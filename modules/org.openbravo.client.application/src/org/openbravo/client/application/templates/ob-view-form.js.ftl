@@ -19,7 +19,14 @@
 */
 -->
 {
-    fields: [
+    // use theFields instead of fields, when the form
+    // gets created, initialized, the datasource is
+    // set (ob-standard-view.js buildStructure) 
+    // causing re-initialization of the fields,
+    // removing the current ones and recreating new ones
+    // by using theFields, the form initially does not
+    // have fields, which prevents this initial destroy step
+    theFields: [
     <#list data.fields as field>
       <@createField field/><#if field_has_next>,</#if>
     </#list>    

@@ -114,7 +114,7 @@
       SELECT DISTINCT DOCUMENTNO
       FROM M_MOVEMENT
       WHERE AD_CLIENT_ID=v_Client AND POSTED='Y'
-        AND MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+        AND MOVEMENTDATE >= TO_DATE(v_MinDateCosting)
       ORDER BY DOCUMENTNO
       )
       LOOP
@@ -139,7 +139,7 @@
       FROM M_INVENTORY I, M_WAREHOUSE W
       WHERE I.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
         AND I.AD_CLIENT_ID=v_Client AND I.POSTED='Y'
-        AND I.MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+        AND I.MOVEMENTDATE >= TO_DATE(v_MinDateCosting)
       ORDER BY I.NAME, W.NAME
       )
       LOOP
@@ -163,7 +163,7 @@
       SELECT DISTINCT DOCUMENTNO
       FROM M_PRODUCTION
       WHERE AD_CLIENT_ID=v_Client AND POSTED='Y'
-        AND MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+        AND MOVEMENTDATE >= TO_DATE(v_MinDateCosting)
       ORDER BY DOCUMENTNO
       )
       LOOP
@@ -188,7 +188,7 @@
       FROM M_INOUT
       WHERE ISSOTRX='N' 
         AND AD_CLIENT_ID=v_Client AND POSTED='Y'
-        AND DATEACCT > TO_DATE(v_MinDateCosting)
+        AND DATEACCT >= TO_DATE(v_MinDateCosting)
       ORDER BY DOCUMENTNO
       )
       LOOP
@@ -211,14 +211,14 @@
       v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MatchedInvoices@ @PostedUsingCost@ @Date@ ';
       FOR Cur_Docs IN
       (
-      SELECT DISTINCT IO.DATEORDERED, I.DOCUMENTNO
+      SELECT DISTINCT I.DATEINVOICED, I.DOCUMENTNO
       FROM M_MATCHINV M, M_INOUTLINE IOL, M_INOUT IO, C_INVOICE I, C_INVOICELINE IL
       WHERE M.AD_CLIENT_ID=v_Client AND M.POSTED='Y'
         AND IL.C_INVOICELINE_ID = M.C_INVOICELINE_ID
         AND I.C_INVOICE_ID = IL.C_INVOICE_ID
         AND IOL.M_INOUTLINE_ID = M.M_INOUTLINE_ID AND IO.M_INOUT_ID = IOL.M_INOUT_ID
-        AND IO.DATEACCT > TO_DATE(v_MinDateCosting)
-      ORDER BY IO.DATEORDERED, I.DOCUMENTNO
+        AND IO.DATEACCT >= TO_DATE(v_MinDateCosting)
+      ORDER BY I.DATEINVOICED, I.DOCUMENTNO
       )
       LOOP
         IF (v_FirstIteration) THEN
@@ -226,7 +226,7 @@
         ELSE
           v_CheckResultStr := v_CheckResultStr || ', ';
         END IF;
-        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DATEORDERED || ' (' || '@Invoice@ @SOS_DOCUMENTNO@' || Cur_Docs.DOCUMENTNO || ')';
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DATEINVOICED || ' (' || '@Invoice@ @SOS_DOCUMENTNO@' || Cur_Docs.DOCUMENTNO || ')';
       END LOOP;
       v_CheckResultStr:=v_CheckResultStr || '.';
     END IF;

@@ -60,6 +60,8 @@ isc.OBListItem.addProperties({
     this.Super('pickValue', arguments);
     delete this._pickedValue;
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
+      // update the display before moving the focus
+      this.updateValueMap(true);
       this.form.focusInNextItem(this.name);
     }
   },

@@ -42,11 +42,12 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
-import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaDefault;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
 import org.openbravo.model.financialmgmt.calendar.Period;
@@ -217,12 +218,6 @@ public class DocFINReconciliation extends AcctServer {
             "cGlItemId",
             transaction.getGLItem() != null ? transaction.getGLItem().getId() : data[i]
                 .getField("cGlItemId"));
-        FieldProviderFactory.setField(data[i], "cInvoiceId", paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-                && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                    .getInvoicePaymentSchedule().getInvoice() != null ? paymentDetails
-                .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-                .getInvoice().getId() : "");
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
         FieldProviderFactory.setField(data[i], "cCurrencyId", transaction.getCurrency().getId());
         FieldProviderFactory.setField(data[i], "cProjectId", paymentDetails.get(i)
@@ -341,10 +336,8 @@ public class DocFINReconciliation extends AcctServer {
           .toString());
       FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
       FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
-      FieldProviderFactory
-          .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
-              .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
-              .getBusinessPartner().getId());
+      FieldProviderFactory.setField(data[0], "cBpartnerId",
+          transaction.getBusinessPartner() != null ? transaction.getBusinessPartner().getId() : "");
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
@@ -356,6 +349,11 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
       if (transaction.getSalesCampaign() != null)
         FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      if (transaction.getProduct() != null)
+        FieldProviderFactory.setField(data[0], "mProductId", transaction.getProduct().getId());
+      if (transaction.getSalesRegion() != null)
+        FieldProviderFactory.setField(data[0], "cSalesregionId", transaction.getSalesRegion()
             .getId());
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
     } finally {
@@ -504,14 +502,30 @@ public class DocFINReconciliation extends AcctServer {
       Fact fact, String Fact_Acct_Group_ID) throws ServletException {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(transaction))
+    if (getDocumentTransactionConfirmation(transaction)) {
+      BigDecimal transactionPaymentAmount = new BigDecimal(line.getPaymentAmount());
+      BigDecimal transactionDepositedAmount = new BigDecimal(line.getDepositAmount());
+      String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
+      final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+      // Should map with the amount booked in the transaction and adjust with currency gain/loss
+      transactionPaymentAmount = convertAmount(transactionPaymentAmount, true,
+          dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
+          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          conn);
+      transactionDepositedAmount = convertAmount(transactionDepositedAmount, false,
+          dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
+          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          conn);
       fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
-          C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
-    else
+          C_Currency_ID, transactionPaymentAmount.toString(),
+          transactionDepositedAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+    } else {
       fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID,
           line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
+    }
     fact.createLine(line, getClearOutAccount(as, transaction.getAccount(), conn), C_Currency_ID,
         line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
@@ -524,12 +538,21 @@ public class DocFINReconciliation extends AcctServer {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(transaction))
+    String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+    if (getDocumentTransactionConfirmation(transaction)) {
+      BigDecimal transactionAmount = new BigDecimal(line.getAmount());
+      // Should map with the amount booked in the transaction and adjust with currency gain/loss
+      transactionAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
+          dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
+          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          conn);
       fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
-          !payment.isReceipt() ? line.getAmount() : "",
-          payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, null, null, EXCHANGE_DOCTYPE_Transaction, transaction.getId(), conn);
-    else if (!getDocumentPaymentConfirmation(payment)) {
+          !payment.isReceipt() ? transactionAmount.toString() : "",
+          payment.isReceipt() ? transactionAmount.toString() : "", Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
+    } else if (!getDocumentPaymentConfirmation(payment)) {
       FieldProviderFactory[] data = loadLinesPaymentDetailsFieldProvider(transaction);
       for (int i = 0; i < data.length; i++) {
         if (data[i] == null)
@@ -546,101 +569,49 @@ public class DocFINReconciliation extends AcctServer {
         detail.m_C_Currency_ID = line.m_C_Currency_ID;
         detail.m_DateAcct = line.m_DateAcct;
         detail.m_DateDoc = line.m_DateDoc;
+        detail.finFinAccTransactionId = transaction.getId();
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             data[i].getField("FIN_Payment_Detail_ID"));
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID);
       }
     } else {
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID, !payment
-          .isReceipt() ? line.getAmount() : "", payment.isReceipt() ? line.getAmount() : "",
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,  null, null, EXCHANGE_DOCTYPE_Payment, payment.getId(), conn);
+      BigDecimal paymentAmount = new BigDecimal(line.getAmount());
+      // Should map with the amount booked in the payment and adjust with currency gain/loss
+      paymentAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
+          dateFormat.format(transaction.getDateAcct()), TABLEID_Payment, line.getFinPaymentId(),
+          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          conn);
+      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
+          !payment.isReceipt() ? paymentAmount.toString() : "",
+          payment.isReceipt() ? paymentAmount.toString() : "", Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
     }
-    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID, payment
-        .isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
-        Fact_Acct_Group_ID, "999999", DocumentType, null, null, EXCHANGE_DOCTYPE_Transaction, transaction.getId(),conn);
+    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID,
+        payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
+        Fact_Acct_Group_ID, "999999", DocumentType, conn);
     if (!getDocumentPaymentConfirmation(payment)
         && !getDocumentTransactionConfirmation(transaction)) {
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
+      // FIXME: WHEN RELATION BETWEEN GENERATION OF CREDIT AND CONSUMPTION IS CREATED IN DATABASE
+      // THEN I CAN CONVERT TO CALCULATE DIFFERENCES
       if (payment.getUsedCredit().compareTo(ZERO) != 0
           && payment.getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(line, getAccountBPartner(payment.getBusinessPartner().getId(), as, payment
-            .isReceipt(), true, conn), C_Currency_ID, (payment.isReceipt() ? payment
-            .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment.getUsedCredit()
-            .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, null ,EXCHANGE_DOCTYPE_Invoice, line.getInvoiceId(), conn);
+        fact.createLine(
+            line,
+            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment
+            .isReceipt(), true,
+                conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
+                .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment
+                .getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
       }
     }
-    //Create balancing
-    FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Record_ID);
-    createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, reconciliation);
-    
+
     SeqNo = "0";
     return fact;
   }
-  private void createFactCurrencyBalancing(AcctSchema as, ConnectionProvider conn, Fact fact,
-	      String fact_Acct_Group_ID, FIN_Reconciliation reconciliation) throws ServletException {
-	    final BigDecimal acctBalance = fact.getAcctBalance();
-	    if (BigDecimal.ZERO.compareTo(acctBalance) != 0) {
-	      // Need to add balancing entry
-	      // Balance == AcctDr - AcctCr
-	      String currencyLossDR = "0";
-	      String currencyGainCR = "0";
-	      boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
-	      if (isGain) {
-	        // debit > credit = need to credit
-	        currencyGainCR = acctBalance == null ? "" : acctBalance.toPlainString();
-	      } else {
-	        // debit < credit = need to debit
-	        currencyLossDR = acctBalance.negate() == null ? "" : acctBalance.negate().toPlainString();
-	      }
-
-	      String currencyLossGainAcctComboId = null;
-	      // Find gain / loss accounts from account
-	      for (FIN_FinancialAccountAccounting accounting : reconciliation.getAccount()
-	          .getFINFinancialAccountAcctList()) {
-	        if (accounting.getAccountingSchema().getId().equals(as.getC_AcctSchema_ID())) {
-	          AccountingCombination revaluationAcct;
-	          if (isGain) {
-	            revaluationAcct = accounting.getFINBankrevaluationgainAcct();
-	          } else {
-	            revaluationAcct = accounting.getFINBankrevaluationlossAcct();
-	          }
-	          if (revaluationAcct != null) {
-	            currencyLossGainAcctComboId = revaluationAcct.getId();
-	          }
-	          break;
-	        }
-	      }
-	      if (currencyLossGainAcctComboId == null) {
-	        // Find default gain/loss accounts from schema
-	        final OBQuery<AcctSchemaDefault> obqAcctSchemDefault = OBDal.getInstance().createQuery(
-	            AcctSchemaDefault.class, " where accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
-	        final AcctSchemaDefault acctSchemaDefault = obqAcctSchemDefault.list().get(0);
-	        AccountingCombination defaultRevaluationAcct;
-	        if (isGain) {
-	          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationGain();
-	        } else {
-	          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationLoss();
-	        }
-	        if (currencyLossGainAcctComboId == null && defaultRevaluationAcct != null) {
-	          currencyLossGainAcctComboId = defaultRevaluationAcct.getId();
-	        }
-	      }
-	      Account accountGainLoss = Account.getAccount(conn, currencyLossGainAcctComboId);
-	      if (accountGainLoss == null) {
-	        // Fall back to currency balancing
-	        accountGainLoss = as.getCurrencyBalancing_Acct();
-	      }
-
-	      if (accountGainLoss != null) {
-	        final FactLine line = fact.createLine(null, accountGainLoss, as.getC_Currency_ID(),
-	            currencyLossDR, currencyGainCR, fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-	            conn);
-	        line.setAmtSource(C_Currency_ID, "0", "0"); // Mimic normal currency balancing
-	      }
-	    }
-	  }
 
   @Deprecated
   public Fact createFactPaymentDetails(DocLine_FINReconciliation line, AcctSchema as,
@@ -660,13 +631,13 @@ public class DocFINReconciliation extends AcctServer {
       BigDecimal bpAmount = new BigDecimal(line.getAmount());
       if (line.getWriteOffAmt() != null
           && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
-      Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
-          line.m_C_BPartner_ID, as, conn) : getAccountWriteOffBPartner(
-          AcctServer.ACCTTYPE_WriteOff_Revenue, line.m_C_BPartner_ID, as, conn);
-      if (account == null) {
-        account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
-            : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
-      }
+        Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
+            line.m_C_BPartner_ID, as, conn) : getAccountWriteOffBPartner(
+            AcctServer.ACCTTYPE_WriteOff_Revenue, line.m_C_BPartner_ID, as, conn);
+        if (account == null) {
+          account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+              : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+        }
         fact.createLine(line, account, C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""),
             (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
@@ -695,6 +666,7 @@ public class DocFINReconciliation extends AcctServer {
     boolean isPrepayment = paymentDetail.isPrepayment();
     boolean isReceipt = paymentDetail.getFinPayment().isReceipt();
     BigDecimal bpAmount = paymentDetail.getAmount();
+    Currency paymentCurrency = paymentDetail.getFinPayment().getCurrency();
     if (paymentDetail.getWriteoffAmount() != null
         && paymentDetail.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
       Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
@@ -704,9 +676,15 @@ public class DocFINReconciliation extends AcctServer {
         account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
             : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
       }
-      fact.createLine(line, account, C_Currency_ID, (isReceipt ? paymentDetail.getWriteoffAmount()
-          .toString() : ""), (isReceipt ? "" : paymentDetail.getWriteoffAmount().toString()),
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      // Write off amount is generated at payment time so conversion is calculated taking into
+      // account conversion at payment date to calculate gains or losses
+      BigDecimal writeOffAmt = convertAmount(paymentDetail.getWriteoffAmount(), !isReceipt,
+          line.m_DateAcct, TABLEID_Payment, paymentDetail.getFinPayment().getId(),
+          paymentCurrency.getId(), as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
+      fact.createLine(line, account, paymentCurrency.getId(), (isReceipt ? writeOffAmt.toString()
+          : ""), (isReceipt ? "" : writeOffAmt.toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
       bpAmount = bpAmount.add(paymentDetail.getWriteoffAmount());
     }
     String bpartnerId = (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
@@ -724,13 +702,32 @@ public class DocFINReconciliation extends AcctServer {
       fact.createLine(
           line,
           getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.cGlItemId), as, isReceipt,
-              conn), C_Currency_ID, (isReceipt ? "" : bpAmount.toString()),
+              conn), paymentCurrency.getId(), (isReceipt ? "" : bpAmount.toString()),
           (isReceipt ? bpAmount.toString() : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     } else {
+      BigDecimal bpAmountConverted = bpAmount;
+      Invoice invoice = paymentDetail.getFINPaymentScheduleDetailList().get(0)
+          .getInvoicePaymentSchedule() != null ? paymentDetail.getFINPaymentScheduleDetailList()
+          .get(0).getInvoicePaymentSchedule().getInvoice() : null;
+      if (!isPrepayment && invoice != null) {
+        // To force opposite posting isReceipt is opposite as well. this is required when
+        // looking backwards
+        bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, line.m_DateAcct,
+            TABLEID_Invoice, invoice.getId(), paymentCurrency.getId(), as.m_C_Currency_ID, line,
+            as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+      }
+      if (isPrepayment) {
+        // To force opposite posting isReceipt is opposite as well. this is required when
+        // looking backwards. When prepayments date for event is always date for PAYMENT
+        bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, line.m_DateAcct,
+            TABLEID_Payment, paymentDetail.getFinPayment().getId(), paymentCurrency.getId(),
+            as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+      }
       fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
-          C_Currency_ID, !isReceipt ? bpAmount.toString() : "", isReceipt ? bpAmount.toString()
-              : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          paymentCurrency.getId(), !isReceipt ? bpAmountConverted.toString() : "",
+          isReceipt ? bpAmountConverted.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
     }
 
     SeqNo = "0";
@@ -747,16 +744,28 @@ public class DocFINReconciliation extends AcctServer {
     boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(transaction))
+    if (getDocumentTransactionConfirmation(transaction)) {
+      BigDecimal transactionPaymentAmount = new BigDecimal(line.getPaymentAmount());
+      BigDecimal transactionDepositedAmount = new BigDecimal(line.getDepositAmount());
+      // Should map with the amount booked in the transaction and adjust with currency gain/loss
+      transactionPaymentAmount = convertAmount(transactionPaymentAmount, true, DateAcct,
+          TABLEID_Transaction, transaction.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
+          fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+      transactionDepositedAmount = convertAmount(transactionDepositedAmount, false, DateAcct,
+          TABLEID_Transaction, transaction.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
+          fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
       fact.createLine(line, getAccountTransaction(conn, transaction.getAccount(), as, isReceipt),
-          C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
-    else if (!"".equals(line.getCGlItemId()))
+          C_Currency_ID, transactionPaymentAmount.toString(),
+          transactionDepositedAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+      // Why empty string is being checked??
+    } else if (!"".equals(line.getCGlItemId())) {
       fact.createLine(
           line,
           getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
               isReceipt, conn), C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(),
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    }
     fact.createLine(line, getAccount(conn, transaction.getAccount(), as, isReceipt), C_Currency_ID,
         line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, "999999",
         DocumentType, conn);

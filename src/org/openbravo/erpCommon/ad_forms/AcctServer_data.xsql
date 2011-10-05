@@ -122,6 +122,18 @@
       <Parameter name="client"/>
       <Parameter name="org"/>
    </SqlMethod>
+   <SqlMethod name="currencyConvertionRate" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      SELECT C_Currency_Rate(?, ?,TO_DATE(?),TO_CHAR(?), ?, ?) AS CONVERTED FROM DUAL
+      </Sql>
+      <Parameter name="CurFrom_ID"/>
+      <Parameter name="CurTo_ID"/>
+      <Parameter name="Date"/>
+      <Parameter name="RateType"/>
+      <Parameter name="client"/>
+      <Parameter name="org"/>
+   </SqlMethod>
    <SqlMethod name="periodOpen" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -479,7 +491,10 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
      SELECT DISTINCT(AD_Table.AD_Table_ID) as id,
-               (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||(case when ad_table.po_window_id is null then '' else ' - ' end)||ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) as name
+               AD_Table.tablename || ' (' ||
+               (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)
+               || (case when ad_table.po_window_id is null then '' else ' - ' end)
+               || ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?)  || ')' as name
         FROM AD_TABLE, C_ACCTSCHEMA_TABLE
        WHERE AD_TABLE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID
          AND AD_TABLE.ISACTIVE = 'Y'

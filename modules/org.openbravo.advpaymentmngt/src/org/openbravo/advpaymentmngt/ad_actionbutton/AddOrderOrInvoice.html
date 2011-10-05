@@ -55,6 +55,7 @@
   OB.APRM.APFT_GLItems = [];
   OB.APRM.APFT_GLItemsId = 0;
   OB.APRM.HasGLItems = false;
+  OB.APRM.AOOI_bp = null;
 var hasBPartner = null;
 </script>
 <script language="JavaScript" type="text/javascript">
@@ -100,12 +101,28 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   return true;
 }
 function loadGridList() {
-  try {
-    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
-    var paramXMLReq = null;
-    return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
-  } catch (e) {
-    alert(e);
+  if (OB.APRM.AOOI_bp === null ||
+      OB.APRM.AOOI_bp !== document.getElementById('C_BPartner_ID').value ||
+      OB.APRM.AOOI_dt !== document.getElementById('paramDocumentType').value ||
+      OB.APRM.AOOI_pm !== document.getElementById('paramAlternativePaymentMethod').checked ||
+      OB.APRM.AOOI_ddf !== document.getElementById('paramDueDateFrom').value ||
+      OB.APRM.AOOI_ddt !== document.getElementById('paramDueDateTo').value ||
+      OB.APRM.AOOI_cu !== document.getElementById('paramCurrencyId').value)
+  {
+	OB.APRM.AOOI_bp = document.getElementById('C_BPartner_ID').value;
+    OB.APRM.AOOI_dt = document.getElementById('paramDocumentType').value;
+    OB.APRM.AOOI_pm = document.getElementById('paramAlternativePaymentMethod').checked;
+    OB.APRM.AOOI_ddf = document.getElementById('paramDueDateFrom').value;
+    OB.APRM.AOOI_ddt = document.getElementById('paramDueDateTo').value;
+    OB.APRM.AOOI_cu = document.getElementById('paramCurrencyId').value;
+
+	try {
+      var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
+    } catch (e) {
+      alert(e);
+    }
   }
 }
 </script>
@@ -836,7 +853,7 @@ function closeProcessPayment() {
             <tr>
               <td class="TitleCell"><span class="LabelText">Transaction Type</span></td>
               <td class="Combo_ContentCell">
-                <select name="inpDocumentType" class="ComboKey Combo_OneCell_width" onchange="documentTypeOnChange(this.value);">
+                <select id="paramDocumentType" name="inpDocumentType" class="ComboKey Combo_OneCell_width" onchange="documentTypeOnChange(this.value);">
                   <option value="O">Orders</option>
                   <option value="I" selected="selected">Invoices</option>
                   <option value="B">Orders and Invoices</option>

@@ -336,7 +336,6 @@
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputDisabled {
   border-width: 1px 0px 1px 1px;
-  border-right:0px none;
 }
 
 .OBFormFieldInputRequiredHint,
@@ -678,7 +677,7 @@
 
 .OBFormButtonDisabled,
 .OBFormButtonSelectedDisabled {
-  border:1px solid #d0d1cd;
+  border:2px solid #d0d1cd;
   background-image: url(./images/form/textButton-bg-disabled.png);
   font-weight:normal;
   color:#777;

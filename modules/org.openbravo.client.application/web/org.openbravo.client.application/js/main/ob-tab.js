@@ -115,12 +115,20 @@ isc.OBTabSetMain.addProperties({
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab', 'Canvas', ksAction_SelectChildTab);
     var ksAction_SelectPreviousTab = function() {
-      me.selectPreviousTab();
+      if (!isc.Page.isRTL()) { // LTR mode
+        me.selectPreviousTab();
+      } else { // RTL mode
+        me.selectNextTab();
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab', 'Canvas', ksAction_SelectPreviousTab);
     var ksAction_SelectNextTab = function() {
-      me.selectNextTab();
+      if (!isc.Page.isRTL()) { // LTR mode
+        me.selectNextTab();
+      } else { // RTL mode
+        me.selectPreviousTab();
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab', 'Canvas', ksAction_SelectNextTab);
@@ -276,6 +284,18 @@ isc.OBTabSetMain.addProperties({
     this.Super('removeTabs', [toRemove]);
     OB.Layout.HistoryManager.updateHistory();
     return true;
+  },
+
+  updateTab: function (tab, pane) {
+    var previousPane = tab && this.getTabObject(tab).pane;
+    
+    this.Super('updateTab', arguments);
+
+    // Note: updateTab doesn't remove the previous loading tab
+    // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
+    if(previousPane) {
+      previousPane.destroy();
+    }
   }
 });
 

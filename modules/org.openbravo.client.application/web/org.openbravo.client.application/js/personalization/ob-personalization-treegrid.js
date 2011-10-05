@@ -38,20 +38,6 @@ isc.OBPersonalizationTreeGrid.addProperties({
   canAcceptDroppedRecords: true,
   leaveScrollbarGap: false,
   showCellContextMenus: true,
-
-  bodyStyleName: 'OBGridBody',
-  baseStyle: 'OBPersonalizationTreeGridCell',
-  styleName: 'OBFormPersonalizationFieldsTreeGrid',
-
-  showOpener: false,
-  // eventhough showOpener is false, still space is taken for an opener
-  // icon, set to a small number, should be > 0 (otherwise it it not used)
-  // this setting of 2 makes the drag indicator to be 2 pixels to the right also
-  openerIconSize: 2,
-  
-  // todo: show custom items for different types of fields
-  nodeIcon: OB.Styles.Personalization.Icons.field,
-  folderIcon: OB.Styles.Personalization.Icons.fieldGroup,
   
   // when an item gets dropped on a closed folder its icon 
   // changes
@@ -60,9 +46,6 @@ isc.OBPersonalizationTreeGrid.addProperties({
   dropIconSuffix: 'open',
   closedIconSuffix: 'closed',
   openIconSuffix: 'open',
-  
-  width: '100%',
-  indentSize: 10,
   
   fields: [
     {name: 'title', canHover: true, showHover: true, 
@@ -76,6 +59,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     ],
     
   initWidget: function() {
+    // todo: show custom items for different types of fields
+    this.nodeIcon = OB.Styles.Personalization.Icons.field;
+    this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
+
     // register a change notifier
     var i = 0, me = this, changedFunction = function() {
       me.personalizeForm.changed();
@@ -123,6 +110,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
    this.Super('initWidget', arguments);
   },
   
+  destroy: function() {
+    if (this.data) {
+      this.data.destroy();
+    }
+    this.Super('destroy', arguments);
+  },
+  
   // open/close a folder on folder click
   folderClick: function (viewer, folder, recordNum) {
     if (this.data.isOpen(folder)) {
@@ -147,6 +141,17 @@ isc.OBPersonalizationTreeGrid.addProperties({
     if (folder && folder.name === '/') {
       return;
     }
+    
+    // don't allow required fields without default value 
+    // to be dropped on the statusbar
+    if (folder.name === OB.Personalization.STATUSBAR_GROUPNAME) {
+      for (i = 0; i < nodes.length; i++) {
+        if (!nodes[i].wasOnStatusBarField && nodes[i].required && !nodes[i].hasDefaultValue) {
+          return;
+        }
+      }
+    }
+    
 //    
 //    // check if the nodes are all dropped on their current parent
 //    // in the same place they are now (note index + i is done, as
@@ -226,6 +231,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // items may have been hidden, which changes their colour
       personalizeForm.fieldsTreeGrid.markForRedraw();
 
+      // set the value in the properties form also
+      if (property === 'hiddenInForm') {
+        personalizeForm.propertiesLayout.formLayout.form.setValue('displayed', !value);
+      } else {
+        personalizeForm.propertiesLayout.formLayout.form.setValue(property, value);
+      }
+      
       // this will reset everything
       personalizeForm.changed();
     };
@@ -234,19 +246,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     // do not exist on the rest of the form)
     if (record.isStatusBarField) {
       menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_Hidden'),
-        checked: record.hiddenInForm,
+        title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
+        checked: !record.hiddenInForm,
         click: function() {
           updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
-        }        
-      });
-    } else if (record.isDynamicStatusBarField) {
-      // dynamic status bar fields exist on the form, so they can be removed
-      // from the status bar
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_RemoveFromStatusBar'),
-        click: function() {
-          me.removeData(record);
         }        
       });
     } else {
@@ -258,13 +261,17 @@ isc.OBPersonalizationTreeGrid.addProperties({
           updatePropertyFunction(record, 'startRow', !record.startRow);
         }        
       });
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
-        checked: !record.hiddenInForm,
-        click: function() {
-          updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
-        }        
-      });
+      
+      if (record.wasOnStatusBarField || !record.required || record.hasDefaultValue) {
+        menuItems.add({
+          title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
+          checked: !record.hiddenInForm,
+          click: function() {
+            updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
+          }        
+        });
+      }
+      
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Personalization_FirstFocus'),
         checked: record.firstFocus,

@@ -72,6 +72,16 @@ OB.Layout.initialize = function() {
       // note the array has to be placed in an array otherwise the newMembers
       // is considered to the argument list
       this.Super('addMembers', [newMembers]);
+    },
+
+    isFirstDraw: true,
+
+    draw: function() {
+      this.Super("draw", arguments);
+      if(isc.Browser.isIE && this.isFirstDraw) {
+        this.isFirstDraw = false;
+        this.markForRedraw(); //To solve issue https://issues.openbravo.com/view.php?id=18192 in IE
+      }
     }
   }, OB.Styles.TopLayout.NavBar);
   

@@ -265,29 +265,31 @@
           // 1) view is not open and class not loaded (open view and show loading bar)
           // 2) view is not open but class was loaded (open view and show loading bar)
           // 3) view is open and class is loaded (show loading bar in open view)          
-          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
-          
+          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params), 
+              loadingPane, currentPane,
+              tabSet = OB.MainView.TabSet;
+
           params = params || {};
-          
+
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
           } else if (!params.popup && viewName !== 'OBPopupClassicWindow' && !params.showsItself) {
             viewTabId = vmgr.views.getViewTabID(viewName, params);
             if (viewTabId) {
               // tab exists, replace its contents
-              var loadingPane = OB.Utilities.createLoadingLayout();
-              
+              loadingPane = OB.Utilities.createLoadingLayout();
+
               // make sure it gets found in the next round
               params.loadingTabId = viewTabId;
               loadingPane.viewTabId = viewTabId;
 
               // is used to prevent history updating
               loadingPane.isLoadingTab = true;
+
+              tabSet.updateTab(viewTabId, loadingPane);
               
-              // refresh the existing tab
-              OB.MainView.TabSet.updateTab(viewTabId, loadingPane);
               // and show it
-              OB.MainView.TabSet.selectTab(viewTabId);
+              tabSet.selectTab(viewTabId);
             } else {
               // create a completely new tab
               // first create a loading tab and then call again
@@ -295,12 +297,14 @@
               params = vmgr.createLoadingTab(viewName, params, viewTabId);
             }
             // use a canvas to make use of the fireOnPause possibilities
+            // but don't forget to destroy it afterwards...
             var cnv = isc.Canvas.create({
               openView: function() {
                 vmgr.openView(viewName, params);
                 // delete so that at the next opening a new loading layout
                 // is created
                 delete params.loadingTabId;
+                this.destroy();
               }
             });
             cnv.fireOnPause('openView', cnv.openView, null, cnv);
@@ -320,7 +324,7 @@
           if (viewInstance && viewInstance.show && viewInstance.showsItself) {
             if (loadingTab) {
               delete params.loadingTabId;
-              OB.MainView.TabSet.removeTab(loadingTab.ID);
+              tabSet.removeTab(loadingTab.ID);
             }
             viewInstance.show();
             return;
@@ -329,10 +333,13 @@
           // eventhough there is already an open tab
           // still refresh it
           if (viewTabId !== null) {
+
             // refresh the view
-            OB.MainView.TabSet.updateTab(viewTabId, viewInstance);
+
+            tabSet.updateTab(viewTabId, viewInstance);
+
             // and show it
-            OB.MainView.TabSet.selectTab(viewTabId);
+            tabSet.selectTab(viewTabId);
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
@@ -359,10 +366,10 @@
             // important part
             
             // the select tab event will update the history
-            if (OB.MainView.TabSet.getSelectedTab() && OB.MainView.TabSet.getSelectedTab().pane.viewTabId === viewTabId) {
+            if (tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.viewTabId === viewTabId) {
               OB.Layout.HistoryManager.updateHistory();
             } else {              
-              OB.MainView.TabSet.selectTab(viewTabId);
+              tabSet.selectTab(viewTabId);
             }
 
             return;

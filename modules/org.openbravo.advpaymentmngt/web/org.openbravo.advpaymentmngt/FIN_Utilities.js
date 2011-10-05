@@ -41,10 +41,16 @@ function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _
   if (!isCreditAllowed) {
     frm.inpUseCredit.checked = false;
   }
-  globalMaskNumeric = getDefaultMaskNumeric();
   globalDecSeparator = getGlobalDecSeparator();
   globalGroupSeparator = getGlobalGroupSeparator();
   globalGroupInterval = getGlobalGroupInterval();
+
+  globalMaskNumeric = formatNameToMask('euroEdition');
+  if (!globalMaskNumeric && OB && OB.Format && OB.Format.formats) {
+    globalMaskNumeric = OB.Format.formats.euroEdition;
+    globalMaskNumeric = returnMaskChange(globalMaskNumeric, '.', ',', globalDecSeparator, globalGroupSeparator);
+  }
+  globalMaskNumeric = globalMaskNumeric || getDefaultMaskNumeric();
 }
 
 function processLabels() {
@@ -303,8 +309,8 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction){
 }
 
 function updateDifference() {
-  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : 0,
-      total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : 0,
+  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : applyFormat('0'),
+      total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : applyFormat('0'),
       amount = total,
       invoicedAmount = total;
   
@@ -323,7 +329,7 @@ function updateDifference() {
   } else if ( compareWithSign(amount, '>', total) ) {
     frm.inpDifference.value = subtract(amount, total);
   } else {
-    frm.inpDifference.value = 0;
+    frm.inpDifference.value = applyFormat('0');
   }
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
   displayLogicElement('sectionDifference', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
@@ -346,7 +352,7 @@ function updateDifference() {
 
 function updateTotal() {
   var chk = frm.inpScheduledPaymentDetailId;
-  var total = 0, i, invalidSpan;
+  var total = applyFormat('0'), i, invalidSpan;
   var scheduledPaymentDetailId, pendingAmount, amount, isAnyChecked = false;
   var selectedBusinessPartners = {
      numberofitems: 0,
@@ -385,9 +391,9 @@ function updateTotal() {
       frm.inpActualPayment.value = frm.inpGeneratedCredit.value;
     }
     updateDifference();
-    if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
+    //if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
       //return;
-    }
+    //}
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
@@ -548,9 +554,9 @@ function updateAll(drivenByGrid) {
   var chk = frm.inpScheduledPaymentDetailId;
   var recordAmount, i;
 
-  frm.inpExpectedPayment.value = '0';
+  frm.inpExpectedPayment.value = applyFormat('0');
   if (isGLItemEnabled) {
-    frm.inpExpectedPayment.value = frm.inpGLSumAmount.value || '0';
+    frm.inpExpectedPayment.value = frm.inpGLSumAmount.value || applyFormat('0');
   }
   if (!chk) {
     return;
@@ -613,7 +619,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
         return false;
       }
-    } else if ( !allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0") ){
+    } else if ( !allowNotSelectingPendingPayment || compare(actualPayment, '==', "0")){
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;
     }
@@ -629,7 +635,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       }
     }
     if (!isAnyChecked &&
-        (!allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0")) 
+        (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))
         ) {
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;

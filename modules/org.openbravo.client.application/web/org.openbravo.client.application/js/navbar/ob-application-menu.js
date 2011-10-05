@@ -114,7 +114,7 @@ isc.OBApplicationMenuTree.addProperties({
 
   itemClick: function(item, colNum) {
     var isClassicEnvironment = OB.Utilities.useClassicMode(item.windowId);
-    var selectedView = null;
+    var selectedView = isc.addProperties({}, item);
     if (item.tabId) {
       selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon);
       selectedView.type = item.type;
@@ -147,6 +147,9 @@ isc.OBApplicationMenuTree.addProperties({
     
     selectedView.icon = item.icon;
     selectedView.type = item.type;
+    
+    selectedView = isc.addProperties({}, item, selectedView);
+    
     OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
     OB.Layout.ViewManager.openView(selectedView.viewId, selectedView);
   }
@@ -169,15 +172,6 @@ isc.OBApplicationMenuButton.addProperties({
     };
     OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     this.Super('draw', arguments);
-  },
-
-  click: function() {
-    if (this.menu.showing) {
-      this.menu.hide();
-      return false;
-    } else {
-      this.showMenu();
-    }
   },
 
   initWidget: function() {

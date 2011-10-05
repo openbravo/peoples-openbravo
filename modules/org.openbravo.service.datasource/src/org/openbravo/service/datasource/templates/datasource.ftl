@@ -38,6 +38,7 @@ although the same is done by the compressor
         createClassName: '${data.dataSourceClassName?js_string}',
 <#if data.getParameter("_onlyGenerateCreateStatement") == "" || data.getParameter("_create") != "">
         ID:'${data.id}',
+        potentiallyShared: true,
 </#if>
 <#if data.getParameter("_new") != "">
         _new: true,

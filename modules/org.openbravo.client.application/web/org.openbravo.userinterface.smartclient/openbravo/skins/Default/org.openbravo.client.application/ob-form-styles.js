@@ -67,6 +67,26 @@ isc.OBTextAreaItem.addProperties({
   height: 66
 });
 
+isc.OBSpinnerItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+isc.OBSpinnerItem.INCREASE_ICON = isc.addProperties(isc.OBSpinnerItem.INCREASE_ICON, {
+  width: 21,
+  height: 11,
+  showRollOver: true,
+  showFocused: false,
+  showDown: true,
+  imgOnly: true,
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/spinnerControlIncrease.png'
+});
+isc.OBSpinnerItem.DECREASE_ICON = isc.addProperties(isc.OBSpinnerItem.DECREASE_ICON, {
+  width: 21,
+  height: 10,
+  showRollOver: true,
+  showFocused: false,
+  showDown: true,
+  imgOnly: true,
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/spinnerControlDecrease.png'
+});
+
 isc.OBPopUpTextAreaItem.addProperties({
   errorOrientation: 'left',
   cellStyle: 'OBFormField',
@@ -140,6 +160,8 @@ OB.Styles.OBFormField.DefaultSearch = {
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
+  // align the button directly to the field
+  pickerIconHspace: 0,
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,

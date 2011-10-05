@@ -31,7 +31,6 @@ public class DocLine_FINReconciliation extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
-  String cInvoiceId = "";
 
   /**
    * @return the finFinAccTransactionId
@@ -152,19 +151,7 @@ public class DocLine_FINReconciliation extends DocLine {
   public void setCGlItemId(String glItemId) {
     cGlItemId = glItemId;
   }
-  /**
-   * @return the cInvoiceId
-   */
-  public String getInvoiceId(){
-	  return cInvoiceId;
-  }
-  /**
-   * @param Invoice_ID
-   *          the Invoice_ID to set
-   */
-  public void setInvoice_ID(String invoice_ID) {
-    cInvoiceId = invoice_ID;
-  }
+
   public DocLine_FINReconciliation(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
     Line_ID = TrxLine_ID;

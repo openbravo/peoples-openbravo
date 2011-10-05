@@ -21,7 +21,7 @@
 <@createView data/>      
 
 <#macro createView tabComponent>    
-    tabTitle: '${tabComponent.tabTitle}',
+    tabTitle: '${tabComponent.tabTitle?js_string}',
     entity:  '${tabComponent.entityName}',
     
     <#if tabComponent.parentProperty != ''>

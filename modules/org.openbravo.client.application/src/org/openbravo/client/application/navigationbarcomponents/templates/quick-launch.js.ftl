@@ -20,7 +20,9 @@
 /* jslint */
 isc.OBQuickLaunch.create({
   title: '',
-  prompt: OB.I18N.getLabel('${data.label}'),
+  itemPrompt: OB.I18N.getLabel('${data.label}'),
+  /* Avoid declare directly "prompt: " in this widget definition.
+     Declared as "itemPrompt" to be called later inside "draw" function (at "ob-quick-launch.js") in order to solve issue https://issues.openbravo.com/view.php?id=18192 in FF */
   buttonType: '${data.buttonType}',
   prefixLabel: '${data.prefixRecent}',
   keyboardShortcutId : '${data.keyboardShortcutId}',

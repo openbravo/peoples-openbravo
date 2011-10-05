@@ -85,7 +85,9 @@ BEGIN
         COALESCE(:NEW.PO_Window_ID , '.') != COALESCE(:OLD.PO_Window_ID , '.') OR
         COALESCE(:NEW.IsDefaultAcct , '.') != COALESCE(:OLD.IsDefaultAcct , '.') OR
         COALESCE(:NEW.Developmentstatus , '.') != COALESCE(:OLD.Developmentstatus , '.') OR
-        COALESCE(:NEW.AD_Package_ID , '.') != COALESCE(:OLD.AD_Package_ID , '.') 
+        COALESCE(:NEW.AD_Package_ID , '.') != COALESCE(:OLD.AD_Package_ID , '.') OR 
+        COALESCE(:NEW.Acctclassname , '.') != COALESCE(:OLD.Acctclassname , '.') OR
+        COALESCE(:NEW.Acctdate_Column_ID , '.') != COALESCE(:OLD.Acctdate_Column_ID , '.') 
         
         --SQL_Record_Identifier is not going to be exported
         ) THEN

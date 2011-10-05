@@ -144,7 +144,7 @@ BEGIN
         WHERE fin_payment_schedule_id = v_payment_schedule_order;
       END LOOP;
   
-      IF (v_pendingamount > 0) THEN
+      IF (v_pendingamount <> 0) THEN
         INSERT INTO fin_payment_scheduledetail
         (
           fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,

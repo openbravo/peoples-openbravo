@@ -328,30 +328,29 @@ isc.OBSelectorWidget
               changeField(this.outFields[i].fieldName, '');
             }
           }
-          return;
-        }
-
-        for (i in this.outFields) {
-          if (this.outFields.hasOwnProperty(i)) {
-            selectedObj[i] = selected[i];
-            if (!this.outFields[i]) {
-              // skip id and _identifier and other columns without
-              // associated tab field
-              continue;
-            }
-
-            if (this.outFields[i].suffix) {
-              hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
-              if (hiddenInput) {
-                hiddenInput.value = selected[i] ? selected[i] : '';
+        } else {
+          for (i in this.outFields) {
+            if (this.outFields.hasOwnProperty(i)) {
+              selectedObj[i] = selected[i];
+              if (!this.outFields[i]) {
+                // skip id and _identifier and other columns without
+                // associated tab field
+                continue;
               }
-            }
 
-            changeField(this.outFields[i].fieldName, selected[i]);
+              if (this.outFields[i].suffix) {
+                hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
+                if (hiddenInput) {
+                  hiddenInput.value = selected[i] ? selected[i] : '';
+                }
+              }
+
+              changeField(this.outFields[i].fieldName, selected[i]);
+            }
           }
         }
 
-        if (typeof setWindowEditing === 'function') {
+        if (document.getElementById('linkButtonEdition') && typeof setWindowEditing === 'function') {
           setWindowEditing(true);
         }
 
@@ -403,7 +402,7 @@ isc.OBSelectorWidget
     // draw now already otherwise the filter does not work the
     // first time
     this.selectorWindow.show();
-    if (this.selectorGrid.filterEditor) {
+    if (this.selectorGrid.clearFilter) {
       this.selectorGrid.clearFilter();
     }
     this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
@@ -567,6 +566,10 @@ isc.OBSelectorWidget
       initWidget : function() {
 
         var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.';
+
+        // Do not destroy dataSource after creation
+        // https://issues.openbravo.com/view.php?id=18456
+        this.dataSource.potentiallyShared = true;
 
         if (this.numCols > 0 && 
             this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length) {
@@ -817,7 +820,9 @@ isc.OBSelectorWidget
                 showFilterEditor : true,
                 sortField : this.displayField,
                 filterData : function(criteria, callback, requestProperties) {
-
+                  requestProperties = requestProperties || {};
+                  requestProperties.params = requestProperties.params | {};
+                  requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
                   if (!criteria) {
                     criteria = {};
                   }
@@ -854,6 +859,10 @@ isc.OBSelectorWidget
 
                 criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
                 criteria._requestType = 'Window';
+                
+                requestProperties = requestProperties || {};
+                requestProperties.params = requestProperties.params | {};
+                requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
 
                 // and call the super
                 return this.Super('fetchData', [ criteria, callback,

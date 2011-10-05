@@ -277,8 +277,8 @@ public class MenuManager implements Serializable {
   @SuppressWarnings("unchecked")
   private void linkWindows() {
     // collect the valid tabs/windows
-    final String tabsHql = "select t from ADTab t left join fetch t.window left join fetch t.table, ADWindowAccess awa "
-        + "where awa.role.id=:roleId and t.active = true and t.window.active = true and t.window = awa.window and t.tabLevel = 0";
+    final String tabsHql = "select t from ADTab t join fetch t.window w join fetch t.table, ADWindowAccess awa "
+        + "where awa.role.id=:roleId and t.active = true and w.active = true and w = awa.window and t.tabLevel = 0";
     final Query tabsQry = OBDal.getInstance().getSession().createQuery(tabsHql);
     tabsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     // force a load

@@ -190,7 +190,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function() {
-       this.setDisabled(!this.view.viewGrid.hasErrors() && !this.view.viewForm.hasChanged && !this.view.viewGrid.hasChanges());
+       this.setDisabled(!this.view.viewGrid.hasErrors() && !this.view.viewForm.hasChanged && !this.view.viewGrid.hasChanges(false));
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },
@@ -652,7 +652,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'leftMembers' array */
       this.leftMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllLeftMembers() }}} **
@@ -864,7 +864,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'rightMembers' array */
       this.rightMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllRightMembers() }}} **
@@ -1007,6 +1007,7 @@ isc.OBToolbar.addProperties({
     // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
     var callbackHandler = function (currentContext, me) {
       return function(response, data, request) {
+        var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists, prop;
         if (sessionAttributes) {
           currentContext.viewForm.sessionAttributes = sessionAttributes;
@@ -1481,11 +1482,11 @@ OB.ToolbarRegistry = {
 		  // and pick them up in the correct order
 		  // the return should be an array of button instances created by doing 
 		  //  btnDefinitionClass.create(btnDefinitionProperties);
-		  var result = [], resultIndex = 0, i;	
+		  var result = [], resultIndex = 0, i, validTabId, tabIds;	
 		  for (i = 0; i < this.buttonDefinitions.length; i++) {	
-		    var j, tabIds = this.buttonDefinitions[i].tabIds;
-		    var validTabId = !tabIds;
-		    if (!validTabId && tabIds) {
+		    tabIds = this.buttonDefinitions[i].tabIds;
+		    validTabId = !tabIds;
+		    if (tabIds) {
 		      for (j = 0; j < tabIds.length; j++) {
 		        if (tabIds[j] === tabId) {
 		          validTabId = true;

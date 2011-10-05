@@ -33,7 +33,7 @@ isc.OBSelectorPopupWindow.addProperties({
     canGroupBy: false
   },
   
-  initWidget: function(){
+  initWidget: function () {
     var selectorWindow = this;
     this.setFilterEditorProperties(this.selectorGridFields);
     
@@ -250,14 +250,14 @@ isc.OBSelectorPopupWindow.addProperties({
       defaultFilter = {}; // Reset filter
       isc.addProperties(defaultFilter, data);
     }
-    
+
     // adds the selector id to filter used to get filter information
     defaultFilter._selectorDefinitionId = this.selector.selectorDefinitionId;
     this.defaultFilter = defaultFilter;
     this.selectorGrid.targetRecordId = this.selector.getValue();
     this.show(true);
   },
-  
+
   setValueInField: function(){
     this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     this.hide();
@@ -288,7 +288,11 @@ isc.OBSelectorItem.addProperties({
     title: OB.I18N.getLabel('OBUISC_Identifier'),
     name: OB.Constants.IDENTIFIER
   }],
-  
+
+  // Do not fetch data upon creation
+  // http://www.smartclient.com/docs/8.1/a/b/c/go.html#attr..ComboBoxItem.optionDataSource
+  fetchMissingValues: false,
+
   autoFetchData: false,
   showPickerIcon: true,
   validateOnChange: true,
@@ -379,7 +383,7 @@ isc.OBSelectorItem.addProperties({
       this.icons = null;
     }
     
-    if (this.showSelectorGrid) {
+    if (this.showSelectorGrid && !this.form.isPreviewForm) {
       this.selectorWindow = isc.OBSelectorPopupWindow.create({
         // solves issue: https://issues.openbravo.com/view.php?id=17268
         title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
@@ -438,7 +442,8 @@ isc.OBSelectorItem.addProperties({
   },
 
   handleOutFields: function(record){
-    var i, j, outFields = this.outFields, form = this.form, item, value;
+    var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
+        fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -463,19 +468,17 @@ isc.OBSelectorItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j in form.fields) {
-            if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].columnName !== "" && form.fields[j].columnName === outFields[i].fieldName) {
-                if (record) {
-                  value = record[i];
-                  if(typeof value === 'undefined') {
-                    continue;
-                  }
-                } else {
-                  value = null;
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].name !== '' && fields[j].name === outFields[i].fieldName) {
+              if (record) {
+                value = record[i];
+                if(typeof value === 'undefined') {
+                  continue;
                 }
-                form.fields[j].setValue(value);
+              } else {
+                value = null;
               }
+              fields[j].setValue(value);
             }
           }
         }
@@ -603,6 +606,15 @@ isc.OBSelectorItem.addProperties({
       return '';
     }
     return ret;
+  },
+
+  destroy: function () {
+    // Explicitly destroy the selector window to avoid memory leaks
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
+    this.Super('destroy', arguments);
   }
 });
 
@@ -676,7 +688,8 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   handleOutFields: function(record){
-    var i, j, value, outFields = this.outFields, form = this.form;
+    var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
+        fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -693,12 +706,10 @@ isc.OBSelectorLinkItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j in form.fields) {
-            if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].columnName !== "" && form.fields[j].columnName === outFields[i].fieldName) {
-                value = record ? record[i] : null;
-                form.fields[j].setValue(value);
-              }
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].name !== "" && fields[j].name === outFields[i].fieldName) {
+              value = record ? record[i] : null;
+              fields[j].setValue(value);
             }
           }
         }
@@ -751,15 +762,17 @@ isc.OBSelectorLinkItem.addProperties({
       this.icons = null;
     }
     
-    this.selectorWindow = isc.OBSelectorPopupWindow.create({
-      // solves issue: https://issues.openbravo.com/view.php?id=17268
-      title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
-      dataSource: this.dataSource,
-      selector: this,
-      valueField: this.gridValueField,
-      displayField: this.gridDisplayField,
-      selectorGridFields: isc.shallowClone(this.selectorGridFields)
-    });
+    if (!this.form.isPreviewForm) {
+      this.selectorWindow = isc.OBSelectorPopupWindow.create({
+        // solves issue: https://issues.openbravo.com/view.php?id=17268
+        title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
+        dataSource: this.dataSource,
+        selector: this,
+        valueField: this.gridValueField,
+        displayField: this.gridDisplayField,
+        selectorGridFields: isc.shallowClone(this.selectorGridFields)
+      });
+    }
     
     return this.Super('init', arguments);
   },
@@ -772,5 +785,14 @@ isc.OBSelectorLinkItem.addProperties({
       this.form.handleItemChange(this);
     }
     return ret;
+  },
+
+  destroy: function () {
+    // Explicitly destroy the selector window to avoid memory leaks
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
+    this.Super('destroy', arguments);
   }
 });

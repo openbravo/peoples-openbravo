@@ -32,6 +32,7 @@ isc.OBTabBarButtonMain.addProperties({
 isc.OBTabSetMain.addProperties({
   tabBarConstructor: isc.OBTabBarMain,
   tabBarPosition: 'top',
+  tabBarAlign: 'left',
   width: '100%',
   height: '*',
   overflow: 'hidden',
@@ -81,6 +82,7 @@ isc.OBTabBarButtonChild.addProperties({
 isc.OBTabSetChild.addProperties({
   tabBarConstructor: isc.OBTabBarChild,
   tabBarPosition: 'top',
+  tabBarAlign: 'left',
   width: '100%',
   height: '*',
   overflow: 'hidden',

@@ -49,9 +49,6 @@ OB.DateItemProperties = {
   
   textAlign: 'left',
   
-  // to prevent infinite looping as setFormErrors will also blur
-  inBlur: false,
-
   dateParts : [],
 
   doInit: function() {
@@ -175,16 +172,14 @@ OB.DateItemProperties = {
   }
 };
 
-isc.OBDateItem.addProperties(OB.DateItemProperties,
-  {
-  
+isc.OBDateItem.addProperties(OB.DateItemProperties, {
   validateOnExit: true,
   
   init: function() {
     // this call super.init
     this.doInit();
-   },
-  
+  },
+   
   expandValue: function() {
     var newValue = this.parseValue(), oldValue = this.blurValue();
     
@@ -205,28 +200,27 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
   },
   
   validateOBDateItem: function(value){
-      var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
-      var isValid = true;
-      if (this.getValue() && dateValue === null) {
-        isValid = false;
-      }
-      var isRequired = this.required;
-      if (isValid === false) {
-        return false;
-      } else if (isRequired === true && value === null) {
-        return false;
-      }
-      return true;
-    },
-    
-    validators: [{
-      type: 'custom',
-      condition: function(item, validator, value){
-        return item.validateOBDateItem(value);
-      }
-    }]
-  } 
-);
+    var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
+    var isValid = true;
+    if (this.getValue() && dateValue === null) {
+      isValid = false;
+    }
+    var isRequired = this.required;
+    if (isValid === false) {
+      return false;
+    } else if (isRequired === true && value === null) {
+      return false;
+    }
+    return true;
+  },
+  
+  validators: [{
+    type: 'custom',
+    condition: function(item, validator, value){
+      return item.validateOBDateItem(value);
+    }
+  }]
+});
 
 OB.I18N.getLabel('OBUIAPP_InvalidValue', null, isc.OBDateItem, 'invalidValueLabel');
 OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateItem, 'requiredValueLabel');

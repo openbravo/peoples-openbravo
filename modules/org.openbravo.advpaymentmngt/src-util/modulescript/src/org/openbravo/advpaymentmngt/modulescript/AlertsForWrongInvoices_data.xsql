@@ -14,16 +14,36 @@
     <Sql>
       <![CDATA[
       select distinct fin_payment_schedule.ad_client_id, ad_column_identifier('c_invoice', fin_payment_schedule.c_invoice_id, 'en_US') as invoice, 
-      fin_payment_schedule.c_invoice_id, fin_payment_schedule.ad_org_id, c_invoice.issotrx, '' as ad_role_id
+      fin_payment_schedule.c_invoice_id, fin_payment_schedule.ad_org_id, c_invoice.issotrx, '' as ad_role_id, '' as ad_alertrule_id, '' as ad_alert_id
       from c_invoice, fin_payment_schedule, fin_payment_scheduledetail
       where c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id 
       and fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_invoice
+      and fin_payment_scheduledetail.iscanceled = 'N'
       group by fin_payment_schedule.ad_client_id, fin_payment_schedule.ad_org_id, c_invoice.issotrx, fin_payment_schedule.fin_payment_schedule_id, fin_payment_schedule.c_invoice_id, fin_payment_schedule.amount
       having fin_payment_schedule.amount <> sum(fin_payment_scheduledetail.amount + coalesce(fin_payment_scheduledetail.writeoffamt,0))
       order by 1, 2
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="selectVoidAlerts" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Identify alerts created not taking in account the void payment functionality.</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select distinct fin_payment_schedule.c_invoice_id, ad_alert.ad_alert_id
+      from fin_payment_schedule, fin_payment_scheduledetail, ad_alert
+      where fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_invoice
+            and ad_alert.referencekey_id = fin_payment_schedule.c_invoice_id
+      and exists (select 1
+                  from fin_payment_scheduledetail psd
+                  where psd.fin_payment_scheduledetail_id = fin_payment_scheduledetail.fin_payment_scheduledetail_id
+                        and psd.iscanceled = 'Y')
+      and ad_alert.ad_alertrule_id = ?
+      group by fin_payment_schedule.fin_payment_schedule_id, fin_payment_schedule.c_invoice_id, fin_payment_schedule.amount, ad_alert.ad_alert_id
+      having fin_payment_schedule.amount <> sum(fin_payment_scheduledetail.amount + coalesce(fin_payment_scheduledetail.writeoffamt,0))
+      ]]>
+    </Sql>
+    <Parameter name="alertRuleId"/>
+  </SqlMethod>  
   <SqlMethod name="existsAlertRule" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -31,9 +51,11 @@
        FROM AD_ALERTRULE
        WHERE NAME = ?
          AND ISACTIVE = 'Y'
+         AND AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="alertRule"/>
+    <Parameter name="client"/>
   </SqlMethod>
   <SqlMethod name="existsAlert" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
@@ -59,6 +81,17 @@
       ]]></Sql>
     <Parameter name="name"/>
     <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="selectOldAlertRules" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT ad_alertrule_id
+       FROM AD_ALERTRULE
+       WHERE (name = 'Wrong purchase invoice. Wrong amount in payment plan detail' OR
+              name = 'Wrong sales invoice. Wrong amount in payment plan detail')
+         AND ISACTIVE = 'Y'
+         AND lower(SQL) not like '%iscanceled%'
+      ]]></Sql>
   </SqlMethod>
   <SqlMethod name="getRoleId" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -128,5 +161,24 @@
     <Parameter name="org"/>
     <Parameter name="adAlertRuleId" />
     <Parameter name="role" />
+  </SqlMethod>
+  <SqlMethod name="updateAlertRuleSql" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      UPDATE ad_alertrule SET SQL = ? WHERE ad_alertrule_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="sql"/>
+    <Parameter name="adAlertRuleId"/>
+  </SqlMethod>
+  <SqlMethod name="updateAlertStatus" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      UPDATE ad_alert SET status = ?, isfixed = ? WHERE ad_alert_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="status"/>
+    <Parameter name="isfixed"/>
+    <Parameter name="alertId"/>
   </SqlMethod>
 </SqlClass>

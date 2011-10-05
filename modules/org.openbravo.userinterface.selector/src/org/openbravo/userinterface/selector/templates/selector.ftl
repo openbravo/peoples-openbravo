@@ -49,7 +49,13 @@
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],
-    optionDataSource: ${data.dataSourceJavascript},
+    // create the datasource in the init method, this
+    // prevents too early creation, it is created when the
+    // fields on the form are actually created
+    init: function() {
+        this.optionDataSource = ${data.dataSourceJavascript};
+        this.Super('init', arguments);
+    },
     whereClause : '${data.whereClause?js_string}',
     outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
 <#else>

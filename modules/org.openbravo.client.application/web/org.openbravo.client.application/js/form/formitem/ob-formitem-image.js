@@ -21,10 +21,6 @@
 //This class is used for the small image shown within the OBImageItemSmallImageContainer
 isc.ClassFactory.defineClass('OBImageItemSmallImage', isc.Img);
 
-isc.OBImageItemSmallImage.addProperties({
-  showDisabled: false
-});
-
 //== OBImageItemSmallImageContainer ==
 //This class is used for the small image container box
 isc.ClassFactory.defineClass('OBImageItemSmallImageContainer', isc.HLayout);
@@ -100,7 +96,7 @@ isc.OBImageItemButton.addProperties({
 //which are used to upload and delete images.
 isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
-OBImageCanvas.addProperties({
+isc.OBImageCanvas.addProperties({
   initWidget: function(){
     this.imageLayout = isc.OBImageItemSmallImageContainer.create({
       imageItem: this.creator
@@ -129,6 +125,13 @@ OBImageCanvas.addProperties({
             imageItem: this.imageItem
           });
           selector.show();
+        },
+        updateState: function(value){
+          if(value){
+            this.setDisabled(false);
+          }else{
+            this.setDisabled(true);
+          }
         }
     });
     var deleteButton = isc.OBImageItemButton.create({
@@ -174,7 +177,14 @@ OBImageCanvas.addProperties({
         }
       }
     });
+    
+    if (this.parentItem.isPreviewFormItem) {
+      selectorButton.showDisabled = false;
+      selectorButton.showDisabledIcon = false;
+    }
+    
     this.deleteButton = deleteButton;
+    this.selectorButton = selectorButton;
     buttonLayout.addMember(selectorButton);
     buttonLayout.addMember(deleteButton);
     this.addMember(buttonLayout);
@@ -201,6 +211,15 @@ isc.ClassFactory.defineClass('OBImageItem', CanvasItem);
 isc.OBImageItem.addProperties({
   shouldSaveValue: true,
   canvasConstructor: 'OBImageCanvas',
+  init: function() {
+    this.canvasProperties = this.canvasProperties || {};
+    this.canvasProperties.parentItem = this;
+    this.Super('init', arguments);
+  },
+  //This formitem will never be disabled, so even if the form is readonly, click events will still be triggered
+  isDisabled: function() {
+    return false;
+  },
   setValue: function(newValue){
     if(!newValue || newValue === '') {
       this.canvas.setImage('');
@@ -233,7 +252,9 @@ isc.OBImageItem.addProperties({
         }
       });
     }
-    this.canvas.deleteButton.updateState(newValue);
+    //Buttons will not be shown if the form is readonly
+    this.canvas.deleteButton.updateState(newValue && !this.form.readOnly && !this.readOnly);
+    this.canvas.selectorButton.updateState(!this.form.readOnly && !this.readOnly);
     return this.Super('setValue', arguments);
   },
   refreshImage: function(imageId){

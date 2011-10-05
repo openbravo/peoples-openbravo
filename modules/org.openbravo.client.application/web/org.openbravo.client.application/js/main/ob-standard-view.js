@@ -179,7 +179,7 @@ isc.OBStandardView.addProperties({
   
   isShowingForm: false,
   isEditingGrid: false,
-  
+
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -255,8 +255,19 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.viewForm) {
-      this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+      // setDataSource executes setFields which replaces the current fields
+      // We don't want to destroy the associated DataSource objects
+      this.viewForm.destroyItemObjects = false;
+      
+      // initially the viewForm.fields is not set, the fields are
+      // in this.viewForm.theFields, this to prevent too early creation of fields
+      // i.e. they are recreated when setting the datasource, as is done
+      // here.
+      // make sure the fields are set now
+      this.viewForm.fields = this.viewForm.theFields;
+      this.viewForm.setDataSource(this.dataSource, this.viewForm.theFields);
       this.viewForm.isViewForm = true;
+      this.viewForm.destroyItemObjects = true;
     }
     
     if (this.isRootView) {
@@ -1099,17 +1110,9 @@ isc.OBStandardView.addProperties({
     var hasChanged = this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged);
     hasChanged = hasChanged || (this.isEditingGrid && (this.viewGrid.hasErrors() || this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged)); 
     if (hasChanged) {
-      if (isc.Page.isRTL()) {
-        suffix = ' *';
-      } else {
-        prefix = '* ';
-      }
+      prefix = '* ';
     }/* else {  // To avoid tab width grow each time the * is shown
-      if (isc.Page.isRTL()) {
-        suffix = ' <span style="color: transparent">*</span>';
-      } else {
-        prefix = '<span style="color: transparent">*</span> ';
-      }
+      prefix = '<span style="color: transparent">*</span> ';
     }*/
     
     // store the original tab title

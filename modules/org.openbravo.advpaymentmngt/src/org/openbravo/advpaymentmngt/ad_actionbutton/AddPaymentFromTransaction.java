@@ -256,7 +256,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           if (strDifferenceAction.equals("refund")) {
             Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
             FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
-                refundAmount.negate());
+                refundAmount.negate(), exchangeRate);
             OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
                 (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
             if (newPayment) {
@@ -520,8 +520,15 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
-    paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
-        (bp != null && bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
+    String paymentMethodId = null;
+    if (bp != null) {
+      if (isReceipt && bp.getPaymentMethod() != null) {
+        paymentMethodId = bp.getPaymentMethod().getId();
+      } else if (!isReceipt && bp.getPOPaymentMethod() != null) {
+        paymentMethodId = bp.getPOPaymentMethod().getId();
+      }
+    }
+    paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(paymentMethodId,
         strFinancialAccountId, account.getOrganization().getId(), true, true, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");

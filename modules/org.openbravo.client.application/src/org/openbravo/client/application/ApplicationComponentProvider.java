@@ -29,6 +29,7 @@ import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.OBContext;
 
 /**
  * 
@@ -139,6 +140,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-time.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-yesno.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-spinner.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));
@@ -179,6 +182,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/main/ob-standard-view-datasource.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-standard-view.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/main/ob-base-view.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-view-form-linked-items.js", false));
     globalResources.add(createStaticResource(
@@ -225,11 +230,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     // personalization
     globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-personalization-styles.js", false));
-
-    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/personalization/ob-personalization.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/personalization/ob-personalization-treegrid.js",
@@ -266,6 +266,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-popup-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-dialog-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
@@ -355,6 +359,19 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-personalization-styles.js", false));
+
+    // RTL files should be added at the end. Don't add more files after them
+    if (OBContext.getOBContext().isRTL()) {
+      globalResources.add(createStyleSheetResource(
+          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+              + KernelConstants.SKIN_PARAMETER
+              + "/org.openbravo.client.application/ob-rtl-styles.css", false));
+
+      globalResources.add(createStaticResource(
+          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+              + KernelConstants.SKIN_PARAMETER
+              + "/org.openbravo.client.application/ob-rtl-styles.js", false));
+    }
 
     return globalResources;
   }

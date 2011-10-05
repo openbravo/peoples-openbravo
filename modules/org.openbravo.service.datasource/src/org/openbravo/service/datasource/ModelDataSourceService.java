@@ -43,6 +43,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class ModelDataSourceService extends BaseDataSourceService {
 
+  private static final String PROPERTY_FIELD = "inpproperty";
   private static final String DATASOURCE_FIELD = "modelProperty";
   private static final String FORM_FIELD = "inpadTableId";
 
@@ -65,7 +66,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
 
     final Entity baseEntity = getBaseEntity(parameters);
-    String propertyPath = parameters.get(DATASOURCE_FIELD);
+    String propertyPath = parameters.get(PROPERTY_FIELD);
     if (propertyPath == null) {
       HashMap<String, String> criteria = getCriteria(parameters);
       if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {

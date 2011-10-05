@@ -130,6 +130,9 @@ isc.OBViewGrid.addProperties({
   // reached
   drawAllMaxCells: 0,
   
+  // the default is enabled which is a commonly used field
+  recordEnabledProperty: '_enabled',
+  
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
@@ -218,7 +221,7 @@ isc.OBViewGrid.addProperties({
     }
   },
 
-  initWidget: function(){
+  initWidget: function () {
     var i;
     
     // make a copy of the dataProperties otherwise we get 
@@ -287,19 +290,41 @@ isc.OBViewGrid.addProperties({
     '\'].clearFilter();" class="OBLinkButtonItem">' +
     OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
     '</span>';
-    
+
     return ret;
   },
 
   // destroy the context menu also
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
-  destroy: function() {
+  destroy: function () {
+    var i, field, fields = this.getFields(), len = fields.length, ds, dataSources = [];
+
+    for(i = 0; i < len; i++) {
+      field = fields[i];
+      editorProperties = field && field.editorProperties;
+      ds = editorProperties && editorProperties.optionDataSource;
+      if(ds) {
+        dataSources.push(ds);
+      }
+    }
+
     if (this.contextMenu) {
       this.contextMenu.destroy();
       this.contextMenu = null;
     }
+
     this.Super('destroy', arguments);
+
+    len = dataSources.length;
+
+    for(i = 0; i < len; i++) {
+      ds = dataSources[i];
+      if(ds) {
+        ds.destroy();
+        ds = null;
+      }
+    }
   },
   
   setData: function(data) {
@@ -385,6 +410,7 @@ isc.OBViewGrid.addProperties({
   },
   
   setView: function(view){
+    var dataPageSizeaux;
     this.view = view;
     this.editFormDefaults.view = view;
     if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
@@ -420,9 +446,11 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-
+    //Modify the quantity of lines to count per Window
+    dataPageSizeaux = OB.PropertyStore.get('dataPageSize',this.view.windowId);
+    this.dataPageSize = dataPageSizeaux ? +dataPageSizeaux : 100;
   },
-  
+
   show: function(){
     var ret = this.Super('show', arguments);
     
@@ -1068,6 +1096,17 @@ isc.OBViewGrid.addProperties({
   },
 
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    var textDeselectInterval = setInterval(function() { //To ensure that if finally a double click (recordDoubleClick) is executed, no work is highlighted/selected
+      if (document.selection && document.selection.empty) {
+        document.selection.empty();
+      } else if (window.getSelection) {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+      }
+    }, 15);
+    setTimeout(function() {
+      clearInterval(textDeselectInterval);
+    }, 350);
     var actionObject = {
       target: this,
       method: this.handleRecordSelection,
@@ -1793,8 +1832,7 @@ isc.OBViewGrid.addProperties({
       // as picklist fields will always have picked a value
       // note that focusItem updatevalue for picklist can result in extra datasource requests
       if (focusItem && !focusItem.hasPickList) {
-        focusItem.updateValue();
-        editForm.handleItemChange(focusItem);
+        focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
           var editValues = this.getEditValues(rowNum);
@@ -1901,8 +1939,7 @@ isc.OBViewGrid.addProperties({
     } else {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
-        focusItem.updateValue();
-        editForm.handleItemChange(focusItem);
+        focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
           var editValues = this.getEditValues(editValuesID);

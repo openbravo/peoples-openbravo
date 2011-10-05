@@ -42,6 +42,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -505,7 +506,14 @@ public class SelectorComponent extends BaseTemplateComponent {
               if (associatedField.getTab().getId().equals(tabId)) {
                 final OutSelectorField outField = new OutSelectorField();
                 outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
-                outField.setTabFieldName(associatedField.getColumn().getName());
+                if (getParameter("isSelectorItem") != null) {
+                  final Property property = KernelUtils.getInstance().getPropertyFromColumn(
+                      associatedField.getColumn(), false);
+                  outField.setTabFieldName(property.getName());
+                } else {
+                  // classic mode
+                  outField.setTabFieldName(associatedField.getColumn().getName());
+                }
                 outField.setOutSuffix((selectorField.getSuffix() == null ? "" : selectorField
                     .getSuffix()));
                 outFields.add(outField);

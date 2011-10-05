@@ -89,6 +89,8 @@ isc.OBStandardWindow.addProperties({
     // method is also called explicitly from the personalization window
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
+    } else if (this.getClass().personalization) {
+      OB.Personalization.personalizeWindow(this.getClass().personalization, this);
     }
   },
   
@@ -114,6 +116,7 @@ isc.OBStandardWindow.addProperties({
     if (this.getClass().windowSettingsRead) {
       return;
     }
+    this.getClass().personalization = data.personalization;
     this.getClass().windowSettingsRead = true;
     this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;

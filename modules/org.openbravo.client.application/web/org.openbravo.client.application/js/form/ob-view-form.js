@@ -90,7 +90,8 @@ OB.ViewFormProperties = {
 
     // is used to keep track of the original simple objects
     // used to create fields
-    this._originalFields = isc.shallowClone(this.fields);
+    // note fields can be in fields or theFields
+    this._originalFields = isc.shallowClone(this.fields || this.theFields);
     
     this.Super('initWidget', arguments);
 
@@ -159,17 +160,19 @@ OB.ViewFormProperties = {
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, record._new);
-    if (hasChanges) {
-      this.setHasChanged(true);
-    }
-    
-    this.view.setTargetRecordInWindow(record.id);
     
     // used when clicking on a cell in a grid
     if (!preventFocus && focusFieldName) {
       this.forceFocusedField = focusFieldName;
     }
+
+    this.doEditRecordActions(preventFocus, record._new);
+
+    if (hasChanges) {
+      this.setHasChanged(true);
+    }
+    
+    this.view.setTargetRecordInWindow(record.id);
     
     return ret;
   },
@@ -203,6 +206,8 @@ OB.ViewFormProperties = {
     this.clearErrors();
     if (!isNew) {
       this.validateAfterFicReturn = true;
+      // If editing a document set to recent documents
+      this.view.setRecentDocument(this.getValues());
     }
     
     this.ignoreFirstFocusEvent = preventFocus;
@@ -401,7 +406,7 @@ OB.ViewFormProperties = {
   // if it is not focusable then a next item is 
   // searched for
   setFocusInForm: function() {
-    if (!this.view.isActiveView()) {
+    if (!this.view || !this.view.isActiveView()) {
       return;
     }
     
@@ -581,11 +586,18 @@ OB.ViewFormProperties = {
       delete this.inFicCall;
       return;
     }
+
+    if (data._readOnly || this.view.readOnly) {
+      this.readOnly = true;
+    } else {
+      this.readOnly = false;
+    }
     
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
                        auxInputs = data.auxiliaryInputValues, prop, value, i, j,
                        dynamicCols = data.dynamicCols,
-                       sessionAttributes = data.sessionAttributes, item, section;
+                       sessionAttributes = data.sessionAttributes, item, section,
+                       retHiddenInputs = data.hiddenInputs;
 
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && this.grid.getEditRow() !== editRow) {
@@ -611,8 +623,25 @@ OB.ViewFormProperties = {
       }
     }
     
+    if(retHiddenInputs) {
+      for(prop in retHiddenInputs) {
+        if(retHiddenInputs.hasOwnProperty(prop)){
+          this.hiddenInputs[prop] = retHiddenInputs[prop];
+        }
+      }
+    }
+    
     if(this.attachmentsSection) {
       this.attachmentsSection.fillAttachments(data.attachments);
+    }
+    
+    // We will show the note count if it has been calculated and is different from 0
+    if(this.noteSection) {
+      if(data.noteCount) {
+        this.noteSection.setNoteCount(data.noteCount);
+      } else if(request.params.MODE === 'EDIT') {
+        this.noteSection.setNoteCount(0);
+      }
     }
 
     // apparently sometimes an empty string is returned
@@ -636,11 +665,6 @@ OB.ViewFormProperties = {
 
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
-    }
-    if (data._readOnly || this.view.readOnly) {
-      this.readOnly = true;
-    } else {
-      this.readOnly = false;
     }
 
     // grid editing    
@@ -975,7 +999,7 @@ OB.ViewFormProperties = {
     if (item._hasChanged) {
       this.itemChangeActions();
 
-      this.onFieldChanged(this);
+      this.onFieldChanged(item.form, item, item.getValue());
 
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {
@@ -1531,6 +1555,32 @@ OB.ViewFormProperties = {
     
     delete this.storedFocusItem;
     delete this.storedSelectionRange;    
+  },
+
+  destroy: function () {
+    var i, items = this.getItems(), len = items.length, ds, dataSources = [];
+
+    // caching reference to all DS of Items
+    for (i = 0; i < len; i++) {
+      item = items[i];
+      ds = item ? item.dataSource || item.optionDataSource : null;
+
+      if(ds) {
+        dataSources.push(ds);
+      }
+    }
+
+    this.Super('destroy', arguments);
+    len = dataSources.length;
+
+    // Destroying DS not managed by DynamicForm.destroy
+    for(i = 0; i < len; i++) {
+      ds = dataSources[i];
+      if(ds) {
+        ds.destroy();
+        ds = null;
+      }
+    }
   }
 };
 

@@ -193,4 +193,13 @@
     <Parameter name="recordId" />
     <Parameter name="referencekey_id" />
   </SqlMethod>
+  <SqlMethod name="existAPRMbasetables" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Check if the FIN_Payment_ScheduleDetail table exist</SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT count(*) AS EXISTING
+       FROM ad_table
+       WHERE ad_table_id = 'C0233061EA504EFEAB0483E836BBAF31'
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>

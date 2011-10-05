@@ -19,6 +19,8 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.Invoice;
 
 public class DocLine_FINFinAccTransaction extends DocLine {
   static Logger log4jDocLine_FINFinAccTransaction = Logger
@@ -31,7 +33,33 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
-  String cInvoiceId = "";
+  Invoice invoice = null;
+
+  public String getcGlItemId() {
+    return cGlItemId;
+  }
+
+  public void setcGlItemId(String cGlItemId) {
+    this.cGlItemId = cGlItemId;
+  }
+
+  public Invoice getInvoice() {
+    return invoice;
+  }
+
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
+  }
+
+  @Deprecated
+  public String getInvoiceId() {
+    return invoice.getId();
+  }
+
+  @Deprecated
+  public void setInvoice_ID(String invoiceId) {
+    this.invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
+  }
 
   /**
    * @return the isPrepayment
@@ -147,19 +175,4 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method
-  
-  /**
-   * @return the cInvoiceId
-   */
-  public String getInvoiceId(){
-	  return cInvoiceId;
-  }
-  /**
-   * @param Invoice_ID
-   *          the Invoice_ID to set
-   */
-  public void setInvoice_ID(String invoice_ID) {
-    cInvoiceId = invoice_ID;
-  }
-
 }

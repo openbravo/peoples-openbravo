@@ -17,7 +17,27 @@
  ************************************************************************
 */
 
+isc.OBPersonalizationTreeGrid.addProperties({
+  bodyStyleName: 'OBGridBody',
+  baseStyle: 'OBPersonalizationTreeGridCell',
+  styleName: 'OBFormPersonalizationFieldsTreeGrid',
+
+  showOpener: false,
+  // eventhough showOpener is false, still space is taken for an opener
+  // icon, set to a small number, should be > 0 (otherwise it it not used)
+  // this setting of 2 makes the drag indicator to be 2 pixels to the right also
+  openerIconSize: 2,
+  
+  width: '100%',
+  indentSize: 10
+});
+
+
 OB.Styles.Personalization = {};
+
+OB.Styles.Personalization.buttonBarProperties = {
+  width: 30
+};
 
 OB.Styles.Personalization.Icons = {
   fieldGroup: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder.png',
@@ -49,7 +69,7 @@ OB.Styles.Personalization.Preview = {
 };
 
 OB.Styles.Personalization.PropertiesTabSet = {
-  expandedHeight: 225,
+  expandedHeight: 175,
   collapsedHeight: 35
 };
 
@@ -63,20 +83,19 @@ OB.Styles.Personalization.TabSet = {
     styleName: 'OBTabBarChild',
     simpleTabBaseStyle: 'OBTabBarButtonChild',
     paneContainerClassName: 'OBTabSetChildContainer',
-    buttonConstructor: isc.OBTabBarButton.create({}),
+    buttonConstructor: isc.OBTabBarButton,
 
     buttonProperties: {
-      // prevent the orange hats, TODO: this not work
-      // don't know why...
-      // another solution is to do a custom style but that's a lot of work
+      // prevent the orange hats
+      customState: 'Inactive',
+      
       src: '',
       capSize: 14,
-      titleStyle: 'OBTabBarButtonChildTitle',
-      showSelected: false,
-      showFocused: false
+      titleStyle: 'OBTabBarButtonChildTitle'
     }
   },
   tabBarPosition: 'top',
+  tabBarAlign: 'left',
   width: '100%',
   height: '100%',
   overflow: 'hidden',

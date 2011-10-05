@@ -20,19 +20,12 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.utility.Image;
 
 /**
  * 
@@ -50,66 +43,7 @@ public class ShowImageLogo extends HttpBaseServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    String logo = vars.getStringParameter("logo");
-    String org = vars.getStringParameter("orgId");
+    ImageUtils.outputImageResource(request, response, "logo");
 
-    // read the image data
-    byte[] img;
-    String mimeType = null;
-    try {
-      OBContext.setAdminMode(true);
-      Image image = Utility.getImageLogoObject(logo, org);
-      if (image != null) {
-        img = image.getBindaryData();
-        mimeType = image.getMimetype();
-      } else {
-        img = Utility.getImageLogo(logo, org);
-      }
-      // write the mimetype
-      if (mimeType == null) {
-        mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
-        if (image != null) {
-          // If there is an OBContext, we attempt to save the MIME type of the image
-          updateMimeType(image.getId(), mimeType);
-        }
-      }
-      if (!mimeType.equals("")) {
-        response.setContentType(mimeType);
-      }
-
-      // write the image
-      OutputStream out = response.getOutputStream();
-      response.setContentLength(img.length);
-      out.write(img);
-      out.close();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * This method updates the MIME type of an image, using SQL. DAL cannot be used because there is
-   * no OBContext in the Login page
-   */
-  private void updateMimeType(String id, String mimeType) {
-    PreparedStatement ps = null;
-    try {
-      ps = OBDal.getInstance().getConnection(true)
-          .prepareStatement("UPDATE ad_image SET mimetype=? WHERE ad_image_id=?");
-      ps.setString(1, mimeType);
-      ps.setString(2, id);
-      ps.executeUpdate();
-    } catch (SQLException e) {
-      log4j.error("Couldn't update mime information of image", e);
-    } finally {
-      try {
-        if (ps != null) {
-          ps.close();
-        }
-      } catch (SQLException e) {
-        // ignore
-      }
-    }
   }
 }

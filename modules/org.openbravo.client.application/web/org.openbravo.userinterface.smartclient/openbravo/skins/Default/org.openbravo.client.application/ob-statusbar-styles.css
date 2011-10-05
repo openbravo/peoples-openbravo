@@ -29,6 +29,7 @@
   font-size: 11px;
   color: #333333;
   font-weight: normal;  /* Don't change, property set via OBStatusBarTextLabel_Status, OBStatusBarTextLabel_Title and OBStatusBarTextLabel_Field */
+  text-align: left;
 }
 
 .OBStatusBarTextLabel_Status {
@@ -51,5 +52,5 @@
 }
 
 .OBStatusBarIconButtonBar {
-  margin-right: 20px;
+  margin: 0px 20px 0px 0px;
 }

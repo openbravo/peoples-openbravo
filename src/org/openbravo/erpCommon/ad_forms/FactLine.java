@@ -22,21 +22,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class FactLine {
   static Logger log4jFactLine = Logger.getLogger(FactLine.class);
@@ -76,10 +72,17 @@ public class FactLine {
   public String m_Fact_Acct_Group_ID;
   public String m_SeqNo;
   public String m_DocBaseType;
+  @Deprecated
   public String m_ConversionType;
 
+  @Deprecated
+  // Use TABLEID_Invoice instead
   public String EXCHANGE_DOCTYPE_Invoice = "318";
+  @Deprecated
+  // Use TABLEID_Payment instead
   public String EXCHANGE_DOCTYPE_Payment = "D1A97202E832470285C9B1EB026D54E2";
+  @Deprecated
+  // Use TABLEID_Transaction instead
   public String EXCHANGE_DOCTYPE_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
 
   /**
@@ -240,75 +243,47 @@ public class FactLine {
       log4jFactLine.warn("convert - No Document VO");
       return false;
     }
-    m_AmtAcctDr = AcctServer.getConvertedAmt(m_AmtSourceDr, m_C_Currency_ID, Acct_Currency_ID,
-        ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, m_Record_ID,
-        m_AD_Table_ID, conn);
-    if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
-      return false;
-    m_AmtAcctCr = AcctServer.getConvertedAmt(m_AmtSourceCr, m_C_Currency_ID, Acct_Currency_ID,
-        ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, m_Record_ID,
-        m_AD_Table_ID, conn);
-    return true;
-  } // convert
-
-  public boolean convertByDocumentData(String Acct_Currency_ID, String CurrencyRateType,
-      String documentId, String AD_Table_ID, ConnectionProvider conn) {
-    String docType = "";
-    String strDateFormat;
-    strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-    String conversionDate = "";
-
-    // Document has no currency
-    log4jFactLine.debug("convert - beginning");
-    log4jFactLine.debug("convert - m_C_Currency_ID : " + m_C_Currency_ID);
-    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY))
-      m_C_Currency_ID = Acct_Currency_ID;
-    log4jFactLine.debug("convert - Acct_Currency_ID : " + Acct_Currency_ID);
-    if (Acct_Currency_ID.equals(m_C_Currency_ID)
-        && !AD_Table_ID.equals(EXCHANGE_DOCTYPE_Transaction)) {
-      m_AmtAcctDr = m_AmtSourceDr;
-      m_AmtAcctCr = m_AmtSourceCr;
-      return true;
+    String recordId = m_docVO.Record_ID;
+    String tableID = m_docVO.AD_Table_ID;
+    // When TableID= Reconciliation info is loaded from transaction
+    if (m_docVO.AD_Table_ID.equals(AcctServer.TABLEID_Reconciliation)
+        && m_docLine instanceof DocLine_FINReconciliation) {
+      tableID = AcctServer.TABLEID_Transaction;
+      recordId = ((DocLine_FINReconciliation) m_docLine).getFinFinAccTransactionId();
     }
-    if (m_docVO == null) {
-      log4jFactLine.warn("convert - No Document VO");
-      return false;
-    }
-    if (AD_Table_ID.equals(EXCHANGE_DOCTYPE_Invoice)) {
-      // Get Invoice
-      docType = EXCHANGE_DOCTYPE_Invoice;
-      if (documentId != null) {
-        Invoice invoice = OBDal.getInstance().get(Invoice.class, documentId);
-        conversionDate = dateFormat.format(invoice.getAccountingDate());
+    ConversionRateDoc conversionRateDoc = m_docVO.getConversionRateDoc(tableID, recordId,
+        m_C_Currency_ID, Acct_Currency_ID);
+    if (conversionRateDoc != null) {
+      m_AmtAcctDr = AcctServer.applyRate(new BigDecimal(m_AmtSourceDr), conversionRateDoc, true)
+          .toString();
+      if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+        return false;
+      m_AmtAcctCr = AcctServer.applyRate(new BigDecimal(m_AmtSourceCr), conversionRateDoc, true)
+          .toString();
+      if (m_AmtAcctCr == null || m_AmtAcctCr.equals(""))
+        return false;
+    } else {
+      // Try to find reversal conversion rate at doc level and use it
+      ConversionRateDoc reversalConversionRateDoc = m_docVO.getConversionRateDoc(tableID, recordId,
+          Acct_Currency_ID, m_C_Currency_ID);
+      if (reversalConversionRateDoc != null) {
+        m_AmtAcctDr = AcctServer.applyRate(new BigDecimal(m_AmtSourceDr),
+            reversalConversionRateDoc, false).toString();
+        if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+          return false;
+        m_AmtAcctCr = AcctServer.applyRate(new BigDecimal(m_AmtSourceCr),
+            reversalConversionRateDoc, false).toString();
+        if (m_AmtAcctCr == null || m_AmtAcctCr.equals(""))
+          return false;
+      } else {
+        m_AmtAcctDr = AcctServer.getConvertedAmt(m_AmtSourceDr, m_C_Currency_ID, Acct_Currency_ID,
+            ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, conn);
+        if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
+          return false;
+        m_AmtAcctCr = AcctServer.getConvertedAmt(m_AmtSourceCr, m_C_Currency_ID, Acct_Currency_ID,
+            ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, conn);
       }
-      // SimpleDateFormat.getInstance().format(invoice.getAccountingDate());
-    } else if (AD_Table_ID.equals(EXCHANGE_DOCTYPE_Payment)) {
-      docType = EXCHANGE_DOCTYPE_Payment;
-      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, documentId);
-      conversionDate = dateFormat.format(payment.getPaymentDate());
-    } else if (AD_Table_ID.equals(EXCHANGE_DOCTYPE_Transaction)) {
-
-      docType = EXCHANGE_DOCTYPE_Transaction;
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          documentId);
-      if (transaction.getForeignCurrency() == null) {
-        m_AmtAcctDr = m_AmtSourceDr;
-        m_AmtAcctCr = m_AmtSourceCr;
-        return true;
-      }
-      conversionDate = dateFormat.format(transaction.getDateAcct());
     }
-
-    m_AmtAcctDr = AcctServer.getConvertedAmt(m_AmtSourceDr, m_C_Currency_ID, Acct_Currency_ID,
-        conversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, documentId,
-        docType, conn);
-    if (m_AmtAcctDr == null || m_AmtAcctDr.equals(""))
-      return false;
-    m_AmtAcctCr = AcctServer.getConvertedAmt(m_AmtSourceCr, m_C_Currency_ID, Acct_Currency_ID,
-        conversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, documentId,
-        docType, conn);
     return true;
   } // convert
 
@@ -344,8 +319,10 @@ public class FactLine {
     BigDecimal sourceDr = new BigDecimal(m_AmtSourceDr);
     BigDecimal sourceCr = new BigDecimal(m_AmtSourceCr);
 
-    BigDecimal acctDr = sourceDr.multiply(conversionRate);
-    BigDecimal acctCr = sourceCr.multiply(conversionRate);
+    BigDecimal acctDr = sourceDr.multiply(conversionRate).setScale(
+        acctCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+    BigDecimal acctCr = sourceCr.multiply(conversionRate).setScale(
+        acctCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
 
     m_AmtAcctDr = toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
     m_AmtAcctCr = toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
@@ -955,15 +932,16 @@ public class FactLine {
     log4jFactLine.debug("currencyCorrect - " + deltaAmount.toString() + "; Old-AcctDr="
         + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr + "; Negative=" + negative + "; AdjustDr="
         + adjustDr);
+    BigDecimal diff = deltaAmount.abs();
     if (adjustDr)
-      if (negative)
-        m_AmtAcctDr = AmtAcctDr.subtract(deltaAmount).toString();
+      if (!negative)
+        m_AmtAcctDr = AmtAcctDr.subtract(diff).toString();
       else
-        m_AmtAcctDr = AmtAcctDr.add(deltaAmount).toString();
-    else if (negative)
-      m_AmtAcctCr = AmtAcctCr.add(deltaAmount).toString();
+        m_AmtAcctDr = AmtAcctDr.add(diff).toString();
+    else if (!negative)
+      m_AmtAcctCr = AmtAcctCr.add(diff).toString();
     else
-      m_AmtAcctCr = AmtAcctCr.subtract(deltaAmount).toString();
+      m_AmtAcctCr = AmtAcctCr.subtract(diff).toString();
     log4jFactLine.debug("currencyCorrect - New-AcctDr=" + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr);
   } // currencyCorrect
 
@@ -1108,4 +1086,9 @@ public class FactLine {
       return null;
     }
   }
+
+  public String getCurrency() {
+    return m_C_Currency_ID;
+  }
+
 }

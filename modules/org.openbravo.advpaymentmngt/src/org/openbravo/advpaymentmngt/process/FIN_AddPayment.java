@@ -227,6 +227,12 @@ public class FIN_AddPayment {
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
       VariablesSecureApp vars, FIN_Payment payment, BigDecimal refundAmount) {
+    return createRefundPayment(conProvider, vars, payment, refundAmount, null);
+  }
+
+  public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
+      VariablesSecureApp vars, FIN_Payment payment, BigDecimal refundAmount,
+      BigDecimal conversionRate) {
     dao = new AdvPaymentMngtDao();
     FIN_Payment refundPayment;
     if (payment.getFINPaymentDetailList().isEmpty())
@@ -248,6 +254,8 @@ public class FIN_AddPayment {
     OBDal.getInstance().flush();
     refundPayment.setAmount(refundAmount);
     refundPayment.setUsedCredit(refundAmount.negate());
+
+    setFinancialTransactionAmountAndRate(refundPayment, conversionRate, null);
 
     FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
         payment.getOrganization(), refundAmount);

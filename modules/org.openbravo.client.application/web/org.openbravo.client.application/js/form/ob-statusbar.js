@@ -161,6 +161,7 @@ isc.OBStatusBar.addProperties( {
   mode : '',
   isActive : true,
   buttonBar : null,
+  buttonBarProperties: {},
 
   initWidget : function() {
     this.contentLabel = isc.OBStatusBarTextLabel.create( {
@@ -169,21 +170,21 @@ isc.OBStatusBar.addProperties( {
       height : '100%'
     });
 
-    this.leftStatusBar = isc.OBStatusBarLeftBar.create( {});
+    this.leftStatusBar = isc.OBStatusBarLeftBar.create({});
     this.leftStatusBar.addMember(this.contentLabel);
     
-    this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
+    this.buttonBar = isc.OBStatusBarIconButtonBar.create(this.buttonBarProperties);
     this.addCreateButtons();
     
     this.savedIcon = isc.Img.create(this.savedIconDefaults);
     this.newIcon = isc.Img.create(this.newIconDefaults);
     this.editIcon = isc.Img.create(this.editIconDefaults);
-    this.spacer = isc.LayoutSpacer.create( {
+    this.spacer = isc.LayoutSpacer.create({
       width : 14
     });
     this.leftStatusBar.addMember(this.spacer, 0);
 
-    this.addMembers( [ this.leftStatusBar, this.buttonBar ]);
+    this.addMembers([this.leftStatusBar, this.buttonBar]);
     this.Super('initWidget', arguments);
   },
   
@@ -287,13 +288,13 @@ isc.OBStatusBar.addProperties( {
 
   addIcon : function(icon) {
       // remove any existing icon or spacer
-    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.destroyAndRemoveMembers(this.leftStatusBar.members[0]);
     this.leftStatusBar.addMember(icon, 0);
   },
 
   removeIcon : function() {
     // remove any existing icon or spacer
-    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.destroyAndRemoveMembers(this.leftStatusBar.members[0]);
     this.leftStatusBar.addMember(this.spacer, 0);
   },
 
@@ -306,11 +307,11 @@ isc.OBStatusBar.addProperties( {
     }
   },
 
-  setContentLabel: function(icon, statusCode, arrayTitleField) {
+  setContentLabel: function(icon, statusCode, arrayTitleField, message) {
     // set the status code before calling updateContentTitle
     this.statusCode = statusCode;
     
-    this.updateContentTitle(arrayTitleField);
+    this.updateContentTitle(arrayTitleField, message);
 
     if (icon) {
       this.addIcon(icon);
@@ -319,20 +320,48 @@ isc.OBStatusBar.addProperties( {
     }
   },
 
-  updateContentTitle: function(arrayTitleField) {
+  updateContentTitle: function(arrayTitleField, message) {
     var msg = '', i;
-    if (this.statusCode) {
-      msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
-    }
-    if (arrayTitleField) {
-      for (i = 0; i < arrayTitleField[0].length; i++) {
-        if (i !== 0 || this.statusCode) {
+    if (!isc.Page.isRTL()) { // LTR mode
+      if (this.statusCode) {
+        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+      }
+      if (arrayTitleField) {
+        for (i = 0; i < arrayTitleField[0].length; i++) {
+          if (i !== 0 || this.statusCode) {
+            msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          }
+          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
+          msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+        }
+      }
+      if (message) {
+        if (arrayTitleField || this.statusCode) {
           msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
-        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
-        msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+      }
+    } else { // RTL mode
+      if (message) {
+        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+        if (arrayTitleField || this.statusCode) {
+          msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+        }
+      }
+      if (arrayTitleField) {
+        for (i = arrayTitleField[0].length-1; i >= 0; i--) {
+          msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + ' :' + arrayTitleField[0][i] + '</span>';
+          if (i !== 0 || this.statusCode) {
+            msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          }
+        }
+      }
+      if (this.statusCode) {
+        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
       }
     }
+
     if (this.labelOverflowHidden) {
       msg = '<nobr>' + msg + '</nobr>';
     }
@@ -345,6 +374,23 @@ isc.OBStatusBar.addProperties( {
       return '&nbsp;&nbsp;&nbsp;';
     }
     return value;
-  }
+  },
 
+  destroy: function () {
+    if(this.savedIcon) {
+      this.savedIcon.destroy();
+      this.savedIcon = null;
+    }
+
+    if(this.newIcon) {
+      this.newIcon.destroy();
+      this.newIcon = null;
+    }
+
+    if(this.editIcon) {
+      this.editIcon.destroy();
+      this.editIcon = null;
+    }
+    this.Super('destroy', arguments);
+  }
 });
