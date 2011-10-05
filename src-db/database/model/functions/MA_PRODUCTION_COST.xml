@@ -98,7 +98,7 @@ BEGIN
                         AND pl.CALCULATED = 'N'
                         AND pl.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID);
 
-    SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(pr.movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
+    SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
     INTO v_Client_ID, v_Org_ID, v_ProductionDate, v_count, v_ProductionNo
     FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
     WHERE pr.m_production_id = p_Production_ID
