@@ -135,8 +135,6 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
   actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
   toggleSave: false,
  
-  // creates one combo with the viewdefinitions which can
-  // be deleted by the current user
   getFields: function() {
     var value, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
@@ -146,9 +144,7 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
     if (views) {
       length = views.length;
       for (i = 0; i < length; i++) {
-        if (views[i].canEdit) {
-          valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
-        }
+        valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
       }
     }
     
