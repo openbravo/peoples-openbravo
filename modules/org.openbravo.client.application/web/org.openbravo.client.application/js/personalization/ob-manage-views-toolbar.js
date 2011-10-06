@@ -50,7 +50,7 @@
     
     showMenu: function() {      
       if (!OB.Utilities.checkProfessionalLicense(
-          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
+          OB.I18N.getLabel('OBUIAPP_ActivateMessageWindowPersonalization'))) {
         return;
       }
       return this.Super('showMenu', arguments);
