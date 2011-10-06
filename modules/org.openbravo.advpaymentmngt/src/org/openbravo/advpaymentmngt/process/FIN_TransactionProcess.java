@@ -112,6 +112,20 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             bundle.setResult(msg);
             return;
           }
+          // Remove conversion rate at document level for the given transaction
+          OBContext.setAdminMode();
+          try {
+            OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+                ConversionRateDoc.class);
+            obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
+                transaction));
+            for (ConversionRateDoc conversionRateDoc : obc.list()) {
+              OBDal.getInstance().remove(conversionRateDoc);
+            }
+            OBDal.getInstance().flush();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
           transaction.setProcessed(false);
           final FIN_FinancialAccount financialAccount = transaction.getAccount();
           financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
