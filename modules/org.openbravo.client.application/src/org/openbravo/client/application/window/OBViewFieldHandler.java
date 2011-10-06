@@ -250,6 +250,7 @@ public class OBViewFieldHandler {
       viewFieldGroup.setType("OBAuditSectionItem");
       viewFieldGroup.setPersonalizable(false);
       fields.add(viewFieldGroup);
+      viewFieldGroup.addChildren(auditFields);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
       // itemIds are hardcoded in the field type
       // viewFieldGroup.addChildren(auditFields);
