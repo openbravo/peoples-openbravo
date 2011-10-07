@@ -408,8 +408,10 @@ public class AddTransaction extends HttpSecureAppServlet {
           finTrans.getAccount(), "N");
       bsline.setMatchingtype("AD");
       bsline.setFinancialAccountTransaction(finTrans);
-      if (finTrans.getFinPayment() != null)
+      if (finTrans.getFinPayment() != null) {
         bsline.setBusinessPartner(finTrans.getFinPayment().getBusinessPartner());
+        finTrans.getFinPayment().setStatus("RPPC");
+      }
       finTrans.setReconciliation(reconciliation);
       finTrans.setStatus("RPPC");
       OBDal.getInstance().save(bsline);
