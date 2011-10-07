@@ -452,6 +452,11 @@ isc.OBSelectorItem.addProperties({
   handleOutFields: function(record){
     var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
         fields = form.fields || grid.fields;
+    
+    if (outFields && !form.hiddenInputs) {
+      form.hiddenInputs = {};
+    }
+    
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
