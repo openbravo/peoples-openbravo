@@ -57,6 +57,10 @@
       <foreign-key foreignTable="AD_TAB_ACCESS" name="AD_FLDACCESS_TABACCESS">
         <reference local="AD_TAB_ACCESS_ID" foreign="AD_TAB_ACCESS_ID"/>
       </foreign-key>
+      <unique name="AD_FLDACCESS_FLD_UN">
+        <unique-column name="AD_TAB_ACCESS_ID"/>
+        <unique-column name="AD_FIELD_ID"/>
+      </unique>
       <check name="AD_FLDACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_FLDACCESS_ISREADWRI_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
