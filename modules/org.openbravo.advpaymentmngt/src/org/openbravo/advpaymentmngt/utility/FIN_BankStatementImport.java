@@ -218,6 +218,9 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner matchBusinessPartnerByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
     OBContext.setAdminMode();
@@ -242,6 +245,9 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner finBPByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
 
