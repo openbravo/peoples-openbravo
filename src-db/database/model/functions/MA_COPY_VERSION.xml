@@ -157,7 +157,7 @@
             Created, Createdby, Updated, Updatedby,
             MA_Sequence_ID, M_Product_ID, Quantity, Productiontype,
             C_Uom_ID, Quantityorder, M_Product_Uom_ID, Componentcost,
-            Decrease, Rejected, Uniqueattconsum, Consumptiontype, Copyproduct
+            Decrease, Rejected, Uniqueattconsum, Copyproduct
           )
           VALUES
           (
@@ -165,7 +165,7 @@
             now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
             v_Sequence_ID, Cur_Product.M_Product_ID, Cur_Product.Quantity, Cur_Product.Productiontype,
             Cur_Product.C_Uom_ID, Cur_Product.Quantityorder, Cur_Product.M_Product_Uom_ID, Cur_Product.Componentcost,
-            Cur_Product.Decrease, Cur_Product.Rejected, Cur_Product.Uniqueattconsum, Cur_Product.Consumptiontype, Cur_Product.Copyproduct
+            Cur_Product.Decrease, Cur_Product.Rejected, Cur_Product.Uniqueattconsum, Cur_Product.Copyproduct
           )
           ;
 	FOR Cur_ProductAtt IN
@@ -181,14 +181,14 @@
 	  (
 	    MA_SequenceProductatt_ID, AD_Client_ID, AD_Org_ID, Isactive,
 	    Created, Createdby, Updated, Updatedby,
-	    MA_Sequenceproduct_id, M_Product_id, M_Attributeuseto_id, M_Attributeuse_id, 
+	    MA_Sequenceproduct_id, MA_Sequenceproductfrom_id, M_Attributeuseto_id, M_Attributeuse_id, 
 	    Isspecialatt, Specialatt
 	  )
 	  VALUES
 	  (
 	    v_ProductAtt_ID, v_Client_ID, v_Org_ID, 'Y',
 	    now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
-	    v_Product_ID, Cur_ProductAtt.M_Product_id, Cur_ProductAtt.M_Attributeuseto_id, Cur_ProductAtt.M_Attributeuse_id, 
+	    v_Product_ID, Cur_ProductAtt.MA_Sequenceproductfrom_id, Cur_ProductAtt.M_Attributeuseto_id, Cur_ProductAtt.M_Attributeuse_id, 
 	    Cur_ProductAtt.Isspecialatt, Cur_ProductAtt.Specialatt
 	  )
 	  ;
