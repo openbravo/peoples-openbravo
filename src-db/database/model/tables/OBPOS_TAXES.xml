@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBPOS_TAXES">
+    <table name="OBPOS_TAXES" primaryKey="OBPOS_TAXES_PK">
+      <column name="OBPOS_TAXES_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="1024" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALIDFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA['2001-01-01 00:00:00'::timestamp without time zone]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_TAXCATEGORIES_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_TAXCUSTCATEGORIES_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PARENT_OBPOS_TAXES_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RATE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RATECASCADE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="RATEORDER" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_TAXES_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_TAXES_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_TAXES" name="OBPOS_TAXES_PARENT">
+        <reference local="PARENT_OBPOS_TAXES_ID" foreign="OBPOS_TAXES_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_TAXCATEGORIES" name="OBPOS_TAXES_TAXCATEGORIES">
+        <reference local="OBPOS_TAXCATEGORIES_ID" foreign="OBPOS_TAXCATEGORIES_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_TAXCUSTCATEGORIES" name="OBPOS_TAXES_TAXCUSTCATEGORIES">
+        <reference local="OBPOS_TAXCUSTCATEGORIES_ID" foreign="OBPOS_TAXCUSTCATEGORIES_ID"/>
+      </foreign-key>
+      <index name="OBPOS_TAXES_NAME" unique="true">
+        <index-column name="NAME"/>
+      </index>
+      <check name="OBPOS_TAXES_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>
