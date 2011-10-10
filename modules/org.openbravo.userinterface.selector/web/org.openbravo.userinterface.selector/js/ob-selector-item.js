@@ -286,6 +286,12 @@ isc.OBSelectorItem.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   showOptionsFromDataSource: true,
+  
+  // https://issues.openbravo.com/view.php?id=18739
+  selectOnFocus: false,
+  // still do select on focus initially
+  doInitialSelectOnFocus: true,
+  
   // Setting this to false results in the picklist to be shown 
   // on focus, specific SC logic
   //  addUnknownValues: false,
@@ -435,7 +441,8 @@ isc.OBSelectorItem.addProperties({
       this.updateValueMap();
     }
     
-    if (this.form.focusInNextItem) {
+    // only jump to the next field if the value has really been set
+    if (currentValue && this.form.focusInNextItem) {
       this.form.focusInNextItem(this.name);
     }
 

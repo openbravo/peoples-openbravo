@@ -419,7 +419,8 @@ OB.ViewFormProperties = {
       return;
     }
     // if not explicitly set to false, select its value
-    if (this.getFocusItem().selectOnFocus !== false) {
+    // or if do initial select on focus
+    if (this.getFocusItem().selectOnFocus !== false || this.getFocusItem().doInitialSelectOnFocus) {
       if (delayCall || isc.Browser.isIE) {
         this.getFocusItem().delayCall('selectValue', [], 100);
       } else {
