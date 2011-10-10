@@ -1624,5 +1624,3 @@ OB.ViewFormProperties = {
     }
   }
 };
-
-isc.OBViewForm.addProperties(OB.ViewFormProperties);

@@ -239,7 +239,7 @@ isc.OBViewGrid.addProperties({
       this.editLinkColNum = 1;
     }
 
-    this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
+    this.editFormDefaults = isc.addProperties({}, isc.clone(OB.ViewFormProperties), this.editFormDefaults);
 
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {

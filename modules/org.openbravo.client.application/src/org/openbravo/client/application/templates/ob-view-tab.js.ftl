@@ -147,7 +147,7 @@
     initWidget: function() {
         this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
-        this.viewForm = isc.OBViewForm.create(${tabComponent.viewForm}); 
+        this.viewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), ${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
         this.Super('initWidget', arguments);
     }
