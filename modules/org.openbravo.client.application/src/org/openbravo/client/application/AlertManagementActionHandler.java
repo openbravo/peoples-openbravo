@@ -107,14 +107,21 @@ public class AlertManagementActionHandler extends BaseActionHandler {
     try {
       if (alertRulesQuery.count() > 0) {
         for (AlertRule alertRule : alertRulesQuery.list()) {
-          JSONObject alertRuleJson = new JSONObject();
-          alertRuleJson.put("name", alertRule.getIdentifier());
-          alertRuleJson.put("alertRuleId", alertRule.getId());
-          if (alertRule.getTab() != null) {
-            alertRuleJson.put("tabId", alertRule.getTab().getId());
-          } else {
-            alertRuleJson.put("tabId", "");
+          JSONObject alertRuleJson = null;
+
+          // Adding alert rule if it has not filter clause. In case it has, it will be added only in
+          // case it returns data after applying the filter clause.
+          if (alertRule.getFilterClause() == null) {
+            alertRuleJson = new JSONObject();
+            alertRuleJson.put("name", alertRule.getIdentifier());
+            alertRuleJson.put("alertRuleId", alertRule.getId());
+            if (alertRule.getTab() != null) {
+              alertRuleJson.put("tabId", alertRule.getTab().getId());
+            } else {
+              alertRuleJson.put("tabId", "");
+            }
           }
+
           String filterClause = null;
           if (alertRule.getFilterClause() != null) {
             try {
@@ -137,6 +144,16 @@ public class AlertManagementActionHandler extends BaseActionHandler {
             // A String with the alert_id's to filter the grid's so only alerts with access are
             // shown.
             if (sqlQuery.list().size() > 0) {
+              // Alert rule returns data, adding it to list of alert rules.
+              alertRuleJson = new JSONObject();
+              alertRuleJson.put("name", alertRule.getIdentifier());
+              alertRuleJson.put("alertRuleId", alertRule.getId());
+              if (alertRule.getTab() != null) {
+                alertRuleJson.put("tabId", alertRule.getTab().getId());
+              } else {
+                alertRuleJson.put("tabId", "");
+              }
+
               String filterAlerts = "";
               @SuppressWarnings("unchecked")
               List<Alert> alerts = sqlQuery.list();
@@ -147,10 +164,12 @@ public class AlertManagementActionHandler extends BaseActionHandler {
                 filterAlerts += "'" + alert.getId() + "'";
               }
               alertRuleJson.put("alerts", filterAlerts);
+
             }
           }
-
-          alertRules.put(alertRuleJson);
+          if (alertRuleJson != null) {
+            alertRules.put(alertRuleJson);
+          }
         }
       }
     } catch (JSONException e) {
