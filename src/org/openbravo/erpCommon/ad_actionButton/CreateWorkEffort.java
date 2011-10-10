@@ -173,8 +173,6 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           }
 
           productionPlan.setOutsourced((wrOp.isOutsourced() == null) ? false : wrOp.isOutsourced());
-          if (wrOp.getMASequence() != null)
-            productionPlan.setDivisionGroupQuantity(wrOp.getMASequence().getDivisiongroupqty());
 
           OBDal.getInstance().save(productionPlan);
           OBDal.getInstance().flush();

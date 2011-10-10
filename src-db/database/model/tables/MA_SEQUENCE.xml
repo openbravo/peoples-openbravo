@@ -101,13 +101,9 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[0]]></onCreateDefault>
       </column>
-      <column name="DIVISIONGROUPQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="USEDMATERIAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

@@ -58,7 +58,6 @@
     v_allownegativestock CHAR(1);
     v_Calculated CHAR(1);
     v_ByDefault CHAR(1);
-    v_Divisiongroupqty NUMBER; 
     v_PendingQty NUMBER; 
     v_InsertQty NUMBER;
     v_AD_Pinstance_ID VARCHAR2(32);
@@ -118,9 +117,9 @@
       SELECT M_ProductionPlan.AD_Org_ID, M_ProductionPlan.MA_WRPhase_ID,
              M_ProductionPlan.ProductionQty, M_ProductionPlan.Processed,
              COALESCE(MA_CostCenter.CALCULATED, 'N') AS CALCULATED, COALESCE(MA_CostCenter.BYDEFAULT, 'N') AS BYDEFAULT,
-             M_ProductionPlan.line, M_ProductionPlan.M_Production_ID, M_ProductionPlan.Divisiongroupqty
+             M_ProductionPlan.line, M_ProductionPlan.M_Production_ID
       INTO v_PlanOrg_ID, v_WRPhase_ID, v_DoneQuantity, v_Processed,
-           v_Calculated, v_ByDefault, v_PlanLine, v_Production_ID, v_Divisiongroupqty
+           v_Calculated, v_ByDefault, v_PlanLine, v_Production_ID
       FROM M_ProductionPlan LEFT JOIN MA_CostCenter_Version ON M_ProductionPlan.MA_CostCenter_Version_ID = MA_CostCenter_Version.MA_CostCenter_Version_ID
                             LEFT JOIN MA_CostCenter ON MA_CostCenter_version.MA_CostCenter_ID = MA_CostCenter.MA_CostCenter_ID
       WHERE M_ProductionPlan_ID=v_Record_ID;
@@ -175,12 +174,14 @@
         v_Line:=0;
         v_ResultStr:='ProdRunProduct P+ Processing';
         FOR Cur_WRPProduct IN
-          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname, p.M_AttributeSetInstance_ID, p.AttrSetValueType
+          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname, p.M_AttributeSetInstance_ID,
+           p.AttrSetValueType, masp.Divisiongroupqty
           FROM M_Product p, MA_WRPhaseProduct wrpp
             left join M_Product_Org po on wrpp.M_Product_ID = po.M_Product_ID
                                     AND po.AD_Org_ID = v_PlanOrg_ID
+	    left join MA_SequenceProduct masp on wrpp.MA_SequenceProduct_ID = masp.MA_SequenceProduct_ID
           WHERE MA_WRPhase_ID=v_WRPhase_ID
-            AND ProductionType='+'
+            AND wrpp.ProductionType='+'
             AND wrpp.M_PRODUCT_ID=p.M_Product_ID
           )
         LOOP
@@ -190,12 +191,12 @@
             RAISE_APPLICATION_ERROR(-20000, v_Message);
           END IF;
           -- Division Group Quantity
-	  IF (v_Divisiongroupqty is not null AND v_Divisiongroupqty <> 0 AND v_NoQty <> 'Y') THEN
+	  IF (Cur_WRPProduct.Divisiongroupqty is not null AND Cur_WRPProduct.Divisiongroupqty <> 0 AND v_NoQty <> 'Y') THEN
 		  v_PendingQty := Cur_WRPProduct.MovementQty*v_DoneQuantity;
 		  WHILE (v_PendingQty>0)
 		  LOOP
-			IF (v_PendingQty > v_Divisiongroupqty) THEN
-			 v_InsertQty:= v_Divisiongroupqty;
+			IF (v_PendingQty > Cur_WRPProduct.Divisiongroupqty) THEN
+			 v_InsertQty:= Cur_WRPProduct.Divisiongroupqty;
 			ELSE
 			 v_InsertQty:= v_PendingQty;
 			END IF;
@@ -210,7 +211,7 @@
 			Productiontype, MovementQty, Updated, Updatedby,
 			C_UOM_ID, M_Locator_ID, 
 			Line, M_AttributeSetInstance_ID, M_Product_UOM_ID, QuantityOrder, 
-			MA_WRPhaseProduct_ID
+			MA_WRPhaseProduct_ID, Divisiongroupqty
 			)
 			VALUES
 			(
@@ -225,7 +226,7 @@
 			v_Line, (CASE WHEN Cur_WRPProduct.AttrSetValueType='D' THEN Cur_WRPProduct.M_AttributeSetInstance_ID ELSE NULL END)
 			,Cur_WRPProduct.M_Product_UOM_ID, 
 			CASE WHEN Cur_WRPProduct.M_Product_UOM_ID IS NULL THEN NULL WHEN v_NoQty = 'Y' THEN 0 ELSE Cur_WRPProduct.QuantityOrder * v_DoneQuantity END,
-			Cur_WRPProduct.MA_WRPhaseProduct_ID
+			Cur_WRPProduct.MA_WRPhaseProduct_ID, Cur_WRPProduct.Divisiongroupqty
 			)
 			;
 		        v_PendingQty:= v_PendingQty-v_InsertQty;

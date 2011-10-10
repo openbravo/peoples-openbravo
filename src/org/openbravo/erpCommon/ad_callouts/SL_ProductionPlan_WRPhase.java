@@ -97,8 +97,6 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmaCostcenterVersionId\", \"" + data[0].maCostcenterVersionId
         + "\"), \n");
     resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced + "\"),\n");
-    resultado.append("new Array(\"inpdivisiongroupqty\", \""
-        + FormatUtilities.replaceJS(data[0].divisiongroupqty) + "\"),\n");
     resultado.append("new Array(\"inpestimatedtime\", \""
         + FormatUtilities.replaceJS(estimatedTime.toPlainString()) + "\")\n");
     resultado.append(");\n");

@@ -130,7 +130,7 @@
           MA_Processplan_Version_ID, MA_Process_ID, Value, Name,
           Description, CostCenterUse, Preptime, Multiplier,
           Seqno, Noqty, Groupuse, Calculated, Estimatedtime, 
-          Divisiongroupqty, Usedmaterial
+          Usedmaterial
         )
         VALUES
         (
@@ -139,7 +139,7 @@
           v_ProcessPlanVersion_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.Value, Cur_Sequence.Name,
           Cur_Sequence.Description, Cur_Sequence.CostCenterUse, Cur_Sequence.Preptime, Cur_Sequence.Multiplier,
           Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated, Cur_Sequence.Estimatedtime, 
-          Cur_Sequence.Divisiongroupqty, Cur_Sequence.Usedmaterial
+          Cur_Sequence.Usedmaterial
         )
         ;
       FOR Cur_Product IN
@@ -157,7 +157,8 @@
             Created, Createdby, Updated, Updatedby,
             MA_Sequence_ID, M_Product_ID, Quantity, Productiontype,
             C_Uom_ID, Quantityorder, M_Product_Uom_ID, Componentcost,
-            Decrease, Rejected, Uniqueattconsum, Copyproduct
+            Decrease, Rejected, Uniqueattconsum, Copyproduct, 
+            Divisiongroupqty
           )
           VALUES
           (
@@ -165,7 +166,8 @@
             now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
             v_Sequence_ID, Cur_Product.M_Product_ID, Cur_Product.Quantity, Cur_Product.Productiontype,
             Cur_Product.C_Uom_ID, Cur_Product.Quantityorder, Cur_Product.M_Product_Uom_ID, Cur_Product.Componentcost,
-            Cur_Product.Decrease, Cur_Product.Rejected, Cur_Product.Uniqueattconsum, Cur_Product.Copyproduct
+            Cur_Product.Decrease, Cur_Product.Rejected, Cur_Product.Uniqueattconsum, Cur_Product.Copyproduct,
+            Cur_Product.Divisiongroupqty
           )
           ;
 	FOR Cur_ProductAtt IN
