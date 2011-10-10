@@ -50,6 +50,7 @@ public class AlertManagementActionHandler extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(AlertManagementActionHandler.class);
   private static final String GET_ALERT_RULES = "getAlertRules";
   private static final String MOVE_TO_STATUS = "moveToStatus";
+  private static final Logger log4j = Logger.getLogger(AlertManagementActionHandler.class);
 
   /*
    * (non-Javadoc)
@@ -129,6 +130,9 @@ public class AlertManagementActionHandler extends BaseActionHandler {
             final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql)
                 .addEntity(Alert.ENTITY_NAME);
             sqlQuery.setParameter(0, alertRule.getId());
+
+            log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'"
+                + sql + "' - Rows: " + sqlQuery.list().size());
             // It is not possible to add an SQL filter clause to the grid's default datasource.
             // A String with the alert_id's to filter the grid's so only alerts with access are
             // shown.
