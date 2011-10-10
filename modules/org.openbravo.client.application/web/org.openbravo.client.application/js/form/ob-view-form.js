@@ -33,6 +33,7 @@ OB.ViewFormProperties = {
   // and the grid and other related components.
   view: null,
   auxInputs: {},
+  hiddenInputs: {},
   sessionAttributes: {},
   dynamicCols: [],
   width: '100%',
@@ -652,9 +653,6 @@ OB.ViewFormProperties = {
     if(retHiddenInputs) {
       for(prop in retHiddenInputs) {
         if(retHiddenInputs.hasOwnProperty(prop)){
-          if(!this.hiddenInputs){
-            this.hiddenInputs={};
-          }
           this.hiddenInputs[prop] = retHiddenInputs[prop];
         }
       }
