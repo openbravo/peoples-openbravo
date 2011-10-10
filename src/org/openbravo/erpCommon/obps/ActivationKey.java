@@ -60,6 +60,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
@@ -88,6 +89,7 @@ public class ActivationKey {
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
   private Date lastRefreshTime;
+  private boolean trial;
 
   private boolean notActiveYet = false;
 
@@ -265,6 +267,20 @@ public class ActivationKey {
       } else {
         isActive = false;
         errorMessage = "@NotSigned@";
+        setLogger();
+        return;
+      }
+
+      String sysId = getProperty("sysId");
+      String dbId = getProperty("dbId");
+      String macId = getProperty("macId");
+
+      SystemInfo.loadId(new DalConnectionProvider());
+      if ((sysId != null && !sysId.isEmpty() && !sysId.equals(SystemInfo.getSystemIdentifier()))
+          || (dbId != null && !dbId.isEmpty() && !dbId.equals(SystemInfo.getDBIdentifier()))
+          || (macId != null && !macId.isEmpty() && !macId.equals(SystemInfo.getMacAddress()))) {
+        isActive = false;
+        errorMessage = "@IncorrectInstance@";
         setLogger();
         return;
       }
@@ -554,11 +570,13 @@ public class ActivationKey {
    */
   public LicenseRestriction checkOPSLimitations(String currentSession) {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
-    if (!isOPSInstance())
+    if (!isOPSInstance()) {
       return LicenseRestriction.NO_RESTRICTION;
+    }
 
-    if (!isActive)
+    if (!isActive) {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
+    }
 
     if (getProperty("lincensetype").equals("USR")) {
       Long softUsers = null;
