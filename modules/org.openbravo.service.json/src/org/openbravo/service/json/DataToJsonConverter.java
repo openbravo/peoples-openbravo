@@ -26,13 +26,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
@@ -274,8 +272,6 @@ public class DataToJsonConverter {
     } else if (property.getDomainType() instanceof HashedStringDomainType
         || property.getDomainType() instanceof EncryptedStringDomainType) {
       return "***";
-    } else if (property.getDomainType() instanceof BinaryDomainType && value instanceof byte[]) {
-      return Base64.encodeBase64String((byte[]) value);
     }
     return value;
   }
