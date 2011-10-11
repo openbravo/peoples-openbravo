@@ -89,7 +89,7 @@ public class ActivationKey {
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
   private Date lastRefreshTime;
-  private boolean trial;
+  private boolean trial = false;
 
   private boolean notActiveYet = false;
   private boolean incosistentInstance = false;
@@ -312,6 +312,8 @@ public class ActivationKey {
     Date endDate = null;
 
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
+
+    trial = "true".equals(getProperty("isTrial"));
 
     try {
       startDate = sd.parse(getProperty("startdate"));
@@ -706,8 +708,11 @@ public class ActivationKey {
           .append("</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
           .append("</td><td>")
-          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang))
-          .append("</td></tr>");
+          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang));
+      if (trial) {
+        sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
+      }
+      sb.append("</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
           .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
 
