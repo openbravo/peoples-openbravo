@@ -28,9 +28,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -230,7 +230,8 @@ public class Role extends HttpSecureAppServlet {
           vars.getDBSession());
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-          || limitation == LicenseRestriction.MODULE_EXPIRED || !correctSystemStatus) {
+          || limitation == LicenseRestriction.MODULE_EXPIRED
+          || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE || !correctSystemStatus) {
         // allow only system login
         datarole = RoleComboData.selectSystem(this, vars.getUser());
       } else {

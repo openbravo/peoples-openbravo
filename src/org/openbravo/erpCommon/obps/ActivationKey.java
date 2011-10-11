@@ -92,6 +92,7 @@ public class ActivationKey {
   private boolean trial;
 
   private boolean notActiveYet = false;
+  private boolean incosistentInstance = false;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -104,7 +105,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE
   }
 
   public enum CommercialModuleStatus {
@@ -280,7 +281,8 @@ public class ActivationKey {
           || (dbId != null && !dbId.isEmpty() && !dbId.equals(SystemInfo.getDBIdentifier()))
           || (macId != null && !macId.isEmpty() && !macId.equals(SystemInfo.getMacAddress()))) {
         isActive = false;
-        errorMessage = "@IncorrectInstance@";
+        incosistentInstance = true;
+        errorMessage = "@IncorrectLicenseInstance@";
         setLogger();
         return;
       }
@@ -572,6 +574,10 @@ public class ActivationKey {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance()) {
       return LicenseRestriction.NO_RESTRICTION;
+    }
+
+    if (incosistentInstance) {
+      return LicenseRestriction.NOT_MATCHED_INSTANCE;
     }
 
     if (!isActive) {

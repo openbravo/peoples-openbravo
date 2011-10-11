@@ -281,7 +281,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       LicenseRestriction limitation = ak.checkOPSLimitations(dbSessionId);
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-          || limitation == LicenseRestriction.MODULE_EXPIRED) {
+          || limitation == LicenseRestriction.MODULE_EXPIRED
+          || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE) {
         return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
       }
     }
