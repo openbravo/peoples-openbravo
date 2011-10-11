@@ -1114,4 +1114,8 @@ public class ActivationKey {
       return SubscriptionStatus.ACTIVE;
     }
   }
+
+  public boolean isTrial() {
+    return trial;
+  }
 }

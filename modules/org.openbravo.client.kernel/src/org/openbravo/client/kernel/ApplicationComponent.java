@@ -178,6 +178,12 @@ public class ApplicationComponent extends BaseTemplateComponent {
     strVersion += " - ";
     strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
         "en_US");
+
+    if (ak.isTrial()) {
+      strVersion += " - ";
+      strVersion += "Trial";
+    }
+
     strVersion += " - ";
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;
