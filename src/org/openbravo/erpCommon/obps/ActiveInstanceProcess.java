@@ -64,7 +64,7 @@ public class ActiveInstanceProcess implements Process {
 
     System sys = OBDal.getInstance().get(System.class, "0");
 
-    boolean localActivation = localActivationKey != null && localActivationKey.isEmpty();
+    boolean localActivation = localActivationKey != null && !localActivationKey.isEmpty();
 
     if (!localActivation) {
       String instanceNo = (String) bundle.getParams().get("instanceNo");
@@ -101,7 +101,7 @@ public class ActiveInstanceProcess implements Process {
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
       } else {
 
-        sys.setActivationKey(result[1]);
+        sys.setActivationKey(activationKey);
         sys.setInstanceKey(publicKey);
         ActivationKey.setInstance(ak);
         if (ak.isActive()) {
