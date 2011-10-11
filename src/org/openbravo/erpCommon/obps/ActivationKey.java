@@ -313,7 +313,7 @@ public class ActivationKey {
 
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
 
-    trial = "true".equals(getProperty("isTrial"));
+    trial = "true".equals(getProperty("trial"));
 
     try {
       startDate = sd.parse(getProperty("startdate"));
