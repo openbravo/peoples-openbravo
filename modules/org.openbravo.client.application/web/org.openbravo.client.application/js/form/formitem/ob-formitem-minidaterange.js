@@ -219,6 +219,10 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return;
     }
     
+    if (newValue === oldValue) {
+      return false;
+    }
+    
     if (this.singleDateMode) {
       dateValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
       if (isc.isA.Date(dateValue)) {
