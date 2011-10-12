@@ -1593,7 +1593,18 @@ OB.ViewFormProperties = {
   // always suppress focus when showing errors, we do focus handling
   // explicitly
   showFieldErrors: function (fieldName, suppressAutoFocus) {
+    // temporary set selectonfocus to false
+    // until after the redraw, to prevent this issue
+    // https://issues.openbravo.com/view.php?id=18739
+    this.previousSelectOnFocus = this.selectOnFocus;
+    this.selectOnFocus = false;
     this.Super('showFieldErrors', [fieldName, true]);
+  },
+  
+  redraw: function() {
+    this.Super('redraw', arguments);
+    this.selectOnFocus = this.previousSelectOnFocus;
+    delete this.previousSelectOnFocus;
   },
   
   destroy: function () {
