@@ -310,7 +310,8 @@ isc.OBToolbar.addClassProperties({
         overflow: 'visible',
         fields: [{
           type: 'OBTextAreaItem', selectOnFocus: true, 
-          width: 390, height: 50, canFocus: true, 
+          width: 390, height: 50, canFocus: true,
+          showTitle: false,
           name:'url', 
           title: OB.I18N.getLabel('OBUIAPP_PasteLink'), value: url},
           {
