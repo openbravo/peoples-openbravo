@@ -38,6 +38,7 @@
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND AD_WINDOW.IsActive = 'Y'
+        AND AD_WINDOW.WindowType IN ('M', 'Q', 'T')
         AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%' 
         AND AD_TAB.ad_table_id IN
         (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
@@ -75,6 +76,7 @@
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND AD_WINDOW.IsActive = 'Y'
+        AND AD_WINDOW.WindowType IN ('M', 'Q', 'T')
         AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%' 
         AND AD_TAB.ad_table_id IN
         (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
@@ -150,6 +152,7 @@
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND AD_WINDOW.IsActive = 'Y'
+        AND AD_WINDOW.WindowType IN ('M', 'Q', 'T')
         AND M1.AD_MODULE_ID = AD_WINDOW.AD_Module_ID
         AND AD_TAB.ad_table_id IN
         (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
