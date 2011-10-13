@@ -65,16 +65,16 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     String discard[] = { "sectionDocType" };
     XmlDocument xmlDocument = null;
     ReportNotPostedData[] data = null;
-    if (strDateFrom.equals("") && strDateTo.equals("")) {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted",
-          discard).createXmlDocument();
-      data = ReportNotPostedData.set();
-    } else {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted")
-          .createXmlDocument();
-      data = ReportNotPostedData.select(this, vars.getLanguage(), vars.getClient(), strDateFrom,
-          strDateTo);
-    }// DateTimeData.nDaysAfter
+    // if (strDateFrom.equals("") && strDateTo.equals("")) {
+    // xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted",
+    // discard).createXmlDocument();
+    // data = ReportNotPostedData.set();
+    // } else {
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted")
+        .createXmlDocument();
+    data = ReportNotPostedData.select(this, vars.getLanguage(), vars.getClient(), strDateFrom,
+        strDateTo);
+    // }// DateTimeData.nDaysAfter
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportNotPosted", false, "", "", "",
         false, "ad_reports", strReplaceWith, false, true);
