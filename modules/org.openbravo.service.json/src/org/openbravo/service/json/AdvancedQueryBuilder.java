@@ -308,13 +308,15 @@ public class AdvancedQueryBuilder {
       // create the clauses, re-uses the code in parseSimpleClause
       // which translates a lesserthan/greater than to the end/start
       // time of a date
-      if (operator.equals(OPERATOR_EQUALS)) {
-        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
-            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
+      if (property.isDate() || property.isDatetime()) {
+        if (operator.equals(OPERATOR_EQUALS)) {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
 
-      } else {
-        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
-            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+        } else {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+        }
       }
     }
 

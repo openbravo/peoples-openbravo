@@ -714,6 +714,7 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+      this.filterEditor.getEditForm().getField(isc.OBViewGrid.EDIT_LINK_FIELD_NAME).defaultValue = newValue;
     }
   },
   
@@ -1380,6 +1381,7 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
+      this.filterEditor.getEditForm().getField(this.getCheckboxField().name).defaultValue = newValue;
     }
   },
   
