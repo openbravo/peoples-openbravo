@@ -458,7 +458,7 @@ isc.OBSelectorItem.addProperties({
 
   handleOutFields: function(record){
     var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
-        fields = form.fields || grid.fields;
+        fields = form.fields || grid.fields, numberFormat;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -469,9 +469,13 @@ isc.OBSelectorItem.addProperties({
               continue;
             }
             if (isc.isA.Number(value)) {
-              value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
-                  OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
-                  OB.Format.defaultGroupingSize);
+              if(outFields[i].numericMask && outFields[i].numericMask!==''){
+                value = OB.Utilities.Number.JSToOBMasked(value, outFields[i].numericMask,
+                   outFields[i].decimalSymbol, outFields[i].groupingSymbol,
+                   outFields[i].groupingSize);
+              }else{
+                value = value.toString().replace('.', OB.Format.defaultDecimalSymbol);
+              }
             }
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
