@@ -476,6 +476,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
       result = msg.getType().equals("Success");
+
+      ActivationKey ak = ActivationKey.getInstance();
+      if (result && ak.isActive() && ak.isTrial() && !ak.isHeartbeatActive()) {
+        msg.setType("Warning");
+        msg.setTitle(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
+      }
     } catch (Exception e) {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
@@ -486,7 +493,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
     msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
     return result;
-
   }
 
   static void insertDummyHBLog() throws ServletException {

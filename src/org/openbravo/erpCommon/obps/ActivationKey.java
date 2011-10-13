@@ -64,6 +64,8 @@ import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.HeartbeatLog;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -105,7 +107,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE
   }
 
   public enum CommercialModuleStatus {
@@ -583,6 +585,10 @@ public class ActivationKey {
       return LicenseRestriction.NOT_MATCHED_INSTANCE;
     }
 
+    if (trial && !isHeartbeatActive()) {
+      return LicenseRestriction.HB_NOT_ACTIVE;
+    }
+
     if (!isActive) {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
     }
@@ -630,6 +636,30 @@ public class ActivationKey {
     }
 
     return result;
+  }
+
+  /**
+   * Checks if heartbeat is active and a beat has been sent during last days.
+   * 
+   * @return
+   */
+  public boolean isHeartbeatActive() {
+    OBContext.setAdminMode();
+    try {
+      Boolean active = OBDal.getInstance().get(SystemInformation.class, "0").isEnableHeartbeat();
+      if (active == null || !active) {
+        return false;
+      }
+      OBCriteria<HeartbeatLog> hbLog = OBDal.getInstance().createCriteria(HeartbeatLog.class);
+      Calendar lastDays = Calendar.getInstance();
+      lastDays.add(Calendar.DAY_OF_MONTH, -9);
+      hbLog.add(Restrictions.ge(HeartbeatLog.PROPERTY_CREATIONDATE,
+          new Date(lastDays.getTimeInMillis())));
+      return hbLog.count() > 0;
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
