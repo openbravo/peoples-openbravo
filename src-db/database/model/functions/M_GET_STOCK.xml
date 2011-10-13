@@ -251,6 +251,36 @@
 	END IF;
 	
     END IF;
+
+        --M_Get_Stock - Finish Process Extension Point
+	SELECT count(*) INTO v_count
+	FROM DUAL
+	where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'FF80818132FDD74F0132FDF278430029');
+	IF (v_count=1) THEN
+	  DECLARE
+	    v_ep_instance VARCHAR2(32);
+	    v_extension_point_id VARCHAR2(32) := 'FF80818132FDD74F0132FDF278430029';
+	  BEGIN
+	    v_ep_instance := get_uuid();
+	    
+	    AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AD_Pinstance_Stock_ID',
+	      pinstance_id, NULL, NULL, NULL, NULL, NULL, NULL);
+	    AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+	      v_Record_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+	    AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
+	      v_AD_User_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+	    AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
+	      NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
+	    AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);	    
+	    SELECT p_text INTO v_Message
+	    FROM ad_ep_instance_para
+	    WHERE ad_ep_instance_id = v_ep_instance
+	    AND parametername LIKE 'Message';
+		  
+	    DELETE FROM ad_ep_instance_para
+	    WHERE ad_ep_instance_id = v_ep_instance;
+	  END;
+	END IF;
     
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
