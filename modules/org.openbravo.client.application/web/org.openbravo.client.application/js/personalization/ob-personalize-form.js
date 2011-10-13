@@ -751,7 +751,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.formLayout.addMember(statusBar);
     
     // create the form and add it to the formLayout
-    this.previewForm = isc.OBViewForm.create(this.previewFormProperties, {
+    this.previewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), this.previewFormProperties, {
       preventAllEvents: true,
       statusBar: statusBar,
       personalizeForm: this,
