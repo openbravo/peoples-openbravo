@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportNotPosted extends HttpSecureAppServlet {
@@ -106,6 +107,15 @@ public class ReportNotPosted extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
+    }
+
+    if (vars.commandIn("FIND") && data.length == 0) {
+      // No data has been found. Show warning message.
+      xmlDocument.setParameter("messageType", "WARNING");
+      xmlDocument.setParameter("messageTitle",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+      xmlDocument.setParameter("messageMessage",
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
