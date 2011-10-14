@@ -48,6 +48,7 @@ public class ActiveInstanceProcess implements Process {
 
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
+  private static final String EVALUATION_PURPOSE = "E";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -105,13 +106,20 @@ public class ActiveInstanceProcess implements Process {
         sys.setInstanceKey(publicKey);
         ActivationKey.setInstance(ak);
         if (ak.isActive()) {
-          msg.setType("Success");
-          msg.setMessage("@Success@");
 
           sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
           sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
 
           updateShowProductionFields("Y");
+
+          if (ak.isTrial() && !EVALUATION_PURPOSE.equals(purpose)) {
+            sysInfo.setInstancePurpose(EVALUATION_PURPOSE);
+            msg.setType("Warning");
+            msg.setMessage("@TrialLicenseForcedEvaluation@");
+          } else {
+            msg.setType("Success");
+            msg.setMessage("@Success@");
+          }
 
           // When reactivating a cloned instance insert a dummy heartbeat log so it is not detected
           // as a cloned instance anymore.
