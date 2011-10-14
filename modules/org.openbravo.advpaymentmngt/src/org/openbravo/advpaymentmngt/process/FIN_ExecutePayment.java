@@ -136,7 +136,7 @@ public class FIN_ExecutePayment {
               OBError processTransactionError = processTransaction(vars,
                   new DalConnectionProvider(), "P", transaction);
               if (processTransactionError != null
-                  && processTransactionError.getType().equals("Error")) {
+                  && "Error".equals(processTransactionError.getType())) {
                 return processTransactionError;
               }
             }
