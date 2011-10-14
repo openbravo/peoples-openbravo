@@ -237,7 +237,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "", "", "", "", "" };
+    String discard[] = { "", "", "", "", "", "", "" };
 
     switch (activationKey.getSubscriptionStatus()) {
     case COMMUNITY:
@@ -247,6 +247,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
       discard[5] = "OPSActive";
+      discard[6] = "OPSExpiredCancel";
       break;
     case ACTIVE:
       discard[0] = "CEInstance";
@@ -256,12 +257,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
+      discard[5] = "OPSExpiredCancel";
       break;
     case CANCEL:
       discard[0] = "CEInstance";
       discard[1] = "OPSActiveTitle";
       discard[2] = "OPSExpired";
       discard[3] = "OPSNoActiveYet";
+      discard[4] = "OPSExpiredCancel";
       break;
     case EXPIRED:
       discard[0] = "CEInstance";
@@ -269,6 +272,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[2] = "OPSNoActiveYet";
       discard[3] = "OPSConverted";
       discard[4] = "OPSActive";
+      if (activationKey.isTrial()) {
+        discard[5] = "OPSExpiredCancel";
+      }
       break;
     case NO_ACTIVE_YET:
       discard[0] = "CEInstance";
@@ -276,6 +282,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[2] = "OPSActiveTitle";
       discard[3] = "OPSConverted";
       discard[4] = "OPSActive";
+      discard[5] = "OPSExpiredCancel";
       break;
     }
 
