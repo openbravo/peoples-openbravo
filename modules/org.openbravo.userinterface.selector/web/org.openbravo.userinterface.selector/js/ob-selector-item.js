@@ -69,7 +69,10 @@ isc.OBSelectorPopupWindow.addProperties({
         this.selectorGridFields[i].canFilter = true;
       }
     }
-    
+    if(!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length===0){
+      this.dataSource.fields = this.selectorGridFields;
+      this.dataSource.init();
+    }
     this.selectorGrid = isc.OBGrid.create({
     
       selector: this.selector,
