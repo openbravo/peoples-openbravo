@@ -21,6 +21,7 @@ package org.openbravo.retail.posterminal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,13 +29,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.BaseWebServiceServlet;
 import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.ResourceNotFoundException;
+import org.openbravo.service.web.WebServiceUtil;
 
 /**
  * A web service which provides POS terminal services.
@@ -93,32 +98,59 @@ public class TerminalServlet extends BaseWebServiceServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    if (!checkSetParameters(request, response)) {
+    String[] pathparts = checkSetParameters(request, response);
+    if (pathparts == null) {
       return;
     }
+    
+    if ("hql".equals(pathparts[1])) {
 
-    String resourcename = "";
-    //
-    // final OBCriteria<OBPOSResources> criteria =
-    // OBDal.getInstance().createCriteria(OBPOSResources.class);
-    // criteria.add(Expression.eq("name", resourcename));
-    // int i = criteria.count();
-    // if (i > 0
-    //
-    //
-    // // OBDal.getInstance().get
-    // OBPOSResources res = OBProvider.getInstance().get(OBPOSResources.class);
-    // res.getName()
+      if (pathparts.length < 3) {
+        writeResult(
+            response,
+            JsonUtils.convertExceptionToJson(new InvalidRequestException("No HQL sentences to execute: "
+                + request.getRequestURI())));   
+        return;
+      }
+      
+      final Session session = OBDal.getInstance().getSession();   
+      
+      for (int i = 2; i < pathparts.length; i++) {
+        final Query query = session.createQuery(pathparts[i]);
+//        query.setParameter(0, epos.getPriceList().getId());
+//        query.setParameter(1, epos.getPriceList().getId());
+//        query.setParameter(2, "I");
+//        query.setParameter(3, "100");
+//        setClientOrgFilter(query);
 
-    // try {
+      List<Object[]> pro = query.list();      
+      
+       final OBCriteria<OBPOSResources> criteria =
+       OBDal.getInstance().createCriteria(OBPOSResources.class);
+       criteria.add(Expression.eq("name", resourcename));
+       int i = criteria.count();
+       if (i > 0
+      //
+      //
+      // // OBDal.getInstance().get
+      // OBPOSResources res = OBProvider.getInstance().get(OBPOSResources.class);
+      // res.getName()
 
-    // now do the action
-    String result = "{\"get\" : \"calling\"}";
-    writeResult(response, result);
-    //
-    // } catch (final JSONException e) {
-    // throw new InvalidContentException(e);
-    // }
+      // try {
+
+      // now do the action
+      String result = "{\"get\" : \"calling\"}";
+      writeResult(response, result);
+      //
+      // } catch (final JSONException e) {
+      // throw new InvalidContentException(e);
+      // }      
+    } else {
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Command not found: "
+              + pathparts[1])));      
+    }
   }
 
   @Override
@@ -142,16 +174,32 @@ public class TerminalServlet extends BaseWebServiceServlet {
     writeResult(response, result);
   }
 
-  private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response)
+  private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
     if (!request.getRequestURI().contains("/" + SERVLET_PATH)) {
       writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
           "Invalid url, the path should contain the service name: " + SERVLET_PATH)));
-      return false;
+      return null;
     }
 
-    return true;
+    final int nameIndex = request.getRequestURI().indexOf(SERVLET_PATH);
+    final String servicePart = request.getRequestURI().substring(nameIndex);
+    final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
+    if (pathParts.length == 0 || !pathParts[0].equals(SERVLET_PATH)) {
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
+      return null;
+    }
 
+    if (pathParts.length == 1) {
+      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+          "Invalid url, no entityName: " + request.getRequestURI())));
+      return null;
+    }
+
+    return pathParts;
   }
 
   private void writeResult(HttpServletResponse response, String result) throws IOException {
@@ -163,22 +211,22 @@ public class TerminalServlet extends BaseWebServiceServlet {
     w.close();
   }
 
-  private String getRequestContent(HttpServletRequest request) throws IOException {
-    final BufferedReader reader = request.getReader();
-    if (reader == null) {
-      return "";
-    }
-    String line;
-    final StringBuilder sb = new StringBuilder();
-    while ((line = reader.readLine()) != null) {
-      if (sb.length() > 0) {
-        sb.append("\n");
-      }
-      sb.append(line);
-    }
-    log.debug("REQUEST CONTENT>>>>");
-    log.debug(sb.toString());
-    return sb.toString();
-  }
+  // private String getRequestContent(HttpServletRequest request) throws IOException {
+  // final BufferedReader reader = request.getReader();
+  // if (reader == null) {
+  // return "";
+  // }
+  // String line;
+  // final StringBuilder sb = new StringBuilder();
+  // while ((line = reader.readLine()) != null) {
+  // if (sb.length() > 0) {
+  // sb.append("\n");
+  // }
+  // sb.append(line);
+  // }
+  // log.debug("REQUEST CONTENT>>>>");
+  // log.debug(sb.toString());
+  // return sb.toString();
+  // }
 
 }
