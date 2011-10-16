@@ -18,7 +18,6 @@
  */
 package org.openbravo.userinterface.selector;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,13 +38,11 @@ import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
@@ -57,7 +54,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -544,14 +540,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   }
 
   private void setOutFieldFormat(OutSelectorField outField, String formatStr) {
-    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-    DecimalFormat format = Utility.getFormat(vars, formatStr);
-    outField.setNumericMask(vars.getSessionValue("#FormatOutput|" + formatStr));
-    outField.setGroupingSize(format.getGroupingSize());
-    outField.setDecimalSymbol(new Character(format.getDecimalFormatSymbols().getDecimalSeparator())
-        .toString());
-    outField.setGroupingSymbol(new Character(format.getDecimalFormatSymbols()
-        .getGroupingSeparator()).toString());
+    outField.setFormatType(formatStr);
   }
 
   public String getOutHiddenInputPrefix() {
@@ -708,10 +697,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private String tabFieldName;
     private String outFieldName;
     private String suffix;
-    private String numericMask = "";
-    private String decimalSymbol = "";
-    private String groupingSymbol = "";
-    private int groupingSize = 0;
+    private String formatType = "";
 
     public String getTabFieldName() {
       return tabFieldName;
@@ -737,36 +723,12 @@ public class SelectorComponent extends BaseTemplateComponent {
       return suffix;
     }
 
-    public String getNumericMask() {
-      return numericMask;
+    public String getFormatType() {
+      return formatType;
     }
 
-    public void setNumericMask(String numericMask) {
-      this.numericMask = numericMask;
-    }
-
-    public String getDecimalSymbol() {
-      return decimalSymbol;
-    }
-
-    public void setDecimalSymbol(String decimalSymbol) {
-      this.decimalSymbol = decimalSymbol;
-    }
-
-    public String getGroupingSymbol() {
-      return groupingSymbol;
-    }
-
-    public void setGroupingSymbol(String groupingSymbol) {
-      this.groupingSymbol = groupingSymbol;
-    }
-
-    public int getGroupingSize() {
-      return groupingSize;
-    }
-
-    public void setGroupingSize(int groupingSize) {
-      this.groupingSize = groupingSize;
+    public void setFormatType(String formatType) {
+      this.formatType = formatType;
     }
 
   }

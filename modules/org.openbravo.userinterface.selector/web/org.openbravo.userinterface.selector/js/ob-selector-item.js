@@ -69,7 +69,10 @@ isc.OBSelectorPopupWindow.addProperties({
         this.selectorGridFields[i].canFilter = true;
       }
     }
-    
+    if(!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length===0){
+      this.dataSource.fields = this.selectorGridFields;
+      this.dataSource.init();
+    }
     this.selectorGrid = isc.OBGrid.create({
     
       selector: this.selector,
@@ -469,10 +472,10 @@ isc.OBSelectorItem.addProperties({
               continue;
             }
             if (isc.isA.Number(value)) {
-              if(outFields[i].numericMask && outFields[i].numericMask!==''){
-                value = OB.Utilities.Number.JSToOBMasked(value, outFields[i].numericMask,
-                   outFields[i].decimalSymbol, outFields[i].groupingSymbol,
-                   outFields[i].groupingSize);
+              if(outFields[i].formatType && outFioutFields[i].formatType!==''){
+                value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.formats[outFields[i].formatType],
+                  OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
+                   OB.Format.defaultGroupingSize);
               }else{
                 value = value.toString().replace('.', OB.Format.defaultDecimalSymbol);
               }
