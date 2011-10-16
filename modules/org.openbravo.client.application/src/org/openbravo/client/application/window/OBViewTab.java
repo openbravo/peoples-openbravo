@@ -63,7 +63,13 @@ import org.openbravo.utils.FormatUtilities;
  */
 public class OBViewTab extends BaseTemplateComponent {
 
-  private static final String TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
+  private static final String DEFAULT_TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
+  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+
+  static {
+    // Map: WindowType - Template
+    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF808181330BD14F01330BD34EA00008");
+  }
 
   private Entity entity;
   private Tab tab;
@@ -81,20 +87,28 @@ public class OBViewTab extends BaseTemplateComponent {
 
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
-  private ComponentProvider componentProvider;
+  private ComponentProvider dsComponentProvider;
 
   public String getDataSourceJavaScript() {
     final String dsId = getDataSourceId();
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBRestDataSource");
+    } else {
+      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    }
     dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
-    final Component component = componentProvider.getComponent(dsId, dsParameters);
+    final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }
 
   protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
+    final String windowType = tab.getWindow().getWindowType();
+    if (TEMPLATE_MAP.containsKey(windowType)) {
+      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(windowType));
+    }
+    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
   public OBViewFieldHandler getFieldHandler() {

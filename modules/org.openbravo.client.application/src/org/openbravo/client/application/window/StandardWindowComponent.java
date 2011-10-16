@@ -19,7 +19,9 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -39,8 +41,13 @@ import org.openbravo.model.ad.ui.Window;
  */
 public class StandardWindowComponent extends BaseTemplateComponent {
   private static final Logger log = Logger.getLogger(StandardWindowComponent.class);
+  private static final String DEFAULT_TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
 
-  private static final String TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
+  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+  static {
+    // WindowType - Template
+    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF80818132F916130132F9357DE10016");
+  }
 
   private Window window;
   private OBViewTab rootTabComponent = null;
@@ -48,7 +55,10 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private String uniqueString = "" + System.currentTimeMillis();
 
   protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
+    if (TEMPLATE_MAP.containsKey(window.getWindowType())) {
+      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(window.getWindowType()));
+    }
+    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
   public String getWindowClientClassName() {
