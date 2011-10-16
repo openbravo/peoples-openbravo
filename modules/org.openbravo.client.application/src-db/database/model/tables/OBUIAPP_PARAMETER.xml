@@ -97,6 +97,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="OBUIAPP_PROCESS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PARAMETER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -108,6 +112,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_PARAMETER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBUIAPP_PROCESS" name="OBUIAPP_PARAMETER_PROCESS">
+        <reference local="OBUIAPP_PROCESS_ID" foreign="OBUIAPP_PROCESS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="OBUIAPP_PARAMETER_REFERENCE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
