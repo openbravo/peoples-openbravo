@@ -37,8 +37,8 @@ isc.OBImageItemSmallImageContainer.addProperties({
       command: 'GETSIZE'
     };
     OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-      var pageHeight = Page.getHeight()-100;
-      var pageWidth = Page.getWidth()-100;
+      var pageHeight = isc.Page.getHeight()-100;
+      var pageWidth = isc.Page.getWidth()-100;
       var height;
       var width;
       var ratio = data.width/data.height;
@@ -181,7 +181,7 @@ isc.OBImageCanvas.addProperties({
 
 // == OBImageItem ==
 // Item used for Openbravo ImageBLOB images.
-isc.ClassFactory.defineClass('OBImageItem', CanvasItem);
+isc.ClassFactory.defineClass('OBImageItem', isc.CanvasItem);
 
 isc.OBImageItem.addProperties({
   shouldSaveValue: true,

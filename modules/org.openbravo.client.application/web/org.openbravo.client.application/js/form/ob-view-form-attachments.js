@@ -230,13 +230,16 @@ isc.OBAttachmentsLayout.addProperties({
   },
   
   fillAttachments: function(attachments){
-	var id;
+    var id, i;
+    
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
+    
     if(this.getForm().isNew){
       return;	
     }
+    
     this.addMember(hLayout);
     var me = this;
     var addButton = isc.OBLinkButtonItem.create({
@@ -269,7 +272,7 @@ isc.OBAttachmentsLayout.addProperties({
         theForm: form,
         canvas: me,
         click: function(){
-          var form = this.theForm;
+          var fileName, form = this.theForm;
           var addFunction = function(clickedOK){
             if(clickedOK){
               var hTempLayout = isc.HLayout.create();
@@ -299,8 +302,11 @@ isc.OBAttachmentsLayout.addProperties({
             return;
           }
           value = value?value:'';
+          
           var lastChar=value.lastIndexOf("\\") + 1;
-          var fileName = lastChar===-1?value:value.substring(lastChar);
+          
+          fileName = lastChar === -1 ? value : value.substring(lastChar);
+  
           if(this.theForm.theCanvas.fileExists(fileName, this.canvas.savedAttachments)){
             isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), addFunction);
           }else{

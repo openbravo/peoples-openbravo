@@ -925,7 +925,7 @@ OB.ViewFormProperties = {
     }
     
     // store the textualvalue so that it is correctly send back to the server
-    typeInstance = SimpleType.getType(field.type);
+    typeInstance = isc.SimpleType.getType(field.type);
     if (columnValue.classicValue && typeInstance.decSeparator) {
       this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
@@ -933,7 +933,7 @@ OB.ViewFormProperties = {
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
     // Modifications in this method should go also in processColumnValue because both almost do the same
-    var assignClassicValue, typeInstance, length;
+    var assignClassicValue, typeInstance, length, isDate;
 
     // no editvalues even anymore, go away
     if (!editValues) {
@@ -996,7 +996,7 @@ OB.ViewFormProperties = {
       assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter)
         ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue))
         : columnValue.classicValue;
-      typeInstance = SimpleType.getType(field.type);
+      typeInstance = isc.SimpleType.getType(field.type);
       if (columnValue.classicValue && typeInstance.decSeparator) {
         this.setTextualValue(field.name, assignClassicValue, typeInstance, editValues);
       }
@@ -1021,7 +1021,7 @@ OB.ViewFormProperties = {
   
   // calls setValue and the onchange handling
   setItemValue: function(item, value) {
-    var currentValue;
+    var currentValue, view;
 
     if (isc.isA.String(item)) {
        
@@ -1455,7 +1455,7 @@ OB.ViewFormProperties = {
   },
   
   getFirstErrorItem: function() {
-    var flds = this.getFields(), errs = this.getErrors();
+    var flds = this.getFields(), errs = this.getErrors(), i;
     if (flds.length) {
       var length = flds.length;
       for (i = 0; i < length; i++) {

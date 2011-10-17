@@ -136,7 +136,7 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
   toggleSave: false,
  
   getFields: function() {
-    var value, personalization = this.standardWindow.getClass().personalization, 
+    var i, value, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
       standardWindow = this.standardWindow, length;
@@ -186,7 +186,7 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
   // creates one combo with the viewdefinitions which can
   // be deleted by the current user
   getFields: function() {
-    var personalization = this.standardWindow.getClass().personalization, 
+    var i, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
       standardWindow = this.standardWindow, length;

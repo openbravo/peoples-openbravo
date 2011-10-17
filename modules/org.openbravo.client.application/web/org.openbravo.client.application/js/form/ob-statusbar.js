@@ -273,6 +273,8 @@ isc.OBStatusBar.addProperties( {
   },
 
   enableShortcuts: function(){
+    var i;
+    
     if (this.buttonBar.members) {
       for (i = 0; i < this.buttonBar.members.length; i++) {
         if (this.buttonBar.members[i].enableShortcut) {
@@ -283,7 +285,7 @@ isc.OBStatusBar.addProperties( {
   },
 
   disableShortcuts: function(){
-    var length;
+    var length, i;
     if (this.buttonBar.members) {
       length = this.buttonBar.members.length;
       for (i = 0; i < length; i++) {

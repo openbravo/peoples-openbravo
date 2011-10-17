@@ -304,7 +304,7 @@ OB.Personalization.deleteViewDefinition = function(standardWindow, personalizati
       },
       function(resp, data, req){
         var personalization = standardWindow.getClass().personalization, 
-          length,
+          length, i,
           views = personalization && personalization.views ? personalization.views : [];
         
         if (views) {

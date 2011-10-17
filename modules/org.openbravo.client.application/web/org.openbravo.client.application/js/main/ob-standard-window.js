@@ -127,7 +127,7 @@ isc.OBStandardWindow.addProperties({
   },
   
   setPersonalization: function(personalization) {
-    var i, defaultView, persDefaultValue;
+    var i, defaultView, persDefaultValue, views, length;
     
     if (personalization.forms) {
       OB.Personalization.personalizeWindow(personalization.forms, this);

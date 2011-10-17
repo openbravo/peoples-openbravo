@@ -20,7 +20,7 @@
 // == OBTextAreaItem and OBPopupTextArea ==
 // Input for large strings, contains 2 widgets one for editing in the form
 // and one for in the grid.
-isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
+isc.ClassFactory.defineClass('OBTextAreaItem', isc.TextAreaItem);
 
 isc.OBTextAreaItem.addProperties({
   operator: 'iContains',
@@ -40,7 +40,7 @@ isc.OBTextAreaItem.addProperties({
 });
 
 // used in the grid
-isc.ClassFactory.defineClass('OBPopUpTextAreaItem', PopUpTextAreaItem);
+isc.ClassFactory.defineClass('OBPopUpTextAreaItem', isc.PopUpTextAreaItem);
 
 isc.OBPopUpTextAreaItem.addProperties({
   validateOnExit: true,

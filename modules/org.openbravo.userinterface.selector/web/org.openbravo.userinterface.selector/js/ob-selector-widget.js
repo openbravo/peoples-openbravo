@@ -622,7 +622,7 @@ isc.OBSelectorWidget
               editorType : 'comboBox',
               displayField : this.displayField,
               focus : function(form, item) {
-                currentWindowElementType = 'custom'; // To
+                var currentWindowElementType = 'custom'; // To
                 if (typeof setWindowElementFocus === 'function') {
                   // To sync with Openbravo focus logic
                   setWindowElementFocus(document

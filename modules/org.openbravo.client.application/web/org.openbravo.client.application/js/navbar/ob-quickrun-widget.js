@@ -39,7 +39,7 @@ isc.OBQuickRun.addClassProperties({
     if (isc.OBQuickRun.currentQuickRun &&
     isc.OBQuickRun.currentQuickRun.showing) {
       var tempQuickRun = isc.OBQuickRun.currentQuickRun;
-      currentQuickRun = null;
+      this.currentQuickRun = null;
       tempQuickRun.doHide();
     }
   }
@@ -160,7 +160,7 @@ isc.OBQuickRun.addProperties({
   // ** {{{ keyPress }}} **
   // handle the escape and enter keys, these should hide the layout.
   keyPress: function(){
-    var key = EventHandler.getKey();
+    var key = isc.EventHandler.getKey();
     if (key === 'Escape' || key === 'Enter') {
       if (isc.OBQuickRun.currentQuickRun) {
         isc.OBQuickRun.currentQuickRun.doHide();

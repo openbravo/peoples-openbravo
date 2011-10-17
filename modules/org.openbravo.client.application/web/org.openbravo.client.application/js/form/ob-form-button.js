@@ -19,7 +19,7 @@
 
 // == OBFormButton ==
 // The default form button.
-isc.ClassFactory.defineClass('OBFormButton', Button);
+isc.ClassFactory.defineClass('OBFormButton', isc.Button);
 
 isc.OBFormButton.addProperties({
   autoFit: true,

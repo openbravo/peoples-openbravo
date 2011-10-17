@@ -130,7 +130,7 @@ isc.OBDateRangeDialog.addProperties({
 // == OBMinDateRangeItem ==
 // Item used for filtering by dates in the grid. Replaces the normal Smartclient
 // MiniDateRangeItem to make it editable.
-isc.ClassFactory.defineClass('OBMiniDateRangeItem', OBTextItem);
+isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.OBTextItem);
 
 isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   validateOnExit: false,
