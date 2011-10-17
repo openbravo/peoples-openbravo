@@ -1460,7 +1460,7 @@ OB.ToolbarUtils.showAuditTrail = function(view){
   if (selectedRecords.length > 1) {
     var setWarning = {
       set: function(label){
-        view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', label);
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, '', label);
       }
     };
     OB.I18N.getLabel('JS28', null, setWarning, 'set');

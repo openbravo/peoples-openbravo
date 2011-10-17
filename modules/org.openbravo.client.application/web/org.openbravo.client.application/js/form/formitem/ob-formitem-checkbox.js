@@ -19,7 +19,7 @@
 
 // == OBCheckboxItem ==
 // Item used for Openbravo yes/no fields.
-isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
+isc.ClassFactory.defineClass('OBCheckboxItem', isc.CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
   operator: 'equals'

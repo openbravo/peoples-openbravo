@@ -230,7 +230,7 @@ isc.OBAttachmentsLayout.addProperties({
   },
   
   fillAttachments: function(attachments){
-    var id, i;
+    var id, i, length;
     
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
