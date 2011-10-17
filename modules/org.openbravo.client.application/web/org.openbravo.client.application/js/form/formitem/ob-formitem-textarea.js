@@ -29,7 +29,7 @@ isc.OBTextAreaItem.addProperties({
   selectOnFocus: false,
   
   isDisabled: function() {
-    this.Super('isDisabled', arguments);
+    return this.Super('isDisabled', arguments);
   },
 
   itemHoverHTML: function(item, form) {
