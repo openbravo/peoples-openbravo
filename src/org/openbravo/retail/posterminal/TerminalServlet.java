@@ -18,10 +18,8 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.SessionHandler;
@@ -115,21 +112,21 @@ public class TerminalServlet extends BaseWebServiceServlet {
       
       final Session session = OBDal.getInstance().getSession();   
       
-      for (int i = 2; i < pathparts.length; i++) {
-        final Query query = session.createQuery(pathparts[i]);
-//        query.setParameter(0, epos.getPriceList().getId());
-//        query.setParameter(1, epos.getPriceList().getId());
-//        query.setParameter(2, "I");
-//        query.setParameter(3, "100");
-//        setClientOrgFilter(query);
-
-      List<Object[]> pro = query.list();      
-      
-       final OBCriteria<OBPOSResources> criteria =
-       OBDal.getInstance().createCriteria(OBPOSResources.class);
-       criteria.add(Expression.eq("name", resourcename));
-       int i = criteria.count();
-       if (i > 0
+      // for (int i = 2; i < pathparts.length; i++) {
+      // final Query query = session.createQuery(pathparts[i]);
+      // // query.setParameter(0, epos.getPriceList().getId());
+      // // query.setParameter(1, epos.getPriceList().getId());
+      // // query.setParameter(2, "I");
+      // // query.setParameter(3, "100");
+      // // setClientOrgFilter(query);
+      //
+      // List<Object[]> pro = query.list();
+      //
+      // final OBCriteria<OBPOSResources> criteria =
+      // OBDal.getInstance().createCriteria(OBPOSResources.class);
+      // criteria.add(Expression.eq("name", resourcename));
+      // int i = criteria.count();
+      // if (i > 0
       //
       //
       // // OBDal.getInstance().get
