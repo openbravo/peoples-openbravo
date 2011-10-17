@@ -441,7 +441,7 @@ isc.OBGrid.addProperties({
       this.filterImage.show(true);
     } else {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
-      if (this.view && this.view.messageBar.hasFilterMessage) {
+      if (this.view && this.view.messageBar && this.view.messageBar.hasFilterMessage) {
         this.view.messageBar.hide();
       }
       this.filterImage.hide();
