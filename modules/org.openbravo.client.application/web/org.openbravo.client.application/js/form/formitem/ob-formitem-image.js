@@ -233,18 +233,11 @@ isc.OBImageItem.addProperties({
     return this.Super('setValue', arguments);
   },
   refreshImage: function(imageId){
-
       //If creating/replacing an image, the form is marked as modified
       //and the image id is set as the value of the item
       this.setValue(imageId);
       this.form.itemChangeActions();
-
-  },
-  changed: function (form, item, value) {
-    form.setValue(identifierFieldName, value);
-    return this.Super('changed', arguments);
   }
-
 });
 
 //== OBImageSelector ==
