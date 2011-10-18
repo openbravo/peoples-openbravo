@@ -142,18 +142,25 @@
       AD_Org_ID, UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_currency_id, C_PROJECT_ID,
       C_BPartner_ID, M_PriceList_ID, invoicerule
-    INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
+     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
       v_CBPartner_ID, v_PriceList_ID, v_invoicerule
     FROM C_ORDER
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
+
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
-    INTO v_DocSubTypeSO
+      INTO v_DocSubTypeSO
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocType_ID;
+    -- Get current DocSubTypeTarget
+    SELECT DocSubTypeSO, docbasetype
+    INTO v_DocSubTypeSOTarget, v_docbasetypetarget
+    FROM C_DOCTYPE
+    WHERE C_DocType_ID=v_DocTypetarget_ID;
+
     -- Get the name of the org of the Order. Added by P.Sarobe
     SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
@@ -161,7 +168,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction = 'CO') THEN
+    IF (v_DocAction = 'CO' OR v_DocAction='AC') THEN
       SELECT COUNT(*)
         INTO v_Aux
        FROM C_ORDERLINE
@@ -185,10 +192,6 @@
       RAISE_APPLICATION_ERROR(-20000, '@WaitingPayment@') ;
     END IF;
 
-    SELECT DocSubTypeSO
-    INTO v_DocSubTypeSOTarget
-    FROM C_DOCTYPE
-    WHERE C_DocType_ID=v_DocTypetarget_ID;
     IF (v_DocSubTypeSOTarget='PR' AND v_invoicerule <> 'I') THEN
       RAISE_APPLICATION_ERROR(-20000, '@PrepayMustImmediate@');
     END IF;
@@ -213,7 +216,7 @@
       * Re-activate
       */
       IF (v_DocAction='RE') THEN
-        IF (v_DocSubTypeSO IN ('WR', 'WI')) THEN
+        IF (v_DocSubTypeSO IN ('WR', 'WI') OR v_docstatus IN ('FF', 'PD')) THEN
           RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
         END IF;
         --Verify not managed debtPayments added by ALO
@@ -266,7 +269,7 @@
         v_ResultStr:='ReActivate';
         UPDATE C_ORDER
         SET DocStatus='IP', -- In Progress
-            DocAction='CO',
+            DocAction=CASE WHEN v_docbasetypetarget IN ('PRN', 'SRN') THEN 'AC' ELSE 'CO' END,
             Processing='N',
             Processed='N',
             Updated=now(),
@@ -327,7 +330,7 @@
              )
             LOOP
             -- Qty corrected for SO/PO
-            IF (v_DocSubTypeSO IS NULL) THEN
+            IF (v_docbasetypetarget IN ('POO', 'PRM')) THEN
               v_QtySO:=0;
               v_QtyOrderSO:=NULL;
               v_QtyPO:=Cur_ResLine.qtydelivered-Cur_ResLine.qty;
@@ -347,7 +350,7 @@
               v_QtyPO:=0;
               v_QtyOrderPO:=NULL;
             END IF;
-            IF (v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+            IF (v_DocStatus<>'IP') THEN
               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
             END IF;
           END LOOP;
@@ -386,7 +389,7 @@
 
         UPDATE C_ORDER
         SET DocStatus='DR', -- Draft
-            DocAction='CO',
+            DocAction=CASE WHEN v_docbasetypetarget IN ('PRN', 'SRN') THEN 'AC' ELSE 'CO' END,
             Processing='N',
             Updated=now(),
             UpdatedBy=v_User
@@ -399,7 +402,7 @@
       SELECT COUNT(*)
         INTO v_Count
       FROM C_ORDER C, C_DOCTYPE
-      WHERE C_DocType.DocBaseType IN ('SOO', 'POO')
+      WHERE C_DocType.DocBaseType IN ('SOO', 'POO', 'SRM', 'PRM')
         AND C_DocType.IsSOTrx=C.ISSOTRX
         AND AD_ISORGINCLUDED(C.AD_Org_ID,C_DocType.AD_Org_ID, C.AD_Client_ID) <> -1
         AND C.C_DOCTYPETARGET_ID = C_DOCTYPE.C_DOCTYPE_ID
@@ -462,11 +465,11 @@
       /**
       *Update Product purchasing Plan Table
       */
-      IF (v_isSoTrx ='N') THEN
+      IF (v_isSoTrx ='N' AND v_docbasetypetarget NOT IN ('PRM', 'SRM')) THEN
         FOR Cur_OrderLine IN (SELECT * FROM C_ORDERLINE WHERE C_Order_Id =  v_Record_ID)
         LOOP
           UPDATE M_PRODUCT_PO SET PriceLastPO=Cur_OrderLine.PriceActual 
-          Where C_BPARTNER_ID = v_CBPartner_ID AND M_PRODUCT_ID = Cur_OrderLine.M_PRODUCT_ID
+          WHERE C_BPARTNER_ID = v_CBPartner_ID AND M_PRODUCT_ID = Cur_OrderLine.M_PRODUCT_ID
           AND Ad_Isorgincluded(Cur_OrderLine.AD_ORG_ID,AD_ORG_ID, Cur_OrderLine.AD_Client_ID) <> -1;
         END LOOP;
       END IF;
@@ -476,11 +479,11 @@
       IF (v_DocAction='VO') THEN
         -- Cancel all Items
         UPDATE C_ORDERLINE
-          SET QtyOrdered=0,
-          --MODIFIED BY F.IRIAZABAL
-          QuantityOrder = CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN NULL ELSE 0 END,
-          LineNetAmt=0,
-          Updated=now()
+        SET QtyOrdered=0,
+            --MODIFIED BY F.IRIAZABAL
+            QuantityOrder = CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN NULL ELSE 0 END,
+            LineNetAmt=0,
+            Updated=now()
         WHERE C_Order_ID=v_Record_ID
           AND QtyOrdered<>0;
       END IF;
@@ -488,6 +491,7 @@
      /**************************************************************************
       * Start Processing ------------------------------------------------------
       *************************************************************************/
+
       -- Check the header belongs to a organization where transactions are posible and ready to use
       SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
         INTO v_is_ready, v_is_tr_allow
@@ -513,16 +517,15 @@
         -- Now, needs to go to END_PROCESSING to unlock
       END IF;
       /**
-      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid
+      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid, ACknowledge
       */
-      IF (v_DocAction IN('AP', 'CO', 'PR', 'CL', 'VO')) THEN
+      IF (v_DocAction IN ('AP', 'CO', 'PR', 'CL', 'VO', 'AC')) THEN
         NULL;
       ELSE
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@') ;
       END IF;
 
-      SELECT COUNT(*)
-        INTO v_count
+      SELECT COUNT(*) INTO v_count
       FROM AD_CLIENTINFO
       WHERE AD_CLIENT_ID=v_Client_ID
         AND CHECKORDERORG='Y';
@@ -904,7 +907,7 @@
             FOR UPDATE)
         LOOP
           -- Qty corrected for SO/PO
-          IF (v_DocSubTypeSO IS NOT NULL) THEN
+          IF (v_docbasetypetarget IN ('SOO', 'SRM')) THEN
             v_QtySO   := Cur_ResLine.Qty;
             v_QtyOrderSO := NULL;
             IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
@@ -932,7 +935,7 @@
           DBMS_OUTPUT.PUT_LINE('Reserved Warehouse=' || Cur_ResLine.M_Warehouse_ID || ', Product=' || Cur_ResLine.M_Product_ID || ', Attrib=' || Cur_ResLine.M_AttributeSetInstance_ID || ', Qty=' || v_QtySO || '/' || v_QtyPO);
 
           -- Update Order Line
-          IF (v_DocSubTypeSO IS NOT NULL) THEN
+          IF (v_docbasetypetarget IN ('SOO', 'SRM')) THEN
             UPDATE C_ORDERLINE
             SET QtyReserved = QtyReserved + v_QtySO
             WHERE C_OrderLine_ID = Cur_ResLine.C_OrderLine_ID;
@@ -1213,8 +1216,9 @@
           UPDATE C_ORDER  SET DocStatus='VO'  WHERE C_Order_ID=v_Record_ID;
         END IF;
       END IF;
+
       -- We are done with standard sales orders
-      IF (v_DocSubTypeSO = 'RM') THEN
+      IF (v_DocSubTypeSO = 'RM' OR v_docbasetypetarget IN ('SRM', 'PRM')) THEN
 
         FOR Cur_Order IN( SELECT ol.qtyordered, ol.c_order_discount_id FROM C_order o,C_orderline ol
             WHERE o.C_Order_ID = v_Record_ID
@@ -1238,6 +1242,15 @@
       IF (v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO IS NULL) THEN
         UPDATE C_ORDER
         SET DocStatus='CO',
+            DocAction='--',
+            Processed='Y',
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+      END IF;
+      IF (v_DocAction = 'AC') THEN
+        UPDATE C_ORDER
+        SET DocStatus='AC',
             DocAction='--',
             Processed='Y',
             Updated=now(),
