@@ -6,8 +6,8 @@
 <!--FF808081316ACC4501316ADAA4FB0006-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF808081316ACC4501316ADAA4FB0006-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808081316ACC4501316ADAA4FB0006-->  <VALUE><![CDATA[OBSEIG_AssociateAccount]]></VALUE>
-<!--FF808081316ACC4501316ADAA4FB0006-->  <MSGTEXT><![CDATA[This process links your Openbravo User with your Google Account. After completion if you access the system using your Google Account you will be logged in with you current User.
-Do yo want to continue?]]></MSGTEXT>
+<!--FF808081316ACC4501316ADAA4FB0006-->  <MSGTEXT><![CDATA[This process links your Openbravo user id with your Google Account. After completion, if you access the system using your Google Account, you will be logged in with you current user.
+Do you want to continue?]]></MSGTEXT>
 <!--FF808081316ACC4501316ADAA4FB0006-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF808081316ACC4501316ADAA4FB0006-->  <AD_MODULE_ID><![CDATA[FF8080813129ADA401312CA1222A0005]]></AD_MODULE_ID>
 <!--FF808081316ACC4501316ADAA4FB0006--></AD_MESSAGE>

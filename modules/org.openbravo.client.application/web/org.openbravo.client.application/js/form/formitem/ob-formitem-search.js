@@ -19,7 +19,7 @@
 
 // == OBSearchItem ==
 // Item used for Openbravo search fields.
-isc.ClassFactory.defineClass('OBSearchItem', StaticTextItem);
+isc.ClassFactory.defineClass('OBSearchItem', isc.StaticTextItem);
 
 isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 

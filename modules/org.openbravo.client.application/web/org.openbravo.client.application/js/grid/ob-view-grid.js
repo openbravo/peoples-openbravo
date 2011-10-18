@@ -170,7 +170,8 @@ isc.OBViewGrid.addProperties({
     neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
-    
+    criteriaPolicy: 'dropOnChange',
+
     // overridden to update the context/request properties for the fetch
     fetchRemoteData : function (serverCriteria, startRow, endRow) {
       var requestProperties = this.context;
@@ -298,7 +299,8 @@ isc.OBViewGrid.addProperties({
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
   destroy: function () {
-    var i, field, fields = this.getFields(), len = fields.length, ds, dataSources = [];
+    var i, field, fields = this.getFields(), 
+      editorProperties, len = fields.length, ds, dataSources = [];
 
     for(i = 0; i < len; i++) {
       field = fields[i];
@@ -337,8 +339,10 @@ isc.OBViewGrid.addProperties({
   },
 
   draw: function() {
-    var drawnBefore = this.isDrawn(), form, item, length;
+    var drawnBefore = this.isDrawn(), i, form, item, items, length;
+
     this.Super('draw', arguments);
+    
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
         this.getFilterEditor() && this.getFilterEditor().getEditForm()) {
@@ -465,7 +469,7 @@ isc.OBViewGrid.addProperties({
   },
  
   setView: function(view){
-    var dataPageSizeaux, length;
+    var dataPageSizeaux, length, i;
     
     this.view = view;
     this.editFormDefaults.view = view;
@@ -651,7 +655,7 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', 'OBViewGrid.body', ksAction_EditInForm);
 
     var ksAction_CancelChanges = function() {
-      grid.view.undo();
+      me.view.undo();
       return false;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelChanges', 'OBViewGrid.body', ksAction_CancelChanges);
@@ -719,6 +723,8 @@ isc.OBViewGrid.addProperties({
   },
   
   refreshContents: function(callback){
+    var selectedValues;
+    
     this.resetEmptyMessage();
     this.view.updateTabTitle();
     
@@ -2017,7 +2023,7 @@ isc.OBViewGrid.addProperties({
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (saveCallback) {
-        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent, success]);
+        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }

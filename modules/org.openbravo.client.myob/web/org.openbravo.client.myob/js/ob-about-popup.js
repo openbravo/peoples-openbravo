@@ -35,7 +35,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
 	    
   initWidget: function(args){
 	
-    aboutFieldDefinitions = args.aboutFieldDefinitions;
+    var aboutFieldDefinitions = args.aboutFieldDefinitions;
     this.aboutPopupWindowLayout = this.createPopupWindowLayout();
     this.items = [this.aboutPopupWindowLayout];
         

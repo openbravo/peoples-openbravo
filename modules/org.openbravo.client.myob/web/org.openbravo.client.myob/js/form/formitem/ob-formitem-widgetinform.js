@@ -19,7 +19,7 @@
 
 // == OBWidgetInFormItem ==
 // Allows placing of workspace widget into a generated form
-isc.ClassFactory.defineClass('OBWidgetInFormItem', CanvasItem);
+isc.ClassFactory.defineClass('OBWidgetInFormItem', isc.CanvasItem);
 
 isc.OBWidgetInFormItem.addProperties({
   widgetInstance : null,

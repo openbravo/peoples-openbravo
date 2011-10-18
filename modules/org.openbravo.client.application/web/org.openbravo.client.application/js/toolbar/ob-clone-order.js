@@ -25,6 +25,8 @@
   cloneButtonProps.action = function (){
     var view = this.view;
     var callback = function(ok){
+      var requestParams;
+      
       if (ok) {
         requestParams = {
             orderId:view.viewGrid.getSelectedRecord().id

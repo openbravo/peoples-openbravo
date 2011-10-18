@@ -19,7 +19,7 @@
 
 //== OBLinkItem ==
 //Input for normal strings (links) with an added icon to navigate to the link  
-isc.ClassFactory.defineClass('OBLinkItem', TextItem);
+isc.ClassFactory.defineClass('OBLinkItem', isc.TextItem);
 
 isc.OBLinkItem.addProperties({
   validateOnExit: true,
