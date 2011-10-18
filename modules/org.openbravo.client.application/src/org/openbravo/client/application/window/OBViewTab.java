@@ -377,6 +377,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private boolean sessionLogic = false;
     private boolean modal = true;
     private String processId = "";
+    private boolean newDefinition = false;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -388,6 +389,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
       // Define command
       Process process = column.getProcess();
+
       if (process != null) {
         String manualProcessMapping = null;
         for (ModelImplementation impl : process.getADModelImplementationList()) {
@@ -415,6 +417,14 @@ public class OBViewTab extends BaseTemplateComponent {
         modal = Utility.isModalProcess(process);
         processId = process.getId();
 
+      } else if (column.getOBUIAPPProcess() != null) {
+        org.openbravo.client.application.Process newProcess = column.getOBUIAPPProcess();
+        processId = newProcess.getId();
+        url = "/";
+        command = "NEW";
+        newDefinition = true;
+        // TODO: modal should be a parameter in the process definition?
+        modal = !"OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern());
       } else {
         String colName = column.getDBColumnName();
         if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {
@@ -516,6 +526,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getProcessId() {
       return processId;
+    }
+
+    public boolean isNewDefinition() {
+      return newDefinition;
+    }
+
+    public void setNewDefinition(boolean newDefinition) {
+      this.newDefinition = newDefinition;
     }
 
     public class Value {

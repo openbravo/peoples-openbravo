@@ -65,6 +65,7 @@
        command: '${field.command?js_string}',
        property: '${field.propertyName?js_string}',
        processId: '${field.processId?js_string}',
+       newDefinition: ${field.newDefinition?string},
        <#if !field.modal>modal: ${field.modal?string},</#if>
        <#if field.hasLabelValues>
        labelValue: {<#list field.labelValues as value>
