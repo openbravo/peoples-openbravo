@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBPOS_TAXCUSTCATEGORIES_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_BP_TAXCATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -127,8 +127,8 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_CUSTOMERS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_TAXCUSTCATEGORIES" name="OBPOS_CUSTOMERS_TAXCUSTCAT">
-        <reference local="OBPOS_TAXCUSTCATEGORIES_ID" foreign="OBPOS_TAXCUSTCATEGORIES_ID"/>
+      <foreign-key foreignTable="C_BP_TAXCATEGORY" name="OBPOS_CUSTOMERS_BPTAXCAT">
+        <reference local="C_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
       </foreign-key>
       <index name="OBPOS_CUSTOMERS_CARD" unique="false">
         <index-column name="CARD"/>

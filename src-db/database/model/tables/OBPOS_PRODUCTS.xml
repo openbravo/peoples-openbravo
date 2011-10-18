@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBPOS_TAXCATEGORIES_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_TAXCATEGORY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -105,8 +105,8 @@
       <foreign-key foreignTable="OBPOS_CATEGORIES" name="OBPOS_PRODUCTS_CAT">
         <reference local="OBPOS_CATEGORIES_ID" foreign="OBPOS_CATEGORIES_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_TAXCATEGORIES" name="OBPOS_PRODUCTS_TAXCAT">
-        <reference local="OBPOS_TAXCATEGORIES_ID" foreign="OBPOS_TAXCATEGORIES_ID"/>
+      <foreign-key foreignTable="C_TAXCATEGORY" name="OBPOS_PRODUCTS_TAXCAT">
+        <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
       <index name="OBPOS_PRODUCTS_CODE" unique="true">
         <index-column name="CODE"/>
