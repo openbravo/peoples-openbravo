@@ -72,7 +72,9 @@ public class IdentifierProvider implements OBSingleton {
    * @return the identifier
    */
   public String getIdentifier(Object o) {
-    return getIdentifier(o, true, OBContext.getOBContext().getLanguage());
+    final Language lang = OBContext.getOBContext() != null ? OBContext.getOBContext().getLanguage()
+        : null;
+    return getIdentifier(o, true, lang);
   }
 
   // identifyDeep determines if refered to objects are used
