@@ -277,19 +277,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="RM_PROCESS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="RM_RETURN_REASON" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="RM_PICKFROMSHIPMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="RM_EDITLINES" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
