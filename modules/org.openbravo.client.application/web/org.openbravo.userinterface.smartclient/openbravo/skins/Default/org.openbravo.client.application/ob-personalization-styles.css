@@ -97,7 +97,7 @@
 
 .OBPersonalizationPullDownMenu {
   background-color: #3a6b01;
-  border: 1px solid #64932d;
+  border: 1px solid #fa962f;
 }
 
 .OBPersonalizationPullDownMenuTable {
@@ -159,6 +159,6 @@
 .OBPersonalizationPullDownMenuCellSelectedOver,
 .OBPersonalizationPullDownMenuCellSeparatorOver,
 .OBPersonalizationPullDownMenuCellSeparatorSelectedOver {
-  background-color: #035101;
+  background-color: #2C4E00;
   margin-bottom: -1px;
 }

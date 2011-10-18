@@ -56,13 +56,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  SELECT P_Revenue_Acct as revenue, P_Expense_Acct as expense, P_Asset_Acct as asset, P_Cogs_Acct as cogs, 
-  P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
-  P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
-  FROM M_Product_Category pc, M_Product_Category_Acct pca 
-  WHERE pc.M_Product_Category_ID=pca.M_Product_Category_ID
-  AND pca.C_AcctSchema_ID=? 
-  ORDER BY pc.IsDefault DESC, pc.Created
+      SELECT coalesce(acctsdef.P_Revenue_Acct, pca.P_Revenue_Acct) as revenue, coalesce(acctsdef.P_Expense_Acct, pca.P_Expense_Acct) as expense,
+             coalesce(acctsdef.P_Asset_Acct, pca.P_Asset_Acct) as asset, coalesce(acctsdef.P_Cogs_Acct, pca.P_Cogs_Acct) as cogs,
+             coalesce(acctsdef.P_PurchasePriceVariance_Acct, pca.P_PurchasePriceVariance_Acct) as purchasepricevariance,
+             coalesce(acctsdef.P_InvoicePriceVariance_Acct, pca.P_InvoicePriceVariance_Acct) as invoicepricevariance,
+             coalesce(acctsdef.P_TradeDiscountRec_Acct, pca.P_TradeDiscountRec_Acct) as discountrec,
+             coalesce(acctsdef.P_TradeDiscountGrant_Acct, pca.P_TradeDiscountGrant_Acct) as discountgrant
+      FROM M_Product_Category pc, M_Product_Category_Acct pca, c_acctschema_default acctsdef
+      WHERE pc.M_Product_Category_ID = pca.M_Product_Category_ID 
+            AND pca.c_acctschema_id = acctsdef.c_acctschema_id
+            AND pca.C_AcctSchema_ID= ?
+      ORDER BY pc.isdefault desc, pc.created
      ]]>
      </Sql>
      <Parameter name="AcctSchema"/>

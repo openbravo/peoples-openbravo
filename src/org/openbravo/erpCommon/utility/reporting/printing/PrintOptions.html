@@ -52,6 +52,8 @@
       } else {
           //In OB 3, we submit the form in the OB 3 background_target hidden iframe
         submitCommandForm(strCommand, false, null, null, "background_target");
+          //We refresh the main view to ensure that the attachments counter is updated
+        getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view.refresh();
       }
        closePage();
       return true;

@@ -69,7 +69,10 @@ isc.OBSelectorPopupWindow.addProperties({
         this.selectorGridFields[i].canFilter = true;
       }
     }
-    
+    if(!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length===0){
+      this.dataSource.fields = this.selectorGridFields;
+      this.dataSource.init();
+    }
     this.selectorGrid = isc.OBGrid.create({
     
       selector: this.selector,
@@ -458,7 +461,7 @@ isc.OBSelectorItem.addProperties({
 
   handleOutFields: function(record){
     var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
-        fields = form.fields || grid.fields;
+        fields = form.fields || grid.fields, numberFormat;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -469,9 +472,13 @@ isc.OBSelectorItem.addProperties({
               continue;
             }
             if (isc.isA.Number(value)) {
-              value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+              if(outFields[i].formatType && outFioutFields[i].formatType!==''){
+                value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.formats[outFields[i].formatType],
                   OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
-                  OB.Format.defaultGroupingSize);
+                   OB.Format.defaultGroupingSize);
+              }else{
+                value = value.toString().replace('.', OB.Format.defaultDecimalSymbol);
+              }
             }
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
