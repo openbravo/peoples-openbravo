@@ -660,7 +660,11 @@ OB.ViewFormProperties = {
       }
     }
     
-    if(retHiddenInputs) {
+    if(modeIsNew || request.params.MODE === 'EDIT'){
+      //If a new record is created, or an existing one is opened,
+      //the existing hiddenInputs (which correspond to a different record) should be deleted
+      this.hiddenInputs={};
+    }else if(retHiddenInputs) {
       for(prop in retHiddenInputs) {
         if(retHiddenInputs.hasOwnProperty(prop)){
           this.hiddenInputs[prop] = retHiddenInputs[prop];
