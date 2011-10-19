@@ -69,10 +69,8 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this,
-      sortField: 'lineNo',
       fields: this.gridFields,
-      // FIXME: using fixed size
-      height: 300,
+      height: (this.parentWindow.height - 200),
       dataSource: this.dataSource
     });
 
@@ -104,7 +102,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   closeClick: function () {
     var tabSet = OB.MainView.TabSet;
-    tabSet.updateTab(tabSet.getSelectedTab(), this.parentView);
+    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow);
     this.Super('closeClick', arguments);
   },
 

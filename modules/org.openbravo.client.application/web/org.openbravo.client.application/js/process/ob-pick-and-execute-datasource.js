@@ -17,30 +17,10 @@
  ************************************************************************
  */
 
-isc.defineClass('OBPickAndExecuteGrid', isc.OBGrid);
+isc.defineClass('OBPickAndExecuteDataSource', isc.OBRestDataSource);
 
-isc.OBPickAndExecuteGrid.addProperties({
-  dataProperties: {
-    useClientFiltering: false,
-    useClientSorting: false
-  },
-  view: null,
-  dataSource: null,
-  showFilterEditor: true,
-
-  // Editing
-  canEdit: true,
-  editEvent: 'click',
-  autoSaveEdits: false,
-
-  selectionAppearance: 'checkbox',
-  autoFitFieldWidths: true,
-  autoFitWidthApproach: 'title',
-  canAutoFitFields: false,
-  minFieldWidth: 75,
-  width: '100%',
-  height: '100%',
-
-  // default selection
-  selectionProperty: 'selected'
+isc.OBPickAndExecuteDataSource.addProperties({
+  performDSOperation: function (operationType, data, callback, requestProperties) {
+    this.Super('performDSOperation', operationType, data, callback, requestProperties);
+  }
 });

@@ -102,7 +102,7 @@ public class OBViewTab extends BaseTemplateComponent {
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
     if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
-      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBRestDataSource");
+      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBPickAndExecuteDataSource");
     } else {
       dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
     }

@@ -254,6 +254,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             false));
 
     // Process
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.client.application/js/process/ob-pick-and-execute-datasource.js",
+            false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/process/ob-pick-and-execute-grid.js", false));
     globalResources.add(createStaticResource(
