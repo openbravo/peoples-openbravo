@@ -66,15 +66,15 @@ public class ActionButtonUtility {
         data1.setData("ID", "VO");
         v.addElement(data1);
       } else if (strDocStatus.equals("DR") || strDocStatus.equals("IP")) {
-        data1.setData("ID", "CO");
+        data1.setData("ID", "AC".equals(strDocAction) ? "AC" : "CO");
         v.addElement(data1);
         if (!strTable.equals("319") && !strTable.equals("800212")) {
           data1 = new SQLReturnObject();
           data1.setData("ID", "VO");
           v.addElement(data1);
         }
-      } else if ((strDocStatus.equals("CO")) && !(strTable.equals("318")) && // C_Invoice
-          !(strTable.equals("319"))) { // M_InOut
+      } else if ((strDocStatus.equals("CO")) && !(strTable.equals("318"))
+          && !(strTable.equals("319"))) { // C_Invoice - M_InOut
         // Exclude Close for tables C_Invoice and M_InOut because it has
         // no sense for them
         data1.setData("ID", "CL");
@@ -82,11 +82,17 @@ public class ActionButtonUtility {
       }
       data1 = new SQLReturnObject();
       if (strTable.equals("259")) { // C_Order
-        if (strDocStatus.equals("DR")) {
+        if (strDocStatus.equals("DR") && !strDocAction.equals("AC")) {
           data1.setData("ID", "PR");
           v.addElement(data1);
         } else if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RE");
+          v.addElement(data1);
+        } else if (strDocStatus.equals("AC")) {
+          data1.setData("ID", "RE");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "VO");
           v.addElement(data1);
         }
       } else if (strTable.equals("318")) { // C_Invoice
