@@ -296,7 +296,7 @@ isc.OBTabSetMain.addProperties({
 
     // Note: updateTab doesn't remove the previous loading tab
     // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
-    if(previousPane) {
+    if(previousPane && previousPane.isLoadingTab) {
       previousPane.destroy();
     }
   }

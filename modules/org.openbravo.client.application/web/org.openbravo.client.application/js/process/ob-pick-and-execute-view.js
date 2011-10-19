@@ -33,6 +33,7 @@ isc.OBPickAndExecuteView.addProperties({
   showFooter: false,
 
   width: '100%',
+  height: '100%',
   overflow: 'auto',
 
   dataSource: null,
@@ -62,6 +63,9 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
+
+    // the datasource object is defined on view, do not destroy it
+    this.dataSource.potentiallyShared = true;
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this,
@@ -96,6 +100,12 @@ isc.OBPickAndExecuteView.addProperties({
       }
     }
     this.gridFields = result;
+  },
+
+  closeClick: function () {
+    var tabSet = OB.MainView.TabSet;
+    tabSet.updateTab(tabSet.getSelectedTab(), this.parentView);
+    this.Super('closeClick', arguments);
   },
 
   // dummy required by OBStandardView.prepareGridFields

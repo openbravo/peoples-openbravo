@@ -98,7 +98,8 @@ isc.OBStandardWindow.addProperties({
   openProcess: function (params) {
     var parts = this.getPrototype().Class.split('_'), 
         len = parts.length,
-        className = '_';
+        className = '_',
+        tabSet = OB.MainView.TabSet;
     
     if(params.windowId) {
       className = className + params.windowId;
@@ -106,9 +107,8 @@ isc.OBStandardWindow.addProperties({
         // debug mode, we have added _timestamp
         className = className + '_' + parts[2];
       }
-      this.runningProcess = isc[className].create({});
-      this.runningProcess.show();
-      //this.hide();
+      this.runningProcess = isc[className].create({parentView: this});
+      tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
     }
   },
 
