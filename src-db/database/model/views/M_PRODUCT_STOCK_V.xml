@@ -5,8 +5,8 @@ FROM m_storage_detail sd
 JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
 JOIN m_product p ON sd.m_product_id = p.m_product_id AND p.isactive = 'Y'
 WHERE sd.qtyonhand <> 0 OR COALESCE(sd.qtyorderonhand, 0) <> 0
-UNION ALL
-SELECT p.m_product_id AS m_product_stock_v_id, p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, p.m_product_id, 0 AS qtyonhand, NULL AS qtyorderonhand, 0 AS preqtyonhand, NULL AS preqtyorderonhand, p.c_uom_id, NULL AS m_product_uom_id,
+UNION ALL 
+SELECT p.m_product_id AS m_product_stock_v_id, p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, p.m_product_id, 0 AS qtyonhand, NULL AS qtyorderonhand, 0 AS preqtyonhand, NULL AS preqtyorderonhand, p.c_uom_id, NULL AS m_product_uom_id, 
 CASE p.attrsetvaluetype
 WHEN 'D' THEN p.m_attributesetinstance_id
 ELSE NULL
