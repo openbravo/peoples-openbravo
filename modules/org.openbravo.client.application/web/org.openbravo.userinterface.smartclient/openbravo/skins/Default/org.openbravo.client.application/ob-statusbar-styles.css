@@ -40,6 +40,29 @@
   font-weight: bold;
 }
 
+.OBStatusBarTextLink_Title {
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.OBStatusBarTextLink_TitleOver,
+.OBStatusBarTextLink_Title:hover {
+  color: #58A618;
+}
+
+.OBStatusBarTextLink_TitleDown,
+.OBStatusBarTextLink_Title:active {
+  color: #004E27;
+}
+
+.OBStatusBarTextLink_TitleFocused,
+.OBStatusBarTextLink_TitleFocusedOver,
+.OBStatusBarTextLink_TitleFocusedDown,
+.OBStatusBarTextLink_Title:focus {
+  color: #fa962f;
+}
+
 .OBStatusBarTextLabel_Field {
   font-weight: normal;
 }

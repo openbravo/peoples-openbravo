@@ -20,7 +20,7 @@
 
 // == OBTextItem ==
 // Input for normal strings
-isc.ClassFactory.defineClass('OBTextItem', TextItem);
+isc.ClassFactory.defineClass('OBTextItem', isc.TextItem);
 
 isc.OBTextItem.addProperties({
   operator: 'iContains',
@@ -32,7 +32,7 @@ isc.OBTextItem.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBTextFilterItem', OBTextItem);
+isc.ClassFactory.defineClass('OBTextFilterItem', isc.OBTextItem);
 
 isc.OBTextFilterItem.addProperties({
   allowExpressions: true,

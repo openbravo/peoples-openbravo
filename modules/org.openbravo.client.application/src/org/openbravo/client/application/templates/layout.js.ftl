@@ -90,8 +90,11 @@ OB.Layout.initialize = function() {
       
   // create the navbar on the left and the logo on the right
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
+    width: '${data.companyImageLogoWidth}',
+    height: '${data.companyImageLogoHeight}',
+    src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu',
     imageType: 'normal'
-  }, OB.Styles.TopLayout.CompanyImageLogo);
+  });
   OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
   
   OB.TopLayout.OpenbravoLogo = isc.Img.create({
@@ -116,7 +119,7 @@ OB.Layout.initialize = function() {
               width: '100%',
               align: 'right',
               layoutRightMargin: 10,
-              membersMargin: 10,
+              membersMargin: 20,
               defaultLayoutAlign: 'center',
               members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
           })      

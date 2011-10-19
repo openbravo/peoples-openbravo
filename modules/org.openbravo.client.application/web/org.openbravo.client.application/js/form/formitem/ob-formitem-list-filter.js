@@ -19,7 +19,7 @@
 
 //== OBListFilterItem ==
 // Combo box for list references in filter editors.
-isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
+isc.ClassFactory.defineClass('OBListFilterItem', isc.OBListItem);
 
 isc.OBListFilterItem.addProperties({
   allowExpressions: false,

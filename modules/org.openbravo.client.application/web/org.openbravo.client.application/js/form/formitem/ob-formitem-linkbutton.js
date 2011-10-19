@@ -19,4 +19,4 @@
 
 //== OBLinkButtonItem ==
 //Button to emulate a standard html link.
-isc.ClassFactory.defineClass('OBLinkButtonItem', Button);
+isc.ClassFactory.defineClass('OBLinkButtonItem', isc.Button);

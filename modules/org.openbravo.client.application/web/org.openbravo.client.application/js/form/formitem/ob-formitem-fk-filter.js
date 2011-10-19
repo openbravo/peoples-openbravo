@@ -19,7 +19,7 @@
 
 //== OBFKFilterTextItem ==
 //Input used for filtering on FK fields.
-isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
+isc.ClassFactory.defineClass('OBFKFilterTextItem', isc.TextItem);
 
 isc.OBFKFilterTextItem.addProperties({
   operator: 'iContains',

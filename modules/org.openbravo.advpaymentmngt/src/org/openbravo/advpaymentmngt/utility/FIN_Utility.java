@@ -64,7 +64,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
@@ -966,6 +968,21 @@ public class FIN_Utility {
     }
 
     return invoiceDocNo;
+  }
+
+  /**
+   * Returns if given payment status and related payment schedule detail belong to a confirmed
+   * payment
+   * 
+   */
+  public static boolean isPaymentConfirmed(String status, FIN_PaymentScheduleDetail psd) {
+    List<Object> parameters = new ArrayList<Object>();
+    parameters.add(status);
+    parameters.add((psd != null) ? psd.getId() : "");
+    String result = (String) CallStoredProcedure.getInstance().call("APRM_ISPAYMENTCONFIRMED",
+        parameters, null);
+
+    return "Y".equals(result);
   }
 
 }

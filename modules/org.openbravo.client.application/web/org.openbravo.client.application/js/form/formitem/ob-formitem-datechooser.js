@@ -20,7 +20,7 @@
 // == OBDateChooser ==
 // OBDateChooser inherits from SmartClient DateChooser
 // extends standard DateChooser implementation to be used in OBDateItem
-isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
+isc.ClassFactory.defineClass('OBDateChooser', isc.DateChooser);
 
 isc.OBDateChooser.addProperties({
   firstDayOfWeek: 1,

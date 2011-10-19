@@ -86,7 +86,8 @@ public class ProductInfo {
   public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
     if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 8)
       return null;
-    // No Product - get Default from Product Category
+    // No Product - get Default from Accounting Schema defaults then from default Product Category
+    // and finally from oldest Product Category
     if (m_M_Product_ID.equals(""))
       return getAccountDefault(AcctType, as, conn);
     ProductInfoData[] data = null;
@@ -132,7 +133,8 @@ public class ProductInfo {
   } // getAccount
 
   /**
-   * Account from Default Product Category
+   * Account from Accounting Schema defaults, then from default Product Category and finally from
+   * oldest Product Category
    * 
    * @param AcctType
    *          see ACCTTYPE_* (1..8)

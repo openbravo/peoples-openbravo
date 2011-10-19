@@ -19,7 +19,7 @@
 
 // == OBListItem ==
 // Combo box for list references, note is extended by OBFKItem again.
-isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBListItem', isc.ComboBoxItem);
 
 isc.OBListItem.addProperties({
   operator: 'equals',
@@ -95,7 +95,7 @@ isc.OBListItem.addProperties({
   },
 
   setEntries: function(entries) {
-    var length = entries.length,
+    var length = entries.length, i, id, identifier,
       valueField = this.getValueFieldName(), valueMap = {};
     this.entries = [];
     for (i = 0; i < length; i++) {

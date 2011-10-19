@@ -750,7 +750,7 @@ OB.Utilities.postThroughHiddenForm = function(url, data) {
   var encodeProperties = {
     // prevents timezone issues
     encodeDate: function(dt) {
-      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+      var ret, oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
       isc.Comm.xmlSchemaMode = true;
       ret = dt.toSerializeableDate();
       isc.Comm.xmlSchemaMode = oldXMLSchemaMode;

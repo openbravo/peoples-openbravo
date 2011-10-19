@@ -79,7 +79,7 @@
                    WHERE AD_Module_ID = M.AD_Module_ID
                      AND IsIncluded = 'Y')                as display, m.Status, m.help, m.author, m.url,
                      CASE WHEN COALESCE(AD_ORGMODULE.VERSION,M.VERSION) <> M.VERSION THEN 'Y' ELSE '' END AS Update_Available,
-                     seqno
+                     m.seqno
            FROM AD_Module M left join AD_DATASET on M.ad_module_id = AD_DATASET.ad_module_id
 			    LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
           WHERE M.TYPE = 'M'

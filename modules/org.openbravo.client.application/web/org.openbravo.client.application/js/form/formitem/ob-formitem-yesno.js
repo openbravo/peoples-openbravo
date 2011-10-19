@@ -19,7 +19,7 @@
 
 // == OBYesNoItem ==
 // Extends ComboBoxItem with preset yes and no values.
-isc.ClassFactory.defineClass('OBYesNoItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBYesNoItem', isc.ComboBoxItem);
 
 isc.OBYesNoItem.addProperties({
   operator: 'equals',
