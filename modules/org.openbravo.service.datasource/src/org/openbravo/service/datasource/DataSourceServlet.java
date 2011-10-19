@@ -52,6 +52,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.OBUserException;
@@ -68,6 +69,7 @@ import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
@@ -326,7 +328,25 @@ public class DataSourceServlet extends BaseKernelServlet {
               continue;
             }
             Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
-            if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
+
+            if (prop.isAuditInfo()) {
+              Element element = null;
+              if ("creationDate".equals(prop.getName())) {
+                element = OBViewUtil.createdElement;
+              } else if ("createdBy".equals(prop.getName())) {
+                element = OBViewUtil.createdByElement;
+              } else if ("updated".equals(prop.getName())) {
+                element = OBViewUtil.updatedElement;
+              } else if ("updatedBy".equals(prop.getName())) {
+                element = OBViewUtil.updatedByElement;
+              }
+              if (element != null) {
+                niceFieldProperties.put(prop.getName(),
+                    OBViewUtil.getLabel(element, element.getADElementTrlList()));
+              } else {
+                niceFieldProperties.put(prop.getName(), col.getName());
+              }
+            } else if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
               Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
               for (Field field : tab.getADFieldList()) {
                 if (!field.getColumn().getId().equals(col.getId())) {
