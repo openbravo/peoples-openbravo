@@ -54,6 +54,7 @@ isc.OBPickAndExecuteView.addProperties({
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         click: function () {
           view.viewGrid.discardAllEdits();
+          view.viewGrid.deselectAllRecords();
         }
       });
 
@@ -85,12 +86,13 @@ isc.OBPickAndExecuteView.addProperties({
   },
 
   prepareGridFields: function (fields) {
-    //FIXME: using fixed $b4 reference
-    var result = isc.OBStandardView.$b4.prepareGridFields.apply(this, arguments),
+    var result = isc.OBStandardView.getPrototype().prepareGridFields.apply(this, arguments),
         i, f, len = result.length;
+
     for (i = 0; i < len; i++) {
-      if (result[i].disabled) {
+      if (result[i].editorProperties && result[i].editorProperties.disabled) {
         result[i].canEdit = false;
+        result[i].readOnlyEditorType = 'OBTextItem';
       }
     }
     this.gridFields = result;

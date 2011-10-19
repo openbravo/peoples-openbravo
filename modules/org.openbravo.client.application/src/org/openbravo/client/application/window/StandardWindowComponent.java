@@ -53,6 +53,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private OBViewTab rootTabComponent = null;
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
+  private List<String> processViews = new ArrayList<String>();
 
   protected Template getComponentTemplate() {
     if (TEMPLATE_MAP.containsKey(window.getWindowType())) {
@@ -68,6 +69,10 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       return KernelConstants.ID_PREFIX + window.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }
     return KernelConstants.ID_PREFIX + getWindowId();
+  }
+
+  public void setUniqueString(String uniqueString) {
+    this.uniqueString = uniqueString;
   }
 
   public boolean isIndevelopment() {
@@ -145,7 +150,12 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       }
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
+      tabComponent.setUniqueString(uniqueString);
       tempTabs.add(tabComponent);
+      final String processView = tabComponent.getProcessViews();
+      if (!"".equals(processView)) {
+        processViews.add(tabComponent.getProcessViews());
+      }
     }
 
     // compute the correct hierarchical structure of the tabs
@@ -190,5 +200,9 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       rootTabComponent.setRootTab(true);
     }
     return rootTabComponent;
+  }
+
+  public List<String> getProcessViews() {
+    return processViews;
   }
 }

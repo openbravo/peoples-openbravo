@@ -54,6 +54,7 @@ isc.OBToolbarActionButton.addProperties({
   doAction: function (rowNum) {
     var theView = this.contextView,
         me = this,
+        standardWindow = this.view.standardWindow,
         param, allProperties, sessionProperties, callbackFunction, popupParams;
 
     if (rowNum && !theView.viewGrid.getSelectedRecord()) {
@@ -76,6 +77,19 @@ isc.OBToolbarActionButton.addProperties({
     }
 
     allProperties.inpProcessId = this.processId;
+
+    // obuiapp_process definition
+    if (this.newDefinition) {
+      callbackFunction = function () {
+        standardWindow.openProcess({
+          processId: me.processId,
+          windowId: me.windowId
+        });
+      };
+
+      theView.setContextInfo(sessionProperties, callbackFunction, true);
+      return;
+    }
 
     // ad_process definition handling
     if (this.modal) {

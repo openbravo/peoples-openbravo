@@ -38,6 +38,7 @@ isc.OBStandardWindow.addClassProperties({
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
+
   view: null,
   
   viewProperties: null,
@@ -93,7 +94,24 @@ isc.OBStandardWindow.addProperties({
       this.setPersonalization(this.getClass().personalization);
     }
   },
-  
+
+  openProcess: function (params) {
+    var parts = this.getPrototype().Class.split('_'), 
+        len = parts.length,
+        className = '_';
+    
+    if(params.windowId) {
+      className = className + params.windowId;
+      if(len === 3) {
+        // debug mode, we have added _timestamp
+        className = className + '_' + parts[2];
+      }
+      this.runningProcess = isc[className].create({});
+      this.runningProcess.show();
+      //this.hide();
+    }
+  },
+
   readWindowSettings: function() {
     var standardWindow = this;
     

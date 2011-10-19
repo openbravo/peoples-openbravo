@@ -20,7 +20,6 @@
 -->
 
 /*jslint*/
-OB.Layout.ViewManager.loadedWindowClassName = '${data.windowClientClassName?js_string}';
 
 isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBPickAndExecuteView).addProperties({
     windowId: '${data.windowId?js_string}',
