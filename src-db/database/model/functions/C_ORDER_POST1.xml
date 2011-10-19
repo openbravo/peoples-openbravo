@@ -269,7 +269,7 @@
         v_ResultStr:='ReActivate';
         UPDATE C_ORDER
         SET DocStatus='IP', -- In Progress
-            DocAction=CASE WHEN v_docbasetypetarget IN ('PRN', 'SRN') THEN 'AC' ELSE 'CO' END,
+            DocAction=CASE WHEN v_docbasetypetarget IN ('PRM', 'SRM') THEN 'AC' ELSE 'CO' END,
             Processing='N',
             Processed='N',
             Updated=now(),
@@ -389,7 +389,7 @@
 
         UPDATE C_ORDER
         SET DocStatus='DR', -- Draft
-            DocAction=CASE WHEN v_docbasetypetarget IN ('PRN', 'SRN') THEN 'AC' ELSE 'CO' END,
+            DocAction=CASE WHEN v_docbasetypetarget IN ('PRM', 'SRM') THEN 'AC' ELSE 'CO' END,
             Processing='N',
             Updated=now(),
             UpdatedBy=v_User
@@ -482,6 +482,7 @@
         SET QtyOrdered=0,
             --MODIFIED BY F.IRIAZABAL
             QuantityOrder = CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN NULL ELSE 0 END,
+            qtyrejected = qtyordered,
             LineNetAmt=0,
             Updated=now()
         WHERE C_Order_ID=v_Record_ID
@@ -1251,7 +1252,7 @@
       IF (v_DocAction = 'AC') THEN
         UPDATE C_ORDER
         SET DocStatus='AC',
-            DocAction='--',
+            DocAction='RE',
             Processed='Y',
             Updated=now(),
             UpdatedBy=v_User
