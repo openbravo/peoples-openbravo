@@ -70,7 +70,7 @@ public class About extends HttpSecureAppServlet {
       if (ActivationKey.isActiveInstance()) {
         String edition = "";
         if (ak.isTrial()) {
-          edition = "Trial - ";
+          edition = Utility.messageBD(this, "OPSTrial", vars.getLanguage()) + " - ";
         }
         edition += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
             vars.getLanguage());
