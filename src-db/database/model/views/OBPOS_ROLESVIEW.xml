@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+  <database name="VIEW OBPOS_ROLESVIEW">
+    <view name="OBPOS_ROLESVIEW"><![CDATA[SELECT obpos_roles.obpos_roles_id, obpos_roles.ad_client_id, obpos_roles.ad_org_id, obpos_roles.isactive, obpos_roles.created, obpos_roles.createdby, obpos_roles.updated, obpos_roles.updatedby, obpos_roles.name
+FROM obpos_roles]]></view>
+  </database>
