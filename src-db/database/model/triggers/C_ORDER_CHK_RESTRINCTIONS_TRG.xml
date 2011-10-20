@@ -86,6 +86,18 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
+  
+  --Populate DocStatusRM when the Order is a return material.
+  IF (INSERTING OR UPDATING) THEN
+    SELECT count(1) INTO v_n
+    FROM c_doctype
+    WHERE c_doctype_id = :NEW.C_DOCTYPETARGET_ID
+      AND (docsubtypepo = 'PRM' OR docsubtypeso = 'SRM');
+    IF (v_n = 1) THEN
+      :NEW.docstatusrm := :NEW.docstatus;
+    END IF;
+  END IF;
+
 END C_ORDER_CHK_RESTRINCTIONS_TRG
 ]]></body>
     </trigger>
