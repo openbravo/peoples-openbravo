@@ -17,6 +17,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_LINE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_PRODUCT" name="EM_OBPOS_PRODUCTAUX">
         <reference local="EM_OBPOS_PRODUCTAUX_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
