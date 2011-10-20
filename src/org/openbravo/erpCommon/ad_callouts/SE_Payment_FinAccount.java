@@ -61,7 +61,7 @@ public class SE_Payment_FinAccount extends SimpleCallout {
       info.addResult("inpfinaccTxnAmount", "");
     }
 
-    String finIsReceipt = info.getStringParameter("inpfinIsreceipt", null);
+    String finIsReceipt = info.getStringParameter("inpisreceipt", null);
     boolean isPaymentOut = "N".equals(finIsReceipt);
 
     String srtPaymentMethodId = info.getStringParameter("inpfinPaymentmethodId",

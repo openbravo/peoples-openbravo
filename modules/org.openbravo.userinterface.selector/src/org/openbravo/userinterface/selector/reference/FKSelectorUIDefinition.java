@@ -108,6 +108,9 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     String displayFieldName = JsonConstants.IDENTIFIER;
     if (displayField != null && displayField.getProperty() != null) {
       displayFieldName = displayField.getProperty();
+    } else {
+      // fallback to the default
+      return null;
     }
     return prop.getName() + "." + displayFieldName;
   }

@@ -23,17 +23,25 @@
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
 
 isc.OBSectionItem.addProperties({
+  sectionExpanded: false,
+  
   // revisit when/if we allow disabling of section items
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
 
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
+  
   canTabToHeader: true,
   
   alwaysTakeSpace: false,
 
   setSectionItemInContent: function(form) {
-    var i = 0;
-    for (i = 0; i < this.itemIds.length; i++) {
+    var i = 0, length = this.itemIds.length;
+    for (i = 0; i < length; i++) {
       if (form.getItem(this.itemIds[i])) {
         form.getItem(this.itemIds[i]).section = this;
       }
@@ -48,9 +56,9 @@ isc.OBSectionItem.addProperties({
   // Update the property alwaysTakeSpace when collapsing/expanding a section
   // Note: The hidden fields are not updated, they always have alwaysTakeSpace to false
   updateAlwaysTakeSpace: function(flag) {
-    var i, f = this.form, item;
+    var i, f = this.form, item, length = this.itemIds.length;
 
-    for(i = 0; i < this.itemIds.length; i++) {
+    for(i = 0; i < length; i++) {
       item = f.getItem(this.itemIds[i]);
       if (item) {
         // note different cases can occur, these properties may be set, maybe
@@ -107,8 +115,8 @@ isc.OBSectionItem.addProperties({
   },
 
   setNewFocusItemExpanding: function(){
-    var newFocusItem = null, i;
-    for (i = 0; i < this.itemIds.length; i++) {
+    var newFocusItem = null, i, length = this.itemIds.length;
+    for (i = 0; i < length; i++) {
       var itemName = this.itemIds[i], item = this.form.getItem(itemName);
       // isFocusable is a method added in ob-smartclient.js
       if (item.isFocusable()) {
@@ -126,13 +134,15 @@ isc.OBSectionItem.addProperties({
   },
 
   showIf: function(item, value, form, values) {
-    var i, field;
+    var i, field, length;
 
     if(!this.itemIds) {
       return false;
     }
-
-    for (i = 0; i < this.itemIds.length; i++) {
+    
+    length = this.itemIds.length;
+    
+    for (i = 0; i < length; i++) {
       field = form.getItem(this.itemIds[i]);
 
       if(!field || (item.visible === false || item.displayed === false || item.hiddenInForm === true)) {

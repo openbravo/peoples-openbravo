@@ -55,7 +55,9 @@
         this.dataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);
     },
-    whereClause : '${data.whereClause?js_string}'
+    <#if data.whereClause != "">
+        whereClause : '${data.whereClause?js_string}'
+    </#if>
 <#else>
 /* jslint */
 sc_${data.columnName} = isc.OBSelectorLinkWidget.create({
@@ -93,7 +95,9 @@ sc_${data.columnName} = isc.OBSelectorLinkWidget.create({
     },
     extraSearchFields: [${data.extraSearchFields}],
     dataSource: ${data.dataSourceJavascript},
-    whereClause : '${data.whereClause?js_string}',
+    <#if data.whereClause != "">
+        whereClause : '${data.whereClause?js_string}',
+    </#if>
     callOut: ${data.callOut},
     title : '${data.title}'
 });

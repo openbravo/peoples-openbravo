@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,6 +31,7 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -38,8 +40,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.currency.ConversionRateDoc;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -298,7 +300,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
               triggerAutomaticFinancialAccountTransaction(vars, conProvider, payment);
           }
-
+          if (!payment.getAccount().getCurrency().equals(payment.getCurrency())
+              && getConversionRateDocument(payment).size() == 0) {
+            insertConversionRateDocument(payment);
+          }
         } finally {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
@@ -511,11 +516,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     }
                   }
                   // Create merged Payment Schedule Detail with the pending to be paid amount
-                  final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
-                      .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
-                  mergedScheduleDetail.setInvoicePaymentSchedule(paymentScheduleDetail
-                      .getInvoicePaymentSchedule());
-                  OBDal.getInstance().save(mergedScheduleDetail);
+                  if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
+                    final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
+                        .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                    mergedScheduleDetail.setInvoicePaymentSchedule(paymentScheduleDetail
+                        .getInvoicePaymentSchedule());
+                    OBDal.getInstance().save(mergedScheduleDetail);
+                  }
                 } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
                   // Related to orders
                   for (final FIN_PaymentScheduleDetail ordScheDetail : paymentScheduleDetail
@@ -530,11 +537,15 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     }
                   }
                   // Create merged Payment Schedule Detail with the pending to be paid amount
-                  final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
-                      .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
-                  mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
-                      .getOrderPaymentSchedule());
-                  OBDal.getInstance().save(mergedScheduleDetail);
+                  if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
+                    final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
+                        .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                    mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
+                        .getOrderPaymentSchedule());
+                    OBDal.getInstance().save(mergedScheduleDetail);
+                  }
+                } else if (paymentDetail.getGLItem() != null) {
+                  paymentScheduleDetail.setCanceled(true);
                 } else if (paymentScheduleDetail.getOrderPaymentSchedule() == null
                     && paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                   // Credit payment
@@ -606,7 +617,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private void triggerAutomaticFinancialAccountTransaction(VariablesSecureApp vars,
       ConnectionProvider connectionProvider, FIN_Payment payment) {
     FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
-    TransactionsDao.process(transaction);
+    try {
+      processTransaction(vars, connectionProvider, "P", transaction);
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      e.printStackTrace(System.err);
+    }
     return;
   }
 
@@ -686,4 +702,66 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           totalPaid.toString(), paymentSchedule.getOutstandingAmount().toString()));
     }
   }
+
+  private List<ConversionRateDoc> getConversionRateDocument(FIN_Payment payment) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+          ConversionRateDoc.class);
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, payment.getCurrency()));
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, payment.getAccount()
+          .getCurrency()));
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, payment));
+      return obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private ConversionRateDoc insertConversionRateDocument(FIN_Payment payment) {
+    OBContext.setAdminMode();
+    try {
+      ConversionRateDoc newConversionRateDoc = OBProvider.getInstance()
+          .get(ConversionRateDoc.class);
+      newConversionRateDoc.setOrganization(payment.getOrganization());
+      newConversionRateDoc.setCurrency(payment.getCurrency());
+      newConversionRateDoc.setToCurrency(payment.getAccount().getCurrency());
+      newConversionRateDoc.setRate(payment.getFinancialTransactionConvertRate());
+      newConversionRateDoc.setForeignAmount(payment.getFinancialTransactionAmount());
+      newConversionRateDoc.setPayment(payment);
+      OBDal.getInstance().save(newConversionRateDoc);
+      OBDal.getInstance().flush();
+      return newConversionRateDoc;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * It calls the Transaction Process for the given transaction and action.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param transaction
+   *          FIN_FinaccTransaction that needs to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  private OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_FinaccTransaction transaction) throws Exception {
+    ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_TransactionProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
+  }
+
 }

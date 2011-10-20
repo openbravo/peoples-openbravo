@@ -218,19 +218,21 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner matchBusinessPartnerByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
-
+    List<Object> parameters = new ArrayList<Object>();
     OBContext.setAdminMode();
     try {
-
       whereClause.append(" as bsl ");
-      whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = '"
-          + partnername + "'");
+      whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
+      parameters.add(partnername);
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
-          FIN_BankStatementLine.class, whereClause.toString());
+          FIN_BankStatementLine.class, whereClause.toString(), parameters);
       List<FIN_BankStatementLine> matchedLines = bsl.list();
       if (matchedLines.size() == 0)
         return null;
@@ -243,15 +245,19 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner finBPByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
+    List<Object> parameters = new ArrayList<Object>();
 
     OBContext.setAdminMode();
     try {
-
       whereClause.append(" as bp ");
-      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = '" + partnername + "'");
+      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = ?");
+      parameters.add(partnername);
       final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
-          whereClause.toString());
+          whereClause.toString(), parameters);
       List<BusinessPartner> matchedBP = bp.list();
       if (matchedBP.size() == 0)
         return null;

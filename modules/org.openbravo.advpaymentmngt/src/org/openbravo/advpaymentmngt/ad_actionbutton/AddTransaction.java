@@ -36,6 +36,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
@@ -46,6 +47,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
@@ -62,6 +64,8 @@ import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AddTransaction extends HttpSecureAppServlet {
@@ -162,7 +166,11 @@ public class AddTransaction extends HttpSecureAppServlet {
                   : "PWNC", depositAmt, paymentAmt, null, null, null,
               p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate), p
                   .getCurrency(), p.getFinancialTransactionConvertRate(), p.getAmount());
-          TransactionsDao.process(finTrans);
+          OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
+              "P", finTrans);
+          if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+            throw new OBException(processTransactionError.getMessage());
+          }
           if (!"".equals(strFinBankStatementLineId)) {
             matchBankStatementLine(vars, finTrans, strFinBankStatementLineId);
           }
@@ -211,8 +219,11 @@ public class AddTransaction extends HttpSecureAppServlet {
             glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
                 : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
             businessPartner, product, salesRegion);
-
-        TransactionsDao.process(finTrans);
+        OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
+            "P", finTrans);
+        if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+          throw new OBException(processTransactionError.getMessage());
+        }
         strMessage = "1 " + "@RowsInserted@";
         if (!"".equals(strFinBankStatementLineId)) {
           matchBankStatementLine(vars, finTrans, strFinBankStatementLineId);
@@ -232,8 +243,11 @@ public class AddTransaction extends HttpSecureAppServlet {
             FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC" : "PWNC",
             feeDepositAmt, feePaymentAmt, null, null, null, "BF",
             FIN_Utility.getDate(strTransactionDate), null, null, null);
-
-        TransactionsDao.process(finTrans);
+        OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
+            "P", finTrans);
+        if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+          throw new OBException(processTransactionError.getMessage());
+        }
         strMessage = "1 " + "@RowsInserted@";
         if (!"".equals(strFinBankStatementLineId)) {
           matchBankStatementLine(vars, finTrans, strFinBankStatementLineId);
@@ -408,14 +422,43 @@ public class AddTransaction extends HttpSecureAppServlet {
           finTrans.getAccount(), "N");
       bsline.setMatchingtype("AD");
       bsline.setFinancialAccountTransaction(finTrans);
-      if (finTrans.getFinPayment() != null)
+      if (finTrans.getFinPayment() != null) {
         bsline.setBusinessPartner(finTrans.getFinPayment().getBusinessPartner());
+        finTrans.getFinPayment().setStatus("RPPC");
+      }
       finTrans.setReconciliation(reconciliation);
       finTrans.setStatus("RPPC");
       OBDal.getInstance().save(bsline);
       OBDal.getInstance().save(finTrans);
       OBDal.getInstance().flush();
     }
+  }
+
+  /**
+   * It calls the Transaction Process for the given transaction and action.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param transaction
+   *          FIN_FinaccTransaction that needs to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  private OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_FinaccTransaction transaction) throws Exception {
+    ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_TransactionProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
   }
 
   public String getServletInfo() {

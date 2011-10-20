@@ -17,10 +17,10 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
--->
 // contains the code for creating a class reflecting the standard window
-//jslint
 // tell the view manager what got loaded...
+-->
+/*jslint*/
 OB.Layout.ViewManager.loadedWindowClassName = '${data.windowClientClassName?js_string}';
 
 isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBStandardWindow).addProperties({

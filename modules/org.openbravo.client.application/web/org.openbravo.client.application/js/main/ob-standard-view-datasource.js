@@ -111,20 +111,19 @@ isc.OBViewDataSource.addProperties({
   },
 
   getAdditionalProps: function() {
-    var prop;
+    var prop, length, i, fld;
     if (this.additionalProps !== null) {
       return this.additionalProps;
     }
     this.additionalProps = "";
-    for (prop in this.getFields()) {
-      if (this.getFields().hasOwnProperty(prop)) {
-        var fld = this.getFields()[prop];
-        if (fld.additional) {
-          if (this.additionalProps.length > 0) {
-            this.additionalProps += ",";
-          }
-          this.additionalProps += fld.name;
+    length = this.getFields().length;
+    for (i = 0; i < length; i++) {
+      fld = this.getFields()[i];
+      if (fld.additional) {
+        if (this.additionalProps.length > 0) {
+          this.additionalProps += ",";
         }
+        this.additionalProps += fld.name;
       }
     }
     return this.additionalProps;

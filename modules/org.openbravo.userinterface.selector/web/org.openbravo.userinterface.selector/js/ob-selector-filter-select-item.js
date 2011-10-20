@@ -36,6 +36,18 @@ isc.OBSelectorFilterSelectItem.addProperties({
     return ret;
   },
 
+  setDataSource: function(ds) {
+    var val;
+    this.optionDataSource = ds;
+    if (this.getValue()) {
+      val = this.getValue();
+      // first clear 
+      this.setValue(null);
+      // then set again to force a load
+      this.setValue(val);
+    }
+  },
+  
   filterDataBoundPickList : function (requestProperties, dropCache){
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};

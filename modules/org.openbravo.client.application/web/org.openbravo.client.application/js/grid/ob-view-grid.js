@@ -32,17 +32,12 @@ isc.OBViewGrid.addClassProperties({
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
 isc.OBViewGrid.addProperties({
-  
+
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form
   // and the grid and other related components.
   view: null,
-  
-  // ** {{{ foreignKeyFieldNames }}} **
-  // The list of fields which are foreign keys, these require custom
-  // filtering.
-  foreignKeyFieldNames: [],
   
   // ** {{{ editGrid }}} **
   // Controls if an edit link column is created in the grid, set to false to
@@ -101,6 +96,9 @@ isc.OBViewGrid.addProperties({
   canOpenRecordEditor: true,
   showDetailFields: true,
   showErrorIcons: false,
+  
+  allowFilterExpressions: true,
+  showFilterExpressionLegendMenuItem: true,
   
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
@@ -193,7 +191,8 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function(newData, dsResponse) {
-      var i;
+      var i, length;
+      
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
@@ -201,7 +200,8 @@ isc.OBViewGrid.addProperties({
       }
       // correct the length if there is already data in the localData array
       if (this.localData) {
-        for (i = dsResponse.endRow + 1; i < this.localData.length; i++) {
+        length = this.localData.length;
+        for (i = dsResponse.endRow + 1; i < length; i++) {
           if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
             dsResponse.totalRows = i + 1;
           } else {
@@ -239,7 +239,7 @@ isc.OBViewGrid.addProperties({
       this.editLinkColNum = 1;
     }
 
-    this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
+    this.editFormDefaults = isc.addProperties({}, isc.clone(OB.ViewFormProperties), this.editFormDefaults);
 
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
@@ -337,7 +337,7 @@ isc.OBViewGrid.addProperties({
   },
 
   draw: function() {
-    var drawnBefore = this.isDrawn(), form, item;
+    var drawnBefore = this.isDrawn(), form, item, length;
     this.Super('draw', arguments);
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
@@ -349,8 +349,9 @@ isc.OBViewGrid.addProperties({
       // to give everyone time to be ready
       if (!form.getFocusItem()) {
         items = form.getItems();
+        length = items.length;
 
-        for (i = 0; i < items.length; i++) {
+        for (i = 0; i < length; i++) {
           item = items[i];
           if (item.getCanFocus() && !item.isDisabled()) {
             item.delayCall('focusInItem', null, 100);
@@ -390,7 +391,7 @@ isc.OBViewGrid.addProperties({
   },
   
   cellHoverHTML: function(record, rowNum, colNum){
-    var field = this.getField(colNum), cellErrors, msg = '', i;
+    var ret, field = this.getField(colNum), cellErrors, msg = '', i;
     if (this.isCheckboxField(field)) {
       return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
     }
@@ -406,11 +407,66 @@ isc.OBViewGrid.addProperties({
       return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
     }
     
-    return this.Super('cellHoverHTML', arguments);
+    this.inCellHoverHTML = true;
+    ret = this.Super('cellHoverHTML', arguments);
+    delete this.inCellHoverHTML;
+    return ret;
+  },
+ 
+  // also store the filter criteria
+  getViewState : function (returnObject, includeFilter) {
+    var state = this.Super('getViewState', [returnObject || true]);
+
+    if (includeFilter) {
+      state.filter = this.getCriteria();
+
+      if (!this.filterClause) {
+        state.noFilterClause = true;
+      }
+    }
+    
+    if (returnObject) {
+      return state;
+    }
+    return '(' + isc.Comm.serialize(state,false) + ')';
   },
   
+  setViewState: function (state) {
+    var i, length, 
+      localState = this.evalViewState(state, 'viewState');
+    
+    // strange case, sometimes need to call twice
+    if (isc.isA.String(localState)) {
+      localState = this.evalViewState(state, 'viewState');
+    }
+    
+    if (!localState) {
+      return;
+    }
+    
+    this.Super('setViewState', arguments);
+
+    if (localState.noFilterClause) {
+      this.filterClause = null;
+      this.view.messageBar.hide();
+    }      
+    if (localState.filter) {
+      this.setCriteria(localState.filter);
+      if (this.filterEditor) {
+        // update the internal value also, this means that it
+        // get retained when showing the grid for the first
+        // time
+        length = this.filterEditor.getFields().length;
+        for (i = 0; i < length; i++) {
+          this.filterEditor.storeUpdatedEditorValue(false, i);
+        }
+      }
+    }
+  },
+ 
   setView: function(view){
-    var dataPageSizeaux;
+    var dataPageSizeaux, length;
+    
     this.view = view;
     this.editFormDefaults.view = view;
     if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
@@ -436,9 +492,11 @@ isc.OBViewGrid.addProperties({
     
     // if there is no autoexpand field then just divide the space
     if (!this.getAutoFitExpandField()) {
+      length = this.fields.length;
+      
       // nobody, then give all the fields a new size, dividing
       // the space among them
-      for (i = 0; i < this.fields.length; i++) {
+      for (i = 0; i < length; i++) {
         // ignore the first 2 fields, the checkbox and edit/form
         // buttons
         if (i > 1) {
@@ -641,7 +699,11 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
-  updateRowCountDisplay: function(){
+  updateRowCountDisplay: function(delayed){
+    if (!delayed) {
+      this.delayCall('updateRowCountDisplay', [true], 100);
+      return;
+    }
     var newValue = '', length = this.data.getLength();
     if (length > this.dataPageSize) {
       newValue = '>' + this.dataPageSize;
@@ -652,6 +714,7 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+      this.filterEditor.getEditForm().getField(isc.OBViewGrid.EDIT_LINK_FIELD_NAME).defaultValue = newValue;
     }
   },
   
@@ -663,7 +726,7 @@ isc.OBViewGrid.addProperties({
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      if (!this.isOpenDirectMode && selectedValues.length === 0) {
+      if (selectedValues && !this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
         }
@@ -919,15 +982,20 @@ isc.OBViewGrid.addProperties({
   },
     
   convertCriteria: function(criteria){
-    var selectedValues, prop, fld, value, i, criterion, fldName;
+    var selectedValues, prop, fld, value, i, 
+      criterion, fldName, length;
 
     if (!criteria) {
-      criteria = {
-        operator: 'and', 
-        _constructor: "AdvancedCriteria", 
-        criteria:[]};
+      criteria = {};      
     } else {
       criteria = isc.clone(criteria);
+    }
+    
+    if (!criteria.operator) {
+      criteria.operator = 'and';
+    }
+    if (!criteria._constructor) {
+      criteria._constructor = "AdvancedCriteria"; 
     }
     
     if (!criteria.criteria) {
@@ -954,7 +1022,8 @@ isc.OBViewGrid.addProperties({
       delete this.forceRefresh;
     } else {
       // remove the _dummy
-      for (i = 0; i < criteria.criteria.length; i++) {
+      length = criteria.criteria.length;
+      for (i = 0; i < length; i++) {
         if (criteria.criteria[i].fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
           criteria.criteria.removeAt(i);
           break;
@@ -968,19 +1037,22 @@ isc.OBViewGrid.addProperties({
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       var parentPropertyFilterValue = -1;
-      if (selectedValues.length === 0) {
-        parentPropertyFilterValue = '-1';
-      } else if (selectedValues.length > 1) {
-        parentPropertyFilterValue = '-1';
-      } else {
-        parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+      if (selectedValues) {
+        if (selectedValues.length === 0) {
+          parentPropertyFilterValue = '-1';
+        } else if (selectedValues.length > 1) {
+          parentPropertyFilterValue = '-1';
+        } else {
+          parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+        }
       }
       
       this.view.parentRecordId = parentPropertyFilterValue;
       
       var fnd = false;
       var innerCriteria = criteria.criteria;
-      for (i = 0; i < innerCriteria.length; i++) {
+      length = innerCriteria.length;
+      for (i = 0; i < length; i++) {
         criterion = innerCriteria[i];
         fldName = criterion.fieldName;
         if (fldName === this.view.parentProperty) {
@@ -1083,10 +1155,11 @@ isc.OBViewGrid.addProperties({
   },
   
   // determine which field can be autoexpanded to use extra space
-  getAutoFitExpandField: function() {
-    var ret, i;
-    for (i = 0; i < this.autoExpandFieldNames.length; i++) {
-      var field = this.getField(this.autoExpandFieldNames[i]);
+  getAutoFitExpandField: function() {    
+    var ret, i, length;
+    length = this.view.autoExpandFieldNames.length;
+    for (i = 0; i < length; i++) {
+      var field = this.getField(this.view.autoExpandFieldNames[i]);
       if (field && field.name) {
         return field.name;
       }
@@ -1094,7 +1167,7 @@ isc.OBViewGrid.addProperties({
     ret = this.Super('getAutoFitExpandField', arguments);    
     return ret;
   },
-
+  
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
     var textDeselectInterval = setInterval(function() { //To ensure that if finally a double click (recordDoubleClick) is executed, no work is highlighted/selected
       if (document.selection && document.selection.empty) {
@@ -1225,7 +1298,7 @@ isc.OBViewGrid.addProperties({
         click: function(){
           var value;
           // a foreign key field, use the displayfield/identifier
-          if (field.foreignKeyField && field.displayField) {
+          if (field.fkField && field.displayField) {
             value = record[field.displayField];
           } else {
             value = grid.getEditDisplayValue(rowNum, colNum, record);
@@ -1242,7 +1315,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (singleSelected && field.foreignKeyField) {
+    if (singleSelected && field.fkField) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function(){
@@ -1251,7 +1324,7 @@ isc.OBViewGrid.addProperties({
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }
-          OB.Utilities.openDirectView(sourceWindow, field.referencedKeyColumnName, field.targetEntity, record[fldName]);
+          OB.Utilities.openDirectView(sourceWindow, field.refColumnName, field.targetEntity, record[fldName]);
         }
       });
     }
@@ -1308,6 +1381,7 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
+      this.filterEditor.getEditForm().getField(this.getCheckboxField().name).defaultValue = newValue;
     }
   },
   
@@ -1542,11 +1616,11 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i, ret;
+    var i, ret, length = this.getFields().length;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.cellHasErrors(rowNum, i)) {
          colNum = i;
          break; 
@@ -1558,7 +1632,7 @@ isc.OBViewGrid.addProperties({
       this.forceFocusColumn = this.getField(colNum).name;
     } else {
       // set the first focused column
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
           colNum = i;
         }
@@ -1693,8 +1767,9 @@ isc.OBViewGrid.addProperties({
   },
 
   undoEditSelectedRows: function(){
-    var selectedRecords = this.getSelectedRecords(), toRemove = [], i;
-    for (i = 0; i < selectedRecords.length; i++) {
+    var selectedRecords = this.getSelectedRecords(), 
+      toRemove = [], i, length = selectedRecords.length;
+    for (i = 0; i < length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
@@ -1731,6 +1806,20 @@ isc.OBViewGrid.addProperties({
     }
 
     return this.Super('getCellStyle', arguments);
+  },
+  
+  // prevent multi-line content to show strangely
+  // https://issues.openbravo.com/view.php?id=17531
+  formatCellValue: function(value, record, rowNum, colNum) {
+    if (this.inCellHoverHTML || !isc.isA.String(value)) {
+      return value;
+    }
+  
+    var index = value.indexOf('\n');
+    if (index !== -1) {
+      return value.substring(0, index) + '...';
+    } 
+    return value;
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
@@ -1856,7 +1945,7 @@ isc.OBViewGrid.addProperties({
   // is the last being edited
   // also sets a flag which is used in canEditCell   
   getNextEditCell: function (rowNum, colNum, editCompletionEvent) {
-    var ret, i;
+    var ret, i, length = this.getFields().length;
     this._inGetNextEditCell = true;
     // past the last row
     if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
@@ -1864,7 +1953,7 @@ isc.OBViewGrid.addProperties({
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
 
       // force the focus column in the first focus field
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
           this.forceFocusColumn = this.getFields()[i].name;
           break;
@@ -2089,11 +2178,12 @@ isc.OBViewGrid.addProperties({
   },
 
   refreshEditRow: function(){
-    var editRow = this.view.viewGrid.getEditRow(), i;
+    var editRow = this.view.viewGrid.getEditRow(), i, length;
     if (editRow || editRow === 0) {
       // don't refresh the frozen fields, this give strange
       // styling issues in chrome
-      for (i = 0; i < this.view.viewGrid.fields.length; i++) {
+      length = this.view.viewGrid.fields.length;
+      for (i = 0; i < length; i++) {
         if (!this.fieldIsFrozen(i)) {
           this.view.viewGrid.refreshCell(editRow, i, true);
         }
@@ -2209,8 +2299,8 @@ isc.OBViewGrid.addProperties({
   },
 
   allSelectedRecordsWritable: function() {
-    var i;
-    for (i = 0; i < this.getSelectedRecords().length; i++) {
+    var i, length = this.getSelectedRecords().length;
+    for (i = 0; i < length; i++) {
       var record = this.getSelectedRecords()[i];
       if (!this.isWritable(record) || record._new) {
         return false;

@@ -31,6 +31,12 @@ isc.OBNoteSectionItem.addProperties({
 
   overflow : 'hidden',
 
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
+
   canFocus : true,
 
   prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
@@ -43,7 +49,9 @@ isc.OBNoteSectionItem.addProperties({
  
   // this field group does not participate in personalization
   personalizable: false,
-
+  
+  itemIds: ['_notes_Canvas'],
+            
   // note formitems don't have an initWidget but an init method
   init : function() {
     // override the one passed in
@@ -353,6 +361,12 @@ isc.OBNoteLayout.addProperties({
 isc.ClassFactory.defineClass('OBNoteCanvasItem', isc.CanvasItem);
 
 isc.OBNoteCanvasItem.addProperties({
+
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
 
   canFocus : true,
 

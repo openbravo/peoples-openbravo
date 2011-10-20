@@ -93,7 +93,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_GREATERTHANFIElD = "greaterThanField";
   private static final String OPERATOR_LESSTHANFIELD = "lessThanField";
   private static final String OPERATOR_GREATEROREQUALFIELD = "greaterOrEqualField";
-  private static final String OPERATOR_LESSOREQUALFIEld = "lessOrEqualField";
+  private static final String OPERATOR_LESSOREQUALFIElD = "lessOrEqualField";
   private static final String OPERATOR_CONTAINSFIELD = "containsField";
   private static final String OPERATOR_STARTSWITHFIELD = "startsWithField";
   private static final String OPERATOR_ENDSWITHFIELD = "endsWithField";
@@ -261,10 +261,18 @@ public class AdvancedQueryBuilder {
 
   private String parseCriteria(JSONObject jsonCriteria) throws JSONException {
     // a constructor so the content is an advanced criteria
-    if (jsonCriteria.has("_constructor")) {
+    if (jsonCriteria.has("_constructor") || hasOrAndOperator(jsonCriteria)) {
       return parseAdvancedCriteria(jsonCriteria);
     }
     return parseSingleClause(jsonCriteria);
+  }
+
+  private boolean hasOrAndOperator(JSONObject jsonCriteria) throws JSONException {
+    if (!jsonCriteria.has("operator")) {
+      return false;
+    }
+    return OPERATOR_OR.equals(jsonCriteria.get("operator"))
+        || OPERATOR_AND.equals(jsonCriteria.get("operator"));
   }
 
   private String parseSingleClause(JSONObject jsonCriteria) throws JSONException {
@@ -286,6 +294,32 @@ public class AdvancedQueryBuilder {
       value = null;
     }
 
+    // if a comparison is done on an equal date then replace
+    // with a between start time and end time on that date
+    if (operator.equals(OPERATOR_EQUALS) || operator.equals(OPERATOR_EQUALSFIELD)) {
+      final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
+      if (properties.isEmpty()) {
+        return null;
+      }
+      final Property property = properties.get(properties.size() - 1);
+      if (property == null) {
+        return null;
+      }
+      // create the clauses, re-uses the code in parseSimpleClause
+      // which translates a lesserthan/greater than to the end/start
+      // time of a date
+      if (property.isDate() || property.isDatetime()) {
+        if (operator.equals(OPERATOR_EQUALS)) {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
+
+        } else {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+        }
+      }
+    }
+
     return parseSimpleClause(fieldName, operator, value);
   }
 
@@ -305,6 +339,7 @@ public class AdvancedQueryBuilder {
 
   private String parseSimpleClause(String fieldName, String operator, Object value)
       throws JSONException {
+    // note: code duplicated in parseSingleClause
     final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
     if (properties.isEmpty()) {
       return null;
@@ -323,6 +358,10 @@ public class AdvancedQueryBuilder {
 
     String rightClause = buildRightClause(property, operator, value);
 
+    if (hqlOperator.equals("in")) {
+      rightClause = "(" + rightClause + ")";
+    }
+
     if (isNot(operator)) {
       return "not(" + leftClause + " " + hqlOperator + " " + rightClause + ")";
     } else {
@@ -339,7 +378,7 @@ public class AdvancedQueryBuilder {
     if (operator.equals(OPERATOR_EQUALSFIELD) || operator.equals(OPERATOR_NOTEQUALFIELD)
         || operator.equals(OPERATOR_GREATERTHANFIElD) || operator.equals(OPERATOR_LESSTHANFIELD)
         || operator.equals(OPERATOR_GREATEROREQUALFIELD)
-        || operator.equals(OPERATOR_LESSOREQUALFIEld) || operator.equals(OPERATOR_CONTAINSFIELD)
+        || operator.equals(OPERATOR_LESSOREQUALFIElD) || operator.equals(OPERATOR_CONTAINSFIELD)
         || operator.equals(OPERATOR_STARTSWITHFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)) {
       final List<Property> properties = JsonUtils
           .getPropertiesOnPath(getEntity(), value.toString());
@@ -380,7 +419,7 @@ public class AdvancedQueryBuilder {
       clause = clause + ".id";
     }
 
-    if (ignoreCase(operator)) {
+    if (ignoreCase(property, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
@@ -397,7 +436,7 @@ public class AdvancedQueryBuilder {
       localValue = localValue.toString().substring(0, separatorIndex);
     }
 
-    if (ignoreCase(operator)) {
+    if (ignoreCase(property, operator)) {
       localValue = localValue.toString().toUpperCase();
     }
 
@@ -448,7 +487,8 @@ public class AdvancedQueryBuilder {
 
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
-          || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_CONTAINSFIELD)) {
+          || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
+          || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
           || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
@@ -488,12 +528,49 @@ public class AdvancedQueryBuilder {
       }
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
-        return simpleDateFormat.parse(value.toString());
+        final Date date = simpleDateFormat.parse(value.toString());
+        // move the date to the beginning of the day
+        if (isGreaterOperator(operator)) {
+          final Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          calendar.set(Calendar.HOUR, 0);
+          calendar.set(Calendar.MINUTE, 0);
+          calendar.set(Calendar.SECOND, 0);
+          calendar.set(Calendar.MILLISECOND, 0);
+          return calendar.getTime();
+        } else if (isLesserOperator(operator)) {
+          // move the data to the end of the day
+          final Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          calendar.set(Calendar.HOUR, 23);
+          calendar.set(Calendar.MINUTE, 59);
+          calendar.set(Calendar.SECOND, 59);
+          calendar.set(Calendar.MILLISECOND, 999);
+          return calendar.getTime();
+        } else {
+          return date;
+        }
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
       }
     }
     return value;
+  }
+
+  private boolean isGreaterOperator(String operator) {
+    return operator != null
+        && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
+            || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+            || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
+            .equals(OPERATOR_GREATEROREQUALFIELD));
+  }
+
+  private boolean isLesserOperator(String operator) {
+    return operator != null
+        && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
+            || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
+            || operator.equals(OPERATOR_LESSTHANFIELD) || operator
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -565,9 +642,10 @@ public class AdvancedQueryBuilder {
     return operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_IENDSWITH)
         || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_CONTAINS)
         || operator.equals(OPERATOR_ENDSWITH) || operator.equals(OPERATOR_STARTSWITH)
-        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
-        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_CONTAINSFIELD)
-        || operator.equals(OPERATOR_ENDSWITHFIELD) || operator.equals(OPERATOR_STARTSWITHFIELD);
+        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_INOTCONTAINS)
+        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_NOTSTARTSWITH)
+        || operator.equals(OPERATOR_CONTAINSFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)
+        || operator.equals(OPERATOR_STARTSWITHFIELD);
   }
 
   private String getBetweenOperator(String operator, boolean rightClause) {
@@ -602,16 +680,20 @@ public class AdvancedQueryBuilder {
     throw new IllegalArgumentException("Operator not supported " + operator);
   }
 
-  private boolean ignoreCase(String operator) {
+  private boolean ignoreCase(Property property, String operator) {
+    if (property.isPrimitive()
+        && (property.isNumericType() || property.isDate() || property.isDatetime())) {
+      return false;
+    }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
         || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
         || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
         || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
-        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_IENDSWITH)
-        || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_IBETWEEN)
-        || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_ILESSOREQUAL)
-        || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_ILESSTHAN)
-        || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
   }
 
   private boolean isNot(String operator) {
@@ -624,6 +706,10 @@ public class AdvancedQueryBuilder {
   private String getHqlOperator(String operator) {
     if (operator.equals(OPERATOR_EQUALS)) {
       return "=";
+    } else if (operator.equals(OPERATOR_INSET)) {
+      return "in";
+    } else if (operator.equals(OPERATOR_NOTINSET)) {
+      return "in";
     } else if (operator.equals(OPERATOR_NOTEQUAL)) {
       return "!=";
     } else if (operator.equals(OPERATOR_IEQUALS)) {
@@ -680,7 +766,7 @@ public class AdvancedQueryBuilder {
       return "<";
     } else if (operator.equals(OPERATOR_GREATEROREQUALFIELD)) {
       return ">=";
-    } else if (operator.equals(OPERATOR_LESSOREQUALFIEld)) {
+    } else if (operator.equals(OPERATOR_LESSOREQUALFIElD)) {
       return "<=";
     } else if (operator.equals(OPERATOR_CONTAINSFIELD)) {
       return "like";

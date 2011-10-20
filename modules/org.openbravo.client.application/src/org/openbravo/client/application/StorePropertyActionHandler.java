@@ -54,7 +54,10 @@ public class StorePropertyActionHandler extends BaseActionHandler {
         return new JSONObject(
             "{msg: 'No property name in request, ignoring property store request'}");
       }
-      final String cleanedData = data == null ? null : data.replaceAll("\\n", "");
+      String cleanedData = data == null ? null : data.replaceAll("\\n", "");
+      if (cleanedData != null && cleanedData.startsWith("\"") && cleanedData.endsWith("\"")) {
+        cleanedData = cleanedData.substring(1, cleanedData.length() - 1);
+      }
       String windowId = (String) parameters.get("windowId");
       Window window = null;
       if (windowId != null) {

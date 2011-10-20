@@ -28,15 +28,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.service.system.SystemService;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class DeleteClient extends HttpSecureAppServlet {
@@ -75,15 +77,8 @@ public class DeleteClient extends HttpSecureAppServlet {
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
             "@DeleteClient_SelectClient@"));
       } else {
-        PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N",
-            vars.getUser(), vars.getClient(), vars.getOrg());
-        PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient,
-            vars.getClient(), vars.getOrg(), vars.getUser());
-
-        DeleteClientData.adDeleteClient(this, pinstance);
-
-        PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-        myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+        Client client = OBDal.getInstance().get(Client.class, strClient);
+        SystemService.getInstance().deleteClient(client);
       }
     } catch (Exception e) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());

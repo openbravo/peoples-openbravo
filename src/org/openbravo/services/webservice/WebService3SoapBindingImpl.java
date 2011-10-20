@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings("rawtypes")
 public class WebService3SoapBindingImpl implements org.openbravo.services.webservice.WebService3Impl{
     public byte[] getModule(java.lang.String moduleVersionID) throws java.rmi.RemoteException {
         return null;

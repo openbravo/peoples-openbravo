@@ -21,15 +21,12 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class Fact {
   static Logger log4jFact = Logger.getLogger(Fact.class);
@@ -51,7 +48,7 @@ public class Fact {
   public static final String POST_Budget = "B";
   /** Encumbrance Posting */
   public static final String POST_Commitment = "C";
-  
+
   /** Lines */
   private ArrayList<Object> m_lines = new ArrayList<Object>();
 
@@ -228,15 +225,13 @@ public class Fact {
     }
     log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
         + conversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
-    
     // Convert
     if (conversionRate != null) {
       line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
-    }else{
+    } else {
       line.convert(m_acctSchema.getC_Currency_ID(), conversionDate,
           m_acctSchema.getCurrencyRateType(), conn);
     }
-    
     // Optionally overwrite Acct Amount
     if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
       line.setAmtAcct(docLine.m_AmtAcctDr, docLine.m_AmtAcctCr);

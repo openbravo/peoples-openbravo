@@ -28,6 +28,6 @@ isc.OBLinkTitleItem.addProperties({
   
   linkButtonClick: function(){
     var sourceWindow = this.form.view.standardWindow.windowId;
-    OB.Utilities.openDirectView(sourceWindow, this.referencedKeyColumnName, this.targetEntity, this.getValue());
+    OB.Utilities.openDirectView(sourceWindow, this.refColumnName, this.targetEntity, this.getValue());
   }
 });

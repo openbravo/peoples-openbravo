@@ -28,6 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.model.Table;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -39,6 +43,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
@@ -49,6 +54,7 @@ import org.openbravo.service.db.ClientImportProcessor;
 import org.openbravo.service.db.DataExportService;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
+import org.openbravo.service.system.SystemService;
 
 /**
  * Tests export and import of client dataset.
@@ -204,6 +210,30 @@ public class ClientExportImportTest extends XMLBaseTest {
   public void _testExportImportClient1000001() {
     exportImport(QA_TEST_CLIENT_ID);
     // SystemService.getInstance().removeAllClientData(newClientId);
+  }
+
+  /**
+   * Test which copies a client, then deletes it, and then tests that the foreign keys are still
+   * activated
+   */
+  public void testDeleteClient() {
+    Platform platform = SystemService.getInstance().getPlatform();
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
+        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("source.path")));
+    Database dbBefore = platform.loadModelFromDatabase(excludeFilter);
+    String newClientId = exportImport(QA_TEST_CLIENT_ID);
+    Client client = OBDal.getInstance().get(Client.class, newClientId);
+
+    SystemService.getInstance().deleteClient(client);
+    Database dbAfter = platform.loadModelFromDatabase(excludeFilter);
+    for (int i = 0; i < dbBefore.getTableCount(); i++) {
+      Table table1 = dbBefore.getTable(i);
+      Table table2 = dbAfter.getTable(i);
+      for (int j = 0; j < table1.getForeignKeyCount(); j++) {
+        assertTrue(table1.getForeignKey(j).equals(table2.getForeignKey(j)));
+      }
+    }
   }
 
   // tests mantis issue 8509 related to import of ad tree node as

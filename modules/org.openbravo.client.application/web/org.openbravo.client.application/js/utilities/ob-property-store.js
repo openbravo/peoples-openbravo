@@ -76,7 +76,7 @@
     //
     set: function(/* String */propertyName, /* Object */ value, windowId, noSetInServer, setAsSystem) {
       var currentValue = OB.Properties[propertyName], data={property: propertyName, system: setAsSystem?true:false},
-          localPropertyName=propertyName, i;
+          localPropertyName=propertyName, i, length;
       if(windowId){
         data.windowId=windowId;
         localPropertyName=propertyName + '_' + windowId;
@@ -92,7 +92,8 @@
       }
 
       // call the listeners
-      for (i = 0; i < this.listeners.length; i++) {
+      length = this.listeners.length;
+      for (i = 0; i < length; i++) {
         this.listeners[i](localPropertyName, currentValue, value);
       }
 

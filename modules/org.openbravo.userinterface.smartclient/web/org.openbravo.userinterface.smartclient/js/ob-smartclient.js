@@ -31,6 +31,22 @@ isc.setAutoDraw(false);
 // NOTE: disabled as now timezone is send from the client to the server
 // Time.setDefaultDisplayTimezone(0);
 
+isc.Canvas.addProperties({
+  // make sure that the datasources are also destroyed
+  _original_destroy: isc.Canvas.getPrototype().destroy,
+  destroy: function() {
+    if (this.optionDataSource && !this.optionDataSource.potentiallyShared) {
+      this.optionDataSource.destroy();
+      this.optionDataSource = null;
+    }
+    if (this.dataSource && !this.dataSource.potentiallyShared) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+    this._original_destroy();
+  }
+});
+
 //Let the click on an ImgButton and Button fall through to its action method 
 isc.ImgButton.addProperties({
   click: function() {
@@ -58,13 +74,16 @@ isc.Layout.addProperties({
       toDestroy = [toDestroy];
     }
     for (i = 0; i < toDestroy.length; i++) {
-      toDestroy[i].destroy();
+      if (toDestroy[i] && toDestroy[i].destroy) {
+        toDestroy[i].destroy();
+      }
     }
     this.removeMembers(toDestroy);
   }
 });
 
 isc.TextItem.addProperties({
+   
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160
   // https://issues.openbravo.com/view.php?id=17936
@@ -74,11 +93,17 @@ isc.TextItem.addProperties({
     }
     return this.Super('useDisabledEventMask', arguments);
   }
+  
 });
 
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
+  // default, is overridden in generated field template
+  personalizable: true,
+  updatable: true,
+  width: '*',
+  
   // always take up space when an item is hidden in a form
   alwaysTakeSpace: true,
 
@@ -178,9 +203,14 @@ isc.FormItem.addProperties({
     return src;
   },
   
-  changed: function(){
+  changed: function(form, item, value){
     this._hasChanged = true;
     this.clearErrors();
+    
+    if (this.redrawOnChange) {
+      this.form.onFieldChanged(this.form, item || this, value);
+      this.form.view.toolBar.refreshCustomButtonsView(this.form.view);
+    }
   },
   
   focus: function(form, item){
@@ -315,13 +345,13 @@ isc.RelativeDateItem.addProperties({
       // reset the selection range
       
       if (mustRefocus && focusItem !== null) {
-          if (!showQuantity && focusItem === this.quantityField) {
-              this.valueField.focusInItem();
-          } else {
-              if (selectionRange) {
-                  focusItem.delayCall("setSelectionRange", [selectionRange[0],selectionRange[1]]);
-              }
+        if (!showQuantity && focusItem === this.quantityField) {
+          this.valueField.focusInItem();
+        } else {
+          if (selectionRange) {
+            focusItem.delayCall("setSelectionRange", [selectionRange[0],selectionRange[1]]);
           }
+        }
       }
       this.calculatedDateField.canFocus = false;
   },
@@ -329,9 +359,9 @@ isc.RelativeDateItem.addProperties({
   // overridden because the picker is now part of the combo and not a separate field.
   // custom code to center the picker over the picker icon
   getPickerRect : function () {
-      // we want the date chooser to float centered over the picker icon.
-      var form = this.canvas;
-      return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
+    // we want the date chooser to float centered over the picker icon.
+    var form = this.canvas;
+    return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
   }
 
 });
@@ -369,7 +399,6 @@ isc.screenReader = false;
 //isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
 //  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
 //};
-
 
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words

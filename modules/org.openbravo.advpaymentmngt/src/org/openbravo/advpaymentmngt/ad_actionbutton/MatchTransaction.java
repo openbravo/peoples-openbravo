@@ -38,6 +38,7 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
+import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -71,15 +72,17 @@ import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
+import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class MatchTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  VariablesSecureApp vars = null;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "MatchTransaction.adOrgId");
@@ -928,7 +931,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
       transaction.setCreatedByAlgorithm(true);
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
-      TransactionsDao.process(transaction);
+      try {
+        processTransaction(new DalConnectionProvider(), "P", transaction);
+      } catch (Exception e) {
+        OBError newError = Utility.translateError(this, vars, vars.getLanguage(),
+            FIN_Utility.getExceptionMessage(e));
+        throw new OBException(newError.getMessage());
+      }
       return transaction;
     }
   }
@@ -1164,6 +1173,31 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(bs);
       OBDal.getInstance().flush();
     }
+  }
+
+  /**
+   * It calls the Transaction Process for the given transaction and action.
+   * 
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param transaction
+   *          FIN_FinaccTransaction that needs to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  private OBError processTransaction(ConnectionProvider conn, String strAction,
+      FIN_FinaccTransaction transaction) throws Exception {
+    ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_TransactionProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
   }
 
   public String getServletInfo() {

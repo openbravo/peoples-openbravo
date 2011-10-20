@@ -18,6 +18,7 @@
  */
 package org.openbravo.userinterface.selector;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +29,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -59,6 +61,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
   @Override
   public void doFilter(Map<String, String> parameters, HttpServletRequest request) {
+
     final long t1 = System.currentTimeMillis();
 
     try {
@@ -89,6 +92,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
         applyDefaultExpressions(sel, parameters, sfc, request);
+        verifyPropertyTypes(sel, parameters);
       }
 
     } catch (Exception e) {
@@ -96,6 +100,70 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     } finally {
       OBContext.restorePreviousMode();
       log.debug("doFilter took: " + (System.currentTimeMillis() - t1) + "ms");
+    }
+  }
+
+  /**
+   * This method verifies that in the parameters, there are not numeric or date values. In case that
+   * it finds numeric or date parameter, these are deleted
+   * 
+   * @author jecharri
+   */
+  private void verifyPropertyTypes(Selector sel, Map<String, String> parameters) {
+    String value = parameters.get("criteria");
+    if (value == null) {
+      return;
+    }
+    String filteredCriteria = "";
+    String fieldName;
+    Entity entity = ModelProvider.getInstance().getEntityByTableName(
+        sel.getTable().getDBTableName());
+    Entity cEntity = null;
+    try {
+      OBContext.setAdminMode(true);
+      if (value.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+        final String[] separatedValues = value.split(JsonConstants.IN_PARAMETER_SEPARATOR);
+        for (String separatedValue : separatedValues) {
+	  cEntity = entity;
+          JSONObject jSONObject = new JSONObject(separatedValue);
+          fieldName = (String) jSONObject.get("fieldName");
+          if (fieldName.contains("_dummy") || fieldName.contains("_identifier")
+              || fieldName.contains("searchKey")) {
+            filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
+            continue;
+          }
+          String[] fieldNameSplit = fieldName.split("\\.");
+          Property fProp = null;
+          if (fieldNameSplit.length == 1) {
+            fProp = entity.getProperty(fieldName);
+          } else {
+            for (int i = 0; i < fieldNameSplit.length; i++) {
+              fProp = cEntity.getProperty(fieldNameSplit[i]);
+              if (i != fieldNameSplit.length - 1) {
+                cEntity = fProp.getReferencedProperty().getEntity();
+              }
+            }
+          }
+
+          if (fProp.isNumericType() || fProp.isDate()) {
+            try {
+              jSONObject.put("operator", "equals");
+              BigDecimal valueJSONObject = new BigDecimal(jSONObject.get("value").toString());
+              jSONObject.put("value", valueJSONObject);
+              filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
+            } catch (Exception ex) {
+              // do nothing
+            }
+          } else {
+            filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
+          }
+        }
+        parameters.put("criteria", filteredCriteria.substring(0, (filteredCriteria.length() - 5)));
+      }
+    } catch (Exception ex) {
+      log.error("Error converting to JSON object: " + ex.getMessage(), ex);
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 

@@ -182,7 +182,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    * @return List with 2 values. The first one is the sum of outstanding payments (transactions) and
    *         the second is the sum of outstanding deposits (transactions).
    */
-  @SuppressWarnings("unchecked")
   private List<BigDecimal> getOutstandingPaymentAndDepositTotal(FIN_Reconciliation recon) {
     List<BigDecimal> outList = new ArrayList<BigDecimal>();
     OBContext.setAdminMode(true);
@@ -208,6 +207,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcTrans.setProjection(projections);
 
       if (obcTrans.list() != null && obcTrans.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcTrans.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]
@@ -238,7 +238,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    *          Reconciliation
    * @return Sum of the un-reconciled bank statement lines.
    */
-  @SuppressWarnings("unchecked")
   private BigDecimal getUnreconciledBankStatmentLinesTotal(FIN_Reconciliation recon) {
     BigDecimal total = BigDecimal.ZERO;
     OBContext.setAdminMode(true);
@@ -266,6 +265,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcBsl.setProjection(projections);
 
       if (obcBsl.list() != null && obcBsl.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcBsl.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
@@ -289,7 +289,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    * @return Sum of all the transactions in a higher date than the end date of the given
    *         reconciliation.
    */
-  @SuppressWarnings("unchecked")
   private BigDecimal getTransactionsTotalAfterReconciliationEndDate(FIN_Reconciliation recon) {
     BigDecimal balance = BigDecimal.ZERO;
     OBContext.setAdminMode(true);
@@ -305,6 +304,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcTrans.setProjection(projections);
 
       if (obcTrans.list() != null && obcTrans.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcTrans.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]

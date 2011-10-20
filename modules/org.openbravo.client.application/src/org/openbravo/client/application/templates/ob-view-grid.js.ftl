@@ -21,104 +21,23 @@
 
 isc.OBViewGrid.create({
     uiPattern: '${data.uiPattern}', 
-    fields:[
-    <#list data.fields as field>
-        { 
-        autoExpand: ${field.autoExpand}, type: '${field.type}',
-        <#if field.cellAlign??>
-        cellAlign: '${field.cellAlign?js_string}',
-        </#if>
-        editorProperties: {
-          ${field.gridEditorFieldProperties}
-          // note need to be repeated for editor fields
-          , columnName: '${field.columnName?js_string}'
-          , inpColumnName: '${field.inpColumnName?js_string}'
-          , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
-          , targetEntity: '${field.targetEntity?js_string}'
-          , disabled: ${field.readOnly?string}
-          , readonly: ${field.readOnly?string}
-          , updatable: ${field.updatable?string}
-          <#if field.redrawOnChange?string = "true" >
-          , redrawOnChange: true
-          , changed: function(form, item, value) {
-              if (this.pickValue && !this._pickedValue) {
-                return;
-              }
-              this.Super('changed', arguments);
-              form.onFieldChanged(form, item, value);
-              form.view.toolBar.refreshCustomButtonsView(form.view);
-            }
-          </#if>
-          <#if field.firstFocusedField>
-          , firstFocusedField: true
-          </#if>          
-          <#if field.showIf != "">
-          , showIf: function(item, value, form, currentValues) {
-              currentValues = currentValues || form.view.getCurrentValues();
-              var context = form.view.getContextInfo(false, true);
-              return context && (${field.showIf});
-            }
-          </#if>
-          
-        }
-        ${field.gridFieldProperties}
-        ${field.filterEditorProperties}
-        , title: '${field.title?js_string}'
-        , prompt: '${field.title?js_string}'
-        , required: ${field.required?string}
-        , escapeHTML: true
-        , showIf: '${field.initialShow?string}'
-        , columnName: '${field.columnName?js_string}'
-        , inpColumnName: '${field.inpColumnName?js_string}'
-        , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
-        , targetEntity: '${field.targetEntity?js_string}'
-       }
-       <#if field_has_next>,</#if>
-    </#list>
-    <#list data.auditFields as field>
-     ,
-       { 
-        autoExpand: false, type: '${field.type}',
-        editorProperties: {
-          width: '*'
-          , columnName: '${field.columnName?js_string}'
-          , targetEntity: '${field.targetEntity?js_string}'
-          , disabled: true
-          , updatable: false
-        }
-        , showHover: false, 
-        width: isc.OBGrid.getDefaultColumnWidth(30), 
-        name: '${field.columnName?js_string}', 
-        canExport: true, 
-        canHide: true, 
-        editorType: '${field.editorType?js_string}',
-        filterEditorType: '${field.filterEditorType?js_string}',
-        ${field.displayFieldJS}
-         filterOnKeypress: true, canFilter:true, required: false
-        , title: '${field.title?js_string}'
-        , prompt: '${field.title?js_string}'
-        , escapeHTML: true
-        , showIf: 'false'
-        , columnName: '${field.columnName?js_string}'
-        , inpColumnName: ''
-        , targetEntity: '${field.targetEntity?js_string}'
-       }
-    </#list>
-    ],
-    autoExpandFieldNames:[
-    <#list data.autoExpandFields as field>
-        '${field}'<#if field_has_next>,</#if>
-    </#list>
-    ],
-    whereClause: '${data.whereClause?js_string}',
-    orderByClause: '${data.orderByClause?js_string}',
-    sortField: '${data.sortField?js_string}',
-    filterClause: '${data.filterClause?js_string}',
-    filterName: '${data.filterName?js_string}',
+     
+    <#if data.whereClause != "">
+        whereClause: '${data.whereClause?js_string}',
+    </#if>
+    <#if data.orderByClause != "">
+        orderByClause: '${data.orderByClause?js_string}',
+    </#if>
+    <#if data.sortField != "">
+        sortField: '${data.sortField?js_string}',
+    </#if>
+    <#if data.filterClause != "">
+        filterClause: '${data.filterClause?js_string}',
+    </#if>
+    <#if data.filterName != "">
+        filterName: '${data.filterName?js_string}',
+    </#if>
     
-    foreignKeyFieldNames:[
-    <#list data.foreignKeyFields as field>
-        '${field}'<#if field_has_next>,</#if>
-    </#list>
-    ]
+    // the this is the view instance
+    fields: this.gridFields
 })

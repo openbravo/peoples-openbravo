@@ -56,8 +56,8 @@ public class EnumUIDefinition extends UIDefinition {
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
       length = new Long(20);
     }
-    return getShowHoverGridFieldSettings(field) + ", width: isc.OBGrid.getDefaultColumnWidth("
-        + length + ")" + super.getGridFieldProperties(field);
+    return getShowHoverGridFieldSettings(field) + ", length:" + length
+        + super.getGridFieldProperties(field);
   }
 
   @Override

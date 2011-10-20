@@ -54,7 +54,7 @@ public class ImportBankFile extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
-      String strKey = vars.getStringParameter("Fin_Financial_Account_ID");
+      String strKey = vars.getStringParameter("inpfinFinancialAccountId");
 
       String strTabId = vars.getStringParameter("inpTabId");
       String strMessage = "";

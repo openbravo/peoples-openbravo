@@ -21,15 +21,14 @@
 // Registers buttons to open the form layout manager from a normal form/grid
 // view and from the Window Personalization view.
 (function () {
-  
-  var personalizationButtonProperties = {
+  var personalizationButtonProperties, 
+    windowPersonalizationTabButtonProperties;
+
+  personalizationButtonProperties = {
     action: function() {
-      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
       }
 
@@ -52,15 +51,6 @@
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button'),
     updateState: function(){
       var propValue, undef;
-      
-      if (this.view.personalizationData) {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button_modified');
-        this.buttonType = 'personalization-modified';
-      } else {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button');
-        this.buttonType = 'personalization';
-      }
-      this.resetBaseStyle();
       
       // set it 
       if (this.userWindowPersonalizationAllowed === undef) {
@@ -86,7 +76,7 @@
       isc.OBToolbarIconButton, personalizationButtonProperties, 310, null);
 
   // and register the toolbar button the window personalization tab  
-  var windowPersonalizationTabButtonProperties = {
+  windowPersonalizationTabButtonProperties = {
     action: function() {
       var personalizationData = {}, personalizeForm, view = this.view, grid = view.viewGrid,
         record = grid.getSelectedRecord();
@@ -119,10 +109,23 @@
     buttonType: 'edit_personalization',
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Edit_Button'),
     updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords(), i;
+      var view = this.view, form = view.viewForm, 
+        grid = view.viewGrid, length, 
+        selectedRecords = grid.getSelectedRecords(), i;
       
       // only show for records which can be edited
-      for (i = 0; i < selectedRecords.length; i++) {
+      if (selectedRecords.length !== 1) {
+        this.setDisabled(true);
+        return;
+      }
+
+      if (selectedRecords[0].type && selectedRecords[0].type !== 'Form') {
+        this.setDisabled(true);
+        return;
+      }
+
+      length = selectedRecords.length;
+      for (i = 0; i < length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
@@ -146,5 +149,5 @@
   // register only for the window personalization tab
   OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, 
       windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023');
-
+  
 }());

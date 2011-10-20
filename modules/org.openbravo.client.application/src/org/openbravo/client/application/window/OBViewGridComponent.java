@@ -18,32 +18,17 @@
  */
 package org.openbravo.client.application.window;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
-import org.openbravo.client.application.ApplicationUtils;
-import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
+import org.openbravo.client.application.window.OBViewFieldHandler.OBViewFieldDefinition;
 import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.client.kernel.reference.StringUIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.ui.Element;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -58,16 +43,12 @@ import org.openbravo.service.json.JsonConstants;
 public class OBViewGridComponent extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
-  private static Long ZERO = new Long(0);
 
   private boolean applyTransactionalFilter = false;
   private Tab tab;
   private Entity entity;
-  private List<LocalField> fields = null;
 
-  private final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
-  private final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
-  private final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
+  private OBViewTab viewTab;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -103,11 +84,16 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     long lowestSortno = Long.MAX_VALUE;
-    LocalField sortByField = null;
-    for (LocalField localField : getFields()) {
-      final Long recordSortno = localField.getField().getRecordSortNo();
-      if (localField.isInitialShow() && recordSortno != null && recordSortno < lowestSortno) {
-        sortByField = localField;
+    OBViewField sortByField = null;
+    for (OBViewFieldDefinition localField : getViewTab().getFieldHandler().getFields()) {
+      if (!(localField instanceof OBViewField)) {
+        continue;
+      }
+      final OBViewField viewField = (OBViewField) localField;
+      final Long recordSortno = viewField.getField().getRecordSortNo();
+      if (viewField.getLength() < 2000 && viewField.isShowInitiallyInGrid() && recordSortno != null
+          && recordSortno < lowestSortno) {
+        sortByField = viewField;
       }
     }
     if (sortByField != null && sortByField.getProperty() != null) {
@@ -122,9 +108,13 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return OrderLine.PROPERTY_LINENO;
     }
 
-    for (LocalField localField : getFields()) {
-      if (localField.getProperty() != null && localField.getProperty().isIdentifier()) {
-        return localField.getProperty().getName();
+    for (OBViewFieldDefinition localField : getViewTab().getFieldHandler().getFields()) {
+      if (!(localField instanceof OBViewField)) {
+        continue;
+      }
+      final OBViewField viewField = (OBViewField) localField;
+      if (viewField.getProperty() != null && viewField.getProperty().isIdentifier()) {
+        return viewField.getProperty().getName();
       }
     }
     return "";
@@ -192,464 +182,20 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return tab.getUIPattern();
   }
 
-  public List<String> getForeignKeyFields() {
-    final List<String> fkFields = new ArrayList<String>();
-    for (LocalField field : getFields()) {
-      if (!field.getProperty().isPrimitive()) {
-        fkFields.add(field.getProperty().getName());
-      }
-    }
-    return fkFields;
-  }
-
-  public List<String> getAutoExpandFields() {
-    List<LocalField> autoExpandFields = new ArrayList<LocalField>();
-    for (LocalField field : getFields()) {
-      if (new Boolean(field.getAutoExpand())) {
-        autoExpandFields.add(field);
-      }
-    }
-    Collections.sort(autoExpandFields, new LengthComparator());
-    List<String> autoExpandFieldsStr = new ArrayList<String>();
-    for (LocalField field : autoExpandFields) {
-      autoExpandFieldsStr.add(field.getProperty().getName());
-    }
-    return autoExpandFieldsStr;
-  }
-
-  private class LengthComparator implements Comparator<LocalField> {
-    @Override
-    public int compare(LocalField o1, LocalField o2) {
-      return o2.getLength().compareTo(o1.getLength());
-    }
-  }
-
-  public List<LocalField> getFields() {
-    if (fields != null) {
-      return fields;
-    }
-    fields = new ArrayList<LocalField>();
-    final List<String> windowEntities = getWindowEntities();
-    final List<Field> sortedFields = new ArrayList<Field>(tab.getADFieldList());
-    Collections.sort(sortedFields, new GridFieldComparator());
-
-    // Processing dynamic expressions (display logic)
-    for (Field f : sortedFields) {
-      if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
-          || !f.isDisplayed()) {
-        continue;
-      }
-
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
-      displayLogicMap.put(f, parser.getJSExpression());
-
-      for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
-      }
-    }
-
-    // first add the grid fields
-    for (Field fld : sortedFields) {
-      if (fld.isActive() && fld.isShowInGridView()) {
-        final Property prop = KernelUtils.getInstance().getPropertyFromColumn(fld.getColumn());
-        if (prop.isParent() && windowEntities.contains(prop.getTargetEntity().getName())) {
-          continue;
-        }
-        if (prop.isId()) {
-          continue;
-        }
-        if (ApplicationUtils.isUIButton(fld)) {
-          continue;
-        }
-        // these are currently also ignored
-        if (fld.getGridPosition() == null && fld.getSequenceNumber() == null) {
-          continue;
-        }
-
-        fields.add(createLocalField(fld, prop, true));
-      }
-    }
-
-    // Processing dynamic expression (read-only logic)
-    for (Field f : sortedFields) {
-      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
-          || !f.isActive() || !f.getColumn().isActive()) {
-        continue;
-      }
-
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getColumn()
-          .getReadOnlyLogic(), tab);
-      readOnlyLogicMap.put(f, parser.getJSExpression());
-
-      for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
-      }
-    }
-
-    // and add the non grid fields
-    for (Field fld : sortedFields) {
-      if (fld.isActive() && !fld.isShowInGridView()) {
-        final Property prop = KernelUtils.getInstance().getPropertyFromColumn(fld.getColumn());
-        if (prop.isParent() && windowEntities.contains(prop.getTargetEntity().getName())) {
-          continue;
-        }
-        if (prop.isId()) {
-          continue;
-        }
-        if (ApplicationUtils.isUIButton(fld)) {
-          continue;
-        }
-        fields.add(createLocalField(fld, prop, false));
-      }
-    }
-
-    return fields;
-  }
-
-  public List<AuditLocalField> getAuditFields() {
-    boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false, hasUpdatedByField = false;
-    for (Field f : tab.getADFieldList()) {
-      String dbColName = f.getColumn().getDBColumnName().toLowerCase();
-      if (!dbColName.startsWith("created") && !dbColName.startsWith("updated")) {
-        continue;
-      }
-      if (f.isActive() && f.getColumn().isActive() && (f.isDisplayed() || f.isShownInStatusBar())) {
-        if ("created".equals(dbColName)) {
-          hasCreatedField = true;
-        } else if ("createdby".equals(dbColName)) {
-          hasCreatedByField = true;
-        } else if ("updated".equals(dbColName)) {
-          hasUpdatedField = true;
-        } else if ("updatedby".equals(dbColName)) {
-          hasUpdatedByField = true;
-        }
-      }
-    }
-
-    List<AuditLocalField> auditFields = new ArrayList<OBViewGridComponent.AuditLocalField>();
-
-    if (!hasCreatedField) {
-      AuditLocalField created = new AuditLocalField("creationDate", OBViewUtil.createdElement);
-      auditFields.add(created);
-    }
-
-    if (!hasCreatedByField) {
-      AuditLocalField createdBy = new AuditLocalField("createdBy", OBViewUtil.createdByElement);
-      auditFields.add(createdBy);
-    }
-
-    if (!hasUpdatedField) {
-      AuditLocalField updated = new AuditLocalField("updated", OBViewUtil.updatedElement);
-      auditFields.add(updated);
-    }
-
-    if (!hasUpdatedByField) {
-      AuditLocalField updatedBy = new AuditLocalField("updatedBy", OBViewUtil.updatedByElement);
-      auditFields.add(updatedBy);
-    }
-    return auditFields;
-  }
-
-  private LocalField createLocalField(Field fld, Property prop, boolean showInitially) {
-    final LocalField localField = new LocalField();
-    localField.setField(fld);
-    localField.setProperty(prop);
-    localField.setUIDefinition(UIDefinitionController.getInstance().getUIDefinition(
-        prop.getColumnId()));
-    if (!prop.isPrimitive()) {
-      localField.setName(prop.getName() + "." + JsonConstants.IDENTIFIER);
-    } else {
-      localField.setName(prop.getName());
-    }
-    localField.setTitle(OBViewUtil.getLabel(fld));
-    localField.setInitialShow(showInitially);
-    localField.setRedrawOnChange(fieldsInDynamicExpression.contains(fld));
-    localField.setShowIf(displayLogicMap.get(fld) != null ? displayLogicMap.get(fld) : "");
-
-    return localField;
-  }
-
-  public class LocalField {
-    private String name;
-    private Field field;
-    private String title;
-    private Property property;
-    private UIDefinition uiDefinition;
-    private boolean initialShow;
-    private String showIf;
-    private boolean redrawOnChange;
-
-    public boolean isFirstFocusedField() {
-      Boolean focused = field.isFirstFocusedField();
-      Boolean displayed = field.isDisplayed();
-      return focused != null && focused && displayed != null && displayed;
-    }
-
-    public String getColumnName() {
-      return property.getColumnName();
-    }
-
-    public boolean isRequired() {
-      // booleans are never required as their input only allows 2 values
-      if (property.isBoolean()) {
-        return false;
-      }
-      return property.isMandatory();
-    }
-
-    public boolean isReadOnly() {
-      return field.isReadOnly();
-    }
-
-    public boolean isUpdatable() {
-      return property.isUpdatable();
-    }
-
-    public String getInpColumnName() {
-      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
-    }
-
-    public String getReferencedKeyColumnName() {
-      if (property.isOneToMany() || property.isPrimitive()) {
-        return "";
-      }
-      Property prop;
-      if (property.getReferencedProperty() == null) {
-        prop = property.getTargetEntity().getIdProperties().get(0);
-      } else {
-        prop = property.getReferencedProperty();
-      }
-      return prop.getColumnName();
-    }
-
-    /**
-     * @deprecated use {@link #getGridFieldProperties()}
-     */
-    @Deprecated
-    public String getFieldProperties() {
-      return getGridFieldProperties();
-    }
-
-    public String getGridFieldProperties() {
-      return uiDefinition.getGridFieldProperties(field);
-    }
-
-    public String getTargetEntity() {
-      if (property.getTargetEntity() == null) {
-        return "";
-      }
-      return property.getTargetEntity().getName();
-    }
-
-    public String getGridEditorFieldProperties() {
-      String props = uiDefinition.getGridEditorFieldProperties(field).trim();
-      if (props.startsWith("{")) {
-        props = props.substring(1, props.length() - 1);
-      }
-      if (props.trim().endsWith(",")) {
-        return props.trim().substring(0, props.trim().length() - 1);
-      }
-      if (props.trim().length() == 0) {
-        // return at least a dummy property
-        return "_d: ''";
-      }
-      return props.trim();
-    }
-
-    public String getFilterEditorProperties() {
-      return uiDefinition.getFilterEditorProperties(field);
-    }
-
-    // can the column be auto expanded to fill any remaining space
-    public String getAutoExpand() {
-      return (Boolean.toString(!name.equalsIgnoreCase("documentno")
-          && (uiDefinition instanceof StringUIDefinition || !property.isPrimitive())));
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public String getTitle() {
-      return title;
-    }
-
-    public void setTitle(String title) {
-      this.title = title;
-    }
-
-    public UIDefinition getUIDefinition() {
-      return uiDefinition;
-    }
-
-    public void setUIDefinition(UIDefinition typeDefinition) {
-      this.uiDefinition = typeDefinition;
-    }
-
-    public String getType() {
-      return uiDefinition.getName();
-    }
-
-    public Field getField() {
-      return field;
-    }
-
-    public void setField(Field field) {
-      this.field = field;
-    }
-
-    public Property getProperty() {
-      return property;
-    }
-
-    public void setProperty(Property property) {
-      this.property = property;
-    }
-
-    public boolean isInitialShow() {
-      return initialShow;
-    }
-
-    public void setInitialShow(boolean initialShow) {
-      this.initialShow = initialShow;
-    }
-
-    public String getShowIf() {
-      return showIf;
-    }
-
-    public void setShowIf(String showIf) {
-      this.showIf = showIf;
-    }
-
-    public boolean isRedrawOnChange() {
-      return redrawOnChange;
-    }
-
-    public void setRedrawOnChange(boolean redrawOnChange) {
-      this.redrawOnChange = redrawOnChange;
-    }
-
-    public Long getLength() {
-      return field.getDisplayedLength();
-    }
-
-    public String getCellAlign() {
-      return uiDefinition.getCellAlign();
-    }
-  }
-
-  public class AuditLocalField extends LocalField {
-
-    private String refType;
-    private String refEntity;
-    private String name;
-    private Element element;
-
-    public AuditLocalField(String type, Element element) {
-      name = type;
-      this.element = element;
-      if (type.endsWith("By")) {
-        // User search
-        refType = "30";
-        refEntity = "User";
-      } else {
-        // Date time
-        refType = "16";
-        refEntity = "";
-      }
-    }
-
-    @Override
-    public String getColumnName() {
-      return name;
-    }
-
-    @Override
-    public String getTargetEntity() {
-      return refEntity;
-    }
-
-    @Override
-    public String getTitle() {
-      return OBViewUtil.getLabel(element, element.getADElementTrlList());
-    }
-
-    @Override
-    public String getType() {
-      return "_id_" + refType;
-    }
-
-    public String getEditorType() {
-      if ("30".equals(refType)) {
-        return "OBSearchItem";
-      } else {
-        return "OBDateItem";
-      }
-    }
-
-    public String getFilterEditorType() {
-      if ("30".equals(refType)) {
-        return "OBFKFilterTextItem";
-      } else {
-        return "OBMiniDateRangeItem";
-      }
-    }
-
-    public String getDisplayFieldJS() {
-      if ("30".equals(refType)) {
-        return "displayField: '" + name + "._identifier',valueField: '" + name + "',";
-      } else {
-        return "";
-      }
-    }
-
-  }
-
-  private class GridFieldComparator implements Comparator<Field> {
-
-    @Override
-    public int compare(Field arg0, Field arg1) {
-      Long arg0Position = (arg0.getGridPosition() != null ? arg0.getGridPosition() : arg0
-          .getSequenceNumber());
-      Long arg1Position = (arg1.getGridPosition() != null ? arg1.getGridPosition() : arg1
-          .getSequenceNumber());
-
-      if (arg0Position == null && arg1Position == null) {
-        return arg0.getId().compareTo(arg1.getId());
-      } else if (arg0Position == null) {
-        return 1;
-      } else if (arg1Position == null) {
-        return -1;
-      }
-
-      return (int) (arg0Position - arg1Position);
-    }
-
-  }
-
-  private List<String> getWindowEntities() {
-    final List<String> windowEntities = new ArrayList<String>();
-    for (Tab localTab : tab.getWindow().getADTabList()) {
-      windowEntities.add(localTab.getTable().getName());
-    }
-    return windowEntities;
-  }
-
   public boolean isApplyTransactionalFilter() {
     return applyTransactionalFilter;
   }
 
   public void setApplyTransactionalFilter(boolean applyTransactionalFilter) {
     this.applyTransactionalFilter = applyTransactionalFilter;
+  }
+
+  public OBViewTab getViewTab() {
+    return viewTab;
+  }
+
+  public void setViewTab(OBViewTab viewTab) {
+    this.viewTab = viewTab;
   }
 
 }

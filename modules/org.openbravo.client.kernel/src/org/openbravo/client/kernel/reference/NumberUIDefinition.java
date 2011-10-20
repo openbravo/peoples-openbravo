@@ -47,6 +47,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorProperties(Field field) {
+    return ", filterOnKeypress: false" + super.getFilterEditorProperties(field);
+  }
+
+  @Override
   public String getTypeProperties() {
     final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
     if (primitiveDomainType.getFormatId() != null) {
@@ -110,8 +115,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
       JSONObject o = new JSONObject(fieldProperties);
       if (field.isDisplayed() != null && field.isDisplayed()) {
         o.put("width", "50%");
-      } else {
-        o.put("width", "");
       }
       return o.toString();
     } catch (Exception e) { // ignore
@@ -125,8 +128,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
       JSONObject o = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (field.isDisplayed() != null && field.isDisplayed()) {
         o.put("width", "50%");
-      } else {
-        o.put("width", "");
       }
       // If a column has a numeric reference, and is required, and doesn't have a default, then
       // the default '0' is set
@@ -138,8 +139,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
         jsonObject.put("classicValue", 0);
         if (field.isDisplayed() != null && field.isDisplayed()) {
           o.put("width", "50%");
-        } else {
-          o.put("width", "");
         }
         return jsonObject.toString();
       }

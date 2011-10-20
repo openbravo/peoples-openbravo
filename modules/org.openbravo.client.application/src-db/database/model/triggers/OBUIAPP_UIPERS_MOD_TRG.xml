@@ -69,6 +69,8 @@ BEGIN
         COALESCE(:NEW.AD_ORG_ID, '.') != COALESCE(:old.AD_ORG_ID, '.') OR
         COALESCE(:NEW.ISACTIVE, '.') != COALESCE(:old.ISACTIVE, '.') OR
         COALESCE(:NEW.AD_MODULE_ID, '.') != COALESCE(:old.AD_MODULE_ID, '.') OR
+        coalesce(:new.AD_WINDOW_ID, '.') != coalesce(:old.AD_WINDOW_ID, '.') or   
+        coalesce(:new.TYPE, '.') != coalesce(:old.TYPE, '.') or   
         coalesce(:new.AD_TAB_ID, '.') != coalesce(:old.AD_TAB_ID, '.') or   
         coalesce(:new.AD_USER_ID, '.') != coalesce(:old.AD_USER_ID, '.') or   
         coalesce(:new.DESCRIPTION, '.') != coalesce(:old.DESCRIPTION, '.') or   

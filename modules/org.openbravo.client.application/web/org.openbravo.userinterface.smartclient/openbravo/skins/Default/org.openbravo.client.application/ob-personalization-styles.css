@@ -17,6 +17,12 @@
  ************************************************************************
 */
 
+.OBToolbarIconButton_icon_manageviews {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/personalization/iconButton-manageviews.png);
+}
+
 .OBToolbarIconButton_icon_personalization {
   background-repeat: no-repeat;
   background-position: center center;
@@ -89,4 +95,70 @@
   background-color: #ffe1c0;
 }
 
+.OBPersonalizationPullDownMenu {
+  background-color: #3a6b01;
+  border: 1px solid #64932d;
+}
 
+.OBPersonalizationPullDownMenuTable {
+}
+
+.OBPersonalizationPullDownMenuBody {
+}
+
+.OBPersonalizationPullDownMenuCell,
+.OBPersonalizationPullDownMenuCellSelected,
+.OBPersonalizationPullDownMenuCellOver,
+.OBPersonalizationPullDownMenuCellSelectedOver,
+.OBPersonalizationPullDownMenuCellDisabled,
+
+.OBPersonalizationPullDownMenuCellIcon,
+.OBPersonalizationPullDownMenuCellIconSelected,
+.OBPersonalizationPullDownMenuCellIconOver,
+.OBPersonalizationPullDownMenuCellIconSelectedOver,
+.OBPersonalizationPullDownMenuCellIconDisabled,
+
+.OBPersonalizationPullDownMenuCellSeparator,
+.OBPersonalizationPullDownMenuCellSeparatorSelected,
+.OBPersonalizationPullDownMenuCellSeparatorOver,
+.OBPersonalizationPullDownMenuCellSeparatorSelectedOver,
+.OBPersonalizationPullDownMenuCellSeparatorDisabled {
+  color: #ffffff;
+  font-size: 11px;
+  font-family: 'lucida sans', sans-serif;
+  cursor: pointer;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.OBPersonalizationPullDownMenuCellIcon,
+.OBPersonalizationPullDownMenuCellIconSelected,
+.OBPersonalizationPullDownMenuCellIconOver,
+.OBPersonalizationPullDownMenuCellIconSelectedOver,
+.OBPersonalizationPullDownMenuCellIconDisabled {
+  border-right: 1px solid #64932d;
+  text-align: center;
+}
+
+.OBPersonalizationPullDownMenuCellSeparator,
+.OBPersonalizationPullDownMenuCellSeparatorSelected,
+.OBPersonalizationPullDownMenuCellSeparatorOver,
+.OBPersonalizationPullDownMenuCellSeparatorSelectedOver,
+.OBPersonalizationPullDownMenuCellSeparatorDisabled {
+  border-top: 1px solid #64932d;
+}
+
+.OBPersonalizationPullDownMenuCell,
+.OBPersonalizationPullDownMenuCellSelected {
+}
+
+.OBPersonalizationPullDownMenuCellDark,
+.OBPersonalizationPullDownMenuCellOver,
+.OBPersonalizationPullDownMenuCellIconOver,
+.OBPersonalizationPullDownMenuCellIconSelectedOver,
+.OBPersonalizationPullDownMenuCellSelectedOver,
+.OBPersonalizationPullDownMenuCellSeparatorOver,
+.OBPersonalizationPullDownMenuCellSeparatorSelectedOver {
+  background-color: #035101;
+  margin-bottom: -1px;
+}

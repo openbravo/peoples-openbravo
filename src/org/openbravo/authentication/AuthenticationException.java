@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,31 +12,34 @@
 
 package org.openbravo.authentication;
 
+import org.openbravo.base.exception.OBException;
+import org.openbravo.erpCommon.utility.OBError;
+
 /**
  * 
  * @author adrianromero
+ * @author iperdomo
  */
-public class AuthenticationException extends java.lang.Exception {
+public class AuthenticationException extends OBException {
   private static final long serialVersionUID = 1L;
+  private OBError error;
 
-  /**
-   * Creates a new instance of <code>AuthenticationException</code> without detail message.
-   */
-  public AuthenticationException() {
-  }
-
-  /**
-   * Constructs an instance of <code>AuthenticationException</code> with the specified detail
-   * message.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public AuthenticationException(String msg) {
     super(msg);
+    this.error = null;
   }
 
-  public AuthenticationException(String msg, Throwable t) {
-    super(msg, t);
+  public AuthenticationException(String msg, Throwable cause) {
+    super(msg, cause);
+    this.error = null;
+  }
+
+  public AuthenticationException(String msg, OBError error) {
+    super(msg);
+    this.error = error;
+  }
+
+  public OBError getOBError() {
+    return error;
   }
 }

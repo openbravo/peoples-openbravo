@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-/* jslint */
 <#-- 
 if the createStatement parameter is passed then only create the 
 javascript with the isc.RestDataSource.create statement.
@@ -43,14 +42,8 @@ although the same is done by the compressor
 <#if data.getParameter("_new") != "">
         _new: true,
 </#if>
-        titleField: OB.Constants.IDENTIFIER
-        , dataURL:'${data.dataUrl?js_string}${data.name?js_string}'
-        , recordXPath: '/response/data', dataFormat: 'json'
-        , operationBindings:  [{operationType: 'fetch', dataProtocol: 'postParams', requestProperties:{httpMethod: 'POST'}} 
-        , {operationType: 'add', dataProtocol: 'postMessage'}
-        , {operationType: 'remove', dataProtocol: 'postParams', requestProperties:{httpMethod: 'DELETE'}}
-        , {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}
-        ], requestProperties : { params : {
+        dataURL:'${data.dataUrl?js_string}${data.name?js_string}',
+        requestProperties : { params : {
                 <#list data.getParameterNames() as key>
                     ${key} : '${data.getParameter(key)?js_string}'<#if key_has_next>,</#if>     
                 </#list>
@@ -63,23 +56,27 @@ although the same is done by the compressor
 </#macro>
 
 <#macro generateField property>
+<@compress single_line=true>
   {name: '${property.name?js_string}',
-    type: '${property.type}',
-    additional: ${property.additional?string}
+    <#if property.type!="text">
+    type: '${property.type}'
+    </#if>
+    <#if property.additional>
+    , additional: ${property.additional?string}
+    </#if>
 <#if property.id>
-    , hidden: true, primaryKey: true
+    ,primaryKey: true
 </#if>
-<#if property.mandatory && property.updatable && !property.auditInfo && !property.boolean>
-    , required: true
-</#if>
+<#--
+the following is not needed, is covered in the form fields/grid fields
 <#if !property.updatable || property.auditInfo>
     , canSave: false
 </#if>
 <#if 0 < property.fieldLength && property.primitive && !property.id && property.primitiveObjectType.name="java.lang.String">
       , length: ${property.fieldLength?c}
 </#if>
-    <#--TODO: translate this-->
     , title: '${property.name?js_string}'
+-->
 <#if (property.allowedValues)?? && 0 < property.allowedValues?size>
     , valueMap: {
     <#list property.valueMapContent as entry>
@@ -92,34 +89,30 @@ although the same is done by the compressor
     </#list>
     }
 </#if>
-<#if !property.primitive>
-   <#if !property.id>
-    , hidden: true
-   </#if>
-   <#-- , foreignKey: '${property.targetEntity.name}.id' -->
-</#if>
     }
 <#if !property.primitive>
     <#-- Note the subPropName are constants from the JsonConstants class -->
     <#-- , <@generateReferenceField property=property subPropName='id'/> -->
     , <@generateReferenceField property=property subPropName='_identifier'/>
 </#if>
-    
+</@compress>    
 </#macro>
 
 <#macro generateReferenceField property subPropName>
     {name: '${property.name?js_string}.${subPropName}'
+    <#--
     , type: 'text', hidden: true
     <#if property.mandatory>
-      <#--, required: true-->
+      , required: true
     </#if>
-
     <#if !property.updatable || property.auditInfo>
       , canSave: false
     </#if>
-    <#--, valueXPath: '${property.name?js_string}/${subPropName}'-->
-    <#--TODO Translate this-->
+    -->
+    <#--
+    , valueXPath: '${property.name?js_string}/${subPropName}'
     , title: '${property.name?js_string}'
+    -->
     }
     
 <#--

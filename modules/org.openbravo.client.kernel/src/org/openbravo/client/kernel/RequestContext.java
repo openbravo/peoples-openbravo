@@ -870,7 +870,7 @@ public class RequestContext {
       return attributes.get(arg0);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Enumeration getAttributeNames() {
       // TODO Auto-generated method stub
@@ -894,7 +894,7 @@ public class RequestContext {
       return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Enumeration getInitParameterNames() {
       // TODO Auto-generated method stub
@@ -949,7 +949,7 @@ public class RequestContext {
       return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Set getResourcePaths(String arg0) {
       // TODO Auto-generated method stub
@@ -974,14 +974,14 @@ public class RequestContext {
       return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Enumeration getServletNames() {
       // TODO Auto-generated method stub
       return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Enumeration getServlets() {
       // TODO Auto-generated method stub

@@ -1126,9 +1126,12 @@ border-top:1px solid #abadb3;
 .headerButtonSelectedOver,
 .headerButtonSelectedDown {
     background-color:#FFFFFF;
-    
     border-left:1px solid rgb(246,247,249);
     border-right:1px solid rgb(200,204,207);
+    font-family:Arial, Verdana, sans-serif; font-size:11px;
+    padding-left:4px; padding-right:4px;
+    color: black;
+    background: url('images/ListGrid/headerSprite.png') repeat-x top left; 
 }
 .headerButtonOver,
 .headerButtonDown,
@@ -1136,6 +1139,44 @@ border-top:1px solid #abadb3;
 .headerButtonSelectedDown {
     border-left:1px solid rgb(228,242,255);
     border-right:1px solid rgb(200,204,208);
+}
+
+.headerButton {
+    background-position: 0px -210px;
+    border-bottom:1px solid #BAC2CD;
+}
+
+.headerButtonOver {
+    background-position: 0px -420px;
+    border-bottom: 1px solid #98B5D4;
+}
+
+.headerButtonDown {
+    background-position: 0px -350px;
+    border-bottom: 1px solid #ABB6C4;
+}
+
+.headerButtonDisabled {
+    background-position: 0px -280px;
+    border-bottom: 1px solid #BCC4CF;
+    color: #AAAAAA;
+}
+
+.headerButtonSelected,
+.headerButtonSelectedDown{
+    background-position: 0px 0px;
+    border-bottom: 1px solid #98B5D4;
+}
+
+.headerButtonSelectedOver {
+    background-position: 0px -140px;
+    border-bottom: 1px solid #A5B3C4;
+}
+
+.headerButtonSelectedDisabled {
+    background-position: 0px -70px;
+    border-bottom: 1px solid #A6B9CD;
+    color: #AAAAAA;
 }
 
 .sorterButton,
@@ -1148,37 +1189,17 @@ border-top:1px solid #abadb3;
 .sorterButtonSelectedDown {
     background-color:#FFFFFF;
     border-left:1px solid rgb(246,247,249);
+    background-image:url("images/ListGrid/headerSprite.png");
+    background-position: 0px -210px;
 }
+
 .sorterButtonOver,
 .sorterButtonDown,
 .sorterButtonSelectedOver,
 .sorterButtonSelectedDown {
     border-left:1px solid rgb(228,242,255);
-}
-
-/* ListGrid column header titles */
-.headerTitle,
-.headerTitleOver,
-.headerTitleDown,
-.headerTitleSelected,
-.headerTitleSelectedOver,
-.headerTitleSelectedDown,
-.headerTitleDisabled,
-.headerTitleSelectedDisabled {
-    font-family:Arial, Verdana, sans-serif; font-size:11px;
-    padding-left:4px; padding-right:4px;
-    color: black;
-}
-.headerTitleDown,
-.headerTitleSelected,
-.headerTitleSelectedOver,
-.headerTitleSelectedDown,
-.headerTitleSelectedDisabled {
-    color:black;
-}
-.headerTitleDisabled,
-.headerTitleSelectedDisabled {
-    color: #AAAAAA;
+    background-image:url("images/ListGrid/headerSprite.png");
+    background-position: 0px -420px;
 }
 
 
@@ -1212,6 +1233,8 @@ border-top:1px solid #abadb3;
 .tallCellDisabledDark,
 .gridSummaryCell,
 .gridSummaryCellDisabled,
+.groupSummaryCell,
+.groupSummaryCellDisabled,
 .recordSummaryCell,
 .recordSummaryCellDark,
 .recordSummaryCellOver,
@@ -1267,10 +1290,20 @@ border-top:1px solid #abadb3;
 .recordSummaryCellDark {
     background-color:#fafafa;
 }
-.gridSummaryCell,
-.gridSummaryCellDisabled {
+.groupSummaryCell,
+.groupSummaryCellDisabled {
     border-top:1px solid gray;
     border-bottom:1px solid gray;
+    background-color:#ececec;
+}
+
+.gridSummaryCell,
+.gridSummaryCellDisabled {
+    border-top-width:0px;
+    border-bottom-width:0px;
+    background-color:#ececec;
+}
+.summaryRowBody {
     background-color:#ececec;
 }
 .tallCellDark {
@@ -1284,10 +1317,12 @@ border-top:1px solid #abadb3;
 .recordSummaryCellOverDark {
     background:#FFFFFF url(./images/ListGrid/row_Over.png) repeat-x bottom left scroll;
 }
+
 .tallCellOver,
 .tallCellOverDark {
-    border-top: 1px solid #e5e5e5;
-	background-color:#e5e5e5;
+	background-color:#daecff;
+    border-top: 1px dotted #c5e0ff;
+    border-bottom: 1px dotted #c5e0ff;    
 }
 
 .cellSelected,
@@ -1299,6 +1334,7 @@ border-top:1px solid #abadb3;
     border-top: 1px dotted #9fb7e9;
     border-bottom: 1px dotted #9fb7e9;
 }
+
 .tallCellSelected,
 .tallCellSelectedDark {
     background:#d9e4f6;
@@ -1314,13 +1350,15 @@ border-top:1px solid #abadb3;
     border-top: 1px dotted #9fb7e9;
     border-bottom: 1px dotted #9fb7e9;     
 }
+
 .tallCellSelectedOver,
 .tallCellSelectedOverDark {
-	background-color:#d0dff6;
-    border-top: 1px dotted #9fb7e9;
-    border-bottom: 1px dotted #9fb7e9;    
+	background-color:#bfdcf9;
+    border-top: 1px dotted #c5e0ff;
+    border-bottom: 1px dotted #c5e0ff;    
 }
-
+.groupSummaryCell,
+.groupSummaryCellDisabled,
 .gridSummaryCell,
 .gridSummaryCellDisabled {
     font-weight:bold;
@@ -1331,6 +1369,7 @@ border-top:1px solid #abadb3;
 .specialColDisabled,
 .tallCellDisabled,
 .tallCellDisabledDark,
+.groupSummaryCellDisabled,
 .gridSummaryCellDisabled,
 .specialColDisabled,
 .recordSummaryCellDisabled,

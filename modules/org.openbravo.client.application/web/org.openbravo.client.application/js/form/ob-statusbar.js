@@ -75,7 +75,7 @@ isc.OBStatusBarIconButton.addProperties( {
   },
 
   doAction : function() {
-    var rowNum, newRowNum, newRecord, theButtonBar, i;
+    var rowNum, newRowNum, newRecord, theButtonBar, i, length;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
@@ -96,7 +96,8 @@ isc.OBStatusBarIconButton.addProperties( {
     } else if (this.buttonType === 'maximizeRestore') {
       theButtonBar = this.view.statusBar.buttonBar;
       if (theButtonBar.members) {
-        for (i = 0; i < theButtonBar.members.length; i++) {
+        length = theButtonBar.members.length;
+        for (i = 0; i < length; i++) {
           if (theButtonBar.members[i].buttonType === 'maximize' && !theButtonBar.members[i].isDisabled() && theButtonBar.members[i].isVisible()) {
             theButtonBar.members[i].action();
             break;
@@ -189,6 +190,9 @@ isc.OBStatusBar.addProperties( {
   },
   
   addCreateButtons: function() {
+    var buttonSpacer = isc.HLayout.create( {
+        width : this.iconButtonGroupSpacerWidth
+      }), i, length;
 
     this.previousButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
@@ -196,29 +200,34 @@ isc.OBStatusBar.addProperties( {
       keyboardShortcutId : 'StatusBar_Previous',
       prompt : OB.I18N.getLabel('OBUIAPP_PREVIOUSBUTTON')
     });
+    
     this.nextButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'next',
       keyboardShortcutId : 'StatusBar_Next',
       prompt : OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
     });
+    
     this.closeButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'close',
       keyboardShortcutId : 'StatusBar_Close',
       prompt : OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
     });
+    
     this.maximizeButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'maximize',
       prompt : OB.I18N.getLabel('OBUIAPP_MAXIMIZEBUTTON')
     });
+    
     this.restoreButton = isc.OBStatusBarIconButton.create( {
       visibility : 'hidden',
       view : this.view,
       buttonType : 'restore',
       prompt : OB.I18N.getLabel('OBUIAPP_RESTOREBUTTON')
     });
+    
     this.maximizeRestoreButton = isc.OBStatusBarIconButton.create( { // Only for implement 'StatusBar_Maximize-Restore' keyboard shortcut
       visibility : 'hidden',
       view : this.view,
@@ -227,13 +236,10 @@ isc.OBStatusBar.addProperties( {
       keyboardShortcutId : 'StatusBar_Maximize-Restore'
     });
 
-    var buttonSpacer = isc.HLayout.create( {
-      width : this.iconButtonGroupSpacerWidth
-    }), i;
-
     this.buttonBar.addMembers( [ this.previousButton, this.nextButton, buttonSpacer,
         this.maximizeButton, this.restoreButton, this.closeButton, this.maximizeRestoreButton ]);
-    for (i = 0; i < this.buttonBar.members.length; i++) {
+    length = this.buttonBar.members.length;
+    for (i = 0; i < length; i++) {
       if (this.buttonBar.members[i].buttonType) {
         OB.TestRegistry.register(
             'org.openbravo.client.application.statusbar.button.' + this.buttonBar.members[i].buttonType + '.' + this.view.tabId,
@@ -277,8 +283,10 @@ isc.OBStatusBar.addProperties( {
   },
 
   disableShortcuts: function(){
+    var length;
     if (this.buttonBar.members) {
-      for (i = 0; i < this.buttonBar.members.length; i++) {
+      length = this.buttonBar.members.length;
+      for (i = 0; i < length; i++) {
         if (this.buttonBar.members[i].disableShortcut) {
           this.buttonBar.members[i].disableShortcut();
         }
@@ -321,13 +329,14 @@ isc.OBStatusBar.addProperties( {
   },
 
   updateContentTitle: function(arrayTitleField, message) {
-    var msg = '', i;
+    var msg = '', i, length;
     if (!isc.Page.isRTL()) { // LTR mode
       if (this.statusCode) {
         msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
       }
       if (arrayTitleField) {
-        for (i = 0; i < arrayTitleField[0].length; i++) {
+        length = arrayTitleField[0].length;
+        for (i = 0; i < length; i++) {
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }

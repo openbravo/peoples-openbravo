@@ -127,9 +127,6 @@
       and pr.isactive='Y' 
       and pr.UIPattern = 'S'
       and p.ad_process_id = pr.ad_process_id
-      and exists (select 1 
-                    from ad_menu m 
-                   where m.ad_process_id = p.ad_process_id)
       ]]>
     </Sql>
   </SqlMethod>

@@ -96,6 +96,10 @@ isc.OBQuickRun.addProperties({
     // Always call the superclass implementation when overriding initWidget
     this.Super('initWidget', arguments);
     
+    this.computeSetContent();
+  },
+  
+  computeSetContent: function() {
     // set some defaults
     var defaultLayoutProperties = {
       styleName: 'OBFlyoutLayout',
@@ -108,8 +112,8 @@ isc.OBQuickRun.addProperties({
     // compute the height
     if (this.members) {
       defaultLayoutProperties.members = this.members;
-      var computedHeight = 0, i;
-      for (i = 0; i < this.members.length; i++) {
+      var computedHeight = 0, i, length = this.members.length;
+      for (i = 0; i < length; i++) {
         if (this.members[i].height) {
           computedHeight = computedHeight + this.members[i].height;
         }
@@ -127,6 +131,13 @@ isc.OBQuickRun.addProperties({
     }
     // this.overCanvas = this.layout;
     // this.showOverCanvas = true;
+  },
+  
+  resetLayout: function() {
+    if (this.layout) {
+      this.layout.destroy();
+      this.layout = null;
+    }
   },
 
   // ** {{{ click }}} **

@@ -309,6 +309,9 @@ public class LoginUtils {
     }
 
     // Login process if finished, set the flag as not logging in
+    // this flag may not be removed from the session, it must be set
+    // to N to prevent re-initializing the session continuously
+    // See the HttpSecureAppServlet
     vars.setSessionValue("#loggingIn", "N");
     return true;
   }
@@ -317,7 +320,7 @@ public class LoginUtils {
    * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
    * correct.
    */
-  static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
+  public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {
     String strRole = role;
     if (strRole.equals("")) {

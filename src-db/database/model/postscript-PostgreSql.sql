@@ -1,167 +1,4 @@
 
-CREATE OR REPLACE FUNCTION ad_script_disable_triggers(p_seqNoStart numeric)
-  RETURNS numeric AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMERIC := p_seqNoStart;
- Cur_Triggers RECORD;
-BEGIN
- FOR Cur_Triggers IN (SELECT OBJECT_NAME AS NAME, TABLE_NAME
-                      FROM USER_OBJECTS
-                      ORDER BY OBJECT_NAME) LOOP
-    v_seqNo := v_seqNo + 1;
-  --      INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE');
-    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TABLE  '||Cur_Triggers.TABLE_NAME||' DISABLE TRIGGER '||Cur_Triggers.NAME);
- END LOOP;
- RETURN v_seqNo;
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-/-- END
-
-CREATE OR REPLACE FUNCTION ad_script_disable_constraints(p_seqNoStart numeric)
-  RETURNS numeric AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMERIC := p_seqNoStart;
- Cur_Constraints RECORD;
-BEGIN
- RAISE NOTICE '%','ad_script_disable_constraints';
- FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME
-                          FROM USER_CONSTRAINTS C1
-                          WHERE CONSTRAINT_TYPE IN ('P','U','R')
-                          --AND DELETE_RULE NOT LIKE 'C'
-                          ORDER BY (CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3 END), TABLE_NAME, CONSTRAINT_NAME) LOOP
-   v_seqNo := v_seqNo + 1;
-   --INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME);
-  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DROP CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME);
- END LOOP;
- RETURN v_seqNo+1;
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-/-- END
-
-
-CREATE OR REPLACE FUNCTION ad_script_enable_triggers(p_seqNoStart numeric)
-  RETURNS numeric AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMERIC := p_seqNoStart;
- Cur_Triggers RECORD;
-BEGIN
- FOR Cur_Triggers IN (SELECT OBJECT_NAME AS NAME, TABLE_NAME
-                      FROM USER_OBJECTS
-                      ORDER BY OBJECT_NAME) LOOP
-      v_seqNo := v_seqNo + 1;
---    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE');
-    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'ALTER TABLE  '||Cur_Triggers.TABLE_NAME||' ENABLE TRIGGER '||Cur_Triggers.NAME);
- END LOOP;
- RETURN v_seqNo;
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-/-- END
-
-CREATE OR REPLACE FUNCTION ad_script_enable_constraints(p_seqNoStart numeric)
-  RETURNS numeric AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMERIC := p_seqNoStart;
- Cur_Constraints RECORD;
-BEGIN
--- Make sure all foreign keys are satisfied
-  FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
-                           FROM USER_CONSTRAINTS C1
-                           WHERE CONSTRAINT_TYPE = 'R'
-                           --AND DELETE_RULE = 'C'
-            ) LOOP
-    v_seqNo := v_seqNo + 1;
-    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'DELETE FROM '||Cur_Constraints.TABLE_NAME||' WHERE '||Cur_Constraints.COLUMN_NAMES|| 
-                    ' IS NOT NULL AND ' ||Cur_Constraints.COLUMN_NAMES|| 
-                    ' IN (' ||
-			' SELECT ' ||Cur_Constraints.COLUMN_NAMES || ' FROM ' || Cur_Constraints.TABLE_NAME || ' EXCEPT ' ||
-			' SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
-                    );
-  END LOOP;
- 
- FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
-                           FROM USER_CONSTRAINTS C1
-                           WHERE CONSTRAINT_TYPE IN ('P','U','R')
-                           --AND DELETE_RULE NOT LIKE 'C'
-                           ORDER BY (CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1 END), TABLE_NAME, CONSTRAINT_NAME) LOOP
-    v_seqNo := v_seqNo + 1;
-   INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' ADD CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME|| (CASE Cur_Constraints.CONSTRAINT_TYPE
-     WHEN 'P' THEN '  PRIMARY KEY ('||Cur_Constraints.COLUMN_NAMES||')'
-     WHEN 'U' THEN '  UNIQUE ('||Cur_Constraints.COLUMN_NAMES||')'
-     WHEN 'R' THEN '  FOREIGN KEY ('||Cur_Constraints.COLUMN_NAMES||') REFERENCES '||Cur_Constraints.FK_TABLE||' ('||Cur_Constraints.FK_COLUMN_NAMES||') '||
-                                (CASE Cur_Constraints.FK_MATCHTYPE WHEN 'f' THEN ' MATCH FULL' WHEN 'p' THEN ' MATCH PARTIAL' ELSE '' END) ||
-                                (CASE Cur_Constraints.DELETE_RULE WHEN 'N' THEN ' ON DELETE SET NULL' WHEN 'D' THEN ' ON DELETE SET DEFAULT' WHEN 'C' THEN ' ON DELETE CASCADE' ELSE '' END)
-
-     END));
-  END LOOP;
-  RETURN v_seqNo + 100001;
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-/-- END
-
 CREATE OR REPLACE FUNCTION ad_script_drop_recreate_index(p_seqNoStart numeric)
   RETURNS numeric AS
 $BODY$ DECLARE
@@ -590,8 +427,8 @@ END;   $BODY$
 SELECT pg_temp.insert_recipient();
 /-- END
 
---Inserts role access for new register window
---See issue:  https://issues.openbravo.com/view.php?id=11349
+--Inserts role access for new Smartclient register window
+--It needs to be done this way until this issue is fixed:  https://issues.openbravo.com/view.php?id=18689
 CREATE OR REPLACE FUNCTION pg_temp.insert_register_form_access()
   RETURNS void AS
 $BODY$ DECLARE
@@ -612,10 +449,10 @@ $BODY$ DECLARE
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  INSERT INTO ad_form_access(ad_form_access_id, ad_form_id, ad_role_id,
-                               ad_client_id, ad_org_id, isactive, created,
-                               createdby, updated, updatedby, isreadwrite)
-         VALUES('41263F39F7614270808A955844B07A7F', '3D8AB0C824ED4C70ADE086D9CFE5DA1A', '0', '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+  INSERT INTO OBUIAPP_View_Role_Access(OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy)
+         VALUES(get_uuid(), 'FF808081329B023101329B0CE2080013', '0', '0', '0', 'Y', now(), '0', now(), '0');
 EXCEPTION
 WHEN OTHERS THEN
 --do nothing

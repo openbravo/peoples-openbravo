@@ -18084,7 +18084,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--B506C3346CDB44EEB33592003DCA14B2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B506C3346CDB44EEB33592003DCA14B2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B506C3346CDB44EEB33592003DCA14B2-->  <VALUE><![CDATA[PaymentmethodNotbelongsFinAccount]]></VALUE>
-<!--B506C3346CDB44EEB33592003DCA14B2-->  <MSGTEXT><![CDATA[Automatic actions could not be performed: selected payment method does not belong to the business partner default financial account.]]></MSGTEXT>
+<!--B506C3346CDB44EEB33592003DCA14B2-->  <MSGTEXT><![CDATA[Automatic actions could not be performed: selected payment method does not belong to the business partner default financial account or the default financial account is not accessible for the invoice's organization.]]></MSGTEXT>
 <!--B506C3346CDB44EEB33592003DCA14B2-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--B506C3346CDB44EEB33592003DCA14B2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B506C3346CDB44EEB33592003DCA14B2--></AD_MESSAGE>

@@ -26,6 +26,7 @@ isc.OBToolbarActionButton.addProperties( {
   visible: false,
   modal: true,
   contextView: null,
+  labelValue: {},
   
   action : function() {
     this.runProcess();
@@ -158,13 +159,19 @@ isc.OBToolbarActionButton.addProperties( {
     }
   },
   
-  updateState: function(record, hide) {
+  updateState: function(record, hide, context) {
+    var currentValues = record || this.contextView.getCurrentValues() || {};
     if (hide || !record) {
       this.hide();
       return;
     }
     
-    this.visible = !this.displayIf || this.displayIf(null, null, this.contextView.viewForm, record);
+    context = context || this.contextView.getContextInfo(false, true, true); 
+    
+    
+    OB.Utilities.fixNull250(currentValues);
+    
+    this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
     
     // Even visible is correctly set, it is necessary to execute show() or hide()
     if (this.visible){
@@ -173,7 +180,7 @@ isc.OBToolbarActionButton.addProperties( {
       this.hide();
     }
     
-    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.contextView.viewForm, record);
+    var readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
     if (readonly) {
       this.disable();
     } else {

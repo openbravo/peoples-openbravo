@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class WebService3ImplServiceLocator extends org.apache.axis.client.Service implements org.openbravo.services.webservice.WebService3ImplService {
 
     public WebService3ImplServiceLocator() {

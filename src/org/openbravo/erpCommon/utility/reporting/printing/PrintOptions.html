@@ -49,10 +49,11 @@
        if (!isWindowInMDIPopup || getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getClassName()==='OBClassicWindow') {
         // If opening in 2.50 layout, do it in hidden frame
         submitCommandForm(strCommand, false, null, null, "hiddenFrame");
-        closePage();
       } else {
-        submitCommandForm(strCommand, false, null, null);
+          //In OB 3, we submit the form in the OB 3 background_target hidden iframe
+        submitCommandForm(strCommand, false, null, null, "background_target");
       }
+       closePage();
       return true;
     }
 

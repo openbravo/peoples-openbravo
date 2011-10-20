@@ -1790,7 +1790,7 @@ AND fapm.Payout_Allow = (SELECT CASE WHEN '@FIN_ISRECEIPT@'='N' THEN 'Y' ELSE fa
 <!--FF8081813092D5DC013092DD70AD000C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8081813092D5DC013092DD70AD000C-->  <NAME><![CDATA[Document currency]]></NAME>
 <!--FF8081813092D5DC013092DD70AD000C-->  <TYPE><![CDATA[S]]></TYPE>
-<!--FF8081813092D5DC013092DD70AD000C-->  <CODE><![CDATA[C_Currency.C_Currency_id in (SELECT C_Currency_ID FROM C_Invoice WHERE C_Invoice_ID =@C_Invoice_ID@)  or C_Currency.C_Currency_id in (SELECT foreign_currency_id FROM aprm_finacc_transaction_v WHERE aprm_finacc_transaction_v_id=@APRM_Finacc_Transaction_V_ID@) or C_Currency.C_Currency_id in (SELECT C_Currency_ID FROM FIN_Payment WHERE FIN_Payment_ID = @FIN_Payment_ID@)]]></CODE>
+<!--FF8081813092D5DC013092DD70AD000C-->  <CODE><![CDATA[C_Currency_id = (SELECT c_currency_id FROM aprm_finacc_transaction_v WHERE aprm_finacc_transaction_v_id=@aprm_finacc_transaction_v_id@)]]></CODE>
 <!--FF8081813092D5DC013092DD70AD000C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF8081813092D5DC013092DD70AD000C--></AD_VAL_RULE>
 

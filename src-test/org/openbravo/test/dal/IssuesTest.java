@@ -620,6 +620,7 @@ public class IssuesTest extends BaseTest {
     query.setString(0, "en_US");
     query.setString(1, "800025");
 
+    @SuppressWarnings("unchecked")
     java.util.List<Object[]> l = query.list();
 
   }

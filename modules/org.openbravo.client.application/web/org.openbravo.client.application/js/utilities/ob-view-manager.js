@@ -91,11 +91,12 @@
     },
 
     findLoadingTab: function(params) {
-      var i;
+      var i, length;
       if (!params.loadingTabId) {
         return null;
       }
-      for (i = 0; i < OB.MainView.TabSet.tabs.length; i++) {
+      length = OB.MainView.TabSet.tabs.length;
+      for (i = 0; i < length; i++) {
         var pane = OB.MainView.TabSet.tabs[i].pane;
         if (pane.viewTabId && pane.isLoadingTab && pane.viewTabId === params.loadingTabId) {
           return OB.MainView.TabSet.tabs[i];
@@ -296,6 +297,12 @@
               // in another thread
               params = vmgr.createLoadingTab(viewName, params, viewTabId);
             }
+            
+            // make a clone to prevent params being updated in multiple threads
+            // happens for the myob tab in special cases
+            // https://issues.openbravo.com/view.php?id=18548
+            params = isc.shallowClone(params);
+            
             // use a canvas to make use of the fireOnPause possibilities
             // but don't forget to destroy it afterwards...
             var cnv = isc.Canvas.create({

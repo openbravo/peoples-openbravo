@@ -619,9 +619,12 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
         return false;
       }
-    } else if ( !allowNotSelectingPendingPayment || compare(actualPayment, '==', "0")){
-      showJSMessage('APRM_JSNOTLINESELECTED');
-      return false;
+    } else {
+      if (!(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) &&
+          (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))){
+        showJSMessage('APRM_JSNOTLINESELECTED');
+        return false;
+      }	
     }
   } else {
     var total = chk.length;
@@ -634,7 +637,8 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
         }
       }
     }
-    if (!isAnyChecked &&
+    if (!(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) &&
+        !isAnyChecked &&
         (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))
         ) {
       showJSMessage('APRM_JSNOTLINESELECTED');

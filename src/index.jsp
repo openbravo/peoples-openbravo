@@ -7,7 +7,7 @@
 <%@ page import="org.apache.log4j.Logger" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
-/*
+  /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License

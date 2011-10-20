@@ -391,6 +391,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
+    dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
     final String extraProperties = getAdditionalProperties(getSelector(), false);
     if (extraProperties.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties.toString());
@@ -578,9 +579,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     final String displayField = getDisplayField();
     final LocalSelectorField localSelectorField = new LocalSelectorField();
     localSelectorField.setName(displayField);
-    localSelectorField.setTitle(" ");
-    localSelectorField.setSort(false);
-    localSelectorField.setFilter(false);
+    localSelectorField.setPickListField(true);
     localSelectorField.setSelectorItem(isSelectorItem());
     pickListFields.add(localSelectorField);
     pickListFields.addAll(getSelectorFields(true, false));
@@ -607,6 +606,7 @@ public class SelectorComponent extends BaseTemplateComponent {
         continue;
       }
       final LocalSelectorField localSelectorField = new LocalSelectorField();
+      localSelectorField.setPickListField(pickList);
       String fieldName = getPropertyOrDataSourceField(selectorField);
 
       // handle the case that the field is a foreign key
@@ -715,7 +715,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   // used to create picklist and grid fields
   public static class LocalSelectorField {
-    private String title;
+    private String title = " ";
     private String name;
     private String displayField;
     private boolean filter;
@@ -724,6 +724,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private DomainType domainType;
     private UIDefinition uiDefinition;
     private SelectorField selectorField;
+    private boolean pickListField;
 
     public DomainType getDomainType() {
       return domainType;
@@ -773,8 +774,14 @@ public class SelectorComponent extends BaseTemplateComponent {
       result.add(createLocalSelectorFieldProperty("title", title));
       result.add(createLocalSelectorFieldProperty("name", name));
       // is used at runtime to set canFilter on false for a field
-      result.add(createLocalSelectorFieldProperty("disableFilter", !filter));
-      result.add(createLocalSelectorFieldProperty("canSort", sort));
+      if (!isPickListField()) {
+        if (!filter) {
+          result.add(createLocalSelectorFieldProperty("disableFilter", !filter));
+        }
+        if (!sort) {
+          result.add(createLocalSelectorFieldProperty("canSort", sort));
+        }
+      }
       result.add(createLocalSelectorFieldProperty("type", getType()));
       if ((domainType instanceof PrimitiveDomainType)) {
         final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
@@ -881,6 +888,14 @@ public class SelectorComponent extends BaseTemplateComponent {
         return property.getTargetEntity().getName();
       }
       return null;
+    }
+
+    public boolean isPickListField() {
+      return pickListField;
+    }
+
+    public void setPickListField(boolean pickListField) {
+      this.pickListField = pickListField;
     }
 
   }

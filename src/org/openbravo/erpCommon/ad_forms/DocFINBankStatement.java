@@ -161,6 +161,7 @@ public class DocFINBankStatement extends AcctServer {
         return true;
       }
     }
+    setStatus(STATUS_DocumentDisabled);
     return false;
   }
 

@@ -100,7 +100,7 @@ public class Reference extends ModelObject {
   /**
    * @deprecated use {@link PrimitiveDomainType#getPrimitiveType()}.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   public static Class getPrimitiveType(String id) {
     if (primitiveTypes.containsKey(id))
       return primitiveTypes.get(id);

@@ -90,7 +90,7 @@ isc.OBStandardWindow.addProperties({
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
     } else if (this.getClass().personalization) {
-      OB.Personalization.personalizeWindow(this.getClass().personalization, this);
+      this.setPersonalization(this.getClass().personalization);
     }
   },
   
@@ -106,26 +106,123 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i;
-    
-    // do the personalization part always
-    if (data) {
-      OB.Personalization.personalizeWindow(data.personalization, this);
+    var i, views, length;
+
+    if (data && data.personalization) {
+      this.setPersonalization(data.personalization);
     }
-    
-    if (this.getClass().windowSettingsRead) {
-      return;
-    }
-    this.getClass().personalization = data.personalization;
+
     this.getClass().windowSettingsRead = true;
+
     this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;
     this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
     // set the views to readonly
-    for (i = 0; i < this.views.length; i++) {
+    length = this.views.length;
+    for (i = 0; i < length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
+    }
+  },
+  
+  setPersonalization: function(personalization) {
+    var i, defaultView, persDefaultValue;
+    
+    if (personalization.forms) {
+      OB.Personalization.personalizeWindow(personalization.forms, this);
+    }
+    this.getClass().personalization = personalization;
+    
+    persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+    
+    // find the default view, the personalizations are
+    // returned in order of prio, then do sort by name
+    if (this.getClass().personalization.views) {
+      views = this.getClass().personalization.views;
+      length = views.length;
+      if (persDefaultValue) {
+        for (i = 0; i < length; i++) {
+          if (persDefaultValue === views[i].personalizationId) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      if (!defaultView) {
+        for (i = 0; i < length; i++) {
+          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      
+      // apply the default view
+      // maybe do this in a separate thread
+      if (defaultView) {
+        this.fireOnPause('setDefaultView', function() {
+          OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
+        }, 100);
+      }
+      
+      this.getClass().personalization.views.sort(function(v1, v2) {
+        var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
+        if (t1 < t2) {
+          return -1;
+        } else if (t1 === t2) {
+          return 0;
+        }
+        return 1;
+      });
+    }    
+  },
+
+  // Update the personalization record which is stored 
+  updateFormPersonalization: function(view, formPersonalization) {
+    if (!this.getClass().personalization) {
+      this.getClass().personalization = {};
+     }
+    if (!this.getClass().personalization.forms) {
+      this.getClass().personalization.forms = [];
+    }
+    this.getClass().personalization.forms[view.tabId] = formPersonalization;
+   },
+   
+  getFormPersonalization: function(view, checkSavedView) {
+    var formPersonalization, i, persView;
+    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      // no form personalization on form level
+      // check window level
+      if (checkSavedView && this.getClass().personalization && this.getClass().personalization.views 
+          && this.selectedPersonalizationId) {
+        for (i = 0; i < this.getClass().personalization.views.length; i++) {
+          persView = this.getClass().personalization.views[i];
+          if (persView.viewDefinition && 
+              persView.viewDefinition[view.tabId] && 
+              persView.personalizationId === this.selectedPersonalizationId) {
+            return persView.viewDefinition[view.tabId].form;
+          }
+        }
+      }
+      // nothing found go away
+      return null;
+    }
+    formPersonalization = this.getClass().personalization.forms;
+    return formPersonalization[view.tabId];
+  },
+
+  removeAllFormPersonalizations: function() {
+    var i, updateButtons = false, length = this.views.length;
+    if (!this.getClass().personalization) {
+      return;
+    }
+    updateButtons = this.getClass().personalization.forms;
+    if (updateButtons) {
+      delete this.getClass().personalization.forms;
+      for (i = 0; i < length; i++) {
+        this.views[i].toolBar.updateButtonState(false);
+      }
     }
   },
 
@@ -454,9 +551,10 @@ isc.OBStandardWindow.addProperties({
 
   draw: function(){
     var standardWindow = this, targetEntity,
-        ret = this.Super('draw', arguments), i;
+        ret = this.Super('draw', arguments), i,
+        length = this.views.length;
     if (this.targetTabId) {
-      for (i = 0; i < this.views.length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
           this.views[i].viewGrid.targetRecordId = this.targetRecordId;
@@ -554,8 +652,8 @@ isc.OBStandardWindow.addProperties({
   },
 
   storeViewState: function(){
-    var result = {}, i;
-    for (i = 0; i < this.views.length; i++) {
+    var result = {}, i, length = this.views.length;
+    for (i = 0; i < length; i++) {
       if(this.views[i].viewGrid){
         result[this.views[i].tabId]=this.views[i].viewGrid.getViewState();
       }

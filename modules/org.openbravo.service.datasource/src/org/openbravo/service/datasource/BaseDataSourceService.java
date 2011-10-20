@@ -66,6 +66,10 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return template;
   }
 
+  /**
+   * @deprecated returned class {@link DataSourceJavaScriptCreator} is deprecated
+   */
+  @Deprecated
   protected DataSourceJavaScriptCreator getJavaScriptCreator() {
     return new DataSourceJavaScriptCreator();
   }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2389,7 +2390,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
         mod.setUpgradeAvailable(null);
         hasChanged = true;
       }
-      // OBDal.getInstance().flush();
+      OBDal.getInstance().flush();
+      try {
+        // A commit is necessary to avoid a lock which can happen because xsql statements are being
+        // executed (but not committed yet) in parallel with DAL statements over the same tables
+        // (see issue 18697)
+        OBDal.getInstance().getConnection().commit();
+      } catch (SQLException e) {
+        // Do nothing, this will not happen
+      }
     } finally {
       OBInterceptor.setPreventUpdateInfoChange(false);
     }

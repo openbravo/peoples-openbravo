@@ -206,8 +206,9 @@ isc.OBAlertGrid.addProperties({
   },
   
   cellClick: function (record, rowNum, colNum) {
-    var i, tabId, field = this.getField(colNum);
-    for (i = 0; i < OB.AlertManagement.alertRules.length; i++) {
+    var i, tabId, field = this.getField(colNum),
+      length = OB.AlertManagement.alertRules.length;
+    for (i = 0; i < length; i++) {
       if (OB.AlertManagement.alertRules[i].alertRuleId === record.alertRule) {
         tabId = OB.AlertManagement.alertRules[i].tabId;
       }

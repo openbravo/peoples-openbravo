@@ -951,7 +951,7 @@ public abstract class AcctServer {
         AcctServerData[] data = AcctServerData.selectDocType(connectionProvider, C_DocType_ID);
         DocumentType = data[0].docbasetype;
         GL_Category_ID = data[0].glCategoryId;
-	IsReversal = data[0].isreversal;
+        IsReversal = data[0].isreversal;
       }
       // We have a document Type, but no GL info - search for DocType
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
@@ -1220,7 +1220,6 @@ public abstract class AcctServer {
         RateType = "S";
       data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
           client, org);
-
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();

@@ -14,20 +14,24 @@ package org.openbravo.base.secureApp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.Login;
-import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
@@ -51,26 +55,18 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-  private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
-  private String strServletPorDefecto;
-
-  @Override
-  public void init(ServletConfig config) {
-    super.init(config);
-    strServletPorDefecto = config.getServletContext().getInitParameter("DefaultServlet");
-  }
+  private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
       ServletException {
 
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("start doPost");
-    }
+    log4j.debug("start doPost");
+
     final VariablesSecureApp vars = new VariablesSecureApp(req);
 
     // Empty session
-    req.getSession(true).setAttribute("#Authenticated_user", null);
+    vars.removeSessionValue("#Authenticated_user");
 
     final String strUser = vars.getStringParameter("user");
 
@@ -89,67 +85,56 @@ public class LoginHandler extends HttpBaseServlet {
       if (strUser.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
-        final String strPass = vars.getStringParameter("password");
-        final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
-        String sessionId = createDBSession(req, strUser, strUserAuth);
-        if (strUserAuth != null) {
-          HttpSession session = req.getSession(true);
-          session.setAttribute("#Authenticated_user", strUserAuth);
-          session.setAttribute("#AD_SESSION_ID", sessionId);
-          // #logginigIn attribute is used in HttpSecureAppServlet to determine whether the logging
-          // process is complete or not. At this stage is not complete, we only have a user ID, but
-          // no the rest of session info: client, org, role...
-          session.setAttribute("#LOGGINGIN", "Y");
-          log4j.debug("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
-          checkLicenseAndGo(res, vars, strUserAuth, sessionId, doRedirect);
-        } else {
-          // strUserAuth can be null because a failed user/password or because the user is locked
-          String failureTitle;
-          String failureMessage;
-          if (LoginUtils.checkUserPassword(myPool, strUser, strPass) == null) {
-            log4j
-                .debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
-            failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language);
-            failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
-          } else {
-            failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
-            failureMessage = Utility.messageBD(this, "LOCKED_USER_MSG", language);
-            log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
-            updateDBSession(sessionId, false, "LU");
+        try {
+
+          AuthenticationManager authManager;
+          String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+              .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
+          if (authClass == null || authClass.equals("")) {
+            // If not defined, load default
+            authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
           }
-          goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html",
-              doRedirect);
+          try {
+            authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
+                .newInstance();
+            authManager.init(this);
+          } catch (Exception e) {
+            log4j
+                .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+
+            authManager = new DefaultAuthenticationManager(this);
+          }
+
+          final String strUserAuth = authManager.authenticate(req, res);
+          final String sessionId = vars.getSessionValue("#AD_Session_ID");
+
+          if (StringUtils.isEmpty(strUserAuth)) {
+            throw new AuthenticationException("Message");// FIXME
+          }
+
+          checkLicenseAndGo(res, vars, strUserAuth, sessionId, doRedirect);
+
+        } catch (AuthenticationException e) {
+
+          final OBError errorMsg = e.getOBError();
+
+          if (errorMsg != null) {
+            vars.removeSessionValue("#LoginErrorMsg");
+
+            final String failureTitle = Utility.messageBD(this, errorMsg.getTitle(), language);
+            final String failureMessage = Utility.messageBD(this, errorMsg.getMessage(), language);
+
+            goToRetry(res, vars, failureMessage, failureTitle, "Error",
+                "../security/Login_FS.html", doRedirect);
+
+          } else {
+            throw new ServletException("Error"); // FIXME
+          }
         }
       }
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * Stores session in DB. If the user is valid, it is inserted in the createdBy column, if not user
-   * 0 is used.
-   */
-  private String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
-    try {
-      String usr = strUserAuth == null ? "0" : strUserAuth;
-
-      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
-
-      if (strUserAuth == null) {
-        sl.setStatus("F");
-      } else {
-        sl.setStatus("S");
-      }
-
-      sl.setUserName(strUser);
-      sl.setServerUrl(strDireccion);
-      sl.save();
-      return sl.getSessionID();
-    } catch (Exception e) {
-      log4j.error("Error creating DB session", e);
-      return null;
     }
   }
 
@@ -217,6 +202,8 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "ME");
         goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
+      case NO_RESTRICTION:
+        break;
       }
 
       // Build checks

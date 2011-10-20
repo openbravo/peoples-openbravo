@@ -19,6 +19,8 @@
 
 package org.openbravo.client.kernel.reference;
 
+import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -32,7 +34,11 @@ public class TextUIDefinition extends StringUIDefinition {
   // don't support sorting on large text fields
   @Override
   public String getGridFieldProperties(Field field) {
-    return super.getGridFieldProperties(field) + ", canSort: false";
+    final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+
+    // anything above 2000 is probably a clob
+    return super.getGridFieldProperties(field) + ", canSort: false"
+        + (property.getFieldLength() > 4000 ? ", canFilter: false" : "");
   }
 
   @Override

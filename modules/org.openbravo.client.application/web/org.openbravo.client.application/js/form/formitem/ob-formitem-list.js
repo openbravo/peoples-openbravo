@@ -95,9 +95,10 @@ isc.OBListItem.addProperties({
   },
 
   setEntries: function(entries) {
-    var valueField = this.getValueFieldName(), valueMap = {};
+    var length = entries.length,
+      valueField = this.getValueFieldName(), valueMap = {};
     this.entries = [];
-    for (i = 0; i < entries.length; i++) {
+    for (i = 0; i < length; i++) {
       id = entries[i][OB.Constants.ID] || '';
       identifier = entries[i][OB.Constants.IDENTIFIER] || '';
       valueMap[id] = identifier;
@@ -109,8 +110,8 @@ isc.OBListItem.addProperties({
 
   setEntry: function(id, identifier) {
     var i, entries = this.entries || [], entry = {}, valueField = this
-        .getValueFieldName();
-    for (i = 0; i < entries.length; i++) {
+        .getValueFieldName(), length = entries.length;
+    for (i = 0; i < length; i++) {
       if (entries[i][valueField] === id) {
         return;
       }

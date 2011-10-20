@@ -219,6 +219,10 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return;
     }
     
+    if (newValue === oldValue) {
+      return false;
+    }
+    
     if (this.singleDateMode) {
       dateValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
       if (isc.isA.Date(dateValue)) {
@@ -315,14 +319,15 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
   
   updateStoredDates: function() {
-    var value = this.rangeItemValue, i;
+    var value = this.rangeItemValue, i, newValue, length;
     
     if (value) {
       if (isc.DataSource.isAdvancedCriteria(value)) {
         // value has come back as an AdvancedCriteria!
-        var newValue = {};
-
-        for (i = 0; i < value.criteria.length; i++) {
+        newValue = {};
+        length = value.criteria.length;
+          
+        for (i = 0; i < length; i++) {
           var criterion = value.criteria[i];
           if (criterion.operator === 'greaterThan'
               || criterion.operator === 'greaterOrEqual') {
@@ -441,13 +446,9 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     }
     return true;
   },
-  
-  formatDate: function(dt) {
-    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
-  },
-  
-  // TODO: the destroy and clear can be removed 
-  // after upgrading to a SC release after mid-august 2011
+   
+  // Explicit destroy of the rangedialog as formitems don't have 
+  // an auto delete of autochilds
   destroy: function() {
     this.destroying = true;
     if (this.rangeDialog) {
@@ -466,5 +467,9 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return;
     }
     this.Super('clear', arguments);
+  },
+  
+  formatDate: function(dt) {
+    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
   }
 });

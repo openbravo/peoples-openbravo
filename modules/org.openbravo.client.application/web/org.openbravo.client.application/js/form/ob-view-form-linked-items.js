@@ -48,6 +48,8 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   visible: false,
   
+  itemIds: ['_linkedItems_Canvas'],
+  
   // note formitems don't have an initWidget but an init method
   init: function(){
     // override the one passed in
@@ -390,6 +392,12 @@ isc.OBLinkedItemLayout.addProperties({
 isc.ClassFactory.defineClass('OBLinkedItemCanvasItem', isc.CanvasItem);
 
 isc.OBLinkedItemCanvasItem.addProperties({
+
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
 
   canFocus: true,
   

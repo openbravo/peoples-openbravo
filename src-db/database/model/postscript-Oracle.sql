@@ -46,169 +46,6 @@ BEGIN
 END hex_to_int;
 /-- END hex_to_int
 
-CREATE OR REPLACE FUNCTION ad_script_disable_triggers (p_seqNoStart NUMBER)
-  RETURN NUMBER
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMBER := p_seqNoStart;
- TYPE RECORD IS REF CURSOR;
- Cur_Triggers RECORD;
-BEGIN
-     FOR Cur_Triggers IN 
-      (SELECT OBJECT_NAME AS NAME 
-      FROM USER_OBJECTS 
-      WHERE OBJECT_TYPE='TRIGGER' 
-      ORDER BY OBJECT_NAME 
-      ) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE') ; 
-    END LOOP; 
-
- RETURN v_seqNo;
-END ad_script_disable_triggers;
-/-- END
-
-CREATE OR REPLACE FUNCTION ad_script_disable_constraints(p_seqNoStart NUMBER)
-  RETURN NUMBER
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMBER := p_seqNoStart;
- TYPE RECORD IS REF CURSOR;
- Cur_Constraints RECORD;
-BEGIN
-    FOR Cur_Constraints IN 
-      (SELECT TABLE_NAME, CONSTRAINT_NAME 
-    FROM USER_CONSTRAINTS C1 
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R') AND COALESCE(DELETE_RULE,'.') NOT LIKE 'CASCADE' 
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3 
-      END 
-      ), TABLE_NAME, CONSTRAINT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME) ; 
-    END LOOP; 
-
- RETURN v_seqNo;
-END ad_script_disable_constraints;
-/-- END
-
-
-CREATE OR REPLACE FUNCTION ad_script_enable_triggers(p_seqNoStart NUMBER)
-  RETURN NUMBER 
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMBER := p_seqNoStart;
- TYPE RECORD IS REF CURSOR;
- Cur_Triggers RECORD;
-BEGIN
-    FOR Cur_Triggers IN 
-      (SELECT OBJECT_NAME AS NAME 
-    FROM USER_OBJECTS 
-    WHERE OBJECT_TYPE='TRIGGER' 
-    ORDER BY OBJECT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE') ; 
-    END LOOP; 
-
- RETURN v_seqNo;
-END ad_script_enable_triggers;
-/-- END
-
-CREATE OR REPLACE FUNCTION ad_script_enable_constraints(p_seqNoStart NUMBER)
-  RETURN NUMBER
-AS
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
- v_seqNo      NUMBER := p_seqNoStart;
- TYPE RECORD IS REF CURSOR;
- Cur_Constraints RECORD;
-BEGIN
-    FOR Cur_ConstraintsEnable IN 
-      (SELECT TABLE_NAME, CONSTRAINT_NAME 
-    FROM USER_CONSTRAINTS C1 
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R') AND COALESCE(DELETE_RULE,'.') NOT LIKE 'CASCADE' 
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1 
-      END 
-      ), TABLE_NAME, CONSTRAINT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TABLE '||Cur_ConstraintsEnable.TABLE_NAME||' ENABLE CONSTRAINT '||Cur_ConstraintsEnable.CONSTRAINT_NAME) ; 
-    END LOOP; 
-
-  RETURN v_seqNo;
-END ad_script_enable_constraints;
-/-- END
-
-
 CREATE OR REPLACE FUNCTION ad_script_execute (param_Message VARCHAR2)
   RETURN VARCHAR2
 AS
@@ -818,13 +655,13 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /-- END
 
---Inserts role access for new register window
---See issue:  https://issues.openbravo.com/view.php?id=11349
+--Inserts role access for new Smartclient register window
+--It needs to be done this way until this issue is fixed:  https://issues.openbravo.com/view.php?id=18689
 BEGIN
-    INSERT INTO ad_form_access(ad_form_access_id, ad_form_id, ad_role_id,
-                               ad_client_id, ad_org_id, isactive, created,
-                               createdby, updated, updatedby, isreadwrite)
-    VALUES('41263F39F7614270808A955844B07A7F', '3D8AB0C824ED4C70ADE086D9CFE5DA1A', '0', '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+    INSERT INTO OBUIAPP_View_Role_Access(OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy)
+         VALUES(get_uuid(), 'FF808081329B023101329B0CE2080013', '0', '0', '0', 'Y', now(), '0', now(), '0');
 EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /-- END

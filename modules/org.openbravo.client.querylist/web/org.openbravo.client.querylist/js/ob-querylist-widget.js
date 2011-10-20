@@ -316,10 +316,13 @@ isc.OBQueryListGrid.addProperties({
       requestProperties.params = this.getFetchRequestParams(requestProperties.params);
 
       requestProperties.params.showAll = true;
-      this.dataSource.fetchData(criteria, function(dsResponse, data, dsRequest){
+      // sometimes we get here before the datasource
+      // is set
+      if (this.dataSource) {
+        this.dataSource.fetchData(criteria, function(dsResponse, data, dsRequest){
           dsResponse.clientContext.grid.widget.setTotalRows(dsResponse.totalRows);
         }, requestProperties );
-
+      }
     } else {
       this.widget.setTotalRows(dsResponse.totalRows);
     }

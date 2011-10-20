@@ -125,6 +125,47 @@
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_FieldGroup ' || v_rowcount) ;
     -- Field
+    -- First field_trls are created from the element_trls
+    INSERT
+    INTO AD_Field_Trl
+      (
+        AD_Field_Trl_ID, AD_Field_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+      )
+    SELECT get_uuid(), AD_Field_ID, AD_Language.AD_Language, trl.Name, trl.Description, trl.Help, 'N', '0', '0', '0','0'
+    FROM AD_Field, AD_Language, AD_Module M, ad_column c
+    left join ad_element_trl trl
+    on trl.ad_element_id=c.ad_element_id
+    WHERE AD_Language.IsActive='Y'  
+    and AD_Field.iscentrallymaintained='Y'
+    AND AD_Field.AD_Module_ID = M.AD_Module_ID
+    AND M.AD_Language != AD_Language.AD_Language
+    AND AD_Language.IsSystemLanguage='Y' 
+    and c.ad_column_id=AD_Field.ad_column_id
+    and trl.ad_language=AD_Language.AD_Language
+    AND NOT EXISTS (SELECT 1 FROM AD_Field_TRL
+                 WHERE AD_Field_ID = AD_Field.AD_Field_ID 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+    -- If there weren't element_trls, field_trls are created from elements
+    INSERT
+    INTO AD_Field_Trl
+      (
+        AD_Field_Trl_ID, AD_Field_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+      )
+    SELECT get_uuid(), AD_Field_ID, AD_Language.AD_Language, e.Name, e.Description, e.Help, 'N', '0', '0', '0','0'
+    FROM AD_Field, AD_Language, AD_Module M, ad_column c,ad_element e, ad_module modEl
+    WHERE AD_Language.IsActive='Y'  
+    and AD_Field.iscentrallymaintained='Y'
+    AND AD_Field.AD_Module_ID = M.AD_Module_ID
+    AND M.AD_Language != AD_Language.AD_Language
+    AND AD_Language.IsSystemLanguage='Y' 
+    and c.ad_element_id=e.ad_element_id 
+    and c.ad_column_id=AD_Field.ad_column_id
+    and modEl.ad_module_id=e.ad_module_id
+    and modEl.ad_language!=m.ad_language
+    AND NOT EXISTS (SELECT 1 FROM AD_Field_TRL
+                 WHERE AD_Field_ID = AD_Field.AD_Field_ID 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+    -- If there were no elements, or element_trls, data is copied from the ad_field itself
     INSERT
     INTO AD_Field_Trl
       (

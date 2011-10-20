@@ -80,8 +80,8 @@ isc.OBQuickLaunch.addProperties({
 
     if (recent && recent.length > 0) {
       var newFields = [];
-      var index = 0, recentIndex;
-      for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
+      var index = 0, recentIndex, length = recent.length;
+      for (recentIndex = 0; recentIndex < length; recentIndex++) {
         if (recent[recentIndex]) {
           newFields[index] = isc.OBQuickLaunchRecentLinkButton.create({recentObject: recent[recentIndex], prefixLabel: this.prefixLabel, nodeIcons: this.nodeIcons});
           newFields[index].recentPropertyName = this.recentPropertyName;

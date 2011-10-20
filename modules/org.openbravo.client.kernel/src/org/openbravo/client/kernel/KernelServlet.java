@@ -107,10 +107,6 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
-
   protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
@@ -219,12 +215,16 @@ public class KernelServlet extends BaseKernelServlet {
     throw new UnsupportedOperationException("Only GET/POST is supported");
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private Map<String, Object> getParameterMap(HttpServletRequest request) {
     final Map<String, Object> parameterMap = new HashMap<String, Object>();
     for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
       final String key = (String) keys.nextElement();
       parameterMap.put(key, request.getParameter(key));
+    }
+
+    if (!parameterMap.containsKey(KernelConstants.HTTP_SESSION)) {
+      parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession());
     }
 
     if (!parameterMap.containsKey(KernelConstants.CONTEXT_URL)) {

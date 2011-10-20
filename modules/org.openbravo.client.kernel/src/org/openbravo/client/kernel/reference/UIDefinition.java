@@ -129,9 +129,9 @@ public abstract class UIDefinition {
    */
   public String getFieldProperties(Field field) {
     if (field != null && field.isDisplayed() != null && !field.isDisplayed()) {
-      return "{width: ''}"; // Not displayed fields use HiddenItem
+      return ""; // Not displayed fields use HiddenItem
     }
-    return "{width: '*'}";
+    return "";
   }
 
   /**
@@ -319,8 +319,7 @@ public abstract class UIDefinition {
     if (getFilterEditorType() == null) {
       return ",canFilter: false";
     }
-    return ", canFilter:true, filterEditorType: '" + getFilterEditorType() + "'"
-        + getFilterEditorPropertiesProperty(field);
+    return getFilterEditorPropertiesProperty(field);
   }
 
   /**
@@ -348,8 +347,11 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridFieldProperties(Field field) {
-    return ", name: '" + getGridFieldName(field)
-        + "', canExport: true, canHide: true, editorType: '" + this.getGridEditorType() + "'";
+    if (this.getGridEditorType() != null
+        && !this.getGridEditorType().equals(this.getFormEditorType())) {
+      return ", editorType: '" + this.getGridEditorType() + "'";
+    }
+    return "";
   }
 
   /**
@@ -364,7 +366,7 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridEditorFieldProperties(Field field) {
-    return getFieldProperties(field);
+    return "";
   }
 
   public Reference getReference() {
@@ -389,8 +391,7 @@ public abstract class UIDefinition {
   // but then the value should be converted to the translated
   // value of the enum
   protected String getShowHoverGridFieldSettings(Field field) {
-    return ", showHover: true, hoverHTML:\"return grid.getDisplayValue(colNum, record[(this.displayField ? this.displayField : '"
-        + getGridFieldName(field) + "')])\"";
+    return ", showHover: true";
   }
 
   protected String getGridFieldName(Field fld) {

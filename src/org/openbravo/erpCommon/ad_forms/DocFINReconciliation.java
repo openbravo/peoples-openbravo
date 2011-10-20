@@ -207,7 +207,8 @@ public class DocFINReconciliation extends AcctServer {
             .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getBusinessPartner() : null));
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getBusinessPartner())));
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
         FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
@@ -230,7 +231,9 @@ public class DocFINReconciliation extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getOrderPaymentSchedule().getOrder().getProject() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getProject().getId() : ""));
+            .getProject().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getProject() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getProject().getId() : "")));
         FieldProviderFactory
             .setField(
                 data[i],
@@ -247,7 +250,10 @@ public class DocFINReconciliation extends AcctServer {
                             .getOrderPaymentSchedule().getOrder().getSalesCampaign() != null ? paymentDetails
                         .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
                         .getOrder().getSalesCampaign().getId()
-                        : ""));
+                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getSalesCampaign() != null ? paymentDetails.get(i)
+                            .getFINPaymentScheduleDetailList().get(0).getSalesCampaign().getId()
+                            : "")));
         FieldProviderFactory.setField(data[i], "cActivityId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
@@ -258,7 +264,15 @@ public class DocFINReconciliation extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getActivity().getId() : ""));
+            .getActivity().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getActivity() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getActivity().getId() : "")));
+        FieldProviderFactory.setField(data[i], "mProductId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getProduct() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getProduct().getId() : "");
+        FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
       }
     } finally {
@@ -310,6 +324,11 @@ public class DocFINReconciliation extends AcctServer {
           FieldProviderFactory.setField(data[i], "cProjectId", transaction.getProject().getId());
         if (transaction.getSalesCampaign() != null)
           FieldProviderFactory.setField(data[i], "cCampaignId", transaction.getSalesCampaign()
+              .getId());
+        if (transaction.getProduct() != null)
+          FieldProviderFactory.setField(data[0], "mProductId", transaction.getProduct().getId());
+        if (transaction.getSalesRegion() != null)
+          FieldProviderFactory.setField(data[0], "cSalesregionId", transaction.getSalesRegion()
               .getId());
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
       }
@@ -564,6 +583,8 @@ public class DocFINReconciliation extends AcctServer {
         detail.m_C_Project_ID = data[i].getField("cProjectId");
         detail.m_C_Campaign_ID = data[i].getField("cCampaignId");
         detail.m_C_Activity_ID = data[i].getField("cActivityId");
+        detail.m_M_Product_ID = data[i].getField("mProductId");
+        detail.m_C_SalesRegion_ID = data[i].getField("cSalesregionId");
         detail.m_AD_Org_ID = line.m_AD_Org_ID;
         detail.m_description = line.m_description;
         detail.m_C_Currency_ID = line.m_C_Currency_ID;
@@ -600,8 +621,7 @@ public class DocFINReconciliation extends AcctServer {
           && payment.getGeneratedCredit().compareTo(ZERO) == 0) {
         fact.createLine(
             line,
-            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment
-            .isReceipt(), true,
+            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(), true,
                 conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
                 .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment
                 .getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
