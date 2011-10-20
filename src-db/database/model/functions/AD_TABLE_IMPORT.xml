@@ -198,6 +198,8 @@
         v_FieldLength:=19;
       ELSIF(Cur_Column.Data_Type IN('NUMBER')) THEN
         v_FieldLength:=COALESCE(Cur_Column.Data_Precision, 10) +2;
+      ELSIF(Cur_Column.Data_Type IN ('BYTEA', 'BLOB')) THEN
+        v_FieldLength:=4000;
       ELSE
         v_FieldLength:=Cur_Column.Data_Length;
       END IF;
@@ -218,6 +220,8 @@
           v_AD_Reference_ID:='22';
         ELSIF(Cur_Column.Data_Type IN ('DATE', 'TIMESTAMP')) THEN
           v_AD_Reference_ID:='15';
+	ELSIF(Cur_Column.Data_Type IN ('BYTEA', 'BLOB')) THEN
+	  v_AD_Reference_ID:='23';
         ELSE
           v_AD_Reference_ID:='10'; -- if not found, use String
           v_CorrectType:='N';
