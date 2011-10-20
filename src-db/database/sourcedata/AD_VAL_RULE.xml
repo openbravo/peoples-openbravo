@@ -276,9 +276,9 @@ OR (@AD_Reference_ID@ = '28' and AD_Reference.ParentReference_ID='17')]]></CODE>
 <!--133-->  <NAME><![CDATA[C_DocType PO/SO]]></NAME>
 <!--133-->  <DESCRIPTION><![CDATA[Document Type for orders]]></DESCRIPTION>
 <!--133-->  <TYPE><![CDATA[S]]></TYPE>
-<!--133-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO', 'SRM', 'PRM') AND C_DocType.IsSOTrx='@IsSOTrx@'
+<!--133-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND C_DocType.IsSOTrx='@IsSOTrx@'
 AND (AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1' OR COALESCE(@AD_Org_ID@,'-1')='-1')
-AND ((COALESCE(@isReturnMaterial@, 'N') = 'Y' AND C_DocType.DocBaseType IN ('SRM', 'PRM')) OR (COALESCE(@isReturnMaterial@, 'N') = 'N' AND C_DocType.DocBaseType IN ('SOO', 'POO')))]]></CODE>
+AND ((COALESCE(@isReturnMaterial@, 'N') = 'Y' AND (C_DocType.DocSubTypePO ='PRM' OR C_DocType.DocSubTypeSO ='SRM')) OR (COALESCE(@isReturnMaterial@, 'N') = 'N' AND (C_DocType.DocSubTypePO <>'PRM' OR C_DocType.DocSubTypeSO <>'SRM')))]]></CODE>
 <!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--133--></AD_VAL_RULE>
 
