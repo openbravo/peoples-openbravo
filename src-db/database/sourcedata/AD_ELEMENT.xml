@@ -25120,8 +25120,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--AFBC10A30F765892E040007F010025B5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--AFBC10A30F765892E040007F010025B5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AFBC10A30F765892E040007F010025B5-->  <COLUMNNAME><![CDATA[DocStatusRM]]></COLUMNNAME>
-<!--AFBC10A30F765892E040007F010025B5-->  <NAME><![CDATA[Document Status RM]]></NAME>
-<!--AFBC10A30F765892E040007F010025B5-->  <PRINTNAME><![CDATA[Document Status RM]]></PRINTNAME>
+<!--AFBC10A30F765892E040007F010025B5-->  <NAME><![CDATA[Document Status]]></NAME>
+<!--AFBC10A30F765892E040007F010025B5-->  <PRINTNAME><![CDATA[Document Status]]></PRINTNAME>
 <!--AFBC10A30F765892E040007F010025B5-->  <DESCRIPTION><![CDATA[The Document Status indicates the status of a document at this time.]]></DESCRIPTION>
 <!--AFBC10A30F765892E040007F010025B5-->  <HELP><![CDATA[The Document Status indicates the status of a document at this time.  To change the status of a document, use one of the buttons usually located at the bottom of the document window.]]></HELP>
 <!--AFBC10A30F765892E040007F010025B5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
