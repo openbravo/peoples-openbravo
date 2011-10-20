@@ -35,7 +35,6 @@ public class TextUIDefinition extends StringUIDefinition {
   @Override
   public String getGridFieldProperties(Field field) {
     final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-    final Long length = field.getColumn().getLength();
 
     // anything above 2000 is probably a clob
     return super.getGridFieldProperties(field) + ", canSort: false"

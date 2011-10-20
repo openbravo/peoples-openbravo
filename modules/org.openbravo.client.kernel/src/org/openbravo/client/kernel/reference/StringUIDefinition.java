@@ -18,8 +18,6 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -42,25 +40,6 @@ public class StringUIDefinition extends UIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBTextItem";
-  }
-
-  @Override
-  public String getFieldProperties(Field field) {
-    String fieldProperties = super.getFieldProperties(field);
-    if (field != null && field.getColumn() != null) {
-      final Long length = field.getColumn().getLength();
-      try {
-        if (length != null) {
-          JSONObject o = new JSONObject(
-              fieldProperties != null && fieldProperties.length() > 0 ? fieldProperties : "{}");
-          o.put("length", length);
-          return o.toString();
-        }
-      } catch (Exception e) { // ignore
-        throw new OBException(e);
-      }
-    }
-    return fieldProperties;
   }
 
   @Override
