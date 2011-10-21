@@ -42,5 +42,42 @@ isc.OBPickAndExecuteGrid.addProperties({
   height: '100%',
 
   // default selection
-  selectionProperty: 'selected'
+  selectionProperty: 'selected',
+
+  selectedIds: [],
+
+  selectionUpdated: function (record, recordList) {
+    var i, len = recordList.length;
+
+    this.selectedIds = [];
+
+    for (i = 0; i < len; i++) {
+      this.selectedIds.push(recordList[i].id);
+    }
+
+    this.Super('selectionUpdated', arguments);
+  },
+
+  handleFilterEditorSubmit: function (criteria, context) {
+    var ids = [],
+        crit = {},
+        len = this.selectedIds.length;
+
+    for (i = 0; i < len; i++) {
+      ids.push({
+        fieldName: 'id',
+        operator: 'equals',
+        value: this.selectedIds[i]
+      });
+    }
+
+    crit._constructor = 'AdvancedCriteria';
+    crit.operator = 'or';
+    crit.criteria = ids;
+    crit.removeEmpty = function () {};
+
+    criteria.criteria.criteria = crit;
+
+    this.Super('handleFilterEditorSubmit', [criteria, context]);
+  }
 });

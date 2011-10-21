@@ -18,9 +18,3 @@
  */
 
 isc.defineClass('OBPickAndExecuteDataSource', isc.OBRestDataSource);
-
-isc.OBPickAndExecuteDataSource.addProperties({
-  performDSOperation: function (operationType, data, callback, requestProperties) {
-    this.Super('performDSOperation', operationType, data, callback, requestProperties);
-  }
-});

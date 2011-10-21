@@ -45,26 +45,29 @@ isc.OBPickAndExecuteView.addProperties({
   initWidget: function () {
 
     var view = this,
-        okButton = isc.OBFormButton.create({
-        title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
-        click: function () {
-          console.log(view.viewGrid.getSelectedRecords());
-        }
-      }),
-        cancelButton = isc.OBFormButton.create({
-        title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-        click: function () {
-          view.viewGrid.discardAllEdits();
-          view.viewGrid.deselectAllRecords();
-        }
-      });
+        okButton, cancelButton;
+
+    okButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
+      click: function () {
+        console.log(view.viewGrid.getSelectedRecords());
+      }
+    });
+
+    cancelButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+      click: function () {
+        view.viewGrid.discardAllEdits();
+        view.viewGrid.deselectAllRecords();
+      }
+    });
 
     this.prepareGridFields(this.viewProperties.fields);
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
 
-    // the datasource object is defined on view, do not destroy it
+    // the datasource object is defined on viewProperties, do not destroy it
     this.dataSource.potentiallyShared = true;
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
