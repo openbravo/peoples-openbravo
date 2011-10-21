@@ -529,8 +529,9 @@ isc.OBGrid.addProperties({
     var d = data || {}, expProp = exportProperties || {}, dsURL = this.dataSource.dataURL;
     var sortCriteria;
     var lcriteria = this.getCriteria();
-    if(this.getData() && this.getData().dataSource){
-      lcriteria = this.getData().dataSource.convertRelativeDates(lcriteria);
+    var gdata = this.getData();
+    if(gdata && gdata.dataSource){
+      lcriteria = gdata.dataSource.convertRelativeDates(lcriteria);
     }
     
     isc.addProperties(d, {
