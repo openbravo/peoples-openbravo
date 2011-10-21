@@ -528,6 +528,10 @@ isc.OBGrid.addProperties({
   exportData: function(exportProperties, data){
     var d = data || {}, expProp = exportProperties || {}, dsURL = this.dataSource.dataURL;
     var sortCriteria;
+    var lcriteria = this.getCriteria();
+    if(this.getData() && this.getData().dataSource){
+      lcriteria = this.getData().dataSource.convertRelativeDates(lcriteria);
+    }
     
     isc.addProperties(d, {
       _dataSource: this.dataSource.ID,
@@ -538,7 +542,7 @@ isc.OBGrid.addProperties({
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
-    }, this.getCriteria(), this.getFetchRequestParams());
+    }, lcriteria, this.getFetchRequestParams());
     if(this.getSortField()){
       sortCriteria=this.getSort();
       if(sortCriteria && sortCriteria.length > 0){
