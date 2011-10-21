@@ -331,6 +331,29 @@ isc.OBStatusBar.addProperties( {
   },
 
   updateContentTitle: function(arrayTitleField, message) {
+    var linkImageWidth = this.titleLinkImageWidth,
+      linkImageHeight = this.titleLinkImageHeight;
+
+    if (typeof linkImageWidth !== 'undefined') {
+      linkImageWidth = linkImageWidth.toString();
+      if (linkImageWidth.indexOf('px') === -1) {
+        linkImageWidth = linkImageWidth + 'px';
+      }
+      linkImageWidth = 'width: ' + linkImageWidth + ';';
+    } else {
+      linkImageWidth = '';
+    }
+
+    if (typeof linkImageHeight !== 'undefined') {
+      linkImageHeight = linkImageHeight.toString();
+      if (linkImageHeight.indexOf('px') === -1) {
+        linkImageHeight = linkImageHeight + 'px';
+      }
+      linkImageHeight = 'height: ' + linkImageHeight + ';';
+    } else {
+      linkImageHeight = '';
+    }
+
     var msg = '', i, length;
     if (!isc.Page.isRTL()) { // LTR mode
       if (this.statusCode) {
@@ -342,7 +365,14 @@ isc.OBStatusBar.addProperties( {
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }
-          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
+          if (typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
+            msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
+              '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
+              arrayTitleField[0][i] + ':&nbsp;<img src="' + (this.titleLinkImageSrc?this.titleLinkImageSrc:'') + '" style="' + linkImageWidth + linkImageHeight + '" />&nbsp;' + 
+              '</span>';
+          } else {
+            msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ':&nbsp;' + '</span>';
+          }
           msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
         }
       }
@@ -362,7 +392,14 @@ isc.OBStatusBar.addProperties( {
       if (arrayTitleField) {
         for (i = arrayTitleField[0].length-1; i >= 0; i--) {
           msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
-          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + ' :' + arrayTitleField[0][i] + '</span>';
+          if (typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
+            msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
+              '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
+              '&nbsp;<img src="' + (this.titleLinkImageSrc?this.titleLinkImageSrc:'') + '" style="' + linkImageWidth + linkImageHeight + '"/>&nbsp;:' + arrayTitleField[0][i] + 
+              '</span>';
+          } else {
+            msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + ' :' + arrayTitleField[0][i] + '</span>';
+          }
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }

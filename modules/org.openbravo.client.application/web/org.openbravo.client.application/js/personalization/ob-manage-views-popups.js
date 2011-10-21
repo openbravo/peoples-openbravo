@@ -227,7 +227,7 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
 OB.Personalization.ManageViewsPopupPropertiesSave = {
   title: OB.I18N.getLabel('OBUIAPP_SaveView'),
   
-  actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
+  actionLabel: OB.I18N.getLabel('OBUIAPP_Save'),
   
   // 3 combo fields are created: views, level and level value
   // the last 2 are only created if the user is allowed to

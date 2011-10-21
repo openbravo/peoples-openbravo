@@ -85,6 +85,7 @@
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="yy">adTableId</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="zz">docbasetype</FIELD>
+    <FIELD id="fieldId" attribute="onclick" replace="ww">tabId</FIELD>
     <FUNCTION id="functionOrderJournal" name="ORDER" attribute="value">identifier</FUNCTION>
     <FUNCTION id="functionCalculateOrderJournal" name="ADD" arg1="functionOrderJournal" arg2="paramGroupId" format="integerInform"/>
     <FUNCTION id="functionCalculateOrderJournalWithInitial" name="ADD" arg1="functionCalculateOrderJournal" arg2="paramEntryNo" format="integerInform"/>

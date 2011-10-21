@@ -522,13 +522,17 @@
                         ELSIF (Cur_order.deliveryrule = 'L') THEN
                           DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Line');
                           v_lines := v_lines - v_lines_per_orderline;
-                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
+                          IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.') <= 1800 ) THEN
+			    v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
+			  END IF;
                           v_hasPartial := true;
                           DELETE FROM M_INOUTLINE
                           WHERE M_INOUT_ID = p_InOut_ID
                             AND C_ORDERLINE_ID = ol.C_ORDERLINE_ID;
                         ELSE
-                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+                          IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.') <= 1800 ) THEN
+			    v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+			  END IF;
                           v_hasPartial := true;
                         END IF;
                       END IF;

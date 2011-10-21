@@ -96,22 +96,27 @@ OB.ViewFormProperties = {
   },
   
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]], i, item, value, tmpValue,
+    var statusBarFields = [[],[],[],[],[], []], i, item, title, refColumnName, targetEntity, value, displayedValue,
       length = this.statusBarFields.length;
     for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
+      title = item.getTitle();
+      sourceWindowId = this.view.standardWindow.windowId;
+      refColumnName = item.refColumnName;
+      targetEntity = item.targetEntity;
       value = item.getValue();
-      if(value !== null && value !== '') {
+      displayedValue = item.getValue();
+      if(displayedValue !== null && displayedValue !== '') {
         
         if (item.getDisplayValue()) {
-          value = item.getDisplayValue();
+          displayedValue = item.getDisplayValue();
         }
         
-        if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
+        if(displayedValue === title && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
           if (item.getValue()) {
-            value = OB.I18N.getLabel('OBUIAPP_Yes');
+            displayedValue = OB.I18N.getLabel('OBUIAPP_Yes');
           } else {
-            value = OB.I18N.getLabel('OBUIAPP_No');
+            displayedValue = OB.I18N.getLabel('OBUIAPP_No');
           }
         }
         
@@ -119,13 +124,17 @@ OB.ViewFormProperties = {
         // status bar field and it has a value then always use that
         // one
         if (item.displayField && this.getValue(item.displayField)) {
-          value = this.getValue(item.displayField);
+          displayedValue = this.getValue(item.displayField);
         } else if (this.getValue(item.name + '._identifier')) {
-          value = this.getValue(item.name + '._identifier');
+          displayedValue = this.getValue(item.name + '._identifier');
         }
         
-        statusBarFields[0].push(item.getTitle());
-        statusBarFields[1].push(value);
+        statusBarFields[0].push(title);
+        statusBarFields[1].push(displayedValue);
+        statusBarFields[2].push(sourceWindowId);
+        statusBarFields[3].push(refColumnName);
+        statusBarFields[4].push(targetEntity);
+        statusBarFields[5].push(value);
       }
     }
     return statusBarFields;
@@ -651,7 +660,11 @@ OB.ViewFormProperties = {
       }
     }
     
-    if(retHiddenInputs) {
+    if(modeIsNew || request.params.MODE === 'EDIT'){
+      //If a new record is created, or an existing one is opened,
+      //the existing hiddenInputs (which correspond to a different record) should be deleted
+      this.hiddenInputs={};
+    }else if(retHiddenInputs) {
       for(prop in retHiddenInputs) {
         if(retHiddenInputs.hasOwnProperty(prop)){
           this.hiddenInputs[prop] = retHiddenInputs[prop];
