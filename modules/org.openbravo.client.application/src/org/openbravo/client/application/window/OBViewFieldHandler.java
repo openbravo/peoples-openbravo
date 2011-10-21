@@ -36,7 +36,9 @@ import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
@@ -122,13 +124,35 @@ public class OBViewFieldHandler {
 
     // Processing dynamic expression (read-only logic)
     for (Field f : adFields) {
-      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
-          || !f.isActive() || !f.getColumn().isActive()) {
-        continue;
+      final OBQuery<WindowAccess> waQuery = OBDal
+          .getInstance()
+          .createQuery(
+              WindowAccess.class,
+              "as wa where wa.window in (select window from ADTab where id = :tabId) and (wa.editableField = false and not exists (from wa.aDTabAccessList where id = :tabId) or exists (from wa.aDTabAccessList ta where ta.tab.id = :tabId and ta.editableField = false and not exists (from ta.aDFieldAccessList fa where fa.field.id = :fieldId)) or exists (from wa.aDTabAccessList ta where ta.tab.id = :tabId and exists (from ta.aDFieldAccessList fa where fa.editableField = false and fa.field.id = :fieldId)))");
+      waQuery.setNamedParameter("tabId", tab.getId());
+      waQuery.setNamedParameter("fieldId", f.getId());
+      boolean hasReadOnlyRoles = false;
+      final StringBuffer readonlyOnlyRoleConditions = new StringBuffer();
+      boolean hasReadOnlyLogic = true;
+      for (WindowAccess wa : waQuery.list()) {
+        if (hasReadOnlyRoles)
+          readonlyOnlyRoleConditions.append(" | ");
+        readonlyOnlyRoleConditions.append("OB.User.roleId == '").append(wa.getRole().getId())
+            .append("'");
+        hasReadOnlyRoles = true;
       }
 
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getColumn()
-          .getReadOnlyLogic(), tab);
+      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
+          || !f.isActive() || !f.getColumn().isActive()) {
+        if (hasReadOnlyRoles)
+          hasReadOnlyLogic = false;
+        else
+          continue;
+      }
+      final DynamicExpressionParser parser = new DynamicExpressionParser(hasReadOnlyLogic ? f
+          .getColumn().getReadOnlyLogic()
+          + " | " + readonlyOnlyRoleConditions.toString() : readonlyOnlyRoleConditions.toString(),
+          tab);
       readOnlyLogicMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
@@ -886,8 +910,8 @@ public class OBViewFieldHandler {
         return field.getObuiappColspan();
       }
       return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH
-          || (getRowSpan() == 2 && !property.getDomainType().getReference().getId()
-              .equals(IMAGEBLOB_AD_REFERENCE_ID)) ? 2 : 1;
+          || (getRowSpan() == 2 && !property.getDomainType().getReference().getId().equals(
+              IMAGEBLOB_AD_REFERENCE_ID)) ? 2 : 1;
     }
 
     public boolean getEndRow() {

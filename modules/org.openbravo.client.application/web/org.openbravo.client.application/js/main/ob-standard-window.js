@@ -170,26 +170,6 @@ isc.OBStandardWindow.addProperties({
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
     }
-    
-    // Field level permissions
-    if (data && data.tabs) {
-        for ( t = 0; t < data.tabs.length; t++) {
-          tab = data.tabs[t];
-          view = this.getView(tab.tabId);
-          for ( i = 0; i < view.viewForm.fields.length; i++) {
-            field = view.viewForm.fields[i];
-            if (tab.fields[field.name] !== undefined) {
-                      field.updatable = tab.fields[field.name];
-            }
-          }
-          for ( i = 0; i < view.viewGrid.fields.length; i++) {
-            field = view.viewGrid.fields[i];
-            if (tab.fields[field.name] !== undefined) {
-              field.editorProperties.updatable = tab.fields[field.name];
-            }
-          }
-        }
-      }
   },
 
   // Update the personalization record which is stored 
