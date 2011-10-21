@@ -71,13 +71,16 @@ isc.OBPickAndExecuteGrid.addProperties({
       });
     }
 
-    crit._constructor = 'AdvancedCriteria';
-    crit.operator = 'or';
-    crit.criteria = ids;
-    crit.removeEmpty = function () {};
+    if (len > 0) {
+      crit._constructor = 'AdvancedCriteria';
+      crit._OrExpression = true; // trick to get a really _or_ in the backend
+      crit.operator = 'or';
+      crit.criteria = ids;
+      crit.criteria.push(criteria); // original filter
+    } else {
+      crit = criteria;
+    }
 
-    criteria.criteria.criteria = crit;
-
-    this.Super('handleFilterEditorSubmit', [criteria, context]);
+    this.Super('handleFilterEditorSubmit', [crit, context]);
   }
 });

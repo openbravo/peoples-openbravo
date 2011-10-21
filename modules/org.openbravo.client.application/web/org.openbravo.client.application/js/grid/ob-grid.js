@@ -483,7 +483,7 @@ isc.OBGrid.addProperties({
     length = criteria.length;
     for (i = 0; i < length; i++) {
       var criterion = criteria[i];
-      var prop = criterion.fieldName;
+      var prop = criterion && criterion.fieldName;
       var fullPropName = prop;
       if (!prop) {
         if (this.isGridFilteredWithCriteria(criterion.criteria)) {
