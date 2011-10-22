@@ -50,7 +50,6 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
-    RequestContext.setServletContext(config.getServletContext());
   }
 
   public void service(final HttpServletRequest request, HttpServletResponse response)
@@ -60,8 +59,6 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
     final KernelHttpServletResponse localResponse = new KernelHttpServletResponse();
     localResponse.setDelegate(response);
 
-    RequestContext.get().setRequest(request);
-    RequestContext.get().setResponse(localResponse);
     callServiceInSuper(request, localResponse);
 
     if (localResponse.isDoLogout()) {
