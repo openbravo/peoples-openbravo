@@ -23,7 +23,7 @@
 		<cache usage="read-write"/>
 		
 		<id name="id" type="string" column="ad_ref_list_id">
-			<generator class="uuid" /> 
+            <generator class="org.openbravo.base.session.DalUUIDGenerator" />
 		</id>
 		
 		<property name="value" type="string" column="value" />		
