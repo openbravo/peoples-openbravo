@@ -32,6 +32,12 @@ isc.setAutoDraw(false);
 // Time.setDefaultDisplayTimezone(0);
 
 isc.Canvas.addProperties({
+  
+  // workaround for this issue:
+  // http://forums.smartclient.com/showthread.php?p=75007#post75007
+  // https://issues.openbravo.com/view.php?id=18841
+  cancelNativeScrollOnKeyDown: false,
+  
   // make sure that the datasources are also destroyed
   _original_destroy: isc.Canvas.getPrototype().destroy,
   destroy: function() {
