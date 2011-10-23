@@ -182,8 +182,8 @@ isc.OBSelectorPopupWindow.addProperties({
         gridField.filterEditorType = type.filterEditorType;
       }
       
-      gridField.canFilter = (fld.canFilter === false ? false : true);
-      gridField.filterOnKeypress = (fld.filterOnKeypress === false ? false : true); 
+      gridField.canFilter = (gridField.canFilter === false ? false : true);
+      gridField.filterOnKeypress = (gridField.filterOnKeypress === false ? false : true); 
 
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
@@ -280,7 +280,7 @@ isc.OBSelectorPopupWindow.addProperties({
 // 1) a combo box with a picker icon
 // 2) a popup window showing a search grid with data
 //
-isc.ClassFactory.defineClass('OBSelectorItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBSelectorItem', isc.ComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
@@ -472,7 +472,7 @@ isc.OBSelectorItem.addProperties({
               continue;
             }
             if (isc.isA.Number(value)) {
-              if(outFields[i].formatType && outFioutFields[i].formatType!==''){
+              if(outFields[i].formatType && outFields[i].formatType !== ''){
                 value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.formats[outFields[i].formatType],
                   OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
                    OB.Format.defaultGroupingSize);
@@ -640,7 +640,7 @@ isc.OBSelectorItem.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBSelectorLinkItem', StaticTextItem);
+isc.ClassFactory.defineClass('OBSelectorLinkItem', isc.StaticTextItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 

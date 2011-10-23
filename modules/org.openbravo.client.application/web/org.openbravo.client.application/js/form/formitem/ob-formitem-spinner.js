@@ -20,7 +20,7 @@
 
 // == OBSpinnerItem ==
 // Input for spinner number
-isc.ClassFactory.defineClass('OBSpinnerItem', SpinnerItem);
+isc.ClassFactory.defineClass('OBSpinnerItem', isc.SpinnerItem);
 
 isc.OBSpinnerItem.addProperties({
   operator: 'equals',

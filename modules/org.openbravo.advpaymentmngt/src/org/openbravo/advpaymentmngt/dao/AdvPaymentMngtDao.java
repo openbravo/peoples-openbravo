@@ -20,7 +20,6 @@
 package org.openbravo.advpaymentmngt.dao;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -408,10 +407,12 @@ public class AdvPaymentMngtDao {
     }
     if (finTxnAmount == null || finTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
       finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
-    } else if (paymentAmount != null && paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
-      // Correct exchange rate for rounding that occurs in UI
-      finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
     }
+    // This code commented due to fix in bug 17829
+    // else if (paymentAmount != null && paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
+    // // Correct exchange rate for rounding that occurs in UI
+    // finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
+    // }
 
     newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
     newPayment.setFinancialTransactionAmount(finTxnAmount);

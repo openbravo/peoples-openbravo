@@ -24,6 +24,8 @@ isc.OBMessageBar.addProperties({
   height: 40,
   overflow: 'visible',
   setTypeStyle: function(type) {
+    this.mainIcon.setSrc('');
+    this.closeIcon.setSrc('');
     this.setStyleName('OBMessageBar_' + type);
     this.mainIcon.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/messagebar/mainIcon-' + type + '.png');
     this.text.setStyleName('OBMessageBarDescriptionText OBMessageBarDescriptionText_' + type);

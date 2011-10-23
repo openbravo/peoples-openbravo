@@ -185,7 +185,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="IMAGESIZEVALUESACTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="IMAGESIZEVALUESACTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>

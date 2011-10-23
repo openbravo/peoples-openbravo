@@ -35,6 +35,9 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.kernel.reference.StringUIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -114,6 +117,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     if (value == null) {
       return;
     }
+    boolean isCustomQuerySelector = sel.getHQL() != null;
     String filteredCriteria = "";
     String fieldName;
     Entity entity = ModelProvider.getInstance().getEntityByTableName(
@@ -124,7 +128,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       if (value.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final String[] separatedValues = value.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String separatedValue : separatedValues) {
-	  cEntity = entity;
+          cEntity = entity;
           JSONObject jSONObject = new JSONObject(separatedValue);
           fieldName = (String) jSONObject.get("fieldName");
           if (fieldName.contains("_dummy") || fieldName.contains("_identifier")
@@ -132,20 +136,42 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
             filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
             continue;
           }
-          String[] fieldNameSplit = fieldName.split("\\.");
-          Property fProp = null;
-          if (fieldNameSplit.length == 1) {
-            fProp = entity.getProperty(fieldName);
-          } else {
-            for (int i = 0; i < fieldNameSplit.length; i++) {
-              fProp = cEntity.getProperty(fieldNameSplit[i]);
-              if (i != fieldNameSplit.length - 1) {
-                cEntity = fProp.getReferencedProperty().getEntity();
+          boolean filterParameter = false;
+          if (isCustomQuerySelector) {
+            // This is a custom query selector. We cannot filter parameters by linking them to
+            // entity properties
+            // Instead, we will do it by checking the references of the fields
+            for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
+              if (field.isSearchinsuggestionbox()) {
+                if (field.getDisplayColumnAlias().equals(fieldName)) {
+                  UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                      field.getReference());
+                  if (!(uiDef instanceof StringUIDefinition)) {
+                    filterParameter = true;
+                  }
+                }
               }
             }
+          } else {
+            // A property in the entity is searched for this fieldName
+            // If the property is numeric or date, then it is filtered
+            String[] fieldNameSplit = fieldName.split("\\.");
+            Property fProp = null;
+            if (fieldNameSplit.length == 1) {
+              fProp = entity.getProperty(fieldName);
+            } else {
+              for (int i = 0; i < fieldNameSplit.length; i++) {
+                fProp = cEntity.getProperty(fieldNameSplit[i]);
+                if (i != fieldNameSplit.length - 1) {
+                  cEntity = fProp.getReferencedProperty().getEntity();
+                }
+              }
+            }
+            if (fProp.isNumericType() || fProp.isDate()) {
+              filterParameter = true;
+            }
           }
-
-          if (fProp.isNumericType() || fProp.isDate()) {
+          if (filterParameter) {
             try {
               jSONObject.put("operator", "equals");
               BigDecimal valueJSONObject = new BigDecimal(jSONObject.get("value").toString());

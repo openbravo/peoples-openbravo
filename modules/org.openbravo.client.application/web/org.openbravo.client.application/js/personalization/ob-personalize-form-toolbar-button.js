@@ -26,6 +26,7 @@
 
   personalizationButtonProperties = {
     action: function() {
+      var tabIdentifier, personalizeForm;
       
       if (!OB.Utilities.checkProfessionalLicense(
           OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {

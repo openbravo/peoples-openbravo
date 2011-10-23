@@ -99,10 +99,6 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
 
   @Override
   protected String getDisplayFieldName(Field field, Property prop) {
-    Long length = field.getDisplayedLength();
-    if (length == null || length == 0) {
-      length = field.getColumn().getLength();
-    }
     final Selector selector = getSelector(field);
     final SelectorField displayField = selector.getDisplayfield();
     String displayFieldName = JsonConstants.IDENTIFIER;

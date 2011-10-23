@@ -295,7 +295,8 @@ isc.OBStandardView.addProperties({
   // handles different ways by which an error can be passed from the 
   // system, translates this to an object with a type, title and message
   setErrorMessageFromResponse: function(resp, data, req){
-    var errorCode;
+    var errorCode, index1, index2;
+    
     // only handle it once
     if (resp._errorMessageHandled) {
       return true;
@@ -527,7 +528,7 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function(childView){
-    var length;
+    var length, i, actionButton;
     
     if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.windowId) !== 'Y') ||
         (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')){
@@ -537,7 +538,6 @@ isc.OBStandardView.addProperties({
     this.standardWindow.addView(childView);
     
     // Add buttons in parent to child. Note that currently it is only added one level.
-    var i;
     if (this.actionToolbarButtons && this.actionToolbarButtons.length>0 && childView.showParentButtons){
       length = this.actionToolbarButtons.length;
       for (i = 0; i < length; i++) {
@@ -792,7 +792,8 @@ isc.OBStandardView.addProperties({
   },
 
   refreshChildViews: function() {
-    var i, length;
+    var i, length, tabViewPane;
+    
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
@@ -1078,7 +1079,7 @@ isc.OBStandardView.addProperties({
 
   // set childs to refresh when they are made visible
   setChildsToRefresh: function() {
-    var length;
+    var length, i;
     
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
@@ -1289,7 +1290,8 @@ isc.OBStandardView.addProperties({
     if (!this.viewGrid.getSelectedRecord()) {
       return;
     }
-    var record = this.viewGrid.getSelectedRecord();
+    var record = this.viewGrid.getSelectedRecord(), criteria;
+    
     criteria = {
         operator: 'and', 
         _constructor: "AdvancedCriteria", 
@@ -1386,7 +1388,7 @@ isc.OBStandardView.addProperties({
     
       var callback = function(ok){
         var i, doUpdateTotalRows, data, deleteData, error, 
-          recordInfos = [], 
+          recordInfos = [], length,
           removeCallBack = function(resp, data, req){
             var length,
               localData = resp.dataObject || resp.data || data, 
@@ -1792,7 +1794,7 @@ isc.OBStandardView.addProperties({
     var tabId = forcedTabId || this.tabId;
     var callback = function(resp, data, req){
       if (req.clientContext && data.type && (data.text || data.title)) {
-        req.clientContext.messageBar.setMessage(OBMessageBar[data.type], data.title, data.text);
+        req.clientContext.messageBar.setMessage(isc.OBMessageBar[data.type], data.title, data.text);
       }
     };
     
@@ -1820,7 +1822,7 @@ isc.OBStandardView.addProperties({
   },
   
   prepareFormFields: function(fields) {
-    var i, length = fields.length, result = [];
+    var i, length = fields.length, result = [], fld;
     
     for (i = 0; i < length; i++) {
       fld = isc.shallowClone(fields[i]);

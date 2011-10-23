@@ -249,8 +249,9 @@ isc.OBGrid.addProperties({
       // overridden for:
       // https://issues.openbravo.com/view.php?id=18509
       editorChanged : function (item) {
-        var prop, same, opDefs, val = item.getElementValue(); 
-          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;                           
+        var prop, same, opDefs, val = item.getElementValue(), 
+          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
+        
         if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
           // now check if the item element value is only
           // an operator, if so, go away
@@ -441,7 +442,7 @@ isc.OBGrid.addProperties({
       this.filterImage.show(true);
     } else {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
-      if (this.view && this.view.messageBar.hasFilterMessage) {
+      if (this.view && this.view.messageBar && this.view.messageBar.hasFilterMessage) {
         this.view.messageBar.hide();
       }
       this.filterImage.hide();
@@ -451,7 +452,7 @@ isc.OBGrid.addProperties({
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {
-        this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
+        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
             this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
             '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' +
             'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
@@ -527,6 +528,11 @@ isc.OBGrid.addProperties({
   exportData: function(exportProperties, data){
     var d = data || {}, expProp = exportProperties || {}, dsURL = this.dataSource.dataURL;
     var sortCriteria;
+    var lcriteria = this.getCriteria();
+    var gdata = this.getData();
+    if(gdata && gdata.dataSource){
+      lcriteria = gdata.dataSource.convertRelativeDates(lcriteria);
+    }
     
     isc.addProperties(d, {
       _dataSource: this.dataSource.ID,
@@ -537,7 +543,7 @@ isc.OBGrid.addProperties({
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
-    }, this.getCriteria(), this.getFetchRequestParams());
+    }, lcriteria, this.getFetchRequestParams());
     if(this.getSortField()){
       sortCriteria=this.getSort();
       if(sortCriteria && sortCriteria.length > 0){

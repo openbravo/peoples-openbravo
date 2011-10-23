@@ -618,6 +618,8 @@ isc.OBTabSetChild.addProperties({
   },
 
   makeTabVisible: function(tab){
+    var pane;
+    
     if (tab === this.getSelectedTab()) {
       pane = this.getTabPane(tab);
       pane.show();
