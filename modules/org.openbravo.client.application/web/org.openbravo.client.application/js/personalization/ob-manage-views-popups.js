@@ -133,7 +133,7 @@ OB.Personalization.ManageViewsPopupProperties = {
 OB.Personalization.ManageViewsPopupPropertiesDefault = {
   title: OB.I18N.getLabel('OBUIAPP_SetDefaultView'),
   actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
-  toggleSave: false,
+  toggleSave: true,
  
   getFields: function() {
     var i, value, personalization = this.standardWindow.getClass().personalization, 
@@ -155,7 +155,13 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
         editorType: 'select',
         addUnknownValues: false,
         required: true,
-        allowEmptyValue: true
+        allowEmptyValue: true,
+        changed: function() {
+          // enable the save button when there is a change
+          this.form.saveButton.setDisabled(false);
+          // don't let it be disabled again
+          this.form.toggleSave = false;
+        }
       },
       OB.Styles.Personalization.viewFieldDefaults,
       OB.Styles.OBFormField.DefaultComboBox
