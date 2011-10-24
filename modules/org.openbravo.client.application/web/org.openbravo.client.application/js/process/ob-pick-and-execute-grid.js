@@ -42,9 +42,41 @@ isc.OBPickAndExecuteGrid.addProperties({
   height: '100%',
 
   // default selection
-  selectionProperty: 'selected',
+  selectionProperty: '_selected',
 
   selectedIds: [],
+
+
+  initWidget: function () {
+
+    this.filterEditorProperties.origSetValuesAsCriteria = this.filterEditorProperties.setValuesAsCriteria;
+
+    this.filterEditorProperties.setValuesAsCriteria = function (criteria, advanced) {
+      var orig = (criteria && criteria.criteria) || [],
+          len = orig.length,
+          crit;
+
+      if (criteria._OrExpression) {
+        for (i = 0; i < len; i++) {
+          if (orig[i].fieldName && orig[i].fieldName === 'id') {
+            continue;
+          }
+
+          if (orig[i].operator && orig[i]._constructor) {
+            crit = orig[i];
+            break;
+          }
+        }
+      } else {
+        crit = criteria;
+      }
+
+      this.origSetValuesAsCriteria(crit, advanced);
+    };
+
+    this.Super('initWidget', arguments);
+  },
+
 
   selectionUpdated: function (record, recordList) {
     var i, len = recordList.length;
@@ -61,7 +93,8 @@ isc.OBPickAndExecuteGrid.addProperties({
   handleFilterEditorSubmit: function (criteria, context) {
     var ids = [],
         crit = {},
-        len = this.selectedIds.length;
+        len = this.selectedIds.length,
+        i, c, found;
 
     for (i = 0; i < len; i++) {
       ids.push({
@@ -76,11 +109,38 @@ isc.OBPickAndExecuteGrid.addProperties({
       crit._OrExpression = true; // trick to get a really _or_ in the backend
       crit.operator = 'or';
       crit.criteria = ids;
+
+      c = criteria.criteria;
+      found = false;
+
+      for (i = 0; i < c.length; i++) {
+        if (c[i].fieldName && c[i].value !== '') {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        // adding an *always true* sentence 
+        criteria.criteria.push({
+          fieldName: 'id',
+          operator: 'notNull'
+        });
+      }
       crit.criteria.push(criteria); // original filter
     } else {
       crit = criteria;
     }
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
+  },
+
+  dataArrived: function (startRow, endRow) {
+    var record, i, len = this.selectedIds.length;
+    for (i = 0; i < len; i++) {
+      record = this.data.findByKey(this.selectedIds[i]);
+      record[this.selectionProperty] = true;
+    }
+    this.Super('dataArrived', arguments);
   }
 });
