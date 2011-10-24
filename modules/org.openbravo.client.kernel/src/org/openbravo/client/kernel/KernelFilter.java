@@ -30,7 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.dal.core.DalThreadHandler;
+import org.openbravo.dal.core.ThreadHandler;
 
 /**
  * Sets the request/response object in the request context.
@@ -49,7 +49,7 @@ public class KernelFilter implements Filter {
 
   public void doFilter(final ServletRequest request, final ServletResponse response,
       final FilterChain chain) throws IOException, ServletException {
-    final DalThreadHandler dth = new DalThreadHandler() {
+    final ThreadHandler dth = new ThreadHandler() {
 
       @Override
       public void doBefore() {
@@ -65,7 +65,6 @@ public class KernelFilter implements Filter {
       @Override
       public void doFinal(boolean errorOccured) {
         RequestContext.clear();
-        super.doFinal(errorOccured);
       }
     };
 
