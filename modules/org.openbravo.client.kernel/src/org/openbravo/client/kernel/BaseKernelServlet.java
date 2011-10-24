@@ -58,6 +58,7 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
     // redirects are done by the authentication manager
     final KernelHttpServletResponse localResponse = new KernelHttpServletResponse();
     localResponse.setDelegate(response);
+    RequestContext.get().setResponse(localResponse);
 
     callServiceInSuper(request, localResponse);
 
