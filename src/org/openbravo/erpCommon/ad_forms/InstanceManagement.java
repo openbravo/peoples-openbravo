@@ -179,7 +179,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
       params.put("publicKey", vars.getStringParameter("publicKey"));
       params.put("activationKey", buf.toString());
-      params.put("purpose", vars.getStringParameter("purpose"));
       params.put("activate", true);
 
       pb.setParams(params);

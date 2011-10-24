@@ -93,8 +93,6 @@ public class ActiveInstanceProcess implements Process {
         activationKey = result[1];
       }
 
-      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-      sysInfo.setInstancePurpose(purpose);
       ActivationKey ak = new ActivationKey(publicKey, activationKey);
       String nonAllowedMods = ak.verifyInstalledModules(false);
       if (!nonAllowedMods.isEmpty()) {
@@ -106,6 +104,8 @@ public class ActiveInstanceProcess implements Process {
         sys.setInstanceKey(publicKey);
         ActivationKey.setInstance(ak);
         if (ak.isActive()) {
+          SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+          sysInfo.setInstancePurpose(ak.getProperty("purpose"));
 
           sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
           sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
