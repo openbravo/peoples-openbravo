@@ -33,7 +33,7 @@
          case when C_Invoice.C_Currency_ID = (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ) then C_InvoiceTax.TaxBaseAmt else
          C_Currency_Convert(C_InvoiceTax.TaxBaseAmt ,C_Invoice.C_Currency_ID, (select c_currency_id from c_taxpayment where c_taxpayment_id = ? ),
          coalesce(C_invoice.TaxDate, C_invoice.DateAcct), 'S', c_invoice.ad_client_id, c_invoice.ad_org_id) end as TaxBaseAmt,
-         C_Tax.C_Tax_ID, C_Tax.IsTaxExempt ,C_Tax.IsTaxUndeductable, C_Tax.IsNoVat, C_DocType.DocBaseType
+         C_Tax.C_Tax_ID, C_Tax.IsTaxExempt ,C_Tax.IsTaxUndeductable, C_Tax.IsNoVat, C_DocType.DocBaseType, C_DocType.isreversal
          from C_Invoice,
          C_TaxRegister_Type_Lines,
          C_InvoiceTax,

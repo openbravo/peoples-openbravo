@@ -218,7 +218,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
             return myMessage;
           }
           if (myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_APCredit)
-              || myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_ARCredit)) {
+              || myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_ARCredit)
+              || "Y".equals(myinvoice.isreversal)) { // isreversal means credit memo
             strTaxBaseAmt = (new BigDecimal(strTaxBaseAmt).negate()).toPlainString();
             strTaxAmt = (new BigDecimal(strTaxAmt).negate()).toPlainString();
             strTaxUndeducAmt = (new BigDecimal(strTaxUndeducAmt).negate()).toPlainString();
