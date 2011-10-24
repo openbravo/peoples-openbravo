@@ -20,6 +20,7 @@
 OB.APRM = {};
 OB.APRM.bankTransitoryAccountCalloutResponse = function(me, confirmMessage, financialAccountId) {
   isc.confirm(confirmMessage, function(value){
+    var post;
     if (value) {
       var bankTransitoryAccount = me.getField('fINTransitoryAcct')._value,
           bankTransitoryAccountDesc = me.getField('fINTransitoryAcct').valueMap[bankTransitoryAccount];
