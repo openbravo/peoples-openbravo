@@ -48,31 +48,34 @@ isc.OBPickAndExecuteGrid.addProperties({
 
 
   initWidget: function () {
+    if (!this.filterEditorProperties.origSetValuesAsCriteria) {
+      // the origSetValuesAsCriteria member is added as 'class' level
+      // we only need to do it once
+      this.filterEditorProperties.origSetValuesAsCriteria = this.filterEditorProperties.setValuesAsCriteria;
 
-    this.filterEditorProperties.origSetValuesAsCriteria = this.filterEditorProperties.setValuesAsCriteria;
+      this.filterEditorProperties.setValuesAsCriteria = function (criteria, advanced) {
+        var orig = (criteria && criteria.criteria) || [],
+            len = orig.length,
+            crit;
 
-    this.filterEditorProperties.setValuesAsCriteria = function (criteria, advanced) {
-      var orig = (criteria && criteria.criteria) || [],
-          len = orig.length,
-          crit;
+        if (criteria._OrExpression) {
+          for (i = 0; i < len; i++) {
+            if (orig[i].fieldName && orig[i].fieldName === 'id') {
+              continue;
+            }
 
-      if (criteria._OrExpression) {
-        for (i = 0; i < len; i++) {
-          if (orig[i].fieldName && orig[i].fieldName === 'id') {
-            continue;
+            if (orig[i].operator && orig[i]._constructor) {
+              crit = orig[i];
+              break;
+            }
           }
-
-          if (orig[i].operator && orig[i]._constructor) {
-            crit = orig[i];
-            break;
-          }
+        } else {
+          crit = criteria;
         }
-      } else {
-        crit = criteria;
-      }
 
-      this.origSetValuesAsCriteria(crit, advanced);
-    };
+        this.origSetValuesAsCriteria(crit, advanced);
+      };
+    }
 
     this.Super('initWidget', arguments);
   },
