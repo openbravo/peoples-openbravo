@@ -182,7 +182,7 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
     if (ak.isTrial()) {
       strVersion += " - ";
-      strVersion += Utility.messageBD(new DalConnectionProvider(), "OPSTrial", OBContext
+      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial", OBContext
           .getOBContext().getLanguage().getLanguage());
     }
 

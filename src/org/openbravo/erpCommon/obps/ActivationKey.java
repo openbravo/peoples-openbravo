@@ -279,7 +279,7 @@ public class ActivationKey {
       String dbId = getProperty("dbId");
       String macId = getProperty("macId");
 
-      SystemInfo.loadId(new DalConnectionProvider());
+      SystemInfo.loadId(new DalConnectionProvider(false));
       if ((sysId != null && !sysId.isEmpty() && !sysId.equals(SystemInfo.getSystemIdentifier()))
           || (dbId != null && !dbId.isEmpty() && !dbId.equals(SystemInfo.getDBIdentifier()))
           || (macId != null && !macId.isEmpty() && !macId.equals(SystemInfo.getMacAddress()))) {
@@ -1021,8 +1021,8 @@ public class ActivationKey {
     if (tier1Artifacts == null || tier2Artifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
-      throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoRestrictionsFile",
-          OBContext.getOBContext().getLanguage().getLanguage()));
+      throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+          "NoRestrictionsFile", OBContext.getOBContext().getLanguage().getLanguage()));
     }
 
     String artifactId = id;
