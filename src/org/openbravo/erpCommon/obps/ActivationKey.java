@@ -94,7 +94,7 @@ public class ActivationKey {
   private boolean trial = false;
 
   private boolean notActiveYet = false;
-  private boolean incosistentInstance = false;
+  private boolean inconsistentInstance = false;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -284,7 +284,7 @@ public class ActivationKey {
           || (dbId != null && !dbId.isEmpty() && !dbId.equals(SystemInfo.getDBIdentifier()))
           || (macId != null && !macId.isEmpty() && !macId.equals(SystemInfo.getMacAddress()))) {
         isActive = false;
-        incosistentInstance = true;
+        inconsistentInstance = true;
         errorMessage = "@IncorrectLicenseInstance@";
         setLogger();
         return;
@@ -581,7 +581,7 @@ public class ActivationKey {
       return LicenseRestriction.NO_RESTRICTION;
     }
 
-    if (incosistentInstance) {
+    if (inconsistentInstance) {
       return LicenseRestriction.NOT_MATCHED_INSTANCE;
     }
 
