@@ -20,22 +20,34 @@
 package org.openbravo.dal.core;
 
 import java.io.Serializable;
+import java.util.Properties;
 
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.UUIDHexGenerator;
+import org.hibernate.type.Type;
 import org.openbravo.base.model.BaseOBObjectDef;
+import org.openbravo.base.session.DalUUIDGenerator;
 
 /**
  * Extends the standard Hibernate UUIDHexGenerator. This is needed because the standard Hibernate
  * UUIDHexGenerator will overwrite the id even if the object already has one. The goal is to try to
  * keep an id if it has been assigned to an object. This is important in case of imports.
  * 
+ * @deprecated replaced by the {@link DalUUIDGenerator}.
+ * 
  * @author mtaal
  */
-
 public class DalUUIDHexGenerator extends UUIDHexGenerator {
   @Override
-  public Serializable generate(SessionImplementor session, Object obj) {
+  public void configure(Type type, Properties params, Dialect d) throws MappingException {
+    super.configure(type, params, d);
+  }
+
+  @Override
+  public Serializable generate(SessionImplementor session, Object obj) throws HibernateException {
     final BaseOBObjectDef bob = (BaseOBObjectDef) obj;
     if (bob.getId() != null) {
       return ((String) bob.getId()).toUpperCase();

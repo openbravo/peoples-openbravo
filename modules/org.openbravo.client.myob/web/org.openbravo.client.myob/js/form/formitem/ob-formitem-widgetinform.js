@@ -23,6 +23,8 @@ isc.ClassFactory.defineClass('OBWidgetInFormItem', isc.CanvasItem);
 
 isc.OBWidgetInFormItem.addProperties({
   widgetInstance : null,
+  autoDestroy: true,
+  
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   widgetProperties: {
