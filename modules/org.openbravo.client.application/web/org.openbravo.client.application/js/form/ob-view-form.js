@@ -97,7 +97,7 @@ OB.ViewFormProperties = {
   
   getStatusBarFields: function() {
     var statusBarFields = [[],[],[],[],[], []], i, item, title, refColumnName, targetEntity, value, displayedValue,
-      length = this.statusBarFields.length;
+      length = this.statusBarFields.length, sourceWindowId;
     for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
       title = item.getTitle();

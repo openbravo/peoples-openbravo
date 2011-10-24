@@ -217,7 +217,7 @@ isc.OBSearchItem.addProperties({
   setUnloadEventHandling: function(){
     var me = this;
     if (document.layers) {
-      document.captureEvents(Event.UNLOAD);
+      document.captureEvents(isc.Event.UNLOAD);
     }
     window.onunload = function(){
       if (isc.OBSearchItem.openedWindow) {
@@ -230,7 +230,7 @@ isc.OBSearchItem.addProperties({
   
   clearUnloadEventHandling: function(){
     if (document.layers) {
-      window.releaseEvents(Event.UNLOAD);
+      window.releaseEvents(isc.Event.UNLOAD);
     }
     window.onunload = function(){
     };
