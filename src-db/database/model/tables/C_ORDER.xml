@@ -289,7 +289,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="RM_CREATECREDITMEMO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="RM_CREATEINVOICE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
