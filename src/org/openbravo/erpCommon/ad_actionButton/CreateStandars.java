@@ -250,20 +250,6 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
             OBContext.restorePreviousMode();
           } // END LOOP ATTRIBUTES
 
-          // CREATE ATRIBUTE
-          AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
-              opProduct.getProduct().getAttributeSet().getId());
-          OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn, vars,
-              data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N", opProduct
-                  .getProduct().getId(), attValues);
-          if (!createAttributeInstanceError.getType().equals("Success"))
-            throw new OBException(createAttributeInstanceError.getMessage());
-
-          OBDal.getInstance().flush();
-
-          AttributeSetInstance newAttSetinstance = OBDal.getInstance().get(
-              AttributeSetInstance.class, attSetInstanceTo.getAttSetInstanceId());
-
           // UPDATE LINES
 
           OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
@@ -278,6 +264,21 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
           List<ProductionLine> plinesToCopyTo = ProductionLineCriteria.list();
 
           for (ProductionLine pline : plinesToCopyTo) {
+
+            // CREATE ATRIBUTE
+            AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
+                opProduct.getProduct().getAttributeSet().getId());
+            OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn,
+                vars, data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N",
+                opProduct.getProduct().getId(), attValues);
+            if (!createAttributeInstanceError.getType().equals("Success"))
+              throw new OBException(createAttributeInstanceError.getMessage());
+
+            OBDal.getInstance().flush();
+
+            AttributeSetInstance newAttSetinstance = OBDal.getInstance().get(
+                AttributeSetInstance.class, attSetInstanceTo.getAttSetInstanceId());
+
             pline.setAttributeSetValue(newAttSetinstance);
             OBDal.getInstance().save(pline);
           }
