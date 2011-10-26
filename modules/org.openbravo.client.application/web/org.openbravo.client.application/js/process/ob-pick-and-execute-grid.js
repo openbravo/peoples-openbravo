@@ -30,7 +30,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   // Editing
   canEdit: true,
-  editEvent: 'click',
+  editEvent: isc.EH.CLICK,
   autoSaveEdits: false,
 
   selectionAppearance: 'checkbox',
@@ -40,17 +40,20 @@ isc.OBPickAndExecuteGrid.addProperties({
   minFieldWidth: 75,
   width: '100%',
   height: '100%',
+  autoFitFieldsFillViewport: false,
 
   // default selection
   selectionProperty: '_selected',
 
   selectedIds: [],
 
-
   initWidget: function () {
+    var len = this.fields.length;
+
+    // the origSetValuesAsCriteria member is added as 'class' level
+    // we only need to do it once
     if (!this.filterEditorProperties.origSetValuesAsCriteria) {
-      // the origSetValuesAsCriteria member is added as 'class' level
-      // we only need to do it once
+
       this.filterEditorProperties.origSetValuesAsCriteria = this.filterEditorProperties.setValuesAsCriteria;
 
       this.filterEditorProperties.setValuesAsCriteria = function (criteria, advanced) {
@@ -75,6 +78,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
         this.origSetValuesAsCriteria(crit, advanced);
       };
+    }
+
+    // adding a reference to the plain field object to this grid
+    // useful when working with custom field validators
+    for (i = 0; i < len; i++) {
+      this.fields[i].grid = this;
     }
 
     this.Super('initWidget', arguments);
@@ -145,5 +154,13 @@ isc.OBPickAndExecuteGrid.addProperties({
       record[this.selectionProperty] = true;
     }
     this.Super('dataArrived', arguments);
+  },
+
+  recordClick: function (grid, record, recordNum, field, fieldNum, value, rawValue) {
+    if (fieldNum === 0 && value.indexOf('unchecked.png') !== -1) {
+      grid.endEditing();
+      return false;
+    }
+    return this.Super('recordClick', arguments);
   }
 });

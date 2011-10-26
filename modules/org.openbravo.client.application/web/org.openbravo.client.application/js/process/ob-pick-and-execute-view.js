@@ -40,7 +40,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   viewGrid: null,
 
-  gridFields: null,
+  gridFields: [],
 
   initWidget: function () {
 
@@ -48,7 +48,8 @@ isc.OBPickAndExecuteView.addProperties({
         okButton, cancelButton;
 
     okButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
+      //FIXME: Move to AD_Message
+      title: 'Done',
       click: function () {
         console.log(view.viewGrid.getSelectedRecords());
       }
@@ -63,6 +64,8 @@ isc.OBPickAndExecuteView.addProperties({
     });
 
     this.prepareGridFields(this.viewProperties.fields);
+
+    this._addIconField();
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
@@ -98,8 +101,11 @@ isc.OBPickAndExecuteView.addProperties({
       if (result[i].editorProperties && result[i].editorProperties.disabled) {
         result[i].canEdit = false;
         result[i].readOnlyEditorType = 'OBTextItem';
+      } else {
+        result[i].validateOnExit = true;
       }
     }
+
     this.gridFields = result;
   },
 
@@ -109,6 +115,32 @@ isc.OBPickAndExecuteView.addProperties({
     this.Super('closeClick', arguments);
   },
 
+  _addIconField: function () {
+    if (!this.gridFields) {
+      return;
+    }
+
+    this.gridFields.unshift({
+      name: '_pin',
+      type: 'text',
+      title: '&nbsp;',
+      canEdit: false,
+      canFilter: false,
+      canSort: false,
+      width: 32,
+      formatCellValue: function (value, record, rowNum, colNum, grid) {
+        if (record[grid.selectionProperty]) {
+          return '<img src="web/images/iconPin.png" />';
+        }
+        return '';
+      },
+      formatEditorValue: function (value, record, rowNum, colNum, grid) {
+        return this.formatCellValue(arguments);
+      }
+    });
+  },
+
   // dummy required by OBStandardView.prepareGridFields
   setFieldFormProperties: function () {}
+
 });
