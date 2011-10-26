@@ -39,18 +39,18 @@ isc.OBToolbar.addClassProperties({
     updateState: function(){
       var view = this.view, form = view.viewForm, hasErrors = false, editRow;
       if (view.isShowingForm) {
-        this.setDisabled(!form.isNew &&
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && 
         (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        !view.hasValidState() || form.hasErrors() ||
+        !form.hasChanged || !form.allRequiredFieldsSet()));
       } else if (view.isEditingGrid) {
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!form.isNew && !hasErrors &&
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && !hasErrors &&
         (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        !view.hasValidState() || form.hasErrors() || 
+        !form.hasChanged || !form.allRequiredFieldsSet()));
       } else {
         this.setDisabled(true);
       }
@@ -81,10 +81,10 @@ isc.OBToolbar.addClassProperties({
       var view = this.view, form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(false);
-        var saveDisabled = (!form.isNew &&
-        (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        var saveDisabled = !(form.isNew && form.allRequiredFieldsSet()) && 
+          (form.isSaving || form.readOnly ||
+          !view.hasValidState() || form.hasErrors() ||
+          !form.hasChanged || !form.allRequiredFieldsSet());
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
@@ -189,12 +189,19 @@ isc.OBToolbar.addClassProperties({
   UNDO_BUTTON_PROPERTIES: {
     action: function(){
       this.view.undo();
+      if (!this.view.isShowingForm) {
+        this.setDisabled(true);
+      }
     },
     disabled: true,
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function() {
-       this.setDisabled(!this.view.viewGrid.hasErrors() && !this.view.viewForm.hasChanged && !this.view.viewGrid.hasChanges(false));
+      if (this.view.isShowingForm) {
+        this.setDisabled(false);
+      } else {
+        this.setDisabled(!this.view.isEditingGrid);
+      }
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },
@@ -1080,7 +1087,7 @@ isc.OBToolbar.addProperties({
           isNew = currentContext.viewForm.isNew, 
           hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
           currentValues = currentContext.getCurrentValues();
-
+     
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
