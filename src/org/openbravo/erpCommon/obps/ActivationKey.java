@@ -60,9 +60,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.HeartbeatLog;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -88,8 +91,10 @@ public class ActivationKey {
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
   private Date lastRefreshTime;
+  private boolean trial = false;
 
   private boolean notActiveYet = false;
+  private boolean inconsistentInstance = false;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -102,7 +107,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE
   }
 
   public enum CommercialModuleStatus {
@@ -226,6 +231,7 @@ public class ActivationKey {
     subscriptionActuallyConverted = false;
     tier1Artifacts = null;
     tier2Artifacts = null;
+    trial = false;
     licenseClass = LicenseClass.COMMUNITY;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
@@ -268,6 +274,21 @@ public class ActivationKey {
         setLogger();
         return;
       }
+
+      String sysId = getProperty("sysId");
+      String dbId = getProperty("dbId");
+      String macId = getProperty("macId");
+
+      SystemInfo.loadId(new DalConnectionProvider(false));
+      if ((sysId != null && !sysId.isEmpty() && !sysId.equals(SystemInfo.getSystemIdentifier()))
+          || (dbId != null && !dbId.isEmpty() && !dbId.equals(SystemInfo.getDBIdentifier()))
+          || (macId != null && !macId.isEmpty() && !macId.equals(SystemInfo.getMacAddress()))) {
+        isActive = false;
+        inconsistentInstance = true;
+        errorMessage = "@IncorrectLicenseInstance@";
+        setLogger();
+        return;
+      }
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -294,6 +315,8 @@ public class ActivationKey {
     Date endDate = null;
 
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
+
+    trial = "true".equals(getProperty("trial"));
 
     try {
       startDate = sd.parse(getProperty("startdate"));
@@ -554,11 +577,21 @@ public class ActivationKey {
    */
   public LicenseRestriction checkOPSLimitations(String currentSession) {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
-    if (!isOPSInstance())
+    if (!isOPSInstance()) {
       return LicenseRestriction.NO_RESTRICTION;
+    }
 
-    if (!isActive)
+    if (inconsistentInstance) {
+      return LicenseRestriction.NOT_MATCHED_INSTANCE;
+    }
+
+    if (trial && !isHeartbeatActive()) {
+      return LicenseRestriction.HB_NOT_ACTIVE;
+    }
+
+    if (!isActive) {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
+    }
 
     if (getProperty("lincensetype").equals("USR")) {
       Long softUsers = null;
@@ -603,6 +636,30 @@ public class ActivationKey {
     }
 
     return result;
+  }
+
+  /**
+   * Checks if heartbeat is active and a beat has been sent during last days.
+   * 
+   * @return
+   */
+  public boolean isHeartbeatActive() {
+    OBContext.setAdminMode();
+    try {
+      Boolean active = OBDal.getInstance().get(SystemInformation.class, "0").isEnableHeartbeat();
+      if (active == null || !active) {
+        return false;
+      }
+      OBCriteria<HeartbeatLog> hbLog = OBDal.getInstance().createCriteria(HeartbeatLog.class);
+      Calendar lastDays = Calendar.getInstance();
+      lastDays.add(Calendar.DAY_OF_MONTH, -9);
+      hbLog.add(Restrictions.ge(HeartbeatLog.PROPERTY_CREATIONDATE,
+          new Date(lastDays.getTimeInMillis())));
+      return hbLog.count() > 0;
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -682,8 +739,11 @@ public class ActivationKey {
           .append("</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
           .append("</td><td>")
-          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang))
-          .append("</td></tr>");
+          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang));
+      if (trial) {
+        sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
+      }
+      sb.append("</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
           .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
 
@@ -961,8 +1021,8 @@ public class ActivationKey {
     if (tier1Artifacts == null || tier2Artifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
-      throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoRestrictionsFile",
-          OBContext.getOBContext().getLanguage().getLanguage()));
+      throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+          "NoRestrictionsFile", OBContext.getOBContext().getLanguage().getLanguage()));
     }
 
     String artifactId = id;
@@ -1084,5 +1144,9 @@ public class ActivationKey {
     } else {
       return SubscriptionStatus.ACTIVE;
     }
+  }
+
+  public boolean isTrial() {
+    return trial;
   }
 }

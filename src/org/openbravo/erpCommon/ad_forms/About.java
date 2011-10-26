@@ -68,10 +68,15 @@ public class About extends HttpSecureAppServlet {
 
       String licenseInfo = "";
       if (ActivationKey.isActiveInstance()) {
+        String edition = "";
+        if (ak.isTrial()) {
+          edition = Utility.messageBD(this, "OPSTrial", vars.getLanguage()) + " - ";
+        }
+        edition += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
+            vars.getLanguage());
+
         licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()).replace(
-            "@OBPSEdition@",
-            Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
-                vars.getLanguage()))
+            "@OBPSEdition@", edition)
             + " " + ak.getProperty("customer");
       } else {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());

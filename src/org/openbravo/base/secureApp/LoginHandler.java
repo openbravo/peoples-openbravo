@@ -202,6 +202,20 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "ME");
         goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
+      case NOT_MATCHED_INSTANCE:
+        msg = Utility.messageBD(myPool, "OPS_NOT_MATCHED_INSTANCE", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_NOT_MATCHED_INSTANCE_TITLE", vars.getLanguage());
+        log4j.warn("No matched instance - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
+      case HB_NOT_ACTIVE:
+        msg = Utility.messageBD(myPool, "OPS_NOT_HB_ACTIVE", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage());
+        log4j.warn("HB not active - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
       case NO_RESTRICTION:
         break;
       }
