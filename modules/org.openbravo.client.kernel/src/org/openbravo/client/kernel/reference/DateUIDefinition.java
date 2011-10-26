@@ -126,16 +126,20 @@ public class DateUIDefinition extends UIDefinition {
   public String getTypeProperties() {
     final StringBuilder sb = new StringBuilder();
     sb.append("editFormatter: function(value, field, component, record) {"
-        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
+        + "return OB.Utilities.Date.JSToOB(value, " + getClientFormatObject() + ");" + "},"
         + "parseInput: function(value, field, component, record) {"
-        + "return OB.Utilities.Date.OBToJS(value, OB.Format.date);" + "},");
+        + "return OB.Utilities.Date.OBToJS(value, " + getClientFormatObject() + ");" + "},");
     sb.append("shortDisplayFormatter: function(value, field, component, record) {"
-        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
+        + "return OB.Utilities.Date.JSToOB(value, " + getClientFormatObject() + ");" + "},"
         + "normalDisplayFormatter: function(value, field, component, record) {"
-        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
-        + "createClassicString: function(value) {"
-        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
+        + "return OB.Utilities.Date.JSToOB(value, " + getClientFormatObject() + ");" + "},"
+        + "createClassicString: function(value) {" + "return OB.Utilities.Date.JSToOB(value, "
+        + getClientFormatObject() + ");" + "},");
     return sb.toString();
+  }
+
+  protected String getClientFormatObject() {
+    return "OB.Format.date";
   }
 
   @Override
