@@ -116,6 +116,8 @@ public class Property {
   private Property trlParentProperty;
   private Property trlOneToManyProperty;
 
+  private Integer seqno;
+
   /**
    * Initializes this Property using the information from the Column.
    * 
@@ -130,6 +132,7 @@ public class Property {
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
     setColumnId(fromColumn.getId());
+    setSeqno(fromColumn.getSeqno());
 
     setStoredInSession(fromColumn.isStoredInSession());
 
@@ -1228,5 +1231,13 @@ public class Property {
 
   public void setStoredInSession(boolean storedInSession) {
     this.storedInSession = storedInSession;
+  }
+
+  public Integer getSeqno() {
+    return seqno;
+  }
+
+  public void setSeqno(Integer seqno) {
+    this.seqno = seqno;
   }
 }

@@ -105,7 +105,7 @@ isc.OBAlertGrid.addProperties({
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
       canFilter: true,
-      frozen: true,
+      //frozen: true, /* Removed due to issue https://issues.openbravo.com/view.php?id=17611 */
       canFreeze: true,
       showHover: true,
       prompt: OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt'),

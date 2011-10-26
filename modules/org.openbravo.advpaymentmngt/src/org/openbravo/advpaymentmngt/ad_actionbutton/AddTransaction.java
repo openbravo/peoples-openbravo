@@ -65,7 +65,6 @@ import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AddTransaction extends HttpSecureAppServlet {
@@ -166,9 +165,8 @@ public class AddTransaction extends HttpSecureAppServlet {
                   : "PWNC", depositAmt, paymentAmt, null, null, null,
               p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate), p
                   .getCurrency(), p.getFinancialTransactionConvertRate(), p.getAmount());
-          OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
-              "P", finTrans);
-          if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+          OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
+          if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
             throw new OBException(processTransactionError.getMessage());
           }
           if (!"".equals(strFinBankStatementLineId)) {
@@ -219,9 +217,8 @@ public class AddTransaction extends HttpSecureAppServlet {
             glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
                 : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
             businessPartner, product, salesRegion);
-        OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
-            "P", finTrans);
-        if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+        OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
+        if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
           throw new OBException(processTransactionError.getMessage());
         }
         strMessage = "1 " + "@RowsInserted@";
@@ -243,9 +240,8 @@ public class AddTransaction extends HttpSecureAppServlet {
             FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC" : "PWNC",
             feeDepositAmt, feePaymentAmt, null, null, null, "BF",
             FIN_Utility.getDate(strTransactionDate), null, null, null);
-        OBError processTransactionError = processTransaction(vars, new DalConnectionProvider(),
-            "P", finTrans);
-        if (processTransactionError != null && processTransactionError.getType().equals("Error")) {
+        OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
+        if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
           throw new OBException(processTransactionError.getMessage());
         }
         strMessage = "1 " + "@RowsInserted@";

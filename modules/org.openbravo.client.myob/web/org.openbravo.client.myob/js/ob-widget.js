@@ -50,7 +50,7 @@ isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
 //
 // == OBWidgetMenuItem ==
 //
-isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
+isc.defineClass('OBWidgetMenuItem', isc.IMenuButton).addProperties({
   widget: null,
   menu: null,
 
@@ -367,7 +367,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   },
   
   allRequiredParametersSet: function() {
-    var i;
+    var i, fieldDefinition;
     for (i = 0; i < this.fieldDefinitions.length; i++) {
       fieldDefinition = this.fieldDefinitions[i];
       if (fieldDefinition.required && !this.parameters[fieldDefinition.name] &&

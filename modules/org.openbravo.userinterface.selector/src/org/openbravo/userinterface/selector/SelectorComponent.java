@@ -45,6 +45,7 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
+import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
@@ -511,6 +512,12 @@ public class SelectorComponent extends BaseTemplateComponent {
                   final Property property = KernelUtils.getInstance().getPropertyFromColumn(
                       associatedField.getColumn(), false);
                   outField.setTabFieldName(property.getName());
+                  UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                      associatedField.getColumn().getId());
+                  if (uiDef instanceof NumberUIDefinition) {
+                    String formatStr = ((NumberUIDefinition) uiDef).getFormat();
+                    setOutFieldFormat(outField, formatStr);
+                  }
                 } else {
                   // classic mode
                   outField.setTabFieldName(associatedField.getColumn().getName());
@@ -530,6 +537,10 @@ public class SelectorComponent extends BaseTemplateComponent {
       OBContext.restorePreviousMode();
     }
     return outFields;
+  }
+
+  private void setOutFieldFormat(OutSelectorField outField, String formatStr) {
+    outField.setFormatType(formatStr);
   }
 
   public String getOutHiddenInputPrefix() {
@@ -686,6 +697,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private String tabFieldName;
     private String outFieldName;
     private String suffix;
+    private String formatType = "";
 
     public String getTabFieldName() {
       return tabFieldName;
@@ -709,6 +721,14 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public String getOutSuffix() {
       return suffix;
+    }
+
+    public String getFormatType() {
+      return formatType;
+    }
+
+    public void setFormatType(String formatType) {
+      this.formatType = formatType;
     }
 
   }

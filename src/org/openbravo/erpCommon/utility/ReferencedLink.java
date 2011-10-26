@@ -222,9 +222,13 @@ public class ReferencedLink extends HttpSecureAppServlet {
         if (data == null || data.length == 0)
           throw new ServletException("Window not found");
 
-        strWindowId = data[0].adWindowId;
-        if (!isSOTrx && !data[0].poWindowId.equals(""))
+        // only in case an adWindowId is returned
+        if (!data[0].adWindowId.equals("")) {
+          strWindowId = data[0].adWindowId;
+        }
+        if (!isSOTrx && !data[0].poWindowId.equals("")) {
           strWindowId = data[0].poWindowId;
+        }
       }
     }
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);

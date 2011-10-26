@@ -40,7 +40,7 @@ OB.Personalization = {
 // used as the basis. This can be used to make sure that the 
 // personalizationData used is up-to-date with the current form fields.
 OB.Personalization.getPersonalizationDataFromForm = function(form) {
-  var i, dataFields = [], statusBarFields, length,
+  var i, dataFields = [], statusBarFields, length, record,
     origPersonalizationData = form && form.view ? form.view.getFormPersonalization(true) : null;
 
   // just use the personalization data which was used on the 
@@ -98,7 +98,7 @@ OB.Personalization.getPersonalizationDataFromForm = function(form) {
 // of new fields in the AD, changes in required and the title and removal of
 // fields.
 OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fields, statusBarFields) {
-  var fld, j, record, i, dataField, undef;
+  var fld, j, record, i, dataField, undef, length;
   
   // required and title and removal of fields
   // length is recomputed every time as fields can be removed

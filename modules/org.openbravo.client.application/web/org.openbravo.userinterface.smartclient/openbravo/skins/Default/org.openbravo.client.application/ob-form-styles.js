@@ -118,7 +118,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
   pickListHeight: 200,
-  autoSizePickList: false,
+  autoSizePickList: true,
 
   pickListProperties: {
     showShadow: false,
@@ -535,6 +535,7 @@ isc.OBSectionItemButton.addProperties({
 
   isc.OBImageSelector.addProperties({
    hlayoutTopMargin: 10,
+   hlayoutBottomMargin: 10,
    height: 30,
    width: 450,
    align: 'center'

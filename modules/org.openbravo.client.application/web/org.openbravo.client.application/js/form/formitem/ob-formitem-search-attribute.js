@@ -19,7 +19,7 @@
 
 // = Search Attribute widget =
 // A specific subclass of OBSearchItem for attribute fields.
-isc.ClassFactory.defineClass('OBPAttributeSearchItem', OBSearchItem);
+isc.ClassFactory.defineClass('OBPAttributeSearchItem', isc.OBSearchItem);
 
 isc.OBPAttributeSearchItem.addProperties({
   operator: 'iContains',

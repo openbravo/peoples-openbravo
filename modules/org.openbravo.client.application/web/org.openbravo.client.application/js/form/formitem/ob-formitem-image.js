@@ -37,8 +37,8 @@ isc.OBImageItemSmallImageContainer.addProperties({
       command: 'GETSIZE'
     };
     OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-      var pageHeight = Page.getHeight()-100;
-      var pageWidth = Page.getWidth()-100;
+      var pageHeight = isc.Page.getHeight()-100;
+      var pageWidth = isc.Page.getWidth()-100;
       var height;
       var width;
       var ratio = data.width/data.height;
@@ -138,36 +138,11 @@ isc.OBImageCanvas.addProperties({
       buttonType: 'erase',
       imageItem: this.creator,
       deleteFunction: function(){
-        var imageId = this.imageItem.getValue();
-        var view = this.imageItem.form.view;
-        var d = {
-                inpimageId: this.imageItem.getValue(),
-                inpTabId: this.imageItem.form.view.tabId,
-                inpColumnName: this.imageItem.columnName,
-                parentObjectId: this.imageItem.form.values.id,
-                command: 'DELETE'
-        };
         var imageItem = this.imageItem;
-        isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDeleteImage'), function(clickedOK){
-          if(clickedOK){
-            OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-               imageItem.refreshImage();
-            });
-          }
-        });
+        imageItem.refreshImage();
       },
       click: function(form, item){
-        //On click, we autosave before showing the selector,
-        //because after delete we will reload the form
-        if (!this.imageItem.form.validateForm()) {
-          return;
-        }
-        var actionObject = {
-          target: this,
-          method: this.deleteFunction,
-          parameters: []
-        };
-        this.imageItem.form.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);
+        this.deleteFunction();
       },
       updateState: function(value){
         if(value){
@@ -206,7 +181,7 @@ isc.OBImageCanvas.addProperties({
 
 // == OBImageItem ==
 // Item used for Openbravo ImageBLOB images.
-isc.ClassFactory.defineClass('OBImageItem', CanvasItem);
+isc.ClassFactory.defineClass('OBImageItem', isc.CanvasItem);
 
 isc.OBImageItem.addProperties({
   shouldSaveValue: true,
@@ -258,24 +233,11 @@ isc.OBImageItem.addProperties({
     return this.Super('setValue', arguments);
   },
   refreshImage: function(imageId){
-    if(imageId){
       //If creating/replacing an image, the form is marked as modified
       //and the image id is set as the value of the item
       this.setValue(imageId);
       this.form.itemChangeActions();
-    }else{
-      //However, if the image is being deleted, we reload the form,
-      //as the process has automatically changed the record and we need to reload
-      //to avoid concurrent changes problem
-      this.setValue(imageId);
-      this.form.view.refresh();
-    }
-  },
-  changed: function (form, item, value) {
-    form.setValue(identifierFieldName, value);
-    return this.Super('changed', arguments);
   }
-
 });
 
 //== OBImageSelector ==
@@ -291,6 +253,17 @@ isc.OBImageSelector.addProperties({
   initWidget: function(args){
     var imageId = this.imageItem.getValue();
     var view = args.form.view;
+    var imageSizeAction = this.imageItem.imageSizeValuesAction;
+    var imageWidthValue = this.imageItem.imageWidth;
+    imageWidthValue = parseInt(imageWidthValue, 10);
+    if (!imageWidthValue) {
+      imageWidthValue = 0;
+    }
+    var imageHeightValue = this.imageItem.imageHeight;
+    imageHeightValue = parseInt(imageHeightValue, 10);
+    if (!imageHeightValue) {
+      imageHeightValue = 0;
+    }
     var form = isc.DynamicForm.create({
       fields: [
         {name: 'inpFile', title: OB.I18N.getLabel('OBUIAPP_ImageFile'), type: 'upload', canFocus: false, align:'right'},
@@ -300,6 +273,9 @@ isc.OBImageSelector.addProperties({
         {name: 'inpadOrgId', type: 'hidden', value: args.form.values.organization},
         {name: 'parentObjectId', type: 'hidden', value: args.form.values.id},
         {name: 'imageId', type: 'hidden', value: imageId},
+        {name: 'imageSizeAction', type: 'hidden', value: imageSizeAction},
+        {name: 'imageWidthValue', type: 'hidden', value: imageWidthValue},
+        {name: 'imageHeightValue', type: 'hidden', value: imageHeightValue},
         {name: 'inpSelectorId', type: 'hidden', value: this.ID}
       ],
       height: '20px',
@@ -309,23 +285,21 @@ isc.OBImageSelector.addProperties({
       redraw: function(){
       }
     });
-    
-    if(imageId){
-      var deletebutton = isc.OBFormButton.create({
-        title: OB.I18N.getLabel('OBUIAPP_Delete'),
-        action: function(){
-          form.getField('Command').setValue('DELETE_OB3');
-          form.submitForm();
-        }
-      });
-    }
-    var closebutton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUIAPP_Close'),
-      thisPopup: this,
-      action: function(){
-        this.thisPopup.hide();
+    this.formDeleteImage = isc.DynamicForm.create({
+      fields: [
+        {name: 'Command', type: 'hidden', value: 'DELETE_OB3'},
+        {name: 'inpTabId', type: 'hidden', value: view.tabId},
+        {name: 'imageId', type: 'hidden', value: imageId}
+      ],
+      height: '1px',
+      width: '1px',
+      encoding: 'normal',
+      action: 'utility/ImageInfoBLOB',
+      target: "background_target",
+      redraw: function(){
       }
     });
+
     var uploadbutton = isc.OBFormButton.create({
         title: OB.I18N.getLabel('OBUIAPP_Upload'),
         action: function(){
@@ -333,36 +307,148 @@ isc.OBImageSelector.addProperties({
           if(!value){
               return;
           }
-          if(!form.getField('imageId').getValue()){
-            form.getField('Command').setValue('SAVE_OB3');
-            form.submitForm();
-          }else{
-            var theForm = form;
-            isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmOverwriteImage'), function(clickedOK){
-              if(clickedOK){
-                theForm.getField('Command').setValue('SAVE_OB3');
-                theForm.submitForm();
-              }
-            });
-          }
+          form.getField('Command').setValue('SAVE_OB3');
+          form.submitForm();
         }
     });
-    this.addItem(
+    var messageBarText = this.getMessageText('Warn', imageSizeAction, imageWidthValue, imageHeightValue);
+
+    var messageBar = isc.OBMessageBar.create({visibility: 'hidden'});
+    messageBar.setType(isc.OBMessageBar.TYPE_WARNING);
+    messageBar.setText(null, messageBarText);
+    messageBar.hideCloseIcon();
+    if (messageBarText && (imageWidthValue || imageHeightValue)) {
+      messageBar.show();
+    }
+
+    this.addItems([
       isc.HLayout.create({
         width: '100%',
-          height: '20px',
+        height: 1,
+        align: 'center',
+        members: [
+          messageBar
+        ]
+      }),
+      isc.HLayout.create({
+        width: '100%',
+        height: 20,
         layoutTopMargin: this.hlayoutTopMargin,
+        layoutBottomMargin: this.hlayoutBottomMargin,
         align: 'center',
         members: [
           form,
-          uploadbutton
+          uploadbutton,
+          this.formDeleteImage
         ]
       })
-    );
+    ]);
     this.Super('initWidget', arguments);
   },
-  callback: function(imageId){
-      this.imageItem.refreshImage(imageId);
-      this.hide();
+  getMessageText: function(type, imageSizeAction, XXX, YYY, AAA, BBB) {
+    var message = '';
+    if (imageSizeAction === 'N') {
+      return message;
+    }
+    if (imageSizeAction.indexOf('RESIZE') !== -1 && type === 'Confirm') {
+      imageSizeAction = 'RESIZE';
+    }
+    if (!XXX) {
+      XXX = 'ANY';
+    }
+    if (!YYY) {
+      YYY = 'ANY';
+    }
+    if (!AAA) {
+      AAA = 'ANY';
+    }
+    if (!BBB) {
+      BBB = 'ANY';
+    }
+    message = OB.I18N.getLabel('OBUIAPP_Image_' + type + '_' + imageSizeAction);
+    message = message.replace('XXX', XXX).replace('YYY', YYY).replace('AAA', AAA).replace('BBB', BBB);
+    message = message.replace(/\n/g, '<br />');
+    return message;
+  },
+  deleteTempImage: function(imageId) {
+    if (imageId) {
+      this.formDeleteImage.getField('imageId').setValue(imageId);
+      this.formDeleteImage.submitForm();
+    }
+  },
+  callback: function(imageId, imageSizeAction, oldWidth, oldHeight, newWidth, newHeight){
+    oldWidth = parseInt(oldWidth, 10);
+    oldHeight = parseInt(oldHeight, 10);
+    newWidth = parseInt(newWidth, 10);
+    newHeight = parseInt(newHeight, 10);
+    var selector = this;
+    if (imageSizeAction === 'WRONGFORMAT') {
+      isc.warn(this.getMessageText('Error', imageSizeAction), function() {
+        return true;
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+    } else if (imageSizeAction === 'ALLOWED' && ((oldWidth !== 0 && oldWidth !== newWidth) || (oldHeight !== 0 && oldHeight !== newHeight))) {
+      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function() {
+        selector.deleteTempImage(imageId);
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+    } else if (imageSizeAction === 'ALLOWED_MINIMUM' && ((oldWidth !== 0 && oldWidth > newWidth) || (oldHeight !== 0 && oldHeight > newHeight))) {
+      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function() {
+        selector.deleteTempImage(imageId);
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+    } else if (imageSizeAction === 'ALLOWED_MAXIMUM' && ((oldWidth !== 0 && oldWidth < newWidth) || (oldHeight !== 0 && oldHeight < newHeight))) {
+      isc.warn(this.getMessageText('Error', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function() {
+        selector.deleteTempImage(imageId);
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+
+    } else if (imageSizeAction === 'RECOMMENDED' && ((oldWidth !== 0 && oldWidth !== newWidth) || (oldHeight !== 0 && oldHeight !== newHeight))) {
+      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function(clickedOK) {
+        if(clickedOK){
+          selector.refreshImage(imageId);
+        } else {
+          selector.deleteTempImage(imageId);
+        }
+      });
+    } else if (imageSizeAction === 'RECOMMENDED_MINIMUM' && ((oldWidth !== 0 && oldWidth > newWidth) || (oldHeight !== 0 && oldHeight > newHeight))) {
+      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function(clickedOK) {
+        if(clickedOK){
+          selector.refreshImage(imageId);
+        } else {
+          selector.deleteTempImage(imageId);
+        }
+      });
+    } else if (imageSizeAction === 'RECOMMENDED_MAXIMUM' && ((oldWidth !== 0 && oldWidth < newWidth) || (oldHeight !== 0 && oldHeight < newHeight))) {
+      isc.confirm(this.getMessageText('Confirm', imageSizeAction, oldWidth, oldHeight, newWidth, newHeight), function(clickedOK) {
+        if(clickedOK){
+          selector.refreshImage(imageId);
+        } else {
+          selector.deleteTempImage(imageId);
+        }
+      });
+    } else if (imageSizeAction.indexOf('RESIZE') !== -1 && (oldWidth !== newWidth || oldHeight !== newHeight)) {
+      isc.confirm(this.getMessageText('Confirm', imageSizeAction, newWidth, newHeight, oldWidth, oldHeight), function(clickedOK) {
+        if(clickedOK){
+          selector.refreshImage(imageId);
+        } else {
+          selector.deleteTempImage(imageId);
+        }
+      });
+    } else {
+      this.refreshImage(imageId);
+    }
+  },
+  refreshImage: function(imageId) {
+    this.imageItem.refreshImage(imageId);
+    this.hide();
   }
 });

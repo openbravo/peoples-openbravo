@@ -354,8 +354,8 @@ public class MenuManager implements Serializable {
       if (!addOption) {
         Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
         if (menuEntry != null) {
-          addOption = menuEntry.isSummaryLevel();
-          inactiveSummary = true;
+          addOption = menuEntry.isActive();
+          inactiveSummary = menuEntry.isSummaryLevel();
         }
       }
 

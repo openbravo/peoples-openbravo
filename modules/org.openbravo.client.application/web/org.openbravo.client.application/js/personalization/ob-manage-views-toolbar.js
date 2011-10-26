@@ -59,7 +59,7 @@
     // shows the menu with the available views and the save 
     // and delete option
     action: function() {
-      var data = [], icon, i, undef, view,
+      var data = [], icon, i, undef, view, formData,
         standardWindow = this.view.standardWindow,
         adminLevel = false, length,
         personalization = standardWindow.getClass().personalization, 

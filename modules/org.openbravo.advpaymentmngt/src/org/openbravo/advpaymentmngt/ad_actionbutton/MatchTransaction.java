@@ -73,7 +73,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class MatchTransaction extends HttpSecureAppServlet {
@@ -918,10 +917,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       try {
-        ConnectionProvider conn = new DalConnectionProvider();
         FIN_AddPayment.processPayment(new VariablesSecureApp(OBContext.getOBContext().getUser()
             .getId(), OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()), conn,
+            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()), this,
             "P", payment);
       } catch (Exception e) {
         return null;
@@ -932,7 +930,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
       try {
-        processTransaction(new DalConnectionProvider(), "P", transaction);
+        processTransaction(this, "P", transaction);
       } catch (Exception e) {
         OBError newError = Utility.translateError(this, vars, vars.getLanguage(),
             FIN_Utility.getExceptionMessage(e));

@@ -1,3 +1,9 @@
+/*global getGlobalDecSeparator, getGlobalGroupSeparator, getGlobalGroupInterval,
+  formatNameToMask, returnMaskChange, getDefaultMaskNumeric, getElementsByName,
+  displayLogicElement, returnFormattedNumber, returnFormattedToCalc, roundNumber,
+  returnCalcToFormatted, setWindowElementFocus, showJSMessage, initialize_MessageBox,
+  updateData, top, getFrame*/
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -729,6 +735,6 @@ function decodeJSON(jsonString) {
     try{
         return eval('(' + jsonString + ')'); // do the eval
     }catch(e){
-        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ str);
+        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ jsonString);
     }
 }

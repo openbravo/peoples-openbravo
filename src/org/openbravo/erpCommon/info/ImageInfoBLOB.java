@@ -112,7 +112,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-    } else if (vars.getCommand().startsWith("SAVE")) {
+    } else if (vars.getCommand().equals("SAVE")) {
       OBContext.setAdminMode(true);
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
@@ -133,7 +133,6 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           image.setMimetype(mimeType);
           OBDal.getInstance().save(image);
           OBDal.getInstance().flush();
-
         } else {
           image = OBDal.getInstance().get(Image.class, imageID);
           image.setActive(true);
@@ -145,16 +144,94 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        if (vars.getCommand().equals("SAVE_OB3")) {
-          String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-          writeRedirectOB3(writer, selectorId, image.getId());
-        } else {
-          writeRedirect(writer, image.getId(), columnName);
-        }
+        writeRedirect(writer, image.getId(), columnName);
       } finally {
         OBContext.restorePreviousMode();
       }
-    } else if (vars.getCommand().startsWith("DELETE")) {
+    } else if (vars.getCommand().startsWith("SAVE_OB3")) {
+      OBContext.setAdminMode(true);
+      try {
+        final FileItem fi = vars.getMultiFile("inpFile");
+        byte[] bytea = fi.get();
+        String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
+        String imageSizeAction = vars.getStringParameter("imageSizeAction");
+        String imageId = "";
+        Long[] sizeOld = new Long[2];
+        Long[] sizeNew = new Long[2];
+        if (!mimeType.contains("image")
+            || (!mimeType.contains("jpeg") && !mimeType.contains("png")
+                && !mimeType.contains("gif") && !mimeType.contains("bmp"))) {
+          imageId = "";
+          imageSizeAction = "WRONGFORMAT";
+          sizeOld[0] = (long) 0;
+          sizeOld[1] = (long) 0;
+          sizeNew[0] = (long) 0;
+          sizeNew[1] = (long) 0;
+        } else {
+
+          int newWidth;
+          if (vars.getStringParameter("imageWidthValue") != "") {
+            newWidth = Integer.parseInt(vars.getStringParameter("imageWidthValue"));
+          } else {
+            newWidth = 0;
+          }
+          int newHeight;
+          if (vars.getStringParameter("imageHeightValue") != "") {
+            newHeight = Integer.parseInt(vars.getStringParameter("imageHeightValue"));
+          } else {
+            newHeight = 0;
+          }
+
+          if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
+              || imageSizeAction.equals("ALLOWED_MAXIMUM") || imageSizeAction.equals("RECOMMENDED")
+              || imageSizeAction.equals("RECOMMENDED_MINIMUM")
+              || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
+            sizeOld[0] = (long) newWidth;
+            sizeOld[1] = (long) newHeight;
+            sizeNew = Utility.computeImageSize(bytea);
+          } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
+            sizeOld = Utility.computeImageSize(bytea);
+            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, false, false);
+            sizeNew = Utility.computeImageSize(bytea);
+          } else if (imageSizeAction.equals("RESIZE_ASPECTRATIO")) {
+            sizeOld = Utility.computeImageSize(bytea);
+            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, true);
+            sizeNew = Utility.computeImageSize(bytea);
+          } else if (imageSizeAction.equals("RESIZE_ASPECTRATIONL")) {
+            sizeOld = Utility.computeImageSize(bytea);
+            bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, false);
+            sizeNew = Utility.computeImageSize(bytea);
+          } else {
+            sizeOld = Utility.computeImageSize(bytea);
+            sizeNew = sizeOld;
+          }
+
+          mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
+          // Using DAL to write the image data to the database
+          Image image;
+
+          image = OBProvider.getInstance().get(Image.class);
+          Organization org = OBDal.getInstance().get(Organization.class, orgId);
+          image.setOrganization(org);
+          image.setBindaryData(bytea);
+          image.setActive(true);
+          image.setName("Image");
+          image.setWidth(sizeNew[0]);
+          image.setHeight(sizeNew[1]);
+          image.setMimetype(mimeType);
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
+
+          imageId = image.getId();
+        }
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter writer = response.getWriter();
+        String selectorId = orgId = vars.getStringParameter("inpSelectorId");
+        writeRedirectOB3(writer, selectorId, imageId, imageSizeAction, sizeOld, sizeNew);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else if (vars.getCommand().equals("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         OBContext.setAdminMode(true);
         try {
@@ -172,11 +249,19 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        if (vars.getCommand().equals("DELETE_OB3")) {
-          String selectorId = orgId = vars.getStringParameter("inpSelectorId");
-          writeRedirectOB3(writer, selectorId, "");
-        } else {
-          writeRedirect(writer, "", columnName);
+        writeRedirect(writer, "", columnName);
+      } else {
+        printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
+      }
+    } else if (vars.getCommand().startsWith("DELETE_OB3")) {
+      if (imageID != null && !imageID.equals("")) {
+        OBContext.setAdminMode(true);
+        try {
+          Image image = OBDal.getInstance().get(Image.class, imageID);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().remove(image);
+        } finally {
+          OBContext.restorePreviousMode();
         }
       } else {
         printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
@@ -186,9 +271,11 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     }
   }
 
-  private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId) {
+  private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId,
+      String imageSizeAction, Long[] sizeOld, Long[] sizeNew) {
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
-    writer.write("top." + selectorId + ".callback('" + imageId + "');");
+    writer.write("top." + selectorId + ".callback('" + imageId + "', '" + imageSizeAction + "', '"
+        + sizeOld[0] + "' ,'" + sizeOld[1] + "' ,'" + sizeNew[0] + "' ,'" + sizeNew[1] + "');");
     writer.write("</SCRIPT></BODY></HTML>");
 
   }

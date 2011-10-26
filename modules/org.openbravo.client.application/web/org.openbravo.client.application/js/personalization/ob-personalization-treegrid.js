@@ -256,8 +256,8 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // the menu entries when right clicking a field, different menu
   // entries are shown for status bar or normal fields
   createCellContextItems: function(record){
-    var menuItems = [], updatePropertyFunction, me = this,
-      personalizeForm = this.personalizeForm, length;
+    var i, menuItems = [], updatePropertyFunction, me = this,
+      personalizeForm = this.personalizeForm, length, allNodes;
     
     updatePropertyFunction = function(record, property, value) {
       record[property] = value;
@@ -265,7 +265,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // make sure only one record has first focus
       if (record.firstFocus) {
         allNodes = personalizeForm.fieldsTreeGrid.data.getAllNodes();
-        length = allNode.length;
+        length = allNodes.length;
         for (i = 0; i < length; i++) {
           if (allNodes[i].firstFocus) {
             allNodes[i].firstFocus = false;

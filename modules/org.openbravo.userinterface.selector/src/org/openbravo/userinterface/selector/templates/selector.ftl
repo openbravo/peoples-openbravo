@@ -52,7 +52,7 @@
 <@compress single_line=true>
     <#list data.outFields as selectorOutField>
     <#if selectorOutField.tabFieldName != "">
-    '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
+    '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}', 'formatType': '${selectorOutField.formatType}'}<#if selectorOutField_has_next>,</#if>
     </#if>
     </#list>
 </@compress>

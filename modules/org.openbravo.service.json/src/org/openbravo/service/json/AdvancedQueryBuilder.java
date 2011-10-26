@@ -490,7 +490,8 @@ public class AdvancedQueryBuilder {
           || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
-      } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
+      } else if (operator.equals(OPERATOR_NOTSTARTSWITH)
+          || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
           || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
         return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
       } else {
@@ -644,6 +645,7 @@ public class AdvancedQueryBuilder {
         || operator.equals(OPERATOR_ENDSWITH) || operator.equals(OPERATOR_STARTSWITH)
         || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_INOTCONTAINS)
         || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_NOTSTARTSWITH)
+        || operator.equals(OPERATOR_INOTENDSWITH) || operator.equals(OPERATOR_INOTSTARTSWITH)
         || operator.equals(OPERATOR_CONTAINSFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)
         || operator.equals(OPERATOR_STARTSWITHFIELD);
   }
@@ -688,6 +690,7 @@ public class AdvancedQueryBuilder {
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
         || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
         || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
         || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
         || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
         || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)

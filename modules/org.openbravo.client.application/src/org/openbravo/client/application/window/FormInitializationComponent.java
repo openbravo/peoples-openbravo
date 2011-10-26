@@ -1218,7 +1218,11 @@ public class FormInitializationComponent extends BaseActionHandler {
                     }
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed
-                      addCalloutToList(col, calloutsToCall, lastfieldChangedList);
+                      // but only if the callout we are firing is different
+                      if (!calloutClassName.equals(col.getCallout().getADModelImplementationList()
+                          .get(0).getJavaClassName())) {
+                        addCalloutToList(col, calloutsToCall, lastfieldChangedList);
+                      }
                     }
                   } else {
                     for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {

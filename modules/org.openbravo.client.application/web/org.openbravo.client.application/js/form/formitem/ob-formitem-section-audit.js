@@ -18,7 +18,7 @@
  */
 
 //== OBAuditSectionItem ==
-isc.ClassFactory.defineClass('OBAuditSectionItem', OBSectionItem);
+isc.ClassFactory.defineClass('OBAuditSectionItem', isc.OBSectionItem);
 
 isc.OBAuditSectionItem.addProperties({
   // this field group does not participate in formbuilding
