@@ -18,8 +18,12 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,10 +31,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.JsonToDataConverter;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.BaseWebServiceServlet;
 import org.openbravo.service.web.InvalidContentException;
@@ -101,47 +112,12 @@ public class TerminalServlet extends BaseWebServiceServlet {
     }
     
     if ("hql".equals(pathparts[1])) {
-
-      if (pathparts.length < 3) {
-        writeResult(
-            response,
-            JsonUtils.convertExceptionToJson(new InvalidRequestException("No HQL sentences to execute: "
-                + request.getRequestURI())));   
-        return;
+      try {
+        execHQLQuery(request, response, getContentAsJSON(request.getParameter("content")));
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        writeResult(response, JsonUtils.convertExceptionToJson(e));
       }
-      
-      final Session session = OBDal.getInstance().getSession();   
-      
-      // for (int i = 2; i < pathparts.length; i++) {
-      // final Query query = session.createQuery(pathparts[i]);
-      // // query.setParameter(0, epos.getPriceList().getId());
-      // // query.setParameter(1, epos.getPriceList().getId());
-      // // query.setParameter(2, "I");
-      // // query.setParameter(3, "100");
-      // // setClientOrgFilter(query);
-      //
-      // List<Object[]> pro = query.list();
-      //
-      // final OBCriteria<OBPOSResources> criteria =
-      // OBDal.getInstance().createCriteria(OBPOSResources.class);
-      // criteria.add(Expression.eq("name", resourcename));
-      // int i = criteria.count();
-      // if (i > 0
-      //
-      //
-      // // OBDal.getInstance().get
-      // OBPOSResources res = OBProvider.getInstance().get(OBPOSResources.class);
-      // res.getName()
-
-      // try {
-
-      // now do the action
-      String result = "{\"get\" : \"calling\"}";
-      writeResult(response, result);
-      //
-      // } catch (final JSONException e) {
-      // throw new InvalidContentException(e);
-      // }      
     } else {
       writeResult(
           response,
@@ -153,8 +129,25 @@ public class TerminalServlet extends BaseWebServiceServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    String result = "{\"post\" : \"calling\"}";
-    writeResult(response, result);
+
+    String[] pathparts = checkSetParameters(request, response);
+    if (pathparts == null) {
+      return;
+    }
+
+    if ("hql".equals(pathparts[1])) {
+      try {
+        execHQLQuery(request, response, getContentAsJSON(getRequestContent(request)));
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        writeResult(response, JsonUtils.convertExceptionToJson(e));
+      }
+    } else {
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Command not found: "
+              + pathparts[1])));
+    }
   }
 
   @Override
@@ -169,6 +162,89 @@ public class TerminalServlet extends BaseWebServiceServlet {
       ServletException {
     String result = "{\"put\" : \"calling\"}";
     writeResult(response, result);
+  }
+
+
+  private void execHQLQuery(HttpServletRequest request, HttpServletResponse response,
+      Object jsonContent) throws Exception {
+
+    // if (pathparts.length < 3) {
+    // writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+    // "No HQL sentences to execute: " + request.getRequestURI())));
+    // return;
+    // }
+
+    final Session session = OBDal.getInstance().getSession();
+
+    // get all sentences to execute.
+
+    List<JSONObject> jsonSentences = new ArrayList<JSONObject>();
+    if (jsonContent instanceof JSONArray) {
+      final JSONArray jsonArray = (JSONArray) jsonContent;
+      for (int i = 0; i < jsonArray.length(); i++) {
+        jsonSentences.add(jsonArray.getJSONObject(i));
+      }
+    } else {
+      jsonSentences.add((JSONObject) jsonContent);
+    }
+
+    final JSONObject jsonResult = new JSONObject();
+
+    // Execute all sentences
+    for (JSONObject jsonsent : jsonSentences) {
+
+      final JSONObject jsonResponse = new JSONObject();
+      final JSONArray jsonData = new JSONArray();
+
+      final int startRow = 0;
+
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
+
+      final Query query = session.createQuery(querybuilder.getHQLQuery());
+
+      if (jsonsent.has("parameters")) {
+        JSONObject jsonparams = jsonsent.getJSONObject("parameters");
+        Iterator it = jsonparams.keys();
+        while (it.hasNext()) {
+          String key = (String) it.next();
+          Object value = jsonparams.get(key);
+          if (value instanceof JSONObject) {
+            JSONObject jsonvalue = (JSONObject) value;
+            query.setParameter(
+                key,
+                JsonToDataConverter.convertJsonToPropertyValue(
+                    PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
+          } else {
+            query.setParameter(key,
+                JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
+
+          }
+        }
+      }
+
+      JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
+
+      List listdata = query.list();
+      for (Object o : listdata) {
+        jsonData.put(converter.convert(o));
+      }
+
+      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
+          + startRow
+          - 1 : 0));
+
+      if (jsonData.length() == 0) {
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+      }
+
+      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+    }
+
+    writeResult(response, jsonResult.toString());
+
   }
 
   private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
@@ -192,7 +268,8 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
     if (pathParts.length == 1) {
       writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url, no entityName: " + request.getRequestURI())));
+"Invalid url, no command: "
+              + request.getRequestURI())));
       return null;
     }
 
@@ -208,22 +285,30 @@ public class TerminalServlet extends BaseWebServiceServlet {
     w.close();
   }
 
-  // private String getRequestContent(HttpServletRequest request) throws IOException {
-  // final BufferedReader reader = request.getReader();
-  // if (reader == null) {
-  // return "";
-  // }
-  // String line;
-  // final StringBuilder sb = new StringBuilder();
-  // while ((line = reader.readLine()) != null) {
-  // if (sb.length() > 0) {
-  // sb.append("\n");
-  // }
-  // sb.append(line);
-  // }
-  // log.debug("REQUEST CONTENT>>>>");
-  // log.debug(sb.toString());
-  // return sb.toString();
-  // }
+  private String getRequestContent(HttpServletRequest request) throws IOException {
+    final BufferedReader reader = request.getReader();
+    if (reader == null) {
+      return "";
+    }
+    String line;
+    final StringBuilder sb = new StringBuilder();
+    while ((line = reader.readLine()) != null) {
+      if (sb.length() > 0) {
+        sb.append("\n");
+      }
+      sb.append(line);
+    }
+    log.debug("REQUEST CONTENT>>>>");
+    log.debug(sb.toString());
+    return sb.toString();
+  }
 
+  private Object getContentAsJSON(String content) throws JSONException {
+    Check.isNotNull(content, "Content must be set");
+    if (content.trim().startsWith("[")) {
+      return new JSONArray(content);
+    } else {
+      return new JSONObject(content);
+    }
+  }
 }
