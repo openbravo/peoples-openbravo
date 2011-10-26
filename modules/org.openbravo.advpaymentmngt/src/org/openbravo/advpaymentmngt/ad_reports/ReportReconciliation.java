@@ -62,10 +62,11 @@ public class ReportReconciliation extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFinReconciliationID = vars.getGlobalVariable("inpfinReconciliationId", "");
-      String strFinFinancialAccountName = vars.getGlobalVariable("inpfinFinancialAccountId_R", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strLastFieldChanged = vars.getGlobalVariable("inpLastFieldChanged", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, strFinFinancialAccountName,
+      printPageDataPDF(request, response, vars, strFinReconciliationID, 
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strLastFieldChanged.toLowerCase().contains("detail") ? DETAIL : SUMMARY);
     }
   }
