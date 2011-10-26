@@ -365,7 +365,7 @@ isc.OBStatusBar.addProperties( {
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }
-          if (typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
+          if (arrayTitleField.length === 6 && typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
             msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
               '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
               arrayTitleField[0][i] + ':&nbsp;<img src="' + (this.titleLinkImageSrc?this.titleLinkImageSrc:'') + '" style="' + linkImageWidth + linkImageHeight + '" />&nbsp;' + 
