@@ -596,4 +596,8 @@ public abstract class UIDefinition {
   public String formatValueToSQL(java.lang.String value) {
     return value;
   }
+
+  protected boolean getSafeBoolean(Boolean value) {
+    return value != null && value;
+  }
 }
