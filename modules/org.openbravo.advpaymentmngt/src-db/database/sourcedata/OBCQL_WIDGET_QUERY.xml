@@ -8,7 +8,7 @@
 <!--FF80808133186ADD01331B3B733B0011-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[FF80808133186ADD01331B3A932C000D]]></OBKMO_WIDGET_CLASS_ID>
 <!--FF80808133186ADD01331B3B733B0011-->  <HQL><![CDATA[select m.messageText as regType, 
 a.reconciledItems as itemNo , a.reconciledItemsAmount as itemAmt 
-from aprm_reconciliation_detail_v as a, ADMessageTrl as m
+from APRM_Rec_Detail_v as a, ADMessageTrl as m
 where  a.type = m.message.searchKey and a.reconciliation.id =  :reconciliationId and m.language.language = :language]]></HQL>
 <!--FF80808133186ADD01331B3B733B0011--></OBCQL_WIDGET_QUERY>
 
