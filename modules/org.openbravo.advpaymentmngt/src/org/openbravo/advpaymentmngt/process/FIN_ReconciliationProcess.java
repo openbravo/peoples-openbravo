@@ -51,7 +51,12 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
       final String strAction = (String) bundle.getParams().get("action");
 
       // retrieve standard params
-      final String recordID = (String) bundle.getParams().get("Aprm_Reconciliation_V_ID");
+      String recordID = (String) bundle.getParams().get("FIN_Reconciliation_ID");
+      // This code is kept to maintain compatibility with previous tab which was built
+      // on to of a view
+      if (recordID == null || "".equals(recordID)) {
+        recordID = (String) bundle.getParams().get("Aprm_Reconciliation_V_ID");
+      }
       final FIN_Reconciliation reconciliation = dao.getObject(FIN_Reconciliation.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
