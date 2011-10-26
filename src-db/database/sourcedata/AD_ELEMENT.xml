@@ -19418,7 +19418,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--34F3510FE19C406B8CEA67DC4FFDD575-->  <NAME><![CDATA[Details]]></NAME>
 <!--34F3510FE19C406B8CEA67DC4FFDD575-->  <PRINTNAME><![CDATA[Details]]></PRINTNAME>
 <!--34F3510FE19C406B8CEA67DC4FFDD575-->  <DESCRIPTION><![CDATA[Widget displaying details for the reconciliation event]]></DESCRIPTION>
-<!--34F3510FE19C406B8CEA67DC4FFDD575-->  <HELP><![CDATA[Widget that esplains reconciled, unreconciled, outstanding payments and outstanding deposits for the given reconciliation document.]]></HELP>
+<!--34F3510FE19C406B8CEA67DC4FFDD575-->  <HELP><![CDATA[Widget that explains reconciled, unreconciled, outstanding payments and outstanding deposits for the given reconciliation document.]]></HELP>
 <!--34F3510FE19C406B8CEA67DC4FFDD575-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--34F3510FE19C406B8CEA67DC4FFDD575--></AD_ELEMENT>
 
