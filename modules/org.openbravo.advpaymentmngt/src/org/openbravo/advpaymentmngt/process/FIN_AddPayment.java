@@ -37,6 +37,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -482,6 +483,18 @@ public class FIN_AddPayment {
               "inpPaymentAmount" + paymentScheduleDetail.getId(), "")));
     }
     return selectedPaymentScheduleDetailsAmounts;
+  }
+
+  public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
+      VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)
+      throws ServletException {
+    HashMap<String, BigDecimal> selectedBaseOBObjectAmounts = new HashMap<String, BigDecimal>();
+
+    for (final T o : selectedBaseOBObjects) {
+      selectedBaseOBObjectAmounts.put((String) o.getId(),
+          new BigDecimal(vars.getNumericParameter(htmlElementId + (String) o.getId(), "")));
+    }
+    return selectedBaseOBObjectAmounts;
   }
 
   /**

@@ -1421,6 +1421,7 @@ public class AdvPaymentMngtDao {
     obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
     obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
     obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
+    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
     obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
         FIN_Payment.PROPERTY_USEDCREDIT));
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
