@@ -5394,8 +5394,17 @@ function replaceAt(string, what, ini, end) {
 }
 
 function closePage() {
+  var cancelEvent, element;
   if (isWindowInMDIPopup) {
-    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId);
+    element = window.event.target;
+    while (element) {
+      if (element.id === 'buttonCancel') {
+        cancelEvent = true;
+        break;
+      }
+      element = element.parentElement;
+    }
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, cancelEvent);
   } else if (isWindowInMDITab) {
   } else {
     top.window.close();
