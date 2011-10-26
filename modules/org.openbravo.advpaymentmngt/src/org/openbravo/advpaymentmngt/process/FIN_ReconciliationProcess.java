@@ -77,6 +77,7 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         }
         reconciliation.setProcessed(true);
         reconciliation.setAPRMProcessReconciliation("R");
+        reconciliation.setAprmProcessRec("R");
         reconciliation.setDocumentStatus("CO");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
@@ -108,6 +109,7 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         OBDal.getInstance().flush();
         reconciliation.setDocumentStatus("DR");
         reconciliation.setAPRMProcessReconciliation("P");
+        reconciliation.setAprmProcessRec("P");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
       }
