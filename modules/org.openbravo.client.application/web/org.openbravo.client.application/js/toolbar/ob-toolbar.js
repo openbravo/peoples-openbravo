@@ -545,7 +545,8 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
-    var length = this.leftMembers.length, i;
+    var length = this.leftMembers.length, i, 
+      form = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm;
     
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i].updateState) {
@@ -556,6 +557,17 @@ isc.OBToolbar.addProperties({
     // and refresh the process toolbar buttons
     if (!changeEvent) {
       this.refreshCustomButtons(noSetSession);
+    } else if (this.rightMembers){
+      // determine if the buttons should be hidden or not      
+      if (this.view.isEditingGrid || this.view.isShowingForm) {        
+        if (form.hasErrors() || !form.allRequiredFieldsSet()) {
+          this.hideShowRightMembers(false);
+        } else {
+          this.hideShowRightMembers(true);
+        }
+      } else {
+        this.hideShowRightMembers(true);
+      }
     }
   },
   
@@ -1083,11 +1095,22 @@ isc.OBToolbar.addProperties({
       currentContext = buttonContexts[iButtonContext];
 
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
-      var numOfSelRecords = 0, 
+      var numOfSelRecords = 0,
+          theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
           isNew = currentContext.viewForm.isNew, 
           hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
           currentValues = currentContext.getCurrentValues();
      
+      if (!hideAllButtons && 
+          (this.view.isEditingGrid || this.view.isShowingForm)) {        
+        hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
+      }
+      if (hideAllButtons) {
+        this.hideShowRightMembers(false);
+      } else {
+        this.hideShowRightMembers(true);
+      }
+      
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
@@ -1147,6 +1170,17 @@ isc.OBToolbar.addProperties({
         me.updateButtonState(true);
       }  
       );
+    }
+  },
+  
+  hideShowRightMembers: function(show) {
+    var i;
+    for (i = 0; i < this.rightMembers.length; i++) {
+      if (show) {
+        this.rightMembers[i].show();
+      } else {
+        this.rightMembers[i].hide();
+      }
     }
   },
 
