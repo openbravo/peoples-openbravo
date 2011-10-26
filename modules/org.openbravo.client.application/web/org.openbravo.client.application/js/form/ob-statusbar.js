@@ -332,7 +332,8 @@ isc.OBStatusBar.addProperties( {
 
   updateContentTitle: function(arrayTitleField, message) {
     var linkImageWidth = this.titleLinkImageWidth,
-      linkImageHeight = this.titleLinkImageHeight;
+        linkImageHeight = this.titleLinkImageHeight,
+        msg = '', i, length, undef;
 
     if (typeof linkImageWidth !== 'undefined') {
       linkImageWidth = linkImageWidth.toString();
@@ -354,7 +355,6 @@ isc.OBStatusBar.addProperties( {
       linkImageHeight = '';
     }
 
-    var msg = '', i, length;
     if (!isc.Page.isRTL()) { // LTR mode
       if (this.statusCode) {
         msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
@@ -365,7 +365,7 @@ isc.OBStatusBar.addProperties( {
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }
-          if (arrayTitleField.length === 6 && typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
+          if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
             msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
               '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
               arrayTitleField[0][i] + ':&nbsp;<img src="' + (this.titleLinkImageSrc?this.titleLinkImageSrc:'') + '" style="' + linkImageWidth + linkImageHeight + '" />&nbsp;' + 
@@ -392,7 +392,7 @@ isc.OBStatusBar.addProperties( {
       if (arrayTitleField) {
         for (i = arrayTitleField[0].length-1; i >= 0; i--) {
           msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
-          if (typeof arrayTitleField[2][i] !== 'undefined' && typeof arrayTitleField[3][i] !== 'undefined' && typeof arrayTitleField[4][i] !== 'undefined' && typeof arrayTitleField[5][i] !== 'undefined') {
+          if (arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
             msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
               '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
               '&nbsp;<img src="' + (this.titleLinkImageSrc?this.titleLinkImageSrc:'') + '" style="' + linkImageWidth + linkImageHeight + '"/>&nbsp;:' + arrayTitleField[0][i] + 
