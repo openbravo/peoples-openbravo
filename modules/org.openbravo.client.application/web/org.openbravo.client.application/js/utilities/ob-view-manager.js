@@ -144,6 +144,8 @@
     },
 
     createTab: function(viewName, viewTabId, viewInstance, params) {
+      var tabTitle;
+      
       if (params.i18nTabTitle) {
         // note call to I18N is done below after the tab
         // has been created
@@ -428,7 +430,8 @@
 
     restoreState: function(newState, data) {
 
-      var tabSet = OB.MainView.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
+      var viewId, tabSet = OB.MainView.TabSet, tabsLength, i, tabObject, 
+        hasChanged = false, stateData, requestViewsRestoreState;
 
       if (vmgr.inStateHandling) {
         return;

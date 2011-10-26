@@ -538,7 +538,7 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
-    var length = this.leftMembers.length;
+    var length = this.leftMembers.length, i;
     
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i].updateState) {
@@ -1050,7 +1050,7 @@ isc.OBToolbar.addProperties({
     // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
     var callbackHandler = function (currentContext, me) {
       return function(response, data, request) {
-        var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
+        var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists, prop;
         if (sessionAttributes) {
           currentContext.viewForm.sessionAttributes = sessionAttributes;
@@ -1070,7 +1070,7 @@ isc.OBToolbar.addProperties({
       };
     };
 
-    var currentTabCalled = false, me = this;
+    var currentTabCalled = false, me = this, requestParams;
     length = buttonContexts.length;
     for (iButtonContext = 0; iButtonContext < length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
@@ -1233,7 +1233,7 @@ isc.OBToolbar.addProperties({
   },
   
   enableShortcuts: function(){
-    var length;
+    var length, i;
     if (this.leftMembers) {
       length = this.leftMembers.length;
       for (i = 0; i < length; i++) {
@@ -1254,7 +1254,7 @@ isc.OBToolbar.addProperties({
   },
   
   disableShortcuts: function(){
-    var length;
+    var length, i;
     if (this.leftMembers) {
       length = this.leftMembers.length;
       for (i = 0; i < length; i++) {
@@ -1416,7 +1416,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     length = selectedRecords.length;
 
   if (length === 0) {
-    view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
     return;
   }
 
@@ -1460,7 +1460,7 @@ OB.ToolbarUtils.showAuditTrail = function(view){
   if (selectedRecords.length > 1) {
     var setWarning = {
       set: function(label){
-        view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', label);
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, '', label);
       }
     };
     OB.I18N.getLabel('JS28', null, setWarning, 'set');
@@ -1479,15 +1479,14 @@ OB.ToolbarUtils.showAuditTrail = function(view){
 };
 
 OB.ToolbarUtils.showTree = function(view){
+  var tabId = view.tabId;
+
   function openPopupTree() {
-    // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
-    var popupParams = 'url=/utility/WindowTree.html';
-    popupParams += '&Command=DEFAULT';
+    var popupParams = 'Command=DEFAULT';
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
-    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'security/Menu.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, false, false, true);
   }
-  var tabId = view.tabId;
   
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };
@@ -1541,7 +1540,7 @@ OB.ToolbarRegistry = {
 		  // and pick them up in the correct order
 		  // the return should be an array of button instances created by doing 
 		  //  btnDefinitionClass.create(btnDefinitionProperties);
-		  var result = [], resultIndex = 0, i, validTabId, 
+		  var result = [], j, resultIndex = 0, i, validTabId, 
 		    tabIds, length = this.buttonDefinitions.length,
 		    tabIdsLength;	
 		  for (i = 0; i < length; i++) {	

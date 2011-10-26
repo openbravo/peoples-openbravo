@@ -50,6 +50,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
         })
     ]
     });
+    
+    this.gridDataSource = this.createGridDataSource();
+
     this.Super('initWidget', arguments);
     this.widgetTitle = this.title;
     // refresh if the dbInstanceId is set
@@ -228,7 +231,7 @@ isc.OBQueryListGrid.addProperties({
     }
     this.Super('initWidget', arguments);
   },
-
+  
   filterData: function(criteria, callback, requestProperties){
     var crit = criteria || {},
     reqProperties = requestProperties || {};
@@ -273,6 +276,14 @@ isc.OBQueryListGrid.addProperties({
     params.viewMode = this.widget.viewMode;
     params.showAll = this.widget.parameters.showAll;
     return params;
+  },
+  
+  destroy: function() {
+    if (this.dataSource) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+    this.Super('destroy', arguments);
   },
   
   fetchData: function(criteria, callback, requestProperties){

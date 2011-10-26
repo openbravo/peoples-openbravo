@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '11667';
+  var number = '11668';
   return number;
 }
 
@@ -1634,12 +1634,15 @@ function putFocusOnMenu() {
 * Put the focus on the Window frame
 */
 function putFocusOnWindow() {
-  parent.frameMenu.onBlurMenu();
-  parent.appFrame.selectedArea = 'window'
-  parent.appFrame.focus();
-  parent.appFrame.setWindowElementFocus(parent.appFrame.focusedWindowElement);
+  try {
+    parent.frameMenu.onBlurMenu();
+    parent.appFrame.selectedArea = 'window'
+    parent.appFrame.focus();
+    parent.appFrame.setWindowElementFocus(parent.appFrame.focusedWindowElement);
+  } catch (e) {
+    console.log(e);
+  }
   return true;
-  //parent.appFrame.focus();
 }
 
 /**

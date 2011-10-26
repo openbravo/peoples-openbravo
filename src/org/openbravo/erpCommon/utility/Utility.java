@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -2611,6 +2613,85 @@ public class Utility {
     size[0] = new Long(rImage.getWidth());
     size[1] = new Long(rImage.getHeight());
     return size;
+  }
+
+  /**
+   * Resize an image giving the image input as byte[]
+   * 
+   * @param bytea
+   *          The contents of the image as a byte array
+   * @param maxW
+   *          Maximum width that the image will be resized.
+   * @param maxH
+   *          Maximum height that the image will be resized.
+   * @param maintainAspectRatio
+   *          If true, the image will be resized exactly to the maximum parameters. If false, the
+   *          imagen will be resized closest to the maximum parameters keeping aspect ratio
+   * @param canMakeLargerImage
+   *          If true and the original image is smaller than maximum parameters, the resized image
+   *          could be larger than the original one. If false, not.
+   * @return The resized image
+   */
+  public static byte[] resizeImageByte(byte[] bytea, int maxW, int maxH,
+      boolean maintainAspectRatio, boolean canMakeLargerImage) throws IOException {
+    ByteArrayInputStream bis = new ByteArrayInputStream(bytea);
+    BufferedImage rImage = ImageIO.read(bis);
+    int newW = maxW;
+    int newH = maxH;
+    int oldW = rImage.getWidth();
+    int oldH = rImage.getHeight();
+    if (newW == 0 && newH == 0) {
+      return bytea;
+    } else if (newW == 0) {
+      if (maintainAspectRatio) {
+        newW = 99999;
+      } else {
+        newW = oldW;
+      }
+    } else if (newH == 0) {
+      if (maintainAspectRatio) {
+        newH = 99999;
+      } else {
+        newH = oldH;
+      }
+    }
+    if (oldW == newW && oldH == newH) {
+      return bytea;
+    }
+    if (!canMakeLargerImage && newW > oldW && newH > oldH) {
+      return bytea;
+    }
+    if (maintainAspectRatio) {
+      float oldRatio = (float) oldW / (float) oldH;
+      float newRatio = (float) newW / (float) newH;
+      if (oldRatio < newRatio) {
+        newW = (int) ((float) newH * oldRatio);
+      } else if (oldRatio > newRatio) {
+        newH = (int) ((float) newW / oldRatio);
+      }
+    }
+    BufferedImage dimg = new BufferedImage(newW, newH, rImage.getType());
+    Graphics2D g = dimg.createGraphics();
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.drawImage(rImage, 0, 0, newW, newH, 0, 0, oldW, oldH, null);
+    g.dispose();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
+    if (mimeType.contains("jpeg")) {
+      mimeType = "jpeg";
+    } else if (mimeType.contains("png")) {
+      mimeType = "png";
+    } else if (mimeType.contains("gif")) {
+      mimeType = "gif";
+    } else if (mimeType.contains("bmp")) {
+      mimeType = "bmp";
+    } else {
+      return bytea;
+    }
+    ImageIO.write(dimg, mimeType, baos);
+    byte[] bytesOut = baos.toByteArray();
+    return bytesOut;
   }
 
   /**

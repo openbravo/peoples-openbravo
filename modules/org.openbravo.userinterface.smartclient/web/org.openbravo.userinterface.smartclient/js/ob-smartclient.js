@@ -32,6 +32,12 @@ isc.setAutoDraw(false);
 // Time.setDefaultDisplayTimezone(0);
 
 isc.Canvas.addProperties({
+  
+  // workaround for this issue:
+  // http://forums.smartclient.com/showthread.php?p=75007#post75007
+  // https://issues.openbravo.com/view.php?id=18841
+  cancelNativeScrollOnKeyDown: false,
+  
   // make sure that the datasources are also destroyed
   _original_destroy: isc.Canvas.getPrototype().destroy,
   destroy: function() {
@@ -83,7 +89,244 @@ isc.Layout.addProperties({
 });
 
 isc.TextItem.addProperties({
-   
+
+  // to support and/or in text items
+  // https://issues.openbravo.com/view.php?id=18747
+  // NOTE: if Smartclient starts to support and/or, revisit this code
+  parseValueExpressions: function(value, fieldName) {
+    // enable hack to force Smartclient to support and/or logic
+    if (isc.isA.String(value) && 
+        (value.toUpperCase().contains(' OR ') || value.toUpperCase().contains(' AND '))) {
+      return this.parseOBValueExpressions(value, fieldName);
+    }
+    return this.Super('parseValueExpressions', arguments);
+  },
+
+  // this is a copy of the FormItem.parseValueExpressions to support
+  // and/or logic for enum and text fields
+  parseOBValueExpressions: function(value, fieldName) {
+    var type = this.getType(),
+      isValidLogicType = (isc.SimpleType.inheritsFrom(type, 'enum') ||
+          isc.SimpleType.inheritsFrom(type, 'text') ||
+          isc.SimpleType.inheritsFrom(type, 'integer') ||
+          isc.SimpleType.inheritsFrom(type, 'float') ||
+          isc.SimpleType.inheritsFrom(type, 'date')
+      ),
+      opIndex = isc.DynamicForm.getOperatorIndex(),
+      validOps = isc.getKeys(opIndex),
+      result = { operator: 'and', criteria: [], fieldName: fieldName},
+      crit = result.criteria,
+      valueParts = [], i,
+      ds = isc.DS.get(this.form.expressionDataSource || this.form.dataSource),
+      defOpName, defOp, insensitive, field, skipTheseOps,
+      valuePart, subCrit, isDateField, useDefaultOperator, opKey, key,
+      operator, operators, op, ops, wildCard,
+      parts, partCrit, part, partIndex,
+      hasPrefix, hasSuffix;
+    
+    if (!value) {
+      value = this.getValue();
+    }
+    if (!value) {
+      return;
+    }
+    
+    if (!isc.isA.String(value)) {
+      value += '';
+    }
+    
+    defOpName = this.getOperator();
+    if (defOpName) {
+      validOps.add(defOpName);
+    }
+    
+    defOp = ds ? ds.getSearchOperator(defOpName) : { id: defOpName };
+    
+    insensitive = defOp.caseInsensitive;
+    
+    if (isValidLogicType && value.contains(' and ')) {
+        valueParts = value.split(' and ');
+    } else if (isValidLogicType && value.contains(' or ')) {
+        valueParts = value.split(' or ');
+        result.operator = 'or';
+    } else if (value.contains('...')) {
+        valueParts = value.split('...');
+        if (valueParts.length === 2) {
+            var tempOps = opIndex['...'],
+                tempOp;
+    
+            if (tempOps) {
+              tempOp = (insensitive ? tempOps.find('caseInsensitive', true) : tempOps[0]);
+            }
+    
+            field = ds ? ds.getField(fieldName) : null;
+    
+            if (field && isc.SimpleType.inheritsFrom(field.type, 'date')) {
+                valueParts[0] = new Date(Date.parse(valueParts[0]));
+                valueParts[0].logicalDate = true;
+                valueParts[1] = new Date(Date.parse(valueParts[1]));
+                valueParts[1].logicalDate = true;
+            } else if (field && field.type === 'text') {
+                
+                if (!valueParts[1].endsWith(this._betweenInclusiveEndCrit)) {
+                    valueParts[1] += this._betweenInclusiveEndCrit;
+                }
+            }
+    
+            return { fieldName: fieldName, operator: tempOp.ID, 
+                start: valueParts[0], end: valueParts[1] };
+        }
+    } else {
+        valueParts = [value];
+    }
+    
+    skipTheseOps = [ ' and ', ' or ', '...' ];
+    
+    for (i = 0; i < valueParts.length; i++) {
+        valuePart = valueParts[i];
+        subCrit = { fieldName: fieldName };
+        field = ds ? ds.getField(fieldName) : null;
+        isDateField = (field ? field && isc.SimpleType.inheritsFrom(field.type, 'date') : false);
+    
+        useDefaultOperator = true;
+        for (opKey in opIndex) {
+          if (opIndex.hasOwnProperty(opKey)) {
+            if (!opKey) {
+              continue;
+            }
+            
+            operators = opIndex[opKey];
+  
+            if (operators && operators.length) {
+                operator = operators.find('caseInsensitive', insensitive) || operators[0];
+            }
+    
+            if (!operator || !operator.symbol || skipTheseOps.contains(operator.symbol)) {
+              continue;
+            }
+            if (validOps.contains(operator.symbol) && 
+                      (isc.isA.String(valuePart) && valuePart.startsWith(operator.symbol))) {
+              useDefaultOperator = false;
+              break;
+            }
+          }
+        }
+        if (useDefaultOperator) {
+          valuePart = defOp.symbol + valuePart;
+        }
+        
+        for (key in opIndex) {
+          if (opIndex.hasOwnProperty(key)) {
+    
+            if (!key) {
+              continue;
+            }
+    
+            ops = opIndex[key];
+            wildCard = false;
+    
+            if (key === '==' && isc.isA.String(valuePart) && valuePart.startsWith('=') && 
+                    !valuePart.startsWith('==') && !valuePart.startsWith('=(')) 
+            {
+              wildCard = true;
+            }
+    
+            if (ops && ops.length) {
+              op = ops.find('caseInsensitive', insensitive) || ops[0];
+            }
+    
+            if (!op || !op.symbol || skipTheseOps.contains(op.symbol)) {
+              continue;
+            }
+            
+            if (validOps.contains(op.symbol) && (
+                  (isc.isA.String(valuePart) && valuePart.startsWith(op.symbol)) 
+                  || wildCard))
+            {
+              valuePart = valuePart.substring(op.symbol.length - (wildCard ? 1 : 0));
+              if (op.closingSymbol) {
+                // this is a containing operator (inSet, notInSet), with opening and 
+                // closing symbols...  check that the value endsWith the correct 
+                // closing symbol and strip it off - op.processValue() will split 
+                // the string for us later
+                if (valuePart.endsWith(op.closingSymbol)) {
+                    valuePart = valuePart.substring(0, valuePart.length - op.closingSymbol.length);
+                }
+              }
+  
+              if (isDateField) {
+                valuePart = new Date(Date.parse(valuePart));
+                valuePart.logicalDate = true;
+              }
+  
+              subCrit.operator = op.ID;
+  
+              if (op.processValue) {
+                valuePart = op.processValue(valuePart, ds);
+              }
+  
+              if (op.wildCard && isc.isA.String(valuePart) && valuePart.contains(op.wildCard)) {
+                // this is an operator that supports wildCards (equals, notEquals)...
+                
+                parts = valuePart.split(op.wildCard);
+  
+                if (parts.length > 1) {
+                  for (partIndex=0; partIndex<parts.length; partIndex++) {
+                    part = parts[partIndex];
+  
+                    if (!part || part.length === 0) {
+                      continue;
+                    }
+  
+                    partCrit = { fieldName: fieldName, value: part };
+  
+                    hasPrefix = partIndex > 0;
+                    hasSuffix = parts.length - 1 > partIndex;
+  
+                    if (hasPrefix && hasSuffix) {
+                      // this is a contains criteria
+                      partCrit.operator = insensitive ? 'iContains' : 'contains';
+                    } else if (hasPrefix) {
+                      // this is an endsWith criteria
+                      partCrit.operator = insensitive ? 'iEndsWith' : 'endsWith';
+                    } else if (hasSuffix) {
+                      // this is a startsWith criteria
+                      partCrit.operator = insensitive ? 'iStartsWith' : 'startsWith';
+                    }
+  
+                    result.criteria.add(partCrit);
+                  }
+  
+                  // clear out the sub-crit's operator - this will prevent it being
+                  // added to the result criteria below (we've already added 
+                  // everything we need above
+                  subCrit.operator = null;
+                }
+            } else {
+              // set the value if one is required for the op
+              if (op.valueType !== 'none') {
+                subCrit.value = valuePart;
+              }
+            }
+  
+            break;
+          }
+        }
+      }
+      if (subCrit.operator) {
+        result.criteria.add(subCrit);
+      }
+    }
+    if (result.criteria.length === 1) {
+      result = result.criteria[0];
+    }
+    if (result.criteria && result.criteria.length === 0) {
+      result = null;
+    }
+    
+    return result;
+  },
+
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160
   // https://issues.openbravo.com/view.php?id=17936
@@ -349,7 +592,7 @@ isc.RelativeDateItem.addProperties({
           this.valueField.focusInItem();
         } else {
           if (selectionRange) {
-            focusItem.delayCall("setSelectionRange", [selectionRange[0],selectionRange[1]]);
+            focusItem.delayCall('setSelectionRange', [selectionRange[0],selectionRange[1]]);
           }
         }
       }
@@ -405,7 +648,7 @@ isc.screenReader = false;
 isc.DataSource.addProperties({
   _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,
   fieldMatchesFilter: function(fieldValue, filterValue, requestProperties) {
-    if (fieldValue && typeof fieldValue === "string") {
+    if (fieldValue && typeof fieldValue === 'string') {
       fieldValue = fieldValue.replace(/á|à|ä|â/g, 'a').replace(/Á|À|Ä|Â/g, 'A');
       fieldValue = fieldValue.replace(/é|è|ë|ê/g, 'e').replace(/É|È|Ë|Ê/g, 'E');
       fieldValue = fieldValue.replace(/í|ì|ï|î/g, 'i').replace(/Í|Ì|Ï|Î/g, 'I');
@@ -414,7 +657,7 @@ isc.DataSource.addProperties({
       fieldValue = fieldValue.replace(/ç/g, 'c').replace(/Ç/g, 'C');
       fieldValue = fieldValue.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
     }
-    if (filterValue && typeof filterValue === "string") {
+    if (filterValue && typeof filterValue === 'string') {
       filterValue = filterValue.replace(/á|à|ä|â/g, 'a').replace(/Á|À|Ä|Â/g, 'A');
       filterValue = filterValue.replace(/é|è|ë|ê/g, 'e').replace(/É|È|Ë|Ê/g, 'E');
       filterValue = filterValue.replace(/í|ì|ï|î/g, 'i').replace(/Í|Ì|Ï|Î/g, 'I');

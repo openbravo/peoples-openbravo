@@ -27,6 +27,10 @@ isc.OBStatusBar.addProperties({
 
   statusLabelStyle: 'OBStatusBarTextLabel_Status',
   titleLabelStyle: 'OBStatusBarTextLabel_Title',
+  titleLinkStyle: 'OBStatusBarTextLink_Title',
+  titleLinkImageSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  titleLinkImageWidth: 8,
+  titleLinkImageHeight: 8,
   fieldLabelStyle: 'OBStatusBarTextLabel_Field',
   separatorLabelStyle: 'OBStatusBarTextLabel_Separator',
   labelOverflowHidden: true,

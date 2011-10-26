@@ -23,7 +23,7 @@
 		<cache usage="read-write"/>
 		
 		<id name="id" type="string" column="obserds_datasource_id">
-			<generator class="uuid" />
+            <generator class="org.openbravo.base.session.DalUUIDGenerator" />
 		</id>
 
         <many-to-one name="table" not-null="false" class="org.openbravo.base.model.Table" column="ad_table_id"/>

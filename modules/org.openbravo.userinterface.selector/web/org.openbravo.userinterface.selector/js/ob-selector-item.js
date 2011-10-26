@@ -69,7 +69,10 @@ isc.OBSelectorPopupWindow.addProperties({
         this.selectorGridFields[i].canFilter = true;
       }
     }
-    
+    if(!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length===0){
+      this.dataSource.fields = this.selectorGridFields;
+      this.dataSource.init();
+    }
     this.selectorGrid = isc.OBGrid.create({
     
       selector: this.selector,
@@ -179,8 +182,8 @@ isc.OBSelectorPopupWindow.addProperties({
         gridField.filterEditorType = type.filterEditorType;
       }
       
-      gridField.canFilter = (fld.canFilter === false ? false : true);
-      gridField.filterOnKeypress = (fld.filterOnKeypress === false ? false : true); 
+      gridField.canFilter = (gridField.canFilter === false ? false : true);
+      gridField.filterOnKeypress = (gridField.filterOnKeypress === false ? false : true); 
 
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
@@ -277,7 +280,7 @@ isc.OBSelectorPopupWindow.addProperties({
 // 1) a combo box with a picker icon
 // 2) a popup window showing a search grid with data
 //
-isc.ClassFactory.defineClass('OBSelectorItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBSelectorItem', isc.ComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
@@ -458,7 +461,7 @@ isc.OBSelectorItem.addProperties({
 
   handleOutFields: function(record){
     var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
-        fields = form.fields || grid.fields;
+        fields = form.fields || grid.fields, numberFormat;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -469,9 +472,13 @@ isc.OBSelectorItem.addProperties({
               continue;
             }
             if (isc.isA.Number(value)) {
-              value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+              if(outFields[i].formatType && outFields[i].formatType !== ''){
+                value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.formats[outFields[i].formatType],
                   OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
-                  OB.Format.defaultGroupingSize);
+                   OB.Format.defaultGroupingSize);
+              }else{
+                value = value.toString().replace('.', OB.Format.defaultDecimalSymbol);
+              }
             }
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
@@ -633,7 +640,7 @@ isc.OBSelectorItem.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBSelectorLinkItem', StaticTextItem);
+isc.ClassFactory.defineClass('OBSelectorLinkItem', isc.StaticTextItem);
 
 isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 

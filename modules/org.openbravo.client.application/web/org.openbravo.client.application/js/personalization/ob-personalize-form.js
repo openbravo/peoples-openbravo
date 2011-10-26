@@ -645,7 +645,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // called when the delete button is called
   deletePersonalization: function(confirmed) {
-    var me = this;
+    var me = this, callback;
     
     // only delete if we have a personalization id
     // this should always be the case
@@ -672,6 +672,8 @@ isc.OBPersonalizeFormLayout.addProperties({
           action: 'delete'
         },
         function(resp, data, req){
+          var personalization;
+          
           me.hasBeenDeleted = true;
           // close when returned
           me.doClose(true);
@@ -684,7 +686,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   
   // the undo action, resets everything to the loaded, last-saved state
   cancel: function(confirmed) {
-    var me = this;
+    var me = this, callback;
     if (!confirmed) {
       callback = function(ok) {
         if (ok) {
@@ -751,7 +753,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.formLayout.addMember(statusBar);
     
     // create the form and add it to the formLayout
-    this.previewForm = isc.OBViewForm.create(this.previewFormProperties, {
+    this.previewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), this.previewFormProperties, {
       preventAllEvents: true,
       statusBar: statusBar,
       personalizeForm: this,
@@ -1020,7 +1022,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // called by the buttons in the toolbar of the standard maintenance form/grid
   doOpen: function(retrievedInitialData) {
-    var me = this, window, i, j, persField, fld;
+    var me = this, window, i, j, persField, fld, tabSet, tab;
     
     // first get the preview form data, continue after receiving it
     if (!retrievedInitialData) {

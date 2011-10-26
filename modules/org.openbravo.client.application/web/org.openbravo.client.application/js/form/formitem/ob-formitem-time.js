@@ -19,7 +19,7 @@
 
 // == OBTimeItem ==
 // For entering times.
-isc.ClassFactory.defineClass('OBTimeItem', TimeItem);
+isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
 
 isc.OBTimeItem.addProperties({
   operator: 'equals',

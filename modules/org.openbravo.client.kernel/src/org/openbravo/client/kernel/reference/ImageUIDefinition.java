@@ -18,6 +18,9 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.model.ad.ui.Field;
+
 /**
  * Implementation of the image ui definition.
  * 
@@ -39,5 +42,25 @@ public class ImageUIDefinition extends UIDefinition {
   public String getTypeProperties() {
     return "shortDisplayFormatter: function(value, field, component, record) {" + "return \"\";"
         + "},";
+  }
+
+  @Override
+  public String getFieldProperties(Field field) {
+    String fieldProperties = super.getFieldProperties(field);
+    try {
+      JSONObject obj;
+      if (fieldProperties.equals("")) {
+        obj = new JSONObject();
+      } else {
+        obj = new JSONObject(fieldProperties);
+      }
+      obj.put("imageSizeValuesAction", field.getColumn().getImageSizeValuesAction());
+      obj.put("imageWidth", field.getColumn().getImageWidth());
+      obj.put("imageHeight", field.getColumn().getImageHeight());
+      return obj.toString();
+    } catch (Exception e) { // ignore
+      log.error("There was an error when calculating the properties of an Image field", e);
+      return fieldProperties;
+    }
   }
 }

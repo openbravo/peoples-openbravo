@@ -162,6 +162,24 @@
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
+  <EmailTemplate id="FF808081332C7C9101332C86F756002C" identifier="Reversed Purchase Invoice Report template - ">
+    <id>FF808081332C7C9101332C86F756002C</id>
+    <active>true</active>
+    <pocDocumentType id="FF808081332C7C9101332C86C35D0027" entity-name="DocumentTemplate" identifier="Reversed Purchase Invoice Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="FF808081332C7C9101332C88789F003B" identifier="Reversed Sales Invoice Report template - ">
+    <id>FF808081332C7C9101332C88789F003B</id>
+    <active>true</active>
+    <pocDocumentType id="FF808081332C7C9101332C87DBBE0034" entity-name="DocumentTemplate" identifier="Reversed Sales Invoice Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
   <FinancialMgmtGLCategory id="102C08DF5D4341D5B7FDF758632503D2" identifier="AR Invoice">
     <id>102C08DF5D4341D5B7FDF758632503D2</id>
     <active>true</active>
@@ -664,7 +682,7 @@
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
-    <reversal>true</reversal>
+    <reversal>false</reversal>
   </DocumentType>
   <DocumentType id="6B13D02AD3C44C4CB0CFBD1288E0CB10" identifier="Physical Inventory">
     <id>6B13D02AD3C44C4CB0CFBD1288E0CB10</id>
@@ -894,7 +912,7 @@
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
-    <reversal>true</reversal>
+    <reversal>false</reversal>
   </DocumentType>
   <DocumentType id="B476CFAE109047DEB5BC9AC80A03297A" identifier="AR Credit Memo">
     <id>B476CFAE109047DEB5BC9AC80A03297A</id>
@@ -1652,6 +1670,30 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Payment Out-@our_ref@</reportFilename>
     <templateFilename>RptFIN_Payment.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="FF808081332C7C9101332C86C35D0027" identifier="Reversed Purchase Invoice Report template">
+    <id>FF808081332C7C9101332C86C35D0027</id>
+    <active>true</active>
+    <documentType id="AFFD4594FB734E9682D5769669A9D471" entity-name="DocumentType" identifier="Reversed Purchase Invoice"/>
+    <name>Reversed Purchase Invoice Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Reversed Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="FF808081332C7C9101332C87DBBE0034" identifier="Reversed Sales Invoice Report template">
+    <id>FF808081332C7C9101332C87DBBE0034</id>
+    <active>true</active>
+    <documentType id="67C3266D11A04078B7A14AC21E91C711" entity-name="DocumentType" identifier="Reversed Sales Invoice"/>
+    <name>Reversed Sales Invoice Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Reversed Sales Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>

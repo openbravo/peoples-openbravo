@@ -33,6 +33,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.DalUUIDGenerator;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.Check;
 
@@ -317,7 +318,7 @@ public class DalMappingGenerator implements OBSingleton {
           + "</param>" + NL);
       sb.append(TAB3 + "</generator>" + NL);
     } else if (p.isUuid()) {
-      sb.append(TAB3 + "<generator class=\"" + DalUUIDHexGenerator.class.getName() + "\"/>" + NL);
+      sb.append(TAB3 + "<generator class=\"" + DalUUIDGenerator.class.getName() + "\"/>" + NL);
     }
     sb.append(TAB2 + "</id>" + NL);
     return sb.toString();

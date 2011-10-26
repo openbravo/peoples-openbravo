@@ -424,8 +424,9 @@ public class DocFINFinAccTransaction extends AcctServer {
           fact.createLine(
               line,
               getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
-                  isReceipt, conn), paymentCurrency.getId(), line.getPaymentAmount(), line
-                  .getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                  isReceipt, conn), paymentCurrency.getId(), isReceipt ? "" : line.getAmount(),
+              isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         } else {
           BigDecimal bpAmountConverted = bpamount;
           Invoice invoice = line.getInvoice();

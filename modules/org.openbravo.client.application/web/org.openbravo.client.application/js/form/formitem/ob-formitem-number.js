@@ -19,7 +19,7 @@
 
 // = OBNumberIte =
 // Contains the widgets for editing numeric values.
-isc.ClassFactory.defineClass('OBNumberItem', TextItem);
+isc.ClassFactory.defineClass('OBNumberItem', isc.TextItem);
 
 // = OBNumberItem =
 // The Openbravo numeric form item.
@@ -37,7 +37,7 @@ isc.OBNumberItem.addProperties({
   
   init: function(){
     this.setKeyPressFilter(this.keyPressFilterNumeric);
-    this.typeInstance = SimpleType.getType(this.type);
+    this.typeInstance = isc.SimpleType.getType(this.type);
     return this.Super('init', arguments);
   },
   
@@ -427,6 +427,8 @@ isc.OBNumberItem.addProperties({
   },
   
   blur: function(){
+    var value;
+    
     if (this.doBlurLogic) {
       this.validate();  
 
@@ -485,10 +487,10 @@ isc.OBNumberItem.validateCondition = function(item, validator, value){
   return false;
 };
 
-Validator.addValidator('isFloat', isc.OBNumberItem.validateCondition);
-Validator.addValidator('isInteger', isc.OBNumberItem.validateCondition);
+isc.Validator.addValidator('isFloat', isc.OBNumberItem.validateCondition);
+isc.Validator.addValidator('isInteger', isc.OBNumberItem.validateCondition);
 
-isc.ClassFactory.defineClass('OBNumberFilterItem', OBNumberItem);
+isc.ClassFactory.defineClass('OBNumberFilterItem', isc.OBNumberItem);
 
 isc.OBNumberFilterItem.addProperties({
   allowExpressions: true,
@@ -497,7 +499,7 @@ isc.OBNumberFilterItem.addProperties({
   keyPressFilterNumeric: '[0-9.,-=<>!#orand ]',
   doBlurLogic: false,
   operator: 'equals',
-  validOperators: ['equals', 'lessThan', 'greaterThan',
+  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual',
                    'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual',
                    'between', 'betweenInclusive', 'isNull', 'isNotNull'
                    ],
@@ -527,11 +529,17 @@ isc.OBNumberFilterItem.addProperties({
   
   buildValueExpressions: function(criterion) {
     var i = 0, criteria, length;
-    if (criterion && criterion.criteria) {
+    if (criterion && !criterion.criteria) {
+      criterion = { criteria: [criterion] };
+    }
+    if (criterion.criteria) {
       criterion = isc.clone(criterion);
       length = criterion.criteria.length;
       for (i = 0; i < length; i++) {
         criteria = criterion.criteria[i];
+        if (criteria.operator === 'iNotEqual') {
+          criteria.operator = 'notEqual';
+        }
         if (criteria.start) {
           criteria.start = this.convertToStringValue(criteria.start);
         }
@@ -543,7 +551,7 @@ isc.OBNumberFilterItem.addProperties({
         }
       }
     }
-    var ret = this.Super('buildValueExpressions', arguments);
+    var ret = this.Super('buildValueExpressions', [criterion]);
     if (isc.isA.String(ret) && ret.contains('undefined')) {
       return ret.replace('undefined', '');
     }

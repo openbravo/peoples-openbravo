@@ -70,7 +70,7 @@ isc.OBClassicWindow.addMethods({
     
     this.obManualURL = obManualURL || '';
     
-    this.tabTitle = tabTitle || null;
+    this.tabTitle = null;
     
     OB.Layout.HistoryManager.updateHistory();
   },

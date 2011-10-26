@@ -55,7 +55,7 @@
     //
     updateHistory: function() {
 
-      var state = {}, stateStr, data;
+      var state = {}, stateStr, data, i, tabsLength, tab, tabObject;
 
       if (L.ViewManager.inStateHandling) {
         return;

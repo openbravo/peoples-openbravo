@@ -95,7 +95,7 @@ isc.OBUserProfile.addProperties({
     var me = this, formLayout, newPasswordField, passwordForm, 
      confirmPasswordField, buttonLayout, currentPasswordField, 
      roleForm, widgetInstance, comboBoxFieldProperties, roleField, 
-     orgField, warehouseField, languageField,
+     orgField, warehouseField, languageField, checkboxFieldProperties,
      defaultField, clientField, tabSet, pwdButtonLayout, 
      pwdFormLayout, pwdSaveButton, textFieldProperties, 
      passwordFieldProperties;

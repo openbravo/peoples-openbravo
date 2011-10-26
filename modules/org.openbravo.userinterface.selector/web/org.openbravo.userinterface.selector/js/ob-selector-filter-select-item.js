@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', SelectItem);
+isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', isc.SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
   operator: 'equals',
