@@ -130,7 +130,7 @@ isc.OBPickAndExecuteView.addProperties({
       width: 32,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="web/images/iconPin.png" />';
+          return '<img src="web/org.openbravo.client.application/images/iconPin.png" />';
         }
         return '';
       },
