@@ -245,7 +245,7 @@ isc.OBGrid.addProperties({
         }
         return ret;
       },
-
+      
       // overridden for:
       // https://issues.openbravo.com/view.php?id=18509
       editorChanged : function (item) {
@@ -253,6 +253,14 @@ isc.OBGrid.addProperties({
           actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
         
         if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
+          
+          // if someone starts typing and and or then do not filter
+          // onkeypress either
+          if (val.contains(' and') || val.contains(' or')) {
+            this.preventPerformFilterFiring();
+            return;
+          }
+          
           // now check if the item element value is only
           // an operator, if so, go away
           opDefs = isc.DataSource.getSearchOperators();
@@ -265,15 +273,22 @@ isc.OBGrid.addProperties({
                 continue;
               }
               
-              same = opDefs[prop].symbol && 
-                (opDefs[prop].symbol === val || opDefs[prop].symbol.startsWith(val));
+              same = opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
               if (same) {
+                this.preventPerformFilterFiring();
                 return;
               }
             }
           }
         }
         return this.Super('editorChanged', arguments);
+      },
+      
+      // function called to clear any pending performFilter calls
+      // earlier type actions can already have pending filter actions
+      // this deletes them
+      preventPerformFilterFiring: function() {
+        this.fireOnPause("performFilter", {}, this.fetchDelay);
       },
       
       // repair that filter criteria on fk fields can be 
