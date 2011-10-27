@@ -452,13 +452,24 @@ isc.OBViewGrid.addProperties({
     if (localState.noFilterClause) {
       this.filterClause = null;
       this.view.messageBar.hide();
-    }      
-    if (localState.filter) {
+    }
+
+    // and no additional filter clauses passed in
+    if (localState.filter && 
+        this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId &&
+        this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
       this.delayCall('storeViewFilter', [localState.filter], 100, this);
     }
   },
   
-  storeViewFilter: function(filter) {
+  storeViewFilter: function(filter, counter) {
+    // wait until the filter editor is there, but not indefinitely
+    if (!this.getFilterEditor() || !this.getFilterEditor().getEditForm()) {
+      if (!counter || counter < 1000) {
+        this.delayCall('storeViewFilter', [filter, (counter ? ++counter : 1)], 100, this);
+      }
+      return;
+    }
     var i, length;
     
     this.setCriteria(filter);
@@ -471,10 +482,12 @@ isc.OBViewGrid.addProperties({
         this.filterEditor.storeUpdatedEditorValue(false, i);
       }
     }
+
+    this.checkShowFilterFunnelIcon(filter);
   },
  
   setView: function(view){
-    var dataPageSizeaux, length, i;
+    var dataPageSizeaux, length, i, crit;
     
     this.view = view;
     this.editFormDefaults.view = view;
@@ -495,7 +508,12 @@ isc.OBViewGrid.addProperties({
       }
     }
  //// Ends..
-    
+    if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && 
+        this.view.standardWindow.additionalCriteria) {
+      crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
+      this.delayCall('fetchData', [crit], 100, this);
+      delete this.view.standardWindow.additionalCriteria;
+    }
     // if there is no autoexpand field then just divide the space
     if (!this.getAutoFitExpandField()) {
       length = this.fields.length;

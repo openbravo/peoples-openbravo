@@ -498,7 +498,7 @@ isc.OBStandardView.addProperties({
   },
   
   getDirectLinkUrl: function() {
-    var url = window.location.href;
+    var url = window.location.href, crit;
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
@@ -523,7 +523,13 @@ isc.OBStandardView.addProperties({
     } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
       url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
     }
-
+    if (!this.isShowingForm) {
+      crit = this.viewGrid.getCriteria();
+      if (crit && crit.criteria && crit.criteria.length > 0) {
+        url = url + '&criteria=' + escape(isc.JSON.encode(crit, {prettyPrint: false, dateFormat: 'dateConstructor'}));
+      }
+    }
+    
     return url;
   },
   
