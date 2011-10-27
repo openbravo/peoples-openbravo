@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ************************************************************************************
+ * Copyright (C) 2010-2011 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+<SqlClass name="UpdateReconciliationProcessButtonValueData" package="org.openbravo.advpaymentmngt.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select 1 as name from dual
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="update" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE FIN_RECONCILIATION SET EM_APRM_PROCESS_REC = EM_APRM_PROCESS_RECONCILIATION
+        WHERE EM_APRM_PROCESS_REC IS NULL
+        AND EM_APRM_PROCESS_REC IS NOT NULL
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>
