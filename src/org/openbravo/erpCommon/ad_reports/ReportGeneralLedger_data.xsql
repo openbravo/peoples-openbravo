@@ -290,9 +290,12 @@
      	SELECT NODE_ID AS ID
 	FROM AD_TREENODE
 	WHERE AD_TREE_ID = ?
-	AND AD_ISORGINCLUDED(?, NODE_ID, ?) <> -1
+	AND (AD_ISORGINCLUDED(?, NODE_ID, ?) <> -1
+	  OR AD_ISORGINCLUDED(NODE_ID, ?, ?) <> -1)
      ]]></Sql>
      <Parameter name="adTreeId"/>
+     <Parameter name="adOrgId"/>
+     <Parameter name="adClientId"/>
      <Parameter name="adOrgId"/>
      <Parameter name="adClientId"/>
   </SqlMethod>
