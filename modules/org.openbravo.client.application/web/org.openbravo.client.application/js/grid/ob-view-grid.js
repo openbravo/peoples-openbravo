@@ -454,15 +454,21 @@ isc.OBViewGrid.addProperties({
       this.view.messageBar.hide();
     }      
     if (localState.filter) {
-      this.setCriteria(localState.filter);
-      if (this.filterEditor) {
-        // update the internal value also, this means that it
-        // get retained when showing the grid for the first
-        // time
-        length = this.filterEditor.getFields().length;
-        for (i = 0; i < length; i++) {
-          this.filterEditor.storeUpdatedEditorValue(false, i);
-        }
+      this.delayCall('storeViewFilter', [localState.filter], 100, this);
+    }
+  },
+  
+  storeViewFilter: function(filter) {
+    var i, length;
+    
+    this.setCriteria(filter);
+    if (this.filterEditor) {
+      // update the internal value also, this means that it
+      // get retained when showing the grid for the first
+      // time
+      length = this.filterEditor.getFields().length;
+      for (i = 0; i < length; i++) {
+        this.filterEditor.storeUpdatedEditorValue(false, i);
       }
     }
   },

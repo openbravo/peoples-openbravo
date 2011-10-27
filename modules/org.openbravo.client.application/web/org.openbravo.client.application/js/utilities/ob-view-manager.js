@@ -344,11 +344,15 @@
           if (viewTabId !== null) {
 
             // refresh the view
+            if (viewInstance.ownMainTabHandling) {
+              viewInstance.mainTabSet = tabSet;
+              viewInstance.mainTabId = viewTabId;
+            } else {
+              tabSet.updateTab(viewTabId, viewInstance);
 
-            tabSet.updateTab(viewTabId, viewInstance);
-
-            // and show it
-            tabSet.selectTab(viewTabId);
+              // and show it
+              tabSet.selectTab(viewTabId);
+            }
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance

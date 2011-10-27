@@ -38,6 +38,9 @@ isc.OBStandardWindow.addClassProperties({
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
+  
+  ownMainTabHandling: true,
+  
   view: null,
   
   viewProperties: null,
@@ -51,6 +54,7 @@ isc.OBStandardWindow.addProperties({
   dirtyEditForm: null,
   
   initWidget: function(){
+
     this.views = [];
     
     this.toolBarLayout = isc.HLayout.create({
@@ -92,6 +96,7 @@ isc.OBStandardWindow.addProperties({
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
+    
   },
   
   readWindowSettings: function() {
@@ -127,7 +132,7 @@ isc.OBStandardWindow.addProperties({
   },
   
   setPersonalization: function(personalization) {
-    var i, defaultView, persDefaultValue, views, length;
+    var i, defaultView, persDefaultValue, views, length, me = this;
     
     // cache the original view so that it can be restored
     if (!this.getClass().originalView) {
@@ -161,12 +166,10 @@ isc.OBStandardWindow.addProperties({
       }
       
       // apply the default view
-      // maybe do this in a separate thread
       if (defaultView) {
-        this.fireOnPause('setDefaultView', function() {
-          OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
-        }, 100);
+        OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
       }
+      this.addToMainTab();
       
       this.getClass().personalization.views.sort(function(v1, v2) {
         var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
@@ -177,9 +180,16 @@ isc.OBStandardWindow.addProperties({
         }
         return 1;
       });
-    }    
+    }
   },
 
+  addToMainTab: function() {
+    this.mainTabSet.updateTab(this.mainTabId, this);
+
+    // and show it
+    this.mainTabSet.selectTab(this.mainTabId);
+  },
+  
   // Update the personalization record which is stored 
   updateFormPersonalization: function(view, formPersonalization) {
     if (!this.getClass().personalization) {
