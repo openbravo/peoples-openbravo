@@ -34,7 +34,7 @@
         <onCreateDefault/>
       </column>
       <column name="DATENEW" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA['2001-01-01 00:00:00'::timestamp without time zone]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="TITLE" primaryKey="false" required="true" type="VARCHAR" size="1024" autoIncrement="false">

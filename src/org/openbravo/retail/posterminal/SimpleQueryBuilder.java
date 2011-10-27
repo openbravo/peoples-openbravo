@@ -148,7 +148,7 @@ public class SimpleQueryBuilder {
         }
       } else if (s == 2) {
         if (!Character.isLetterOrDigit(c)) {
-          if (Character.isWhitespace(c) || c == ')') {
+          if (Character.isWhitespace(c) || c == ')' || c == '(') {
             return i + 1;
           } else {
             return -1;

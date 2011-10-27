@@ -21,12 +21,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_CATALOG" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_PRODUCT" name="EM_OBPOS_PRODUCTAUX">
         <reference local="EM_OBPOS_PRODUCTAUX_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_CATEGORIES" name="EM_OBPOS_PRODUCTS_CAT">
         <reference local="EM_OBPOS_CATEGORIES_ID" foreign="OBPOS_CATEGORIES_ID"/>
       </foreign-key>
+      <check name="EM_OBPOS_CATALOG_CHK"><![CDATA[EM_OBPOS_CATALOG IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_SCALE_CHK"><![CDATA[EM_OBPOS_SCALE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -73,7 +73,13 @@ public class JSONRowConverter {
         return item;
       }
     } else {
-      return convertPrimitiveValue(obj);
+      if (fi == null || fi.length == 0) {
+        return convertPrimitiveValue(obj);
+      } else {
+        JSONObject item = new JSONObject();
+        item.put(fi[0], convertPrimitiveValue(obj));
+        return item;
+      }
     }
   }
 

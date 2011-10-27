@@ -110,7 +110,7 @@ public class TerminalServlet extends BaseWebServiceServlet {
     if (pathparts == null) {
       return;
     }
-    
+
     if ("hql".equals(pathparts[1])) {
       try {
         execHQLQuery(request, response, getContentAsJSON(request.getParameter("content")));
@@ -122,7 +122,7 @@ public class TerminalServlet extends BaseWebServiceServlet {
       writeResult(
           response,
           JsonUtils.convertExceptionToJson(new InvalidRequestException("Command not found: "
-              + pathparts[1])));      
+              + pathparts[1])));
     }
   }
 
@@ -164,7 +164,6 @@ public class TerminalServlet extends BaseWebServiceServlet {
     writeResult(response, result);
   }
 
-
   private void execHQLQuery(HttpServletRequest request, HttpServletResponse response,
       Object jsonContent) throws Exception {
 
@@ -204,7 +203,7 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
       if (jsonsent.has("parameters")) {
         JSONObject jsonparams = jsonsent.getJSONObject("parameters");
-        Iterator it = jsonparams.keys();
+        Iterator<?> it = jsonparams.keys();
         while (it.hasNext()) {
           String key = (String) it.next();
           Object value = jsonparams.get(key);
@@ -224,15 +223,14 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
       JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
 
-      List listdata = query.list();
+      List<?> listdata = query.list();
       for (Object o : listdata) {
         jsonData.put(converter.convert(o));
       }
 
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
-          + startRow
-          - 1 : 0));
+          + startRow - 1 : 0));
 
       if (jsonData.length() == 0) {
         jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
@@ -267,8 +265,9 @@ public class TerminalServlet extends BaseWebServiceServlet {
     }
 
     if (pathParts.length == 1) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-"Invalid url, no command: "
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url, no command: "
               + request.getRequestURI())));
       return null;
     }
