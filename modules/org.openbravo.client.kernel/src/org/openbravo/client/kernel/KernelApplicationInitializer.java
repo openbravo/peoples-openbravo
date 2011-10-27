@@ -11,54 +11,23 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 package org.openbravo.client.kernel;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
-import org.openbravo.base.session.SessionFactoryController;
-import org.openbravo.client.kernel.event.PersistenceEventOBInterceptor;
-import org.openbravo.dal.core.OBInterceptor;
 
 /**
- * Class responsible for initializing the kernel layer. Can be used in a servlet as well as a
- * non-servlet environment.
+ * An example {@link ApplicationInitializer}.
  * 
  * @author mtaal
  */
 @ApplicationScoped
-public class KernelInitializer {
-
-  @Inject
-  private PersistenceEventOBInterceptor persistenceEventOBInterceptor;
-
-  @Inject
-  @Any
-  private Instance<ApplicationInitializer> applicationInitializers;
+public class KernelApplicationInitializer implements ApplicationInitializer {
 
   public void initialize() {
-    setInterceptor();
-
-    for (ApplicationInitializer initializer : applicationInitializers) {
-      initializer.initialize();
-    }
-
   }
-
-  public synchronized void setInterceptor() {
-    final OBInterceptor interceptor = (OBInterceptor) SessionFactoryController.getInstance()
-        .getConfiguration().getInterceptor();
-    if (interceptor.getInterceptorListener() == null) {
-      interceptor.setInterceptorListener(persistenceEventOBInterceptor);
-    }
-  }
-
 }
