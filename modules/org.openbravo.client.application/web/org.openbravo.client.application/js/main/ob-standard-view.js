@@ -520,10 +520,9 @@ isc.OBStandardView.addProperties({
     url = url + '?tabId=' + this.tabId;
     if (this.isShowingForm && this.viewForm.isNew && this.isRootView) {      
         url = url + '&command=NEW';      
-    } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+    } else if ((this.isShowingForm || !this.isRootView) && this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
       url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
-    }
-    if (!this.isShowingForm) {
+    } else if (!this.isShowingForm && this.isRootView) {
       crit = this.viewGrid.getCriteria();
       if (crit && crit.criteria && crit.criteria.length > 0) {
         url = url + '&criteria=' + escape(isc.JSON.encode(crit, {prettyPrint: false, dateFormat: 'dateConstructor'}));
