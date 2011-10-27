@@ -309,7 +309,7 @@ isc.OBGrid.addProperties({
         if (internCriteria && this.getEditForm()) {
           // now remove anything which is not a field
           // otherwise smartclient will keep track of them and send them again
-          var fields = this.getEditForm().getFields(), length = fields.length;
+          var fields = this.getEditForm().getFields(), length = fields.length, i;
           for (i = internCriteria.length - 1; i >=0; i--) {
             prop = internCriteria[i].fieldName;
             // happens when the internCriteria[i], is again an advanced criteria
