@@ -146,6 +146,9 @@ public class JsonToDataConverter {
         try {
           if (property.getDomainType() instanceof TimestampDomainType) {
             String strValue = (String) value;
+            if (strValue.equals("null")) {
+              return null;
+            }
             // there are cases that also the date part is sent in, get rid of it
             if (strValue.indexOf("T") != -1) {
               final int index = strValue.indexOf("T");
@@ -355,7 +358,7 @@ public class JsonToDataConverter {
     // just use a random entity to get the name of the updated property
     if (jsonObject.has(Organization.PROPERTY_UPDATED) && obObject instanceof Traceable) {
       final String jsonDateStr = jsonObject.getString(Organization.PROPERTY_UPDATED);
-      if (jsonDateStr != null) {
+      if (jsonDateStr != null && !jsonDateStr.equals("null")) {
         try {
           final String repairedString = JsonUtils.convertFromXSDToJavaFormat(jsonDateStr);
           final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
