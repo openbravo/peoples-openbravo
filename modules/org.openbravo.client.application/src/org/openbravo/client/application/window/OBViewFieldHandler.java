@@ -149,10 +149,10 @@ public class OBViewFieldHandler {
         else
           continue;
       }
-      final DynamicExpressionParser parser = new DynamicExpressionParser(hasReadOnlyLogic ? f
-          .getColumn().getReadOnlyLogic()
-          + " | " + readonlyOnlyRoleConditions.toString() : readonlyOnlyRoleConditions.toString(),
-          tab);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(
+          hasReadOnlyRoles ? (hasReadOnlyLogic ? f.getColumn().getReadOnlyLogic() + " | "
+              + readonlyOnlyRoleConditions.toString() : readonlyOnlyRoleConditions.toString()) : f
+              .getColumn().getReadOnlyLogic(), tab);
       readOnlyLogicMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
