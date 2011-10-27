@@ -470,6 +470,15 @@ isc.FormItem.addProperties({
     }
   },
   
+  // prevent a jscript error in ie when closing a tab
+  // https://issues.openbravo.com/view.php?id=18890
+  blurItem: function() {
+    if (!this.form || this.form.destroyed) {
+      return;
+    }
+    this.Super('blurItem', arguments);
+  },
+
   isDisabled: function(ignoreTemporaryDisabled){
     // disabled if the property can not be updated and the form or record is new
     // explicitly comparing with false as it is only set for edit form fields
