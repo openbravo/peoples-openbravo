@@ -210,7 +210,7 @@ isc.OBGrid.addProperties({
       isCheckboxField: function(){
         return false;
       },
-      
+ 
       filterImg: {
         src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
       },

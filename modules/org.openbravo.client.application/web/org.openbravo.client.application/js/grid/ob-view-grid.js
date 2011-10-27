@@ -472,9 +472,6 @@ isc.OBViewGrid.addProperties({
     
     this.view = view;
     this.editFormDefaults.view = view;
-    if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
-      this.setViewState(this.view.standardWindow.viewState[this.view.tabId]);
-    }
     
     if (this.getField(this.view.parentProperty)) {
       this.getField(this.view.parentProperty).canFilter = false;

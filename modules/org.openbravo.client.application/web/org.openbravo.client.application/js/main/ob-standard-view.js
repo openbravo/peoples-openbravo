@@ -234,6 +234,10 @@ isc.OBStandardView.addProperties({
     return ret;
   },
   
+  show: function() {
+    this.Super('show', arguments);
+  },
+  
   destroy: function() {
     // destroy the datasource
     if (this.dataSource) {
