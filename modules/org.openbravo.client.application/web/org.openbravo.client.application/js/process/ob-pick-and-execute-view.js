@@ -58,8 +58,7 @@ isc.OBPickAndExecuteView.addProperties({
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
       click: function () {
-        view.viewGrid.discardAllEdits();
-        view.viewGrid.deselectAllRecords();
+        view.closeClick();
       }
     });
 
@@ -81,12 +80,18 @@ isc.OBPickAndExecuteView.addProperties({
     });
 
     this.items = [this.viewGrid, isc.HLayout.create({
-      styleName: this.buttonBarStyleName,
-      height: this.buttonBarHeight,
-      defaultLayoutAlign: 'center',
-      members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-        width: this.buttonBarSpace
-      }), cancelButton, isc.LayoutSpacer.create({})]
+      align: 'center',
+      width: '100%',
+      members: [isc.HLayout.create({
+        width: 1,
+        overflow: 'visible',
+        styleName: this.buttonBarStyleName,
+        height: this.buttonBarHeight,
+        defaultLayoutAlign: 'center',
+        members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
+          width: 32
+        }), cancelButton, isc.LayoutSpacer.create({})]
+      })]
     })];
 
     this.Super('initWidget', arguments);
