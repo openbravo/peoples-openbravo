@@ -511,7 +511,7 @@ isc.OBViewGrid.addProperties({
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && 
         this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
-      this.delayCall('fetchData', [crit], 100, this);
+      this.delayCall('storeViewFilter', [crit], 100, this);
       delete this.view.standardWindow.additionalCriteria;
     }
     // if there is no autoexpand field then just divide the space

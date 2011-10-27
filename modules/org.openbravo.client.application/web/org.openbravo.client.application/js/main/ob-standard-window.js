@@ -184,10 +184,14 @@ isc.OBStandardWindow.addProperties({
   },
 
   addToMainTab: function() {
-    this.mainTabSet.updateTab(this.mainTabId, this);
+    if (this.mainTabSet) {
+      this.mainTabSet.updateTab(this.mainTabId, this);
 
-    // and show it
-    this.mainTabSet.selectTab(this.mainTabId);
+      // and show it
+      this.mainTabSet.selectTab(this.mainTabId);
+    }
+    // has already been done
+    this.ownMainTabHandling = false;
   },
   
   // Update the personalization record which is stored 
