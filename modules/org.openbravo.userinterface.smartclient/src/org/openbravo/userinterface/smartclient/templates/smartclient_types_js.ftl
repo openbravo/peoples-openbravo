@@ -55,3 +55,6 @@ isc.Date.setShortDatetimeDisplayFormat(function(useCustomTimeZone) {
     return OB.Utilities.Date.JSToOB(this, OB.Format.dateTime);
 });
 
+isc.Date.toShortDatetime = function(formatter, isDatetimeField) {
+    return OB.Utilities.Date.JSToOB(this, OB.Format.dateTime);
+};

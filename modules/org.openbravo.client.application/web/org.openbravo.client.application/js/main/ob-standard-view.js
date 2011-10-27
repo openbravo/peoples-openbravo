@@ -183,7 +183,7 @@ isc.OBStandardView.addProperties({
   propertyToColumns:[],
 
   initWidget: function(properties){
-    var length;
+    var length, rightMemberButtons = [], leftMemberButtons = [], i, actionButton;
     
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -193,15 +193,11 @@ isc.OBStandardView.addProperties({
     if (this.isRootView) {
       this.buildStructure();
     }
-    
+
     OB.TestRegistry.register('org.openbravo.client.application.View_' + this.tabId, this);
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
-    
-    var rightMemberButtons = [];
-    var leftMemberButtons = [];
-    var i, actionButton;
-    
+ 
     if (this.actionToolbarButtons) {
       length = this.actionToolbarButtons.length;
       for (i = 0; i < length; i++) {
@@ -227,11 +223,13 @@ isc.OBStandardView.addProperties({
       rightMembers: rightMemberButtons
     });
 
-    var ret = this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
     
     this.toolBar.updateButtonState(true);
-
-    return ret;
+  },
+  
+  show: function() {
+    this.Super('show', arguments);
   },
   
   destroy: function() {

@@ -39,18 +39,18 @@ isc.OBToolbar.addClassProperties({
     updateState: function(){
       var view = this.view, form = view.viewForm, hasErrors = false, editRow;
       if (view.isShowingForm) {
-        this.setDisabled(!form.isNew &&
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && 
         (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        !view.hasValidState() || form.hasErrors() ||
+        !form.hasChanged || !form.allRequiredFieldsSet()));
       } else if (view.isEditingGrid) {
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!form.isNew && !hasErrors &&
+        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && !hasErrors &&
         (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        !view.hasValidState() || form.hasErrors() || 
+        !form.hasChanged || !form.allRequiredFieldsSet()));
       } else {
         this.setDisabled(true);
       }
@@ -81,10 +81,10 @@ isc.OBToolbar.addClassProperties({
       var view = this.view, form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(false);
-        var saveDisabled = (!form.isNew &&
-        (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
+        var saveDisabled = !(form.isNew && form.allRequiredFieldsSet()) && 
+          (form.isSaving || form.readOnly ||
+          !view.hasValidState() || form.hasErrors() ||
+          !form.hasChanged || !form.allRequiredFieldsSet());
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
@@ -189,12 +189,19 @@ isc.OBToolbar.addClassProperties({
   UNDO_BUTTON_PROPERTIES: {
     action: function(){
       this.view.undo();
+      if (!this.view.isShowingForm) {
+        this.setDisabled(true);
+      }
     },
     disabled: true,
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function() {
-       this.setDisabled(!this.view.viewGrid.hasErrors() && !this.view.viewForm.hasChanged && !this.view.viewGrid.hasChanges(false));
+      if (this.view.isShowingForm) {
+        this.setDisabled(false);
+      } else {
+        this.setDisabled(!this.view.isEditingGrid);
+      }
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },
@@ -538,7 +545,8 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
-    var length = this.leftMembers.length, i;
+    var length = this.leftMembers.length, i, 
+      form = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm;
     
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i].updateState) {
@@ -549,6 +557,17 @@ isc.OBToolbar.addProperties({
     // and refresh the process toolbar buttons
     if (!changeEvent) {
       this.refreshCustomButtons(noSetSession);
+    } else if (this.rightMembers){
+      // determine if the buttons should be hidden or not      
+      if (this.view.isEditingGrid || this.view.isShowingForm) {        
+        if (form.hasErrors() || !form.allRequiredFieldsSet()) {
+          this.hideShowRightMembers(false);
+        } else {
+          this.hideShowRightMembers(true);
+        }
+      } else {
+        this.hideShowRightMembers(true);
+      }
     }
   },
   
@@ -1076,11 +1095,22 @@ isc.OBToolbar.addProperties({
       currentContext = buttonContexts[iButtonContext];
 
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
-      var numOfSelRecords = 0, 
+      var numOfSelRecords = 0,
+          theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
           isNew = currentContext.viewForm.isNew, 
           hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
           currentValues = currentContext.getCurrentValues();
-
+     
+      if (!hideAllButtons && 
+          (this.view.isEditingGrid || this.view.isShowingForm)) {        
+        hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
+      }
+      if (hideAllButtons) {
+        this.hideShowRightMembers(false);
+      } else {
+        this.hideShowRightMembers(true);
+      }
+      
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
@@ -1140,6 +1170,17 @@ isc.OBToolbar.addProperties({
         me.updateButtonState(true);
       }  
       );
+    }
+  },
+  
+  hideShowRightMembers: function(show) {
+    var i;
+    for (i = 0; i < this.rightMembers.length; i++) {
+      if (show) {
+        this.rightMembers[i].show();
+      } else {
+        this.rightMembers[i].hide();
+      }
     }
   },
 

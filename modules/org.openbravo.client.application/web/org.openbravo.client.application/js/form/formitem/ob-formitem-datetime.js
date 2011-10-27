@@ -209,6 +209,7 @@ isc.OBDateTimeItem.addClassProperties({
 
 // == OBDateItem properties ==
 isc.OBDateTimeItem.addProperties({
+  showTime: true,
   
   blurValue: function() {
     return isc.OBDateTimeItem.expandDateYear(this.dateFormat, this.getValue());

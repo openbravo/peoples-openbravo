@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -45,15 +44,11 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.system.HeartbeatLog;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -179,30 +174,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
         buf.append(new String(b, 0, n));
       }
 
-      ActivationKey ak = new ActivationKey(vars.getStringParameter("publicKey"), buf.toString());
-      String nonAllowedMods = ak.verifyInstalledModules();
-      if (!nonAllowedMods.isEmpty()) {
-        msg.setType("Error");
-        msg.setMessage(Utility.messageBD(this, "LicenseWithoutAccessTo", vars.getLanguage())
-            + nonAllowedMods);
-      } else {
-        System sys = OBDal.getInstance().get(System.class, "0");
-        sys.setActivationKey(buf.toString());
-        sys.setInstanceKey(vars.getStringParameter("publicKey"));
-        ActivationKey.setInstance(ak);
-        SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-        sysInfo.setInstancePurpose(ak.getProperty("purpose"));
-        OBDal.getInstance().save(sysInfo);
+      ProcessBundle pb = new ProcessBundle(null, vars);
+      HashMap<String, Object> params = new HashMap<String, Object>();
 
-        msg.setType("Success");
-        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      params.put("publicKey", vars.getStringParameter("publicKey"));
+      params.put("activationKey", buf.toString());
+      params.put("activate", true);
 
-        // When reactivating a cloned instance insert a dummy heartbeat log so it is not detected as
-        // a cloned instance anymore.
-        if (HeartbeatProcess.isClonedInstance()) {
-          insertDummyHBLog();
-        }
-      }
+      pb.setParams(params);
+
+      new ActiveInstanceProcess().execute(pb);
+      msg = (OBError) pb.getResult();
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
@@ -254,7 +236,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "", "", "", "", "" };
+    String discard[] = { "", "", "", "", "", "", "" };
 
     switch (activationKey.getSubscriptionStatus()) {
     case COMMUNITY:
@@ -264,6 +246,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
       discard[5] = "OPSActive";
+      discard[6] = "OPSExpiredCancel";
       break;
     case ACTIVE:
       discard[0] = "CEInstance";
@@ -273,12 +256,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
+      discard[5] = "OPSExpiredCancel";
       break;
     case CANCEL:
       discard[0] = "CEInstance";
       discard[1] = "OPSActiveTitle";
       discard[2] = "OPSExpired";
       discard[3] = "OPSNoActiveYet";
+      discard[4] = "OPSExpiredCancel";
       break;
     case EXPIRED:
       discard[0] = "CEInstance";
@@ -286,6 +271,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[2] = "OPSNoActiveYet";
       discard[3] = "OPSConverted";
       discard[4] = "OPSActive";
+      if (activationKey.isTrial()) {
+        discard[5] = "OPSExpiredCancel";
+      }
       break;
     case NO_ACTIVE_YET:
       discard[0] = "CEInstance";
@@ -293,6 +281,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[2] = "OPSActiveTitle";
       discard[3] = "OPSConverted";
       discard[4] = "OPSActive";
+      discard[5] = "OPSExpiredCancel";
       break;
     }
 
@@ -493,6 +482,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
       result = msg.getType().equals("Success");
+
+      ActivationKey ak = ActivationKey.getInstance();
+      if (result && ak.isActive() && ak.isTrial() && !ak.isHeartbeatActive()) {
+        msg.setType("Warning");
+        msg.setTitle(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
+      }
     } catch (Exception e) {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
@@ -500,25 +496,12 @@ public class InstanceManagement extends HttpSecureAppServlet {
       result = false;
     }
 
-    // When reactivating a cloned instance insert a dummy heartbeat log so it is not detected as
-    // a cloned instance anymore.
-    if (HeartbeatProcess.isClonedInstance() && result) {
-      insertDummyHBLog();
-    }
-
     msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
     return result;
-
   }
 
   static void insertDummyHBLog() throws ServletException {
-    HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
-    hbLog.setClient(OBDal.getInstance().get(Client.class, "0"));
-    hbLog.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-    hbLog.setSystemIdentifier(SystemInfo.getSystemIdentifier());
-    hbLog.setDatabaseIdentifier(SystemInfo.getDBIdentifier());
-    hbLog.setMacIdentifier(SystemInfo.getMacAddress());
-    OBDal.getInstance().save(hbLog);
+    ActiveInstanceProcess.insertDummyHBLog();
   }
 }

@@ -155,36 +155,7 @@ isc.OBGrid.addProperties({
     return value;
   },
   
-  initWidget: function(){
-    // prevent the value to be displayed in case of a link
-    var i, thisGrid = this, length, field, 
-      formatCellValueFunction = function(value, record, rowNum, colNum, grid){
-        return '';
-      };
-
-    if (this.fields) {
-      length = this.fields.length;
-      for (i = 0; i < length; i++) {
-        field = this.fields[i];
-
-        if (!field.filterEditorProperties) {
-          field.filterEditorProperties = {};
-        }
-
-        field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
-
-        if (field.isLink) {
-          // store the originalFormatCellValue if not already set
-          if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
-            field.originalFormatCellValue = field.formatCellValue;
-          }
-          field.formatCellValueFunctionReplaced = true;
-          field.formatCellValue = formatCellValueFunction;
-        }
-      }
-    }
-    
-    this.filterEditorProperties = {
+  filterEditorProperties: {
 
       // http://forums.smartclient.com/showthread.php?p=73107
       // https://issues.openbravo.com/view.php?id=18557
@@ -210,7 +181,7 @@ isc.OBGrid.addProperties({
       isCheckboxField: function(){
         return false;
       },
-      
+ 
       filterImg: {
         src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
       },
@@ -245,7 +216,7 @@ isc.OBGrid.addProperties({
         }
         return ret;
       },
-
+      
       // overridden for:
       // https://issues.openbravo.com/view.php?id=18509
       editorChanged : function (item) {
@@ -253,6 +224,14 @@ isc.OBGrid.addProperties({
           actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
         
         if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
+          
+          // if someone starts typing and and or then do not filter
+          // onkeypress either
+          if (val.contains(' and') || val.contains(' or')) {
+            this.preventPerformFilterFiring();
+            return;
+          }
+          
           // now check if the item element value is only
           // an operator, if so, go away
           opDefs = isc.DataSource.getSearchOperators();
@@ -265,15 +244,22 @@ isc.OBGrid.addProperties({
                 continue;
               }
               
-              same = opDefs[prop].symbol && 
-                (opDefs[prop].symbol === val || opDefs[prop].symbol.startsWith(val));
+              same = opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
               if (same) {
+                this.preventPerformFilterFiring();
                 return;
               }
             }
           }
         }
         return this.Super('editorChanged', arguments);
+      },
+      
+      // function called to clear any pending performFilter calls
+      // earlier type actions can already have pending filter actions
+      // this deletes them
+      preventPerformFilterFiring: function() {
+        this.fireOnPause("performFilter", {}, this.fetchDelay);
       },
       
       // repair that filter criteria on fk fields can be 
@@ -294,7 +280,7 @@ isc.OBGrid.addProperties({
         if (internCriteria && this.getEditForm()) {
           // now remove anything which is not a field
           // otherwise smartclient will keep track of them and send them again
-          var fields = this.getEditForm().getFields(), length = fields.length;
+          var fields = this.getEditForm().getFields(), length = fields.length, i;
           for (i = internCriteria.length - 1; i >=0; i--) {
             prop = internCriteria[i].fieldName;
             // happens when the internCriteria[i], is again an advanced criteria
@@ -351,23 +337,52 @@ isc.OBGrid.addProperties({
         showDisabled: false,
         prompt: OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip'),
         initWidget: function(){
-          thisGrid.filterImage = this;
+          this.recordEditor.sourceWidget.filterImage = this;
           this.recordEditor.filterImage = this;
-          if (thisGrid.filterClause) {
+          if (this.recordEditor.sourceWidget.filterClause) {
             this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
             this.visibility = 'inherit';
           }
           this.Super('initWidget', arguments);
         },
         click: function(){
-          thisGrid.clearFilter();
+          this.recordEditor.sourceWidget.clearFilter();
         }
       }
-    };
+    },
+
+  initWidget: function(){
+    // prevent the value to be displayed in case of a link
+    var i, length, field,
+      formatCellValueFunction = function(value, record, rowNum, colNum, grid){
+        return '';
+      };
+
+    if (this.fields) {
+      length = this.fields.length;
+      for (i = 0; i < length; i++) {
+        field = this.fields[i];
+
+        if (!field.filterEditorProperties) {
+          field.filterEditorProperties = {};
+        }
+
+        field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
+
+        if (field.isLink) {
+          // store the originalFormatCellValue if not already set
+          if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
+            field.originalFormatCellValue = field.formatCellValue;
+          }
+          field.formatCellValueFunctionReplaced = true;
+          field.formatCellValue = formatCellValueFunction;
+        }
+      }
+    }
     
     this.Super('initWidget', arguments);
   },
-  
+
   clearFilter: function(keepFilterClause, noPerformAction){
     var i = 0, fld, length;
     if (!keepFilterClause) {
@@ -483,7 +498,7 @@ isc.OBGrid.addProperties({
     length = criteria.length;
     for (i = 0; i < length; i++) {
       var criterion = criteria[i];
-      var prop = criterion.fieldName;
+      var prop = criterion && criterion.fieldName;
       var fullPropName = prop;
       if (!prop) {
         if (this.isGridFilteredWithCriteria(criterion.criteria)) {

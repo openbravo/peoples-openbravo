@@ -479,7 +479,9 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // the toolbar shows the save, delete and undo button
   createAddToolbar: function() {
-    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties;
+    var saveButtonProperties, saveCloseButtonProperties, 
+      deleteButtonProperties, cancelButtonProperties,
+      restoreButtonProperties, restoreLayout;
 
     saveButtonProperties = {
       action: function() {
@@ -544,14 +546,43 @@ isc.OBPersonalizeFormLayout.addProperties({
       },
       keyboardShortcutId: 'ToolBar_Undo'
     };
+    
+    restoreButtonProperties = {
+      action: function() {
+        var i, standardWindow = this.view.getStandardWindow(),
+          viewDefinitions = standardWindow.getClass().originalView,
+          length = standardWindow.views.length, view, viewTabDefinition;
+        for (i = 0; i < length; i++) {
+          view = standardWindow.views[i];
+          viewTabDefinition = viewDefinitions[view.tabId];
 
+          this.view.initializing = true;
+          
+          this.view.destroyAndRemoveMembers(this.view.mainLayout);
+          this.view.mainLayout = null;
+          this.view.createAddMainLayout();
+          
+          this.view.buildFieldsTreeGrid(viewTabDefinition);
+          this.view.buildPreviewForm();
+          delete this.initializing;
+        }
+      },
+      title: OB.I18N.getLabel('OBUIAPP_RestoreDefaults'),
+      updateState: function() {
+//        this.setDisabled(this.view.hasNotChanged());
+      }
+    };
+   
     this.toolBar = isc.OBToolbar.create({
       view: this,
       leftMembers: [ isc.OBToolbarIconButton.create(saveButtonProperties),
                      isc.OBToolbarIconButton.create(saveCloseButtonProperties),
                      isc.OBToolbarIconButton.create(cancelButtonProperties),
                      isc.OBToolbarIconButton.create(deleteButtonProperties)],
-      rightMembers: []
+      rightMembers: [isc.OBToolbarTextButton.create(restoreButtonProperties)],
+      refreshCustomButtons: function(){
+        this.rightMembers[0].updateState();
+      }
     });
     this.addMember(this.toolBar);
   },
@@ -886,8 +917,10 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.setStatusBarInformation();
   },
   
-  buildFieldsTreeGrid: function() {
+  buildFieldsTreeGrid: function(personalizationData) {
     var i, prop, fld, length;
+    
+    personalizationData = personalizationData || this.personalizationData;
     
     this.fieldsLayout.destroyAndRemoveMembers(this.fieldsLayout.getMembers());
     if (this.fieldsTreeGrid) {
@@ -905,9 +938,9 @@ isc.OBPersonalizeFormLayout.addProperties({
       'colSpan', 'rowSpan', 'required', 'sectionExpanded',
       'startRow', 'name', 'hasDisplayLogic'
     ];
-    length = this.personalizationData.form.fields.length;
+    length = personalizationData.form.fields.length;
     for (i = 0; i < length; i++) {
-      fld = this.personalizationData.form.fields[i];
+      fld = personalizationData.form.fields[i];
       for (prop in fld) {
         if (fld.hasOwnProperty(prop) && 
             !this.personalizationDataProperties.contains(prop)) {
@@ -921,7 +954,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.fieldsTreeGrid = isc.OBPersonalizationTreeGrid.create({
       // make a clone so that the original personalization data is not
       // updated, when doing cancel, the original is restored
-      fieldData: isc.shallowClone(this.personalizationData.form.fields),
+      fieldData: isc.shallowClone(personalizationData.form.fields),
       personalizeForm: this,
       selectionUpdated: function(record, recordList) {
         this.personalizeForm.selectionUpdated(record, recordList);

@@ -38,6 +38,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The component responsible for generating the static part of the application js file.
@@ -178,6 +179,13 @@ public class ApplicationComponent extends BaseTemplateComponent {
     strVersion += " - ";
     strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
         "en_US");
+
+    if (ak.isTrial()) {
+      strVersion += " - ";
+      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial", OBContext
+          .getOBContext().getLanguage().getLanguage());
+    }
+
     strVersion += " - ";
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;

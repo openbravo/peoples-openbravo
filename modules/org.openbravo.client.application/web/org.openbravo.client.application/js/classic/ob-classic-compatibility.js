@@ -337,6 +337,8 @@
       // * {{{theOpener}}} type: Window Object - the window object of the opener
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // of the popup. Used in window.open to allow IE know which is the opener
+      // 
+      // returns the created OBClassicPopupWindow
       open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams){
         if (showMinimizeControl !== false) {
           showMinimizeControl = true;
@@ -368,6 +370,7 @@
         cPopup.show();
         cobcomp.Popup.postOpen(cPopup, postParams);
         OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
+        return cPopup;
       },
 
       // ** {{{ Popup.postOpen(cPopup, postParams) }}} **
@@ -443,9 +446,26 @@
       //
       // Parameters:
       // * {{{name}}} type: String - the name of the window
-      close: function(name){
+      close: function(name, cancelEvent){
+        var activateView;
+        
         name = name + '_' + cobcomp.Popup.secString;
+        activateView = window[name].activeViewWhenClosed;
         window[name].closeClick();
+
+        if (!cancelEvent && activateView) {
+          activateView.setAsActiveView();
+        }
+      },
+      
+      // ** {{{ Popup.getPopup(name) }}} **
+      //
+      // Get the popup instance.
+      //
+      // Parameters:
+      // * {{{name}}} type: String - the name of the window
+      getPopup: function(name) {
+        return window[name + '_' + cobcomp.Popup.secString];
       },
 
       // ** {{{ Popup.close(name, width, height) }}} **

@@ -38,6 +38,7 @@ isc.OBStandardWindow.addClassProperties({
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
+
   view: null,
   
   viewProperties: null,
@@ -93,7 +94,24 @@ isc.OBStandardWindow.addProperties({
       this.setPersonalization(this.getClass().personalization);
     }
   },
-  
+
+  openProcess: function (params) {
+    var parts = this.getPrototype().Class.split('_'), 
+        len = parts.length,
+        className = '_',
+        tabSet = OB.MainView.TabSet;
+    
+    if(params.windowId) {
+      className = className + params.windowId;
+      if(len === 3) {
+        // debug mode, we have added _timestamp
+        className = className + '_' + parts[2];
+      }
+      this.runningProcess = isc[className].create({parentWindow: this});
+      tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+    }
+  },
+
   readWindowSettings: function() {
     var standardWindow = this;
     
@@ -129,9 +147,11 @@ isc.OBStandardWindow.addProperties({
   setPersonalization: function(personalization) {
     var i, defaultView, persDefaultValue, views, length;
     
-    if (personalization.forms) {
-      OB.Personalization.personalizeWindow(personalization.forms, this);
+    // cache the original view so that it can be restored
+    if (!this.getClass().originalView) {
+      this.getClass().originalView = OB.Personalization.getViewDefinition(this, '', false);
     }
+
     this.getClass().personalization = personalization;
     
     persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);

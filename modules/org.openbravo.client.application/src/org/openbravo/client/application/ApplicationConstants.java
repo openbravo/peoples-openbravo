@@ -47,6 +47,8 @@ public class ApplicationConstants {
   public static final String PROPERTIES_COMPONENT_ID = "Properties";
   public static final String PROPERTY_PARAMETER = "property";
 
+  public static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
+
   static {
     try {
       ACTION_RESULT_SUCCESS = new JSONObject("{result: 'success'}");

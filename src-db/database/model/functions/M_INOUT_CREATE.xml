@@ -261,7 +261,7 @@
              o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
              d.DocSubTypeSO,
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
-           ORDER BY o.PriorityRule
+           ORDER BY o.PriorityRule,o.DocumentNo
           ) LOOP
           v_DocumentNo:='';
           v_order_count := v_order_count +1;

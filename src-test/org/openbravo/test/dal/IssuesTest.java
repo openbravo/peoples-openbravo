@@ -32,9 +32,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
@@ -60,6 +63,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
 import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -124,12 +128,30 @@ import org.openbravo.test.base.BaseTest;
  * 
  * https://issues.openbravo.com/view.php?id=15218: error when closing transaction
  * 
+ * https://issues.openbravo.com/view.php?id=18688: Ability to call database functions from HQL query
+ * 
  * @author mtaal
  * @author iperdomo
  */
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * https://issues.openbravo.com/view.php?id=18688
+   */
+  public void test18688() {
+    final Session session = OBDal.getInstance().getSession();
+    OBDal.getInstance().registerSQLFunction("ad_column_identifier_std",
+        new StandardSQLFunction("ad_column_identifier_std", StandardBasicTypes.STRING));
+    final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
+        + Category.ENTITY_NAME + " bc";
+    final Query qry = session.createQuery(qryStr);
+    for (Object o : qry.list()) {
+      final Object[] os = (Object[]) o;
+      assertTrue(os[1] instanceof String && os[1].toString().length() > 0);
+    }
+  }
 
   /**
    * https://issues.openbravo.com/view.php?id=13749

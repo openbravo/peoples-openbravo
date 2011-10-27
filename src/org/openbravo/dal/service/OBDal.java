@@ -26,7 +26,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -82,6 +85,15 @@ public class OBDal implements OBSingleton {
   public void enableActiveFilter() {
     SessionHandler.getInstance().getSession().enableFilter("activeFilter")
         .setParameter("activeParam", "Y");
+  }
+
+  /**
+   * Register a sql function in the session factory, after this call it can be used by queries.
+   */
+  public void registerSQLFunction(String name, SQLFunction function) {
+    final Dialect dialect = ((SessionFactoryImpl) SessionHandler.getInstance().getSession()
+        .getSessionFactory()).getDialect();
+    dialect.getFunctions().put(name, function);
   }
 
   /**

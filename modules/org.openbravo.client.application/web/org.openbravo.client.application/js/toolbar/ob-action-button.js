@@ -22,78 +22,96 @@ OB.ActionButton.executingProcess = null;
 
 isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 
-isc.OBToolbarActionButton.addProperties( {
+isc.OBToolbarActionButton.addProperties({
   visible: false,
   modal: true,
   contextView: null,
   labelValue: {},
-  
-  action : function() {
+
+  action: function () {
     this.runProcess();
   },
 
-  runProcess : function() {
+  runProcess: function () {
     var theView = this.view,
-      record, rowNum;
+        record, rowNum, actionObject;
 
-    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords().length === 1){
+    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords().length === 1) {
       // Keep current selection that might be lost in autosave
       record = theView.viewGrid.getSelectedRecord();
       rowNum = theView.viewGrid.getRecordIndex(record);
     }
-    
-    var actionObject = {
-        target: this,
-        method: this.doAction,
-        parameters: [ rowNum ]
-      };
+
+    actionObject = {
+      target: this,
+      method: this.doAction,
+      parameters: [rowNum]
+    };
+
     theView.standardWindow.doActionAfterAutoSave(actionObject);
   },
-  
-  doAction: function(rowNum){
-    var theView = this.contextView, param;
+
+  doAction: function (rowNum) {
+    var theView = this.contextView,
+        me = this,
+        standardWindow = this.view.standardWindow,
+        param, allProperties, sessionProperties, callbackFunction, popupParams;
 
     if (rowNum && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
       theView.viewGrid.selectRecord(rowNum);
     }
 
-    var allProperties = theView.getContextInfo(false, true, false, true);
-    var sessionProperties = theView.getContextInfo(true, true, false, true);
-    var me = this, callbackFunction;
+    allProperties = theView.getContextInfo(false, true, false, true);
+    sessionProperties = theView.getContextInfo(true, true, false, true);
+
 
     OB.ActionButton.executingProcess = this;
 
     for (param in allProperties) {
       // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns 
       // the transformed values.
-      
       if (allProperties.hasOwnProperty(param) && typeof allProperties[param] === 'boolean') {
-        allProperties[param] = allProperties[param]?'Y':'N';
+        allProperties[param] = allProperties[param] ? 'Y' : 'N';
       }
     }
-    
+
     allProperties.inpProcessId = this.processId;
-    
-    if (this.modal){
+
+    // obuiapp_process definition
+    if (this.newDefinition) {
+      callbackFunction = function () {
+        standardWindow.openProcess({
+          processId: me.processId,
+          windowId: me.windowId
+        });
+      };
+
+      theView.setContextInfo(sessionProperties, callbackFunction, true);
+      return;
+    }
+
+    // ad_process definition handling
+    if (this.modal) {
       allProperties.Command = this.command;
       callbackFunction = function(){
-        OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
+        var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
+        popup.activeViewWhenClosed = theView;
       };
     } else {
-      var popupParams = {
-            viewId: 'OBPopupClassicWindow',
-            obManualURL: this.obManualURL, 
-            processId: this.id,
-            id: this.id,
-            popup: true,
-            command: this.command,
-            tabTitle: this.title,
-            postParams: allProperties,
-            height: 600, 
-            width: 900
-          };
-      callbackFunction = function(){
+      popupParams = {
+        viewId: 'OBPopupClassicWindow',
+        obManualURL: this.obManualURL,
+        processId: this.id,
+        id: this.id,
+        popup: true,
+        command: this.command,
+        tabTitle: this.title,
+        postParams: allProperties,
+        height: 600,
+        width: 900
+      };
+      callbackFunction = function () {
         OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
       };
     }

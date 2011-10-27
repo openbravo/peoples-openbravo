@@ -253,6 +253,16 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             "web/org.openbravo.client.application/js/personalization/ob-manage-views-toolbar.js",
             false));
 
+    // Process
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.client.application/js/process/ob-pick-and-execute-datasource.js",
+            false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-pick-and-execute-grid.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-pick-and-execute-view.js", false));
+
     // Styling
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"

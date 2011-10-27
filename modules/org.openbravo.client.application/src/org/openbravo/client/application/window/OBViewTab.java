@@ -28,11 +28,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.RefWindow;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -41,6 +45,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -52,6 +57,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
@@ -63,7 +69,14 @@ import org.openbravo.utils.FormatUtilities;
  */
 public class OBViewTab extends BaseTemplateComponent {
 
-  private static final String TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
+  private static final Logger log = Logger.getLogger(OBViewTab.class);
+  private static final String DEFAULT_TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
+  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+
+  static {
+    // Map: WindowType - Template
+    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF808181330BD14F01330BD34EA00008");
+  }
 
   private Entity entity;
   private Tab tab;
@@ -75,26 +88,35 @@ public class OBViewTab extends BaseTemplateComponent {
   private List<IconButton> iconButtons = null;
   private boolean buttonSessionLogic;
   private boolean isRootTab;
+  private String uniqueString = "" + System.currentTimeMillis();
 
   @Inject
   private OBViewFieldHandler fieldHandler;
 
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
-  private ComponentProvider componentProvider;
+  private ComponentProvider dsComponentProvider;
 
   public String getDataSourceJavaScript() {
     final String dsId = getDataSourceId();
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBPickAndExecuteDataSource");
+    } else {
+      dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    }
     dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
-    final Component component = componentProvider.getComponent(dsId, dsParameters);
+    final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }
 
   protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
+    final String windowType = tab.getWindow().getWindowType();
+    if (TEMPLATE_MAP.containsKey(windowType)) {
+      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(windowType));
+    }
+    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
   public OBViewFieldHandler getFieldHandler() {
@@ -351,6 +373,25 @@ public class OBViewTab extends BaseTemplateComponent {
     return buttonSessionLogic;
   }
 
+  public void setUniqueString(String uniqueString) {
+    this.uniqueString = uniqueString;
+  }
+
+  public String getProcessViews() {
+    StringBuilder views = new StringBuilder();
+    for (ButtonField f : getButtonFields()) {
+      if ("".equals(f.getWindowId())) {
+        continue;
+      }
+      final StandardWindowComponent processWindow = createComponent(StandardWindowComponent.class);
+      processWindow.setParameters(getParameters());
+      processWindow.setUniqueString(uniqueString);
+      processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
+      views.append(processWindow.generate()).append("\n");
+    }
+    return views.toString();
+  }
+
   public class ButtonField {
     private String id;
     private String label;
@@ -363,6 +404,8 @@ public class OBViewTab extends BaseTemplateComponent {
     private boolean sessionLogic = false;
     private boolean modal = true;
     private String processId = "";
+    private String windowId = "";
+    private boolean newDefinition = false;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -373,8 +416,39 @@ public class OBViewTab extends BaseTemplateComponent {
       autosave = column.isAutosave();
 
       // Define command
-      Process process = column.getProcess();
-      if (process != null) {
+      Process process = null;
+
+      if (column.getOBUIAPPProcess() != null) {
+        // new process definition has more precedence
+        org.openbravo.client.application.Process newProcess = column.getOBUIAPPProcess();
+        processId = newProcess.getId();
+        url = "/";
+        command = "NEW";
+        newDefinition = true;
+
+        if ("OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern())) {
+          // TODO: modal should be a parameter in the process definition?
+          modal = false;
+
+          // figuring out the windowId
+          for (org.openbravo.client.application.Parameter param : newProcess
+              .getOBUIAPPParameterList()) {
+            if (param.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
+              OBCriteria<RefWindow> obcRefWindow = OBDal.getInstance().createCriteria(
+                  RefWindow.class);
+              obcRefWindow.add(Restrictions.eq(RefWindow.PROPERTY_REFERENCE,
+                  param.getReferenceSearchKey()));
+              if (obcRefWindow.list().size() > 0) {
+                setWindowId(obcRefWindow.list().get(0).getWindow().getId());
+                break;
+              }
+              log.error("AD definition error: process parameter (" + param.getId()
+                  + ") is using Window Reference without a window");
+            }
+          }
+        }
+      } else if (column.getProcess() != null) {
+        process = column.getProcess();
         String manualProcessMapping = null;
         for (ModelImplementation impl : process.getADModelImplementationList()) {
           if (impl.isDefault()) {
@@ -502,6 +576,22 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getProcessId() {
       return processId;
+    }
+
+    public boolean isNewDefinition() {
+      return newDefinition;
+    }
+
+    public void setNewDefinition(boolean newDefinition) {
+      this.newDefinition = newDefinition;
+    }
+
+    public String getWindowId() {
+      return windowId;
+    }
+
+    public void setWindowId(String windowId) {
+      this.windowId = windowId;
     }
 
     public class Value {

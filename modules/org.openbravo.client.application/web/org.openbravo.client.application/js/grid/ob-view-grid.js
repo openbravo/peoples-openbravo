@@ -170,7 +170,6 @@ isc.OBViewGrid.addProperties({
     neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
-    criteriaPolicy: 'dropOnChange',
 
     // overridden to update the context/request properties for the fetch
     fetchRemoteData : function (serverCriteria, startRow, endRow) {
@@ -473,9 +472,6 @@ isc.OBViewGrid.addProperties({
     
     this.view = view;
     this.editFormDefaults.view = view;
-    if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
-      this.setViewState(this.view.standardWindow.viewState[this.view.tabId]);
-    }
     
     if (this.getField(this.view.parentProperty)) {
       this.getField(this.view.parentProperty).canFilter = false;

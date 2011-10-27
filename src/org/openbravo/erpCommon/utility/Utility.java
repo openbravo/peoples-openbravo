@@ -131,6 +131,7 @@ public class Utility {
       strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
       StringBuilder url = new StringBuilder(COMMUNITY_BRANDING_URL);
       url.append("?licenseClass=" + strLicenseClass);
+      url.append("&trial=" + (ActivationKey.getInstance().isTrial() ? "Y" : "N"));
       url.append("&version=" + OBVersion.getInstance().getMajorVersion());
       url.append("&uimode=" + uiMode);
       url.append("&language=" + OBContext.getOBContext().getLanguage().getLanguage());
