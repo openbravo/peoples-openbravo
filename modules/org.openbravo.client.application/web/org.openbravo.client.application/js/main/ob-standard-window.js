@@ -39,8 +39,6 @@ isc.OBStandardWindow.addClassProperties({
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
   
-  ownMainTabHandling: true,
-  
   view: null,
   
   viewProperties: null,
@@ -169,7 +167,6 @@ isc.OBStandardWindow.addProperties({
       if (defaultView) {
         OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
       }
-      this.addToMainTab();
       
       this.getClass().personalization.views.sort(function(v1, v2) {
         var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
@@ -183,17 +180,6 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
-  addToMainTab: function() {
-    if (this.mainTabSet) {
-      this.mainTabSet.updateTab(this.mainTabId, this);
-
-      // and show it
-      this.mainTabSet.selectTab(this.mainTabId);
-    }
-    // has already been done
-    this.ownMainTabHandling = false;
-  },
-  
   // Update the personalization record which is stored 
   updateFormPersonalization: function(view, formPersonalization) {
     if (!this.getClass().personalization) {
