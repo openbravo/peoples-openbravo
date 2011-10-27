@@ -387,10 +387,10 @@
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <NAME><![CDATA[EM_APRM_Payment Description]]></NAME>
-<!--18096D8809024E67A36E636EA0D9D0E7-->  <DESCRIPTION><![CDATA[Invoice's Reference to be automatically included into the Payment Description]]></DESCRIPTION>
-<!--18096D8809024E67A36E636EA0D9D0E7-->  <HELP><![CDATA[Invoice's reference to be automatically included into the payment description. Possible values are:
-- Invoice document number (default)
-- Supplier reference, which is defined in the invoice's header]]></HELP>
+<!--18096D8809024E67A36E636EA0D9D0E7-->  <DESCRIPTION><![CDATA[Purchase Invoice's Reference to be automatically included into the Payment Description.]]></DESCRIPTION>
+<!--18096D8809024E67A36E636EA0D9D0E7-->  <HELP><![CDATA[Purchase Invoice's reference to be automatically included into the payment description. Possible values are:
+- Invoice document number (default).
+- Supplier reference, which is defined in the invoice's header.]]></HELP>
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <COLUMNNAME><![CDATA[EM_Aprm_Payment_Desc]]></COLUMNNAME>
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <AD_TABLE_ID><![CDATA[228]]></AD_TABLE_ID>
 <!--18096D8809024E67A36E636EA0D9D0E7-->  <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>

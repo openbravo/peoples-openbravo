@@ -20,7 +20,6 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
-import java.security.InvalidParameterException;
 import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -948,20 +947,17 @@ public class FIN_Utility {
   public static String getDesiredDocumentNo(final Organization organization, final Invoice invoice) {
     String invoiceDocNo;
     try {
+      // By default take the invoice document number
+      invoiceDocNo = invoice.getDocumentNo();
+
       final String paymentDescription = organization.getOrganizationInformationList().get(0)
           .getAPRMPaymentDescription();
-      if (paymentDescription.equals("Invoice Document Number")) {
-        invoiceDocNo = invoice.getDocumentNo();
-      } else if (paymentDescription.equals("Supplier Reference")) {
+      // In case of a purchase invoice and the Supplier Reference is selected use Reference
+      if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
         invoiceDocNo = invoice.getOrderReference();
-        if (invoiceDocNo.length() == 0) {
+        if (invoiceDocNo == null) {
           invoiceDocNo = invoice.getDocumentNo();
         }
-      } else {
-        throw new InvalidParameterException(
-            "Not supported parameter: "
-                + paymentDescription
-                + ". Review Payment description reference. Possible values are: 'Invoice Document Number' and 'Supplier Reference'.");
       }
     } catch (Exception e) {
       invoiceDocNo = invoice.getDocumentNo();
