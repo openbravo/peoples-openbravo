@@ -51,7 +51,7 @@ isc.OBPickAndExecuteView.addProperties({
       //FIXME: Move to AD_Message
       title: 'Done',
       click: function () {
-        console.log(view.viewGrid.getSelectedRecords());
+        // console.log(view.viewGrid.getSelectedRecords());
       }
     });
 
