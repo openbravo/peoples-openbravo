@@ -201,7 +201,10 @@
             DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
             SEQNO, SORTNO, ISSAMELINE,
             ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID, 
-            ShowInRelation, Grid_Seqno
+            ShowInRelation, Grid_Seqno,
+            startinoddcolumn,startnewline, em_obuisel_outfield_id,
+            isfirstfocusedfield, isshowninstatusbar, onchangefunction,
+            em_obuiapp_colspan,em_obuiapp_rowspan
           )
           VALUES
           (
@@ -212,8 +215,11 @@
             Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
             Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
             Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_dest_ad_module_id,
-            Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno
-          );
+            Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno,
+            Cur_Fields.Startinoddcolumn, Cur_Fields.Startnewline, Cur_Fields.EM_Obuisel_Outfield_ID,
+            Cur_Fields.isFirstFocusedField, Cur_Fields.isShownInStatusBar, Cur_Fields.onchangefunction,
+            Cur_Fields.em_obuiapp_colspan,Cur_Fields.em_obuiapp_rowspan    
+            );
 
         -- update dest translations from source translations
         UPDATE AD_Field_Trl

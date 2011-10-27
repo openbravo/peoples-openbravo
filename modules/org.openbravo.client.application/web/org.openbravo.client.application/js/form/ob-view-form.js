@@ -97,7 +97,7 @@ OB.ViewFormProperties = {
   
   getStatusBarFields: function() {
     var statusBarFields = [[],[],[],[],[], []], i, item, title, refColumnName, targetEntity, value, displayedValue,
-      length = this.statusBarFields.length;
+      length = this.statusBarFields.length, sourceWindowId;
     for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
       title = item.getTitle();
@@ -1198,7 +1198,13 @@ OB.ViewFormProperties = {
   },
   
   undo: function(){
-    var i, flds = this.getFields(), length = flds.length;
+    var i, flds = this.getFields(), length = flds.length, 
+      doClose = !this.hasChanged;
+    
+    if (doClose) {
+      this.doClose();
+      return;
+    }
     
     // also restore the valuemaps
     for (i = 0; i < length; i++) {
@@ -1217,6 +1223,15 @@ OB.ViewFormProperties = {
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());      
     }
     this.view.toolBar.updateButtonState(true);
+  },
+  
+  doClose: function() {
+    this.view.switchFormGridVisibility();
+    this.view.messageBar.hide();
+    if (this.isNew) {
+      this.view.refreshChildViews();
+    }
+    this.view.standardWindow.setDirtyEditForm(null);
   },
   
   autoSave: function(){
@@ -1645,5 +1660,18 @@ OB.ViewFormProperties = {
         ds = null;
       }
     }
+  },
+  
+  allRequiredFieldsSet: function() {
+    var i, item, length = this.getItems().length, value,
+      undef, nullValue = null;
+    for (i = 0; i < length; i++) {
+      item = this.getItems()[i];
+      value = this.getValue(item);
+      if (this.isRequired(item) && value !== false && value !== 0 && !value) {
+        return false;
+      }
+    }
+    return true;
   }
 };

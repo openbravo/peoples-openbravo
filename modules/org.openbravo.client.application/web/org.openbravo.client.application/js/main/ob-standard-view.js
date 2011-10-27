@@ -228,6 +228,10 @@ isc.OBStandardView.addProperties({
     this.toolBar.updateButtonState(true);
   },
   
+  show: function() {
+    this.Super('show', arguments);
+  },
+  
   destroy: function() {
     // destroy the datasource
     if (this.dataSource) {

@@ -87,6 +87,7 @@
         AND M_PRODUCTIONLINE.C_UOM_ID = C_UOM.C_UOM_ID
         AND M_PRODUCTION_ID = v_Production_Id     
         AND M_PRODUCTIONPLAN.line < v_Line
+	AND M_PRODUCTIONLINE.movementqty > 0
         AND M_PRODUCTIONLINE.M_PRODUCT_ID = v_product_old
         AND M_PRODUCTIONLINE.C_UOM_ID = v_UOM_Old
         AND (v_Product_UOM_old IS NULL OR M_PRODUCTIONLINE.M_Product_UOM_id = v_Product_UOM_old)

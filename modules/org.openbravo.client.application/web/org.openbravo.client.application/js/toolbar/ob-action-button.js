@@ -94,8 +94,9 @@ isc.OBToolbarActionButton.addProperties({
     // ad_process definition handling
     if (this.modal) {
       allProperties.Command = this.command;
-      callbackFunction = function () {
-        OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
+      callbackFunction = function(){
+        var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
+        popup.activeViewWhenClosed = theView;
       };
     } else {
       popupParams = {
@@ -118,34 +119,32 @@ isc.OBToolbarActionButton.addProperties({
     //Force setting context info, it needs to be forced in case the current record has just been saved.
     theView.setContextInfo(sessionProperties, callbackFunction, true);
   },
-
-  closeProcessPopup: function (newWindow) {
+  
+  closeProcessPopup: function(newWindow) {
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh, windowParams;
+        afterRefresh = function(){
+          // Refresh context view
+          contextView.getTabMessage();
+          currentView.toolBar.refreshCustomButtons();
 
-    afterRefresh = function () {
-      // Refresh context view
-      contextView.getTabMessage();
-      currentView.toolBar.refreshCustomButtons();
+          if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+            // Executing an action defined in parent tab, current tab is maximized,
+            // let's set half for each in order to see the message
+            contextView.setHalfSplit();
+          }
 
-      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
-        // Executing an action defined in parent tab, current tab is maximized,
-        // let's set half for each in order to see the message
-        contextView.setHalfSplit();
-      }
-
-      // Refresh in order to show possible new records
-      currentView.refresh(null, false, true);
-    };
+          // Refresh in order to show possible new records
+          currentView.refresh(null, false, true);
+        };
 
     if (currentView.parentView) {
       currentView.parentView.setChildsToRefresh();
     } else {
       currentView.setChildsToRefresh();
     }
-
+        
     if (currentView.viewGrid.getSelectedRecord()) {
       // There is a record selected, refresh it and its parent
       currentView.refreshCurrentRecord(afterRefresh);
@@ -158,64 +157,61 @@ isc.OBToolbarActionButton.addProperties({
 
     if (newWindow) {
       if (OB.Application.contextUrl && newWindow.indexOf(OB.Application.contextUrl) !== -1) {
-        newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length - 1);
+        newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length-1);
       }
 
-      if (!newWindow.startsWith('/')) {
-        newWindow = '/' + newWindow;
+      if (!newWindow.startsWith('/')){
+        newWindow = '/'+newWindow;
       }
 
       if (newWindow.startsWith(contextView.mapping250)) {
         // Refreshing current tab, do not open it again.
         return;
       }
-      windowParams = {
-        viewId: this.title,
-        tabTitle: this.title,
-        obManualURL: newWindow
-      };
+      var windowParams = {
+          viewId : this.title,
+          tabTitle: this.title,
+          obManualURL : newWindow  
+        };
       OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
     }
   },
-
-  updateState: function (record, hide, context) {
-    var currentValues = record || this.contextView.getCurrentValues() || {},
-        readonly, buttonValue, label;
-
+  
+  updateState: function(record, hide, context) {
+    var currentValues = record || this.contextView.getCurrentValues() || {};
     if (hide || !record) {
       this.hide();
       return;
     }
-
-    context = context || this.contextView.getContextInfo(false, true, true);
-
-
+    
+    context = context || this.contextView.getContextInfo(false, true, true); 
+    
+    
     OB.Utilities.fixNull250(currentValues);
-
+    
     this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
-
+    
     // Even visible is correctly set, it is necessary to execute show() or hide()
-    if (this.visible) {
+    if (this.visible){
       this.show();
     } else {
       this.hide();
     }
-
-    readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
-
+    
+    var readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
     if (readonly) {
       this.disable();
     } else {
       this.enable();
     }
-
-    buttonValue = record[this.property];
+    
+    var buttonValue = record[this.property];
     if (buttonValue === '--') {
       buttonValue = 'CL';
     }
-
-    label = this.labelValue[buttonValue];
-    if (!label) {
+    
+    var label = this.labelValue[buttonValue];
+    if (!label){
       if (this.realTitle) {
         label = this.realTitle;
       } else {
@@ -225,4 +221,5 @@ isc.OBToolbarActionButton.addProperties({
     this.realTitle = label;
     this.setTitle(label);
   }
+  
 });

@@ -70,6 +70,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     final String strPass = vars.getStringParameter("password");
 
     if (StringUtils.isEmpty(strUser)) {
+      // redirects to the menu or the menu with the target
+      setTargetInfoInVariables(request, variables);
       return null; // just give up, return null
     }
 
@@ -109,23 +111,28 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       return null;
     } else {
       // redirects to the menu or the menu with the target
-      String strTarget = request.getRequestURL().toString();
-      String qString = request.getQueryString();
-      String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
-
-      if (!strTarget.endsWith("/security/Menu.html")) {
-        variables.setSessionValue("targetmenu", strTarget);
-      }
-
-      // Storing target string to redirect after a successful login
-      variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
-          + (qString != null && !qString.equals("") ? "?" + qString : ""));
-      if (qString != null && !qString.equals("")) {
-        variables.setSessionValue("targetQueryString", qString);
-      }
+      setTargetInfoInVariables(request, variables);
     }
 
     return userId;
+  }
+
+  private void setTargetInfoInVariables(HttpServletRequest request, VariablesHistory variables) {
+    // redirects to the menu or the menu with the target
+    String strTarget = request.getRequestURL().toString();
+    String qString = request.getQueryString();
+    String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
+
+    if (!strTarget.endsWith("/security/Menu.html")) {
+      variables.setSessionValue("targetmenu", strTarget);
+    }
+
+    // Storing target string to redirect after a successful login
+    variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
+        + (qString != null && !qString.equals("") ? "?" + qString : ""));
+    if (qString != null && !qString.equals("")) {
+      variables.setSessionValue("targetQueryString", qString);
+    }
   }
 
   private String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {

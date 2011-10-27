@@ -1,3 +1,5 @@
+/*global setWindowEditing, readOnlyLogic, logChanges, setOBTabBehavior, setWindowElementFocus, disableDefaultAction, displayLogic */
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License

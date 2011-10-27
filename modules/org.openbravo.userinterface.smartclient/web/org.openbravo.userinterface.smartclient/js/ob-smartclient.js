@@ -470,6 +470,15 @@ isc.FormItem.addProperties({
     }
   },
   
+  // prevent a jscript error in ie when closing a tab
+  // https://issues.openbravo.com/view.php?id=18890
+  blurItem: function() {
+    if (!this.form || this.form.destroyed) {
+      return;
+    }
+    this.Super('blurItem', arguments);
+  },
+
   isDisabled: function(ignoreTemporaryDisabled){
     // disabled if the property can not be updated and the form or record is new
     // explicitly comparing with false as it is only set for edit form fields
@@ -646,6 +655,14 @@ isc.screenReader = false;
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({
+  
+  // workaround for this issue:
+  // http://forums.smartclient.com/showthread.php?p=75186#post75186
+  // https://issues.openbravo.com/view.php?id=18841
+  compareAdvancedCriteria: function() {
+    return 1;
+  },
+  
   _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,
   fieldMatchesFilter: function(fieldValue, filterValue, requestProperties) {
     if (fieldValue && typeof fieldValue === 'string') {

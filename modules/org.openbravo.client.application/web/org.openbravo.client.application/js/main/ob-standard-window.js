@@ -147,9 +147,11 @@ isc.OBStandardWindow.addProperties({
   setPersonalization: function(personalization) {
     var i, defaultView, persDefaultValue, views, length;
     
-    if (personalization.forms) {
-      OB.Personalization.personalizeWindow(personalization.forms, this);
+    // cache the original view so that it can be restored
+    if (!this.getClass().originalView) {
+      this.getClass().originalView = OB.Personalization.getViewDefinition(this, '', false);
     }
+
     this.getClass().personalization = personalization;
     
     persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);

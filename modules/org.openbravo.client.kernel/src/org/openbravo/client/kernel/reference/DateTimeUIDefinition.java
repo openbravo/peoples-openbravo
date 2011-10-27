@@ -40,6 +40,10 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     return "OBDateTimeItem";
   }
 
+  protected String getClientFormatObject() {
+    return "OB.Format.dateTime";
+  }
+
   @Override
   public synchronized Object createFromClassicString(String value) {
     try {

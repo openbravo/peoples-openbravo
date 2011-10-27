@@ -1,3 +1,5 @@
+/*global $LAB,internetConnection */
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
