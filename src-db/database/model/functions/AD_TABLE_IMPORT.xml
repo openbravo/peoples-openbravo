@@ -310,7 +310,7 @@
             ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
             ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
             AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR, 
-            POSITION, aD_module_id
+            POSITION, imagesizevaluesaction, aD_module_id
           )
           VALUES
           (v_NextNo, '0', '0', 'Y',
@@ -320,7 +320,7 @@
          (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
           v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
           null, v_DefaultValue, v_IsSessionAttr,
-          Cur_Column.COLUMN_ID, v_module_id);
+          Cur_Column.COLUMN_ID, 'N', v_module_id);
           --
 	  v_count:=v_count + 1;
       ELSE
