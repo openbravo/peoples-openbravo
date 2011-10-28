@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.math.BigDecimal;
 
+import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
@@ -28,6 +29,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.AttributeUse;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.model.manufacturing.processplan.OperationProduct;
 import org.openbravo.model.manufacturing.processplan.OperationProductAttribute;
 import org.openbravo.scheduling.Process;
@@ -50,6 +52,7 @@ public class SequenceProductCreate implements Process {
       final String qty = (String) bundle.getParams().get("qty");
       final ConnectionProvider conn = bundle.getConnection();
       final String copyAttribute = (String) bundle.getParams().get("copyattribute");
+      final String productCategoryId = (String) bundle.getParams().get("mProductCategoryId");
 
       // Create new product copy of selected
       OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
@@ -66,6 +69,11 @@ public class SequenceProductCreate implements Process {
       newProduct.setProductAccountsList(null);
       newProduct.setProductTrlList(null);
 
+      // Product Category
+      ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
+      if (pcategory != null)
+        newProduct.setProductCategory(pcategory);
+
       // Save product
       OBDal.getInstance().save(newProduct);
 
@@ -78,6 +86,7 @@ public class SequenceProductCreate implements Process {
       newOpProduct.setMASequence(opProduct.getMASequence());
       newOpProduct.setClient(opProduct.getClient());
       newOpProduct.setOrganization(opProduct.getOrganization());
+      newOpProduct.setLineNo(getLineNum(opProduct.getMASequence().getId()));
       newOpProduct.setProduct(newProduct);
       newOpProduct.setQuantity(new BigDecimal(qty));
       newOpProduct.setUOM(newProduct.getUOM());
@@ -159,6 +168,18 @@ public class SequenceProductCreate implements Process {
 
     OBDal.getInstance().save(opProductAtt);
 
+  }
+
+  private static Long getLineNum(String SequenceId) throws Exception {
+    String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= '"
+        + SequenceId + "'";
+    Query q = OBDal.getInstance().getSession().createQuery(hql);
+
+    if (q.list().size() > 0) {
+      return new Long(q.list().get(0).toString());
+    } else {
+      return 0L;
+    }
   }
 
 }
