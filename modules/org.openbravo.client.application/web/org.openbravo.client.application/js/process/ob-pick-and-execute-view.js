@@ -155,7 +155,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     allProperties._selection = this.viewGrid.getSelectedRecords();
 
-    OB.RemoteCallManager.call('org.openbravo.example.pne.CopyLinesActionHandler', allProperties, {
+    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
       processId: this.processId,
       windowId: this.windowId
     }, function () {

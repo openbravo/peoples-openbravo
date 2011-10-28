@@ -423,7 +423,7 @@ public class OBViewTab extends BaseTemplateComponent {
         org.openbravo.client.application.Process newProcess = column.getOBUIAPPProcess();
         processId = newProcess.getId();
         url = "/";
-        command = "NEW";
+        command = newProcess.getJavaClassName();
         newDefinition = true;
 
         if ("OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern())) {

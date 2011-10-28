@@ -107,7 +107,11 @@ isc.OBStandardWindow.addProperties({
         // debug mode, we have added _timestamp
         className = className + '_' + parts[2];
       }
-      this.runningProcess = isc[className].create({parentWindow: this});
+      this.runningProcess = isc[className].create({parentWindow: this,
+        windowId: params.windowId,
+        processId: params.processId,
+        actionHandler: params.actionHandler
+      });
       tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
     }
   },
