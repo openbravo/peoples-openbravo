@@ -30,6 +30,7 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -42,14 +43,16 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
-    JSONObject jsonRequest = null;
-    try {
-      jsonRequest = new JSONObject(content);
 
-      final String processId = jsonRequest.getString("processId");
+    try {
+      OBContext.setAdminMode();
+
+      final String processId = (String) parameters.get("processId");
       Check.isNotNull(processId, "Process ID missing in request");
 
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
+      Check.isNotNull(processDefinition, "Not valid process id");
+
       for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
         if (param.isFixed() && param.isEvaluateFixedValue()) {
           parameters.put(param.getDBColumnName(),
@@ -57,11 +60,14 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         }
       }
 
+      return doExecute(parameters, content);
+
     } catch (Exception e) {
       log.error("Error trying to execute process request: " + e.getMessage(), e);
-      return null;
+      return new JSONObject();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return doExecute(parameters, content);
   }
 
   /*

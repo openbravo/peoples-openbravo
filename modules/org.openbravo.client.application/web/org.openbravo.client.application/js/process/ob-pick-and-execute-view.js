@@ -51,7 +51,7 @@ isc.OBPickAndExecuteView.addProperties({
       //FIXME: Move to AD_Message
       title: 'Done',
       click: function () {
-        // console.log(view.viewGrid.getSelectedRecords());
+        view.doProcess();
       }
     });
 
@@ -146,6 +146,21 @@ isc.OBPickAndExecuteView.addProperties({
   },
 
   // dummy required by OBStandardView.prepareGridFields
-  setFieldFormProperties: function () {}
+  setFieldFormProperties: function () {},
 
+  doProcess: function () {
+    var view = this,
+        activeView = view.parentWindow && view.parentWindow.activeView,
+        allProperties = activeView.getContextInfo(false, true, false, true) || {};
+
+    allProperties._selection = this.viewGrid.getSelectedRecords();
+
+    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
+      processId: this.processId,
+      windowId: this.windowId
+    }, function () {
+      // do something nice, for now, close the window
+      view.closeClick();
+    });
+  }
 });
