@@ -21,6 +21,8 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -42,6 +44,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.plm.AttributeInstance;
+import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.manufacturing.processplan.OperationProduct;
 import org.openbravo.model.manufacturing.processplan.OperationProductAttribute;
@@ -74,6 +77,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
       OBDal.getInstance().flush();
 
       copyAttributes(conn, vars, productionPlan);
+      createInstanciableAttributes(conn, vars, productionPlan);
 
       final OBError msg = new OBError();
 
@@ -213,10 +217,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
                   attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
                 // GDate //
                 if (opProductAtt.getSpecialatt().equals(expirationDateSearchKey)) {
-                  String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-                      .getProperty("dateFormat.java");
-                  SimpleDateFormat dateformater = new SimpleDateFormat(dateFormat);
-                  attSetInstanceTo.setGuaranteeDate(dateformater.format(attSetInstanceFrom
+                  attSetInstanceTo.setGuaranteeDate(dateToString(attSetInstanceFrom
                       .getExpirationDate()));
                 }
               } else {
@@ -266,6 +267,17 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
           for (ProductionLine pline : plinesToCopyTo) {
 
             // CREATE ATRIBUTE
+            if (pline.getProduct().getAttributeSet().isExpirationDate()
+                && (attSetInstanceTo.getGuaranteeDate() == null || attSetInstanceTo
+                    .getGuaranteeDate().equals(""))
+                && pline.getProduct().getAttributeSet().getGuaranteedDays() != null
+                && pline.getProduct().getAttributeSet().getGuaranteedDays() != 0L) {
+              // Set GuaranteeDate if is not copied
+              Date movementdate = ((productionPlan.getProductionplandate() != null) ? productionPlan
+                  .getProductionplandate() : productionPlan.getProduction().getMovementDate());
+              int days = pline.getProduct().getAttributeSet().getGuaranteedDays().intValue();
+              attSetInstanceTo.setGuaranteeDate(dateToString(addDays(movementdate, days)));
+            }
             AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
                 opProduct.getProduct().getAttributeSet().getId());
             OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn,
@@ -289,10 +301,75 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     }
   }
 
+  private void createInstanciableAttributes(ConnectionProvider conn, VariablesSecureApp vars,
+      ProductionPlan productionPlan) throws Exception {
+    OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(ProductionLine.class);
+    ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
+        productionPlan));
+    ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
+    List<ProductionLine> plines = ProductionLineCriteria.list();
+    for (ProductionLine line : plines) {
+      // Check has empty attribute
+      if (line.getProduct().getAttributeSet() != null
+          && line.getProduct().getAttributeSetValue() == null) {
+        AttributeSet attSet = line.getProduct().getAttributeSet();
+        // Check if has automatic attributes
+        if ((attSet.isLot() && attSet.getLotControl() != null)
+            || (attSet.isSerialNo() && attSet.getSerialNoControl() != null)
+            || (attSet.isExpirationDate() && attSet.getGuaranteedDays() != null && attSet
+                .getGuaranteedDays() != 0L)) {
+
+          AttributeSetInstanceValue attSetInstance = new AttributeSetInstanceValue();
+          HashMap<String, String> attValues = new HashMap<String, String>();
+
+          if (attSet.isExpirationDate()) {
+            Date movementdate = ((productionPlan.getProductionplandate() != null) ? productionPlan
+                .getProductionplandate() : productionPlan.getProduction().getMovementDate());
+            int days = attSet.getGuaranteedDays().intValue();
+            attSetInstance.setGuaranteeDate(dateToString(addDays(movementdate, days)));
+          }
+          AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
+              attSet.getId());
+          OBError createAttributeInstanceError = attSetInstance.setAttributeInstance(conn, vars,
+              data, attSet.getId(), "", "", "N", line.getProduct().getId(), attValues);
+          if (!createAttributeInstanceError.getType().equals("Success"))
+            throw new OBException(createAttributeInstanceError.getMessage());
+
+          OBDal.getInstance().flush();
+
+          AttributeSetInstance newAttSetinstance = OBDal.getInstance().get(
+              AttributeSetInstance.class, attSetInstance.getAttSetInstanceId());
+
+          line.setAttributeSetValue(newAttSetinstance);
+          OBDal.getInstance().save(line);
+
+        }
+      }
+    }
+    OBDal.getInstance().flush();
+  }
+
   private String replace(String strIni) {
     // delete characters: " ","&",","
     return Replace.replace(Replace.replace(Replace.replace(
         Replace.replace(Replace.replace(Replace.replace(strIni, "#", ""), " ", ""), "&", ""), ",",
         ""), "(", ""), ")", "");
+  }
+
+  private String dateToString(Date date) throws Exception {
+    if (date == null)
+      return "";
+    String dateformat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+    SimpleDateFormat formater = new SimpleDateFormat(dateformat);
+    return formater.format(date);
+  }
+
+  private Date addDays(Date date, int days) throws Exception {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.DATE, days);
+    Date gdate = calendar.getTime();
+    return gdate;
   }
 }
