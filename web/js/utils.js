@@ -5396,7 +5396,7 @@ function replaceAt(string, what, ini, end) {
 function closePage() {
   var cancelEvent, element;
   if (isWindowInMDIPopup) {
-    element = window.event.target;
+    element = window.event && window.event.target;
     while (element) {
       if (element.id === 'buttonCancel') {
         cancelEvent = true;
