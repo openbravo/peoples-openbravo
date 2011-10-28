@@ -9,5 +9,9 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBUIAPP_VALIDATOR" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>
