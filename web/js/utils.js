@@ -5393,18 +5393,9 @@ function replaceAt(string, what, ini, end) {
   return newString;
 }
 
-function closePage() {
-  var cancelEvent, element;
+function closePage(okEvent) {
   if (isWindowInMDIPopup) {
-    element = window.event && window.event.target;
-    while (element) {
-      if (element.id === 'buttonCancel') {
-        cancelEvent = true;
-        break;
-      }
-      element = element.parentElement;
-    }
-    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, cancelEvent);
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, !okEvent);
   } else if (isWindowInMDITab) {
   } else {
     top.window.close();
