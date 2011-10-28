@@ -474,17 +474,20 @@ public class FIN_AddPayment {
   public static HashMap<String, BigDecimal> getSelectedPaymentDetailsAndAmount(
       VariablesSecureApp vars, List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails)
       throws ServletException {
-    HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts = new HashMap<String, BigDecimal>();
-
-    for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
-      selectedPaymentScheduleDetailsAmounts.put(
-          paymentScheduleDetail.getId(),
-          new BigDecimal(vars.getNumericParameter(
-              "inpPaymentAmount" + paymentScheduleDetail.getId(), "")));
-    }
-    return selectedPaymentScheduleDetailsAmounts;
+    return getSelectedBaseOBObjectAmount(vars, selectedPaymentScheduleDetails, "inpPaymentAmount");
   }
 
+  /**
+   * Creates a HashMap with the BaseOBObject id's and the amount gotten from the Session.
+   * 
+   * The amounts are stored in Session like "htmlElementId"+basobObject.Id
+   * 
+   * @param vars
+   *          VariablseSecureApp with the session data.
+   * @param selectedPaymentScheduleDetails
+   *          List of FIN_PaymentScheduleDetails that need to be included in the HashMap.
+   * @return A HashMap mapping the FIN_PaymentScheduleDetail's Id with the corresponding amount.
+   */
   public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
       VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)
       throws ServletException {

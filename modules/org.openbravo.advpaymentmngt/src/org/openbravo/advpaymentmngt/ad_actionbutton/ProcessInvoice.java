@@ -191,8 +191,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
               && isPaymentMethodConfigured(invoice) && !isInvoiceWithPayments(invoice)
               && ("API".equals(invoiceDocCategory) || "ARI".equals(invoiceDocCategory))) {
-            creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getBusinessPartner(),
-                invoice.isSalesTransaction());
+            creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
+                invoice.getBusinessPartner(), invoice.isSalesTransaction());
             if (creditPayments != null && !creditPayments.isEmpty()) {
               printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction, strTabId,
                   strC_Invoice_ID, strdocaction, strWindowId, strTabId, invoice.getInvoiceDate(),
