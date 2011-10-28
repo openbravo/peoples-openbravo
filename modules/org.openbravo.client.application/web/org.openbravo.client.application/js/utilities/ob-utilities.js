@@ -312,7 +312,11 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
     //URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
     if (urlParams.filterClause) {
       view.additionalFilterTabId = data.tabId;
-        view.additionalFilterClause = urlParams.filterClause;
+      view.additionalFilterClause = urlParams.filterClause;
+    }
+    if (urlParams.criteria) {
+      view.additionalCriteriaTabId = data.tabId;
+      view.additionalCriteria = urlParams.criteria;
     }
      
     if (urlParams.replaceDefaultFilter) {

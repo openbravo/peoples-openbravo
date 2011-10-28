@@ -37,9 +37,11 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -91,8 +93,11 @@ public class OBDal implements OBSingleton {
    * Register a sql function in the session factory, after this call it can be used by queries.
    */
   public void registerSQLFunction(String name, SQLFunction function) {
-    final Dialect dialect = ((SessionFactoryImpl) SessionHandler.getInstance().getSession()
-        .getSessionFactory()).getDialect();
+    final DalSessionFactory dalSessionFactory = (DalSessionFactory) SessionFactoryController
+        .getInstance().getSessionFactory();
+
+    final Dialect dialect = ((SessionFactoryImpl) dalSessionFactory.getDelegateSessionFactory())
+        .getDialect();
     dialect.getFunctions().put(name, function);
   }
 

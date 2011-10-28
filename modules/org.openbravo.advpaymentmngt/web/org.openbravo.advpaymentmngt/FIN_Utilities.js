@@ -711,19 +711,31 @@ function createCombo(object, innerHTML){
  * @return
  */
 function reloadParentGrid() {
-  if(top.opener) {
-    var dad = top.opener;
-    if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
-      top.opener.loadGrid();
-    } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
-      top.opener.updateGridDataAfterFilter();
+  var f, dad, layoutMDI;
+  try {
+    f = getFrame('LayoutMDI');
+    layoutMDI = (f && f.OB
+                 && f.OB.Layout.ClassicOBCompatibility.Popup
+                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process')
+                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj()
+                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj().contentWindow
+                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0]);
+    dad = layoutMDI || top.opener;
+    if (dad) {
+      if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
+        dad.loadGrid();
+      } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
+        dad.updateGridDataAfterFilter();
+      }
+    } else if (f && f.OB.MainView.TabSet.getSelectedTab().pane.view) {
+      var theView = f.OB.MainView.TabSet.getSelectedTab().pane.view;
+      theView.refresh(function(){
+          theView.getTabMessage();
+          theView.toolBar.refreshCustomButtons();
+      });
     }
-  } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view) {
-    var theView = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view;
-    theView.refresh(function(){
-        theView.getTabMessage();
-        theView.toolBar.refreshCustomButtons();
-    });
+  } catch(e) {
+    // not possible to reload parent grid
   }
 }
 

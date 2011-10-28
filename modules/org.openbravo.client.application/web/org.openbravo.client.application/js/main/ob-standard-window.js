@@ -38,7 +38,7 @@ isc.OBStandardWindow.addClassProperties({
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
-
+  
   view: null,
   
   viewProperties: null,

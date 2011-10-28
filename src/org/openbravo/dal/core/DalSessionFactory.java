@@ -67,7 +67,7 @@ public class DalSessionFactory implements SessionFactory {
    * 
    * @return the underlying real sessionfactory
    */
-  protected SessionFactory getDelegateSessionFactory() {
+  public SessionFactory getDelegateSessionFactory() {
     return delegateSessionFactory;
   }
 
