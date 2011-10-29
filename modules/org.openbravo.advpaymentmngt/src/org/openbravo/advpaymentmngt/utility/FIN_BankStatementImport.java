@@ -151,7 +151,10 @@ public abstract class FIN_BankStatementImport {
 
     try {
       numberOfLines = saveFINBankStatementLines(bankStatementLines);
-      FIN_AddPayment.processBankStatement(vars, conn, "P", bankStatement.getId());
+      OBDal.getInstance().refresh(bankStatement);
+      OBError processResult = FIN_AddPayment.processBankStatement(vars, conn, "P",
+          bankStatement.getId());
+      setMyError(processResult);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
