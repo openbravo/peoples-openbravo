@@ -91,12 +91,22 @@ isc.OBPickAndExecuteGrid.addProperties({
 
 
   selectionUpdated: function (record, recordList) {
-    var i, len = recordList.length;
+    var i, len = recordList.length, index;
 
     this.selectedIds = [];
 
     for (i = 0; i < len; i++) {
       this.selectedIds.push(recordList[i].id);
+    }
+    if (record) {
+      index = this.getRecordIndex(record);
+    }
+    if (index >= 0) {
+      // refresh only one row
+      this.refreshRow(index);
+    } else {
+      // refresh it all
+      this.markForRedraw('Selection changed');
     }
 
     this.Super('selectionUpdated', arguments);
