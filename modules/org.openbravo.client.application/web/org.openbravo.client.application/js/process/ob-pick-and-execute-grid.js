@@ -98,16 +98,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     for (i = 0; i < len; i++) {
       this.selectedIds.push(recordList[i].id);
     }
-    if (record) {
-      index = this.getRecordIndex(record);
-    }
-    if (index >= 0) {
-      // refresh only one row
-      this.refreshRow(index);
-    } else {
-      // refresh it all
-      this.markForRedraw('Selection changed');
-    }
+    // refresh it all as multiple lines can be selected
+    this.markForRedraw('Selection changed');
 
     this.Super('selectionUpdated', arguments);
   },
