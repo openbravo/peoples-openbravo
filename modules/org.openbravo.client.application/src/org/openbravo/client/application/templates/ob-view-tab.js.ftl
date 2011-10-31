@@ -20,7 +20,9 @@
 -->
 <@createView data/>      
 
-<#macro createView tabComponent>    
+<#macro createView tabComponent>
+    standardWindow: this.standardWindow,
+        
     tabTitle: '${tabComponent.tabTitle?js_string}',
     entity:  '${tabComponent.entityName}',
     

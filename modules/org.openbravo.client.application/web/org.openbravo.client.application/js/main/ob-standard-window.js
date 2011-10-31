@@ -94,7 +94,6 @@ isc.OBStandardWindow.addProperties({
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
-    
   },
   
   readWindowSettings: function() {
@@ -180,6 +179,44 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  getDefaultGridViewState: function(tabId) {
+    var views, length, i, personalization = this.getClass().personalization,    
+      defaultView,
+      persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+
+    if (!personalization) {
+      return null;
+    }
+    
+    if (personalization.views) {
+      views = personalization.views;
+      length = views.length;
+      if (persDefaultValue) {
+        for (i = 0; i < length; i++) {
+          if (persDefaultValue === views[i].personalizationId) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      if (!defaultView) {
+        for (i = 0; i < length; i++) {
+          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+    }
+    
+    if (defaultView && defaultView.viewDefinition && 
+        defaultView.viewDefinition[tabId]) {
+      return defaultView.viewDefinition[tabId].grid;
+    }
+    
+    return null;
+  },
+  
   // Update the personalization record which is stored 
   updateFormPersonalization: function(view, formPersonalization) {
     if (!this.getClass().personalization) {

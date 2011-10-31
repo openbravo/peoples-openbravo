@@ -261,7 +261,7 @@ isc.OBStandardView.addProperties({
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      this.viewGrid.fetchData();
+      this.viewGrid.fetchData(this.viewGrid.getCriteria());
       this.refreshContents = false;
     }
     

@@ -659,7 +659,11 @@ isc.DataSource.addProperties({
   // workaround for this issue:
   // http://forums.smartclient.com/showthread.php?p=75186#post75186
   // https://issues.openbravo.com/view.php?id=18841
-  compareAdvancedCriteria: function() {
+  compareAdvancedCriteria: function(newCriterion, oldCriterion) {
+    // simple check...
+    if (newCriterion === oldCriterion) {
+      return 0;
+    }
     return 1;
   },
   

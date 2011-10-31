@@ -347,7 +347,10 @@
             tabSet.updateTab(viewTabId, viewInstance);
 
             // and show it
-            tabSet.selectTab(viewTabId);
+            // only select a non myob tab
+            if (viewInstance.getClassName() !== 'OBMyOpenbravoImplementation') {
+              tabSet.selectTab(viewTabId);
+            }
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
@@ -376,7 +379,8 @@
             // the select tab event will update the history
             if (tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.viewTabId === viewTabId) {
               OB.Layout.HistoryManager.updateHistory();
-            } else {              
+            } else if (viewInstance.getClassName() !== 'OBMyOpenbravoImplementation') {
+                // only select a non myob tab
               tabSet.selectTab(viewTabId);
             }
 
