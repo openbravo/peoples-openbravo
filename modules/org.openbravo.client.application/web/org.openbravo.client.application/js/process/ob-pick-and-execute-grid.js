@@ -48,7 +48,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   selectedIds: [],
 
   initWidget: function () {
-    var len = this.fields.length, i;
+    var i, len = this.fields.length;
 
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
@@ -89,9 +89,15 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  selectionChanged: function (record, state) {
+    if (state) {
+      this.selectionUpdated(record, this.getSelection().push(record));
+    }
+    this.Super('selectionChanged', arguments);
+  },
 
   selectionUpdated: function (record, recordList) {
-    var i, len = recordList.length, index;
+    var i, len = recordList.length;
 
     this.selectedIds = [];
 
