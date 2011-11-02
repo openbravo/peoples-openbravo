@@ -677,6 +677,10 @@ isc.screenReader = false;
 // between accent or non-accent words
 isc.DataSource.addProperties({
   
+    // simple check...
+    if (newCriterion === oldCriterion) {
+      return 0;
+    }
   _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,
   fieldMatchesFilter: function(fieldValue, filterValue, requestProperties) {
     if (fieldValue && typeof fieldValue === 'string') {
