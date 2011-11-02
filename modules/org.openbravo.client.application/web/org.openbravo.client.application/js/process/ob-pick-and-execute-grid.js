@@ -43,7 +43,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   autoFitFieldsFillViewport: false,
 
   // default selection
-  selectionProperty: '_selected',
+  selectionProperty: 'obSelected',
 
   selectedIds: [],
 
