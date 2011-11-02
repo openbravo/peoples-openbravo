@@ -235,6 +235,30 @@ public class InitialSetupUtility {
   }
 
   /**
+   * @deprecated use new insertClientinfo method where new parameter "campaignTree" is added
+   * 
+   * @param client
+   * @param menuTree
+   * @param orgTree
+   * @param bpartnerTree
+   * @param projectTree
+   * @param salesRegionTree
+   * @param productTree
+   * @param boDiscountCalculatedFromLineAmounts
+   * @return ClientInformation object for the new element
+   * @throws Exception
+   * @deprecated
+   */
+  @Deprecated
+  public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
+      Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
+      Boolean boDiscountCalculatedFromLineAmounts) throws Exception {
+
+    return insertClientinfo(client, menuTree, orgTree, bpartnerTree, projectTree, salesRegionTree,
+        productTree, null, boDiscountCalculatedFromLineAmounts);
+  }
+
+  /**
    * 
    * @param client
    * @param menuTree
@@ -248,14 +272,6 @@ public class InitialSetupUtility {
    * @return ClientInformation object for the new element
    * @throws Exception
    */
-  public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
-      Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
-      Boolean boDiscountCalculatedFromLineAmounts) throws Exception {
-
-    return insertClientinfo(client, menuTree, orgTree, bpartnerTree, projectTree, salesRegionTree,
-        productTree, null, boDiscountCalculatedFromLineAmounts);
-  }
-
   public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
       Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
       Tree campaignTree, Boolean boDiscountCalculatedFromLineAmounts) throws Exception {

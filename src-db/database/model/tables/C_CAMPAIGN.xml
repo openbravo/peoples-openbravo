@@ -79,5 +79,6 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="C_CAMPAIGN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CAMPAIGN_ISSUMMARY_CHECK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
     </table>
   </database>
