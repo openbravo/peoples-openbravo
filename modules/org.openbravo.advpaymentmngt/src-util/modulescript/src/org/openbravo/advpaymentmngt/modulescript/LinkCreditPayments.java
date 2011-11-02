@@ -36,9 +36,8 @@ public class LinkCreditPayments extends ModuleScript {
 
       final LinkCreditPaymentsData[] bPartners = LinkCreditPaymentsData.selectBusinessPartners(cp);
       for (int i = 0; i < bPartners.length; i++) {
-        log4j.info("Linking Credit Payments for business Partner: " + bPartners[i].name);
-        linkCreditPayments(cp, bPartners[i].cBpartnerId, "Y");
-        linkCreditPayments(cp, bPartners[i].cBpartnerId, "N");
+        linkCreditPayments(cp, bPartners[i].cBpartnerId, bPartners[i].name, "Y");
+        linkCreditPayments(cp, bPartners[i].cBpartnerId, bPartners[i].name, "N");
       }
     } catch (Exception e) {
       handleError(e);
@@ -46,13 +45,16 @@ public class LinkCreditPayments extends ModuleScript {
 
   }
 
-  private void linkCreditPayments(ConnectionProvider cp, String cbPartnerId, String isReceipt)
-      throws ServletException {
+  private void linkCreditPayments(ConnectionProvider cp, String cbPartnerId, String cbPartnerName,
+      String isReceipt) throws ServletException {
     LinkCreditPaymentsData[] paymentsUsingCredit = LinkCreditPaymentsData
-        .selectPaymentsUsingCredit(cp, cbPartnerId, isReceipt);
+        .selectPaymentsUsingCredit(cp, isReceipt, cbPartnerId);
     LinkCreditPaymentsData[] creditPayments = LinkCreditPaymentsData
-        .selectPaymentsGeneratingCredit(cp, cbPartnerId, isReceipt);
-    linkCreditPayment(cp, paymentsUsingCredit, creditPayments);
+        .selectPaymentsGeneratingCredit(cp, isReceipt, cbPartnerId);
+    if (paymentsUsingCredit.length > 0 && creditPayments.length > 0) {
+      log4j.info("Linking Credit Payments for business Partner: " + cbPartnerName);
+      linkCreditPayment(cp, paymentsUsingCredit, creditPayments);
+    }
   }
 
   private void linkCreditPayment(ConnectionProvider cp,
@@ -69,7 +71,7 @@ public class LinkCreditPayments extends ModuleScript {
           availableCreditPayment = new BigDecimal(creditPayments[j].usedCredit);
         }
         if (availableCreditPayment.compareTo(consumedCredit) >= 0) {
-          log4j.info("linking with " + creditPayments[j].documentno + " with amount: "
+          log4j.info("linking with credit payment " + creditPayments[j].documentno + ", amount: "
               + consumedCredit);
           LinkCreditPaymentsData.insertUsedCreditSource(cp, paymentsUsingCredit[i].adClientId,
               paymentsUsingCredit[i].adOrgId, paymentsUsingCredit[i].finPaymentId,
@@ -77,9 +79,9 @@ public class LinkCreditPayments extends ModuleScript {
               creditPayments[j].cCurrencyId);
           availableCreditPayment = availableCreditPayment.subtract(consumedCredit);
           consumedCredit = BigDecimal.ZERO;
-          log4j.info("available credit in the payment: " + availableCreditPayment);
+          log4j.info("(available credit in the payment: " + availableCreditPayment + ") ");
         } else {
-          log4j.info("linking with " + creditPayments[j].finPaymentId + " with amount: "
+          log4j.info("linking with credit payment " + creditPayments[j].documentno + ", amount: "
               + availableCreditPayment);
           LinkCreditPaymentsData.insertUsedCreditSource(cp, paymentsUsingCredit[i].adClientId,
               paymentsUsingCredit[i].adOrgId, paymentsUsingCredit[i].finPaymentId,
@@ -87,8 +89,10 @@ public class LinkCreditPayments extends ModuleScript {
               creditPayments[j].cCurrencyId);
           consumedCredit = consumedCredit.subtract(availableCreditPayment);
           availableCreditPayment = BigDecimal.ZERO;
+          log4j.info("(credit payment has been fully used)");
+        }
+        if (availableCreditPayment.compareTo(BigDecimal.ZERO) == 0) {
           j++;
-          log4j.info("credit payment has been fully used");
         }
       }
     }

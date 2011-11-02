@@ -236,7 +236,10 @@ static Logger log4j = Logger.getLogger(LinkCreditPaymentsData.class);
     String strSql = "";
     strSql = strSql + 
       "        SELECT C_BPARTNER_ID, NAME" +
-      "        FROM C_BPARTNER";
+      "        FROM C_BPARTNER BP" +
+      "        WHERE EXISTS (SELECT 1" +
+      "                      FROM FIN_PAYMENT P" +
+      "                      WHERE P.C_BPARTNER_ID = BP.C_BPARTNER_ID)";
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);

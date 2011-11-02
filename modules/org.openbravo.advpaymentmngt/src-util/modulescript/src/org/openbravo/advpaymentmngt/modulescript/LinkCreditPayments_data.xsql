@@ -79,7 +79,10 @@
     <Sql>
       <![CDATA[
         SELECT C_BPARTNER_ID, NAME
-        FROM C_BPARTNER
+        FROM C_BPARTNER BP
+        WHERE EXISTS (SELECT 1
+                      FROM FIN_PAYMENT P
+                      WHERE P.C_BPARTNER_ID = BP.C_BPARTNER_ID)
       ]]>
     </Sql>
   </SqlMethod>
