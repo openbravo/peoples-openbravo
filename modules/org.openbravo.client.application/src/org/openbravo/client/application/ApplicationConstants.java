@@ -49,6 +49,11 @@ public class ApplicationConstants {
 
   public static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
+  // Processes constants
+
+  // Identifier of the key holding the selected rows in a grid
+  public static final String SELECTION_PROPERTY = "_selection";
+
   static {
     try {
       ACTION_RESULT_SUCCESS = new JSONObject("{result: 'success'}");

@@ -51,7 +51,9 @@ isc.OBPickAndExecuteView.addProperties({
       //FIXME: Move to AD_Message
       title: 'Done',
       click: function () {
-        view.doProcess();
+        if (view.validate()) {
+          view.doProcess();
+        }
       }
     });
 
@@ -148,12 +150,27 @@ isc.OBPickAndExecuteView.addProperties({
   // dummy required by OBStandardView.prepareGridFields
   setFieldFormProperties: function () {},
 
-  doProcess: function () {
-    var view = this,
-        activeView = view.parentWindow && view.parentWindow.activeView,
-        allProperties = activeView.getContextInfo(false, true, false, true) || {};
+  validate: function () {
+    var viewGrid = this.viewGrid;
 
-    allProperties._selection = this.viewGrid.getSelectedRecords();
+    viewGrid.endEditing();
+    return !viewGrid.hasErrors();
+  },
+
+  doProcess: function () {
+    var i, tmp, view = this,
+        grid = view.viewGrid,
+        activeView = view.parentWindow && view.parentWindow.activeView,
+        allProperties = activeView.getContextInfo(false, true, false, true) || {},
+        selection = grid.getSelectedRecords() || [],
+        len = selection.length;
+
+    allProperties._selection = [];
+
+    for (i = 0; i < len; i++) {
+      tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));
+      allProperties._selection.push(tmp);
+    }
 
     OB.RemoteCallManager.call(this.actionHandler, allProperties, {
       processId: this.processId,
@@ -161,6 +178,7 @@ isc.OBPickAndExecuteView.addProperties({
     }, function () {
       // do something nice, for now, close the window
       view.closeClick();
+      view.parentWindow.activeView.refresh();
     });
   }
 });
