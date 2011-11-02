@@ -87,7 +87,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
               .getString("attributeSetValue")));
       newOrderLine.setUOM(shipmentLine.getUOM());
       // Ordered Quantity = returned quantity.
-      newOrderLine.setOrderedQuantity(BigDecimal.ONE);
+      BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned"));
+      newOrderLine.setOrderedQuantity(qtyReturned.negate());
       // Price
       BigDecimal price = new BigDecimal(selectedLine.getString("unitPrice"));
       newOrderLine.setUnitPrice(price);
