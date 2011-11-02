@@ -549,7 +549,7 @@ BEGIN
         AND isactive = 'Y';
         
         IF (v_payment_desc IS NOT NULL AND v_payment_desc='Supplier Reference' 
-            AND coalesce(length(v_poreference), 0)>0) THEN
+            AND v_IsSOTrx ='N' AND coalesce(length(v_poreference), 0)>0) THEN
           v_documentno := v_poreference;
         END IF;
         

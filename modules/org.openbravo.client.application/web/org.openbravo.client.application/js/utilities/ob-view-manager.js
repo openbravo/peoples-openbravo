@@ -344,7 +344,6 @@
           if (viewTabId !== null) {
 
             // refresh the view
-
             tabSet.updateTab(viewTabId, viewInstance);
 
             // and show it

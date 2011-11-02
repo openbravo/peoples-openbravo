@@ -10361,11 +10361,11 @@
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--F848820D63394EB6AAABFC6B66101BCD-->  <NAME><![CDATA[Invoice's Reference for Payment Description]]></NAME>
-<!--F848820D63394EB6AAABFC6B66101BCD-->  <DESCRIPTION><![CDATA[Invoice's Reference to be automatically included into the Payment Description]]></DESCRIPTION>
-<!--F848820D63394EB6AAABFC6B66101BCD-->  <HELP><![CDATA[Invoice's reference to be automatically included into the payment description. Possible values are:
-- Invoice document number (default)
-- Supplier reference, which is defined in the invoice's header]]></HELP>
+<!--F848820D63394EB6AAABFC6B66101BCD-->  <NAME><![CDATA[Purchase Invoice's Reference for Payment Description]]></NAME>
+<!--F848820D63394EB6AAABFC6B66101BCD-->  <DESCRIPTION><![CDATA[Purchase Invoice's Reference to be automatically included into the Payment Description.]]></DESCRIPTION>
+<!--F848820D63394EB6AAABFC6B66101BCD-->  <HELP><![CDATA[Purchase Invoice's reference to be automatically included into the payment description. Possible values are:
+- Invoice document number (default).
+- Supplier reference, which is defined in the invoice's header.]]></HELP>
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <AD_TAB_ID><![CDATA[170]]></AD_TAB_ID>
 <!--F848820D63394EB6AAABFC6B66101BCD-->  <AD_COLUMN_ID><![CDATA[18096D8809024E67A36E636EA0D9D0E7]]></AD_COLUMN_ID>

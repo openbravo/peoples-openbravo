@@ -60,7 +60,6 @@
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER(1):=1;
   v_PostResult NUMBER;
-  v_logMessageLength NUMBER:= 2000;
   v_logLines NUMBER:=0;
   v_isWholeLog BOOLEAN := true;
   v_Message VARCHAR2(2000):='';
@@ -592,7 +591,7 @@
             v_order_delivered_count := v_order_delivered_count +1;
             result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ' @InoutDocumentno@ ' || v_DocumentNo || ': @ShipmentSuccess@.' ;
           END IF;
-          IF (LENGTH(v_Message || result_String || '<br><br>') <= v_logMessageLength + 3 ) THEN
+          IF (LENGTH(v_Message || result_String || '<br><br>') <= 1800 ) THEN
 		v_Message:=v_Message || result_String || '<br><br>';          
 		v_logLines := v_logLines + 1;
 	  ELSE
@@ -603,7 +602,6 @@
           v_hasPartial := false;
           IF(NOT Next_Order) THEN
             IF(v_lines=0) THEN
-              DBMS_OUTPUT.PUT_LINE('v_lines!!!!!!!!!!!!!!!!!' || v_lines) ;
               DELETE FROM M_INOUTLINE
               WHERE M_INOUT_ID  = p_InOut_ID;
               DELETE FROM M_INOUT
@@ -820,8 +818,8 @@
       --<<FINISH_PROCESS>>
       IF(p_PInstance_ID IS NOT NULL) THEN
         --  Update AD_PInstance
-      IF (v_isWholeLog <> true) THEN
-	v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message;
+      IF (NOT v_isWholeLog) THEN
+	v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message || '...';
       END IF;
 	
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
