@@ -739,26 +739,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
   private void undoUsedCredit(FIN_Payment myPayment, VariablesSecureApp vars,
       Set<String> invoiceDocNos) {
-    final BigDecimal usedAmount = myPayment.getUsedCredit();
-    final BusinessPartner bp = myPayment.getBusinessPartner();
-    final Boolean isReceipt = myPayment.isReceipt();
-    BigDecimal pendingDeallocateAmount = usedAmount;
-
-    final List<FIN_Payment> payments;
-    final boolean oldFlow;
-    if (myPayment.getFINPaymentCreditList().isEmpty()) {
-      // Credit payments created by the old flow, or from the Add details button
-      payments = dao.getCustomerPaymentsWithUsedCredit(bp, isReceipt);
-      oldFlow = true;
-    } else {
-      // Credit payments used by the new popup while completing invoice
-      payments = new ArrayList<FIN_Payment>();
-      for (final FIN_Payment_Credit pc : myPayment.getFINPaymentCreditList()) {
-        final FIN_Payment creditPaymentUsed = pc.getCreditPaymentUsed();
-        creditPaymentUsed.setUsedCredit(creditPaymentUsed.getUsedCredit().subtract(pc.getAmount()));
-        payments.add(creditPaymentUsed);
-      }
-      oldFlow = false;
+    final List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
+    for (final FIN_Payment_Credit pc : myPayment.getFINPaymentCreditList()) {
+      final FIN_Payment creditPaymentUsed = pc.getCreditPaymentUsed();
+      creditPaymentUsed.setUsedCredit(creditPaymentUsed.getUsedCredit().subtract(pc.getAmount()));
+      payments.add(creditPaymentUsed);
     }
 
     for (final FIN_Payment payment : payments) {
@@ -786,19 +771,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             }
           }
           payment.setDescription(newDesc.toString());
-        }
-      }
-
-      if (oldFlow) {
-        BigDecimal paymentUsedAmount = payment.getUsedCredit();
-        if (usedAmount.compareTo(paymentUsedAmount) == 1) {
-          payment.setUsedCredit(BigDecimal.ZERO);
-          pendingDeallocateAmount = pendingDeallocateAmount.subtract(paymentUsedAmount);
-          OBDal.getInstance().save(payment);
-        } else {
-          payment.setUsedCredit(payment.getUsedCredit().subtract(pendingDeallocateAmount));
-          OBDal.getInstance().save(payment);
-          break;
         }
       }
     }
