@@ -87,7 +87,7 @@ BEGIN
   -- Deleting
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20000, 'C_Campaign InsertTrigger Error: No ClientInfo or parent TreeNode');
+  RAISE_APPLICATION_ERROR(-20000, '@20014@');
 END C_CAMPAIGN_TRG
 ]]></body>
     </trigger>
