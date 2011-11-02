@@ -58,6 +58,7 @@ isc.OBToolbar.addClassProperties({
     keyboardShortcutId: 'ToolBar_Save'
   },
   SAVECLOSE_BUTTON_PROPERTIES: {
+    saveDisabled: true,
     action: function(){
       var actionObject = {
         target: this,
@@ -68,7 +69,7 @@ isc.OBToolbar.addClassProperties({
     },
     
     saveAndClose: function() {
-      if(!this.view.viewForm.validateForm()) {
+      if(!this.saveDisabled && !this.view.viewForm.validateForm()) {
         return;
       }
       this.view.switchFormGridVisibility();
@@ -92,6 +93,7 @@ isc.OBToolbar.addClassProperties({
           this.buttonType = 'saveclose';
           this.prompt = OB.I18N.getLabel('OBUIAPP_SaveClose');
         }
+        this.saveDisabled = saveDisabled;
       } else {
         this.setDisabled(true);
       }
