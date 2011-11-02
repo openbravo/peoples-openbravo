@@ -61,9 +61,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="M_WAREHOUSE" name="C_EXTERNALPOS_M_WAREHOUSE">
-        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -78,6 +75,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="OBPOS_APP_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE" name="OBPOS_APP_WAREHOUSE">
+        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <index name="OBPOS_APPLICATIONS_NAME" unique="true">
         <index-column name="NAME"/>
