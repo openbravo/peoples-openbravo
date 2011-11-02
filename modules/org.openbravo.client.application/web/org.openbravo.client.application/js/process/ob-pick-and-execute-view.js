@@ -118,7 +118,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   closeClick: function () {
     var tabSet = OB.MainView.TabSet;
-    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow);
+    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
     this.Super('closeClick', arguments);
   },
 
@@ -178,7 +178,6 @@ isc.OBPickAndExecuteView.addProperties({
     }, function () {
       // do something nice, for now, close the window
       view.closeClick();
-      view.parentWindow.activeView.refresh();
     });
   }
 });
