@@ -232,6 +232,7 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null");
+      whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
       parameters.add(partnername);
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
