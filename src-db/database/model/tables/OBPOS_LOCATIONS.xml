@@ -33,11 +33,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="1024" autoIncrement="false">
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="1024" autoIncrement="false">
+      <column name="ADDRESS" primaryKey="false" required="false" type="NVARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

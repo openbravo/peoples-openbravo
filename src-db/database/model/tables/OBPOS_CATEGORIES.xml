@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="1024" autoIncrement="false">
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -41,12 +41,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="IMAGE" primaryKey="false" required="false" type="BLOB" size="4000" autoIncrement="false">
+      <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_CATEGORIES_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="OBPOS_CATEGORIES_AD_IMAGE">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_CATEGORIES_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
