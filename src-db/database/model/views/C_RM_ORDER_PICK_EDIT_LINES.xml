@@ -12,7 +12,7 @@
       WHEN rol.c_orderline_id IS NOT NULL
       THEN 'Y'
       ELSE 'N'
-    END AS isSelected,
+    END AS ob_selected,
     il.m_inoutline_id,
     rol.c_order_id AS returnOrderId,
     i.documentno   AS inoutNo,
@@ -24,7 +24,7 @@
     rol.qtyordered AS returned,
     ol.priceactual,
     rol.rm_return_reason,
-    o.documentno as orderNo,
+    o.documentno AS orderNo,
     i.issotrx
   FROM m_inoutline il
   JOIN m_inout i

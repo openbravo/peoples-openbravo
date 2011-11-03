@@ -7034,8 +7034,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1321-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1321-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1321-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1321-->  <COLUMNNAME><![CDATA[IsSelected]]></COLUMNNAME>
-<!--1321-->  <NAME><![CDATA[Selected]]></NAME>
+<!--1321-->  <COLUMNNAME><![CDATA[OB_Selected]]></COLUMNNAME>
+<!--1321-->  <NAME><![CDATA[ob_selected]]></NAME>
 <!--1321-->  <PRINTNAME><![CDATA[Selected]]></PRINTNAME>
 <!--1321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1321--></AD_ELEMENT>
