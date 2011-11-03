@@ -19,6 +19,15 @@
 
 OB.OBEXPE = {};
 
-OB.OBEXPE.validate = function () {
+OB.OBEXPE.validate = function (item, validator, value, record) {
+  // item has access to grid: item.grid
+  // from the grid you can get all selected records and edited values, e.g.
+  //   * item.grid.getSelection()
+  //   * item.grid.getEditedRecord()
+  // grid has access to view: grid.view
+  // view has access to parentWindow: view.parentWindow (the window running the process)
+  // parentWindow has access to currentView
+  // currentView has getContextInfo
+  // debugger;
   return true;
 };
