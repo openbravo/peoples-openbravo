@@ -100,6 +100,9 @@ the outputted value is already covered by a default.
         <#if field.firstFocusedField>
             firstFocusedField: true,
         </#if>
+        <#if field.validationFunction != "">
+            validationFn: ${field.validationFunction},
+        </#if>
 </@compress>
     </#if>
     <#if field.type = "OBSectionItem" || field.type = "OBNoteSectionItem" || field.type = "OBLinkedItemSectionItem"  || field.type = "OBAttachmentsSectionItem" || field.type = "OBAuditSectionItem">

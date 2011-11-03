@@ -1987,7 +1987,19 @@ isc.OBStandardView.addProperties({
         fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
-      
+
+      if(fld.validationFn) {
+
+        if(!fld.validators) {
+          fld.validators = [];
+        }
+
+        fld.validators.push({
+          type: 'custom',
+          condition: fld.validationFn
+        });
+      }
+
       result.push(fld);
     }
     
