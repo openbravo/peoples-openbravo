@@ -237,6 +237,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="RM_RECEIPT_PICKEDIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
