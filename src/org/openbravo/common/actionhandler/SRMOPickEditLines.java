@@ -12,8 +12,6 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 /**
@@ -79,12 +77,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
           selectedLine.getString("goodsShipmentLine"));
       newOrderLine.setGoodsShipmentLine(shipmentLine);
-      newOrderLine.setProduct(OBDal.getInstance().get(Product.class,
-          selectedLine.getString("product")));
-      newOrderLine.setAttributeSetValue(OBDal.getInstance().get(
-          AttributeSetInstance.class,
-          (selectedLine.getString("attributeSetValue") == null) ? "0" : selectedLine
-              .getString("attributeSetValue")));
+      newOrderLine.setProduct(shipmentLine.getProduct());
+      newOrderLine.setAttributeSetValue(shipmentLine.getAttributeSetValue());
       newOrderLine.setUOM(shipmentLine.getUOM());
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned"));
@@ -97,6 +91,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setStandardPrice(shipmentLine.getSalesOrderLine().getStandardPrice());
 
       newOrderLine.setTax(shipmentLine.getSalesOrderLine().getTax());
+
+      newOrderLine.setReturnReason(selectedLine.getString("returnReason"));
 
       List<OrderLine> orderLines = order.getOrderLineList();
       orderLines.add(newOrderLine);
