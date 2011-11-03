@@ -88,7 +88,7 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationProcessButtonValueDat
     strSql = strSql + 
       "        UPDATE FIN_RECONCILIATION SET EM_APRM_PROCESS_REC = EM_APRM_PROCESS_RECONCILIATION" +
       "        WHERE EM_APRM_PROCESS_REC IS NULL" +
-      "        AND EM_APRM_PROCESS_REC IS NOT NULL";
+      "        AND EM_APRM_PROCESS_RECONCILIATION IS NOT NULL";
 
     int updateCount = 0;
     PreparedStatement st = null;
