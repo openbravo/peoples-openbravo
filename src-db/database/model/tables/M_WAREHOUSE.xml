@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_RETURNLOCATOR_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
