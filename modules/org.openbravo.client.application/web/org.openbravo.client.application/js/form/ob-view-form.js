@@ -1047,12 +1047,12 @@ OB.ViewFormProperties = {
     }
     currentValue = item.getValue();
 
-    // Force setElemntValue even there is no change to show new possible values
-    // in field.valueMap (issue #18957)
-    item.setElementValue(item.mapValueToDisplay(value));
-
     // no change go away
     if (item.compareValues(value, currentValue)) {
+      // Force setElemntValue even there is no change to show new possible values
+      // in field.valueMap (issue #18957)
+      item.setElementValue(item.mapValueToDisplay(value));
+
       return;
     }
 
