@@ -77,6 +77,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
       OBDal.getInstance().flush();
 
       copyAttributes(conn, vars, productionPlan);
+
       createInstanciableAttributes(conn, vars, productionPlan);
 
       final OBError msg = new OBError();
@@ -310,8 +311,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     List<ProductionLine> plines = ProductionLineCriteria.list();
     for (ProductionLine line : plines) {
       // Check has empty attribute
-      if (line.getProduct().getAttributeSet() != null
-          && line.getProduct().getAttributeSetValue() == null) {
+      if (line.getProduct().getAttributeSet() != null && line.getAttributeSetValue() == null) {
         AttributeSet attSet = line.getProduct().getAttributeSet();
         // Check if has automatic attributes
         if ((attSet.isLot() && attSet.getLotControl() != null)
