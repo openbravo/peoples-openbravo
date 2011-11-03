@@ -63,7 +63,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     }
     final String strOrderId = jsonRequest.getString("inpcOrderId");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
-    for (long i = 0; i < selectedLines.length() - 1; i++) {
+    for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       System.err.println(selectedLine);
       OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);

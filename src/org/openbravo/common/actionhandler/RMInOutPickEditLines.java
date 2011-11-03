@@ -64,7 +64,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     }
     final String strInOutId = jsonRequest.getString("inpmInoutId");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
-    for (long i = 0; i < selectedLines.length() - 1; i++) {
+    for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       System.err.println(selectedLine);
       ShipmentInOutLine newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
