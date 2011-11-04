@@ -1067,8 +1067,11 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
+    
+    // commented line because of https://issues.openbravo.com/view.php?id=18963
+    // toolbar seems to be refreshed in any case
     // note only set session info if there is a record selected
-    this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
+    //    this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
 
     var tabViewPane = null, i;
 
