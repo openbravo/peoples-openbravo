@@ -563,7 +563,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-            .equals(OPERATOR_GREATEROREQUALFIELD));
+              .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -571,7 +571,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-            .equals(OPERATOR_LESSOREQUALFIElD));
+              .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -822,11 +822,15 @@ public class AdvancedQueryBuilder {
           || !key.endsWith(DataEntityQueryService.PARAM_DELIMITER)) {
         continue;
       }
-      final int index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
+      int index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
       if (index != -1) {
-        localWhereClause = localWhereClause.substring(0, index) + getTypedParameterAlias() + " "
-            + localWhereClause.substring(index + key.length());
-        typedParameters.add(filterParameters.get(key));
+        while (index != -1) {
+          // substitute all occurrences of paramater
+          localWhereClause = localWhereClause.substring(0, index) + getTypedParameterAlias() + " "
+              + localWhereClause.substring(index + key.length());
+          typedParameters.add(filterParameters.get(key));
+          index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
+        }
       }
     }
 
