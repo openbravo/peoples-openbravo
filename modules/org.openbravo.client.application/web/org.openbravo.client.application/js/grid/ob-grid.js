@@ -514,12 +514,14 @@ isc.OBGrid.addProperties({
       }
 
       var field = this.filterEditor.getField(prop);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
 
       field = this.filterEditor.getField(fullPropName);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
     }
