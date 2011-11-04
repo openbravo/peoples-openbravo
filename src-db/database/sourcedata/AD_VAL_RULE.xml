@@ -185,7 +185,8 @@ OR (@AD_Reference_ID@ = '28' and AD_Reference.ParentReference_ID='17')]]></CODE>
 <!--125-->  <NAME><![CDATA[C_DocType Material Shipments/Receipts]]></NAME>
 <!--125-->  <DESCRIPTION><![CDATA[Document Type Material Shipments and Receipts]]></DESCRIPTION>
 <!--125-->  <TYPE><![CDATA[S]]></TYPE>
-<!--125-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('MMR', 'MMS') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--125-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('MMR', 'MMS') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1'
+AND COALESCE(@isReturnMaterial@, 'N') = C_DocType.IsReturn]]></CODE>
 <!--125-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--125--></AD_VAL_RULE>
 
