@@ -133,7 +133,11 @@ isc.OBStandardWindow.addProperties({
     
     // cache the original view so that it can be restored
     if (!this.getClass().originalView) {
-      this.getClass().originalView = OB.Personalization.getViewDefinition(this, '', false);
+      this.getClass().originalView = {};
+      this.getClass().originalView.personalizationId = 'dummyId';
+      this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
+      this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
+      this.getClass().originalView.canDelete = false;
     }
 
     this.getClass().personalization = personalization;

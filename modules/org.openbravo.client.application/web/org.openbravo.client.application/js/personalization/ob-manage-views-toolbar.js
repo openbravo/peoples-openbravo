@@ -61,7 +61,7 @@
     action: function() {
       var data = [], icon, i, undef, view, formData,
         standardWindow = this.view.standardWindow,
-        adminLevel = false, length,
+        adminLevel = false, length, viewSelected = false,
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : [],
         canDelete = false;
@@ -71,6 +71,15 @@
         return;
       }
       
+      // add the standard view, but make a copy so that it is not added
+      // to the real list of editable/deletable views
+      views = isc.shallowClone(views);
+      views.push(standardWindow.getClass().originalView);
+      
+      if (!standardWindow.selectedPersonalizationId) {
+        standardWindow.selectedPersonalizationId = standardWindow.getClass().originalView.personalizationId;
+      }
+      
       // create the list of current views to show
       length = views.length;
       for (i = 0; i < length; i++) {
@@ -78,7 +87,7 @@
         canDelete = view.canEdit || canDelete;
         
         if (standardWindow.selectedPersonalizationId && view.personalizationId === standardWindow.selectedPersonalizationId) {
-          icon = this.menu.itemIcon;
+          icon = this.menu.itemIcon;          
         } else {
           icon = null;
         }
@@ -140,11 +149,6 @@
               popup.show();
             }});
         }
-        
-        data.push({title: OB.I18N.getLabel('OBUIAPP_RestoreDefaults'), 
-          doClick: function(standardWindow) {
-            OB.Personalization.applyViewDefinition('', standardWindow.getClass().originalView, standardWindow);
-          }});
       }
       
       if (data.length === 0) {
