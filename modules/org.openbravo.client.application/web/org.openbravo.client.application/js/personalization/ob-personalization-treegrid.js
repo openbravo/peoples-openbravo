@@ -59,7 +59,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     ],
     
   initWidget: function() {
-    var nodes, i;
+    var i;
     // todo: show custom items for different types of fields
     this.nodeIcon = OB.Styles.Personalization.Icons.field;
     this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
@@ -110,13 +110,18 @@ isc.OBPersonalizationTreeGrid.addProperties({
 //   this.data.openAll();
    
    this.Super('initWidget', arguments);
-   
-   // open the folders which need to be opened
-   for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
-     if (nodes[i].sectionExpanded) {
-       this.openFolder(nodes[i]);
-     }
-   }
+  },
+  
+  // open the folders and expands form items, needs to be called
+  // after the preview form has been build
+  openFolders: function() {
+    var i, nodes;
+    // open the folders which need to be opened
+    for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
+      if (nodes[i].sectionExpanded) {
+        this.openFolder(nodes[i]);
+      }
+    }
   },
   
   destroy: function() {
