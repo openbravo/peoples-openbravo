@@ -412,6 +412,7 @@ public class OBViewFieldHandler {
     public boolean isDisplayed();
 
     public boolean getHasDefaultValue();
+
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
@@ -624,6 +625,10 @@ public class OBViewFieldHandler {
 
     public boolean isDisplayed() {
       return true;
+    }
+
+    public String getValidationFunction() {
+      return "";
     }
 
   }
@@ -961,6 +966,13 @@ public class OBViewFieldHandler {
 
     public void setGridSort(int gridSort) {
       this.gridSort = gridSort;
+    }
+
+    public String getValidationFunction() {
+      if (field.getObuiappValidator() != null) {
+        return field.getObuiappValidator();
+      }
+      return "";
     }
   }
 
