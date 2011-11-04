@@ -959,6 +959,13 @@ public class AdvancedQueryBuilder {
         sb.append(", ");
       }
       addComma = true;
+
+      final String[] orderByExpression = path.split(" "); // e.property DESC
+      if (orderByExpression.length > 1) {
+        path = orderByExpression[0];
+        direction = " " + orderByExpression[1] + " ";
+      }
+
       final String resolvedPath = resolveJoins(JsonUtils.getPropertiesOnPath(getEntity(), path),
           path);
       sb.append(resolvedPath);
