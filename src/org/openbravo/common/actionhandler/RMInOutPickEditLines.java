@@ -83,7 +83,12 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("receiving"));
       newInOutLine.setMovementQuantity(qtyReceived.negate());
-      newInOutLine.setConditiongoods(selectedLine.getString("conditionOfTheGoods"));
+      if (selectedLine.getString("conditionOfTheGoods") != null
+          && !selectedLine.getString("conditionOfTheGoods").equals("null")) {
+        newInOutLine.setConditiongoods(selectedLine.getString("conditionOfTheGoods"));
+      } else {
+        newInOutLine.setConditiongoods(inOut.getConditiongoods());
+      }
 
       List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
       inOutLines.add(newInOutLine);
