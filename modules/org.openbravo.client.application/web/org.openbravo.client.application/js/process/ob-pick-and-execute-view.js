@@ -78,7 +78,8 @@ isc.OBPickAndExecuteView.addProperties({
       view: this,
       fields: this.gridFields,
       height: (this.parentWindow.height - 200),
-      dataSource: this.dataSource
+      dataSource: this.dataSource,
+      gridProperties: this.viewProperties.gridProperties
     });
 
     this.items = [this.viewGrid, isc.HLayout.create({

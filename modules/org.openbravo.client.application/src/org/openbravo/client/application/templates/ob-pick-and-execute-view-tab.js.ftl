@@ -70,6 +70,8 @@
     </#list>
 </@compress>
     ],
- 
+
+    gridProperties: ${tabComponent.viewGrid},
+
     dataSource: ${tabComponent.dataSourceJavaScript}
 </#macro>
