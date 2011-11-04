@@ -92,7 +92,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       newOrderLine.setTax(shipmentLine.getSalesOrderLine().getTax());
 
-      newOrderLine.setReturnReason(selectedLine.getString("returnReason"));
+      if (selectedLine.getString("returnReason") != null
+          && !selectedLine.getString("returnReason").equals("null")) {
+        newOrderLine.setReturnReason(selectedLine.getString("returnReason"));
+      } else {
+        newOrderLine.setReturnReason(order.getReturnReason());
+      }
 
       List<OrderLine> orderLines = order.getOrderLineList();
       orderLines.add(newOrderLine);
