@@ -2659,7 +2659,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--257-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'N']]></HQLWHERECLAUSE>
+<!--257-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'N' and e.documentType.return=false]]></HQLWHERECLAUSE>
 <!--257-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--257--></AD_TAB>
 
