@@ -10,7 +10,7 @@ JOIN m_inout i ON il.m_inout_id = i.m_inout_id
 JOIN c_doctype dt ON i.c_doctype_id = dt.c_doctype_id
 LEFT JOIN c_orderline ol ON il.c_orderline_id = ol.c_orderline_id
 LEFT JOIN c_order o ON ol.c_order_id = o.c_order_id
-LEFT JOIN c_orderline rol ON rol.m_inoutline_id = il.m_inoutline_id
-LEFT JOIN c_order ro ON ro.c_order_id = rol.c_order_id AND ro.processed='N'
+LEFT JOIN (SELECT ol2.* FROM c_orderline ol2 JOIN c_order o2 ON ol2.c_order_id = o2.c_order_id AND o2.processed='N') rol ON rol.m_inoutline_id = il.m_inoutline_id
+LEFT JOIN c_order ro ON ro.c_order_id = rol.c_order_id
 WHERE dt.ad_table_id = '319' AND i.processed = 'Y' AND i.docstatus <> 'VO']]></view>
   </database>
