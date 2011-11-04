@@ -21,7 +21,6 @@ package org.openbravo.retail.posterminal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,30 +104,31 @@ public class TerminalServlet extends BaseWebServiceServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-
-    String[] pathparts = checkSetParameters(request, response);
-    if (pathparts == null) {
-      return;
-    }
-
-    if ("hql".equals(pathparts[1])) {
-      try {
-        execHQLQuery(request, response, getContentAsJSON(request.getParameter("content")));
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        writeResult(response, JsonUtils.convertExceptionToJson(e));
-      }
-    } else {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Command not found: "
-              + pathparts[1])));
-    }
+    doGetOrPost(request, response, request.getParameter("content"));
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+    doGetOrPost(request, response, getRequestContent(request));
+  }
+
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+        "Method not supported: DELETE")));
+  }
+
+  @Override
+  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    writeResult(response,
+        JsonUtils.convertExceptionToJson(new InvalidRequestException("Method not supported: PUT")));
+  }
+
+  private void doGetOrPost(HttpServletRequest request, HttpServletResponse response, String content)
+      throws IOException, ServletException {
 
     String[] pathparts = checkSetParameters(request, response);
     if (pathparts == null) {
@@ -137,7 +137,8 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
     if ("hql".equals(pathparts[1])) {
       try {
-        execHQLQuery(request, response, getContentAsJSON(getRequestContent(request)));
+        JSONObject jsonResult = execHQLQueryArray(request, response, getContentAsJSON(content));
+        writeResult(response, jsonResult.toString());
       } catch (Exception e) {
         log.error(e.getMessage(), e);
         writeResult(response, JsonUtils.convertExceptionToJson(e));
@@ -150,99 +151,80 @@ public class TerminalServlet extends BaseWebServiceServlet {
     }
   }
 
-  @Override
-  public void doDelete(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    String result = "{\"delete\" : \"calling\"}";
-    writeResult(response, result);
-  }
-
-  @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    String result = "{\"put\" : \"calling\"}";
-    writeResult(response, result);
-  }
-
-  private void execHQLQuery(HttpServletRequest request, HttpServletResponse response,
-      Object jsonContent) throws Exception {
-
-    // if (pathparts.length < 3) {
-    // writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-    // "No HQL sentences to execute: " + request.getRequestURI())));
-    // return;
-    // }
-
-    final Session session = OBDal.getInstance().getSession();
+  private JSONObject execHQLQueryArray(HttpServletRequest request, HttpServletResponse response,
+      Object jsonContent) throws JSONException {
 
     // get all sentences to execute.
 
-    List<JSONObject> jsonSentences = new ArrayList<JSONObject>();
-    if (jsonContent instanceof JSONArray) {
-      final JSONArray jsonArray = (JSONArray) jsonContent;
-      for (int i = 0; i < jsonArray.length(); i++) {
-        jsonSentences.add(jsonArray.getJSONObject(i));
-      }
-    } else {
-      jsonSentences.add((JSONObject) jsonContent);
-    }
-
     final JSONObject jsonResult = new JSONObject();
 
-    // Execute all sentences
-    for (JSONObject jsonsent : jsonSentences) {
-
-      final JSONObject jsonResponse = new JSONObject();
-      final JSONArray jsonData = new JSONArray();
-
-      final int startRow = 0;
-
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
-
-      final Query query = session.createQuery(querybuilder.getHQLQuery());
-
-      if (jsonsent.has("parameters")) {
-        JSONObject jsonparams = jsonsent.getJSONObject("parameters");
-        Iterator<?> it = jsonparams.keys();
-        while (it.hasNext()) {
-          String key = (String) it.next();
-          Object value = jsonparams.get(key);
-          if (value instanceof JSONObject) {
-            JSONObject jsonvalue = (JSONObject) value;
-            query.setParameter(
-                key,
-                JsonToDataConverter.convertJsonToPropertyValue(
-                    PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
-          } else {
-            query.setParameter(key,
-                JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
-
-          }
-        }
+    if (jsonContent instanceof JSONArray) {
+      final JSONArray jsonArray = (JSONArray) jsonContent;
+      final JSONArray jsonResponses = new JSONArray();
+      for (int i = 0; i < jsonArray.length(); i++) {
+        jsonResponses.put(execHQLQuery(jsonArray.getJSONObject(i)));
       }
-
-      JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
-
-      List<?> listdata = query.list();
-      for (Object o : listdata) {
-        jsonData.put(converter.convert(o));
-      }
-
-      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
-          + startRow - 1 : 0));
-
-      if (jsonData.length() == 0) {
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
-      }
-
-      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponses);
+    } else if (jsonContent instanceof JSONObject) {
+      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, execHQLQuery((JSONObject) jsonContent));
+    } else {
+      throw new JSONException("Expected JSON object or array.");
     }
 
-    writeResult(response, jsonResult.toString());
+    return jsonResult;
+  }
 
+  private JSONObject execHQLQuery(JSONObject jsonsent) throws JSONException {
+
+    final JSONObject jsonResponse = new JSONObject();
+    final JSONArray jsonData = new JSONArray();
+
+    final int startRow = 0;
+
+    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(querybuilder.getHQLQuery());
+
+    if (jsonsent.has("parameters")) {
+      JSONObject jsonparams = jsonsent.getJSONObject("parameters");
+      Iterator<?> it = jsonparams.keys();
+      while (it.hasNext()) {
+        String key = (String) it.next();
+        Object value = jsonparams.get(key);
+        if (value instanceof JSONObject) {
+          JSONObject jsonvalue = (JSONObject) value;
+          query.setParameter(
+              key,
+              JsonToDataConverter.convertJsonToPropertyValue(
+                  PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
+        } else {
+          query.setParameter(key,
+              JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
+
+        }
+      }
+    }
+
+    JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
+
+    List<?> listdata = query.list();
+    for (Object o : listdata) {
+      jsonData.put(converter.convert(o));
+    }
+
+    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
+        + startRow - 1 : 0));
+
+    if (jsonData.length() == 0) {
+      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+    }
+
+    jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
+    return jsonResponse;
   }
 
   private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
