@@ -1109,8 +1109,6 @@ isc.OBToolbar.addProperties({
       }
       if (hideAllButtons) {
         this.hideShowRightMembers(false);
-      } else {
-        this.hideShowRightMembers(true);
       }
       
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
