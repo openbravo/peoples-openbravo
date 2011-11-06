@@ -1046,11 +1046,16 @@ OB.ViewFormProperties = {
       item = this.getField(item);
     }
     currentValue = item.getValue();
-    
+
     // no change go away
     if (item.compareValues(value, currentValue)) {
+      // Force setElemntValue even there is no change to show new possible values
+      // in field.valueMap (issue #18957)
+      item.setElementValue(item.mapValueToDisplay(value));
+
       return;
     }
+
     this.setValue(item, value);
 
     // fire any new callouts

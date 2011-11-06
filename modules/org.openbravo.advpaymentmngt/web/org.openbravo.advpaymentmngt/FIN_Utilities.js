@@ -711,15 +711,14 @@ function createCombo(object, innerHTML){
  * @return
  */
 function reloadParentGrid() {
-  var f, dad, layoutMDI;
+  var f, dad, layoutMDI, popup;
   try {
     f = getFrame('LayoutMDI');
-    layoutMDI = (f && f.OB
-                 && f.OB.Layout.ClassicOBCompatibility.Popup
-                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process')
-                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj()
-                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj().contentWindow
-                 && f.OB.Layout.ClassicOBCompatibility.Popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0]);
+    popup = f && f.OB && f.OB.Layout.ClassicOBCompatibility.Popup;
+    layoutMDI = popup && popup.getPopup('process')
+                && popup.getPopup('process').getIframeHtmlObj()
+                && popup.getPopup('process').getIframeHtmlObj().contentWindow
+                && popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0];
     dad = layoutMDI || top.opener;
     if (dad) {
       if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {

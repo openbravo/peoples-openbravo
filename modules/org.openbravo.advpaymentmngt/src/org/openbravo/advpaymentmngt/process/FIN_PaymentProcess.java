@@ -30,7 +30,6 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -45,7 +44,6 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.scheduling.ProcessBundle;
@@ -269,15 +267,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   } else {
                     increaseCustomerCredit(businessPartner, amount);
                   }
-                  validateAmount(paymentScheduleDetail.getInvoicePaymentSchedule(),
-                      paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                   FIN_AddPayment.updatePaymentScheduleAmounts(
                       paymentScheduleDetail.getInvoicePaymentSchedule(),
                       paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                 }
                 if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
-                  validateAmount(paymentScheduleDetail.getOrderPaymentSchedule(),
-                      paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                   FIN_AddPayment.updatePaymentScheduleAmounts(
                       paymentScheduleDetail.getOrderPaymentSchedule(),
                       paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
@@ -667,39 +661,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         OBDal.getInstance().save(payment);
         break;
       }
-    }
-  }
-
-  /**
-   * Checks if the amount to pay/receive fits with the outstanding amount in the invoice or order.
-   * 
-   * @param paymentSchedule
-   *          Payment plan of the order or invoice where the outstanding amount is specified.
-   * @param amount
-   *          Amount to by paid or received.
-   * @param writeOffAmount
-   *          Write off amount.
-   * @return True if the amount is valid.
-   * @throws OBException
-   *           Exception explaining why the amount is not valid.
-   */
-  private boolean validateAmount(FIN_PaymentSchedule paymentSchedule, BigDecimal amount,
-      BigDecimal writeOffAmount) throws OBException {
-    BigDecimal totalPaid = amount;
-    BigDecimal outstanding = paymentSchedule.getOutstandingAmount();
-    if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
-      totalPaid = amount.add(writeOffAmount);
-    }
-    // ((totalPaid > 0 || outstanding > 0) && totalPaid <= outstanding)
-    // || (totalPaid < 0 && outstanding < 0 && totalPaid >= outstanding)
-    if (((totalPaid.compareTo(BigDecimal.ZERO) == 1 || outstanding.compareTo(BigDecimal.ZERO) == 1) && totalPaid
-        .compareTo(outstanding) <= 0)
-        || (totalPaid.compareTo(BigDecimal.ZERO) == -1
-            && outstanding.compareTo(BigDecimal.ZERO) == -1 && totalPaid.compareTo(outstanding) >= 0)) {
-      return true;
-    } else {
-      throw new OBException(String.format(FIN_Utility.messageBD("APRM_AmountOutOfRange"),
-          totalPaid.toString(), paymentSchedule.getOutstandingAmount().toString()));
     }
   }
 

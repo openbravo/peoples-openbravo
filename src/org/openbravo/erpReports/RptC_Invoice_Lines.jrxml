@@ -208,7 +208,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textField isBlankWhenNull="false">
+				<textField isBlankWhenNull="true">
 					<reportElement key="textField-1" style="default" x="0" y="0" width="72" height="16" forecolor="#000000"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

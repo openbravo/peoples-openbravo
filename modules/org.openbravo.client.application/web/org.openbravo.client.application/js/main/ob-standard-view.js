@@ -255,7 +255,7 @@ isc.OBStandardView.addProperties({
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      this.viewGrid.fetchData();
+      this.viewGrid.fetchData(this.viewGrid.getCriteria());
       this.refreshContents = false;
     }
     
@@ -1061,6 +1061,9 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
+    
+    // commented line because of https://issues.openbravo.com/view.php?id=18963
+    // toolbar seems to be refreshed in any case
     // note only set session info if there is a record selected
     this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
 

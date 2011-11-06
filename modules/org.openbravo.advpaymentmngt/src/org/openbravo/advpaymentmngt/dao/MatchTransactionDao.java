@@ -169,6 +169,7 @@ public class MatchTransactionDao {
     whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
     whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = '");
     whereClause.append(strFinancialAccountId).append("'");
+    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     if (strPaymentTypeFilter.equalsIgnoreCase("D")) {
       whereClause.append("   and (bsl.").append(FIN_BankStatementLine.PROPERTY_DRAMOUNT);
       whereClause.append(" is null ");
@@ -208,6 +209,7 @@ public class MatchTransactionDao {
     whereClause.append("   and bsl.").append(
         FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
     whereClause.append(" is null");
+    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
         FIN_BankStatementLine.class, whereClause.toString());
 
@@ -224,6 +226,7 @@ public class MatchTransactionDao {
     whereClause.append("   and bsl.").append(
         FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
     whereClause.append(" is not null");
+    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
         FIN_BankStatementLine.class, whereClause.toString());
     return obData.list();
@@ -341,6 +344,7 @@ public class MatchTransactionDao {
           FIN_BankStatementLine.class);
       obc.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obc.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, financialAccount));
+      obc.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       obc.addOrderBy(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, false);
       obc.setMaxResults(1);
       final List<FIN_BankStatementLine> bst = obc.list();
@@ -397,6 +401,7 @@ public class MatchTransactionDao {
 
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT,
           reconciliation.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
@@ -446,6 +451,7 @@ public class MatchTransactionDao {
       }
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT,
           lastReconciliation.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       obcBsl.add(Restrictions.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE,
           lastReconciliation.getTransactionDate()));
       ProjectionList projections = Projections.projectionList();
