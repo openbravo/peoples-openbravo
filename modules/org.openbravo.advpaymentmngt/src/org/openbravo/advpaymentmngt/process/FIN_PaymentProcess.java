@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,8 +46,10 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
@@ -180,8 +183,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           if (paymentAmount.compareTo(payment.getAmount()) != 0)
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
           if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0)
-            updateUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(),
-                payment.isReceipt());
+            updateUsedCredit(payment);
 
           payment.setWriteoffAmount(paymentWriteOfAmount);
           payment.setProcessed(true);
@@ -372,23 +374,46 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           }
           List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
           List<ConversionRateDoc> conversionRates = payment.getCurrencyConversionRateDocList();
+          Set<String> invoiceDocNos = new HashSet<String>();
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
             removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
               BigDecimal amount = paymentScheduleDetail.getAmount().add(
                   paymentScheduleDetail.getWriteoffAmount());
-              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && restorePaidAmounts) {
-                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                    .getInvoicePaymentSchedule(), paymentScheduleDetail.getAmount().negate(),
-                    paymentScheduleDetail.getWriteoffAmount().negate());
-                // BP SO_CreditUsed
-                businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
-                    .getBusinessPartner();
-                if (isReceipt) {
-                  increaseCustomerCredit(businessPartner, amount);
-                } else {
-                  decreaseCustomerCredit(businessPartner, amount);
+              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+                // Remove invoice description related to the credit payments
+                final Invoice invoice = paymentScheduleDetail.getInvoicePaymentSchedule()
+                    .getInvoice();
+                invoiceDocNos.add(invoice.getDocumentNo());
+                final String invDesc = invoice.getDescription();
+                if (invDesc != null) {
+                  final String creditMsg = Utility.messageBD(new DalConnectionProvider(),
+                      "APRM_InvoiceDescUsedCredit", vars.getLanguage());
+                  if (creditMsg != null) {
+                    final StringBuffer newDesc = new StringBuffer();
+                    for (final String line : invDesc.split("\n")) {
+                      if (!line.startsWith(creditMsg.substring(0, creditMsg.lastIndexOf("%s")))) {
+                        newDesc.append(line);
+                        if (!"".equals(line))
+                          newDesc.append("\n");
+                      }
+                    }
+                    invoice.setDescription(newDesc.toString());
+                  }
+                }
+                if (restorePaidAmounts) {
+                  FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
+                      .getInvoicePaymentSchedule(), paymentScheduleDetail.getAmount().negate(),
+                      paymentScheduleDetail.getWriteoffAmount().negate());
+                  // BP SO_CreditUsed
+                  businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
+                      .getBusinessPartner();
+                  if (isReceipt) {
+                    increaseCustomerCredit(businessPartner, amount);
+                  } else {
+                    decreaseCustomerCredit(businessPartner, amount);
+                  }
                 }
               }
               if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {
@@ -428,9 +453,43 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
           if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
               && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
-            undoUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(),
-                payment.isReceipt());
+            undoUsedCredit(payment, vars, invoiceDocNos);
           }
+
+          List<FIN_Payment> creditPayments = new ArrayList<FIN_Payment>();
+          for (final FIN_Payment_Credit pc : payment.getFINPaymentCreditList()) {
+            creditPayments.add(pc.getCreditPaymentUsed());
+          }
+          for (final FIN_Payment creditPayment : creditPayments) {
+            // Update Description
+            final String payDesc = creditPayment.getDescription();
+            if (payDesc != null) {
+              final String invoiceDocNoMsg = Utility.messageBD(new DalConnectionProvider(),
+                  "APRM_CreditUsedinInvoice", vars.getLanguage());
+              if (invoiceDocNoMsg != null) {
+                final StringBuffer newDesc = new StringBuffer();
+                for (final String line : payDesc.split("\n")) {
+                  boolean include = true;
+                  if (line.startsWith(invoiceDocNoMsg.substring(0,
+                      invoiceDocNoMsg.lastIndexOf("%s")))) {
+                    for (final String docNo : invoiceDocNos) {
+                      if (line.indexOf(docNo) > 0) {
+                        include = false;
+                        break;
+                      }
+                    }
+                  }
+                  if (include) {
+                    newDesc.append(line);
+                    if (!"".equals(line))
+                      newDesc.append("\n");
+                  }
+                }
+                creditPayment.setDescription(newDesc.toString());
+              }
+            }
+          }
+          payment.getFINPaymentCreditList().clear();
           payment.setGeneratedCredit(BigDecimal.ZERO);
           payment.setUsedCredit(BigDecimal.ZERO);
 
@@ -491,6 +550,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
              * Cancel all payment schedule details related to the payment
              */
             final List<FIN_PaymentScheduleDetail> removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
+            Set<String> invoiceDocNos = new HashSet<String>();
             for (final FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
               for (final FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                   .getFINPaymentScheduleDetailList()) {
@@ -508,6 +568,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
                       paymentScheduleDetail.setCanceled(true);
                     }
+                    invoiceDocNos.add(paymentScheduleDetail.getInvoicePaymentSchedule()
+                        .getInvoice().getDocumentNo());
                   }
                   // Create merged Payment Schedule Detail with the pending to be paid amount
                   if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
@@ -555,6 +617,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               for (FIN_PaymentScheduleDetail removedPD : removedPDS)
                 OBDal.getInstance().remove(removedPD);
             }
+            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+                && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
+              undoUsedCredit(payment, vars, invoiceDocNos);
+            }
+            payment.getFINPaymentCreditList().clear();
+            payment.setUsedCredit(BigDecimal.ZERO);
           }
         } finally {
           OBDal.getInstance().flush();
@@ -630,36 +698,80 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     return true;
   }
 
-  private static void updateUsedCredit(BigDecimal usedAmount, BusinessPartner bp, boolean isReceipt) {
-    List<FIN_Payment> payments = dao.getCustomerPaymentsWithCredit(bp, isReceipt);
-    BigDecimal pendingToAllocateAmount = usedAmount;
-    for (FIN_Payment payment : payments) {
-      BigDecimal availableAmount = payment.getGeneratedCredit().subtract(payment.getUsedCredit());
-      if (pendingToAllocateAmount.compareTo(availableAmount) == 1) {
-        payment.setUsedCredit(payment.getUsedCredit().add(availableAmount));
-        pendingToAllocateAmount = pendingToAllocateAmount.subtract(availableAmount);
-        OBDal.getInstance().save(payment);
-      } else {
-        payment.setUsedCredit(payment.getUsedCredit().add(pendingToAllocateAmount));
-        OBDal.getInstance().save(payment);
-        break;
+  private void updateUsedCredit(FIN_Payment newPayment) {
+    if (newPayment.getFINPaymentCreditList().isEmpty()) {
+      // We process the payment from the Payment In/Out window (not from the Process Invoice flow)
+      final BigDecimal usedAmount = newPayment.getUsedCredit();
+      final BusinessPartner bp = newPayment.getBusinessPartner();
+      final boolean isReceipt = newPayment.isReceipt();
+
+      List<FIN_Payment> creditPayments = dao.getCustomerPaymentsWithCredit(bp, isReceipt);
+      BigDecimal pendingToAllocateAmount = usedAmount;
+      for (FIN_Payment creditPayment : creditPayments) {
+        BigDecimal availableAmount = creditPayment.getGeneratedCredit().subtract(
+            creditPayment.getUsedCredit());
+        if (pendingToAllocateAmount.compareTo(availableAmount) == 1) {
+          creditPayment.setUsedCredit(creditPayment.getUsedCredit().add(availableAmount));
+          pendingToAllocateAmount = pendingToAllocateAmount.subtract(availableAmount);
+          linkCreditPayment(newPayment, availableAmount, creditPayment);
+          OBDal.getInstance().save(creditPayment);
+        } else {
+          creditPayment.setUsedCredit(creditPayment.getUsedCredit().add(pendingToAllocateAmount));
+          linkCreditPayment(newPayment, pendingToAllocateAmount, creditPayment);
+          OBDal.getInstance().save(creditPayment);
+          break;
+        }
       }
     }
   }
 
-  private void undoUsedCredit(BigDecimal usedAmount, BusinessPartner bp, Boolean isReceipt) {
-    List<FIN_Payment> payments = dao.getCustomerPaymentsWithUsedCredit(bp, isReceipt);
-    BigDecimal pendingDeallocateAmount = usedAmount;
-    for (FIN_Payment payment : payments) {
-      BigDecimal paymentUsedAmount = payment.getUsedCredit();
-      if (usedAmount.compareTo(paymentUsedAmount) == 1) {
-        payment.setUsedCredit(BigDecimal.ZERO);
-        pendingDeallocateAmount = pendingDeallocateAmount.subtract(paymentUsedAmount);
-        OBDal.getInstance().save(payment);
-      } else {
-        payment.setUsedCredit(payment.getUsedCredit().subtract(pendingDeallocateAmount));
-        OBDal.getInstance().save(payment);
-        break;
+  public static void linkCreditPayment(FIN_Payment newPayment, BigDecimal usedAmount,
+      FIN_Payment creditPayment) {
+    final FIN_Payment_Credit creditInfo = OBProvider.getInstance().get(FIN_Payment_Credit.class);
+    creditInfo.setPayment(newPayment);
+    creditInfo.setAmount(usedAmount);
+    creditInfo.setCurrency(newPayment.getCurrency());
+    creditInfo.setCreditPaymentUsed(creditPayment);
+    creditInfo.setOrganization(newPayment.getOrganization());
+    creditInfo.setClient(newPayment.getClient());
+    newPayment.getFINPaymentCreditList().add(creditInfo);
+  }
+
+  private void undoUsedCredit(FIN_Payment myPayment, VariablesSecureApp vars,
+      Set<String> invoiceDocNos) {
+    final List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
+    for (final FIN_Payment_Credit pc : myPayment.getFINPaymentCreditList()) {
+      final FIN_Payment creditPaymentUsed = pc.getCreditPaymentUsed();
+      creditPaymentUsed.setUsedCredit(creditPaymentUsed.getUsedCredit().subtract(pc.getAmount()));
+      payments.add(creditPaymentUsed);
+    }
+
+    for (final FIN_Payment payment : payments) {
+      // Update Description
+      final String payDesc = payment.getDescription();
+      if (payDesc != null) {
+        final String invoiceDocNoMsg = Utility.messageBD(new DalConnectionProvider(),
+            "APRM_CreditUsedinInvoice", vars.getLanguage());
+        if (invoiceDocNoMsg != null) {
+          final StringBuffer newDesc = new StringBuffer();
+          for (final String line : payDesc.split("\n")) {
+            boolean include = true;
+            if (line.startsWith(invoiceDocNoMsg.substring(0, invoiceDocNoMsg.lastIndexOf("%s")))) {
+              for (final String docNo : invoiceDocNos) {
+                if (line.indexOf(docNo) > 0) {
+                  include = false;
+                  break;
+                }
+              }
+            }
+            if (include) {
+              newDesc.append(line);
+              if (!"".equals(line))
+                newDesc.append("\n");
+            }
+          }
+          payment.setDescription(newDesc.toString());
+        }
       }
     }
   }

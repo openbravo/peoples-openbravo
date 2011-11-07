@@ -37,6 +37,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -473,15 +474,30 @@ public class FIN_AddPayment {
   public static HashMap<String, BigDecimal> getSelectedPaymentDetailsAndAmount(
       VariablesSecureApp vars, List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails)
       throws ServletException {
-    HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts = new HashMap<String, BigDecimal>();
+    return getSelectedBaseOBObjectAmount(vars, selectedPaymentScheduleDetails, "inpPaymentAmount");
+  }
 
-    for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
-      selectedPaymentScheduleDetailsAmounts.put(
-          paymentScheduleDetail.getId(),
-          new BigDecimal(vars.getNumericParameter(
-              "inpPaymentAmount" + paymentScheduleDetail.getId(), "")));
+  /**
+   * Creates a HashMap with the BaseOBObject id's and the amount gotten from the Session.
+   * 
+   * The amounts are stored in Session like "htmlElementId"+basobObject.Id
+   * 
+   * @param vars
+   *          VariablseSecureApp with the session data.
+   * @param selectedPaymentScheduleDetails
+   *          List of FIN_PaymentScheduleDetails that need to be included in the HashMap.
+   * @return A HashMap mapping the FIN_PaymentScheduleDetail's Id with the corresponding amount.
+   */
+  public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
+      VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)
+      throws ServletException {
+    HashMap<String, BigDecimal> selectedBaseOBObjectAmounts = new HashMap<String, BigDecimal>();
+
+    for (final T o : selectedBaseOBObjects) {
+      selectedBaseOBObjectAmounts.put((String) o.getId(),
+          new BigDecimal(vars.getNumericParameter(htmlElementId + (String) o.getId(), "")));
     }
-    return selectedPaymentScheduleDetailsAmounts;
+    return selectedBaseOBObjectAmounts;
   }
 
   /**

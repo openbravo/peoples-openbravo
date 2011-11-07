@@ -112,11 +112,13 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strOrdCrit = vars.getInGlobalVariable("inpShown", "PaymentReport|OrdCrit", "",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
               "FINPR_BPartner_Category", ""));
+      final String strInclPaymentUsingCredit = vars.getGlobalVariable("inpInclPaymentUsingCredit",
+          "PaymentReport|IncludePaymentUsingCredit", "Y");
       printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit);
+          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit);
     } else if (vars.commandIn("FIND")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
       String strInclSubOrg = vars.getRequestGlobalVariable("inpInclSubOrg",
@@ -166,11 +168,14 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strOrdCrit = vars.getRequestInGlobalVariable("inpShown", "PaymentReport|OrdCrit",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
               "FINPR_BPartner_Category", ""));
+      final String strInclPaymentUsingCredit = vars.getStringParameter("inpInclPaymentUsingCredit",
+          "N");
+      vars.setSessionValue("PaymentReport|IncludePaymentUsingCredit", strInclPaymentUsingCredit);
       printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit);
+          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit);
     } else if (vars.commandIn("PDF", "XLS")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
       String strInclSubOrg = vars.getRequestGlobalVariable("inpInclSubOrg",
@@ -215,6 +220,9 @@ public class PaymentReport extends HttpSecureAppServlet {
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
               "FINPR_BPartner_Category", ""));
       String strOutput = "html";
+      final String strInclPaymentUsingCredit = vars.getStringParameter("inpInclPaymentUsingCredit",
+          "N");
+      vars.setSessionValue("PaymentReport|IncludePaymentUsingCredit", strInclPaymentUsingCredit);
       if (vars.commandIn("PDF"))
         strOutput = "pdf";
       else if (vars.commandIn("XLS"))
@@ -224,7 +232,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strOutput, strGroupCrit, strOrdCrit);
+          strOverdue, strOutput, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit);
 
     } else if (vars.commandIn("LINK")) {
       String strTableId = vars.getRequiredStringParameter("inpAdTableId", IsIDFilter.instance);
@@ -254,7 +262,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
       String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit) throws IOException, ServletException {
+      String strOrdCrit, String strInclPaymentUsingCredit) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = null;
@@ -269,7 +277,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit);
+          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit);
 
       if (data.length == 0) {
 
@@ -510,6 +518,7 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument
         .setParameter("conversionDatedisplaySave", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paymType", strPaymType);
+    xmlDocument.setParameter("inclPaymentUsingCredit", strInclPaymentUsingCredit);
 
     Vector<Object> vector = new Vector<Object>(0);
     SQLReturnObject sqlRO = new SQLReturnObject();
@@ -601,10 +610,28 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setData("reportOrdCrit", "liststructure", objectListData);
     xmlDocument.setData("reportShown", "liststructure", PaymentReportDao.getObjectList(strOrdCrit));
 
+    xmlDocument.setParameter("showOneAsterisk", showAsterisk(data, "*") ? "" : "Display:none");
+    xmlDocument.setParameter("showTwoAsterisk", showAsterisk(data, "**") ? "" : "Display:none");
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private boolean showAsterisk(FieldProvider[] data, String asterisk) {
+    if (asterisk == null || "".equals(asterisk) || data == null)
+      return false;
+    boolean showAsterisk = false;
+    for (final FieldProvider fp : data) {
+      if (fp.getField("INVOICE_NUMBER") != null && !"".equals(fp.getField("INVOICE_NUMBER"))
+          && fp.getField("INVOICE_NUMBER").length() >= asterisk.length()
+          && asterisk.equals(fp.getField("INVOICE_NUMBER").substring(0, asterisk.length()))) {
+        showAsterisk = true;
+        break;
+      }
+    }
+    return showAsterisk;
   }
 
   private void printPage(HttpServletRequest request, HttpServletResponse response,
@@ -614,7 +641,8 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
       String strConversionDate, String strPaymType, String strOverdue, String strOutput,
-      String strGroupCrit, String strOrdCrit) throws IOException, ServletException {
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit) throws IOException,
+      ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
 
@@ -623,7 +651,7 @@ public class PaymentReport extends HttpSecureAppServlet {
         strDueDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo,
         strcBPartnerIdIN, strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-        strOverdue, strGroupCrit, strOrdCrit);
+        strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit);
 
     if (data.length == 1 && data[0] == null) {
 
@@ -793,6 +821,14 @@ public class PaymentReport extends HttpSecureAppServlet {
       parameters.put("OVERDUE_SHOW", Utility.messageBD(this, "No", vars.getLanguage()));
     parameters.put("GROUPCRIT_SHOW", Utility.messageBD(this, strGroupCrit, vars.getLanguage()));
     parameters.put("ORDCRIT_SHOW", strOrdCritShow);
+    if ("Y".equals(strInclPaymentUsingCredit)) {
+      parameters.put("INCL_PAYMENTUSINGCREDIT", Utility.messageBD(this, "Yes", vars.getLanguage()));
+    } else {
+      parameters.put("INCL_PAYMENTUSINGCREDIT", Utility.messageBD(this, "No", vars.getLanguage()));
+    }
+
+    parameters.put("ONE_ASTERISK_SHOW", new Boolean(showAsterisk(data, "*")));
+    parameters.put("TWO_ASTERISK_SHOW", new Boolean(showAsterisk(data, "**")));
 
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }

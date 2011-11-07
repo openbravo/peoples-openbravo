@@ -45,6 +45,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -979,6 +980,30 @@ public class FIN_Utility {
         parameters, null);
 
     return "Y".equals(result);
+  }
+
+  /**
+   * Returns the legal entity of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public static Organization getLegalEntityOrg(final Organization org) {
+    try {
+      OBContext.setAdminMode(true);
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId());
+      for (final String orgId : osp.getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
 }
