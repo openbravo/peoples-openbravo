@@ -197,6 +197,13 @@
 	<parameter name="PAYMENT_METHOD_SHOW" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="FINANCIAL_ACCOUNT_SHOW" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="CONVERT_CURRENCY_SHOW" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="INCL_PAYMENTUSINGCREDIT" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="ONE_ASTERISK_SHOW" isForPrompting="false" class="java.lang.Boolean">
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TWO_ASTERISK_SHOW" isForPrompting="false" class="java.lang.Boolean">
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT 'hello' AS BP_GROUP, 'hello' AS BPARTNER, 'hello' AS PROJECT, 'hello' AS PAYMENT, 'hello' AS SALES_PERSON, 1234 AS INVOICE_NUMBER, to_Date('01/01/2010') AS INVOICE_DATE,
        to_Date('01/03/2010') AS DUE_DATE, 1234 AS PLANNED_DSO, 1234 AS CURRENT_DSO, 1234 AS OVERDUE, 1234 AS DAYS_OVERDUE, 1234 AS AMOUNT,
        'hello' AS CURRENCY, 1234 AS BASE_AMOUNT, 'hello' AS BASE_CURRENCY, 'hello' AS PAYMENT_METHOD, 'hello' AS FINANCIAL_ACCOUNT
@@ -382,6 +389,34 @@ FROM DUAL]]></queryString>
 			<groupExpression><![CDATA[$F{GROUP_CRIT}]]></groupExpression>
 			<groupHeader>
 			<band height="100"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="408"
+						y="20"
+						width="179"
+						height="18"
+						key="staticText-50"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Include Payments Using Credit:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="593"
+						y="20"
+						width="179"
+						height="18"
+						key="textField-46"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{INCL_PAYMENTUSINGCREDIT}.toString()]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement
 						style="Report_Footer"
@@ -1865,6 +1900,42 @@ Amount]]></text>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</pageFooter>
+		<lastPageFooter>
+			<band height="40"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="3"
+						y="4"
+						width="693"
+						height="17"
+						key="staticText-51">
+							<printWhenExpression><![CDATA[$P{ONE_ASTERISK_SHOW}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[* Invoice paid using a credit payment]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="3"
+						y="21"
+						width="693"
+						height="17"
+						key="staticText-52">
+							<printWhenExpression><![CDATA[$P{TWO_ASTERISK_SHOW}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[** Several invoices have been paid using the same credit payment]]></text>
+				</staticText>
+			</band>
+		</lastPageFooter>
 		<summary>
 			<band height="30"  isSplitAllowed="true" >
 				<staticText>

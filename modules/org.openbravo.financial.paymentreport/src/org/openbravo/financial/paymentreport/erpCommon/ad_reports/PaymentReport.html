@@ -13,7 +13,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2009 Openbravo SL 
+* All portions are Copyright (C) 2009-2011 Openbravo SL 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -279,7 +279,7 @@ function onloadFunctions() {
   <input type="hidden" name="inpSecondKey"></input>
   <input type="hidden" name="inpKeyReferenceId"></input>
   <input type="hidden" name="inpTableReferenceId"></input>
-  <input type="hidden" name="inpissotrx" id="IsSOTrx" value="N">
+  <input type="hidden" name="inpissotrx" id="IsSOTrx" value="N"></input>
   <input type="hidden" name="inpAdTableId"></input>
   <input type="hidden" name="inpIsReceipt"></input>
   <input type="hidden" name="inpRecordId"></input>
@@ -407,6 +407,13 @@ function onloadFunctions() {
                                 </tbody>
                               </table>
                             <!-- USER CONTROLS -->
+						  </td>
+						</tr>
+					  </table>
+					
+					</td>
+				   </tr>
+				 </table>		
               <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
@@ -504,7 +511,7 @@ function onloadFunctions() {
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountFrom', document.frmMain.inpAmountFrom.value);return false;">
-                            <table class="FieldButton"  onmouseout="window.status='';return true;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                               <tr>
                                 <td class="FieldButton_bg">
                                   <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
@@ -527,7 +534,7 @@ function onloadFunctions() {
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountTo', document.frmMain.inpAmountTo.value);return false;">
-                            <table class="FieldButton"  onmouseout="window.status='';return true;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                               <tr>
                                 <td class="FieldButton_bg">
                                   <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
@@ -788,13 +795,13 @@ function onloadFunctions() {
                     <select  name="inpPaymentMethodId" id="paramPaymentMethodId" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportPaymentMethod_ID"></div></option>
                     </select>
-                  </td>
-                  <td class="TitleCell"><span class="LabelText">Financial Account</span></td>
-                  <td class="Combo_ContentCell" colspan="2">
-                    <select  name="inpFinancialAccountId" id="paramFinancialAccountId" class="Combo Combo_TwoCells_width">
-                      <option value=""> <div id="reportFinancialAccount_ID"></div></option>
-                    </select>
-                  </td>
+                  </td>  
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Include Payments Using Credit</span></td>
+                  <td class="Radio_Check_ContentCell">
+                    <span class="Checkbox_container_NOT_Focused">
+                      <input type="checkbox" name="inpInclPaymentUsingCredit" value="Y" id="paramInclPaymentUsingCredit"></input>
+                    </span></td>
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Currency</span></td>
@@ -803,9 +810,12 @@ function onloadFunctions() {
                       <option value=""> <div id="reportC_Currency_ID"></div></option>
                     </select>
                   </td>
-                  <td class="ContentCell"></td>
-                  <td class="ContentCell"></td>
-                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Financial Account</span></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select  name="inpFinancialAccountId" id="paramFinancialAccountId" class="Combo Combo_TwoCells_width">
+                      <option value=""> <div id="reportFinancialAccount_ID"></div></option>
+                    </select>
+                  </td>
                 </tr>
                 
                 
@@ -843,7 +853,7 @@ function onloadFunctions() {
                   <td class="TitleCell"><span class="LabelText">Payment Type</span></td>
                   <td class="Combo_ContentCell" colspan="2">
                     <select  name="inpPaymType" id="paramPaymType" class="ComboKey Combo_TwoCells_width" required="true">
-                        <option value=""><div id="reportPaymType"></option>
+                        <option value=""><div id="reportPaymType"></div></option>
                     </select>
                   </td>
                   <td class="ContentCell"></td>
@@ -1039,7 +1049,6 @@ function onloadFunctions() {
                   <td class="ContentCell"></td>
                   <td class="ContentCell"></td>
                 </tr>
-              </table>
               <table class="Main_Client_TableEdition">
                   <tr>
                     <td colspan="6">
@@ -1081,11 +1090,12 @@ function onloadFunctions() {
                                 <a href="#" onclick="validate(); openInvoiceTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink" style="xx">
                                   <span id="fieldInvoiceNumber">xx14500.34</span>
                                 </a>
+                                <span id="fieldInvoiceNumber_nolink" class="DataGrid_Body_Cell" style="xx">xx14500.34</span>
                               </td>
                                 
                               <td width="10%" id="fieldInvoiceDate" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" class="DataGrid_Body_Cell_Amount">
-                                <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx">
+                                <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx" title="xx">
                                   <span id="fieldPayment">xx14500.34</span>
                                 </a>
                               </td>
@@ -1167,10 +1177,11 @@ function onloadFunctions() {
                                       <a href="#" onclick="validate(); openInvoiceTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink2" style="xx">
                                         <span id="fieldInvoiceNumber2">xx14500.34</span>
                                       </a>
+                                      <span id="fieldInvoiceNumber2_nolink" class="DataGrid_Body_Cell" style="xx">xx14500.34</span>
                                     </td>
                                     <td width="10%" id="fieldInvoiceDate2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" class="DataGrid_Body_Cell_Amount">
-                                      <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx">
+                                      <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx" title="xx">
                                         <span id="fieldPayment2">xx14500.34</span>
                                       </a>
                                     </td>
@@ -1225,18 +1236,23 @@ function onloadFunctions() {
                 </table>
 
                       <!-- USER CONTROLS -->
-                </td>
+                <table class="Main_Client_TableEdition">
+			      <tr>
+				   <td>					
+				    <div id="paramShowOneAsterisk" style="xx" class="RelationInfoContent">* Invoice paid using a credit payment</div>
+				    <div id="paramShowTwoAsterisk" style="xx" class="RelationInfoContent">** Several invoices have been paid using the same credit payment</div>
+				   </td>
+				  </tr>
+			  </table>		
               </tr>
               </table>
-              </td>
-            </tr>
-          </table>
-        </div>
+        
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
           <tr>
-            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"/></td>
           </tr>
         </table>
+	</div>
       </td>
       <td valign="top">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
