@@ -129,6 +129,15 @@ public class Utility {
     OBContext.setAdminMode();
     try {
       strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+
+      String purpose = "";
+
+      try {
+        purpose = OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose();
+      } catch (Exception e) {
+        log4j.error("Error getting instance purpose", e);
+      }
+
       StringBuilder url = new StringBuilder(COMMUNITY_BRANDING_URL);
       url.append("?licenseClass=" + strLicenseClass);
       url.append("&trial=" + (ActivationKey.getInstance().isTrial() ? "Y" : "N"));
@@ -140,6 +149,7 @@ public class Utility {
       url.append("&databaseIdentifier=" + SystemInfo.getDBIdentifier());
       url.append("&internetConnection=" + (HttpsUtils.isInternetAvailable() ? "Y" : "N"));
       url.append("&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date()));
+      url.append("&purpose=" + purpose);
       return url.toString();
     } catch (Exception e) {
       throw new OBException(e);

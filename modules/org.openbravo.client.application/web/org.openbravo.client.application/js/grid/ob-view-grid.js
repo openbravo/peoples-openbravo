@@ -222,7 +222,7 @@ isc.OBViewGrid.addProperties({
   },
 
   initWidget: function () {
-    var i;
+    var i, vwState;
     
     // make a copy of the dataProperties otherwise we get 
     // change results that values of one grid are copied/coming back
@@ -283,6 +283,11 @@ isc.OBViewGrid.addProperties({
   
     var ret = this.Super('initWidget', arguments);
     
+    vwState = this.view.standardWindow.getDefaultGridViewState(this.view.tabId);
+    if (vwState) {
+      this.setViewState(vwState);
+    }
+
     this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
     this.filterNoRecordsEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' +
     '<span onclick="window[\'' +
@@ -447,49 +452,30 @@ isc.OBViewGrid.addProperties({
       return;
     }
     
-    this.Super('setViewState', arguments);
+    if (this.getDataSource()) {
+      this.Super('setViewState', arguments);
+    }
 
     if (localState.noFilterClause) {
       this.filterClause = null;
-      this.view.messageBar.hide();
+      if (this.view.messageBar) {
+        this.view.messageBar.hide();
+      }
     }
 
     // and no additional filter clauses passed in
     if (localState.filter && 
         this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId &&
         this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
-      this.delayCall('storeViewFilter', [localState.filter], 100, this);
+      this.setCriteria(localState.filter);
     }
-  },
-  
-  storeViewFilter: function(filter, counter) {
-    // wait until the filter editor is there, but not indefinitely
-    if (!this.getFilterEditor() || !this.getFilterEditor().getEditForm()) {
-      if (!counter || counter < 1000) {
-        this.delayCall('storeViewFilter', [filter, (counter ? ++counter : 1)], 100, this);
-      }
-      return;
-    }
-    var i, length;
-    
-    this.setCriteria(filter);
-    if (this.filterEditor) {
-      // update the internal value also, this means that it
-      // get retained when showing the grid for the first
-      // time
-      length = this.filterEditor.getFields().length;
-      for (i = 0; i < length; i++) {
-        this.filterEditor.storeUpdatedEditorValue(false, i);
-      }
-    }
-
-    this.checkShowFilterFunnelIcon(filter);
   },
  
   setView: function(view){
     var dataPageSizeaux, length, i, crit;
     
     this.view = view;
+    
     this.editFormDefaults.view = view;
     
     if (this.getField(this.view.parentProperty)) {
@@ -511,7 +497,7 @@ isc.OBViewGrid.addProperties({
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && 
         this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
-      this.delayCall('storeViewFilter', [crit], 100, this);
+      this.setCriteria(crit);
       delete this.view.standardWindow.additionalCriteria;
     }
     // if there is no autoexpand field then just divide the space
@@ -1003,6 +989,9 @@ isc.OBViewGrid.addProperties({
   
   getCriteria: function(){
     var criteria = this.Super('getCriteria', arguments) || {};
+    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+      criteria = isc.shallowClone(this.initialCriteria);
+    }
     criteria = this.convertCriteria(criteria);
     return criteria;
   },

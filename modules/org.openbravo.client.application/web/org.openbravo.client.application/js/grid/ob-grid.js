@@ -219,7 +219,7 @@ isc.OBGrid.addProperties({
       
       // overridden for:
       // https://issues.openbravo.com/view.php?id=18509
-      editorChanged : function (item) {
+      editorChanged: function (item) {
         var prop, same, opDefs, val = item.getElementValue(), 
           actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
         
@@ -227,7 +227,7 @@ isc.OBGrid.addProperties({
           
           // if someone starts typing and and or then do not filter
           // onkeypress either
-          if (val.contains(' and') || val.contains(' or')) {
+          if (val.contains(' and') || val.contains(' or ')) {
             this.preventPerformFilterFiring();
             return;
           }
@@ -514,12 +514,14 @@ isc.OBGrid.addProperties({
       }
 
       var field = this.filterEditor.getField(prop);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
 
       field = this.filterEditor.getField(fullPropName);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
     }

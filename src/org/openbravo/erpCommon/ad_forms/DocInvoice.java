@@ -878,7 +878,7 @@ public class DocInvoice extends AcctServer {
     ArrayList<Object> new_as = new ArrayList<Object>();
     // We reload again all the acct schemas of the client
     AcctSchema[] m_aslocal = AcctSchema.getAcctSchemaArray(connectionProvider, AD_Client_ID,
-        AD_Org_ID);
+        adOrgId);
     // Filter the right acct schemas for the organization
     for (int i = 0; i < m_aslocal.length; i++) {
       acct = m_aslocal[i];

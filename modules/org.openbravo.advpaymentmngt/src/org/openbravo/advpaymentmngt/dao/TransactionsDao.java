@@ -206,6 +206,7 @@ public class TransactionsDao {
         obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
       }
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_ENDINGDATE, false);
+      obc.addOrderBy(FIN_Reconciliation.PROPERTY_CREATIONDATE, false);
       obc.setMaxResults(1);
       final List<FIN_Reconciliation> rec = obc.list();
       if (rec.size() == 0)

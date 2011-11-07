@@ -65,7 +65,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strLastFieldChanged = vars.getGlobalVariable("inpLastFieldChanged", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, 
+      printPageDataPDF(request, response, vars, strFinReconciliationID,
           OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strLastFieldChanged.toLowerCase().contains("detail") ? DETAIL : SUMMARY);
     }
@@ -262,6 +262,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
         obcBsl.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
       }
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));

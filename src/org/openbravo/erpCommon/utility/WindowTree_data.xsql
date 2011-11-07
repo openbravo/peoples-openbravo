@@ -140,7 +140,7 @@
    <SqlMethod name="selectCampaign" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_Campaign_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_Campaign_ID AS ID, m.Name,m.Description, m.IsSummary 
         FROM AD_TreeNode tn, 
               C_Campaign m
         WHERE  tn.Node_ID = m.C_Campaign_ID 

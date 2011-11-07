@@ -20,6 +20,7 @@
 -->
 
 isc.OBViewGrid.create({
+    view: this,
     uiPattern: '${data.uiPattern}', 
      
     <#if data.whereClause != "">

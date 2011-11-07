@@ -554,8 +554,11 @@ isc.OBPersonalizeFormLayout.addProperties({
           length = standardWindow.views.length, view, viewTabDefinition;
         for (i = 0; i < length; i++) {
           view = standardWindow.views[i];
+          if (view.tabId !== this.view.tabId) {
+            continue;
+          }
           viewTabDefinition = viewDefinitions[view.tabId];
-
+          
           this.view.initializing = true;
           
           this.view.destroyAndRemoveMembers(this.view.mainLayout);
@@ -564,7 +567,10 @@ isc.OBPersonalizeFormLayout.addProperties({
           
           this.view.buildFieldsTreeGrid(viewTabDefinition);
           this.view.buildPreviewForm();
-          delete this.initializing;
+          this.view.fieldsTreeGrid.openFolders();
+          
+          delete this.view.initializing;
+          this.view.changed();
         }
       },
       title: OB.I18N.getLabel('OBUIAPP_RestoreDefaults'),
@@ -737,11 +743,12 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.destroyAndRemoveMembers(this.mainLayout);
     this.mainLayout = null;
     this.createAddMainLayout();
-
-    this.setStatusBarInformation();
     
     this.buildFieldsTreeGrid();
     this.buildPreviewForm();
+    this.setStatusBarInformation();
+    this.fieldsTreeGrid.openFolders();
+
     delete this.initializing;
   },
 
@@ -915,6 +922,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.buildFieldsTreeGrid();
     
     this.setStatusBarInformation();
+    this.fieldsTreeGrid.openFolders();
   },
   
   buildFieldsTreeGrid: function(personalizationData) {

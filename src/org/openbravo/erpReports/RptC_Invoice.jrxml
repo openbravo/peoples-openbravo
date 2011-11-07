@@ -65,6 +65,7 @@ AD_CLIENT.DESCRIPTION AS ENTITY, C_Location_Description(AD_ORGINFO.C_LOCATION_ID
 C_PAYMENTTERM.NAME AS PAYTERM, AD_ORGINFO.ad_org_id AS ORGANIZATIONID, C_INVOICE.docstatus AS STATUS, AD_ORG.NAME AS ORG_NAME, AD_ORGINFO.TAXID AS ORG_TAXID,
 C_BPARTNER.TAXID AS BP_TAXID, (COALESCE(TO_CHAR(AD_USER.NAME), '') || CASE WHEN AD_USER.NAME IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER.TAXID), '') || CASE WHEN C_BPARTNER.TAXID IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(POSTAL), '') || CASE WHEN POSTAL IS null THEN '' ELSE CHR(13) END ||
+COALESCE(TO_CHAR(C_LOCATION.CITY), '') || CASE WHEN C_LOCATION.CITY IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_COUNTRY.NAME), '') || CASE WHEN C_COUNTRY.NAME IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
 CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN, ISSOTRX
 FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -236,7 +237,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					<textFieldExpression class="java.lang.String"><![CDATA[(($F{STATUS}.compareTo("VO")==0) ? "VOIDED" : " ")]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-14" style="Report_Footer" x="0" y="93" width="285" height="85" isPrintWhenDetailOverflows="true"/>
+					<reportElement key="textField-14" style="Report_Footer" x="0" y="93" width="285" height="110" isPrintWhenDetailOverflows="true"/>
 					<textElement verticalAlignment="Top">
 						<font size="10"/>
 					</textElement>
