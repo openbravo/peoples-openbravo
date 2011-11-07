@@ -25,3 +25,10 @@ OB.RM = OB.RM || {};
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
   return value <= record.movementQuantity;
 };
+
+/**
+ * Check that entered received quantity is less than pending qty.
+ */
+OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
+  return value <= record.pending;
+};
