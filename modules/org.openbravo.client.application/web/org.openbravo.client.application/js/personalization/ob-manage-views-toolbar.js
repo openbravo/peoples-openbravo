@@ -149,11 +149,6 @@
               popup.show();
             }});
         }
-        
-        data.push({title: OB.I18N.getLabel('OBUIAPP_RestoreDefaults'), 
-          doClick: function(standardWindow) {
-            OB.Personalization.applyViewDefinition('', standardWindow.getClass().originalView, standardWindow);
-          }});
       }
       
       if (data.length === 0) {

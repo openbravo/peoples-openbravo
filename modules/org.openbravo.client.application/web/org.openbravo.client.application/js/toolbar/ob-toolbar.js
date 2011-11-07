@@ -1111,8 +1111,6 @@ isc.OBToolbar.addProperties({
         this.hideShowRightMembers(false);
       }
       
-      }
-      
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
