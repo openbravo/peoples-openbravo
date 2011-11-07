@@ -34,8 +34,7 @@
   <SqlMethod name="existsNull" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT COUNT(1) FROM DUAL
-        WHERE EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT WHERE LINE IS NULL)
+        SELECT COUNT(1) FROM MA_SEQUENCEPRODUCT WHERE LINE IS NULL
       </Sql>
    </SqlMethod>
    <SqlMethod name="selectSequenceProducts" type="preparedStatement" return="multiple">
