@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT MA_SEQUENCE.MA_SEQUENCE_ID, '' AS TOTAL, '' AS MA_SEQUENCEPRODUCT_ID
+      SELECT MA_SEQUENCE.MA_SEQUENCE_ID, '' AS TOTAL, '' AS MA_SEQUENCEPRODUCT_ID, '' AS NUM
       FROM MA_SEQUENCEPRODUCT 
           JOIN MA_SEQUENCE ON MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID = MA_SEQUENCE.MA_SEQUENCE_ID
       WHERE MA_SEQUENCEPRODUCT.LINE IS NULL
@@ -34,7 +34,8 @@
   <SqlMethod name="existsNull" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT COUNT(1) FROM MA_SEQUENCEPRODUCT WHERE LINE IS NULL
+        SELECT COUNT(1) AS NUM FROM DUAL
+     	WHERE EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT WHERE LINE IS NULL)
       </Sql>
    </SqlMethod>
    <SqlMethod name="selectSequenceProducts" type="preparedStatement" return="multiple">
