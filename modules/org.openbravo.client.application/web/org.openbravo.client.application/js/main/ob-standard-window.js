@@ -138,6 +138,9 @@ isc.OBStandardWindow.addProperties({
       this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
       this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
       this.getClass().originalView.canDelete = false;
+      
+      // and clone the original view so that it can't get updated accidentally
+      this.getClass().originalView = isc.clone(this.getClass().originalView);
     }
 
     this.getClass().personalization = personalization;
