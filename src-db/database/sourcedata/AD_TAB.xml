@@ -3085,7 +3085,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--294-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--294-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--294-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false AND e.transactionDocument.documentCategory != 'PRM']]></HQLWHERECLAUSE>
+<!--294-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false AND e.transactionDocument.return=false]]></HQLWHERECLAUSE>
 <!--294-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--294--></AD_TAB>
 
