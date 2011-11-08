@@ -112,7 +112,7 @@ isc.TextItem.addProperties({
       result = { operator: "and", criteria: [] },
       crit = result.criteria,
       valueParts = [],
-      allowEx = this._shouldAllowExpressions(),
+      allowEx = true,
       ds = isc.DS.get(this.form.expressionDataSource || this.form.dataSource)
     ;
   
