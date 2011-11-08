@@ -1175,10 +1175,11 @@ isc.OBToolbar.addProperties({
   
   hideShowRightMembers: function(show) {
     var i;
-    for (i = 0; i < this.rightMembers.length; i++) {
-      if (show) {
-        this.rightMembers[i].show();
-      } else {
+    // if showing make sure that they are not always shown
+    if (show) {
+      this.refreshCustomButtons(false);
+    } else {
+      for (i = 0; i < this.rightMembers.length; i++) {
         this.rightMembers[i].hide();
       }
     }
