@@ -550,7 +550,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     restoreButtonProperties = {
       action: function() {
         var i, standardWindow = this.view.getStandardWindow(),
-          viewDefinitions = standardWindow.getClass().originalView,
+          viewDefinitions = standardWindow.getClass().originalView.viewDefinition,
           length = standardWindow.views.length, view, viewTabDefinition;
         for (i = 0; i < length; i++) {
           view = standardWindow.views[i];
