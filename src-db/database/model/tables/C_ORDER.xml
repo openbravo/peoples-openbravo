@@ -377,6 +377,9 @@
       <index name="C_ORDER_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <index name="C_ORDER_C_RETURN_REASON" unique="false">
+        <index-column name="C_RETURN_REASON_ID"/>
+      </index>
       <index name="C_ORDER_CLIENT_ORG_DATE_DOCNO" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
@@ -388,9 +391,6 @@
       </index>
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
-      </index>
-      <index name="FKI_C_ORDER_C_RETURN_REASON" unique="false">
-        <index-column name="C_RETURN_REASON_ID"/>
       </index>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
