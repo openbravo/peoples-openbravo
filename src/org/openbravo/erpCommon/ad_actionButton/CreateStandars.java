@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -59,6 +60,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
   private static final String expirationDateSearchKey = "EXD";
+  protected Logger log4j = Logger.getLogger(this.getClass());
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -89,6 +91,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
       e.printStackTrace(System.err);
+      log4j.error(e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
@@ -294,11 +297,11 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
             pline.setAttributeSetValue(newAttSetinstance);
             OBDal.getInstance().save(pline);
+            OBDal.getInstance().flush();
           }
 
         }
       }
-      OBDal.getInstance().flush();
     }
   }
 
@@ -342,11 +345,10 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
           line.setAttributeSetValue(newAttSetinstance);
           OBDal.getInstance().save(line);
-
+          OBDal.getInstance().flush();
         }
       }
     }
-    OBDal.getInstance().flush();
   }
 
   private String replace(String strIni) {
