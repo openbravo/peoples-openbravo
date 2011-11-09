@@ -89,13 +89,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
-//  selectionChanged: function (record, state) {
-//    if (state) {
-//      this.selectionUpdated(record, this.getSelection().push(record));
-//    }
-//    this.Super('selectionChanged', arguments);
-//  },
-
   selectionUpdated: function (record, recordList) {
     var i, len = recordList.length;
 
@@ -141,7 +134,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
 
       if (!found) {
-        // adding an *always true* sentence 
+        // adding an *always true* sentence
         criteria.criteria.push({
           fieldName: 'id',
           operator: 'notNull'
@@ -156,11 +149,23 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
-    var record, i, len = this.selectedIds.length;
+    var record, i, allRows, len = this.selectedIds.length;
     for (i = 0; i < len; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
       record[this.selectionProperty] = true;
     }
+
+    if (len === 0) {
+      // push all *selected* rows into selectedIds cache
+      allRows = this.data.allRows;
+      len = allRows.length;
+      for (i = 0; i < len; i++) {
+        if (allRows[i][this.selectionProperty]) {
+          this.selectedIds.push(allRows[i][OB.Constants.ID]);
+        }
+      }
+    }
+
     this.Super('dataArrived', arguments);
   },
 
@@ -202,5 +207,117 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     return params;
+  },
+
+  getFieldByColumnName: function (columnName) {
+    var i, len = this.fields.length,
+        colName;
+
+    if (!this.fieldsByColumnName) {
+      this.fieldsByColumnName = [];
+      for (i = 0; i < len; i++) {
+        colName = this.fields[i].columnName;
+        if (colName) {
+          this.fieldsByColumnName[colName] = this.fields[i];
+        }
+      }
+    }
+
+    return this.fieldsByColumnName[columnName];
+  },
+
+  setValueMap: function (field, entries) {
+    var len = entries.length,
+        map = {},
+        i, undef;
+
+    for (i = 0; i < len; i++) {
+      if (entries[i][OB.Constants.ID] !== undef) {
+        map[entries[i][OB.Constants.ID]] = entries[i][OB.Constants.IDENTIFIER];
+      }
+    }
+
+    this.Super('setValueMap', [field, map]);
+  },
+
+  processColumnValue: function (rowNum, columnName, columnValue, editValues) {
+    var field;
+    if (!columnValue) {
+      return;
+    }
+
+    if (columnValue.entries) {
+      field = this.getFieldByColumnName(columnName);
+      if (!field) {
+        return;
+      }
+      this.setValueMap(field.name, columnValue.entries);
+    }
+  },
+
+  processFICReturn: function (response, data, request) {
+    var context = response && response.clientContext,
+        rowNum = context && context.rowNum,
+        grid = context && context.grid,
+        columnValues, prop, value, editValues, undef;
+
+
+    if (rowNum === undef || !data || !data.columnValues) {
+      return;
+    }
+
+    columnValues = data.columnValues;
+    editValues = grid.getEditValues(rowNum);
+
+    for (prop in columnValues) {
+      if (columnValues.hasOwnProperty(prop)) {
+        grid.processColumnValue(rowNum, prop, columnValues[prop], editValues);
+      }
+    }
+  },
+
+  getContextInfo: function (rowNum) {
+    var contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, false, true)),
+        record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum)),
+        fields = this.view.viewProperties.fields,
+        len = fields.length,
+        fld, i, value, undef;
+
+    for (i = 0; i < len; i++) {
+      fld = fields[i];
+      value = record[fld.name];
+      if (value !== undef) {
+        contextInfo[fld.inpColumnName] = value;
+      }
+    }
+
+    return contextInfo;
+  },
+
+  retrieveInitialValues: function (rowNum, colNum, newCell, newRow, suppressFocus) {
+    var requestParams, allProperties, i;
+
+    allProperties = this.getContextInfo(rowNum);
+
+    requestParams = {
+      MODE: 'EDIT',
+      PARENT_ID: null,
+      TAB_ID: this.view.viewProperties.tabId,
+      ROW_ID: this.getRecord(rowNum)[OB.Constants.ID]
+    };
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {
+      grid: this,
+      rowNum: rowNum,
+      colNum: colNum,
+      newCell: newCell,
+      newRow: newRow,
+      suppressFocus: suppressFocus
+    });
+  },
+
+  showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
+    this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+    this.Super('showInlineEditor', arguments);
   }
 });
