@@ -23,12 +23,12 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  return value <= record.movementQuantity;
+  return (value <= record.movementQuantity) && (value > 0);
 };
 
 /**
  * Check that entered received quantity is less than pending qty.
  */
 OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
-  return value <= record.pending;
+  return (value <= record.pending) && (value > 0);
 };

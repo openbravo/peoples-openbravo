@@ -71,6 +71,7 @@
   v_DoctypeReversed_ID VARCHAR2(32);
   v_DocType_ID VARCHAR2(32);
   v_DocTypeTarget_ID VARCHAR2(32);
+  v_isreturndoctype CHAR(1);
   v_PaymentRule C_INVOICE.PaymentRule%TYPE;
   v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
   v_Order_ID VARCHAR2(32);
@@ -204,22 +205,22 @@ BEGIN --BODY
    * Read Invoice
    */
   v_ResultStr:='ReadingInvoice';
-  SELECT Processing, Processed, DocAction, DocStatus,
-      C_DocType_ID, C_DocTypeTarget_ID,
-      PaymentRule, C_PaymentTerm_ID, DateAcct, DateInvoiced,
-      AD_Client_ID, AD_Org_ID, UpdatedBy, DocumentNo,
-      C_Order_ID, IsSOTrx, C_BPartner_ID, AD_User_ID,
-      C_Currency_ID, POReference, Posted,
-      c_Project_Id, C_WithHolding_ID
+  SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
+      i.C_DocType_ID, i.C_DocTypeTarget_ID,
+      i.PaymentRule, i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
+      i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
+      i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
+      i.C_Currency_ID, i.POReference, i.Posted,
+      i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID
-  FROM C_INVOICE
-  WHERE C_Invoice_ID=v_Record_ID FOR UPDATE;
+      v_C_Project_Id, cWithHoldID, v_isreturndoctype
+  FROM C_INVOICE i JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
+  WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
   DBMS_OUTPUT.PUT_LINE('Invoice_ID=' || v_Record_ID ||', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID) ;
   /**
    * Invoice Voided, Closed, or Reversed - No Action
@@ -295,6 +296,16 @@ BEGIN --BODY
         IF (v_count<>0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@DifferentDocumentNo@');
         END IF;
+      END IF;
+    END IF;
+    -- Check that quantities are negative for return invoices
+    IF (v_isreturndoctype = 'Y') THEN
+      SELECT count(*) INTO v_count
+      FROM c_invoiceline
+      WHERE c_invoice_discount_id IS NULL
+        AND qtyinvoiced > 0;
+      IF (v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ReturnInvoiceNegativeQty@');
       END IF;
     END IF;
   END IF;

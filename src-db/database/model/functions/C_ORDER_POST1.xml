@@ -52,6 +52,7 @@
   v_DocSubTypeSO VARCHAR(60) ;
   v_DocSubTypeSOTarget VARCHAR(60) ;
   v_DocBaseTypeTarget VARCHAR(60);
+  v_IsReturnDocType CHAR(1);
   v_IsBinding CHAR(1):='Y';
   --
   ToDeliver NUMBER;
@@ -151,9 +152,13 @@
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
-    INTO v_DocSubTypeSO
+      INTO v_DocSubTypeSO
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocType_ID;
+    SELECT DocSubTypeSO, isreturn
+      INTO v_DocSubTypeSOTarget, v_isreturndoctype
+    FROM C_DOCTYPE
+    WHERE C_DocType_ID=v_DocTypetarget_ID;
     -- Get the name of the org of the Order. Added by P.Sarobe
     SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
@@ -185,10 +190,6 @@
       RAISE_APPLICATION_ERROR(-20000, '@WaitingPayment@') ;
     END IF;
 
-    SELECT DocSubTypeSO
-    INTO v_DocSubTypeSOTarget
-    FROM C_DOCTYPE
-    WHERE C_DocType_ID=v_DocTypetarget_ID;
     IF (v_DocSubTypeSOTarget='PR' AND v_invoicerule <> 'I') THEN
       RAISE_APPLICATION_ERROR(-20000, '@PrepayMustImmediate@');
     END IF;
@@ -461,8 +462,9 @@
 
       /**
       *Update Product purchasing Plan Table
+      * Return Material orders do not update the last price.
       */
-      IF (v_isSoTrx ='N') THEN
+      IF (v_isSoTrx ='N' AND v_isreturndoctype = 'N') THEN
         FOR Cur_OrderLine IN (SELECT * FROM C_ORDERLINE WHERE C_Order_Id =  v_Record_ID)
         LOOP
           UPDATE M_PRODUCT_PO SET PriceLastPO=Cur_OrderLine.PriceActual 
@@ -1214,7 +1216,7 @@
         END IF;
       END IF;
       -- We are done with standard sales orders
-      IF (v_DocSubTypeSO = 'RM') THEN
+      IF (v_DocSubTypeSO = 'RM' OR v_isreturndoctype = 'Y') THEN
 
         FOR Cur_Order IN( SELECT ol.qtyordered, ol.c_order_discount_id FROM C_order o,C_orderline ol
             WHERE o.C_Order_ID = v_Record_ID
