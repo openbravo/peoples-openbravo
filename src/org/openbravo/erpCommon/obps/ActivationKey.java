@@ -90,8 +90,10 @@ public class ActivationKey {
   private LicenseClass licenseClass;
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
+  private List<String> goldenExcludedArtifacts;
   private Date lastRefreshTime;
   private boolean trial = false;
+  private boolean golden = false;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -100,6 +102,7 @@ public class ActivationKey {
 
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
+  private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -116,7 +119,8 @@ public class ActivationKey {
 
   public enum FeatureRestriction {
     NO_RESTRICTION(""), DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"), TIER1_RESTRICTION(
-        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION("");
+        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION(""), GOLDEN_RESTRICTION(
+        "RESTRICTED_TO_GOLDEN");
 
     private String msg;
 
@@ -231,7 +235,9 @@ public class ActivationKey {
     subscriptionActuallyConverted = false;
     tier1Artifacts = null;
     tier2Artifacts = null;
+    goldenExcludedArtifacts = null;
     trial = false;
+    golden = false;
     licenseClass = LicenseClass.COMMUNITY;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
@@ -317,6 +323,7 @@ public class ActivationKey {
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
 
     trial = "true".equals(getProperty("trial"));
+    golden = "true".equals(getProperty("golden"));
 
     try {
       startDate = sd.parse(getProperty("startdate"));
@@ -414,6 +421,7 @@ public class ActivationKey {
     DisabledModules.reload();
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
+    goldenExcludedArtifacts = new ArrayList<String>();
     if (isActive() && licenseClass == LicenseClass.STD) {
       // Don't read restrictions for Standard instances
       return;
@@ -441,12 +449,16 @@ public class ActivationKey {
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       } else if (licenseClass == LicenseClass.BASIC) {
         // basic, restrict tier 2
+        if (isGolden()) {
+          goldenExcludedArtifacts.addAll(m1.get(GOLDEN_EXCLUDED));
+        }
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       }
     } catch (Exception e) {
       log4j.error("Error reading license restriction file", e);
       tier1Artifacts = null;
       tier2Artifacts = null;
+      goldenExcludedArtifacts = null;
     }
   }
 
@@ -1018,7 +1030,7 @@ public class ActivationKey {
       return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type:" + actualType + " id:" + id);
-    if (tier1Artifacts == null || tier2Artifacts == null) {
+    if (tier1Artifacts == null || tier2Artifacts == null || goldenExcludedArtifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -1078,6 +1090,9 @@ public class ActivationKey {
     }
     if (tier2Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER2_RESTRICTION;
+    }
+    if (goldenExcludedArtifacts.contains(actualType + artifactId)) {
+      return FeatureRestriction.GOLDEN_RESTRICTION;
     }
 
     if ("W".equals(actualType)) {
@@ -1148,5 +1163,9 @@ public class ActivationKey {
 
   public boolean isTrial() {
     return trial;
+  }
+
+  public boolean isGolden() {
+    return golden;
   }
 }

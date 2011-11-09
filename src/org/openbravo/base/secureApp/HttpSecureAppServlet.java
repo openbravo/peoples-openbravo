@@ -849,6 +849,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String editionType = null;
     String completeWindowMsg = "";
     String discard[] = { "" };
+    String msg;
 
     switch (featureRestriction) {
     case TIER1_RESTRICTION:
@@ -866,9 +867,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       completeWindowMsg = infoText + "\n"
           + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
       break;
+    case GOLDEN_RESTRICTION:
+      discard[0] = "links";
+      msg = Utility.messageBD(this, "OBPSGoldenKeyRestricted", vars.getLanguage());
+      infoText = msg;
+      completeWindowMsg = msg;
+      break;
     case DISABLED_MODULE_RESTRICTION:
       discard[0] = "links";
-      String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+      msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
       infoText = msg;
       completeWindowMsg = msg;
       break;
