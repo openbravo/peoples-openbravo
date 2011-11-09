@@ -110,7 +110,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN
   }
 
   public enum CommercialModuleStatus {
@@ -599,6 +599,10 @@ public class ActivationKey {
 
     if (trial && !isHeartbeatActive()) {
       return LicenseRestriction.HB_NOT_ACTIVE;
+    }
+
+    if (!isActive && golden) {
+      return LicenseRestriction.EXPIRED_GOLDEN;
     }
 
     if (!isActive) {
