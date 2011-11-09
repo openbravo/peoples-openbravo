@@ -71,6 +71,10 @@
 </@compress>
     ],
 
+    <#if tabComponent.selectionFunction != "">
+    selectionFn: ${tabComponent.selectionFunction},
+    </#if>
+
     gridProperties: ${tabComponent.viewGrid},
 
     dataSource: ${tabComponent.dataSourceJavaScript}

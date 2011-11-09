@@ -31,3 +31,7 @@ OB.OBEXPE.validate = function (item, validator, value, record) {
   // debugger;
   return true;
 };
+
+OB.OBEXPE.selectionChanged = function (grid, record, recordList) {
+  isc.say(record.id);
+};

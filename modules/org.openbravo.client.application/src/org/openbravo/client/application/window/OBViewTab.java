@@ -322,6 +322,13 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.getTable().getName();
   }
 
+  public String getSelectionFunction() {
+    if (tab.getOBUIAPPSelection() != null) {
+      return tab.getOBUIAPPSelection();
+    }
+    return "";
+  }
+
   public void setTabTitle(String tabTitle) {
     this.tabTitle = tabTitle;
   }
