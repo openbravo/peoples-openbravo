@@ -193,16 +193,16 @@
         <default/>
         <onCreateDefault><![CDATA[LINENETAMT]]></onCreateDefault>
       </column>
-      <column name="RM_RETURN_REASON" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="M_INOUTLINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="QTYREJECTED" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="C_RETURN_REASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_AD_CLIENT">
@@ -228,6 +228,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_ORDER_DISCOUNT" name="C_ORDERLINE_C_ORDER_DISCOUNT">
         <reference local="C_ORDER_DISCOUNT_ID" foreign="C_ORDER_DISCOUNT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_RETURN_REASON" name="C_ORDERLINE_C_RETURN_REASON">
+        <reference local="C_RETURN_REASON_ID" foreign="C_RETURN_REASON_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_TAX" name="C_ORDERLINE_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
@@ -267,6 +270,9 @@
       </index>
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
+      </index>
+      <index name="FKI_C_ORDERLINE_C_RETURN_REASON" unique="false">
+        <index-column name="C_RETURN_REASON_ID"/>
       </index>
       <check name="C_ORDERLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="C_ORDERLINE_CHECK2"><![CDATA[(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)]]></check>

@@ -277,10 +277,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="RM_RETURN_REASON" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="RM_PICKFROMSHIPMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -290,6 +286,10 @@
         <onCreateDefault/>
       </column>
       <column name="RM_CREATEINVOICE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_RETURN_REASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -344,6 +344,9 @@
       <foreign-key foreignTable="C_PROJECT" name="C_ORDER_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_RETURN_REASON" name="C_ORDER_C_RETURN_REASON">
+        <reference local="C_RETURN_REASON_ID" foreign="C_RETURN_REASON_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_ORDER_DROPSHIP_BPARTNER">
         <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -385,6 +388,9 @@
       </index>
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
+      </index>
+      <index name="FKI_C_ORDER_C_RETURN_REASON" unique="false">
+        <index-column name="C_RETURN_REASON_ID"/>
       </index>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
