@@ -188,6 +188,32 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           payment.setWriteoffAmount(paymentWriteOfAmount);
           payment.setProcessed(true);
           payment.setAPRMProcessPayment("R");
+          if (BigDecimal.ZERO.compareTo(payment.getUsedCredit()) != 0
+              || BigDecimal.ZERO.compareTo(payment.getGeneratedCredit()) != 0) {
+            BusinessPartner businessPartner = payment.getBusinessPartner();
+            if (businessPartner == null) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                  "@APRM_CreditWithoutBPartner@"));
+              bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
+              return;
+            } else if (!payment
+                .getCurrency()
+                .getId()
+                .equals(
+                    businessPartner.getPriceList() != null ? businessPartner.getPriceList()
+                        .getCurrency().getId() : ""))
+              msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(String.format(
+                Utility.parseTranslation(conProvider, vars, language, "@APRM_CreditCurrency@"),
+                businessPartner.getPriceList().getCurrency().getISOCode()));
+            bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
+            return;
+          }
           // Execution Process
           if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
               payment.isReceipt())) {
