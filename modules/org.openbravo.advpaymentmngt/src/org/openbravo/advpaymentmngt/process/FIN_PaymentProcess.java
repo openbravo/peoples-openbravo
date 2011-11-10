@@ -209,7 +209,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             msg.setTitle(Utility.messageBD(conProvider, "Error", language));
             msg.setMessage(String.format(
                 Utility.parseTranslation(conProvider, vars, language, "@APRM_CreditCurrency@"),
-                businessPartner.getPriceList().getCurrency().getISOCode()));
+                businessPartner.getPriceList() != null ? businessPartner.getPriceList()
+                    .getCurrency().getISOCode() : Utility.parseTranslation(conProvider, vars,
+                    language, "@APRM_CreditNoPricelistCurrency@")));
             bundle.setResult(msg);
             OBDal.getInstance().rollbackAndClose();
             return;
