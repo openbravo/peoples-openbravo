@@ -274,9 +274,6 @@
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="FKI_C_ORDERLINE_C_RETURN_REASON" unique="false">
-        <index-column name="C_RETURN_REASON_ID"/>
-      </index>
       <check name="C_ORDERLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="C_ORDERLINE_CHECK2"><![CDATA[(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)]]></check>
       <check name="C_ORDERLINE_DIRECTSHIP_CHECK"><![CDATA[DIRECTSHIP IN ('Y', 'N')]]></check>
