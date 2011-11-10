@@ -30,6 +30,7 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.ReturnReason;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 /**
@@ -112,7 +113,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       if (selectedLine.getString("returnReason") != null
           && !selectedLine.getString("returnReason").equals("null")) {
-        newOrderLine.setReturnReason(selectedLine.getString("returnReason"));
+        newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class,
+            selectedLine.getString("returnReason")));
       } else {
         newOrderLine.setReturnReason(order.getReturnReason());
       }
