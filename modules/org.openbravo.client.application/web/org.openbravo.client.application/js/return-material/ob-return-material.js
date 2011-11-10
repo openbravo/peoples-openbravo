@@ -23,20 +23,39 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  return (value <= record.movementQuantity) && (value > 0);
+  return (value !== null) && (value <= record.movementQuantity) && (value > 0);
 };
 
 /**
  * Check that entered received quantity is less than pending qty.
  */
 OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
-  return (value <= record.pending) && (value > 0);
+  return (value !== null) && (value <= record.pending) && (value > 0);
 };
 
 /**
  * Check that entered shipped quantity is less than pending qty.
  */
 OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
-  //TODO
+  var orderLine = record.orderLine,
+      pendingQty = record.pending,
+      selectedRecords = item.grid.getSelectedRecords(),
+      selectedRecordsLength = selectedRecords.length,
+      editedRecord = null,
+      i;
+  // check value is positive and below available qty and pending qty
+  if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
+    return false;
+  }
+  // check shipped total quantity for the order line is below pending qty.
+  for (i = 0; i < selectedRecordsLength; i++) {
+    editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
+    if (editedRecord.orderLine === orderLine) {
+      pendingQty -= editedRecord.movementQuantity;
+      if (pendingQty < 0) {
+        return false;
+      }
+    }
+  }
   return true;
 };
