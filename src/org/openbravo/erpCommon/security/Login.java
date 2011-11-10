@@ -246,7 +246,8 @@ public class Login extends HttpBaseServlet {
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
-    if (ActivationKey.getInstance().isActive()) {
+    ActivationKey ak = ActivationKey.getInstance();
+    if (ak.isActive()) {
       String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
       Query q = OBDal.getInstance().getSession().createQuery(hql);
       q.setParameter("value", "N");
@@ -279,6 +280,10 @@ public class Login extends HttpBaseServlet {
         + showITLogo + ", showForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
         + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
     xmlDocument.setParameter("visualPrefs", visualPrefs);
+
+    String expirationMessage = "var expirationMessage="
+        + ak.getExpirationMessage(vars.getLanguage()).toString() + ";";
+    xmlDocument.setParameter("expirationMessage", expirationMessage);
     xmlDocument.setParameter("itServiceUrl",
         "var itServiceUrl = '" + SessionLoginData.selectSupportContact(this) + "'");
 

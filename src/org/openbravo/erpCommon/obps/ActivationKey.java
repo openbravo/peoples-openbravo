@@ -48,6 +48,8 @@ import javax.crypto.Cipher;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -166,6 +168,8 @@ public class ActivationKey {
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
+  private static final int EXPIRATION_BASIC_DAYS = 10;
+  private static final int EXPIRATION_PROF_DAYS = 10;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -1171,5 +1175,72 @@ public class ActivationKey {
 
   public boolean isGolden() {
     return golden;
+  }
+
+  /**
+   * Returns a JSONObject with a message warning about near expiration or already expired instance.
+   * 
+   */
+  public JSONObject getExpirationMessage(String lang) {
+    JSONObject result = new JSONObject();
+    try {
+      // Community or professional without expiration
+      if (pendingTime == null) {
+        return result;
+      }
+
+      if (!hasExpired) {
+        if (golden) {
+          // Showing message always
+          result.put("type", "Error");
+          result.put(
+              "text",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_GOLDEN", lang,
+                  false).replace("@days@", pendingTime.toString()));
+        } else if (trial) {
+          // Showing message always
+          result.put("type", "Error");
+          result.put(
+              "text",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_TRIAL", lang,
+                  false).replace("@days@", pendingTime.toString()));
+        } else if (licenseClass == LicenseClass.BASIC && pendingTime <= EXPIRATION_BASIC_DAYS) {
+          result.put("type", "Error");
+          result.put(
+              "text",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_BASIC", lang,
+                  false).replace("@days@", pendingTime.toString()));
+        } else if (licenseClass == LicenseClass.BASIC && pendingTime <= EXPIRATION_PROF_DAYS) {
+          result.put("type", "Error");
+          result.put(
+              "text",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_PROF", lang,
+                  false).replace("@days@", pendingTime.toString()));
+        }
+      } else {
+        if (golden) {
+          result.put("type", "Error");
+          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
+              "OBPS_EXPIRED_GOLDEN", lang, false));
+          result.put("disableLogin", true);
+        } else if (trial) {
+          result.put("type", "Error");
+          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
+              "OBPS_EXPIRED_TRIAL", lang, false));
+        } else if (licenseClass == LicenseClass.BASIC) {
+          result.put("type", "Error");
+          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
+              "OBPS_EXPIRED_BASIC", lang, false));
+        } else {
+          result.put("type", "Error");
+          result
+              .put("text", Utility.messageBD(new DalConnectionProvider(false), "OBPS_EXPIRED_PROF",
+                  lang, false));
+        }
+      }
+    } catch (JSONException e) {
+      log4j.error("Error calculating expiration message", e);
+    }
+    return result;
   }
 }

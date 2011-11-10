@@ -32,6 +32,7 @@
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="visualPrefs">var showCompanyLogo = true, showSupportLogo = true, showForgeLogo = true, urlCompany = 'http://www.openbravo.com/', urlSupport = 'http://support.openbravo.com/';/* Parameters retreived from Login.java */</script>
 <script language="JavaScript" type="text/javascript">var urlForge = 'http://forge.openbravo.com/';</script>
+<script language="JavaScript" type="text/javascript" id="expirationMessage"></script>
 <script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="validBrowserMsg">var validBrowserMsg = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="validBrowserMsgOrHigher">var validBrowserMsgOrHigher = 'xx';</script>
@@ -400,6 +401,13 @@ var recBrowserSafari = '5.0.0.0';
     if (!checkRecommendedBrowser() && msgContainerTitle.innerHTML.length === 0 && msgContainerContent.innerHTML.length === 0) {
       var displayRecBrowserMsgText = buildRecBrowserMsgText();
       setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
+    }
+    
+    if (expirationMessage){
+      setLoginMessage(expirationMessage.type, expirationMessage.title, expirationMessage.text);
+      if (expirationMessage.disableLogin) {
+          disableButton('buttonOK');
+      }
     }
   }
 </script>
