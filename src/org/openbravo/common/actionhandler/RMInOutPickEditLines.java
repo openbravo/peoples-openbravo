@@ -32,6 +32,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.sales.ConditionGoods;
 
 /**
  * 
@@ -101,11 +102,12 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("receiving"));
       newInOutLine.setMovementQuantity(qtyReceived.negate());
-      if (selectedLine.getString("conditionOfTheGoods") != null
-          && !selectedLine.getString("conditionOfTheGoods").equals("null")) {
-        newInOutLine.setConditiongoods(selectedLine.getString("conditionOfTheGoods"));
+      if (selectedLine.getString("conditionGoods") != null
+          && !selectedLine.getString("conditionGoods").equals("null")) {
+        newInOutLine.setConditionGoods(OBDal.getInstance().get(ConditionGoods.class,
+            selectedLine.getString("conditionGoods")));
       } else {
-        newInOutLine.setConditiongoods(inOut.getConditiongoods());
+        newInOutLine.setConditionGoods(inOut.getConditionGoods());
       }
 
       List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
