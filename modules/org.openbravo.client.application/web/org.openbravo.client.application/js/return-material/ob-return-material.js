@@ -32,3 +32,11 @@ OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
 OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
   return (value <= record.pending) && (value > 0);
 };
+
+/**
+ * Check that entered shipped quantity is less than pending qty.
+ */
+OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
+  //TODO
+  return true;
+};
