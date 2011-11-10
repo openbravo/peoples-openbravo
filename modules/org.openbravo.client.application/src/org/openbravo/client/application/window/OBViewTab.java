@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,6 +78,9 @@ public class OBViewTab extends BaseTemplateComponent {
     // Map: WindowType - Template
     TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF808181330BD14F01330BD34EA00008");
   }
+
+  private static final List<String> REQUIRE_TRANSACTIONAL_FILTER = Arrays.asList("T",
+      "OBUIAPP_PickAndExecute");
 
   private Entity entity;
   private Tab tab;
@@ -254,7 +258,7 @@ public class OBViewTab extends BaseTemplateComponent {
     viewGridComponent.setTab(tab);
     viewGridComponent.setViewTab(this);
     viewGridComponent.setApplyTransactionalFilter(isRootTab()
-        && this.tab.getWindow().getWindowType().equals("T"));
+        && REQUIRE_TRANSACTIONAL_FILTER.contains(this.tab.getWindow().getWindowType()));
     return viewGridComponent.generate();
   }
 
