@@ -4,7 +4,7 @@
 CASE
 WHEN iol.m_inoutline_id IS NOT NULL THEN 'Y'
 ELSE 'N'
-END AS ob_selected, ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, ol.m_attributesetinstance_id, (-1) * ol.qtyordered AS returned, (-1) * (ol.qtyordered - ol.qtydelivered - COALESCE(ol.qtyrejected, 0)) AS pendingqty, (-1) * iol.movementqty AS receivingqty, iol.m_condition_goods_id, iol.m_locator_id, o.documentno AS returnorderno, o.issotrx
+END AS ob_selected, ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, ol.m_attributesetinstance_id, (-1) * ol.qtyordered AS returned, (-1) * (ol.qtyordered - ol.qtydelivered - COALESCE(ol.qtyrejected, 0)) AS pendingqty, (-1) * iol.movementqty AS receivingqty, iol.m_condition_goods_id, iol.m_locator_id, o.documentno AS returnorderno, o.issotrx, ol.line
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id
 JOIN m_product p ON ol.m_product_id = p.m_product_id AND p.producttype = 'I'
