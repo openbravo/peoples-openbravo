@@ -90,7 +90,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   selectionChanged: function (record, state) {
-    if(this.view.viewProperties.selectionFn) {
+    if (this.view.viewProperties.selectionFn) {
       this.view.viewProperties.selectionFn(this, record, state);
     }
 
@@ -185,6 +185,21 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.Super('recordClick', arguments);
   },
 
+  getOrgParameter: function () {
+    var view = this.view.parentWindow.activeView,
+        context, i;
+
+    context = view.getContextInfo(true, false);
+
+    for (i in context) {
+      if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+        return context[i];
+      }
+    }
+
+    return null;
+  },
+
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
@@ -196,11 +211,10 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     params = params || {};
 
-    if (props.orderByClause) {
-      params[OB.Constants.ORDERBY_PARAMETER] = props.orderByClause;
-    }
-
     isc.addProperties(params, view.getContextInfo(true, false));
+
+    params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
+
 
     if (props.filterClause) {
       if (props.whereClause) {
