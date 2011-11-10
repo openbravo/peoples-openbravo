@@ -48,6 +48,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -199,22 +200,22 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               bundle.setResult(msg);
               OBDal.getInstance().rollbackAndClose();
               return;
-            } else if (!payment
-                .getCurrency()
-                .getId()
-                .equals(
-                    businessPartner.getPriceList() != null ? businessPartner.getPriceList()
-                        .getCurrency().getId() : ""))
+            }
+            PriceList priceList = payment.isReceipt() ? businessPartner.getPriceList()
+                : businessPartner.getPurchasePricelist();
+            if (!payment.getCurrency().getId()
+                .equals(priceList != null ? priceList.getCurrency().getId() : "")) {
               msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-            msg.setMessage(String.format(
-                Utility.parseTranslation(conProvider, vars, language, "@APRM_CreditCurrency@"),
-                businessPartner.getPriceList() != null ? businessPartner.getPriceList()
-                    .getCurrency().getISOCode() : Utility.parseTranslation(conProvider, vars,
-                    language, "@APRM_CreditNoPricelistCurrency@")));
-            bundle.setResult(msg);
-            OBDal.getInstance().rollbackAndClose();
-            return;
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(String.format(
+                  Utility.parseTranslation(conProvider, vars, language, "@APRM_CreditCurrency@"),
+                  priceList != null ? priceList.getCurrency().getISOCode() : Utility
+                      .parseTranslation(conProvider, vars, language,
+                          "@APRM_CreditNoPricelistCurrency@")));
+              bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
+              return;
+            }
           }
           // Execution Process
           if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
