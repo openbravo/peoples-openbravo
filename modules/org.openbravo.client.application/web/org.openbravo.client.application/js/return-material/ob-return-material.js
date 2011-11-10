@@ -34,6 +34,16 @@ OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
 };
 
 /**
+ * Set quantity, storage bin and condition of the goods.
+ */
+OB.RM.RMReceiptSelectionChange = function(grid, record, state) {
+  var i=0;
+  if (state) {
+    record.receiving = record.pending;
+  }
+}
+
+/**
  * Check that entered shipped quantity is less than pending qty.
  */
 OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
