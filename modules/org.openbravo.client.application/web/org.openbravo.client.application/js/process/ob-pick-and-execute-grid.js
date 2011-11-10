@@ -89,6 +89,14 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  selectionChanged: function (record, state) {
+    if(this.view.viewProperties.selectionFn) {
+      this.view.viewProperties.selectionFn(this, record, state);
+    }
+
+    this.Super('selectionChanged', arguments);
+  },
+
   selectionUpdated: function (record, recordList) {
     var i, len = recordList.length;
 
@@ -99,10 +107,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
     // refresh it all as multiple lines can be selected
     this.markForRedraw('Selection changed');
-
-    if(this.view.viewProperties.selectionFn) {
-      this.view.viewProperties.selectionFn(this, record, recordList);
-    }
 
     this.Super('selectionUpdated', arguments);
   },
