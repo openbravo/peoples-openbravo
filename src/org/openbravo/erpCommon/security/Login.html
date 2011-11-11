@@ -409,6 +409,8 @@ function buttonOK_click() {
       setLoginMessage(expirationMessage.type, expirationMessage.title, expirationMessage.text);
       if (expirationMessage.disableLogin) {
           disableButton('buttonOK');
+          document.frmIdentificacion.user.disabled = true;
+          document.frmIdentificacion.password.disabled = true;
       }
     }
   }
