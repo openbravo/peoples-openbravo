@@ -426,7 +426,7 @@ public class ActivationKey {
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
     goldenExcludedArtifacts = new ArrayList<String>();
-    if (isActive() && licenseClass == LicenseClass.STD) {
+    if (isActive() && licenseClass == LicenseClass.STD && !golden) {
       // Don't read restrictions for Standard instances
       return;
     }
@@ -453,10 +453,11 @@ public class ActivationKey {
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       } else if (licenseClass == LicenseClass.BASIC) {
         // basic, restrict tier 2
-        if (isGolden()) {
-          goldenExcludedArtifacts.addAll(m1.get(GOLDEN_EXCLUDED));
-        }
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
+      }
+
+      if (isGolden()) {
+        goldenExcludedArtifacts.addAll(m1.get(GOLDEN_EXCLUDED));
       }
     } catch (Exception e) {
       log4j.error("Error reading license restriction file", e);
@@ -1089,7 +1090,7 @@ public class ActivationKey {
     }
 
     // Check core premium features restrictions
-    if (licenseClass == LicenseClass.STD) {
+    if (licenseClass == LicenseClass.STD && !golden) {
       return FeatureRestriction.NO_RESTRICTION;
     }
 
