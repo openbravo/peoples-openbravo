@@ -41,6 +41,9 @@ OB.Styles.Personalization.Menu = {
   bodyStyleName: 'OBPersonalizationPullDownMenuBody',
   tableStyle: "OBPersonalizationPullDownMenuTable",
   iconBodyStyleName: 'OBPersonalizationPullDownMenuBody',
+  iconWidth: 4,
+  iconHeight: 8,
+  itemIcon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView.png',
   bodyBackgroundColor: null
 };
 

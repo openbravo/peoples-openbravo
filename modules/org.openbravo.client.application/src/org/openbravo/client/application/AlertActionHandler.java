@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -57,6 +58,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @ApplicationScoped
 public class AlertActionHandler extends BaseActionHandler {
+  private static final Logger log4j = Logger.getLogger(AlertActionHandler.class);
 
   /*
    * (non-Javadoc)
@@ -106,6 +108,8 @@ public class AlertActionHandler extends BaseActionHandler {
             .addEntity(Alert.ENTITY_NAME);
         sqlQuery.setParameter(0, alertRule.getId());
         final DataToJsonConverter converter = new DataToJsonConverter();
+        log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
+            + "' - Rows: " + sqlQuery.list().size());
         for (Object alertObject : sqlQuery.list()) {
           final Alert alert = (Alert) alertObject;
           alertJsonObjects.add(converter.toJsonObject(alert, DataResolvingMode.FULL));

@@ -133,12 +133,10 @@ OB.Personalization.ManageViewsPopupProperties = {
 OB.Personalization.ManageViewsPopupPropertiesDefault = {
   title: OB.I18N.getLabel('OBUIAPP_SetDefaultView'),
   actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
-  toggleSave: false,
+  toggleSave: true,
  
-  // creates one combo with the viewdefinitions which can
-  // be deleted by the current user
   getFields: function() {
-    var value, personalization = this.standardWindow.getClass().personalization, 
+    var i, value, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
       standardWindow = this.standardWindow, length;
@@ -146,9 +144,7 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
     if (views) {
       length = views.length;
       for (i = 0; i < length; i++) {
-        if (views[i].canEdit) {
-          valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
-        }
+        valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
       }
     }
     
@@ -159,7 +155,13 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
         editorType: 'select',
         addUnknownValues: false,
         required: true,
-        allowEmptyValue: true
+        allowEmptyValue: true,
+        changed: function() {
+          // enable the save button when there is a change
+          this.form.saveButton.setDisabled(false);
+          // don't let it be disabled again
+          this.form.toggleSave = false;
+        }
       },
       OB.Styles.Personalization.viewFieldDefaults,
       OB.Styles.OBFormField.DefaultComboBox
@@ -190,7 +192,7 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
   // creates one combo with the viewdefinitions which can
   // be deleted by the current user
   getFields: function() {
-    var personalization = this.standardWindow.getClass().personalization, 
+    var i, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
       standardWindow = this.standardWindow, length;
@@ -231,7 +233,7 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
 OB.Personalization.ManageViewsPopupPropertiesSave = {
   title: OB.I18N.getLabel('OBUIAPP_SaveView'),
   
-  actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
+  actionLabel: OB.I18N.getLabel('OBUIAPP_Save'),
   
   // 3 combo fields are created: views, level and level value
   // the last 2 are only created if the user is allowed to
@@ -304,8 +306,8 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
     );
     
     // create the level combo
-    if (standardWindow.getClass().personalization && standardWindow.getClass().personalization.formData) {
-      formData = standardWindow.getClass().personalization.formData;
+    if (personalization && personalization.formData) {
+      formData = personalization.formData;
       // note the key in the levelMap (clients, orgs, roles) corresponds
       // to the property name in the formData
       if (formData.clients) {

@@ -60,7 +60,6 @@
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER(1):=1;
   v_PostResult NUMBER;
-  v_logMessageLength NUMBER:= 2000;
   v_logLines NUMBER:=0;
   v_isWholeLog BOOLEAN := true;
   v_Message VARCHAR2(2000):='';
@@ -261,7 +260,7 @@
              o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
              d.DocSubTypeSO,
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
-           ORDER BY o.PriorityRule
+           ORDER BY o.PriorityRule,o.DocumentNo
           ) LOOP
           v_DocumentNo:='';
           v_order_count := v_order_count +1;
@@ -522,13 +521,17 @@
                         ELSIF (Cur_order.deliveryrule = 'L') THEN
                           DBMS_OUTPUT.PUT_LINE('Not enough stocked products, delivery type Line');
                           v_lines := v_lines - v_lines_per_orderline;
-                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
+                          IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.') <= 1800 ) THEN
+			    v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockDeliveryRuleLine@.' ;
+			  END IF;
                           v_hasPartial := true;
                           DELETE FROM M_INOUTLINE
                           WHERE M_INOUT_ID = p_InOut_ID
                             AND C_ORDERLINE_ID = ol.C_ORDERLINE_ID;
                         ELSE
-                          v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+                          IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.') <= 1800 ) THEN
+			    v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+			  END IF;
                           v_hasPartial := true;
                         END IF;
                       END IF;
@@ -588,7 +591,7 @@
             v_order_delivered_count := v_order_delivered_count +1;
             result_String := '@OrderDocumentno@ ' || cur_order.DocumentNo || ' @InoutDocumentno@ ' || v_DocumentNo || ': @ShipmentSuccess@.' ;
           END IF;
-          IF (LENGTH(v_Message || result_String || '<br><br>') <= v_logMessageLength + 3 ) THEN
+          IF (LENGTH(v_Message || result_String || '<br><br>') <= 1800 ) THEN
 		v_Message:=v_Message || result_String || '<br><br>';          
 		v_logLines := v_logLines + 1;
 	  ELSE
@@ -599,7 +602,6 @@
           v_hasPartial := false;
           IF(NOT Next_Order) THEN
             IF(v_lines=0) THEN
-              DBMS_OUTPUT.PUT_LINE('v_lines!!!!!!!!!!!!!!!!!' || v_lines) ;
               DELETE FROM M_INOUTLINE
               WHERE M_INOUT_ID  = p_InOut_ID;
               DELETE FROM M_INOUT
@@ -816,8 +818,8 @@
       --<<FINISH_PROCESS>>
       IF(p_PInstance_ID IS NOT NULL) THEN
         --  Update AD_PInstance
-      IF (v_isWholeLog <> true) THEN
-	v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message;
+      IF (NOT v_isWholeLog) THEN
+	v_Message := 'First ' || v_logLines || ' result(s):' || '<br>' || v_Message || '...';
       END IF;
 	
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

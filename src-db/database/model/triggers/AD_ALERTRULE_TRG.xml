@@ -55,7 +55,7 @@ BEGIN
       --insert permissions
       FOR Cur_Role in (SELECT DISTINCT AD_Role_ID, AD_CLIENT_ID, AD_ORG_ID
                         FROM AD_Role
-                       WHERE isManual='N') loop
+                       WHERE isManual='N' and ad_role.ad_client_id=:new.AD_Client_ID) loop
         Ad_Sequence_Next('AD_AlertRecipient', Cur_Role.AD_Org_Id, recipient_id) ;
         INSERT INTO AD_AlertRecipient
             (AD_AlertRule_ID, AD_Role_ID, AD_Client_ID,

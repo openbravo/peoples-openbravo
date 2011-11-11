@@ -151,7 +151,10 @@ public abstract class FIN_BankStatementImport {
 
     try {
       numberOfLines = saveFINBankStatementLines(bankStatementLines);
-      FIN_AddPayment.processBankStatement(vars, conn, "P", bankStatement.getId());
+      OBDal.getInstance().refresh(bankStatement);
+      OBError processResult = FIN_AddPayment.processBankStatement(vars, conn, "P",
+          bankStatement.getId());
+      setMyError(processResult);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
@@ -218,6 +221,9 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner matchBusinessPartnerByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
     OBContext.setAdminMode();
@@ -226,6 +232,7 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null");
+      whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
       parameters.add(partnername);
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
@@ -242,6 +249,9 @@ public abstract class FIN_BankStatementImport {
   }
 
   BusinessPartner finBPByName(String partnername) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
 

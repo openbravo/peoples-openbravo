@@ -129,6 +129,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     parameters.add(account);
     whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + " <> ?");
     parameters.add(bankstatement);
+    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
     whereClause.append(" desc");
 

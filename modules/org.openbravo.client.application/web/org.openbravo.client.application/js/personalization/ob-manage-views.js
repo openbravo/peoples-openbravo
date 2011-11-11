@@ -153,13 +153,13 @@ OB.Personalization.applyViewDefinition = function(persId, viewDefinition, standa
   }
 };
 
-// ** {{{OB.Personalization.storeViewDefinition}}} **
-// Retrieve the view state from the window and stores it in the server using the specified name and id (if set).
+// ** {{{OB.Personalization.getViewDefinition}}} **
+// Retrieve the view state from the window.
 // The levelInformation contains the level at which to store the view. After the save the internal
 // view state is stored in the standardWindow.getClass().personalization object.
-OB.Personalization.storeViewDefinition = function(standardWindow, levelInformation, persId, name, isDefault) {
-  var params, view, persDataByTab, 
-    personalizationData = {}, i, formData, length = standardWindow.views.length;
+OB.Personalization.getViewDefinition = function(standardWindow, name, isDefault) {
+  var view, persDataByTab, personalizationData = {}, i, 
+    formData, length = standardWindow.views.length;
   
   // retrieve the viewstate from the server
   for (i = 0; i < length; i++) {
@@ -197,7 +197,17 @@ OB.Personalization.storeViewDefinition = function(standardWindow, levelInformati
       personalizationData.window.childTabSetHeight = standardWindow.activeView.childTabSet.getHeight();      
     }
   }
+  return personalizationData;
+};
 
+// ** {{{OB.Personalization.storeViewDefinition}}} **
+// Retrieve the view state from the window and stores it in the server using the specified name and id (if set).
+// The levelInformation contains the level at which to store the view. After the save the internal
+// view state is stored in the standardWindow.getClass().personalization object.
+OB.Personalization.storeViewDefinition = function(standardWindow, levelInformation, persId, name, isDefault) {
+  var params, personalizationData = 
+      OB.Personalization.getViewDefinition(standardWindow, name, isDefault);
+  
   // if there is a personalization id then use that
   // this ensures that a specific record will be updated
   // on the server.
@@ -304,7 +314,7 @@ OB.Personalization.deleteViewDefinition = function(standardWindow, personalizati
       },
       function(resp, data, req){
         var personalization = standardWindow.getClass().personalization, 
-          length,
+          length, i,
           views = personalization && personalization.views ? personalization.views : [];
         
         if (views) {

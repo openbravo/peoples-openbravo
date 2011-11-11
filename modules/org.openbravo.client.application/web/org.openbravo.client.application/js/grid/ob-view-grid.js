@@ -170,7 +170,7 @@ isc.OBViewGrid.addProperties({
     neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
-    
+
     // overridden to update the context/request properties for the fetch
     fetchRemoteData : function (serverCriteria, startRow, endRow) {
       var requestProperties = this.context;
@@ -222,7 +222,7 @@ isc.OBViewGrid.addProperties({
   },
 
   initWidget: function () {
-    var i;
+    var i, vwState;
     
     // make a copy of the dataProperties otherwise we get 
     // change results that values of one grid are copied/coming back
@@ -239,7 +239,7 @@ isc.OBViewGrid.addProperties({
       this.editLinkColNum = 1;
     }
 
-    this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
+    this.editFormDefaults = isc.addProperties({}, isc.clone(OB.ViewFormProperties), this.editFormDefaults);
 
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
@@ -283,6 +283,11 @@ isc.OBViewGrid.addProperties({
   
     var ret = this.Super('initWidget', arguments);
     
+    vwState = this.view.standardWindow.getDefaultGridViewState(this.view.tabId);
+    if (vwState) {
+      this.setViewState(vwState);
+    }
+
     this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
     this.filterNoRecordsEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' +
     '<span onclick="window[\'' +
@@ -298,7 +303,8 @@ isc.OBViewGrid.addProperties({
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
   destroy: function () {
-    var i, field, fields = this.getFields(), len = fields.length, ds, dataSources = [];
+    var i, field, fields = this.getFields(), 
+      editorProperties, len = fields.length, ds, dataSources = [];
 
     for(i = 0; i < len; i++) {
       field = fields[i];
@@ -337,8 +343,10 @@ isc.OBViewGrid.addProperties({
   },
 
   draw: function() {
-    var drawnBefore = this.isDrawn(), form, item, length;
+    var drawnBefore = this.isDrawn(), i, form, item, items, length;
+
     this.Super('draw', arguments);
+    
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
         this.getFilterEditor() && this.getFilterEditor().getEditForm()) {
@@ -444,34 +452,31 @@ isc.OBViewGrid.addProperties({
       return;
     }
     
+    if (this.getDataSource()) {
+      this.Super('setViewState', arguments);
+    }
+
     if (localState.noFilterClause) {
       this.filterClause = null;
-      this.view.messageBar.hide();
-    }      
-    if (localState.filter) {
-      this.setCriteria(localState.filter);
-      if (this.filterEditor) {
-        // update the internal value also, this means that it
-        // get retained when showing the grid for the first
-        // time
-        length = this.filterEditor.getFields().length;
-        for (i = 0; i < length; i++) {
-          this.filterEditor.storeUpdatedEditorValue(false, i);
-        }
+      if (this.view.messageBar) {
+        this.view.messageBar.hide();
       }
     }
-    
-    this.Super('setViewState', arguments);
+
+    // and no additional filter clauses passed in
+    if (localState.filter && 
+        this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId &&
+        this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
+      this.setCriteria(localState.filter);
+    }
   },
  
   setView: function(view){
-    var dataPageSizeaux, length;
+    var dataPageSizeaux, length, i, crit;
     
     this.view = view;
+    
     this.editFormDefaults.view = view;
-    if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
-      this.setViewState(this.view.standardWindow.viewState[this.view.tabId]);
-    }
     
     if (this.getField(this.view.parentProperty)) {
       this.getField(this.view.parentProperty).canFilter = false;
@@ -489,7 +494,12 @@ isc.OBViewGrid.addProperties({
       }
     }
  //// Ends..
-    
+    if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && 
+        this.view.standardWindow.additionalCriteria) {
+      crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
+      this.setCriteria(crit);
+      delete this.view.standardWindow.additionalCriteria;
+    }
     // if there is no autoexpand field then just divide the space
     if (!this.getAutoFitExpandField()) {
       length = this.fields.length;
@@ -651,7 +661,7 @@ isc.OBViewGrid.addProperties({
     OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', 'OBViewGrid.body', ksAction_EditInForm);
 
     var ksAction_CancelChanges = function() {
-      grid.view.undo();
+      me.view.undo();
       return false;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelChanges', 'OBViewGrid.body', ksAction_CancelChanges);
@@ -699,7 +709,11 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
-  updateRowCountDisplay: function(){
+  updateRowCountDisplay: function(delayed){
+    if (!delayed) {
+      this.delayCall('updateRowCountDisplay', [true], 100);
+      return;
+    }
     var newValue = '', length = this.data.getLength();
     if (length > this.dataPageSize) {
       newValue = '>' + this.dataPageSize;
@@ -710,10 +724,13 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+      this.filterEditor.getEditForm().getField(isc.OBViewGrid.EDIT_LINK_FIELD_NAME).defaultValue = newValue;
     }
   },
   
   refreshContents: function(callback){
+    var selectedValues;
+    
     this.resetEmptyMessage();
     this.view.updateTabTitle();
     
@@ -972,6 +989,9 @@ isc.OBViewGrid.addProperties({
   
   getCriteria: function(){
     var criteria = this.Super('getCriteria', arguments) || {};
+    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+      criteria = isc.shallowClone(this.initialCriteria);
+    }
     criteria = this.convertCriteria(criteria);
     return criteria;
   },
@@ -1376,6 +1396,7 @@ isc.OBViewGrid.addProperties({
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
+      this.filterEditor.getEditForm().getField(this.getCheckboxField().name).defaultValue = newValue;
     }
   },
   
@@ -2011,7 +2032,7 @@ isc.OBViewGrid.addProperties({
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (saveCallback) {
-        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent, success]);
+        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }

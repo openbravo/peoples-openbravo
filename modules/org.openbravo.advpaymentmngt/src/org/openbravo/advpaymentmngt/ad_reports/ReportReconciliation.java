@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class ReportReconciliation extends HttpSecureAppServlet {
@@ -61,10 +62,11 @@ public class ReportReconciliation extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFinReconciliationID = vars.getGlobalVariable("inpfinReconciliationId", "");
-      String strFinFinancialAccountName = vars.getGlobalVariable("inpfinFinancialAccountId_R", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strLastFieldChanged = vars.getGlobalVariable("inpLastFieldChanged", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, strFinFinancialAccountName,
+      printPageDataPDF(request, response, vars, strFinReconciliationID,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strLastFieldChanged.toLowerCase().contains("detail") ? DETAIL : SUMMARY);
     }
   }
@@ -75,9 +77,10 @@ public class ReportReconciliation extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFinReconciliationID = vars.getGlobalVariable("inpfinReconciliationId", "");
-      String strFinFinancialAccountName = vars.getGlobalVariable("inpfinFinancialAccountId_R", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, strFinFinancialAccountName,
+      printPageDataPDF(request, response, vars, strFinReconciliationID,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strReportType);
     }
   }
@@ -182,7 +185,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    * @return List with 2 values. The first one is the sum of outstanding payments (transactions) and
    *         the second is the sum of outstanding deposits (transactions).
    */
-  @SuppressWarnings("unchecked")
   private List<BigDecimal> getOutstandingPaymentAndDepositTotal(FIN_Reconciliation recon) {
     List<BigDecimal> outList = new ArrayList<BigDecimal>();
     OBContext.setAdminMode(true);
@@ -208,6 +210,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcTrans.setProjection(projections);
 
       if (obcTrans.list() != null && obcTrans.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcTrans.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]
@@ -238,7 +241,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    *          Reconciliation
    * @return Sum of the un-reconciled bank statement lines.
    */
-  @SuppressWarnings("unchecked")
   private BigDecimal getUnreconciledBankStatmentLinesTotal(FIN_Reconciliation recon) {
     BigDecimal total = BigDecimal.ZERO;
     OBContext.setAdminMode(true);
@@ -260,12 +262,14 @@ public class ReportReconciliation extends HttpSecureAppServlet {
         obcBsl.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
       }
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
       obcBsl.setProjection(projections);
 
       if (obcBsl.list() != null && obcBsl.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcBsl.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
@@ -289,7 +293,6 @@ public class ReportReconciliation extends HttpSecureAppServlet {
    * @return Sum of all the transactions in a higher date than the end date of the given
    *         reconciliation.
    */
-  @SuppressWarnings("unchecked")
   private BigDecimal getTransactionsTotalAfterReconciliationEndDate(FIN_Reconciliation recon) {
     BigDecimal balance = BigDecimal.ZERO;
     OBContext.setAdminMode(true);
@@ -305,6 +308,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcTrans.setProjection(projections);
 
       if (obcTrans.list() != null && obcTrans.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcTrans.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal paymentAmt = (resultSet[0] != null) ? (BigDecimal) resultSet[0]

@@ -482,8 +482,8 @@ class WadActionButton {
               html.append(tabName);
               html.append("Data.selectActDef");
               html.append(FormatUtilities.replace(data[i].columnname));
-              html.append("(this, ");
-              html.append(((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) ? "\""
+              html.append("(this");
+              html.append(((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) ? ", \""
                   + data[i].defaultvalue + "\""
                   : WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
                       false, isSOTrx, window)));

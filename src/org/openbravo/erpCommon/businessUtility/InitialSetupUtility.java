@@ -235,6 +235,7 @@ public class InitialSetupUtility {
   }
 
   /**
+   * @deprecated use new insertClientinfo method where new parameter "campaignTree" is added
    * 
    * @param client
    * @param menuTree
@@ -246,10 +247,34 @@ public class InitialSetupUtility {
    * @param boDiscountCalculatedFromLineAmounts
    * @return ClientInformation object for the new element
    * @throws Exception
+   * @deprecated
    */
+  @Deprecated
   public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
       Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
       Boolean boDiscountCalculatedFromLineAmounts) throws Exception {
+
+    return insertClientinfo(client, menuTree, orgTree, bpartnerTree, projectTree, salesRegionTree,
+        productTree, null, boDiscountCalculatedFromLineAmounts);
+  }
+
+  /**
+   * 
+   * @param client
+   * @param menuTree
+   * @param orgTree
+   * @param bpartnerTree
+   * @param projectTree
+   * @param salesRegionTree
+   * @param productTree
+   * @param campaignTree
+   * @param boDiscountCalculatedFromLineAmounts
+   * @return ClientInformation object for the new element
+   * @throws Exception
+   */
+  public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
+      Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
+      Tree campaignTree, Boolean boDiscountCalculatedFromLineAmounts) throws Exception {
     final ClientInformation newClientInfo = OBProvider.getInstance().get(ClientInformation.class);
     newClientInfo.setClient(client);
     newClientInfo.setPrimaryTreeMenu(menuTree);
@@ -258,6 +283,8 @@ public class InitialSetupUtility {
     newClientInfo.setPrimaryTreeProject(projectTree);
     newClientInfo.setPrimaryTreeSalesRegion(salesRegionTree);
     newClientInfo.setPrimaryTreeProduct(productTree);
+    if (campaignTree != null)
+      newClientInfo.setTreeCampaign(campaignTree);
     newClientInfo.setDiscountCalculatedFromLineAmounts(boDiscountCalculatedFromLineAmounts);
     OBDal.getInstance().save(newClientInfo);
     OBDal.getInstance().flush();

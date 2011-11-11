@@ -122,6 +122,18 @@
       <Parameter name="client"/>
       <Parameter name="org"/>
    </SqlMethod>
+   <SqlMethod name="currencyConvertionRate" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      SELECT C_Currency_Rate(?, ?,TO_DATE(?),TO_CHAR(?), ?, ?) AS CONVERTED FROM DUAL
+      </Sql>
+      <Parameter name="CurFrom_ID"/>
+      <Parameter name="CurTo_ID"/>
+      <Parameter name="Date"/>
+      <Parameter name="RateType"/>
+      <Parameter name="client"/>
+      <Parameter name="org"/>
+   </SqlMethod>
    <SqlMethod name="periodOpen" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

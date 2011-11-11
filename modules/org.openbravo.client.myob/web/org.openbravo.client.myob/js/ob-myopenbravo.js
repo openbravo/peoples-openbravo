@@ -321,7 +321,7 @@ isc.OBMyOpenbravo.addProperties({
         },
 
         getTotalHeight: function(){
-          var rows = this.getMembers(), i, height = 0, row;
+          var rows = this.getMembers(), widget, i, height = 0, row;
           for (i = 0; i < rows.length; i++) {
             row = rows[i];
             widget = row.getMembers()[0];
@@ -355,7 +355,7 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setRecentList: function(layout){
-    var recentList, newRecent,  
+    var recentList, newRecent, handleClickFunction,
       recentIndex = 0, recent, lbl, newIcon, entryLayout, icon;
     
     // start with a fresh content
@@ -450,7 +450,7 @@ isc.OBMyOpenbravo.addProperties({
   
   setRecentDocumentsList: function(layout){
     var recentList, newRecent, recentIndex = 0, recent, 
-      lbl, newIcon, entryLayout, icon;
+      lbl, newIcon, entryLayout, icon, handleClickFunction;
     
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -504,7 +504,8 @@ isc.OBMyOpenbravo.addProperties({
   // * {{{widgetProperties}}}: properties used to create an instance of the widget
   // like the widgetClassName, height and title 
   addWidget: function(widgetProperties){
-    var i;
+    var i,widgetInstance;
+    
     // if not there yet load it
     if (!isc.ClassFactory.getClass(widgetProperties.widgetClassName)) {
       var rpcMgr = isc.RPCManager;
@@ -586,7 +587,8 @@ isc.OBMyOpenbravo.addProperties({
   },
   
   eventResponseHandler: function(rpcResponse, data, rpcRequest){
-    var i, j, adminLevel, adminLevelValue, publishMessage, levelKey;
+    var i, j, adminLevel, adminLevelValue, publishMessage, 
+      levelKey, levelValueKey;
     
     if (!data || !data.message || !data.context || !data.widgets) {
       isc.Log.logError('Response does not contain required data for processing');
@@ -681,7 +683,8 @@ isc.OBMyOpenbravo.addProperties({
   // The widgets cache is refreshed before sending the event notification to the backend
   //
   updateWidgetsCache: function(eventType, responseWidgets){
-    var columns = this.portalLayout.getMembers(), i, j, k, col, rows, row, widget, newObj;
+    var columns = this.portalLayout.getMembers(), i, j, k, 
+      newWidget, col, rows, row, widget, newObj;
 
     this.widgets = []; // clear cache
     if (eventType === 'RELOAD_WIDGETS' && isc.isAn.Array(responseWidgets)) {

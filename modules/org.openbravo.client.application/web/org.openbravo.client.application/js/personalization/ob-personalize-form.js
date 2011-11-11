@@ -479,7 +479,9 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // the toolbar shows the save, delete and undo button
   createAddToolbar: function() {
-    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties;
+    var saveButtonProperties, saveCloseButtonProperties, 
+      deleteButtonProperties, cancelButtonProperties,
+      restoreButtonProperties, restoreLayout;
 
     saveButtonProperties = {
       action: function() {
@@ -526,8 +528,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         updateState: function(){
           // never allow delete when opened from the maintenance window
           this.setDisabled(this.openedFromMaintenanceWindow || 
-              !this.view.form.view.getFormPersonalization() || 
-              !this.view.form.view.getFormPersonalization().canDelete);
+              !this.view.form.view.getFormPersonalization(false) || 
+              !this.view.form.view.getFormPersonalization(false).canDelete);
         },
         keyboardShortcutId: 'ToolBar_Eliminate'
       };
@@ -544,21 +546,57 @@ isc.OBPersonalizeFormLayout.addProperties({
       },
       keyboardShortcutId: 'ToolBar_Undo'
     };
-
+    
+    restoreButtonProperties = {
+      action: function() {
+        var i, standardWindow = this.view.getStandardWindow(),
+          viewDefinitions = standardWindow.getClass().originalView.viewDefinition,
+          length = standardWindow.views.length, view, viewTabDefinition;
+        for (i = 0; i < length; i++) {
+          view = standardWindow.views[i];
+          if (view.tabId !== this.view.tabId) {
+            continue;
+          }
+          viewTabDefinition = viewDefinitions[view.tabId];
+          
+          this.view.initializing = true;
+          
+          this.view.destroyAndRemoveMembers(this.view.mainLayout);
+          this.view.mainLayout = null;
+          this.view.createAddMainLayout();
+          
+          this.view.buildFieldsTreeGrid(viewTabDefinition);
+          this.view.buildPreviewForm();
+          this.view.fieldsTreeGrid.openFolders();
+          
+          delete this.view.initializing;
+          this.view.changed();
+        }
+      },
+      title: OB.I18N.getLabel('OBUIAPP_RestoreDefaults'),
+      updateState: function() {
+//        this.setDisabled(this.view.hasNotChanged());
+      }
+    };
+   
     this.toolBar = isc.OBToolbar.create({
       view: this,
       leftMembers: [ isc.OBToolbarIconButton.create(saveButtonProperties),
                      isc.OBToolbarIconButton.create(saveCloseButtonProperties),
                      isc.OBToolbarIconButton.create(cancelButtonProperties),
                      isc.OBToolbarIconButton.create(deleteButtonProperties)],
-      rightMembers: []
+      rightMembers: [isc.OBToolbarTextButton.create(restoreButtonProperties)],
+      refreshCustomButtons: function(){
+        this.rightMembers[0].updateState();
+      }
     });
     this.addMember(this.toolBar);
   },
 
   // save the new form layout to the server and updates the preview form
   save: function(callback) {
-    var params, me = this, newDataFields;
+    var params, me = this, newDataFields, 
+      formPers = this.form.view.getFormPersonalization();
 
     // if there is a personalization id then use that
     // this ensures that a specific record will be updated
@@ -567,11 +605,11 @@ isc.OBPersonalizeFormLayout.addProperties({
     // it can be grid. The reason that not the whole structure is send
     // is that the call should only change the target itself (the form
     // personalization data) and not the other parts
-    if (this.form.view.getFormPersonalization() && this.form.view.getFormPersonalization().personalizationId) {
+    if (formPers && formPers.personalizationId) {
       params = {
           action: 'store',
           target: 'form',
-          personalizationId: this.form.view.getFormPersonalization().personalizationId
+          personalizationId: formPers.personalizationId
       };
       
     } else {
@@ -603,9 +641,10 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (!me.personalizationData) {
             me.personalizationData = {};
           }
-          if (data && data.canDelete && me.personalizationData.canDelete !== false) {
-            me.personalizationData.canDelete = true;            
-          }
+          
+          // as the user can save, the user can also delete it
+          me.personalizationData.canDelete = true;          
+            
           if (data && data.personalizationId) {
             me.personalizationData.personalizationId = data.personalizationId;            
           }
@@ -643,7 +682,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // called when the delete button is called
   deletePersonalization: function(confirmed) {
-    var me = this;
+    var me = this, callback;
     
     // only delete if we have a personalization id
     // this should always be the case
@@ -670,6 +709,8 @@ isc.OBPersonalizeFormLayout.addProperties({
           action: 'delete'
         },
         function(resp, data, req){
+          var personalization;
+          
           me.hasBeenDeleted = true;
           // close when returned
           me.doClose(true);
@@ -682,7 +723,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   
   // the undo action, resets everything to the loaded, last-saved state
   cancel: function(confirmed) {
-    var me = this;
+    var me = this, callback;
     if (!confirmed) {
       callback = function(ok) {
         if (ok) {
@@ -702,11 +743,12 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.destroyAndRemoveMembers(this.mainLayout);
     this.mainLayout = null;
     this.createAddMainLayout();
-
-    this.setStatusBarInformation();
     
     this.buildFieldsTreeGrid();
     this.buildPreviewForm();
+    this.setStatusBarInformation();
+    this.fieldsTreeGrid.openFolders();
+
     delete this.initializing;
   },
 
@@ -749,7 +791,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.formLayout.addMember(statusBar);
     
     // create the form and add it to the formLayout
-    this.previewForm = isc.OBViewForm.create(this.previewFormProperties, {
+    this.previewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), this.previewFormProperties, {
       preventAllEvents: true,
       statusBar: statusBar,
       personalizeForm: this,
@@ -817,8 +859,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       // in the form preview
       if (fld.personalizable) {
         // always expand section items
-        if (isc.isA.SectionItem(fld)) {
-          fld.sectionExpanded = true;
+        if (fld.sectionExpanded) {
+          fld.expandSection();
         } else {
           // replace some methods so that clicking a field in the form
           // will select it on the left
@@ -880,10 +922,13 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.buildFieldsTreeGrid();
     
     this.setStatusBarInformation();
+    this.fieldsTreeGrid.openFolders();
   },
   
-  buildFieldsTreeGrid: function() {
+  buildFieldsTreeGrid: function(personalizationData) {
     var i, prop, fld, length;
+    
+    personalizationData = personalizationData || this.personalizationData;
     
     this.fieldsLayout.destroyAndRemoveMembers(this.fieldsLayout.getMembers());
     if (this.fieldsTreeGrid) {
@@ -898,12 +943,12 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.personalizationDataProperties = [
       'isStatusBarField', 'displayed', 'isSection',
       'parentName', 'title', 'hiddenInForm',
-      'colSpan', 'rowSpan', 'required', 
+      'colSpan', 'rowSpan', 'required', 'sectionExpanded',
       'startRow', 'name', 'hasDisplayLogic'
     ];
-    length = this.personalizationData.form.fields.length;
+    length = personalizationData.form.fields.length;
     for (i = 0; i < length; i++) {
-      fld = this.personalizationData.form.fields[i];
+      fld = personalizationData.form.fields[i];
       for (prop in fld) {
         if (fld.hasOwnProperty(prop) && 
             !this.personalizationDataProperties.contains(prop)) {
@@ -917,7 +962,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.fieldsTreeGrid = isc.OBPersonalizationTreeGrid.create({
       // make a clone so that the original personalization data is not
       // updated, when doing cancel, the original is restored
-      fieldData: isc.shallowClone(this.personalizationData.form.fields),
+      fieldData: isc.shallowClone(personalizationData.form.fields),
       personalizeForm: this,
       selectionUpdated: function(record, recordList) {
         this.personalizeForm.selectionUpdated(record, recordList);
@@ -988,9 +1033,9 @@ isc.OBPersonalizeFormLayout.addProperties({
       window = this.maintenanceView.standardWindow;
     } else if (this.openedInForm) {
       if (this.hasBeenSaved || this.hasBeenDeleted) {
-        // reread the window settings
-        // this will update everything in the original forms
-        this.form.view.standardWindow.readWindowSettings();
+        // update the form in the view
+        OB.Personalization.personalizeForm(me.personalizationData, 
+            this.form.view.viewForm);
       }
       window = this.form.view.standardWindow;
     }
@@ -1018,7 +1063,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // called by the buttons in the toolbar of the standard maintenance form/grid
   doOpen: function(retrievedInitialData) {
-    var me = this, window, i, j, persField, fld;
+    var me = this, window, i, j, persField, fld, tabSet, tab;
     
     // first get the preview form data, continue after receiving it
     if (!retrievedInitialData) {

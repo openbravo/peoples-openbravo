@@ -21,6 +21,26 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+//** {{{OB.Utilities.checkProfessionalLicense}}} **
+// Checks if the current instance is using a professional license 
+// (!= community). If the instance has a community instance then 
+// a popup message is shown and false is returned.
+// The parameter can be used to add a custom message to the popup.
+OB.Utilities.checkProfessionalLicense = function(msg) {
+  if(OB.Application.licenseType === 'C') {
+    if (!msg) {
+      msg = '';
+    }
+    isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [msg]), {
+        isModal: true,
+        showModalMask: true,
+        toolbarButtons: [isc.Dialog.OK]
+    });
+    return false;
+  }
+  return true;
+};
+
 // ** {{{OB.Utilities.truncTitle}}} **
 // Truncs a string after a specific length. Initial implementation is 
 // simple (just cuts of at the specified length). Returns the trunced title
@@ -292,7 +312,11 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
     //URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
     if (urlParams.filterClause) {
       view.additionalFilterTabId = data.tabId;
-        view.additionalFilterClause = urlParams.filterClause;
+      view.additionalFilterClause = urlParams.filterClause;
+    }
+    if (urlParams.criteria) {
+      view.additionalCriteriaTabId = data.tabId;
+      view.additionalCriteria = urlParams.criteria;
     }
      
     if (urlParams.replaceDefaultFilter) {
@@ -730,7 +754,7 @@ OB.Utilities.postThroughHiddenForm = function(url, data) {
   var encodeProperties = {
     // prevents timezone issues
     encodeDate: function(dt) {
-      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+      var ret, oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
       isc.Comm.xmlSchemaMode = true;
       ret = dt.toSerializeableDate();
       isc.Comm.xmlSchemaMode = oldXMLSchemaMode;

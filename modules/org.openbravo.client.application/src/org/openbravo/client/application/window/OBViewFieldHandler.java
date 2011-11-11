@@ -104,7 +104,12 @@ public class OBViewFieldHandler {
     // Processing dynamic expressions (display logic)
     for (Field f : adFields) {
       if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
-          || !f.isDisplayed()) {
+          || !(f.isDisplayed() || f.isShowInGridView())) {
+        continue;
+      }
+
+      // are added separately
+      if (f.isShownInStatusBar()) {
         continue;
       }
 
@@ -183,9 +188,15 @@ public class OBViewFieldHandler {
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isActive() || !field.isDisplayed()
+      if (field.getColumn() == null || !field.isActive()
+          || !(field.isDisplayed() || field.isShowInGridView())
           || ApplicationUtils.isUIButton(field)) {
         ignoredFields.add(field);
+        continue;
+      }
+
+      // are added separately
+      if (field.isShownInStatusBar()) {
         continue;
       }
 
@@ -239,6 +250,7 @@ public class OBViewFieldHandler {
       viewFieldGroup.setType("OBAuditSectionItem");
       viewFieldGroup.setPersonalizable(false);
       fields.add(viewFieldGroup);
+      viewFieldGroup.addChildren(auditFields);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
       // itemIds are hardcoded in the field type
       // viewFieldGroup.addChildren(auditFields);

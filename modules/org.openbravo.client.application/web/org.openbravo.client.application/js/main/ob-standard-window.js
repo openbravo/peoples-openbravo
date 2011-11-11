@@ -90,7 +90,7 @@ isc.OBStandardWindow.addProperties({
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
     } else if (this.getClass().personalization) {
-      OB.Personalization.personalizeWindow(this.getClass().personalization, this);
+      this.setPersonalization(this.getClass().personalization);
     }
   },
   
@@ -194,6 +194,102 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  setPersonalization: function(personalization) {
+    var i, defaultView, persDefaultValue, views, length, me = this;
+    
+    // cache the original view so that it can be restored
+    if (!this.getClass().originalView) {
+      this.getClass().originalView = {};
+      this.getClass().originalView.personalizationId = 'dummyId';
+      this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
+      this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
+      this.getClass().originalView.canDelete = false;
+      
+      // and clone the original view so that it can't get updated accidentally
+      this.getClass().originalView = isc.clone(this.getClass().originalView);
+    }
+
+    this.getClass().personalization = personalization;
+    
+    persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+    
+    // find the default view, the personalizations are
+    // returned in order of prio, then do sort by name
+    if (this.getClass().personalization.views) {
+      views = this.getClass().personalization.views;
+      length = views.length;
+      if (persDefaultValue) {
+        for (i = 0; i < length; i++) {
+          if (persDefaultValue === views[i].personalizationId) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      if (!defaultView) {
+        for (i = 0; i < length; i++) {
+          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      
+      // apply the default view
+      if (defaultView) {
+        OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
+      }
+      
+      this.getClass().personalization.views.sort(function(v1, v2) {
+        var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
+        if (t1 < t2) {
+          return -1;
+        } else if (t1 === t2) {
+          return 0;
+        }
+        return 1;
+      });
+    }
+  },
+
+  getDefaultGridViewState: function(tabId) {
+    var views, length, i, personalization = this.getClass().personalization,    
+      defaultView,
+      persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+
+    if (!personalization) {
+      return null;
+    }
+    
+    if (personalization.views) {
+      views = personalization.views;
+      length = views.length;
+      if (persDefaultValue) {
+        for (i = 0; i < length; i++) {
+          if (persDefaultValue === views[i].personalizationId) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      if (!defaultView) {
+        for (i = 0; i < length; i++) {
+          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+    }
+    
+    if (defaultView && defaultView.viewDefinition && 
+        defaultView.viewDefinition[tabId]) {
+      return defaultView.viewDefinition[tabId].grid;
+    }
+    
+    return null;
+  },
+  
   // Update the personalization record which is stored 
   updateFormPersonalization: function(view, formPersonalization) {
     if (!this.getClass().personalization) {
@@ -205,20 +301,23 @@ isc.OBStandardWindow.addProperties({
     this.getClass().personalization.forms[view.tabId] = formPersonalization;
    },
    
-  getFormPersonalization: function(view) {
+  getFormPersonalization: function(view, checkSavedView) {
     var formPersonalization, i, persView;
-    if (this.getClass().personalization && this.getClass().personalization.views 
-        && this.selectedPersonalizationId) {
-      for (i = 0; i < this.getClass().personalization.views.length; i++) {
-        persView = this.getClass().personalization.views[i];
-        if (persView.viewDefinition && 
-            persView.viewDefinition[view.tabId] && 
-            persView.personalizationId === this.selectedPersonalizationId) {
-          return persView.viewDefinition[view.tabId].form;
+    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      // no form personalization on form level
+      // check window level
+      if (checkSavedView && this.getClass().personalization && this.getClass().personalization.views 
+          && this.selectedPersonalizationId) {
+        for (i = 0; i < this.getClass().personalization.views.length; i++) {
+          persView = this.getClass().personalization.views[i];
+          if (persView.viewDefinition && 
+              persView.viewDefinition[view.tabId] && 
+              persView.personalizationId === this.selectedPersonalizationId) {
+            return persView.viewDefinition[view.tabId].form;
+          }
         }
       }
-    }
-    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      // nothing found go away
       return null;
     }
     formPersonalization = this.getClass().personalization.forms;

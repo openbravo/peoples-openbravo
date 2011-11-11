@@ -26,9 +26,6 @@
     initWidget: function() {
       this.menu = isc.Menu.create({
         button: this,
-        
-        iconHeight: 8,
-        iconWidth: 4,
 
         // overridden to get much simpler custom style name
         getBaseStyle: function(record, rowNum, colNum){
@@ -51,23 +48,36 @@
       }, OB.Styles.Personalization.Menu);
     },
     
+    showMenu: function() {      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessageWindowPersonalization'))) {
+        return;
+      }
+      return this.Super('showMenu', arguments);
+    },
+    
     // shows the menu with the available views and the save 
     // and delete option
     action: function() {
-      var data = [], icon, i, undef, view,
+      var data = [], icon, i, undef, view, formData,
         standardWindow = this.view.standardWindow,
-        adminLevel = false, length,
+        adminLevel = false, length, viewSelected = false,
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : [],
         canDelete = false;
       
-      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
+      }
+      
+      // add the standard view, but make a copy so that it is not added
+      // to the real list of editable/deletable views
+      views = isc.shallowClone(views);
+      views.push(standardWindow.getClass().originalView);
+      
+      if (!standardWindow.selectedPersonalizationId) {
+        standardWindow.selectedPersonalizationId = standardWindow.getClass().originalView.personalizationId;
       }
       
       // create the list of current views to show
@@ -77,7 +87,7 @@
         canDelete = view.canEdit || canDelete;
         
         if (standardWindow.selectedPersonalizationId && view.personalizationId === standardWindow.selectedPersonalizationId) {
-          icon = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView.png';
+          icon = this.menu.itemIcon;          
         } else {
           icon = null;
         }
@@ -157,8 +167,7 @@
       this.resetBaseStyle();
       
       // no items are shown in this case
-      if (!this.isWindowPersonalizationAllowed() && (!this.view.standardWindow.getClass().personalization || 
-          !this.view.standardWindow.getClass().personalization.views || this.view.standardWindow.getClass().personalization.views.length === 0)) {
+      if (!this.isWindowPersonalizationAllowed() && !this.viewsToSelect()) {
         this.setDisabled(true);
       } else {
         this.setDisabled(false);
@@ -166,15 +175,39 @@
       
       this.show();
     },
+    
+    viewsToSelect: function() {
+      // standardwindow is not set during initialization
+      var pers = (this.view.standardWindow ? this.view.standardWindow.getClass().personalization : null);
+      return (pers && pers.views && pers.views.length > 0);
+    },
+    
     isWindowPersonalizationAllowed: function() {
-      var propValue, undef;
-      if (this.userWindowPersonalizationAllowed === undef) {
-        propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', 
-            this.view.standardWindow ? this.view.standardWindow.windowId : null);
-        if (propValue === 'false' || propValue === 'N') {
-          this.userWindowPersonalizationAllowed = false;
-        } else {
+      var propValue, undef,
+        standardWindow = this.view.standardWindow,
+        personalization = (standardWindow ? standardWindow.getClass().personalization : null),
+        formData = (personalization ? personalization.formData : null);
+      
+      // standardwindow is not set during initialization
+      // don't set the variable yet, but do not allow either
+      if (!standardWindow) {
+        return false;
+      }
+      
+      // note: false is not cached as during initialization
+      // things can be false
+      if (this.userWindowPersonalizationAllowed === undef) {        
+        // if an admin then allow personalization
+        if (formData && (formData.orgs || formData.clients || formData.roles)) {
           this.userWindowPersonalizationAllowed = true;
+        } else {
+          propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', 
+              standardWindow ? standardWindow.windowId : null);
+          if (propValue === 'false' || propValue === 'N') {
+            return false;
+          } else {
+            this.userWindowPersonalizationAllowed = true;
+          }
         }
       }
       return this.userWindowPersonalizationAllowed;

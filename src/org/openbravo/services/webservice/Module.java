@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings({ "rawtypes", "serial" })
 public class Module  extends org.openbravo.services.webservice.Module2  implements java.io.Serializable {
     private java.util.HashMap additionalInfo;
 

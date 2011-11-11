@@ -20,7 +20,6 @@
 package org.openbravo.advpaymentmngt.dao;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -408,10 +407,12 @@ public class AdvPaymentMngtDao {
     }
     if (finTxnAmount == null || finTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
       finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
-    } else if (paymentAmount != null && paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
-      // Correct exchange rate for rounding that occurs in UI
-      finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
     }
+    // This code commented due to fix in bug 17829
+    // else if (paymentAmount != null && paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
+    // // Correct exchange rate for rounding that occurs in UI
+    // finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
+    // }
 
     newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
     newPayment.setFinancialTransactionAmount(finTxnAmount);
@@ -1420,11 +1421,44 @@ public class AdvPaymentMngtDao {
     obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
     obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
     obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
+    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
     obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
         FIN_Payment.PROPERTY_USEDCREDIT));
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
     return obcPayment.list();
+  }
+
+  /**
+   * Returns the list of credit payments for the selected business partner that belongs to the legal
+   * entity's natural tree of the given organization
+   * 
+   * @param org
+   * @param bp
+   * @param isReceipt
+   * @return
+   */
+  public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
+      boolean isReceipt) {
+    try {
+      OBContext.setAdminMode(true);
+      OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
+      obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
+      obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
+      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
+      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
+      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
+      obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
+          FIN_Payment.PROPERTY_USEDCREDIT));
+      final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
+      obcPayment.add(Restrictions.in("organization.id", OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(legalEntity.getId())));
+      obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
+      obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
+      return obcPayment.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public List<FIN_Payment> getCustomerPaymentsWithUsedCredit(BusinessPartner bp, Boolean isReceipt) {

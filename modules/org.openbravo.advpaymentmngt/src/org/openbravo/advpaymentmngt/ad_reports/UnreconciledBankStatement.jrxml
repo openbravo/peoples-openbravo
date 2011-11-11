@@ -29,9 +29,10 @@
        bsl.referenceno as REF, (bsl.cramount - bsl.dramount) as AMOUNT
 FROM fin_bankstatementline bsl join fin_bankstatement bs on (bsl.fin_bankstatement_id=bs.fin_bankstatement_id)
      left join c_bpartner bp on (bp.c_bpartner_id = bsl.c_bpartner_id)
-WHERE bs.fin_financial_account_id = (SELECT rec.fin_financial_account_id
-                                     FROM fin_reconciliation rec
-                                     WHERE fin_reconciliation_id=$P{RECONCILIATION_ID})
+WHERE bs.processed = 'Y'
+      and bs.fin_financial_account_id = (SELECT rec.fin_financial_account_id
+                                         FROM fin_reconciliation rec
+                                         WHERE fin_reconciliation_id=$P{RECONCILIATION_ID})
       and bsl.datetrx <= (SELECT rec.dateto
                           FROM fin_reconciliation rec
                           WHERE fin_reconciliation_id=$P{RECONCILIATION_ID})

@@ -19,7 +19,7 @@
 
 // == OBYesNoItem ==
 // Extends ComboBoxItem with preset yes and no values.
-isc.ClassFactory.defineClass('OBYesNoItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBYesNoItem', isc.ComboBoxItem);
 
 isc.OBYesNoItem.addProperties({
   operator: 'equals',
@@ -35,6 +35,19 @@ isc.OBYesNoItem.addProperties({
     } else {
       this.Super('setValue', arguments);
     }
+  },
+  
+  // is needed because addUnknownValues is false
+  isUnknownValue: function(enteredValue) {
+    var i, vm = this.getValueMap();
+    if (vm !== null) {
+      for (i = 0; i < vm.length; i++) {
+        if (enteredValue === this.mapValueToDisplay(vm[i])) {
+          return false;
+        }
+      }
+    }
+    return this.Super('isUnknownValue', arguments);
   },
   
   mapValueToDisplay: function(value, a, b, c){

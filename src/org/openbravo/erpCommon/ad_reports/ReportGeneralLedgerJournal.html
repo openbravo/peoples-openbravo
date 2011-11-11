@@ -56,6 +56,12 @@ function submitPage(Command, frm, recordId, table, docbasetype) {
 	frm.inpdocbasetype.value = docbasetype;
 	return submitCommandForm(Command, false, frm, null, null, false, true);
 }
+function openJournalEntry(tabId, recordId){
+	var myframe = getFrame('LayoutMDI') || top.opener;
+	if (myframe) {
+		myframe.OB.Utilities.openDirectTab(tabId, recordId);
+    }
+}
 function imprimir()
 {
 	openPDFFiltered("ReportGeneralLedgerJournalPDF.pdf?Command=PDF","PDF");
@@ -436,7 +442,7 @@ function onloadFunctions() {
                   <div id="sectionJournal"> 
                     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                       <tr class="DataGrid_Body_Row">
-                        <th class="DataGrid_Header_Cell"> <a href="#" onclick="submitPage('DEFAULT', document.frmSecondary, 'xx', 'yy', 'zz');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
+                        <th class="DataGrid_Header_Cell"> <a href="#" onclick="openJournalEntry('ww', 'xx');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
                           Journal Entry&nbsp;<span id="functionCalculateOrderJournal">xx123</span><!--span id="functionCalculateOrderJournalWithInitial">xx123</span--></a>
                           <input type="hidden" name="inpordenJournal" id="functionOrderJournal" value=""></input>
                         </th>

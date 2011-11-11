@@ -247,8 +247,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
         Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
-    if (strYearInitialDate.equals(""))
-      strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
@@ -268,6 +266,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       toolbar
           .prepareRelationBarTemplate(false, false,
               "submitCommandForm('XLS', false, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
+      data = ReportGeneralLedgerData.set();
+    } else if (strYearInitialDate.equals("")) {
+      xmlDocument.setParameter("messageType", "WARNING");
+      xmlDocument.setParameter("messageTitle", 
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+      xmlDocument.setParameter("messageMessage", 
+          Utility.messageBD(this, "PeriodNotFound", vars.getLanguage()));
+      toolbar
+          .prepareRelationBarTemplate(false, false,
+	      "submitCommandForm('XLS', false, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
       data = ReportGeneralLedgerData.set();
     } else {
       String[] discard = { "discard" };
@@ -519,8 +527,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
         Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
-    if (strYearInitialDate.equals(""))
-      strYearInitialDate = strDateFrom;
+    if (strYearInitialDate.equals("")) {
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "PeriodNotFound", vars.getLanguage()));
+
+    }
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
@@ -622,8 +634,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
         Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
-    if (strYearInitialDate.equals(""))
-      strYearInitialDate = strDateFrom;
+    if (strYearInitialDate.equals("")) {
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "PeriodNotFound", vars.getLanguage()));
+
+    }
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strAllaccounts = "Y";

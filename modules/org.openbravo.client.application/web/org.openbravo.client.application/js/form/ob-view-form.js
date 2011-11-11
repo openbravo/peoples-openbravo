@@ -96,32 +96,45 @@ OB.ViewFormProperties = {
   },
   
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]], i, item, value, tmpValue,
-      length = this.statusBarFields.length;
+    var statusBarFields = [[],[],[],[],[], []], i, item, title, refColumnName, targetEntity, value, displayedValue,
+      length = this.statusBarFields.length, sourceWindowId;
     for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
-      value = item.getDisplayValue();
-      if(item && value !== null && value !== '') {
-
-        if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
+      title = item.getTitle();
+      sourceWindowId = this.view.standardWindow.windowId;
+      refColumnName = item.refColumnName;
+      targetEntity = item.targetEntity;
+      value = item.getValue();
+      displayedValue = item.getValue();
+      if(displayedValue !== null && displayedValue !== '') {
+        
+        if (item.getDisplayValue()) {
+          displayedValue = item.getDisplayValue();
+        }
+        
+        if(displayedValue === title && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
           if (item.getValue()) {
-            value = OB.I18N.getLabel('OBUIAPP_Yes');
+            displayedValue = OB.I18N.getLabel('OBUIAPP_Yes');
           } else {
-            value = OB.I18N.getLabel('OBUIAPP_No');
+            displayedValue = OB.I18N.getLabel('OBUIAPP_No');
           }
         }
         
         // if there is a display field or an identifier field accompanying the
         // status bar field and it has a value then always use that
         // one
-        if (item.displayField && getValue(item.displayField)) {
-          value = getValue(item.displayField);
+        if (item.displayField && this.getValue(item.displayField)) {
+          displayedValue = this.getValue(item.displayField);
         } else if (this.getValue(item.name + '._identifier')) {
-          value = this.getValue(item.name + '._identifier');
+          displayedValue = this.getValue(item.name + '._identifier');
         }
         
-        statusBarFields[0].push(item.getTitle());
-        statusBarFields[1].push(value);
+        statusBarFields[0].push(title);
+        statusBarFields[1].push(displayedValue);
+        statusBarFields[2].push(sourceWindowId);
+        statusBarFields[3].push(refColumnName);
+        statusBarFields[4].push(targetEntity);
+        statusBarFields[5].push(value);
       }
     }
     return statusBarFields;
@@ -415,7 +428,8 @@ OB.ViewFormProperties = {
       return;
     }
     // if not explicitly set to false, select its value
-    if (this.getFocusItem().selectOnFocus !== false) {
+    // or if do initial select on focus
+    if (this.getFocusItem().selectOnFocus !== false || this.getFocusItem().doInitialSelectOnFocus) {
       if (delayCall || isc.Browser.isIE) {
         this.getFocusItem().delayCall('selectValue', [], 100);
       } else {
@@ -646,7 +660,11 @@ OB.ViewFormProperties = {
       }
     }
     
-    if(retHiddenInputs) {
+    if(modeIsNew || request.params.MODE === 'EDIT'){
+      //If a new record is created, or an existing one is opened,
+      //the existing hiddenInputs (which correspond to a different record) should be deleted
+      this.hiddenInputs={};
+    }else if(retHiddenInputs) {
       for(prop in retHiddenInputs) {
         if(retHiddenInputs.hasOwnProperty(prop)){
           this.hiddenInputs[prop] = retHiddenInputs[prop];
@@ -668,9 +686,9 @@ OB.ViewFormProperties = {
     }
 
     // apparently sometimes an empty string is returned
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0].text !== '') {
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length-1].text !== '') {
       // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[0].severity], null, calloutMessages[0].text);
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length-1].severity], null, calloutMessages[calloutMessages.length-1].text);
     }
     if (auxInputs) {
       for (prop in auxInputs) {
@@ -920,7 +938,7 @@ OB.ViewFormProperties = {
     }
     
     // store the textualvalue so that it is correctly send back to the server
-    typeInstance = SimpleType.getType(field.type);
+    typeInstance = isc.SimpleType.getType(field.type);
     if (columnValue.classicValue && typeInstance.decSeparator) {
       this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
@@ -928,7 +946,7 @@ OB.ViewFormProperties = {
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
     // Modifications in this method should go also in processColumnValue because both almost do the same
-    var assignClassicValue, typeInstance, length;
+    var assignClassicValue, typeInstance, length, isDate;
 
     // no editvalues even anymore, go away
     if (!editValues) {
@@ -991,7 +1009,7 @@ OB.ViewFormProperties = {
       assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter)
         ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue))
         : columnValue.classicValue;
-      typeInstance = SimpleType.getType(field.type);
+      typeInstance = isc.SimpleType.getType(field.type);
       if (columnValue.classicValue && typeInstance.decSeparator) {
         this.setTextualValue(field.name, assignClassicValue, typeInstance, editValues);
       }
@@ -1016,7 +1034,7 @@ OB.ViewFormProperties = {
   
   // calls setValue and the onchange handling
   setItemValue: function(item, value) {
-    var currentValue;
+    var currentValue, view;
 
     if (isc.isA.String(item)) {
        
@@ -1028,11 +1046,16 @@ OB.ViewFormProperties = {
       item = this.getField(item);
     }
     currentValue = item.getValue();
-    
+
     // no change go away
     if (item.compareValues(value, currentValue)) {
+      // Force setElemntValue even there is no change to show new possible values
+      // in field.valueMap (issue #18957)
+      item.setElementValue(item.mapValueToDisplay(value));
+
       return;
     }
+
     this.setValue(item, value);
 
     // fire any new callouts
@@ -1133,9 +1156,13 @@ OB.ViewFormProperties = {
       }
 
       me.processFICReturn(response, data, request, editValues, editRow);
- 
-      if (me.getFocusItem()) {
-        me.setFocusInForm();
+
+      // don't set the focus in this case, this happens
+      // when moving to a new row in grid editing
+      if (!me.forceFocusedField) {
+        if (me.getFocusItem()) {
+          me.setFocusInForm();
+        }
       }
     });
     this.view.toolBar.updateButtonState(true);
@@ -1176,7 +1203,13 @@ OB.ViewFormProperties = {
   },
   
   undo: function(){
-    var i, flds = this.getFields(), length = flds.length;
+    var i, flds = this.getFields(), length = flds.length, 
+      doClose = !this.hasChanged;
+    
+    if (doClose) {
+      this.doClose();
+      return;
+    }
     
     // also restore the valuemaps
     for (i = 0; i < length; i++) {
@@ -1195,6 +1228,15 @@ OB.ViewFormProperties = {
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());      
     }
     this.view.toolBar.updateButtonState(true);
+  },
+  
+  doClose: function() {
+    this.view.switchFormGridVisibility();
+    this.view.messageBar.hide();
+    if (this.isNew) {
+      this.view.refreshChildViews();
+    }
+    this.view.standardWindow.setDirtyEditForm(null);
   },
   
   autoSave: function(){
@@ -1446,7 +1488,7 @@ OB.ViewFormProperties = {
   },
   
   getFirstErrorItem: function() {
-    var flds = this.getFields(), errs = this.getErrors();
+    var flds = this.getFields(), errs = this.getErrors(), i;
     if (flds.length) {
       var length = flds.length;
       for (i = 0; i < length; i++) {
@@ -1584,7 +1626,18 @@ OB.ViewFormProperties = {
   // always suppress focus when showing errors, we do focus handling
   // explicitly
   showFieldErrors: function (fieldName, suppressAutoFocus) {
+    // temporary set selectonfocus to false
+    // until after the redraw, to prevent this issue
+    // https://issues.openbravo.com/view.php?id=18739
+    this.previousSelectOnFocus = this.selectOnFocus;
+    this.selectOnFocus = false;
     this.Super('showFieldErrors', [fieldName, true]);
+  },
+  
+  redraw: function() {
+    this.Super('redraw', arguments);
+    this.selectOnFocus = this.previousSelectOnFocus;
+    delete this.previousSelectOnFocus;
   },
   
   destroy: function () {
@@ -1612,7 +1665,18 @@ OB.ViewFormProperties = {
         ds = null;
       }
     }
+  },
+  
+  allRequiredFieldsSet: function() {
+    var i, item, length = this.getItems().length, value,
+      undef, nullValue = null;
+    for (i = 0; i < length; i++) {
+      item = this.getItems()[i];
+      value = this.getValue(item);
+      if (this.isRequired(item) && value !== false && value !== 0 && !value) {
+        return false;
+      }
+    }
+    return true;
   }
 };
-
-isc.OBViewForm.addProperties(OB.ViewFormProperties);

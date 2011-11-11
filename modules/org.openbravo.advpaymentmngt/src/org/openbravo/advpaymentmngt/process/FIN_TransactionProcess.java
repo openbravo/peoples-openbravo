@@ -18,14 +18,21 @@
  */
 package org.openbravo.advpaymentmngt.process;
 
+import java.util.List;
+
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -75,6 +82,11 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             transaction.setStatus(transaction.getDepositAmount().compareTo(
                 transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
           }
+          if (transaction.getForeignCurrency() != null
+              && !transaction.getCurrency().equals(transaction.getForeignCurrency())
+              && getConversionRateDocument(transaction).size() == 0) {
+            insertConversionRateDocument(transaction);
+          }
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
@@ -99,6 +111,20 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
                 "@APRM_ReconciledDocument@" + ": " + transaction.getIdentifier()));
             bundle.setResult(msg);
             return;
+          }
+          // Remove conversion rate at document level for the given transaction
+          OBContext.setAdminMode();
+          try {
+            OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+                ConversionRateDoc.class);
+            obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
+                transaction));
+            for (ConversionRateDoc conversionRateDoc : obc.list()) {
+              OBDal.getInstance().remove(conversionRateDoc);
+            }
+            OBDal.getInstance().flush();
+          } finally {
+            OBContext.restorePreviousMode();
           }
           transaction.setProcessed(false);
           final FIN_FinancialAccount financialAccount = transaction.getAccount();
@@ -134,6 +160,40 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           .getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
+    }
+  }
+
+  private List<ConversionRateDoc> getConversionRateDocument(FIN_FinaccTransaction transaction) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+          ConversionRateDoc.class);
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, transaction.getForeignCurrency()));
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, transaction.getCurrency()));
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION, transaction));
+      return obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private ConversionRateDoc insertConversionRateDocument(FIN_FinaccTransaction transaction) {
+    OBContext.setAdminMode();
+    try {
+      ConversionRateDoc newConversionRateDoc = OBProvider.getInstance()
+          .get(ConversionRateDoc.class);
+      newConversionRateDoc.setOrganization(transaction.getOrganization());
+      newConversionRateDoc.setCurrency(transaction.getForeignCurrency());
+      newConversionRateDoc.setToCurrency(transaction.getCurrency());
+      newConversionRateDoc.setRate(transaction.getForeignConversionRate());
+      newConversionRateDoc.setForeignAmount(transaction.getForeignAmount());
+      newConversionRateDoc.setFinancialAccountTransaction(OBDal.getInstance().get(
+          APRM_FinaccTransactionV.class, transaction.getId()));
+      OBDal.getInstance().save(newConversionRateDoc);
+      OBDal.getInstance().flush();
+      return newConversionRateDoc;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 

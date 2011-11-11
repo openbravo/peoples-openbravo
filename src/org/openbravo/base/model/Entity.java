@@ -21,6 +21,7 @@ package org.openbravo.base.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -151,6 +152,22 @@ public class Entity {
       if (p.isOrderByProperty())
         orderByProperties.add(p);
     }
+
+    Collections.sort(identifierProperties, new Comparator<Property>() {
+      public int compare(Property p1, Property p2) {
+        if (p1.getSeqno() == null && p2.getSeqno() == null) {
+          return 0;
+        }
+        if (p1.getSeqno() == null) {
+          return 1;
+        }
+        if (p2.getSeqno() == null) {
+          return -1;
+        }
+
+        return p1.getSeqno().compareTo(p2.getSeqno());
+      }
+    });
 
     entityValidator = new EntityValidator();
     entityValidator.setEntity(this);

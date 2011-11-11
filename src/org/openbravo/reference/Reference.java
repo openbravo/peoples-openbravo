@@ -57,6 +57,7 @@ public class Reference {
       try {
         if (implemenationClass != null) {
           Class<UIReference> c = (Class<UIReference>) Class.forName(implemenationClass);
+          @SuppressWarnings("rawtypes")
           Constructor constructor = c.getConstructor(new Class[] { String.class, String.class });
           String params[] = new String[2];
           params[0] = referenceId;

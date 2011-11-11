@@ -36,12 +36,17 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.SearchDomainType;
+import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -308,13 +313,15 @@ public class AdvancedQueryBuilder {
       // create the clauses, re-uses the code in parseSimpleClause
       // which translates a lesserthan/greater than to the end/start
       // time of a date
-      if (operator.equals(OPERATOR_EQUALS)) {
-        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
-            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
+      if (property.isDate() || property.isDatetime()) {
+        if (operator.equals(OPERATOR_EQUALS)) {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
 
-      } else {
-        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
-            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+        } else {
+          return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
+              + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+        }
       }
     }
 
@@ -396,13 +403,49 @@ public class AdvancedQueryBuilder {
   private String buildFieldClause(List<Property> properties, Property property, String fieldName,
       String operator) {
 
+    // special cases:
+    // TableDomainType
+    // TableDirDomainType
+
+    // handle a special case the table reference which shows a tablename in a combo
+    // or uses the display column to display that in the grid
+    Property useProperty = property;
+    String useFieldName = fieldName;
+    if (properties.size() >= 2) {
+      final Property refProperty = properties.get(properties.size() - 2);
+      if (refProperty.getDomainType() instanceof TableDomainType) {
+        // special case table reference itself
+        final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
+            Table.ENTITY_NAME);
+        if (isTable) {
+          useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
+          final int index = fieldName.indexOf(".");
+          useFieldName = fieldName.substring(0, index + 1) + useProperty.getName();
+        } else {
+          // read the reference to get the table reference
+          final Reference reference = OBDal.getInstance().get(Reference.class,
+              refProperty.getDomainType().getReference().getId());
+          for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
+            if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
+                && referencedTable.getDisplayedColumn().isActive()) {
+              useProperty = property.getEntity().getPropertyByColumnName(
+                  referencedTable.getDisplayedColumn().getDBColumnName());
+              final int index = fieldName.indexOf(".");
+              useFieldName = fieldName.substring(0, index + 1) + useProperty.getName();
+              break;
+            }
+          }
+        }
+      }
+    }
+
     String clause = null;
     if (orNesting > 0) {
-      clause = resolveJoins(properties, fieldName);
+      clause = resolveJoins(properties, useFieldName);
     } else if (getMainAlias() != null) {
-      clause = getMainAlias() + "." + fieldName.trim();
+      clause = getMainAlias() + "." + useFieldName.trim();
     } else {
-      clause = fieldName;
+      clause = useFieldName;
     }
 
     // get rid of the identifier and replace it with the real property name
@@ -410,14 +453,14 @@ public class AdvancedQueryBuilder {
     // NOTE: the if and else check against the key variable and not the leftwherepart
     // because the key contains the original string (with the _identifier part).
     // Within the if the leftWherePart is used because it contains the join aliases
-    if (fieldName.equals(JsonConstants.IDENTIFIER)
-        || fieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
-      clause = computeLeftWhereClauseForIdentifier(property, fieldName, clause);
-    } else if (!property.isPrimitive()) {
+    if (useFieldName.equals(JsonConstants.IDENTIFIER)
+        || useFieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
+      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
+    } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
     }
 
-    if (ignoreCase(property, operator)) {
+    if (ignoreCase(useProperty, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
@@ -485,9 +528,11 @@ public class AdvancedQueryBuilder {
 
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
-          || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_CONTAINSFIELD)) {
+          || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
+          || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
-      } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
+      } else if (operator.equals(OPERATOR_NOTSTARTSWITH)
+          || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
           || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
         return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
       } else {
@@ -639,9 +684,11 @@ public class AdvancedQueryBuilder {
     return operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_IENDSWITH)
         || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_CONTAINS)
         || operator.equals(OPERATOR_ENDSWITH) || operator.equals(OPERATOR_STARTSWITH)
-        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
-        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_CONTAINSFIELD)
-        || operator.equals(OPERATOR_ENDSWITHFIELD) || operator.equals(OPERATOR_STARTSWITHFIELD);
+        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_INOTCONTAINS)
+        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_NOTSTARTSWITH)
+        || operator.equals(OPERATOR_INOTENDSWITH) || operator.equals(OPERATOR_INOTSTARTSWITH)
+        || operator.equals(OPERATOR_CONTAINSFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)
+        || operator.equals(OPERATOR_STARTSWITHFIELD);
   }
 
   private String getBetweenOperator(String operator, boolean rightClause) {
@@ -684,12 +731,13 @@ public class AdvancedQueryBuilder {
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
         || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
         || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
         || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
-        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_IENDSWITH)
-        || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_IBETWEEN)
-        || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_ILESSOREQUAL)
-        || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_ILESSTHAN)
-        || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
   }
 
   private boolean isNot(String operator) {

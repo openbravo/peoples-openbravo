@@ -427,8 +427,8 @@ END;   $BODY$
 SELECT pg_temp.insert_recipient();
 /-- END
 
---Inserts role access for new register window
---See issue:  https://issues.openbravo.com/view.php?id=11349
+--Inserts role access for new Smartclient register window
+--It needs to be done this way until this issue is fixed:  https://issues.openbravo.com/view.php?id=18689
 CREATE OR REPLACE FUNCTION pg_temp.insert_register_form_access()
   RETURNS void AS
 $BODY$ DECLARE
@@ -449,10 +449,10 @@ $BODY$ DECLARE
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  INSERT INTO ad_form_access(ad_form_access_id, ad_form_id, ad_role_id,
-                               ad_client_id, ad_org_id, isactive, created,
-                               createdby, updated, updatedby, isreadwrite)
-         VALUES('41263F39F7614270808A955844B07A7F', '3D8AB0C824ED4C70ADE086D9CFE5DA1A', '0', '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+  INSERT INTO OBUIAPP_View_Role_Access(OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy)
+         VALUES(get_uuid(), 'FF808081329B023101329B0CE2080013', '0', '0', '0', 'Y', now(), '0', now(), '0');
 EXCEPTION
 WHEN OTHERS THEN
 --do nothing

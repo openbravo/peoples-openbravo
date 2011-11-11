@@ -18,7 +18,7 @@
  */
 
 // == OBGCalWidget ==
-isc.defineClass('OBGCalWidget', OBUrlWidget);
+isc.defineClass('OBGCalWidget', isc.OBUrlWidget);
 
 isc.OBGCalWidget.addProperties({
   initWidget: function() {

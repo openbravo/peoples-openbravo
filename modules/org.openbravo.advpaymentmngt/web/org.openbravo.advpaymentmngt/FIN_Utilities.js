@@ -1,3 +1,9 @@
+/*global getGlobalDecSeparator, getGlobalGroupSeparator, getGlobalGroupInterval,
+  formatNameToMask, returnMaskChange, getDefaultMaskNumeric, getElementsByName,
+  displayLogicElement, returnFormattedNumber, returnFormattedToCalc, roundNumber,
+  returnCalcToFormatted, setWindowElementFocus, showJSMessage, initialize_MessageBox,
+  updateData, top, getFrame*/
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -705,19 +711,30 @@ function createCombo(object, innerHTML){
  * @return
  */
 function reloadParentGrid() {
-  if(top.opener) {
-    var dad = top.opener;
-    if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
-      top.opener.loadGrid();
-    } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
-      top.opener.updateGridDataAfterFilter();
+  var f, dad, layoutMDI, popup;
+  try {
+    f = getFrame('LayoutMDI');
+    popup = f && f.OB && f.OB.Layout.ClassicOBCompatibility.Popup;
+    layoutMDI = popup && popup.getPopup('process')
+                && popup.getPopup('process').getIframeHtmlObj()
+                && popup.getPopup('process').getIframeHtmlObj().contentWindow
+                && popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0];
+    dad = layoutMDI || top.opener;
+    if (dad) {
+      if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
+        dad.loadGrid();
+      } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
+        dad.updateGridDataAfterFilter();
+      }
+    } else if (f && f.OB.MainView.TabSet.getSelectedTab().pane.view) {
+      var theView = f.OB.MainView.TabSet.getSelectedTab().pane.view;
+      theView.refresh(function(){
+          theView.getTabMessage();
+          theView.toolBar.refreshCustomButtons();
+      });
     }
-  } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view) {
-    var theView = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view;
-    theView.refresh(function(){
-        theView.getTabMessage();
-        theView.toolBar.refreshCustomButtons();
-    });
+  } catch(e) {
+    // not possible to reload parent grid
   }
 }
 
@@ -729,6 +746,6 @@ function decodeJSON(jsonString) {
     try{
         return eval('(' + jsonString + ')'); // do the eval
     }catch(e){
-        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ str);
+        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ jsonString);
     }
 }

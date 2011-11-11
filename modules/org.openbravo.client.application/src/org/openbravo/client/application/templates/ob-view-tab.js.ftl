@@ -20,7 +20,9 @@
 -->
 <@createView data/>      
 
-<#macro createView tabComponent>    
+<#macro createView tabComponent>
+    standardWindow: this.standardWindow,
+        
     tabTitle: '${tabComponent.tabTitle?js_string}',
     entity:  '${tabComponent.entityName}',
     
@@ -147,7 +149,7 @@
     initWidget: function() {
         this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
-        this.viewForm = isc.OBViewForm.create(${tabComponent.viewForm}); 
+        this.viewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), ${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
         this.Super('initWidget', arguments);
     }

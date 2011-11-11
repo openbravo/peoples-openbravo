@@ -104,7 +104,16 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       final String parentProperty = parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER);
       final BaseOBObject bob = OBDal.getInstance().get(getEntity().getName(),
           (String) parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
-      final String parentId = (String) DalUtil.getId((BaseOBObject) bob.get(parentProperty));
+
+      // a special case, a child tab actually displays the parent record
+      // but a different set of information of that record
+      final String parentId;
+      if (bob.getId().equals(bob.get(parentProperty))) {
+        parentId = (String) bob.getId();
+      } else {
+        parentId = (String) DalUtil.getId((BaseOBObject) bob.get(parentProperty));
+      }
+
       final String whereClause;
       if (parameters.get(JsonConstants.WHERE_PARAMETER) != null
           && !parameters.get(JsonConstants.WHERE_PARAMETER).equals("null")) {

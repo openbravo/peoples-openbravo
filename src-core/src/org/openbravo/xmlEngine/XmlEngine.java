@@ -515,7 +515,7 @@ public class XmlEngine extends HttpServlet {
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   // It's not possible to cast from xmlTemplate to Report
   void connect() {
     for (Enumeration e1 = hasXmlTemplate.elements(); e1.hasMoreElements();) {
@@ -528,7 +528,7 @@ public class XmlEngine extends HttpServlet {
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   // It's not possible to cast from xmlTemplate to Report
   void closeConnections() {
     for (Enumeration e1 = hasXmlTemplate.elements(); e1.hasMoreElements();) {

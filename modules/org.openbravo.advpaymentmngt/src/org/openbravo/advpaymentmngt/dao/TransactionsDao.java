@@ -152,6 +152,7 @@ public class TransactionsDao {
     return maxLine;
   }
 
+  @Deprecated
   public static void process(FIN_FinaccTransaction finFinancialAccountTransaction) {
     final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
         FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
@@ -205,6 +206,7 @@ public class TransactionsDao {
         obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
       }
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_ENDINGDATE, false);
+      obc.addOrderBy(FIN_Reconciliation.PROPERTY_CREATIONDATE, false);
       obc.setMaxResults(1);
       final List<FIN_Reconciliation> rec = obc.list();
       if (rec.size() == 0)

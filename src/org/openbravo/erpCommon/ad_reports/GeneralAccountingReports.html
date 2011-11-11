@@ -187,7 +187,7 @@ function onResizeDo(){
 </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-      <form method="post" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
+      <form method="post" action="GeneralAccountingReports.pdf" name="frmMain" target="background_target" id="form">
         <input type="hidden" name="Command" />
 
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
@@ -561,7 +561,7 @@ function onResizeDo(){
                       <button type="button" 
                         id="buttonPDF" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('FIND', true, null, 'GeneralAccountingReports.pdf', '_blank');return false;" 
+                        onclick="submitCommandForm('FIND', true, null, 'GeneralAccountingReports.pdf', 'background_target');return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Export Results to PDF Format'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -613,5 +613,8 @@ function onResizeDo(){
     </tr>
   </table>
 </form>
+
+<iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
+
 </body>
 </html>

@@ -26,12 +26,10 @@
 
   personalizationButtonProperties = {
     action: function() {
-      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      var tabIdentifier, personalizeForm;
+      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
       }
 
@@ -54,15 +52,6 @@
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button'),
     updateState: function(){
       var propValue, undef;
-      
-      if (this.view.getFormPersonalization()) {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button_modified');
-        this.buttonType = 'personalization-modified';
-      } else {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button');
-        this.buttonType = 'personalization';
-      }
-      this.resetBaseStyle();
       
       // set it 
       if (this.userWindowPersonalizationAllowed === undef) {
