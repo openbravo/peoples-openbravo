@@ -2432,7 +2432,12 @@ public class Utility {
       if (img == null) {
         imageByte = getBlankImage();
       } else {
-        imageByte = img.getBindaryData();
+        OBContext.setAdminMode(true);
+        try {
+          imageByte = img.getBindaryData();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
     } catch (Exception e) {
       log4j.error("Could not load image from database: " + id, e);
@@ -2573,7 +2578,12 @@ public class Utility {
         bout.close();
         imageByte = bout.toByteArray();
       } else {
-        imageByte = img.getBindaryData();
+        OBContext.setAdminMode(true);
+        try {
+          imageByte = img.getBindaryData();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
 
     } catch (Exception e) {

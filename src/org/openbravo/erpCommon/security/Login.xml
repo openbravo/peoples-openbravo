@@ -32,5 +32,7 @@
   <PARAMETER id="errorMsg" name="errorMsgStyle" attribute="style" default="display:none;" />
   <PARAMETER id="errorMsgTitle" name="errorMsgTitle" default="" />
   <PARAMETER id="errorMsgContent" name="errorMsgContent" default="" />
+  <PARAMETER id="identificationFailureTitle" name="identificationFailureTitle" default="" />
+  <PARAMETER id="errorEmptyContent" name="errorEmptyContent" default="" />
   <PARAMETER id="sign-in" name="sign-in" default=""/>
 </REPORT>

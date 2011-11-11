@@ -1527,7 +1527,7 @@ OB.ToolbarUtils.showTree = function(view){
     var popupParams = 'Command=DEFAULT';
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
-    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, true, true, true, null, false);
   }
   
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
