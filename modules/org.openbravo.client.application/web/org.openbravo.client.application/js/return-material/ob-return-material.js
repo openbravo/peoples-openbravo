@@ -40,7 +40,7 @@ OB.RM.RMReceiptSelectionChange = function(grid, record, state) {
   var contextInfo = null;
   if (state) {
     record.receiving = record.pending;
-    contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, false, true)
+    contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true)
     record.storageBin = contextInfo.ReturnLocator; 
     record.conditionGoods = contextInfo.inpmConditionGoodsId;
   }
