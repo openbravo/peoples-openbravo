@@ -91,6 +91,7 @@ if (isMSIE) {
 <title>Openbravo</title>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
+<script type="text/javascript" src="./web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
 
 <!-- styles used during loading -->
 <style type="text/css">
