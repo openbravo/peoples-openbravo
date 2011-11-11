@@ -13,6 +13,9 @@
       <parameter name="p_docsubtypeso" type="CHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
+      <parameter name="p_isreturn" type="CHAR" mode="in">
+        <default><![CDATA[N]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -42,6 +45,7 @@
         OR DOCSUBTYPESO=p_DocSubTypeSO)
         AND AD_Client_Id=p_ClientId
         AND AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId) <> -1
+        AND COALESCE(isreturn, 'N') = p_isreturn
       ORDER BY AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId),
         IsDefault DESC,
         C_DocType_ID
