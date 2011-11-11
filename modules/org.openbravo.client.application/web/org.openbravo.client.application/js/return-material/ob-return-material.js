@@ -37,9 +37,12 @@ OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
  * Set quantity, storage bin and condition of the goods.
  */
 OB.RM.RMReceiptSelectionChange = function(grid, record, state) {
-  var i=0;
+  var contextInfo = null;
   if (state) {
     record.receiving = record.pending;
+    contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, false, true)
+    record.storageBin = contextInfo.ReturnLocator; 
+    record.conditionGoods = contextInfo.inpmConditionGoodsId;
   }
 }
 
