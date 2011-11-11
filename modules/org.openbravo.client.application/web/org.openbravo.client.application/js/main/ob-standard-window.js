@@ -109,53 +109,7 @@ isc.OBStandardWindow.addProperties({
     var i, defaultView, persDefaultValue, views, length, t, tab, view, field;
 
     if (data && data.personalization) {
-      if (data.personalization.forms) {
-        OB.Personalization.personalizeWindow(data.personalization.forms, this);
-      }
-      this.getClass().personalization = data.personalization;
-      
-      persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
-      
-      // find the default view, the personalizations are
-      // returned in order of prio, then do sort by name
-      if (this.getClass().personalization.views) {
-        views = this.getClass().personalization.views;
-        length = views.length;
-        if (persDefaultValue) {
-          for (i = 0; i < length; i++) {
-            if (persDefaultValue === views[i].personalizationId) {
-              defaultView = views[i];
-              break;
-            }
-          }
-        }
-        if (!defaultView) {
-          for (i = 0; i < length; i++) {
-            if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
-              defaultView = views[i];
-              break;
-            }
-          }
-        }
-        
-        // apply the default view
-        // maybe do this in a separate thread
-        if (defaultView) {
-          this.fireOnPause('setDefaultView', function() {
-            OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
-          }, 100);
-        }
-        
-        this.getClass().personalization.views.sort(function(v1, v2) {
-          var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
-          if (t1 < t2) {
-            return -1;
-          } else if (t1 === t2) {
-            return 0;
-          }
-          return 1;
-        });
-      }
+      this.setPersonalization(data.personalization);
     }
 
     this.getClass().windowSettingsRead = true;
