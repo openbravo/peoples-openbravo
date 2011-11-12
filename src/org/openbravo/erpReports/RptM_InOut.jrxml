@@ -140,7 +140,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{issotrx}.equals("Y") ? "GOODS SHIPMENT" : "GOODS RECEIPT"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-29" x="295" y="217" width="108" height="16"/>
+					<reportElement key="textField-29" x="290" y="217" width="108" height="15"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -150,10 +150,10 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<textElement>
 						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{issotrx}.equals("Y") ? "Shimpment No." : "Receipt No."]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{issotrx}.equals("Y") ? "Shipment No." : "Receipt No."]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-30" x="403" y="217" width="80" height="16"/>
+					<reportElement key="textField-30" x="398" y="217" width="85" height="16"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -163,13 +163,13 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<textElement>
 						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{issotrx}.equals("Y") ? "Shimpment Date" : "Receipt Date"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{issotrx}.equals("Y") ? "Shipment Date" : "Receipt Date"]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement key="line-2" x="295" y="233" width="188" height="1"/>
+					<reportElement key="line-2" x="290" y="233" width="193" height="1"/>
 				</line>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-18" stretchType="RelativeToTallestObject" x="295" y="238" width="108" height="16" isPrintWhenDetailOverflows="true"/>
+					<reportElement key="textField-18" stretchType="RelativeToTallestObject" x="290" y="238" width="108" height="16" isPrintWhenDetailOverflows="true"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -182,7 +182,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{documentno}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-19" stretchType="RelativeToTallestObject" x="403" y="238" width="80" height="16" isPrintWhenDetailOverflows="true"/>
+					<reportElement key="textField-19" stretchType="RelativeToTallestObject" x="398" y="238" width="85" height="16" isPrintWhenDetailOverflows="true"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

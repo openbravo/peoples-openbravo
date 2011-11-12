@@ -22,12 +22,15 @@ package org.openbravo.financial.paymentreport.erpCommon.ad_reports;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -62,6 +65,8 @@ import org.openbravo.utils.Replace;
 
 public class PaymentReportDao {
 
+  private static final long milisecDayConv = (1000 * 60 * 60 * 24);
+
   public PaymentReportDao() {
   }
 
@@ -76,6 +81,20 @@ public class PaymentReportDao {
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
       String strGroupCrit, String strOrdCrit) {
+    return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+        strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+        strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId,
+        strcCurrency, strConvertCurrency, strConversionDate, strPaymType, strOverdue, strGroupCrit,
+        strOrdCrit, "Y");
+  }
+
+  public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
+      String strInclSubOrg, String strDueDateFrom, String strDueDateTo, String strAmountFrom,
+      String strAmountTo, String strDocumentDateFrom, String strDocumentDateTo,
+      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
+      String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
+      String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit) {
 
     final StringBuilder hsqlScript = new StringBuilder();
     final java.util.List<Object> parameters = new ArrayList<Object>();
@@ -84,10 +103,6 @@ public class PaymentReportDao {
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     FieldProvider[] data;
-    Date invoicedDate;
-    long plannedDSO = 0;
-    long currentDSO = 0;
-    long currentTime = 0;
     Currency transCurrency;
     BigDecimal transAmount = null;
     ConversionRate convRate = null;
@@ -137,6 +152,12 @@ public class PaymentReportDao {
           }
           hsqlScript.append(")");
         }
+      }
+
+      // Exclude payments that use credit payment
+      if (!strInclPaymentUsingCredit.equalsIgnoreCase("Y")) {
+        hsqlScript.append(" and not (pay.amount = 0 ");
+        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) ");
       }
 
       // due date from - due date to
@@ -381,7 +402,6 @@ public class PaymentReportDao {
       BigDecimal amountSum = BigDecimal.ZERO;
       FieldProvider previousRow = null;
       ConversionRate previousConvRate = null;
-      long milisecDayConv = (1000 * 60 * 60 * 24);
       boolean isReceipt = false;
       boolean isAmtInLimit = false;
 
@@ -408,11 +428,29 @@ public class PaymentReportDao {
               .getPaymentDetails().getFinPayment().getPaymentMethod().getIdentifier());
 
           // payment
-          FieldProviderFactory.setField(data[i], "PAYMENT", FIN_PaymentScheduleDetail[i]
-              .getPaymentDetails().getFinPayment().getIdentifier().toString());
+          FieldProviderFactory.setField(
+              data[i],
+              "PAYMENT",
+              dateFormat.format(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                  .getPaymentDate())
+                  + " - "
+                  + FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                      .getDocumentNo());
+          // payment description
+          FieldProviderFactory.setField(data[i], "PAYMENT_DESC", FIN_PaymentScheduleDetail[i]
+              .getPaymentDetails().getFinPayment().getDescription());
           // payment_id
           FieldProviderFactory.setField(data[i], "PAYMENT_ID", FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment().getId().toString());
+          // payment_date
+          FieldProviderFactory.setField(
+              data[i],
+              "PAYMENT_DATE",
+              dateFormat.format(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                  .getPaymentDate()));
+          // payment_docNo
+          FieldProviderFactory.setField(data[i], "PAYMENT_DOCNO", FIN_PaymentScheduleDetail[i]
+              .getPaymentDetails().getFinPayment().getDocumentNo());
           // payment yes / no
           FieldProviderFactory.setField(data[i], "PAYMENT_Y_N", "");
           // financialAccount
@@ -449,6 +487,10 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "PAYMENT", "");
           // payment_id
           FieldProviderFactory.setField(data[i], "PAYMENT_ID", "");
+          // payment_date
+          FieldProviderFactory.setField(data[i], "PAYMENT_DATE", "");
+          // payment_docNo
+          FieldProviderFactory.setField(data[i], "PAYMENT_DOCNO", "");
           // payment yes / no
           FieldProviderFactory.setField(data[i], "PAYMENT_Y_N", "Display:None");
           // financialAccount
@@ -469,59 +511,42 @@ public class PaymentReportDao {
         }
 
         if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
-          // project
-          if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice().getProject() != null)
-            FieldProviderFactory.setField(data[i], "PROJECT", FIN_PaymentScheduleDetail[i]
-                .getInvoicePaymentSchedule().getInvoice().getProject().getIdentifier());
-          else
+          fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i],
+              FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule(), false);
+        } else if (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment() != null) {
+          java.util.List<Invoice> invoices = getInvoicesUsingCredit(FIN_PaymentScheduleDetail[i]
+              .getPaymentDetails().getFinPayment());
+          if (invoices.size() == 1) {
+            FIN_PaymentSchedule ps = getInvoicePaymentSchedule(FIN_PaymentScheduleDetail[i]
+                .getPaymentDetails().getFinPayment());
+            fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i], ps, true);
+          } else {
+            // project
             FieldProviderFactory.setField(data[i], "PROJECT", "");
-          // salesPerson
-          if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-              .getSalesRepresentative() != null) {
-            FieldProviderFactory.setField(data[i], "SALES_PERSON", FIN_PaymentScheduleDetail[i]
-                .getInvoicePaymentSchedule().getInvoice().getSalesRepresentative().getIdentifier());
-          } else {
+            // salesPerson
             FieldProviderFactory.setField(data[i], "SALES_PERSON", "");
+            // invoiceNumber.
+            FieldProviderFactory.setField(data[i], "INVOICE_NUMBER", invoices.size() > 1 ? "**"
+                + getInvoicesDocNos(invoices) : "");
+            // payment plan id
+            FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_ID", "");
+            // payment plan yes / no
+            FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_Y_N",
+                invoices.size() != 1 ? "Display:none" : "");
+            // payment plan yes / no
+            FieldProviderFactory.setField(data[i], "NOT_PAYMENT_PLAN_Y_N", invoices.size() > 1 ? ""
+                : "Display:none");
+            // invoiceDate
+            FieldProviderFactory.setField(data[i], "INVOICE_DATE", "");
+            // dueDate.
+            FieldProviderFactory.setField(data[i], "DUE_DATE", "");
+            // plannedDSO
+            FieldProviderFactory.setField(data[i], "PLANNED_DSO", "0");
+            // currentDSO
+            FieldProviderFactory.setField(data[i], "CURRENT_DSO", "0");
+            // daysOverdue
+            FieldProviderFactory.setField(data[i], "OVERDUE", "0");
           }
-          // invoiceNumber
-          FieldProviderFactory.setField(data[i], "INVOICE_NUMBER", FIN_PaymentScheduleDetail[i]
-              .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
-          // payment plan id
-          FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_ID", FIN_PaymentScheduleDetail[i]
-              .getInvoicePaymentSchedule().getId());
-          // payment plan yes / no
-          FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_Y_N", "");
-          // invoiceDate
-          invoicedDate = FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-              .getInvoiceDate();
-          FieldProviderFactory.setField(data[i], "INVOICE_DATE", dateFormat.format(invoicedDate)
-              .toString());
-          // dueDate
-          FieldProviderFactory
-              .setField(
-                  data[i],
-                  "DUE_DATE",
-                  dateFormat.format(
-                      FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate())
-                      .toString());
-          // plannedDSO
-          plannedDSO = (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
-              .getTime() - invoicedDate.getTime())
-              / milisecDayConv;
-          FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO));
-          // currentDSO
-          if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
-            currentDSO = (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
-                .getPaymentDate().getTime() - invoicedDate.getTime())
-                / milisecDayConv;
-          } else {
-            currentTime = System.currentTimeMillis();
-            currentDSO = (currentTime - invoicedDate.getTime()) / milisecDayConv;
-          }
-          FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)));
-          // daysOverdue
-          FieldProviderFactory.setField(data[i], "OVERDUE",
-              String.valueOf((currentDSO - plannedDSO)));
         } else {
           // project
           FieldProviderFactory.setField(data[i], "PROJECT", "");
@@ -533,6 +558,8 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_ID", "");
           // payment plan yes / no
           FieldProviderFactory.setField(data[i], "PAYMENT_PLAN_Y_N", "Display:none");
+          // payment plan yes / no
+          FieldProviderFactory.setField(data[i], "NOT_PAYMENT_PLAN_Y_N", "Display:none");
           // invoiceDate
           FieldProviderFactory.setField(data[i], "INVOICE_DATE", "");
           // dueDate.
@@ -558,15 +585,22 @@ public class PaymentReportDao {
           convRate = this.getConversionRate(transCurrency, baseCurrency, strConversionDate);
 
           if (convRate != null) {
+            final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
             if (isReceipt) {
               FieldProviderFactory.setField(data[i], "TRANS_AMOUNT", transAmount.toString());
-              FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
-                  transAmount.multiply(convRate.getMultipleRateBy()).toString());
+              FieldProviderFactory.setField(
+                  data[i],
+                  "BASE_AMOUNT",
+                  transAmount.multiply(convRate.getMultipleRateBy())
+                      .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
             } else {
               FieldProviderFactory.setField(data[i], "TRANS_AMOUNT", transAmount.negate()
                   .toString());
-              FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
-                  transAmount.multiply(convRate.getMultipleRateBy()).negate().toString());
+              FieldProviderFactory.setField(
+                  data[i],
+                  "BASE_AMOUNT",
+                  transAmount.multiply(convRate.getMultipleRateBy())
+                      .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
             }
           } else {
             FieldProvider[] fp = new FieldProvider[1];
@@ -642,12 +676,20 @@ public class PaymentReportDao {
                 FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.negate()
                     .toString());
             } else {
+              final int stdPrecission = previousConvRate.getToCurrency().getStandardPrecision()
+                  .intValue();
               if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
-                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                    amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+                FieldProviderFactory.setField(
+                    previousRow,
+                    "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy())
+                        .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
               else
-                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                    amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
+                FieldProviderFactory.setField(
+                    previousRow,
+                    "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy())
+                        .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
             }
 
             if (strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
@@ -710,12 +752,20 @@ public class PaymentReportDao {
             FieldProviderFactory
                 .setField(previousRow, "BASE_AMOUNT", amountSum.negate().toString());
         } else {
+          final int stdPrecission = previousConvRate.getToCurrency().getStandardPrecision()
+              .intValue();
           if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
-            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+            FieldProviderFactory.setField(
+                previousRow,
+                "BASE_AMOUNT",
+                amountSum.multiply(previousConvRate.getMultipleRateBy())
+                    .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).toString());
           else
-            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
+            FieldProviderFactory.setField(
+                previousRow,
+                "BASE_AMOUNT",
+                amountSum.multiply(previousConvRate.getMultipleRateBy())
+                    .setScale(stdPrecission, BigDecimal.ROUND_HALF_UP).negate().toString());
         }
 
         if (strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
@@ -741,6 +791,58 @@ public class PaymentReportDao {
       OBContext.restorePreviousMode();
     }
     return (FieldProvider[]) groupedData.toArray(new FieldProvider[groupedData.size()]);
+  }
+
+  private void fillLine(SimpleDateFormat dateFormat, FieldProvider data,
+      FIN_PaymentScheduleDetail fIN_PaymentScheduleDetail, FIN_PaymentSchedule paymentSchedule,
+      boolean creditPaysInvoice) {
+    Date invoicedDate;
+    long plannedDSO = 0;
+    long currentDSO = 0;
+    long currentTime = 0;
+    // project
+    if (paymentSchedule.getInvoice().getProject() != null)
+      FieldProviderFactory.setField(data, "PROJECT", paymentSchedule.getInvoice().getProject()
+          .getIdentifier());
+    else
+      FieldProviderFactory.setField(data, "PROJECT", "");
+    // salesPerson
+    if (paymentSchedule.getInvoice().getSalesRepresentative() != null) {
+      FieldProviderFactory.setField(data, "SALES_PERSON", paymentSchedule.getInvoice()
+          .getSalesRepresentative().getIdentifier());
+    } else {
+      FieldProviderFactory.setField(data, "SALES_PERSON", "");
+    }
+    // invoiceNumber
+    FieldProviderFactory.setField(data, "INVOICE_NUMBER", (creditPaysInvoice ? "*" : "")
+        + paymentSchedule.getInvoice().getDocumentNo());
+    // payment plan id
+    FieldProviderFactory.setField(data, "PAYMENT_PLAN_ID", paymentSchedule.getId());
+    // payment plan yes / no
+    FieldProviderFactory.setField(data, "PAYMENT_PLAN_Y_N", "");
+    // payment plan yes / no
+    FieldProviderFactory.setField(data, "NOT_PAYMENT_PLAN_Y_N", "Display:none");
+    // invoiceDate
+    invoicedDate = paymentSchedule.getInvoice().getInvoiceDate();
+    FieldProviderFactory.setField(data, "INVOICE_DATE", dateFormat.format(invoicedDate).toString());
+    // dueDate
+    FieldProviderFactory.setField(data, "DUE_DATE", dateFormat.format(paymentSchedule.getDueDate())
+        .toString());
+    // plannedDSO
+    plannedDSO = (paymentSchedule.getDueDate().getTime() - invoicedDate.getTime()) / milisecDayConv;
+    FieldProviderFactory.setField(data, "PLANNED_DSO", String.valueOf(plannedDSO));
+    // currentDSO
+    if (fIN_PaymentScheduleDetail.getPaymentDetails() != null) {
+      currentDSO = (fIN_PaymentScheduleDetail.getPaymentDetails().getFinPayment().getPaymentDate()
+          .getTime() - invoicedDate.getTime())
+          / milisecDayConv;
+    } else {
+      currentTime = System.currentTimeMillis();
+      currentDSO = (currentTime - invoicedDate.getTime()) / milisecDayConv;
+    }
+    FieldProviderFactory.setField(data, "CURRENT_DSO", String.valueOf((currentDSO)));
+    // daysOverdue
+    FieldProviderFactory.setField(data, "OVERDUE", String.valueOf((currentDSO - plannedDSO)));
   }
 
   public ConversionRate getConversionRate(Currency transCurrency, Currency baseCurrency,
@@ -898,6 +1000,60 @@ public class PaymentReportDao {
 
       return objectListData;
     }
+  }
+
+  public java.util.List<Invoice> getInvoicesUsingCredit(final FIN_Payment payment) {
+    final StringBuilder sql = new StringBuilder();
+    final java.util.List<Invoice> result = new ArrayList<Invoice>();
+
+    sql.append(" select distinct(pdv.invoicePaymentPlan.invoice.id) ");
+    sql.append(" from FIN_Payment_Credit pc, FIN_Payment p0, ");
+    sql.append("      FIN_Payment p1, FIN_Payment_Detail_V pdv  ");
+    sql.append(" where p0.id=pc.creditPaymentUsed ");
+    sql.append(" and pc.payment=p1.id ");
+    sql.append(" and pdv.payment=p1.id ");
+    sql.append(" and p0.id = '" + payment.getId() + "' ");
+
+    try {
+      OBContext.setAdminMode(true);
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(sql.toString());
+      for (final Object o : query.list()) {
+        result.add(OBDal.getInstance().get(Invoice.class, (String) o));
+      }
+
+      return result;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public FIN_PaymentSchedule getInvoicePaymentSchedule(FIN_Payment credit_payment) {
+    final StringBuilder sql = new StringBuilder();
+    sql.append(" select ps ");
+    sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
+    sql.append(" FIN_Payment_Schedule ps ");
+    sql.append(" where pc.payment = pdv.payment ");
+    sql.append(" and ps.id = pdv.invoicePaymentPlan ");
+    sql.append(" and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ");
+
+    try {
+      OBContext.setAdminMode(true);
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(sql.toString());
+      return (FIN_PaymentSchedule) query.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public String getInvoicesDocNos(Collection<Invoice> invoices) {
+    final StringBuilder sb = new StringBuilder();
+    for (Invoice i : invoices) {
+      sb.append(i.getDocumentNo());
+      sb.append(", ");
+    }
+    return sb.delete(sb.length() - 2, sb.length()).toString();
   }
 
   private BusinessPartner getDocumentBusinessPartner(FIN_PaymentScheduleDetail psd) {

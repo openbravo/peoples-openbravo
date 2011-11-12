@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Landscape"
-		 pageWidth="1062"
+		 pageWidth="1385"
 		 pageHeight="595"
-		 columnWidth="1002"
+		 columnWidth="1325"
 		 columnSpacing="0"
 		 leftMargin="30"
 		 rightMargin="30"
@@ -194,6 +194,12 @@
 	<parameter name="OVERDUE_SHOW" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="GROUPCRIT_SHOW" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ORDCRIT_SHOW" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="ONE_ASTERISK_SHOW" isForPrompting="false" class="java.lang.Boolean">
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TWO_ASTERISK_SHOW" isForPrompting="false" class="java.lang.Boolean">
+		<defaultValueExpression ><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT 'hello' AS BP_GROUP, 'hello' AS BPARTNER, 'hello' AS PROJECT, 'hello' AS PAYMENT, 'hello' AS SALES_PERSON, 1234 AS INVOICE_NUMBER, to_Date('01/01/2010') AS INVOICE_DATE,
        to_Date('01/03/2010') AS DUE_DATE, 1234 AS PLANNED_DSO, 1234 AS CURRENT_DSO, 1234 AS OVERDUE, 1234 AS DAYS_OVERDUE, 1234 AS AMOUNT,
        'hello' AS CURRENCY, 1234 AS BASE_AMOUNT, 'hello' AS BASE_CURRENCY, 'hello' AS PAYMENT_METHOD, 'hello' AS FINANCIAL_ACCOUNT
@@ -219,6 +225,9 @@ FROM DUAL]]></queryString>
 	<field name="FINANCIAL_ACCOUNT" class="java.lang.String"/>
 	<field name="GROUP_CRIT" class="java.lang.String"/>
 	<field name="STATUS" class="java.lang.String"/>
+	<field name="PAYMENT_DESC" class="java.lang.String"/>
+	<field name="PAYMENT_DATE" class="java.util.Date"/>
+	<field name="PAYMENT_DOCNO" class="java.lang.String"/>
 
 	<variable name="SUMSUBTOTALSTATUS" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{BASE_AMOUNT}]]></variableExpression>
@@ -259,7 +268,7 @@ FROM DUAL]]></queryString>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="507"
+						x="523"
 						y="25"
 						width="65"
 						height="25"
@@ -273,9 +282,9 @@ FROM DUAL]]></queryString>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="327"
+						x="335"
 						y="25"
-						width="70"
+						width="78"
 						height="25"
 						key="staticText-5"/>
 					<box leftPadding="2"></box>
@@ -287,7 +296,7 @@ FROM DUAL]]></queryString>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="397"
+						x="413"
 						y="25"
 						width="55"
 						height="25"
@@ -302,7 +311,7 @@ Number]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="452"
+						x="468"
 						y="25"
 						width="55"
 						height="25"
@@ -316,7 +325,7 @@ Number]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="572"
+						x="895"
 						y="25"
 						width="62"
 						height="25"
@@ -330,7 +339,7 @@ Number]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="634"
+						x="957"
 						y="25"
 						width="33"
 						height="25"
@@ -345,7 +354,7 @@ DSO]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="667"
+						x="990"
 						y="25"
 						width="33"
 						height="25"
@@ -360,7 +369,7 @@ DSO]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="700"
+						x="1023"
 						y="25"
 						width="36"
 						height="25"
@@ -374,7 +383,7 @@ DSO]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="876"
+						x="1199"
 						y="25"
 						width="80"
 						height="25"
@@ -389,7 +398,7 @@ Amount]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="956"
+						x="1279"
 						y="25"
 						width="46"
 						height="25"
@@ -404,7 +413,7 @@ Currency]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="736"
+						x="1059"
 						y="25"
 						width="80"
 						height="25"
@@ -419,7 +428,7 @@ Amount]]></text>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="816"
+						x="1139"
 						y="25"
 						width="60"
 						height="25"
@@ -477,7 +486,7 @@ Amount]]></text>
 						style="Detail_Header"
 						x="251"
 						y="25"
-						width="76"
+						width="84"
 						height="25"
 						key="staticText-20"/>
 					<box leftPadding="2"></box>
@@ -485,6 +494,34 @@ Amount]]></text>
 						<font size="8" isBold="false"/>
 					</textElement>
 				<text><![CDATA[Project]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="588"
+						y="25"
+						width="227"
+						height="25"
+						key="staticText-22"/>
+					<box leftPadding="2"></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Payment Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="815"
+						y="25"
+						width="80"
+						height="25"
+						key="staticText-25"/>
+					<box leftPadding="2"></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Payment Date]]></text>
 				</staticText>
 			</band>
 		</pageHeader>
@@ -511,7 +548,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="507"
+						x="523"
 						y="0"
 						width="65"
 						height="25"
@@ -520,14 +557,14 @@ Amount]]></text>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PAYMENT}==null ? " " : $F{PAYMENT})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PAYMENT_DOCNO}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="327"
+						x="335"
 						y="0"
-						width="70"
+						width="78"
 						height="25"
 						key="textField-5"/>
 					<box leftPadding="2"></box>
@@ -539,7 +576,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="397"
+						x="413"
 						y="0"
 						width="55"
 						height="25"
@@ -553,7 +590,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="452"
+						x="468"
 						y="0"
 						width="55"
 						height="25"
@@ -567,7 +604,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="572"
+						x="895"
 						y="0"
 						width="62"
 						height="25"
@@ -581,7 +618,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="634"
+						x="957"
 						y="0"
 						width="33"
 						height="25"
@@ -595,7 +632,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="667"
+						x="990"
 						y="0"
 						width="33"
 						height="25"
@@ -609,7 +646,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="700"
+						x="1023"
 						y="0"
 						width="36"
 						height="25"
@@ -623,7 +660,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="876"
+						x="1199"
 						y="0"
 						width="80"
 						height="25"
@@ -637,7 +674,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="956"
+						x="1279"
 						y="0"
 						width="46"
 						height="25"
@@ -651,7 +688,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="736"
+						x="1059"
 						y="0"
 						width="80"
 						height="25"
@@ -665,7 +702,7 @@ Amount]]></text>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="816"
+						x="1139"
 						y="0"
 						width="60"
 						height="25"
@@ -709,7 +746,7 @@ Amount]]></text>
 						style="Report_Footer"
 						x="251"
 						y="0"
-						width="76"
+						width="84"
 						height="25"
 						key="textField-19"/>
 					<box leftPadding="2"></box>
@@ -717,6 +754,35 @@ Amount]]></text>
 						<font size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PROJECT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="588"
+						y="0"
+						width="227"
+						height="25"
+						key="textField-21"
+						stretchType="RelativeToBandHeight"/>
+					<box leftPadding="2"></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PAYMENT_DESC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="815"
+						y="0"
+						width="80"
+						height="25"
+						key="textField-22"/>
+					<box leftPadding="2"></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{PAYMENT_DATE}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -728,6 +794,42 @@ Amount]]></text>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</pageFooter>
+		<lastPageFooter>
+			<band height="40"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="1"
+						y="1"
+						width="693"
+						height="17"
+						key="staticText-23">
+							<printWhenExpression><![CDATA[$P{ONE_ASTERISK_SHOW}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[* Invoice paid using a credit payment]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="1"
+						y="18"
+						width="693"
+						height="17"
+						key="staticText-24">
+							<printWhenExpression><![CDATA[$P{TWO_ASTERISK_SHOW}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[** Several invoices have been paid using the same credit payment]]></text>
+				</staticText>
+			</band>
+		</lastPageFooter>
 		<summary>
 			<band height="0"  isSplitAllowed="true" >
 			</band>

@@ -78,7 +78,7 @@ if (isMSIE) {
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
 <meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT"/>
 <meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
 <meta http-equiv="Pragma" content="no-cache" >

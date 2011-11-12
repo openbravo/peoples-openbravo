@@ -335,11 +335,15 @@
       // * {{{url}}} type: String - the url to be opened in the popup
       // * {{{title}}} type: String - the title to be displayed in the popup
       // * {{{theOpener}}} type: Window Object - the window object of the opener
+      // * {{{showMinimizeControl}}} type: Boolean - to specify if the popup should show the minimize control or not. The default value is "true" if it is not specified
+      // * {{{showMaximizeControl}}} type: Boolean - to specify if the popup should show the maximize control or not. The default value is "true" if it is not specified
+      // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is "true" if it is not specified
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
+      // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is "true" if it is not specified
       // of the popup. Used in window.open to allow IE know which is the opener
       // 
       // returns the created OBClassicPopupWindow
-      open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams){
+      open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal){
         if (showMinimizeControl !== false) {
           showMinimizeControl = true;
         }
@@ -349,6 +353,9 @@
         if (showCloseControl !== false) {
           showCloseControl = true;
         }
+        if (isModal !== false) {
+          isModal = true;
+        }
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
           width: width,
@@ -356,6 +363,8 @@
           showMinimizeButton: showMinimizeControl,
           showMaximizeButton : showMaximizeControl,
           showCloseButton: showCloseControl,
+          isModal : isModal,
+          showModalMask : isModal,
           theOpener: theOpener,
           areParamsSet: false,
           isFramesetDraw: false,
