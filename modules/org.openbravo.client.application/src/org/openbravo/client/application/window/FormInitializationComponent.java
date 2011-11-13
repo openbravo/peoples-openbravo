@@ -64,6 +64,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -136,6 +137,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<JSONObject> calloutMessages = new ArrayList<JSONObject>();
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
+      List<String> readOnlyFields = new ArrayList<String>();
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -231,6 +233,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
         computeAuxiliaryInputs(mode, tab, columnValues);
+        computeReadOnlyFields(tab, readOnlyFields);
       }
 
       // Execution of callouts
@@ -255,7 +258,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Construction of the final JSONObject
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount, readOnlyFields);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -276,10 +279,28 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
+  private void computeReadOnlyFields(final Tab tab, final List<String> readOnlyFields) {
+    final String roleId = OBContext.getOBContext().getRole().getId();
+    final OBQuery<Field> fieldQuery = OBDal
+        .getInstance()
+        .createQuery(
+            Field.class,
+            "as f where f.tab.id = :tabId and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false) or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId) and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false) or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId ) and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false)))");
+    fieldQuery.setNamedParameter("tabId", tab.getId());
+    fieldQuery.setNamedParameter("roleId", roleId);
+    final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+        tab.getTable().getDBTableName());
+    for (Field f : fieldQuery.list()) {
+      String key = entity.getPropertyByColumnName(f.getColumn().getDBColumnName().toLowerCase())
+          .getName();
+      readOnlyFields.add(key);
+    }
+
+  }
+
   private int computeNoteCount(Tab tab, String rowId) {
-    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class,
-        Restrictions.eq("table.id", (String) DalUtil.getId(tab.getTable())),
-        Restrictions.eq("record", rowId));
+    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class, Restrictions.eq("table.id",
+        (String) DalUtil.getId(tab.getTable())), Restrictions.eq("record", rowId));
     return criteria.count();
   }
 
@@ -300,11 +321,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
     OBCriteria<Attachment> attachments;
     if (multipleRowIds == null) {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.eq("record", rowId));
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Restrictions
+          .eq("table.id", tableId), Restrictions.eq("record", rowId));
     } else {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Restrictions
+          .eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
     }
     attachments.addOrderBy("creationDate", false);
     for (Attachment attachment : attachments.list()) {
@@ -325,7 +346,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
       List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
-      int noteCount) {
+      int noteCount, List<String> readOnlyFields) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -342,17 +363,15 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONObject jsonColumnValues = new JSONObject();
         for (Field field : getADFieldList(tab.getId())) {
-          jsonColumnValues.put(
-              field.getColumn().getDBColumnName(),
-              columnValues.get("inp"
-                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
+          jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
         }
         finalObject.put("columnValues", jsonColumnValues);
       }
       JSONObject jsonAuxiliaryInputValues = new JSONObject();
       for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
-        jsonAuxiliaryInputValues.put(auxIn.getName(),
-            columnValues.get("inp" + Sqlc.TransformaNombreColumna(auxIn.getName())));
+        jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
+            + Sqlc.TransformaNombreColumna(auxIn.getName())));
       }
       finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
@@ -373,8 +392,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           // Adding session attributes in a dynamic expression
           // This session attributes could be a preference
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
-            final DynamicExpressionParser parser = new DynamicExpressionParser(
-                field.getDisplayLogic(), tab);
+            final DynamicExpressionParser parser = new DynamicExpressionParser(field
+                .getDisplayLogic(), tab);
 
             for (String attrName : parser.getSessionAttributes()) {
               if (!sessionAttributesMap.containsKey(attrName)) {
@@ -428,6 +447,15 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (!jsExcuteCode.isEmpty()) {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
       }
+
+      if (readOnlyFields != null && readOnlyFields.size() > 0) {
+        final JSONArray fields = new JSONArray();
+        for (String field : readOnlyFields) {
+          fields.put(field);
+        }
+        finalObject.put("readOnlyFields", fields);
+      }
+
       log.debug(finalObject.toString(1));
       return finalObject;
     } catch (JSONException e) {
@@ -550,16 +578,15 @@ public class FormInitializationComponent extends BaseActionHandler {
               changedCols.add(field.getColumn().getDBColumnName());
             }
           }
-          columnValues
-              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
-                  jsonobject);
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
           setRequestContextParameter(field, jsonobject);
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
               setSessionValue(tab.getWindow().getId() + "|"
-                  + field.getColumn().getDBColumnName().toUpperCase(),
-                  jsonobject.has("classicValue") ? jsonobject.get("classicValue") : null);
+                  + field.getColumn().getDBColumnName().toUpperCase(), jsonobject
+                  .has("classicValue") ? jsonobject.get("classicValue") : null);
             }
           }
         }
@@ -585,7 +612,8 @@ public class FormInitializationComponent extends BaseActionHandler {
             "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
       }
       if (((mode.equals("NEW") && !classicValue.equals("") && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition)) || (mode
-          .equals("CHANGE") && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+          .equals("CHANGE")
+          && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
           && field.getColumn().isValidateOnNew()) {
         if (field.getColumn().getCallout() != null) {
           addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
@@ -637,9 +665,8 @@ public class FormInitializationComponent extends BaseActionHandler {
         JSONObject jsonobject = null;
         if (value != null) {
           jsonobject = new JSONObject(value);
-          columnValues
-              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
-                  jsonobject);
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
           setRequestContextParameter(field, jsonobject);
         }
       } catch (Exception e) {
@@ -728,8 +755,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               final Object propValue = JsonToDataConverter.convertJsonToPropertyValue(prop,
                   jsContent.get(inpColName));
               // convert to a valid classic string
-              value = UIDefinitionController.getInstance()
-                  .getUIDefinition(field.getColumn().getId()).convertToClassicString(propValue);
+              value = UIDefinitionController.getInstance().getUIDefinition(
+                  field.getColumn().getId()).convertToClassicString(propValue);
             } else {
               value = (String) jsonValue;
             }
@@ -1076,8 +1103,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           } else {
             calloutInstance = calloutClass.newInstance();
             calloutInstances.put(calloutClassName, calloutInstance);
-            CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
-                RequestContext.getServletContext());
+            CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
+                .getServletContext());
             Object[] initArgs = { config };
             init.invoke(calloutInstance, initArgs);
             // We invoke the service method. This method will automatically call the doPost() method
@@ -1204,8 +1231,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                         if ((oldValue == null && newValue != null)
                             || (oldValue != null && newValue == null)
                             || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-                          columnValues.put(
-                              "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
+                          columnValues.put("inp"
+                              + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
                           changed = true;
                           if (dynamicCols.contains(colId)) {
                             changedCols.add(col.getDBColumnName());
@@ -1213,7 +1240,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
                       } else {
-                        log.debug("Column value didn't change. We do not attempt to execute any additional callout");
+                        log
+                            .debug("Column value didn't change. We do not attempt to execute any additional callout");
                       }
                     }
                     if (changed && col.getCallout() != null) {
@@ -1276,9 +1304,9 @@ public class FormInitializationComponent extends BaseActionHandler {
    */
   private void createNewPreferenceForWindow(Window window) {
 
-    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class,
-        Restrictions.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"),
-        Restrictions.eq(Preference.PROPERTY_WINDOW, window));
+    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Restrictions
+        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Restrictions.eq(
+        Preference.PROPERTY_WINDOW, window));
     if (prefCriteria.count() > 0) {
       // Preference already exists. We don't create a new one.
       return;

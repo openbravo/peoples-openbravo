@@ -541,7 +541,7 @@ OB.ViewFormProperties = {
     this.inFicCall = true;
     
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-      var editValues;
+      var editValues, i, view;
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
@@ -568,6 +568,16 @@ OB.ViewFormProperties = {
       // only compute a new focus item if the form is active
       if (me.view.isActiveView()) {
         me.computeFocusItem();
+      }
+      
+      if (data && data.readOnlyFields) {
+    	  for (i = 0; i < data.readOnlyFields.length; i++) {
+    		  field = me.view.viewForm.getField(data.readOnlyFields[i]);
+    		  if (field) {
+    			  field.updatable = false;
+    			  field.disable();
+    		  }
+    	  }
       }
       
       // if the focus item is not really enabled

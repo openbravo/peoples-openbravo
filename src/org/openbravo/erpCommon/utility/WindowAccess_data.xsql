@@ -52,7 +52,12 @@
                WHERE ta.IsActive = 'Y' 
                AND ta.AD_Window_Access_ID = w.AD_Window_Access_ID
                AND ta.AD_Tab_ID = t.AD_Tab_ID
-               and ta.isReadWrite = 'Y')
+               and (ta.isReadWrite = 'Y'
+                 OR  EXISTS (
+                     SELECT 1 FROM AD_Field_Access fa 
+                     WHERE fa.IsActive = 'Y' 
+                     AND fa.AD_Tab_Access_ID = ta.AD_Tab_Access_ID
+                     AND fa.isReadWrite = 'Y')))
         UNION
         SELECT 1
           FROM AD_Window_Access w,

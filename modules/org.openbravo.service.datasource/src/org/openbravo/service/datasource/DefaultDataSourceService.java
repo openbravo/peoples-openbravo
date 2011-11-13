@@ -180,6 +180,11 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   private void testAccessPermissions(Map<String, String> parameters, String content) {
     try {
+      if (parameters.get("tabId") == null)
+        return;
+      final Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tabId"));
+      if (tab == null)
+        return;
       final String roleId = OBContext.getOBContext().getRole().getId();
 
       final JSONObject jsonObject = new JSONObject(content);
@@ -214,7 +219,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           .get(entityName, id);
       final JSONObject oldData = oldDataObject == null ? null : toJsonConverter.toJsonObject(
           oldDataObject, DataResolvingMode.FULL);
-      final Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tabId"));
       final OBQuery<Field> fieldQuery = OBDal
           .getInstance()
           .createQuery(
