@@ -322,7 +322,7 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
-        FROM C_INVOICE i 
+        FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE i.IsSOTrx='N' 
         AND i.DocStatus IN ('CL','CO') 
         AND i.AD_Client_ID IN ('1') 
@@ -347,7 +347,7 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
-        FROM C_INVOICE i 
+        FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE i.AD_Client_ID IN ('1') 
         AND i.AD_Org_ID IN ('1')
         AND i.C_BPartner_ID = ?
