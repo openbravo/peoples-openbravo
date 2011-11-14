@@ -4,7 +4,7 @@
 CASE
 WHEN iol.m_inoutline_id IS NOT NULL THEN 'Y'
 ELSE 'N'
-END AS ob_selected, ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, ol.m_attributesetinstance_id, (-1) * ol.qtyordered AS returned, (-1) * (ol.qtyordered - ol.qtydelivered - COALESCE(ol.qtyrejected, 0)) AS pendingqty, (-1) * iol.movementqty AS receivingqty, iol.m_condition_goods_id, iol.m_locator_id, o.documentno AS returnorderno, o.issotrx, ol.line
+END AS ob_selected, ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, ol.m_attributesetinstance_id, (-1) * ol.qtyordered AS returned, (-1) * (ol.qtyordered - ol.qtydelivered) AS pendingqty, (-1) * iol.movementqty AS receivingqty, iol.m_condition_goods_id, iol.m_locator_id, o.documentno AS returnorderno, o.issotrx, ol.line
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id
 JOIN m_product p ON ol.m_product_id = p.m_product_id AND p.producttype = 'I'
@@ -13,5 +13,5 @@ LEFT JOIN (SELECT il2.m_inoutline_id, il2.ad_client_id, il2.ad_org_id, il2.isact
 FROM m_inoutline il2
 JOIN m_inout i2 ON il2.m_inout_id = i2.m_inout_id AND i2.processed = 'N') iol ON iol.c_orderline_id = ol.c_orderline_id
 LEFT JOIN m_inout io ON io.m_inout_id = iol.m_inout_id AND io.processed = 'N'
-WHERE (ol.qtyordered - ol.qtydelivered - COALESCE(ol.qtyrejected, 0)) <> 0]]></view>
+WHERE (ol.qtyordered - ol.qtydelivered) <> 0]]></view>
   </database>

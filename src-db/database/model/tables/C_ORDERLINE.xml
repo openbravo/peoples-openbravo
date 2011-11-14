@@ -197,10 +197,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="QTYREJECTED" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="C_RETURN_REASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
