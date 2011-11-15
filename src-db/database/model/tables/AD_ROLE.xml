@@ -97,7 +97,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="AD_ROLE_ADV_CHCK"><![CDATA[ISADVANCED IN ('Y', 'N')]]></check>
+      <check name="AD_FORM_ADV_CHCK"><![CDATA[ISADVANCED IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_ROLE_ISCLIENTADMIN_CHECK"><![CDATA[IS_CLIENT_ADMIN IN ('Y', 'N')]]></check>
     </table>

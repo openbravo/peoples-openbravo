@@ -96,7 +96,7 @@
       <index name="AD_ELEMENT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <check name="AD_ELEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_ELEMENT_GLOSSARY_CHCK"><![CDATA[ISGLOSSARY IN ('Y', 'N')]]></check>
+      <check name="AD_ELEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
