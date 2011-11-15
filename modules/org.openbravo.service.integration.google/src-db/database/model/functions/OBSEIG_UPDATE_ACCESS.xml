@@ -39,7 +39,8 @@ BEGIN
     AND NOT EXISTS (SELECT 1
                      FROM OBUIAPP_View_Role_Access
                     WHERE OBUIAPP_View_Impl_ID = V.OBUIAPP_View_Impl_ID
-                      AND AD_ROLE_ID = R.AD_ROLE_ID);
+                      AND AD_ROLE_ID = R.AD_ROLE_ID
+                      AND (R.ISADVANCED = 'Y' OR V.ISADVANCEDFEATURE = 'N'));
 END OBSEIG_UPDATE_ACCESS
 ]]></body>
     </function>

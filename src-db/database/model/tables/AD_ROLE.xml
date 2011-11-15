@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISADVANCED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_TREE" name="AD_ROLE_AD_TREE_MENU">
         <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
