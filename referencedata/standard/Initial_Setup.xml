@@ -697,7 +697,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
-    <return>false</return>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="6B13D02AD3C44C4CB0CFBD1288E0CB10" identifier="Physical Inventory">
     <id>6B13D02AD3C44C4CB0CFBD1288E0CB10</id>
@@ -937,7 +937,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
-    <return>false</return>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="B476CFAE109047DEB5BC9AC80A03297A" identifier="AR Credit Memo">
     <id>B476CFAE109047DEB5BC9AC80A03297A</id>
