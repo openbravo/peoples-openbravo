@@ -29,14 +29,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
-import org.openbravo.client.application.RefWindow;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -45,7 +43,6 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -399,12 +396,27 @@ public class OBViewTab extends BaseTemplateComponent {
     return views.toString();
   }
 
+  public boolean isAllowAdd() {
+    if (tab.isObuiappCanAdd() != null) {
+      return tab.isObuiappCanAdd();
+    }
+    return false;
+  }
+
+  public boolean isAllowDelete() {
+    if (tab.isObuiappCanDelete() != null) {
+      return tab.isObuiappCanDelete();
+    }
+    return false;
+  }
+
   public class ButtonField {
+    private static final String AD_DEF_ERROR = "AD definition error: process parameter (%s) is using %s reference without %s";
     private String id;
     private String label;
     private String url;
     private String propertyName;
-    private List<Value> labelValues;
+    private List<Value> labelValues = null;
     private boolean autosave;
     private String showIf = "";
     private String readOnlyIf = "";
@@ -436,22 +448,8 @@ public class OBViewTab extends BaseTemplateComponent {
         if ("OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern())) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
-
-          // figuring out the windowId
-          for (org.openbravo.client.application.Parameter param : newProcess
-              .getOBUIAPPParameterList()) {
-            if (param.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
-              OBCriteria<RefWindow> obcRefWindow = OBDal.getInstance().createCriteria(
-                  RefWindow.class);
-              obcRefWindow.add(Restrictions.eq(RefWindow.PROPERTY_REFERENCE,
-                  param.getReferenceSearchKey()));
-              if (obcRefWindow.list().size() > 0) {
-                setWindowId(obcRefWindow.list().get(0).getWindow().getId());
-                break;
-              }
-              log.error("AD definition error: process parameter (" + param.getId()
-                  + ") is using Window Reference without a window");
-            }
+          for (org.openbravo.client.application.Parameter p : newProcess.getOBUIAPPParameterList()) {
+            processParameter(p);
           }
         }
       } else if (column.getProcess() != null) {
@@ -490,11 +488,13 @@ public class OBViewTab extends BaseTemplateComponent {
         }
       }
 
-      labelValues = new ArrayList<Value>();
-      if (column.getReferenceSearchKey() != null) {
-        for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
-            .getADListList()) {
-          labelValues.add(new Value(valueList));
+      if (labelValues == null) {
+        labelValues = new ArrayList<Value>();
+        if (column.getReferenceSearchKey() != null) {
+          for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
+              .getADListList()) {
+            labelValues.add(new Value(valueList));
+          }
         }
       }
 
@@ -517,6 +517,31 @@ public class OBViewTab extends BaseTemplateComponent {
           sessionLogic = true;
         }
       }
+    }
+
+    private void processParameter(org.openbravo.client.application.Parameter p) {
+
+      if (p.getReference().getId().equals(ApplicationConstants.WINDOW_REFERENCE_ID)) {
+        if (p.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
+            || p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
+          log.error(String.format(AD_DEF_ERROR, p.getId(), "Window", "window"));
+        } else {
+          setWindowId(p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow()
+              .getId());
+        }
+        return;
+      } else if (p.getReference().getId().equals(ApplicationConstants.BUTTON_LIST_REFERENCE_ID)) {
+        labelValues = new ArrayList<Value>();
+        for (org.openbravo.model.ad.domain.List valueList : p.getReferenceSearchKey()
+            .getADListList()) {
+          labelValues.add(new Value(valueList));
+        }
+        if (labelValues.size() == 0) {
+          log.error(String.format(AD_DEF_ERROR, p.getId(), "Button List", "a list associated"));
+        }
+        return;
+      }
+      log.error("Trying to use a yet not implemented reference: " + p.getReference());
     }
 
     public boolean isAutosave() {
