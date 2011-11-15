@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISADVANCEDFEATURE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISADVANCEDFEATURE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
@@ -74,6 +74,7 @@
         <unique-column name="AD_MODULE_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="OBUIAPP_ADV_CHCK"><![CDATA[ISADVANCEDFEATURE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_VI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
