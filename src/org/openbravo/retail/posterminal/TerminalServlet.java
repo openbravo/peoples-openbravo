@@ -278,8 +278,6 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
     final JSONObject jsonResponse = new JSONObject();
 
-
-
     String message = pinstance.getErrorMsg();
     int i = message.indexOf("@ERROR=");
     if (i >= 0) {
