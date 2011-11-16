@@ -640,6 +640,7 @@
             v_gUser1_ID VARCHAR2(32) ;
             v_gUser2_ID VARCHAR2(32) ;
             v_description NVARCHAR2(120) ;
+            v_isfinaldoctype CHAR(1) := 'N';
           BEGIN
             p_Invoice_ID:='-1';
             DBMS_OUTPUT.PUT_LINE('  BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
@@ -897,11 +898,17 @@
                 END IF;
                 -- Post it, if not first time
                 IF(p_Invoice_ID<>'-1') THEN
+                  Ad_Sequence_Doctype(v_DocType_ID, Cur_InvoiceSchedule.AD_Client_ID, 'Y', v_DocumentNo) ;
+                  IF(v_DocumentNo IS NULL) THEN
+                    Ad_Sequence_Doc('DocumentNo_C_Invoice', Cur_InvoiceSchedule.AD_Client_ID, 'Y', v_DocumentNo) ;
+                  END IF;
                   UPDATE C_INVOICE
                     SET DateInvoiced=v_DateInvoiced,
-                    DateAcct=v_DateInvoiced
+                    DateAcct=v_DateInvoiced,
+                    documentno = v_DocumentNo
                   WHERE C_Invoice_ID=p_Invoice_ID;
                   C_INVOICE_POST(NULL, p_Invoice_ID) ;
+                  v_isfinaldoctype := 'N';
                 END IF;
                 -- Get Document Type for Invoice
                 v_ResultStr:='GetDocumentType';
@@ -915,8 +922,8 @@
                 ELSE
                   BEGIN
                   v_DocType_ID:=NULL;
-                  SELECT od.C_DocTypeInvoice_ID
-                  INTO v_DocType_ID
+                  SELECT od.C_DocTypeInvoice_ID, CASE od.isreturn WHEN 'Y' THEN 'N' ELSE 'Y' END
+                  INTO v_DocType_ID, v_isfinaldoctype
                   FROM C_DOCTYPE od,
                     C_DOCTYPE ID,
                     C_ORDER o
@@ -936,13 +943,14 @@
                 IF(NOT FINISH_PROCESS) THEN
                   -- Get other defaults
                   Ad_Sequence_Next('C_Invoice', Cur_InvoiceSchedule.AD_Client_ID, p_Invoice_ID) ;
-                  Ad_Sequence_Doctype(v_DocType_ID, Cur_InvoiceSchedule.AD_Client_ID, 'Y', v_DocumentNo) ;
+                  Ad_Sequence_Doctype(v_DocType_ID, Cur_InvoiceSchedule.AD_Client_ID, 'N', v_DocumentNo) ;
                   IF(v_DocumentNo IS NULL) THEN
-                    Ad_Sequence_Doc('DocumentNo_C_Invoice', Cur_InvoiceSchedule.AD_Client_ID, 'Y', v_DocumentNo) ;
+                    Ad_Sequence_Doc('DocumentNo_C_Invoice', Cur_InvoiceSchedule.AD_Client_ID, 'N', v_DocumentNo) ;
                   END IF;
                   --
                   DBMS_OUTPUT.PUT_LINE('  SumInvoice_ID=' || p_Invoice_ID || ' DocumentNo=' || v_DocumentNo) ;
                   v_ResultStr:='InsertSumInvoice ' || p_Invoice_ID;
+                  v_AD_Client_ID := Cur_InvoiceSchedule.AD_Client_ID;
                   INSERT
                   INTO C_INVOICE
                     (
@@ -983,6 +991,34 @@
                   v_LineNo:=0;
                   v_InOut_ID:='-1';
                 END IF;
+              ELSIF (v_isfinaldoctype = 'N') THEN --If docType is not a final one update it
+                BEGIN
+                  v_DocType_ID:=NULL;
+                  SELECT od.C_DocTypeInvoice_ID, CASE od.isreturn WHEN 'Y' THEN 'N' ELSE 'Y' END
+                    INTO v_DocType_ID, v_isfinaldoctype
+                  FROM C_DOCTYPE od,
+                       C_DOCTYPE ID,
+                       C_ORDER o
+                  WHERE od.C_DocType_ID=o.C_DocType_ID
+                    AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID
+                    AND o.C_Order_ID=Cur_InvoiceSchedule.C_Order_ID
+                    AND ID.IsActive='Y';
+                EXCEPTION
+                WHEN OTHERS THEN
+                  v_DocType_ID:=NULL;
+                END;
+                IF (v_DocType_ID IS NULL) THEN
+                  RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                END IF;
+                Ad_Sequence_Doctype(v_DocType_ID, Cur_InvoiceSchedule.AD_Client_ID, 'N', v_DocumentNo) ;
+                IF(v_DocumentNo IS NULL) THEN
+                  Ad_Sequence_Doc('DocumentNo_C_Invoice', Cur_InvoiceSchedule.AD_Client_ID, 'N', v_DocumentNo) ;
+                END IF;
+                UPDATE c_invoice
+                SET c_doctypetarget_id = v_DocType_ID,
+                    c_doctype_id = v_DocType_ID,
+                    documentno = v_DocumentNo
+                WHERE c_invoice_id = p_Invoice_ID;
               END IF;--FINISH_PROCESS
 
               v_InOut_ID:=Cur_InvoiceSchedule.M_InOut_ID;
@@ -1026,9 +1062,14 @@
               -- Post last invoice, if exists
               IF(p_Invoice_ID<>'-1') THEN
                 v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, now())) ;
+                Ad_Sequence_Doctype(v_DocType_ID, v_AD_Client_ID, 'Y', v_DocumentNo) ;
+                IF(v_DocumentNo IS NULL) THEN
+                  Ad_Sequence_Doc('DocumentNo_C_Invoice', v_AD_Client_ID, 'Y', v_DocumentNo) ;
+                END IF;
                 UPDATE C_INVOICE
                   SET DateInvoiced=v_DateInvoiced,
-                  DateAcct=v_DateInvoiced
+                  DateAcct=v_DateInvoiced,
+                  Documentno= v_DocumentNo
                 WHERE C_Invoice_ID=p_Invoice_ID;
                 C_INVOICE_POST(NULL, p_Invoice_ID) ;
 	            IF(p_Invoice_ID='0') THEN
