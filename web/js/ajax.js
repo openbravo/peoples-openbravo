@@ -142,7 +142,7 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
   for (var i=0;i<length;i++) {
     if (formObject.elements[i].type) {
       var text = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
-      if(text && text.indexOf('=') !== 0) {
+      if (text && text.indexOf('=') !== 0) {
         sendText += "&" + text;
       }
     }
