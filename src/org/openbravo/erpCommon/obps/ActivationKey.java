@@ -168,8 +168,8 @@ public class ActivationKey {
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
-  private static final int EXPIRATION_BASIC_DAYS = 10;
-  private static final int EXPIRATION_PROF_DAYS = 10;
+  private static final Long EXPIRATION_BASIC_DAYS = 10L;
+  private static final Long EXPIRATION_PROF_DAYS = 10L;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -179,7 +179,8 @@ public class ActivationKey {
    * 
    */
   public static synchronized ActivationKey getInstance() {
-    return instance;
+    return new ActivationKey();
+    // return instance;
   }
 
   public static synchronized void setInstance(ActivationKey ak) {
@@ -1191,53 +1192,51 @@ public class ActivationKey {
       }
 
       if (!hasExpired) {
+        String msg;
+        Long daysToExpireMsg = getProperty("daysWarn") == null ? null : Long
+            .parseLong(getProperty("daysWarn"));
         if (golden) {
-          // Showing message always
-          result.put("type", "Error");
-          result.put(
-              "text",
-              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_GOLDEN", lang,
-                  false).replace("@days@", pendingTime.toString()));
+          msg = "OBPS_TO_EXPIRE_GOLDEN";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = 999L; // show always
+          }
         } else if (trial) {
-          // Showing message always
+          msg = "OBPS_TO_EXPIRE_TRIAL";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = 999L; // show always
+          }
+        } else if (licenseClass == LicenseClass.BASIC) {
+          msg = "OBPS_TO_EXPIRE_BASIC";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = EXPIRATION_BASIC_DAYS;
+          }
+        } else {
+          msg = "OBPS_TO_EXPIRE_PROF";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = EXPIRATION_PROF_DAYS;
+          }
+        }
+
+        if (pendingTime <= daysToExpireMsg) {
           result.put("type", "Error");
-          result.put(
-              "text",
-              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_TRIAL", lang,
-                  false).replace("@days@", pendingTime.toString()));
-        } else if (licenseClass == LicenseClass.BASIC && pendingTime <= EXPIRATION_BASIC_DAYS) {
-          result.put("type", "Error");
-          result.put(
-              "text",
-              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_BASIC", lang,
-                  false).replace("@days@", pendingTime.toString()));
-        } else if (licenseClass == LicenseClass.BASIC && pendingTime <= EXPIRATION_PROF_DAYS) {
-          result.put("type", "Error");
-          result.put(
-              "text",
-              Utility.messageBD(new DalConnectionProvider(false), "OBPS_TO_EXPIRE_PROF", lang,
-                  false).replace("@days@", pendingTime.toString()));
+          result.put("text", Utility.messageBD(new DalConnectionProvider(false), msg, lang, false)
+              .replace("@days@", pendingTime.toString()));
         }
       } else {
+        String msg;
         if (golden) {
-          result.put("type", "Error");
-          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
-              "OBPS_EXPIRED_GOLDEN", lang, false));
+          msg = "OBPS_EXPIRED_GOLDEN";
           result.put("disableLogin", true);
         } else if (trial) {
-          result.put("type", "Error");
-          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
-              "OBPS_EXPIRED_TRIAL", lang, false));
+          msg = "OBPS_EXPIRED_TRIAL";
         } else if (licenseClass == LicenseClass.BASIC) {
-          result.put("type", "Error");
-          result.put("text", Utility.messageBD(new DalConnectionProvider(false),
-              "OBPS_EXPIRED_BASIC", lang, false));
+          msg = "OBPS_EXPIRED_BASIC";
         } else {
-          result.put("type", "Error");
-          result
-              .put("text", Utility.messageBD(new DalConnectionProvider(false), "OBPS_EXPIRED_PROF",
-                  lang, false));
+          msg = "OBPS_EXPIRED_PROF";
         }
+
+        result.put("type", "Error");
+        result.put("text", Utility.messageBD(new DalConnectionProvider(false), msg, lang, false));
       }
     } catch (JSONException e) {
       log4j.error("Error calculating expiration message", e);
