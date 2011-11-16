@@ -173,6 +173,7 @@ public class Reconciliation extends HttpSecureAppServlet {
       reconciliation.setDocumentStatus("DR");
       reconciliation.setProcessed(false);
       reconciliation.setAPRMProcessReconciliation("P");
+      reconciliation.setAprmProcessRec("P");
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
 
@@ -248,6 +249,7 @@ public class Reconciliation extends HttpSecureAppServlet {
         reconciliation.setDocumentStatus("CO");
         reconciliation.setProcessed(true);
         reconciliation.setAPRMProcessReconciliation("R");
+        reconciliation.setAprmProcessRec("R");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
 

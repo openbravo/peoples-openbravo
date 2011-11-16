@@ -210,7 +210,7 @@ isc.OBGrid.addProperties({
       isCheckboxField: function(){
         return false;
       },
-      
+ 
       filterImg: {
         src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
       },
@@ -245,13 +245,22 @@ isc.OBGrid.addProperties({
         }
         return ret;
       },
-
+      
       // overridden for:
       // https://issues.openbravo.com/view.php?id=18509
       editorChanged : function (item) {
-        var prop, same, opDefs, val = item.getElementValue(); 
-          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;                           
+        var prop, same, opDefs, val = item.getElementValue(), 
+          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
+        
         if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
+          
+          // if someone starts typing and and or then do not filter
+          // onkeypress either
+          if (val.contains(' and') || val.contains(' or')) {
+            this.preventPerformFilterFiring();
+            return;
+          }
+          
           // now check if the item element value is only
           // an operator, if so, go away
           opDefs = isc.DataSource.getSearchOperators();
@@ -264,15 +273,22 @@ isc.OBGrid.addProperties({
                 continue;
               }
               
-              same = opDefs[prop].symbol && 
-                (opDefs[prop].symbol === val || opDefs[prop].symbol.startsWith(val));
+              same = opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
               if (same) {
+                this.preventPerformFilterFiring();
                 return;
               }
             }
           }
         }
         return this.Super('editorChanged', arguments);
+      },
+      
+      // function called to clear any pending performFilter calls
+      // earlier type actions can already have pending filter actions
+      // this deletes them
+      preventPerformFilterFiring: function() {
+        this.fireOnPause("performFilter", {}, this.fetchDelay);
       },
       
       // repair that filter criteria on fk fields can be 
@@ -293,7 +309,7 @@ isc.OBGrid.addProperties({
         if (internCriteria && this.getEditForm()) {
           // now remove anything which is not a field
           // otherwise smartclient will keep track of them and send them again
-          var fields = this.getEditForm().getFields(), length = fields.length;
+          var fields = this.getEditForm().getFields(), length = fields.length, i;
           for (i = internCriteria.length - 1; i >=0; i--) {
             prop = internCriteria[i].fieldName;
             // happens when the internCriteria[i], is again an advanced criteria
@@ -441,7 +457,7 @@ isc.OBGrid.addProperties({
       this.filterImage.show(true);
     } else {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
-      if (this.view && this.view.messageBar.hasFilterMessage) {
+      if (this.view && this.view.messageBar && this.view.messageBar.hasFilterMessage) {
         this.view.messageBar.hide();
       }
       this.filterImage.hide();
@@ -451,7 +467,7 @@ isc.OBGrid.addProperties({
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {
-        this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
+        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
             this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
             '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' +
             'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
@@ -498,12 +514,14 @@ isc.OBGrid.addProperties({
       }
 
       var field = this.filterEditor.getField(prop);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
 
       field = this.filterEditor.getField(fullPropName);
-      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+      // criterion.operator is set in case of an and/or expression
+      if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
         return true;
       }
     }
@@ -527,6 +545,11 @@ isc.OBGrid.addProperties({
   exportData: function(exportProperties, data){
     var d = data || {}, expProp = exportProperties || {}, dsURL = this.dataSource.dataURL;
     var sortCriteria;
+    var lcriteria = this.getCriteria();
+    var gdata = this.getData();
+    if(gdata && gdata.dataSource){
+      lcriteria = gdata.dataSource.convertRelativeDates(lcriteria);
+    }
     
     isc.addProperties(d, {
       _dataSource: this.dataSource.ID,
@@ -537,7 +560,7 @@ isc.OBGrid.addProperties({
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
-    }, this.getCriteria(), this.getFetchRequestParams());
+    }, lcriteria, this.getFetchRequestParams());
     if(this.getSortField()){
       sortCriteria=this.getSort();
       if(sortCriteria && sortCriteria.length > 0){

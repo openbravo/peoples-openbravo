@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class ReportReconciliation extends HttpSecureAppServlet {
@@ -61,10 +62,11 @@ public class ReportReconciliation extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFinReconciliationID = vars.getGlobalVariable("inpfinReconciliationId", "");
-      String strFinFinancialAccountName = vars.getGlobalVariable("inpfinFinancialAccountId_R", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strLastFieldChanged = vars.getGlobalVariable("inpLastFieldChanged", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, strFinFinancialAccountName,
+      printPageDataPDF(request, response, vars, strFinReconciliationID,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strLastFieldChanged.toLowerCase().contains("detail") ? DETAIL : SUMMARY);
     }
   }
@@ -75,9 +77,10 @@ public class ReportReconciliation extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFinReconciliationID = vars.getGlobalVariable("inpfinReconciliationId", "");
-      String strFinFinancialAccountName = vars.getGlobalVariable("inpfinFinancialAccountId_R", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", "");
       String strDateTo = vars.getGlobalVariable("inpdateto", "");
-      printPageDataPDF(request, response, vars, strFinReconciliationID, strFinFinancialAccountName,
+      printPageDataPDF(request, response, vars, strFinReconciliationID,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinFinancialAccountId).getName(),
           strDateTo, strReportType);
     }
   }
@@ -259,6 +262,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
         obcBsl.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
       }
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));

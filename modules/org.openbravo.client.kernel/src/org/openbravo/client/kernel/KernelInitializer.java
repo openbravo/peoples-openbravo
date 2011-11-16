@@ -20,6 +20,8 @@
 package org.openbravo.client.kernel;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.openbravo.base.session.SessionFactoryController;
@@ -38,8 +40,17 @@ public class KernelInitializer {
   @Inject
   private PersistenceEventOBInterceptor persistenceEventOBInterceptor;
 
+  @Inject
+  @Any
+  private Instance<ApplicationInitializer> applicationInitializers;
+
   public void initialize() {
     setInterceptor();
+
+    for (ApplicationInitializer initializer : applicationInitializers) {
+      initializer.initialize();
+    }
+
   }
 
   public synchronized void setInterceptor() {

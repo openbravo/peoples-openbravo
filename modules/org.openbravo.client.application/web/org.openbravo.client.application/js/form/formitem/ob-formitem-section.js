@@ -20,7 +20,7 @@
 // == OBSectionItem ==
 // Form sections, used for notes, more information, attachment etc.
 
-isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
+isc.ClassFactory.defineClass('OBSectionItem', isc.SectionItem);
 
 isc.OBSectionItem.addProperties({
   sectionExpanded: false,

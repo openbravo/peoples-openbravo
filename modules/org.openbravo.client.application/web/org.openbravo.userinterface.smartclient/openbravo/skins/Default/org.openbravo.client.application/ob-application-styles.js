@@ -52,13 +52,6 @@ OB.Styles.TopLayout.NavBar = {
   height: 28
 };
 
-// Properties for the custom company image
-OB.Styles.TopLayout.CompanyImageLogo = {
-  width: 122,
-  height: 34,
-  src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu'
-};
-
 
 /* =====================================================================
  * Main components styling properties

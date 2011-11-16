@@ -164,7 +164,6 @@
                u.email as mailto, c.ad_language, c.ad_client_id
           from ad_alertrecipient  ar, ad_user u, ad_client c
           where ar.ad_alertrule_id = ?
-            and ar.ad_client_id = u.ad_client_id
             and u.ad_client_id = c.ad_client_id
             and ar.ad_user_id = u.ad_user_id
             and c.requestuser is not null

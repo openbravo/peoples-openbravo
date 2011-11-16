@@ -22,7 +22,7 @@
 // in that it auto-completes while typing. A TODO: make this widget work the same as the 
 // OBDateItem, autocomplete when blurring.
 
-isc.ClassFactory.defineClass('OBDateTimeItem', OBDateItem);
+isc.ClassFactory.defineClass('OBDateTimeItem', isc.OBDateItem);
 
 isc.OBDateTimeItem.addClassProperties({
   
@@ -33,6 +33,8 @@ isc.OBDateTimeItem.addClassProperties({
   // * {{{dateFormat}}}: the dateFormat in OB format
   // * {{{value}}}: the current entered value
   autoCompleteDate: function(dateFormat, value, item){
+    var fmt;
+    
     // if (!isTabPressed) {
     if (value === null) {
       return value;
@@ -207,9 +209,10 @@ isc.OBDateTimeItem.addClassProperties({
 
 // == OBDateItem properties ==
 isc.OBDateTimeItem.addProperties({
+  showTime: true,
   
   blurValue: function() {
-    return OBDateTimeItem.expandDateYear(this.dateFormat, this.getValue());
+    return isc.OBDateTimeItem.expandDateYear(this.dateFormat, this.getValue());
   },
 
   // ** {{{ change }}} **
@@ -221,7 +224,7 @@ isc.OBDateTimeItem.addProperties({
       return;
     }
     // prevent change events from happening
-    var completedDate = OBDateTimeItem.autoCompleteDate(item.dateFormat, value, this);
+    var completedDate = isc.OBDateTimeItem.autoCompleteDate(item.dateFormat, value, this);
     if (completedDate !== oldValue) {
       item.setValue(completedDate);
     }

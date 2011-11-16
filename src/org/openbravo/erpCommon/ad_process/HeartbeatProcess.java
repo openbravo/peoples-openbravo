@@ -20,9 +20,11 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -65,9 +67,9 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessLogger;
-import org.openbravo.scheduling.ProcessBundle.Channel;
 
 public class HeartbeatProcess implements Process {
 
@@ -231,11 +233,15 @@ public class HeartbeatProcess implements Process {
     while (e.hasMoreElements()) {
       String elem = (String) e.nextElement();
       String value = props.getProperty(elem);
-      sb.append(elem + "=" + (value == null ? "" : value) + "&");
+      try {
+        sb.append(elem + "=" + (value == null ? "" : URLEncoder.encode(value, "UTF-8")) + "&");
+      } catch (UnsupportedEncodingException e1) {
+        log.error("Error encoding", e1);
+      }
     }
     sb.append("beatType=" + beatType);
 
-    return HttpsUtils.encode(sb.toString(), "UTF-8");
+    return sb.toString();
   }
 
   /**

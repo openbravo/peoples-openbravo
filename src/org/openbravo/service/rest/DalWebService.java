@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,11 +39,12 @@ import org.openbravo.dal.core.DalMappingGenerator;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.dal.xml.EntityExcelXMLConverter;
+import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.dal.xml.ModelXMLConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.dal.xml.XMLUtil;
-import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 import org.openbravo.service.web.InvalidContentException;
@@ -71,6 +72,7 @@ public class DalWebService implements WebService {
   public static final String PARAMETER_FIRSTRESULT = "firstResult";
   public static final String PARAMETER_MAXRESULT = "maxResult";
   public static final String PARAMETER_INCLUDECHILDREN = "includeChildren";
+  public static final String PARAMETER_EXCEL = "excel";
 
   /**
    * Performs the GET REST operation. This service handles multiple types of request: the request
@@ -179,15 +181,21 @@ public class DalWebService implements WebService {
           } else {
             writer = new StringWriter();
           }
-          final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-          exc.setOptionEmbedChildren(true);
-          exc.setOptionIncludeChildren(includeChildren);
-          exc.setOptionIncludeReferenced(false);
-          exc.setOptionExportClientOrganizationReferences(true);
-          exc.setOutput(writer);
-          // use the iterator because it can handle large data sets
-          exc.setDataScroller(obq.scroll(ScrollMode.FORWARD_ONLY));
-          exc.process(new ArrayList<BaseOBObject>());
+          if (request.getParameter(PARAMETER_EXCEL) != null) {
+            final EntityExcelXMLConverter exc = EntityExcelXMLConverter.newInstance();
+            exc.setOutput(writer);
+            exc.export(obq.list());
+          } else {
+            final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+            exc.setOptionEmbedChildren(true);
+            exc.setOptionIncludeChildren(includeChildren);
+            exc.setOptionIncludeReferenced(false);
+            exc.setOptionExportClientOrganizationReferences(true);
+            exc.setOutput(writer);
+            // use the iterator because it can handle large data sets
+            exc.setDataScroller(obq.scroll(ScrollMode.FORWARD_ONLY));
+            exc.process(new ArrayList<BaseOBObject>());
+          }
           if (sendOutputDirectToBrowser) {
             // must be the response writer
             Check.isSameObject(writer, response.getWriter());

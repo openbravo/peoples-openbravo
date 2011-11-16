@@ -130,7 +130,7 @@ isc.OBDateRangeDialog.addProperties({
 // == OBMinDateRangeItem ==
 // Item used for filtering by dates in the grid. Replaces the normal Smartclient
 // MiniDateRangeItem to make it editable.
-isc.ClassFactory.defineClass('OBMiniDateRangeItem', OBTextItem);
+isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.OBTextItem);
 
 isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   validateOnExit: false,
@@ -290,6 +290,25 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   hasAdvancedCriteria: function() {
     return this.singleDateMode || (this.rangeItem !== null && this.rangeItem.hasAdvancedCriteria());
   },
+  
+  setCriterion: function(criterion) {
+    if (!criterion) {
+      return;
+    }
+
+    if (criterion.operator === 'equals') {
+      this.setSingleDateValue(criterion.value);
+      return;
+    }  
+    
+    if (this.rangeItem) {
+      this.rangeItem.setCriterion(criterion);
+      this.singleDateMode = false;
+      this.singleDateValue = null;
+      this.rangeItemValue = this.rangeItem.getValue();
+      this.displayValue();
+    }
+  },
 
   getCriterion: function() {
     if (this.singleDateValue) {
@@ -301,9 +320,6 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     }
     var criteria = this.rangeItem ? this.rangeItem.getCriterion(): null;
     return criteria;
-  },
-
-  setCriterion: function(criterion) {
   },
 
   canEditCriterion: function(criterion) {

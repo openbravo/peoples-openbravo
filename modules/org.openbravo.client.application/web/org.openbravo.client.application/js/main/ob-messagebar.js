@@ -56,7 +56,15 @@ isc.OBMessageBar.addProperties({
     
     this.addMembers([this.mainIcon, this.text, this.closeIcon]);
   },
-  
+
+  hideCloseIcon: function() {
+    this.closeIcon.hide();
+  },
+
+  showCloseIcon: function() {
+    this.closeIcon.show();
+  },
+
   setType: function(type){
     if (this.setTypeStyle) {
       this.setTypeStyle(type);
@@ -87,7 +95,13 @@ isc.OBMessageBar.addProperties({
   },
   
   setMessage: function(type, title, text){
-    var i, length, newText, form = this.view.viewForm, grid = this.view.viewGrid;
+    var i, length, newText, form, grid;
+    if (this.view && this.view.viewForm) {
+      form = this.view.viewForm;
+    }
+    if (this.view && this.view.viewGrid) {
+      grid = this.view.viewGrid;
+    }
     this.setType(type);
     if (isc.isAn.Array(text)) {
       length = text.length;

@@ -126,6 +126,7 @@ BEGIN
             SET iscompleted = 'Y',
               neededqty = qty
             WHERE MRP_RUN_PURCHASE_ID = p_Run_ID
+	      AND iscompleted = 'N'
               AND planneddate <= v_planneddate_new;
 
             v_Qty_New := GREATEST(v_neededqty_New, Cur_PlanProduct.qtymin);

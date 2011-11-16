@@ -72,7 +72,9 @@ public class IdentifierProvider implements OBSingleton {
    * @return the identifier
    */
   public String getIdentifier(Object o) {
-    return getIdentifier(o, true, OBContext.getOBContext().getLanguage());
+    final Language lang = OBContext.getOBContext() != null ? OBContext.getOBContext().getLanguage()
+        : null;
+    return getIdentifier(o, true, lang);
   }
 
   // identifyDeep determines if refered to objects are used
@@ -117,6 +119,12 @@ public class IdentifierProvider implements OBSingleton {
         property = displayColumnProperty;
       } else if (property.isTranslatable()) {
         value = ((BaseOBObject) dob).get(identifier.getName(), language);
+      } else if (!property.isPrimitive() && identifyDeep) {
+        if (dob.get(property.getName()) != null) {
+          value = ((BaseOBObject) dob.get(property.getName())).getIdentifier();
+        } else {
+          value = "";
+        }
       } else {
         value = dob.get(identifier.getName());
       }

@@ -1,3 +1,5 @@
+/*global setWindowEditing, readOnlyLogic, logChanges, setOBTabBehavior, setWindowElementFocus, disableDefaultAction, displayLogic */
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -622,7 +624,7 @@ isc.OBSelectorWidget
               editorType : 'comboBox',
               displayField : this.displayField,
               focus : function(form, item) {
-                currentWindowElementType = 'custom'; // To
+                var currentWindowElementType = 'custom'; // To
                 if (typeof setWindowElementFocus === 'function') {
                   // To sync with Openbravo focus logic
                   setWindowElementFocus(document

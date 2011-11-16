@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.defineClass('OBTwitterWidget', OBUrlWidget);
+isc.defineClass('OBTwitterWidget', isc.OBUrlWidget);
 
 isc.OBTwitterWidget.addProperties({
   initWidget: function() {

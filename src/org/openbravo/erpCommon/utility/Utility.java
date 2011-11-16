@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -127,8 +129,18 @@ public class Utility {
     OBContext.setAdminMode();
     try {
       strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+
+      String purpose = "";
+
+      try {
+        purpose = OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose();
+      } catch (Exception e) {
+        log4j.error("Error getting instance purpose", e);
+      }
+
       StringBuilder url = new StringBuilder(COMMUNITY_BRANDING_URL);
       url.append("?licenseClass=" + strLicenseClass);
+      url.append("&trial=" + (ActivationKey.getInstance().isTrial() ? "Y" : "N"));
       url.append("&version=" + OBVersion.getInstance().getMajorVersion());
       url.append("&uimode=" + uiMode);
       url.append("&language=" + OBContext.getOBContext().getLanguage().getLanguage());
@@ -137,6 +149,7 @@ public class Utility {
       url.append("&databaseIdentifier=" + SystemInfo.getDBIdentifier());
       url.append("&internetConnection=" + (HttpsUtils.isInternetAvailable() ? "Y" : "N"));
       url.append("&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date()));
+      url.append("&purpose=" + purpose);
       return url.toString();
     } catch (Exception e) {
       throw new OBException(e);
@@ -2406,7 +2419,12 @@ public class Utility {
       if (img == null) {
         imageByte = getBlankImage();
       } else {
-        imageByte = img.getBindaryData();
+        OBContext.setAdminMode(true);
+        try {
+          imageByte = img.getBindaryData();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
     } catch (Exception e) {
       log4j.error("Could not load image from database: " + id, e);
@@ -2547,7 +2565,12 @@ public class Utility {
         bout.close();
         imageByte = bout.toByteArray();
       } else {
-        imageByte = img.getBindaryData();
+        OBContext.setAdminMode(true);
+        try {
+          imageByte = img.getBindaryData();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
 
     } catch (Exception e) {
@@ -2611,6 +2634,85 @@ public class Utility {
     size[0] = new Long(rImage.getWidth());
     size[1] = new Long(rImage.getHeight());
     return size;
+  }
+
+  /**
+   * Resize an image giving the image input as byte[]
+   * 
+   * @param bytea
+   *          The contents of the image as a byte array
+   * @param maxW
+   *          Maximum width that the image will be resized.
+   * @param maxH
+   *          Maximum height that the image will be resized.
+   * @param maintainAspectRatio
+   *          If true, the image will be resized exactly to the maximum parameters. If false, the
+   *          imagen will be resized closest to the maximum parameters keeping aspect ratio
+   * @param canMakeLargerImage
+   *          If true and the original image is smaller than maximum parameters, the resized image
+   *          could be larger than the original one. If false, not.
+   * @return The resized image
+   */
+  public static byte[] resizeImageByte(byte[] bytea, int maxW, int maxH,
+      boolean maintainAspectRatio, boolean canMakeLargerImage) throws IOException {
+    ByteArrayInputStream bis = new ByteArrayInputStream(bytea);
+    BufferedImage rImage = ImageIO.read(bis);
+    int newW = maxW;
+    int newH = maxH;
+    int oldW = rImage.getWidth();
+    int oldH = rImage.getHeight();
+    if (newW == 0 && newH == 0) {
+      return bytea;
+    } else if (newW == 0) {
+      if (maintainAspectRatio) {
+        newW = 99999;
+      } else {
+        newW = oldW;
+      }
+    } else if (newH == 0) {
+      if (maintainAspectRatio) {
+        newH = 99999;
+      } else {
+        newH = oldH;
+      }
+    }
+    if (oldW == newW && oldH == newH) {
+      return bytea;
+    }
+    if (!canMakeLargerImage && newW > oldW && newH > oldH) {
+      return bytea;
+    }
+    if (maintainAspectRatio) {
+      float oldRatio = (float) oldW / (float) oldH;
+      float newRatio = (float) newW / (float) newH;
+      if (oldRatio < newRatio) {
+        newW = (int) ((float) newH * oldRatio);
+      } else if (oldRatio > newRatio) {
+        newH = (int) ((float) newW / oldRatio);
+      }
+    }
+    BufferedImage dimg = new BufferedImage(newW, newH, rImage.getType());
+    Graphics2D g = dimg.createGraphics();
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.drawImage(rImage, 0, 0, newW, newH, 0, 0, oldW, oldH, null);
+    g.dispose();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
+    if (mimeType.contains("jpeg")) {
+      mimeType = "jpeg";
+    } else if (mimeType.contains("png")) {
+      mimeType = "png";
+    } else if (mimeType.contains("gif")) {
+      mimeType = "gif";
+    } else if (mimeType.contains("bmp")) {
+      mimeType = "bmp";
+    } else {
+      return bytea;
+    }
+    ImageIO.write(dimg, mimeType, baos);
+    byte[] bytesOut = baos.toByteArray();
+    return bytesOut;
   }
 
   /**

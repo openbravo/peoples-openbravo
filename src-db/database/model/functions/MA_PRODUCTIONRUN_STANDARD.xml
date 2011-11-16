@@ -81,6 +81,7 @@
                 LEFT JOIN C_UOM U ON PU.C_UOM_ID = U.C_UOM_ID
       WHERE MS.AD_PINSTANCE_ID = v_AD_Pinstance_ID
       ORDER BY MS.PRIORITY;
+	AND M_PRODUCTIONLINE.movementqty > 0
       v_storage CUR_STOCK%ROWTYPE;
       NEXT_PRODUCT BOOLEAN:=false;
       Cur_Stock_ISOPEN BOOLEAN:=false;

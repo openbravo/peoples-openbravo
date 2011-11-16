@@ -76,9 +76,11 @@ public class QueryListWidgetProvider extends WidgetProvider {
         + "', isc.OBQueryListWidget).addProperties({widgetId: '"
         + getWidgetClass().getId()
         + "', "
-        + "gridDataSource: "
+        + "gridDataSource: null,"
+        + "createGridDataSource: function() {"
+        + "return "
         + getDataSourceJavaScript()
-        + ", fields:"
+        + ";}, fields:"
         + QueryListUtils
             .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
         + ", maximizedFields:"

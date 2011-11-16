@@ -38,6 +38,7 @@ isc.OBStandardWindow.addClassProperties({
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
+  
   view: null,
   
   viewProperties: null,
@@ -51,6 +52,7 @@ isc.OBStandardWindow.addProperties({
   dirtyEditForm: null,
   
   initWidget: function(){
+
     this.views = [];
     
     this.toolBarLayout = isc.HLayout.create({
@@ -127,11 +129,20 @@ isc.OBStandardWindow.addProperties({
   },
   
   setPersonalization: function(personalization) {
-    var i, defaultView, persDefaultValue;
+    var i, defaultView, persDefaultValue, views, length, me = this;
     
-    if (personalization.forms) {
-      OB.Personalization.personalizeWindow(personalization.forms, this);
+    // cache the original view so that it can be restored
+    if (!this.getClass().originalView) {
+      this.getClass().originalView = {};
+      this.getClass().originalView.personalizationId = 'dummyId';
+      this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
+      this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
+      this.getClass().originalView.canDelete = false;
+      
+      // and clone the original view so that it can't get updated accidentally
+      this.getClass().originalView = isc.clone(this.getClass().originalView);
     }
+
     this.getClass().personalization = personalization;
     
     persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
@@ -159,11 +170,8 @@ isc.OBStandardWindow.addProperties({
       }
       
       // apply the default view
-      // maybe do this in a separate thread
       if (defaultView) {
-        this.fireOnPause('setDefaultView', function() {
-          OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
-        }, 100);
+        OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
       }
       
       this.getClass().personalization.views.sort(function(v1, v2) {
@@ -175,9 +183,47 @@ isc.OBStandardWindow.addProperties({
         }
         return 1;
       });
-    }    
+    }
   },
 
+  getDefaultGridViewState: function(tabId) {
+    var views, length, i, personalization = this.getClass().personalization,    
+      defaultView,
+      persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+
+    if (!personalization) {
+      return null;
+    }
+    
+    if (personalization.views) {
+      views = personalization.views;
+      length = views.length;
+      if (persDefaultValue) {
+        for (i = 0; i < length; i++) {
+          if (persDefaultValue === views[i].personalizationId) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+      if (!defaultView) {
+        for (i = 0; i < length; i++) {
+          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+            defaultView = views[i];
+            break;
+          }
+        }
+      }
+    }
+    
+    if (defaultView && defaultView.viewDefinition && 
+        defaultView.viewDefinition[tabId]) {
+      return defaultView.viewDefinition[tabId].grid;
+    }
+    
+    return null;
+  },
+  
   // Update the personalization record which is stored 
   updateFormPersonalization: function(view, formPersonalization) {
     if (!this.getClass().personalization) {

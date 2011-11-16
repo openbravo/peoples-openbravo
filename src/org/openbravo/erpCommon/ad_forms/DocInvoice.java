@@ -847,11 +847,14 @@ public class DocInvoice extends AcctServer {
       setStatus(STATUS_DocumentDisabled);
       return false;
     }
-    
-    AcctSchema acct = null;
-    for (int i = 0; i < m_as.length; i++) {
-      acct = m_as[i];
-      try {
+
+    try {
+      data = DocInvoiceData.selectRegistro(conn, AD_Client_ID, strRecordId);
+      AcctSchema[] m_acctSchemas = reloadLocalAcctSchemaArray(data[0].adOrgId);
+
+      AcctSchema acct = null;
+      for (int i = 0; i < m_acctSchemas.length; i++) {
+        acct = m_acctSchemas[i];
         data = DocInvoiceData.selectFinInvCount(conn, strRecordId, acct.m_C_AcctSchema_ID);
         int countFinInv = Integer.parseInt(data[0].fininvcount);
         int countGLItemAcct = Integer.parseInt(data[0].finacctcount);
@@ -862,12 +865,32 @@ public class DocInvoice extends AcctServer {
           setStatus(STATUS_InvalidAccount);
           return false;
         }
-      } catch (ServletException e) {
-        log4jDocInvoice.error("Exception in getDocumentConfirmation method: " + e);
+      }
+    } catch (Exception e) {
+      log4jDocInvoice.error("Exception in getDocumentConfirmation method.", e);
+    }
+
+    return true;
+  }
+
+  private AcctSchema[] reloadLocalAcctSchemaArray(String adOrgId) throws ServletException {
+    AcctSchema acct = null;
+    ArrayList<Object> new_as = new ArrayList<Object>();
+    // We reload again all the acct schemas of the client
+    AcctSchema[] m_aslocal = AcctSchema.getAcctSchemaArray(connectionProvider, AD_Client_ID,
+        adOrgId);
+    // Filter the right acct schemas for the organization
+    for (int i = 0; i < m_aslocal.length; i++) {
+      acct = m_aslocal[i];
+      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID, adOrgId)) {
+        new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
       }
     }
-    
-    return true;
+    AcctSchema[] retValue = new AcctSchema[new_as.size()];
+    new_as.toArray(retValue);
+    m_aslocal = retValue;
+    return m_aslocal;
   }
 
   public String getServletInfo() {

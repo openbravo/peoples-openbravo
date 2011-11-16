@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -41,6 +42,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
+import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
@@ -144,6 +146,9 @@ public class JsonToDataConverter {
         try {
           if (property.getDomainType() instanceof TimestampDomainType) {
             String strValue = (String) value;
+            if (strValue.equals("null")) {
+              return null;
+            }
             // there are cases that also the date part is sent in, get rid of it
             if (strValue.indexOf("T") != -1) {
               final int index = strValue.indexOf("T");
@@ -204,6 +209,8 @@ public class JsonToDataConverter {
           // TODO: translate error message
           throw new Error("Could not encrypt password", e);
         }
+      } else if (value instanceof String && property.getDomainType() instanceof BinaryDomainType) {
+        return Base64.decodeBase64((String) value);
       }
       return value;
     } catch (Exception e) {
@@ -351,7 +358,7 @@ public class JsonToDataConverter {
     // just use a random entity to get the name of the updated property
     if (jsonObject.has(Organization.PROPERTY_UPDATED) && obObject instanceof Traceable) {
       final String jsonDateStr = jsonObject.getString(Organization.PROPERTY_UPDATED);
-      if (jsonDateStr != null) {
+      if (jsonDateStr != null && !jsonDateStr.equals("null")) {
         try {
           final String repairedString = JsonUtils.convertFromXSDToJavaFormat(jsonDateStr);
           final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());

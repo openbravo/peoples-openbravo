@@ -73,7 +73,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class MatchTransaction extends HttpSecureAppServlet {
@@ -131,10 +130,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
         } else {
           updateReconciliation(vars, reconciliation.getId(), strFinancialAccountId, strTabId, false);
         }
-
-        // Force manually created bank statements to be processed
-        forceProcessManualBankStatements(OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId));
 
         printPage(response, vars, strOrgId, strWindowId, strTabId, strPaymentTypeFilter,
             strFinancialAccountId, reconciliation.getId(), strShowCleared, strHideDate);
@@ -308,6 +303,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
       reconciliation.setProcessed(process);
       reconciliation.setDocumentStatus(process ? "CO" : "DR");
       reconciliation.setAPRMProcessReconciliation(process ? "R" : "P");
+      reconciliation.setAprmProcessRec(process ? "R" : "P");
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
     } catch (Exception ex) {
@@ -918,10 +914,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       try {
-        ConnectionProvider conn = new DalConnectionProvider();
         FIN_AddPayment.processPayment(new VariablesSecureApp(OBContext.getOBContext().getUser()
             .getId(), OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()), conn,
+            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()), this,
             "P", payment);
       } catch (Exception e) {
         return null;
@@ -932,7 +927,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
       try {
-        processTransaction(new DalConnectionProvider(), "P", transaction);
+        processTransaction(this, "P", transaction);
       } catch (Exception e) {
         OBError newError = Utility.translateError(this, vars, vars.getLanguage(),
             FIN_Utility.getExceptionMessage(e));
@@ -1160,19 +1155,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
     obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
 
     return (obc.list().size() > 0);
-  }
-
-  private void forceProcessManualBankStatements(FIN_FinancialAccount account) {
-    OBCriteria<FIN_BankStatement> obc = OBDal.getInstance().createCriteria(FIN_BankStatement.class);
-    obc.add(Restrictions.eq(FIN_BankStatement.PROPERTY_ACCOUNT, account));
-    obc.add(Restrictions.eq(FIN_BankStatement.PROPERTY_PROCESSED, false));
-    obc.add(Restrictions.isNotEmpty(FIN_BankStatement.PROPERTY_FINBANKSTATEMENTLINELIST));
-    for (FIN_BankStatement bs : obc.list()) {
-      bs.setProcessed(true);
-      bs.setAPRMProcessBankStatement("R");
-      OBDal.getInstance().save(bs);
-      OBDal.getInstance().flush();
-    }
   }
 
   /**

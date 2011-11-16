@@ -83,7 +83,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
   },
   
   getAlertRules: function() {
-    post = {'eventType': 'getAlertRules' };
+    var post = {'eventType': 'getAlertRules' };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.AlertManagementActionHandler',
         post, {}, function(rpcResponse, data, rpcRequest){
@@ -145,7 +145,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
   },
   
   moveToStatus: function(alertIDs, oldStatus, newStatus) {
-    post = {'eventType': 'moveToStatus',
+    var post = {'eventType': 'moveToStatus',
             'oldStatus': oldStatus,
             'newStatus': newStatus,
             'alertIDs': alertIDs};

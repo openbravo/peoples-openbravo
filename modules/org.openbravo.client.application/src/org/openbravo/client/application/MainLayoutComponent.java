@@ -40,6 +40,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.utility.Image;
 import org.openbravo.service.datasource.DataSourceConstants;
 
 /**
@@ -122,6 +124,34 @@ public class MainLayoutComponent extends BaseTemplateComponent {
       return !ActivationKey.isActiveInstance();
     }
     return true;
+  }
+
+  public String getCompanyImageLogoWidth() {
+    Image img = null;
+    img = Utility.getImageLogoObject("yourcompanymenu", "");
+    Long imageWidthLong = null;
+    if (img != null) {
+      imageWidthLong = img.getWidth();
+    }
+    String imageWidthString = "122";
+    if (imageWidthLong != null) {
+      imageWidthString = String.valueOf(imageWidthLong.intValue());
+    }
+    return imageWidthString;
+  }
+
+  public String getCompanyImageLogoHeight() {
+    Image img = null;
+    img = Utility.getImageLogoObject("yourcompanymenu", "");
+    Long imageHeightLong = null;
+    if (img != null) {
+      imageHeightLong = img.getHeight();
+    }
+    String imageHeightString = "34";
+    if (imageHeightLong != null) {
+      imageHeightString = String.valueOf(imageHeightLong.intValue());
+    }
+    return imageHeightString;
   }
 
   public String getStartPage() {

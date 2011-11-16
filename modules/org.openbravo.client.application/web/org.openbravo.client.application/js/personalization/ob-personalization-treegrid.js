@@ -59,7 +59,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     ],
     
   initWidget: function() {
-    var nodes, i;
+    var i;
     // todo: show custom items for different types of fields
     this.nodeIcon = OB.Styles.Personalization.Icons.field;
     this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
@@ -110,13 +110,18 @@ isc.OBPersonalizationTreeGrid.addProperties({
 //   this.data.openAll();
    
    this.Super('initWidget', arguments);
-   
-   // open the folders which need to be opened
-   for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
-     if (nodes[i].sectionExpanded) {
-       this.openFolder(nodes[i]);
-     }
-   }
+  },
+  
+  // open the folders and expands form items, needs to be called
+  // after the preview form has been build
+  openFolders: function() {
+    var i, nodes;
+    // open the folders which need to be opened
+    for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
+      if (nodes[i].sectionExpanded) {
+        this.openFolder(nodes[i]);
+      }
+    }
   },
   
   destroy: function() {
@@ -256,8 +261,8 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // the menu entries when right clicking a field, different menu
   // entries are shown for status bar or normal fields
   createCellContextItems: function(record){
-    var menuItems = [], updatePropertyFunction, me = this,
-      personalizeForm = this.personalizeForm, length;
+    var i, menuItems = [], updatePropertyFunction, me = this,
+      personalizeForm = this.personalizeForm, length, allNodes;
     
     updatePropertyFunction = function(record, property, value) {
       record[property] = value;
@@ -265,7 +270,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // make sure only one record has first focus
       if (record.firstFocus) {
         allNodes = personalizeForm.fieldsTreeGrid.data.getAllNodes();
-        length = allNode.length;
+        length = allNodes.length;
         for (i = 0; i < length; i++) {
           if (allNodes[i].firstFocus) {
             allNodes[i].firstFocus = false;
