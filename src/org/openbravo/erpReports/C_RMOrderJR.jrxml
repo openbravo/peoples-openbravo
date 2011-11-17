@@ -311,7 +311,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_C_OrderLinesJR}]]></subreportExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_C_RMOrderLinesJR}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
