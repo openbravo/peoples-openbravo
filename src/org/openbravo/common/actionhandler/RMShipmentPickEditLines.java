@@ -21,6 +21,7 @@ package org.openbravo.common.actionhandler;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -39,6 +40,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
  * 
  */
 public class RMShipmentPickEditLines extends BaseProcessActionHandler {
+  private boolean setRefNo = false;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -60,6 +62,9 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
 
   private boolean cleanInOutLines(ShipmentInOut inOut) {
     if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
+      if (inOut.getOrderReference() == null) {
+        setRefNo = true;
+      }
       // nothing to delete.
       return true;
     }
@@ -82,6 +87,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     }
     final String strInOutId = jsonRequest.getString("inpmInoutId");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
+    TreeSet<String> rmVendorRefs = new TreeSet<String>();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       System.err.println(selectedLine);
@@ -92,6 +98,9 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
 
       OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
           selectedLine.getString("orderLine"));
+      if (orderLine.getSalesOrder().getOrderReference() != null) {
+        rmVendorRefs.add(orderLine.getSalesOrder().getOrderReference());
+      }
       newInOutLine.setSalesOrderLine(orderLine);
       newInOutLine.setStorageBin(OBDal.getInstance().get(Locator.class,
           selectedLine.getString("storageBin")));
@@ -107,6 +116,11 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
 
       OBDal.getInstance().save(newInOutLine);
+      OBDal.getInstance().save(inOut);
+      OBDal.getInstance().flush();
+    }
+    if (setRefNo && rmVendorRefs.size() == 1) {
+      inOut.setOrderReference(rmVendorRefs.first());
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
     }
