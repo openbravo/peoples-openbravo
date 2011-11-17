@@ -624,9 +624,12 @@ public class PaymentReport extends HttpSecureAppServlet {
       return false;
     boolean showAsterisk = false;
     for (final FieldProvider fp : data) {
-      if (fp.getField("INVOICE_NUMBER") != null && !"".equals(fp.getField("INVOICE_NUMBER"))
+      if (fp.getField("INVOICE_NUMBER") != null
+          && !"".equals(fp.getField("INVOICE_NUMBER"))
           && fp.getField("INVOICE_NUMBER").length() >= asterisk.length()
-          && asterisk.equals(fp.getField("INVOICE_NUMBER").substring(0, asterisk.length()))) {
+          && asterisk.equals(fp.getField("INVOICE_NUMBER").substring(0, asterisk.length()))
+          && !"*".equals(fp.getField("INVOICE_NUMBER").substring(asterisk.length(),
+              asterisk.length() + 1))) {
         showAsterisk = true;
         break;
       }

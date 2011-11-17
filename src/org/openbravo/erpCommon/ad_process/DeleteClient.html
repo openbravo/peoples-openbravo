@@ -45,6 +45,13 @@ var baseDirectory = "../../../../../web/";
 function validate(strCommand) {
 	return true;
 }
+
+function buttonDeleteClient() {
+  if (confirm(ALERT_MSG)){
+    setProcessingMode('window', true);
+    setTimeout(function() { submitCommandForm('SAVE', true); }, 1000);
+  }
+}
 </script>
 	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -253,7 +260,7 @@ function validate(strCommand) {
                 <button type="button" 
                   id="buttonOK" 
                   class="ButtonLink" 
-                  onclick="if (confirm(ALERT_MSG)){ setProcessingMode('window',true); submitCommandForm('SAVE', true);}return false;" 
+                  onclick="buttonDeleteClient(); return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 

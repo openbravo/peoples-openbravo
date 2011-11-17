@@ -127,6 +127,13 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentMethodId + "\"),");
       String PaymentTerm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId
           : data[0].poPaymenttermId);
+      if (PaymentTerm.equalsIgnoreCase("")) {
+        BpartnerMiscData[] paymentTerm = BpartnerMiscData.selectPaymentTerm(this, strOrgId,
+            vars.getClient());
+        if (paymentTerm.length != 0) {
+          PaymentTerm = PaymentTerm.equals("") ? paymentTerm[0].cPaymenttermId : PaymentTerm;
+        }
+      }
       resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\"),");
       FieldProvider[] tdv = null;
       try {

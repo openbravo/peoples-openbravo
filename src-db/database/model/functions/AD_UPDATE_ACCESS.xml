@@ -44,7 +44,8 @@ BEGIN
     AND NOT EXISTS (SELECT 1
                      FROM AD_FORM_ACCESS
                     WHERE AD_FORM_ID = AD_FORM.AD_FORM_ID
-                      AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
+                      AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID
+                      AND (AD_ROLE.ISADVANCED = 'Y' OR AD_FORM.ISADVANCEDFEATURE = 'N'));
 
 --AD_PROCESS_ACCESS
   INSERT INTO AD_Process_Access
@@ -67,7 +68,8 @@ BEGIN
     AND NOT EXISTS (SELECT 1 
                       FROM AD_PROCESS_ACCESS
                      WHERE AD_PROCESS_ID = AD_PROCESS.AD_PROCESS_ID
-                       AND AD_ROLE_ID    = AD_ROLE.AD_ROLE_ID);
+                       AND AD_ROLE_ID    = AD_ROLE.AD_ROLE_ID
+                       AND (AD_ROLE.ISADVANCED = 'Y' OR AD_PROCESS.ISADVANCEDFEATURE = 'N'));
 
  --Add org 0 to role 0                
  INSERT INTO AD_Role_OrgAccess
@@ -114,7 +116,8 @@ BEGIN
     AND NOT EXISTS (SELECT 1 
                        FROM AD_WINDOW_ACCESS
                       WHERE AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
-                        AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
+                        AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID
+                        AND (AD_ROLE.ISADVANCED = 'Y' OR AD_WINDOW.ISADVANCEDFEATURE = 'N'));
 
   --Add role 0 to user 100 (Openbravo)
   INSERT INTO AD_USER_ROLES

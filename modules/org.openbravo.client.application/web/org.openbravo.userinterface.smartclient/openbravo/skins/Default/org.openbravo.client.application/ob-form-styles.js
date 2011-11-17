@@ -428,12 +428,6 @@ isc.OBImageItem.addProperties({
   titleStyle: 'OBFormFieldLabel'
 });
 
-if (navigator.userAgent.toUpperCase().indexOf("MSIE") >= 0) { //IE hack to avoid item be 12 px below the title
-  OBImageCanvas.addProperties({
-    layoutTopMargin: -12
-  });
-}
-
 isc.OBImageCanvas.addProperties({
   height: '0px', // Hack to avoid second line be desplaced in Firefox and IE
   zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
@@ -490,7 +484,7 @@ isc.OBSectionItem.addProperties({
   height: 24
 });
 
-isc.ClassFactory.defineClass('OBSectionItemButton', ImgSectionHeader);
+isc.ClassFactory.defineClass('OBSectionItemButton', isc.ImgSectionHeader);
 isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   showRollOver: true,
   showDown: false,

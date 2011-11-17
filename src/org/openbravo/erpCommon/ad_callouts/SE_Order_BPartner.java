@@ -66,11 +66,12 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       String strInvoiceRule = vars.getStringParameter("inpinvoicerule");
       String strPriceList = vars.getStringParameter("inpmPricelistId");
       String strDeliveryViaRule = vars.getStringParameter("inpdeliveryviarule");
+      String strOrgId = vars.getStringParameter("inpadOrgId");
 
       try {
         printPage(response, vars, strBPartner, strOrderType, strIsSOTrx, strWindowId, strLocation,
             strContact, strProjectId, strTabId, strDeliveryRule, strUserRep, strPaymentrule,
-            strPaymentterm, strInvoiceRule, strPriceList, strDeliveryViaRule);
+            strPaymentterm, strInvoiceRule, strPriceList, strDeliveryViaRule, strOrgId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -82,7 +83,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       String strOrderType, String strIsSOTrx, String strWindowId, String strLocation,
       String strContact, String strProjectId, String strTabId, String strDeliveryRule0,
       String strUserRep0, String strPaymentrule0, String strPaymentterm0, String strInvoiceRule0,
-      String strPriceList0, String strDeliveryViaRule0) throws IOException, ServletException {
+      String strPriceList0, String strDeliveryViaRule0, String strOrgId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -100,8 +102,19 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       strUserRep = strUserRep.equals("") ? strUserRep0 : strUserRep;
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentrule = strPaymentrule.equals("") ? strPaymentrule0 : strPaymentrule;
+
       strPaymentterm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId : data[0].poPaymenttermId);
+      if (strPaymentterm.equalsIgnoreCase("")) {
+        BpartnerMiscData[] paymentTerm = BpartnerMiscData.selectPaymentTerm(this, strOrgId,
+            vars.getClient());
+        if (paymentTerm.length != 0) {
+          strPaymentterm = strPaymentterm.equals("") ? paymentTerm[0].cPaymenttermId
+              : strPaymentterm;
+        }
+      }
+
       strPaymentterm = strPaymentterm.equals("") ? strPaymentterm0 : strPaymentterm;
+
       strInvoiceRule = data[0].invoicerule.equals("") ? strInvoiceRule0 : data[0].invoicerule;
       strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
           : data[0].poPaymentmethodId);
@@ -272,11 +285,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpdeliveryviarule\", \"" + strDeliveryViaRule + "\"),");
     resultado.append("new Array(\"inpisdiscountprinted\", \""
         + SEOrderBPartnerData.getIsDicountPrinted(this, strBPartner) + "\"),");
-    resultado
-        .append("new Array(\"inpcPaymenttermId\", \""
-            + (strPaymentterm.equals("") ? SEOrderBPartnerData.selectPaymentTerm(this,
-                Utility.getContext(this, vars, "#User_Client", strWindowId)) : strPaymentterm)
-            + "\"),");
+    resultado.append("new Array(\"inpcPaymenttermId\", \"" + strPaymentterm + "\"),");
     resultado.append("new Array(\"inpdeliveryrule\", ");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",

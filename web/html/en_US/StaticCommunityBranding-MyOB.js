@@ -70,7 +70,7 @@ function onResizeDo() {
     document.getElementById('TextScrollDown').className = "TextScrollDown TextScrollDown_normal";
   }
 
-  if (TextBody.scrollHeight > TextBody.clientHeight) {
+  if (TextBody.scrollHeight > TextBody.clientHeight + 6) {
     TextBody.style.height = 87;
     TextScrollCont.style.display = '';
   } else {

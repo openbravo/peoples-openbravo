@@ -68,10 +68,15 @@ public class Login extends HttpBaseServlet {
             systemClient.getLanguage().getLanguage());
         String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT", systemClient
             .getLanguage().getLanguage());
+        String identificationFailureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE",
+            systemClient.getLanguage().getLanguage());
+        String emptyUsernameOrPasswordText = Utility.messageBD(this,
+            "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemClient.getLanguage().getLanguage());
 
         if (OBVersion.getInstance().is30()) {
           printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
-              recBrowserMsgTitle, recBrowserMsgText);
+              recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
+              emptyUsernameOrPasswordText);
         } else {
           printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
         }
@@ -234,7 +239,8 @@ public class Login extends HttpBaseServlet {
    */
   private void printPageLogin30(VariablesSecureApp vars, HttpServletResponse response,
       String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
-      String recBrowserMsgTitle, String recBrowserMsgText) throws IOException, ServletException {
+      String recBrowserMsgTitle, String recBrowserMsgText, String identificationFailureTitle,
+      String emptyUsernameOrPasswordText) throws IOException, ServletException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
@@ -286,6 +292,20 @@ public class Login extends HttpBaseServlet {
         : "Your browser's cache has outdated files. Please clean it and reload the page.";
     cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
+
+    String identificationFailureFinal = (identificationFailureTitle != null && !identificationFailureTitle
+        .equals("")) ? identificationFailureTitle : "Invalid user name or password.";
+    identificationFailureFinal = "var identificationFailureTitle = \"" + identificationFailureFinal
+        + "\"";
+    xmlDocument.setParameter("identificationFailureTitle",
+        identificationFailureFinal.replaceAll("\\n", "\n"));
+
+    String emptyUserNameOrPasswordFinal = (emptyUsernameOrPasswordText != null && !emptyUsernameOrPasswordText
+        .equals("")) ? emptyUsernameOrPasswordText : "Enter your username and password.";
+    emptyUserNameOrPasswordFinal = "var errorEmptyContent = \"" + emptyUserNameOrPasswordFinal
+        + "\"";
+    xmlDocument.setParameter("errorEmptyContent",
+        emptyUserNameOrPasswordFinal.replaceAll("\\n", "\n"));
 
     String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
         : "or higher";
