@@ -88,3 +88,32 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
   }
   return true;
 };
+
+/**
+ * Set quantity, storage bin and condition of the goods.
+ */
+OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
+  var contextInfo = null,
+      orderLine = record.orderLine,
+      shippedQty = BigDecimal.prototype.ZERO,
+      selectedRecords = grid.getSelectedRecords(),
+      pending = new BigDecimal(String(record.pending)),
+      availableQty = new BigDecimal(String(record.availableQty)),
+      editedRecord = null,
+      i;
+  if (state) {
+    // calculate already shipped qty on grid
+    for (i = 0; i < selectedRecords.length; i++) {
+      editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));
+      if (editedRecord.orderLine === orderLine && selectedRecords[i].id !== record.id) {
+        shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
+      }
+    }
+    pending = pending.subtract(shippedQty);
+    if (pending.compareTo(availableQty) < 0) {
+      record.movementQuantity = pending.toString();
+    } else {
+      record.movementQuantity = pending.toString();
+    }
+  }
+};
