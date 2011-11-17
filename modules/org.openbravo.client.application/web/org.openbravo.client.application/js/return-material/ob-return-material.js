@@ -23,28 +23,38 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  return (value !== null) && (value <= record.movementQuantity) && (value > 0);
+  if ((value !== null) && (value <= record.movementQuantity) && (value > 0)) {
+    return true;
+  } else {
+    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.movementQuantity]));
+    return false;
+  }
 };
 
 /**
  * Check that entered received quantity is less than pending qty.
  */
 OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
-  return (value !== null) && (value <= record.pending) && (value > 0);
+  if ((value !== null) && (value <= record.pending) && (value > 0)) {
+    return true;
+  } else {
+    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.pending]));
+    return false;
+  }
 };
 
 /**
  * Set quantity, storage bin and condition of the goods.
  */
-OB.RM.RMReceiptSelectionChange = function(grid, record, state) {
+OB.RM.RMReceiptSelectionChange = function (grid, record, state) {
   var contextInfo = null;
   if (state) {
     record.receiving = record.pending;
     contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
-    record.storageBin = contextInfo.ReturnLocator; 
+    record.storageBin = contextInfo.ReturnLocator;
     record.conditionGoods = contextInfo.inpmConditionGoodsId;
   }
-}
+};
 
 /**
  * Check that entered shipped quantity is less than pending qty.
@@ -58,6 +68,11 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       i;
   // check value is positive and below available qty and pending qty
   if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
+    if (record.pending < record.availableQty) {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.pending]));
+    } else {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.availableQty]));
+    }
     return false;
   }
   // check shipped total quantity for the order line is below pending qty.
@@ -66,6 +81,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
     if (editedRecord.orderLine === orderLine) {
       pendingQty -= editedRecord.movementQuantity;
       if (pendingQty < 0) {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
         return false;
       }
     }
