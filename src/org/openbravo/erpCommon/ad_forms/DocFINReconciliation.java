@@ -58,6 +58,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -615,17 +616,33 @@ public class DocFINReconciliation extends AcctServer {
         && !getDocumentTransactionConfirmation(transaction)) {
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
-      // FIXME: WHEN RELATION BETWEEN GENERATION OF CREDIT AND CONSUMPTION IS CREATED IN DATABASE
-      // THEN I CAN CONVERT TO CALCULATE DIFFERENCES
       if (payment.getUsedCredit().compareTo(ZERO) != 0
           && payment.getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(
-            line,
-            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(), true,
-                conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
-                .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment
-                .getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
+        List<FIN_Payment_Credit> creditPayments = transaction.getFinPayment()
+            .getFINPaymentCreditList();
+        for (FIN_Payment_Credit creditPayment : creditPayments) {
+          boolean isReceiptPayment = creditPayment.getCreditPaymentUsed().isReceipt();
+          String creditAmountConverted = convertAmount(creditPayment.getAmount(), isReceiptPayment,
+              DateAcct, TABLEID_Payment, creditPayment.getCreditPaymentUsed().getId(),
+              creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, line,
+              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+          fact.createLine(
+              line,
+              getAccountBPartner(creditPayment.getCreditPaymentUsed().getBusinessPartner().getId(),
+                  as, isReceiptPayment, true, conn), creditPayment.getCreditPaymentUsed()
+                  .getCurrency().getId(), (isReceiptPayment ? creditAmountConverted : ""),
+              (isReceiptPayment ? "" : creditAmountConverted), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        }
+        if (creditPayments.isEmpty()) {
+          fact.createLine(
+              line,
+              getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(),
+                  true, conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
+                  .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment
+                  .getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+        }
       }
     }
 
