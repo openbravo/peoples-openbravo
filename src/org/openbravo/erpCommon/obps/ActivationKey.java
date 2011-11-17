@@ -179,8 +179,7 @@ public class ActivationKey {
    * 
    */
   public static synchronized ActivationKey getInstance() {
-    return new ActivationKey();
-    // return instance;
+    return instance;
   }
 
   public static synchronized void setInstance(ActivationKey ak) {
