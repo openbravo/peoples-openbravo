@@ -87,7 +87,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     buttonLayout.push(isc.LayoutSpacer.create({}));
 
-    if (this.buttons) {
+    if (this.buttons && !isc.isA.emptyObject(this.buttons)) {
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
@@ -105,6 +105,9 @@ isc.OBPickAndExecuteView.addProperties({
       }
     } else {
       buttonLayout.push(okButton);
+      buttonLayout.push(isc.LayoutSpacer.create({
+        width: 32
+      }));
     }
 
     buttonLayout.push(cancelButton);
