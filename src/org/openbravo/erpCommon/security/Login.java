@@ -301,7 +301,7 @@ public class Login extends HttpBaseServlet {
         identificationFailureFinal.replaceAll("\\n", "\n"));
 
     String emptyUserNameOrPasswordFinal = (emptyUsernameOrPasswordText != null && !emptyUsernameOrPasswordText
-        .equals("")) ? emptyUsernameOrPasswordText : "User and password fields must be non-empty.";
+        .equals("")) ? emptyUsernameOrPasswordText : "Enter your username and password.";
     emptyUserNameOrPasswordFinal = "var errorEmptyContent = \"" + emptyUserNameOrPasswordFinal
         + "\"";
     xmlDocument.setParameter("errorEmptyContent",
