@@ -655,16 +655,11 @@ isc.screenReader = false;
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({
-  
   // workaround for this issue:
   // http://forums.smartclient.com/showthread.php?p=75186#post75186
   // https://issues.openbravo.com/view.php?id=18841
   compareAdvancedCriteria: function(newCriterion, oldCriterion) {
-    // simple check...
-    if (newCriterion === oldCriterion) {
-      return 0;
-    }
-    return 1;
+    return -1;
   },
   
   _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,
