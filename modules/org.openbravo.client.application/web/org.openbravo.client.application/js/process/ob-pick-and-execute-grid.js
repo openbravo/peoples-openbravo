@@ -86,6 +86,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.fields[i].grid = this;
     }
 
+    this.filterClause = this.gridProperties.filterClause;
+
     this.Super('initWidget', arguments);
   },
 
@@ -93,7 +95,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.view.viewProperties.selectionFn) {
       this.view.viewProperties.selectionFn(this, record, state);
     }
-
     this.Super('selectionChanged', arguments);
   },
 
@@ -203,6 +204,11 @@ isc.OBPickAndExecuteGrid.addProperties({
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+  },
+
+  clearFilter: function () {
+    this.gridProperties.filterClause = null;
+    this.Super('clearFilter', arguments);
   },
 
   getFetchRequestParams: function (params) {
