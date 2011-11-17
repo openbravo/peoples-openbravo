@@ -88,6 +88,8 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.filterClause = this.gridProperties.filterClause;
 
+    this.filterClause = this.gridProperties.filterClause;
+
     this.Super('initWidget', arguments);
   },
 
@@ -207,7 +209,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   clearFilter: function () {
-    this.gridProperties.filterClause = null;
+    this.filterClause = null;
     this.Super('clearFilter', arguments);
   },
 
@@ -222,11 +224,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
 
 
-    if (props.filterClause) {
+    if (this.filterClause) {
       if (props.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + props.whereClause + ') and (' + props.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + props.whereClause + ') and (' + this.filterClause + ")) ";
       } else {
-        params[OB.Constants.WHERE_PARAMETER] = props.filterClause;
+        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
     } else if (props.whereClause) {
       params[OB.Constants.WHERE_PARAMETER] = props.whereClause;
