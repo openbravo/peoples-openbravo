@@ -168,8 +168,8 @@ public class ActivationKey {
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
-  private static final Long EXPIRATION_BASIC_DAYS = 10L;
-  private static final Long EXPIRATION_PROF_DAYS = 10L;
+  private static final Long EXPIRATION_BASIC_DAYS = 30L;
+  private static final Long EXPIRATION_PROF_DAYS = 30L;
 
   private static ActivationKey instance = new ActivationKey();
 
