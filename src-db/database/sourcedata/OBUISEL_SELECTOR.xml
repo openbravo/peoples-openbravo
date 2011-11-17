@@ -82,11 +82,11 @@ where @additional_filters@
    COALESCE(contact.name, usercontact.name) as contactname, COALESCE(contact.id, usercontact.id) as contactid,
    bploc.name as locationname, bploc.id as locationid,
    bp.customer as customer, bp.vendor as vendor, bp.lifetimeRevenueToDate as income
-FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc
-                        left join bploc.locationAddress loc
-                        left join bploc.aDUserList contact
+FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc with bploc.active=true
+                        left join bploc.locationAddress loc with loc.active = true
+                        left join bploc.aDUserList contact with contact.active=true
                         left join loc.region region
-                        left join bp.aDUserList usercontact with usercontact.partnerAddress.id is null
+                        left join bp.aDUserList usercontact with usercontact.partnerAddress.id is null and usercontact.active=true
 where @additional_filters@
   and bp.summaryLevel = false]]></HQL>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <ENTITY_ALIAS><![CDATA[bp]]></ENTITY_ALIAS>

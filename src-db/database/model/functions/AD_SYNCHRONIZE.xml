@@ -187,11 +187,13 @@
              (SELECT AD_Element_ID
               FROM AD_ELEMENT e, AD_MODULE M
               WHERE M.AD_MODULE_ID = E.AD_MODULE_ID
+                AND e.isGlossary = ''N''
                 AND m.isindevelopment = ''Y'' '||v_sql||')';
 
     EXECUTE IMMEDIATE 
         'DELETE FROM AD_ELEMENT e
-         WHERE EXISTS (SELECT 1 FROM AD_MODULE 
+         WHERE e.isGlossary = ''N''
+           AND EXISTS (SELECT 1 FROM AD_MODULE 
                        WHERE AD_MODULE_ID = e.AD_MODULE_ID 
                          AND ISINDEVELOPMENT =''Y'') '||v_sql;
 

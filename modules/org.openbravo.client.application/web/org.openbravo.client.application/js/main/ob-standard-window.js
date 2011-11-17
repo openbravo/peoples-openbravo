@@ -108,11 +108,7 @@ isc.OBStandardWindow.addProperties({
         // debug mode, we have added _timestamp
         className = className + '_' + parts[2];
       }
-      this.runningProcess = isc[className].create({parentWindow: this,
-        windowId: params.windowId,
-        processId: params.processId,
-        actionHandler: params.actionHandler
-      });
+      this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
       tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
     }
   },
@@ -159,6 +155,9 @@ isc.OBStandardWindow.addProperties({
       this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
       this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
       this.getClass().originalView.canDelete = false;
+      
+      // and clone the original view so that it can't get updated accidentally
+      this.getClass().originalView = isc.clone(this.getClass().originalView);
     }
 
     this.getClass().personalization = personalization;

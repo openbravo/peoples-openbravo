@@ -62,6 +62,27 @@ function openJournalEntry(tabId, recordId){
 		myframe.OB.Utilities.openDirectTab(tabId, recordId);
     }
 }
+function openTabToDetail(factAcctGroupId){
+    var frm = document.frmMain;
+
+    var myframe = getFrame('LayoutMDI') || top.opener;
+    if (myframe) {      
+        myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': '800133'}, 
+        function(response, data, request){
+            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+            command: 'DIRECT',
+            icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+            id: '800133',
+            obManualURL: '/ad_reports/ReportGeneralLedgerJournalDetail.html?inpFactAcctGroupId=' + factAcctGroupId,
+            processId: '800133',
+            tabTitle: data.processTitle,
+            type: 'report',
+            viewId: 'OBClassicWindow'
+            });                        
+        });
+    }
+}
+
 function imprimir()
 {
 	openPDFFiltered("ReportGeneralLedgerJournalPDF.pdf?Command=PDF","PDF");
@@ -448,7 +469,7 @@ function onloadFunctions() {
                         </th>
 						<th width="57%" class="DataGrid_Header_Cell">Accounting Schema&nbsp;<span id="fieldSchemaName">xxSchema Name</span></th>
                         <th width="14%" class="DataGrid_Header_Cell">Date&nbsp;<span id="fieldDateacct">xx12/12/2003</span></th>
-                        <th width="8%" class="DataGrid_Header_Cell"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpFactAcctGroupId, 'yy/xx', false, document.frmMain, 'ReportGeneralLedgerJournalDetail.html', null, false, true);return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
+                        <th width="8%" class="DataGrid_Header_Cell"> <a href="#" onclick="openTabToDetail('yy/xx');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
                           Detail</a></th>
                       </tr>
                       <tr class="DataGrid_Body_Row">

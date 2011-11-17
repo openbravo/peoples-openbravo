@@ -1175,10 +1175,11 @@ isc.OBToolbar.addProperties({
   
   hideShowRightMembers: function(show) {
     var i;
-    for (i = 0; i < this.rightMembers.length; i++) {
-      if (show) {
-        this.rightMembers[i].show();
-      } else {
+    // if showing make sure that they are not always shown
+    if (show) {
+      this.refreshCustomButtons(false);
+    } else {
+      for (i = 0; i < this.rightMembers.length; i++) {
         this.rightMembers[i].hide();
       }
     }
@@ -1526,7 +1527,7 @@ OB.ToolbarUtils.showTree = function(view){
     var popupParams = 'Command=DEFAULT';
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
-    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, true, true, true, null, false);
   }
   
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);

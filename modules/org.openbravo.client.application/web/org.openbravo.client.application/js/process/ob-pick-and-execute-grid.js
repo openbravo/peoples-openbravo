@@ -165,7 +165,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     if (len === 0) {
       // push all *selected* rows into selectedIds cache
-      allRows = this.data.allRows;
+      allRows = this.data.allRows || [];
       len = allRows.length;
       for (i = 0; i < len; i++) {
         if (allRows[i][this.selectionProperty]) {

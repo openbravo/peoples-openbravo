@@ -45,7 +45,7 @@ isc.OBPickAndExecuteView.addProperties({
   initWidget: function () {
 
     var view = this,
-        okButton, cancelButton;
+        okButton, cancelButton, i, buttonLayout = [];
 
     okButton = isc.OBFormButton.create({
       //FIXME: Move to AD_Message
@@ -82,6 +82,30 @@ isc.OBPickAndExecuteView.addProperties({
       gridProperties: this.viewProperties.gridProperties
     });
 
+    buttonLayout.push(isc.LayoutSpacer.create({}));
+
+    if (this.buttons) {
+      for (i in this.buttons) {
+        if (this.buttons.hasOwnProperty(i)) {
+
+          buttonLayout.push(isc.addProperties({}, okButton, {
+            title: this.buttons[i],
+            value: i
+          }));
+
+          // pushing a spacer
+          buttonLayout.push(isc.LayoutSpacer.create({
+            width: 32
+          }));
+        }
+      }
+    } else {
+      buttonLayout.push(okButton);
+    }
+
+    buttonLayout.push(cancelButton);
+    buttonLayout.push(isc.LayoutSpacer.create({}));
+
     this.items = [this.viewGrid, isc.HLayout.create({
       align: 'center',
       width: '100%',
@@ -91,9 +115,7 @@ isc.OBPickAndExecuteView.addProperties({
         styleName: this.buttonBarStyleName,
         height: this.buttonBarHeight,
         defaultLayoutAlign: 'center',
-        members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-          width: 32
-        }), cancelButton, isc.LayoutSpacer.create({})]
+        members: buttonLayout
       })]
     })];
 

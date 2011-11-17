@@ -5,5 +5,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBUIAPP_CAN_ADD" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="EM_OBUIAPP_CAN_DELETE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <check name="EM_OBUIAPP_AD_TAB_CAN_ADD"><![CDATA[EM_OBUIAPP_CAN_ADD IN ('Y', 'N')]]></check>
+      <check name="EM_OBUIAPP_AD_TAB_CAN_DELETE"><![CDATA[EM_OBUIAPP_CAN_DELETE IN ('Y', 'N')]]></check>
     </table>
   </database>

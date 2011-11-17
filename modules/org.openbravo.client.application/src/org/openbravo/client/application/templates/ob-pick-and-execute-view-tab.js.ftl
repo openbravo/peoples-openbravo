@@ -41,7 +41,13 @@
     </#if> 
     <#if tabComponent.trlTab>
     isTrlTab: ${tabComponent.trlTab?string},
-    </#if> 
+    </#if>
+    <#if tabComponent.allowAdd>
+    allowAdd: true,
+    </#if>
+    <#if tabComponent.allowDelete>
+    allowDelete: true,
+    </#if>
     
     standardProperties:{
 <@compress single_line=true>

@@ -50,16 +50,11 @@ isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
 //
 // == OBWidgetMenuItem ==
 //
-isc.defineClass('OBWidgetMenuItem', isc.IMenuButton).addProperties({
+isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
   widget: null,
   menu: null,
 
-  // only show the middle image without stretch appended
-  items: [{
-    name: '',
-    width: '*',
-    height: '*'
-  }],
+  title: '',
 
   editFormLayout: null,
   windowContents: null,

@@ -48,6 +48,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -188,6 +189,34 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           payment.setWriteoffAmount(paymentWriteOfAmount);
           payment.setProcessed(true);
           payment.setAPRMProcessPayment("R");
+          if (BigDecimal.ZERO.compareTo(payment.getUsedCredit()) != 0
+              || BigDecimal.ZERO.compareTo(payment.getGeneratedCredit()) != 0) {
+            BusinessPartner businessPartner = payment.getBusinessPartner();
+            if (businessPartner == null) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                  "@APRM_CreditWithoutBPartner@"));
+              bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
+              return;
+            }
+            PriceList priceList = payment.isReceipt() ? businessPartner.getPriceList()
+                : businessPartner.getPurchasePricelist();
+            if (!payment.getCurrency().getId()
+                .equals(priceList != null ? priceList.getCurrency().getId() : "")) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(String.format(
+                  Utility.parseTranslation(conProvider, vars, language, "@APRM_CreditCurrency@"),
+                  priceList != null ? priceList.getCurrency().getISOCode() : Utility
+                      .parseTranslation(conProvider, vars, language,
+                          "@APRM_CreditNoPricelistCurrency@")));
+              bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
+              return;
+            }
+          }
           // Execution Process
           if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
               payment.isReceipt())) {

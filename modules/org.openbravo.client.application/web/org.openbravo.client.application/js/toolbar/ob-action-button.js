@@ -84,7 +84,8 @@ isc.OBToolbarActionButton.addProperties({
         standardWindow.openProcess({
           processId: me.processId,
           windowId: me.windowId,
-          actionHandler: me.command
+          actionHandler: me.command,
+          buttons: me.labelValue
         });
       };
 
