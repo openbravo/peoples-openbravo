@@ -50,15 +50,11 @@ public class DocLine_Cash extends DocLine {
   // public String m_C_BPartner_ID = "";
   public String m_C_Order_Id = "";
   public String m_C_Debt_Payment_Id = "";
-  //
-  public String m_C_Currency_ID = "";
-  public String m_AD_Org_ID = "";
 
   // Amounts
   public String m_Amount = ZERO.toString();
   public String m_DiscountAmt = ZERO.toString();
   public String m_WriteOffAmt = ZERO.toString();
-  public String m_C_Glitem_ID = "";
 
   public String Line_ID = "";
 
