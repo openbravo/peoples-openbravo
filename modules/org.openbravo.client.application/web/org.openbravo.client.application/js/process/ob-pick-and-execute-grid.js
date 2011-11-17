@@ -163,7 +163,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     var record, i, allRows, len = this.selectedIds.length;
     for (i = 0; i < len; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
-      record[this.selectionProperty] = true;
+      if (record) {
+        record[this.selectionProperty] = true;
+      }
     }
 
     if (len === 0) {
