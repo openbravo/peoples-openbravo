@@ -103,7 +103,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     xmlDocument.setParameter("moduleTree", tree.toHtml());
     xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
 
-    xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.selectISO(this));
+    xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.select(this));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

@@ -134,7 +134,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("paramLocationId", "");
       xmlDocument.setParameter("paramLocationDescription", "");
-      xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.selectISO(this));
+      xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.select(this));
       xmlDocument.setData("reportOrgType", "liststructure",
           InitialOrgSetupData.selectOrgType(this, vars.getLanguage(), vars.getClient()));
       xmlDocument.setData("reportParentOrg", "liststructure",
