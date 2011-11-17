@@ -41,6 +41,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   width: '100%',
   height: '100%',
   autoFitFieldsFillViewport: false,
+  confirmDiscardEdits: false,
 
   // default selection
   selectionProperty: 'obSelected',
@@ -85,8 +86,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     for (i = 0; i < len; i++) {
       this.fields[i].grid = this;
     }
-
-    this.filterClause = this.gridProperties.filterClause;
 
     this.filterClause = this.gridProperties.filterClause;
 
