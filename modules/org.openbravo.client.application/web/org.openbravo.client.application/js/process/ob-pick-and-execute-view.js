@@ -47,14 +47,17 @@ isc.OBPickAndExecuteView.addProperties({
     var view = this,
         okButton, cancelButton, i, buttonLayout = [];
 
+    function actionClick() {
+      if (view.validate()) {
+        view.doProcess(this._buttonValue);
+      }
+    }
+
     okButton = isc.OBFormButton.create({
       //FIXME: Move to AD_Message
       title: 'Done',
-      click: function () {
-        if (view.validate()) {
-          view.doProcess();
-        }
-      }
+      _buttonValue: 'DONE',
+      click: actionClick
     });
 
     cancelButton = isc.OBFormButton.create({
@@ -88,9 +91,10 @@ isc.OBPickAndExecuteView.addProperties({
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
-          buttonLayout.push(isc.addProperties({}, okButton, {
+          buttonLayout.push(isc.OBFormButton.create({
             title: this.buttons[i],
-            value: i
+            _buttonValue: i,
+            click: actionClick
           }));
 
           // pushing a spacer
@@ -180,7 +184,7 @@ isc.OBPickAndExecuteView.addProperties({
     return !viewGrid.hasErrors();
   },
 
-  doProcess: function () {
+  doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid = view.viewGrid,
         activeView = view.parentWindow && view.parentWindow.activeView,
@@ -189,6 +193,7 @@ isc.OBPickAndExecuteView.addProperties({
         len = selection.length;
 
     allProperties._selection = [];
+    allProperties._buttonValue = btnValue || 'DONE';
 
     for (i = 0; i < len; i++) {
       tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));

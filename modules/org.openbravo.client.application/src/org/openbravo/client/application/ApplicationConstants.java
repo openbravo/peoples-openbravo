@@ -54,6 +54,9 @@ public class ApplicationConstants {
   // Identifier of the key holding the selected rows in a grid
   public static final String SELECTION_PROPERTY = "_selection";
 
+  // Identifier of the key holding the value of the button clicked
+  public static final String BUTTON_VALUE = "_buttonValue";
+
   static {
     try {
       ACTION_RESULT_SUCCESS = new JSONObject("{result: 'success'}");
