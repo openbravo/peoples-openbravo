@@ -86,6 +86,10 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.fields[i].grid = this;
     }
 
+    this.filterClause = this.gridProperties.filterClause;
+
+    this.filterClause = this.gridProperties.filterClause;
+
     this.Super('initWidget', arguments);
   },
 
@@ -93,7 +97,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.view.viewProperties.selectionFn) {
       this.view.viewProperties.selectionFn(this, record, state);
     }
-
     this.Super('selectionChanged', arguments);
   },
 
@@ -160,7 +163,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     var record, i, allRows, len = this.selectedIds.length;
     for (i = 0; i < len; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
-      record[this.selectionProperty] = true;
+      if (record) {
+        record[this.selectionProperty] = true;
+      }
     }
 
     if (len === 0) {
@@ -205,6 +210,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
   },
 
+  clearFilter: function () {
+    this.filterClause = null;
+    this.Super('clearFilter', arguments);
+  },
+
   getFetchRequestParams: function (params) {
     var props = this.gridProperties || {},
         view = this.view.parentWindow.activeView;
@@ -216,11 +226,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
 
 
-    if (props.filterClause) {
+    if (this.filterClause) {
       if (props.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + props.whereClause + ') and (' + props.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + props.whereClause + ') and (' + this.filterClause + ")) ";
       } else {
-        params[OB.Constants.WHERE_PARAMETER] = props.filterClause;
+        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
     } else if (props.whereClause) {
       params[OB.Constants.WHERE_PARAMETER] = props.whereClause;
