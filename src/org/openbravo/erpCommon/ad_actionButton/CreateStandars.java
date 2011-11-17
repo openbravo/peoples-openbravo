@@ -79,7 +79,6 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
       OBDal.getInstance().flush();
 
       copyAttributes(conn, vars, productionPlan);
-
       createInstanciableAttributes(conn, vars, productionPlan);
 
       final OBError msg = new OBError();
