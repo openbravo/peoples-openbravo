@@ -123,7 +123,7 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
     if (pending.compareTo(availableQty) < 0) {
       record.movementQuantity = pending.toString();
     } else {
-      record.movementQuantity = pending.toString();
+      record.movementQuantity = availableQty.toString();
     }
   }
 };
