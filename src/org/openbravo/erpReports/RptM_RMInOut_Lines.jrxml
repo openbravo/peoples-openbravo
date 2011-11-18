@@ -30,8 +30,8 @@
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT M_PRODUCT.VALUE,
-        COALESCE((SELECT M_PRODUCT_CUSTOMER.NAME 
-            FROM M_PRODUCT_CUSTOMER 
+        COALESCE((SELECT M_PRODUCT_CUSTOMER.NAME
+            FROM M_PRODUCT_CUSTOMER
             WHERE M_PRODUCT_CUSTOMER.M_PRODUCT_ID=M_INOUTLINE.M_PRODUCT_ID
             AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID=M_INOUT.C_BPARTNER_ID)
             ,M_PRODUCT.NAME) AS NAME,SUM(M_INOUTLINE.MOVEMENTQTY) AS MOVEMENTQTY, M_ATTRIBUTESETINSTANCE.LOT || ' - ' || M_ATTRIBUTESETINSTANCE.GUARANTEEDATE AS LOT,
@@ -237,7 +237,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{movementqty}!=null)?$P{NUMBERFORMAT}.format($F{movementqty}) + " " :new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{movementqty}!=null)?$P{NUMBERFORMAT}.format($F{movementqty}.negate()) + " " :new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-1" style="Report_Footer" stretchType="RelativeToBandHeight" x="89" y="0" width="1" height="17"/>
