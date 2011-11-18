@@ -32,6 +32,16 @@ OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
 };
 
 /**
+ * Set quantity, storage bin and condition of the goods.
+ */
+OB.RM.RMOrderSelectionChange = function (grid, record, state) {
+  var contextInfo = null;
+  if (state) {
+    contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
+    record.returnReason = contextInfo.inpcReturnReasonId;
+  }
+};
+/**
  * Check that entered received quantity is less than pending qty.
  */
 OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
@@ -90,7 +100,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
 };
 
 /**
- * Set quantity, storage bin and condition of the goods.
+ * Set quantity
  */
 OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
   var contextInfo = null,
