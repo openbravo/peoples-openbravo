@@ -12766,7 +12766,8 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--9195CC43B5A4419195030A4DB17D8737-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <HQLWHERECLAUSE><![CDATA[COALESCE(e.goodsShipment.id, @MaterialMgmtShipmentInOut.id@) = @MaterialMgmtShipmentInOut.id@
-AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.businessPartner.id]]></HQLWHERECLAUSE>
+AND @MaterialMgmtShipmentInOut.businessPartner@ = e.orderLine.salesOrder.businessPartner.id
+AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <HQLORDERBYCLAUSE><![CDATA[obSelected DESC, rMOrderNo, product]]></HQLORDERBYCLAUSE>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--9195CC43B5A4419195030A4DB17D8737-->  <EM_OBUIAPP_SELECTION><![CDATA[OB.RM.RMShipmentSelectionChange]]></EM_OBUIAPP_SELECTION>
