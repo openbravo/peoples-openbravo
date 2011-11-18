@@ -136,7 +136,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<JSONObject> calloutMessages = new ArrayList<JSONObject>();
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
-      List<String> readOnlyFields = new ArrayList<String>();
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -256,7 +255,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Construction of the final JSONObject
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount, readOnlyFields);
+          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -326,7 +325,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
       List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
-      int noteCount, List<String> readOnlyFields) {
+      int noteCount) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -428,14 +427,6 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       if (!jsExcuteCode.isEmpty()) {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
-      }
-
-      if (readOnlyFields != null && readOnlyFields.size() > 0) {
-        final JSONArray fields = new JSONArray();
-        for (String field : readOnlyFields) {
-          fields.put(field);
-        }
-        finalObject.put("readOnlyFields", fields);
       }
 
       log.debug(finalObject.toString(1));

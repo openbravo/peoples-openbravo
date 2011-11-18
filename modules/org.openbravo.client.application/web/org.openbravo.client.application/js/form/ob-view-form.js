@@ -569,17 +569,7 @@ OB.ViewFormProperties = {
       if (me.view.isActiveView()) {
         me.computeFocusItem();
       }
-      
-      if (data && data.readOnlyFields) {
-    	  for (i = 0; i < data.readOnlyFields.length; i++) {
-    		  field = me.view.viewForm.getField(data.readOnlyFields[i]);
-    		  if (field) {
-    			  field.updatable = false;
-    			  field.disable();
-    		  }
-    	  }
-      }
-      
+
       // if the focus item is not really enabled
       // then find a new one, even if the form is not active
       if (me.getFocusItem() && !me.getFocusItem().isFocusable(true)) {
