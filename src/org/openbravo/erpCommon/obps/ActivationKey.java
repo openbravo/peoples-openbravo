@@ -30,7 +30,6 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -173,7 +172,10 @@ public class ActivationKey {
    * 
    */
   public static synchronized ActivationKey getInstance() {
-    instance.checkDates();
+    if (instance.startDate != null) {
+      // check dates in case there is a license with dates
+      instance.checkDates();
+    }
     return instance;
   }
 
