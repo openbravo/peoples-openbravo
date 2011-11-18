@@ -199,7 +199,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{QUANTITY}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITY}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{QUANTITY}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITY}.negate()):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="default" x="200" y="0" width="35" height="16" forecolor="#000000"/>
@@ -251,7 +251,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE}!=null)?$P{NUMBERFORMAT}.format($F{BASE}).toString() :new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE}!=null)?$P{NUMBERFORMAT}.format($F{BASE}.negate()).toString() :new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="default" x="415" y="0" width="60" height="16" forecolor="#000000"/>
@@ -264,7 +264,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}) : new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}.negate()) : new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-2" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="16"/>
@@ -321,7 +321,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($V{SUM_LINENETAMT}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($V{SUM_LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($V{SUM_LINENETAMT}.negate()):new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-10" x="318" y="3" width="1" height="15"/>
