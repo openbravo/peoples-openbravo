@@ -726,15 +726,7 @@ public class ActivationKey {
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-    Date startDate = null;
-    Date endDate = null;
-    try {
-      startDate = sd.parse(getProperty("startdate"));
-      if (getProperty("enddate") != null)
-        endDate = sd.parse(getProperty("enddate"));
-    } catch (ParseException e) {
-      log.error("Error parsing date", e);
-    }
+
     StringBuilder sb = new StringBuilder();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
