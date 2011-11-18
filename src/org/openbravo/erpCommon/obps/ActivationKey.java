@@ -725,8 +725,6 @@ public class ActivationKey {
         .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-
     StringBuilder sb = new StringBuilder();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
