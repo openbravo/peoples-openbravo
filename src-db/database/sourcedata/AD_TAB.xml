@@ -3392,7 +3392,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--296-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--296-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'N']]></HQLWHERECLAUSE>
+<!--296-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'N' and e.documentType.return=false]]></HQLWHERECLAUSE>
 <!--296-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--296-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--296-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
