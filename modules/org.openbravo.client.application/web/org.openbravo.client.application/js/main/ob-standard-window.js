@@ -134,6 +134,7 @@ isc.OBStandardWindow.addProperties({
           field = view.viewForm.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
+            field.disabled = !tab.fields[field.name];
           }
         }
         for ( i = 0; i < view.viewGrid.fields.length; i++) {

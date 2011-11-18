@@ -64,7 +64,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -233,7 +232,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
         computeAuxiliaryInputs(mode, tab, columnValues);
-        computeReadOnlyFields(tab, readOnlyFields);
       }
 
       // Execution of callouts
@@ -277,25 +275,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
-  }
-
-  private void computeReadOnlyFields(final Tab tab, final List<String> readOnlyFields) {
-    final String roleId = OBContext.getOBContext().getRole().getId();
-    final OBQuery<Field> fieldQuery = OBDal
-        .getInstance()
-        .createQuery(
-            Field.class,
-            "as f where f.tab.id = :tabId and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false) or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId) and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false) or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId ) and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false)))");
-    fieldQuery.setNamedParameter("tabId", tab.getId());
-    fieldQuery.setNamedParameter("roleId", roleId);
-    final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-        tab.getTable().getDBTableName());
-    for (Field f : fieldQuery.list()) {
-      String key = entity.getPropertyByColumnName(f.getColumn().getDBColumnName().toLowerCase())
-          .getName();
-      readOnlyFields.add(key);
-    }
-
   }
 
   private int computeNoteCount(Tab tab, String rowId) {
