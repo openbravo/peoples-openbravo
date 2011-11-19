@@ -36,7 +36,7 @@ isc.OBWidgetMenuItem.addProperties({
   iconWidth: 18,
   iconHeight: 18,
   iconSpacing: 2,
-  width: 24,
+  width: 18,
   height: 18,
   menuButtonImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/widget/edit.png',
   baseStyle: 'OBWidgetMenuButton',
@@ -50,11 +50,12 @@ isc.OBWidget.addProperties({
   edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/widget/window.png',
   customEdges:null,
   edgeSize:2,
-  edgeTop:27,
+  edgeTop:29,
   edgeBottom:2,
   edgeOffsetTop:2,
   edgeOffsetRight:2,
   edgeOffsetBottom:2,
+  edgeOffsetLeft:2,
   showHeaderBackground:false, // part of edges
   showHeaderIcon:true,
 
@@ -76,7 +77,7 @@ isc.OBWidget.addProperties({
 
 isc.OBWidget.changeDefaults('headerDefaults', {
   layoutMargin: 0,
-  height: 25
+  height: 27
 });
 
 isc.OBWidget.changeDefaults('headerLabelDefaults', {
