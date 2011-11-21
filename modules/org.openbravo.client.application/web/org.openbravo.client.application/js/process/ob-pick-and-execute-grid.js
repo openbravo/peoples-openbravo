@@ -87,15 +87,25 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.fields[i].grid = this;
     }
 
+    // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
 
     this.Super('initWidget', arguments);
   },
 
   selectionChanged: function (record, state) {
+    var recordIdx;
+
     if (this.view.viewProperties.selectionFn) {
       this.view.viewProperties.selectionFn(this, record, state);
     }
+
+    recordIdx = this.getRecordIndex(record);
+
+    if (!state && recordIdx !== -1) {
+      this.discardEdits(recordIdx);
+    }
+
     this.Super('selectionChanged', arguments);
   },
 
