@@ -48,7 +48,7 @@ OB.RM.RMReceiptQtyValidate = function (item, validator, value, record) {
   if ((value !== null) && (value <= record.pending) && (value > 0)) {
     return true;
   } else {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.pending]));
+    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_ReceivingMoreThanPending', [record.pending]));
     return false;
   }
 };
@@ -79,9 +79,9 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
   // check value is positive and below available qty and pending qty
   if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
     if (record.pending < record.availableQty) {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.pending]));
+      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_MoreThanPending', [record.pending]));
     } else {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.availableQty]));
+      isc.warn(OB.I18N.getLabel('OBUIAPP_RM_MoreThanAvailable', [record.availableQty]));
     }
     return false;
   }
