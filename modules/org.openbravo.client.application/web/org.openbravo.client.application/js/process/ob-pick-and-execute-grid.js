@@ -46,10 +46,10 @@ isc.OBPickAndExecuteGrid.addProperties({
   // default selection
   selectionProperty: 'obSelected',
 
-  selectedIds: [],
-
   initWidget: function () {
     var i, len = this.fields.length;
+
+    this.selectedIds = [];
 
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
