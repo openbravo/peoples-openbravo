@@ -5392,7 +5392,7 @@ Once the Purchase Order is created, it is marked as Completed and its Document N
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <VALUE><![CDATA[RegisterModule]]></VALUE>
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <NAME><![CDATA[Register Module]]></NAME>
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <DESCRIPTION><![CDATA[This process registers a module in the central repository]]></DESCRIPTION>
-<!--4062D3F4448547C3A2BCDFB09D062BA2-->  <HELP><![CDATA[This process registers a module in the central repository checking the name, javaname, db_prefix etc. are available to be used. To register a module you must have a valid username and password in Openbravo Central Repository. You should register into Openbravo Forge (link) to obtain these credentials]]></HELP>
+<!--4062D3F4448547C3A2BCDFB09D062BA2-->  <HELP><![CDATA[This process registers a module in the central repository checking the name, javaname, db_prefix etc. are available to be used. To register a module you must have a valid username and password in Openbravo Central Repository. You should register into <a href="http://forge.openbravo.com" target="_blank">Openbravo Forge</a> to obtain these credentials]]></HELP>
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--4062D3F4448547C3A2BCDFB09D062BA2-->  <ISREPORT><![CDATA[N]]></ISREPORT>
