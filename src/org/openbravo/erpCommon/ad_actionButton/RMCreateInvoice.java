@@ -79,6 +79,9 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
   private void executePayments() {
     OBContext.setAdminMode();
     try {
+      if (getLeaveAsCreditProcesses().isEmpty()) {
+        return;
+      }
       List<APRMPendingPaymentFromInvoice> pendingPayments = getPendingPayments();
       List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
       PaymentExecutionProcess executionProcess = null;
@@ -107,7 +110,6 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
         executePayment.init("APP", executionProcess, payments, null, organization);
         executePayment.execute();
       }
-
     } finally {
       OBContext.restorePreviousMode();
     }
