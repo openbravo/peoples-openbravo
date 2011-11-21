@@ -158,8 +158,11 @@ isc.OBNoteLayout.addProperties({
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
+    this.saveNoteButton.setDisabled(true);
+    this.noteDynamicForm.focusInItem('noteOBTextAreaItem');
     
     this.parentElement.noteSection.setNoteCount(this.parentElement.noteSection.noteCount + 1);
+    return false;
   },
 
   /**
@@ -212,6 +215,14 @@ isc.OBNoteLayout.addProperties({
         showTitle : false,
         layout : this,
         width : '*',
+        change: function(form, item, value, oldValue) {
+          if (value) {
+            this.layout.saveNoteButton.setDisabled(false);
+          } else {
+            this.layout.saveNoteButton.setDisabled(true);
+          }
+          return this.Super('change', arguments);
+        },
         validators : [ {
           type : 'required'
         } ]
@@ -222,7 +233,12 @@ isc.OBNoteLayout.addProperties({
       layout : this,
       margin : 4, //hLayout layoutTopMargin is not affecting completly the button, so this magin tries to balance it
       title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
-      click : 'this.layout.saveNote()'
+      click : 'this.layout.saveNote()',
+      canFocus : true,
+      draw: function() {
+        this.setDisabled(true);
+        return this.Super('draw', arguments);
+      }
     });
 
     hLayout.addMember(this.noteDynamicForm);
