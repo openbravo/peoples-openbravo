@@ -13239,7 +13239,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800133-->  <COLUMNNAME><![CDATA[QtyOrderOnHand]]></COLUMNNAME>
-<!--800133-->  <NAME><![CDATA[On Hand Order Quanity]]></NAME>
+<!--800133-->  <NAME><![CDATA[On Hand Order Quantity]]></NAME>
 <!--800133-->  <PRINTNAME><![CDATA[On Hand Quantity order]]></PRINTNAME>
 <!--800133-->  <HELP><![CDATA[The On Hand Quantity indicates the quantity of a product that is on hand in a warehouse in the second uom]]></HELP>
 <!--800133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
