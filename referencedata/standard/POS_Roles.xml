@@ -1225,12 +1225,26 @@
     <active>true</active>
     <editableField>false</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="225C4D4AE896434C9A3192708FC1B3E2" identifier="OBPOS Shared Tickets - POS Employee">
+    <id>225C4D4AE896434C9A3192708FC1B3E2</id>
+    <window id="FF8081813302783D0133030F5A440030" entity-name="ADWindow" identifier="OBPOS Shared Tickets"/>
+    <role id="9AE4B745AC9B4FD4931E65D2B2789EF3" entity-name="ADRole" identifier="POS Employee"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="28319B1039BC4433B1CF0C93F06E0C66" identifier="Requisition - POS Administrator">
     <id>28319B1039BC4433B1CF0C93F06E0C66</id>
     <window id="800092" entity-name="ADWindow" identifier="Requisition"/>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
     <active>true</active>
     <editableField>false</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="2BA68DDACB4A4B9B8E258D3E59519195" identifier="OBPOS Shared Tickets - POS Administrator">
+    <id>2BA68DDACB4A4B9B8E258D3E59519195</id>
+    <window id="FF8081813302783D0133030F5A440030" entity-name="ADWindow" identifier="OBPOS Shared Tickets"/>
+    <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
   </ADWindowAccess>
   <ADWindowAccess id="37C6444FFB7A451E91E4F917D530D0A9" identifier="OBPOS Product View - POS Employee">
     <id>37C6444FFB7A451E91E4F917D530D0A9</id>
@@ -1330,6 +1344,13 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="AD6E1360D3A44EBE8E51DFE1AAAD63EB" identifier="OBPOS Shared Tickets - POS Manager">
+    <id>AD6E1360D3A44EBE8E51DFE1AAAD63EB</id>
+    <window id="FF8081813302783D0133030F5A440030" entity-name="ADWindow" identifier="OBPOS Shared Tickets"/>
+    <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="B12FC5B65EC14262BA5B67BC29C154E1" identifier="Sales Order - POS Guest">
     <id>B12FC5B65EC14262BA5B67BC29C154E1</id>
     <window id="143" entity-name="ADWindow" identifier="Sales Order"/>
@@ -1348,6 +1369,13 @@
     <id>CCBF6A161AC94ACCA9D6D7594BE4CFEA</id>
     <window id="123" entity-name="ADWindow" identifier="Business Partner"/>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="CF74270EBFCB4E598C0F8B070E471146" identifier="OBPOS Shared Tickets - POS Guest">
+    <id>CF74270EBFCB4E598C0F8B070E471146</id>
+    <window id="FF8081813302783D0133030F5A440030" entity-name="ADWindow" identifier="OBPOS Shared Tickets"/>
+    <role id="87C2ADC4B6C04116AC91041D03C2CC62" entity-name="ADRole" identifier="POS Guest"/>
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
