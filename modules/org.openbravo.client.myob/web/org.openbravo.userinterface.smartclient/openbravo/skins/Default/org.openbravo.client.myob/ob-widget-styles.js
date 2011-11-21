@@ -164,5 +164,9 @@ isc.OBWidgetInFormItem.changeDefaults("widgetProperties", {
   edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/form/border.png',
   edgeSize : 1,
   edgeTop : 1,
-  edgeBottom : 1
+  edgeBottom : 1,
+  edgeOffsetTop:1,
+  edgeOffsetRight:1,
+  edgeOffsetBottom:1,
+  edgeOffsetLeft:1
 });
