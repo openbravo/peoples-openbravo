@@ -162,7 +162,6 @@ isc.OBNoteLayout.addProperties({
     this.noteDynamicForm.focusInItem('noteOBTextAreaItem');
     
     this.parentElement.noteSection.setNoteCount(this.parentElement.noteSection.noteCount + 1);
-    return false;
   },
 
   /**
@@ -233,7 +232,10 @@ isc.OBNoteLayout.addProperties({
       layout : this,
       margin : 4, //hLayout layoutTopMargin is not affecting completly the button, so this magin tries to balance it
       title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
-      click : 'this.layout.saveNote()',
+      click : function() {
+        this.layout.saveNote();
+        return false;
+      },
       canFocus : true,
       draw: function() {
         this.setDisabled(true);
