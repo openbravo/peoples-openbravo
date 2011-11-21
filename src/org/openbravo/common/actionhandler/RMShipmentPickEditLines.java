@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,6 +41,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
  * 
  */
 public class RMShipmentPickEditLines extends BaseProcessActionHandler {
+  private static Logger log = Logger.getLogger(RMShipmentPickEditLines.class);
   private boolean setRefNo = false;
 
   @Override
@@ -47,7 +49,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     JSONObject jsonRequest = null;
     try {
       jsonRequest = new JSONObject(content);
-      System.err.println(jsonRequest);
+      log.debug(jsonRequest);
       final String strInOutId = jsonRequest.getString("inpmInoutId");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
       if (cleanInOutLines(inOut)) {
@@ -55,7 +57,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
     }
     return jsonRequest;
   }
@@ -90,7 +92,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
     TreeSet<String> rmVendorRefs = new TreeSet<String>();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
-      System.err.println(selectedLine);
+      log.debug(selectedLine);
       ShipmentInOutLine newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());

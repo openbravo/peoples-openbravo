@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -39,13 +40,14 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
  * 
  */
 public class SRMOPickEditLines extends BaseProcessActionHandler {
+  private static Logger log = Logger.getLogger(SRMOPickEditLines.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
     try {
       jsonRequest = new JSONObject(content);
-      System.err.println(jsonRequest);
+      log.debug(jsonRequest);
       final String strOrderId = jsonRequest.getString("inpcOrderId");
       Order order = OBDal.getInstance().get(Order.class, strOrderId);
       if (cleanOrderLines(order)) {
@@ -68,7 +70,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       OBDal.getInstance().save(order);
       OBDal.getInstance().flush();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       return false;
     }
     return true;
@@ -84,7 +86,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
-      System.err.println(selectedLine);
+      log.debug(selectedLine);
       OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
       newOrderLine.setSalesOrder(order);
       newOrderLine.setOrganization(order.getOrganization());

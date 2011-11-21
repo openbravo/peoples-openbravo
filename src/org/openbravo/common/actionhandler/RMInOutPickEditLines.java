@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,13 +41,14 @@ import org.openbravo.model.sales.ConditionGoods;
  * 
  */
 public class RMInOutPickEditLines extends BaseProcessActionHandler {
+  private static Logger log = Logger.getLogger(RMInOutPickEditLines.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
     try {
       jsonRequest = new JSONObject(content);
-      System.err.println(jsonRequest);
+      log.debug(jsonRequest);
       final String strInOutId = jsonRequest.getString("inpmInoutId");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
       if (cleanInOutLines(inOut)) {
@@ -69,7 +71,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       return false;
     }
     return true;
@@ -85,7 +87,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
-      System.err.println(selectedLine);
+      log.debug(selectedLine);
       ShipmentInOutLine newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());
