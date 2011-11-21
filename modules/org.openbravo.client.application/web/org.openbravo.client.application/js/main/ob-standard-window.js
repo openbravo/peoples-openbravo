@@ -106,7 +106,7 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, dontDisplay;
 
     if (data && data.personalization) {
       this.setPersonalization(data.personalization);
@@ -127,6 +127,9 @@ isc.OBStandardWindow.addProperties({
     
     // Field level permissions
     if (data && data.tabs) {
+      dontDisplay = function(view, record, context) {
+        return false;
+      };
       for ( t = 0; t < data.tabs.length; t++) {
         tab = data.tabs[t];
         view = this.getView(tab.tabId);
@@ -134,35 +137,21 @@ isc.OBStandardWindow.addProperties({
           field = view.viewForm.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
-<<<<<<< local
-            if (!field.updatable && field.disable) { 
-              field.disable();
-              field.setDisabled(true);
-            }
-=======
             field.disabled = !tab.fields[field.name];
->>>>>>> other
           }
         }
         for ( i = 0; i < view.viewGrid.fields.length; i++) {
           field = view.viewGrid.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.editorProperties.updatable = tab.fields[field.name];
-<<<<<<< local
-            if (!field.editorProperties.updatable)
-            field.disabled = true;
-=======
             field.editorProperties.disabled = !tab.fields[field.name];
->>>>>>> other
           }
         }
         for (i = 0; i < view.toolBar.rightMembers.length; i++) {
-        	button = view.toolBar.rightMembers[i];
-        	if (button.property && !tab.fields[button.property]) {
-        		button.displayIf = function(view, record, context) {
-        			return false;
-        		}
-        	}	
+          button = view.toolBar.rightMembers[i];
+            if (button.property && !tab.fields[button.property]) {
+              button.displayIf = dontDisplay;
+          }
         }
         view.viewForm.obFormProperties.view = view;
         view.viewForm.obFormProperties.onFieldChanged(view.viewForm);
