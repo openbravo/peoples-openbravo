@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW OBPOS_PEOPLEVIEW">
-    <view name="OBPOS_PEOPLEVIEW"><![CDATA[SELECT obpos_people.obpos_people_id, obpos_people.ad_client_id, obpos_people.ad_org_id, obpos_people.isactive, obpos_people.created, obpos_people.createdby, obpos_people.updated, obpos_people.updatedby, obpos_people.name
-FROM obpos_people]]></view>
-  </database>

@@ -1330,6 +1330,13 @@
     <active>true</active>
     <editableField>false</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="A0E8D3C3798642DDA65B86D31948B4CB" identifier="Reservation - POS Employee">
+    <id>A0E8D3C3798642DDA65B86D31948B4CB</id>
+    <window id="FF8081813368B623013368C0AE7A0019" entity-name="ADWindow" identifier="Reservation"/>
+    <role id="9AE4B745AC9B4FD4931E65D2B2789EF3" entity-name="ADRole" identifier="POS Employee"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="A9781794346140A4BA2970C40DF7802C" identifier="Price List - POS Administrator">
     <id>A9781794346140A4BA2970C40DF7802C</id>
     <window id="146" entity-name="ADWindow" identifier="Price List"/>
@@ -1379,6 +1386,20 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="D25CDFDACC88416ABD1D4B2A3B4794D7" identifier="Reservation - POS Guest">
+    <id>D25CDFDACC88416ABD1D4B2A3B4794D7</id>
+    <window id="FF8081813368B623013368C0AE7A0019" entity-name="ADWindow" identifier="Reservation"/>
+    <role id="87C2ADC4B6C04116AC91041D03C2CC62" entity-name="ADRole" identifier="POS Guest"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="ED2F7AFAEA5F4F1BB7298842187A59C3" identifier="Reservation - POS Administrator">
+    <id>ED2F7AFAEA5F4F1BB7298842187A59C3</id>
+    <window id="FF8081813368B623013368C0AE7A0019" entity-name="ADWindow" identifier="Reservation"/>
+    <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="EFB0F78296864F3593B1EB518F4FAD4B" identifier="OBPOS Product View - POS Guest">
     <id>EFB0F78296864F3593B1EB518F4FAD4B</id>
     <window id="FF80818133451BE9013345D23F8C007A" entity-name="ADWindow" identifier="OBPOS Product View"/>
@@ -1390,6 +1411,13 @@
     <id>F3C480F3653C46439EEB216650420ABE</id>
     <window id="146" entity-name="ADWindow" identifier="Price List"/>
     <role id="87C2ADC4B6C04116AC91041D03C2CC62" entity-name="ADRole" identifier="POS Guest"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="F5163D5930984F2FBA4BF8658F046A52" identifier="Reservation - POS Manager">
+    <id>F5163D5930984F2FBA4BF8658F046A52</id>
+    <window id="FF8081813368B623013368C0AE7A0019" entity-name="ADWindow" identifier="Reservation"/>
+    <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
