@@ -280,7 +280,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					</textElement>
 					<text><![CDATA[Return from Customer]]></text>
 				</staticText>
-				<textField isBlankWhenNull="false">
+				<textField isBlankWhenNull="true">
 					<reportElement key="textField-8" positionType="FixRelativeToBottom" x="140" y="184" width="140" height="20">
 						<printWhenExpression><![CDATA[new Boolean($F{ISSOTRX}.equals("N"))]]></printWhenExpression>
 					</reportElement>
