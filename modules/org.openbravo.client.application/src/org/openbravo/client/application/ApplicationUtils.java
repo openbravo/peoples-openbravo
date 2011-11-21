@@ -216,6 +216,9 @@ public class ApplicationUtils {
    * @return true in case it is button, false if not
    */
   public static boolean isUIButton(Field field) {
+    if (field.getColumn() == null) {
+      return false;
+    }
     return "28".equals(field.getColumn().getReference().getId());
   }
 }

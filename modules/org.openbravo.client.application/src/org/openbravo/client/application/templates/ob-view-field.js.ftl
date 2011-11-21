@@ -68,6 +68,9 @@ the outputted value is already covered by a default.
 </@compress>
     <#if field.standardField>
 <@compress single_line=true>
+        <#if field.clientClass != ''>
+            clientClass: '${field.clientClass?string}',
+        </#if>
         <#if field.columnName != ''>
             columnName: '${field.columnName?string}',
         </#if>

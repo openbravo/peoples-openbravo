@@ -80,6 +80,7 @@
   vertical-align: middle;
   border-right: 1px solid #cdd7bb;
   border-bottom: 1px solid #cdd7bb;
+  
 /*  margin: 0px; */
   padding: 0px 4px 0px 4px;
 }
@@ -368,3 +369,58 @@
 }
 
 /******************************/
+
+.OBGridFormButton,
+.OBGridFormButtonOver,
+.OBGridFormButtonFocused,
+.OBGridFormButtonFocusedOver,
+.OBGridFormButtonDown,
+.OBGridFormButtonFocusedDown,
+.OBGridFormButtonSelected,
+.OBGridFormButtonSelectedFocused,
+.OBGridFormButtonSelectedDown,
+.OBGridFormButtonSelectedFocusedDown,
+.OBGridFormButtonSelectedOver,
+.OBGridFormButtonSelectedFocusedOver,
+.OBGridFormButtonDisabled,
+.OBGridFormButtonSelectedDisabled {
+  padding: 2px 5px 2px 5px;
+  font-family:'lucida sans',sans-serif; 
+  font-size:12px;
+  background-image:url(./images/form/textButton-bg-normal.png);
+  color:#000000;
+  background-position:right top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  border: 2px solid #efefef;
+}
+
+.OBGridFormButtonDisabled,
+.OBGridFormButtonSelectedDisabled {
+  border:2px solid #d0d1cd;
+  background-image: url(./images/form/textButton-bg-disabled.png);
+  font-weight:normal;
+  color:#777;
+}
+
+.OBGridFormButtonFocused,
+.OBGridFormButtonFocusedOver,
+.OBGridFormButtonSelectedFocused,
+.OBGridFormButtonSelectedFocusedOver,
+.OBGridFormButtonSelectedFocusedDown {
+  border:2px solid #fa962f;
+}
+
+.OBGridFormButtonOver,
+.OBGridFormButtonFocusedOver,
+.OBGridFormButtonSelectedFocused,
+.OBGridFormButtonSelectedFocusedOver {
+  background-image: url(./images/form/textButton-bg-hover.png);
+}
+
+.OBGridFormButtonDown,
+.OBGridFormButtonFocusedDown,
+.OBGridFormButtonSelectedDown,
+.OBGridFormButtonSelectedFocusedDown {
+  background-image: url(./images/form/textButton-bg-down.png);
+}
