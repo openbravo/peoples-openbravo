@@ -64,10 +64,17 @@ isc.OBNoteSectionItem.addProperties({
   },
   
   setNoteCount: function(lNoteCount) {
+    lNoteCount = parseInt(lNoteCount, 10);
     this.noteCount = lNoteCount;
     if(lNoteCount !== 0) {
+      if (!this.getNotePart().noteListGrid.isVisible()) {
+        this.getNotePart().noteListGrid.show();
+      }
       this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle') + ' (' + lNoteCount+')');
     }else{
+      if (this.getNotePart().noteListGrid.isVisible()) {
+        this.getNotePart().noteListGrid.hide();
+      }
       this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle'));
     }
   },
@@ -241,6 +248,8 @@ isc.OBNoteLayout.addProperties({
       headerHeight : 0,
       hoverStyle : 'OBNoteListGridCellOver',
       layout : this,
+      height: 1, //Due to issue 16695. Only with this, the visualization is strange when no records are shown. The noteListGrid visibility management is needed too.
+      visibility: 'hidden', //Due to issue 16695. The noteListGrid is automatically shown/hidden each time the note count (set using setNoteCount) is > 0
       selectionType : 'none',
       showEmptyMessage : false,
       styleName : 'OBNoteListGrid',
