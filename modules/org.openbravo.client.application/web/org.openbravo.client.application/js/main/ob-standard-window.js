@@ -106,7 +106,7 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button;
 
     if (data && data.personalization) {
       this.setPersonalization(data.personalization);
@@ -134,15 +134,35 @@ isc.OBStandardWindow.addProperties({
           field = view.viewForm.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
+<<<<<<< local
+            if (!field.updatable && field.disable) { 
+              field.disable();
+              field.setDisabled(true);
+            }
+=======
             field.disabled = !tab.fields[field.name];
+>>>>>>> other
           }
         }
         for ( i = 0; i < view.viewGrid.fields.length; i++) {
           field = view.viewGrid.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.editorProperties.updatable = tab.fields[field.name];
+<<<<<<< local
+            if (!field.editorProperties.updatable)
+            field.disabled = true;
+=======
             field.editorProperties.disabled = !tab.fields[field.name];
+>>>>>>> other
           }
+        }
+        for (i = 0; i < view.toolBar.rightMembers.length; i++) {
+        	button = view.toolBar.rightMembers[i];
+        	if (button.property && !tab.fields[button.property]) {
+        		button.displayIf = function(view, record, context) {
+        			return false;
+        		}
+        	}	
         }
         view.viewForm.obFormProperties.view = view;
         view.viewForm.obFormProperties.onFieldChanged(view.viewForm);
