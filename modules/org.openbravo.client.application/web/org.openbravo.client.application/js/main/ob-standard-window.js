@@ -102,14 +102,17 @@ isc.OBStandardWindow.addProperties({
         className = '_',
         tabSet = OB.MainView.TabSet;
     
-    if(params.windowId) {
+    if (params.windowId) {
       className = className + params.windowId;
       if(len === 3) {
         // debug mode, we have added _timestamp
         className = className + '_' + parts[2];
       }
-      this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
-      tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+
+      if (isc[className]) {
+        this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
+        tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+      }
     }
   },
   

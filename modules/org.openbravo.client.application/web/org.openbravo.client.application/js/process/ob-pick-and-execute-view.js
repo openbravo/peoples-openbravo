@@ -204,7 +204,7 @@ isc.OBPickAndExecuteView.addProperties({
       allProperties._selection.push(tmp);
     }
 
-    len = grid.data.allRows || 0;
+    len = (grid.data.allRows && grid.data.allRows.length) || 0;
 
     for (i = 0; i < len; i++) {
       tmp = isc.addProperties({}, grid.data.allRows[i], grid.getEditedRecord(grid.data.allRows[i]));
