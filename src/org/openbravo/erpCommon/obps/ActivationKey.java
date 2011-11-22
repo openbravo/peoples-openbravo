@@ -250,6 +250,7 @@ public class ActivationKey {
     licenseClass = LicenseClass.COMMUNITY;
     startDate = null;
     endDate = null;
+    pendingTime = null;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
