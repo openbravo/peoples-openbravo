@@ -23,10 +23,13 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  if ((value !== null) && (value <= record.movementQuantity) && (value > 0)) {
+  var movementQty = new BigDecimal(String(record.movementQuantity)),
+      returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.ZERO,
+      newReturnedQty = new BigDecimal(String(value));
+  if ((value !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (value > 0)) {
     return true;
   } else {
-    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [record.movementQuantity]));
+    isc.warn(OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
     return false;
   }
 };
