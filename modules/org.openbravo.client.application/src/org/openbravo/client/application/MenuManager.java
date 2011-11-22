@@ -39,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
@@ -339,8 +340,13 @@ public class MenuManager implements Serializable {
   }
 
   private void createInitialMenuList() {
-
-    final Tree tree = OBDal.getInstance().createQuery(Tree.class, "typeArea='MM'").list().get(0);
+    Role role = OBDal.getInstance().get(Role.class, roleId);
+    final Tree tree;
+    if (role.getPrimaryTreeMenu() != null) {
+      tree = role.getPrimaryTreeMenu();
+    } else {
+      tree = OBDal.getInstance().createQuery(Tree.class, "id='10'").list().get(0);
+    }
     menuOptions = new ArrayList<MenuOption>();
     OBCriteria<TreeNode> treeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
     treeNodes.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));

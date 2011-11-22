@@ -96,6 +96,8 @@ public class ActivationKey {
   private Date lastRefreshTime;
   private boolean trial = false;
   private boolean golden = false;
+  private Date startDate;
+  private Date endDate;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -179,6 +181,10 @@ public class ActivationKey {
    * 
    */
   public static synchronized ActivationKey getInstance() {
+    if (instance.startDate != null) {
+      // check dates in case there is a license with dates
+      instance.checkDates();
+    }
     return instance;
   }
 
@@ -243,6 +249,8 @@ public class ActivationKey {
     trial = false;
     golden = false;
     licenseClass = LicenseClass.COMMUNITY;
+    startDate = null;
+    endDate = null;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -329,12 +337,13 @@ public class ActivationKey {
     trial = "true".equals(getProperty("trial"));
     golden = "true".equals(getProperty("golden"));
 
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     try {
       startDate = sd.parse(getProperty("startdate"));
 
-      if (getProperty("enddate") != null)
+      if (getProperty("enddate") != null) {
         endDate = sd.parse(getProperty("enddate"));
-
+      }
     } catch (Exception e) {
       errorMessage = "@ErrorReadingDates@";
       isActive = false;
@@ -342,13 +351,19 @@ public class ActivationKey {
       setLogger();
       return;
     }
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+
+    checkDates();
+  }
+
+  private void checkDates() {
+    // Check for dates to know if the instance is active
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       notActiveYet = true;
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
+      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
       messageType = "Warning";
       setLogger();
@@ -356,16 +371,17 @@ public class ActivationKey {
     }
     if (endDate != null) {
       pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
-      if (now.after(endDate)) {
+      if (pendingTime <= 0) {
         if (subscriptionConvertedProperty) {
           // A bought out instance is actually converted when the license has expired.
           subscriptionActuallyConverted = true;
         } else {
           isActive = false;
           hasExpired = true;
-
+          String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+              .getProperty("dateFormat.java");
+          SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
-
           setLogger();
           return;
         }
@@ -739,16 +755,6 @@ public class ActivationKey {
         .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-    Date startDate = null;
-    Date endDate = null;
-    try {
-      startDate = sd.parse(getProperty("startdate"));
-      if (getProperty("enddate") != null)
-        endDate = sd.parse(getProperty("enddate"));
-    } catch (ParseException e) {
-      log.error("Error parsing date", e);
-    }
     StringBuilder sb = new StringBuilder();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))

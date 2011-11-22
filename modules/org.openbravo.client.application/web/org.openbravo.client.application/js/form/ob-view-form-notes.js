@@ -64,10 +64,17 @@ isc.OBNoteSectionItem.addProperties({
   },
   
   setNoteCount: function(lNoteCount) {
+    lNoteCount = parseInt(lNoteCount, 10);
     this.noteCount = lNoteCount;
     if(lNoteCount !== 0) {
+      if (!this.getNotePart().noteListGrid.isVisible()) {
+        this.getNotePart().noteListGrid.show();
+      }
       this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle') + ' (' + lNoteCount+')');
     }else{
+      if (this.getNotePart().noteListGrid.isVisible()) {
+        this.getNotePart().noteListGrid.hide();
+      }
       this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle'));
     }
   },
@@ -151,6 +158,8 @@ isc.OBNoteLayout.addProperties({
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
+    this.saveNoteButton.setDisabled(true);
+    this.noteDynamicForm.focusInItem('noteOBTextAreaItem');
     
     this.parentElement.noteSection.setNoteCount(this.parentElement.noteSection.noteCount + 1);
   },
@@ -205,6 +214,14 @@ isc.OBNoteLayout.addProperties({
         showTitle : false,
         layout : this,
         width : '*',
+        change: function(form, item, value, oldValue) {
+          if (value) {
+            this.layout.saveNoteButton.setDisabled(false);
+          } else {
+            this.layout.saveNoteButton.setDisabled(true);
+          }
+          return this.Super('change', arguments);
+        },
         validators : [ {
           type : 'required'
         } ]
@@ -215,7 +232,15 @@ isc.OBNoteLayout.addProperties({
       layout : this,
       margin : 4, //hLayout layoutTopMargin is not affecting completly the button, so this magin tries to balance it
       title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
-      click : 'this.layout.saveNote()'
+      click : function() {
+        this.layout.saveNote();
+        return false;
+      },
+      canFocus : true,
+      draw: function() {
+        this.setDisabled(true);
+        return this.Super('draw', arguments);
+      }
     });
 
     hLayout.addMember(this.noteDynamicForm);
@@ -241,6 +266,8 @@ isc.OBNoteLayout.addProperties({
       headerHeight : 0,
       hoverStyle : 'OBNoteListGridCellOver',
       layout : this,
+      height: 1, //Due to issue 16695. Only with this, the visualization is strange when no records are shown. The noteListGrid visibility management is needed too.
+      visibility: 'hidden', //Due to issue 16695. The noteListGrid is automatically shown/hidden each time the note count (set using setNoteCount) is > 0
       selectionType : 'none',
       showEmptyMessage : false,
       styleName : 'OBNoteListGrid',
