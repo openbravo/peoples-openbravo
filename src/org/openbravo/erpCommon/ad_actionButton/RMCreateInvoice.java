@@ -83,6 +83,9 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
         return;
       }
       List<APRMPendingPaymentFromInvoice> pendingPayments = getPendingPayments();
+      if (pendingPayments.isEmpty()) {
+        return;
+      }
       List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
       PaymentExecutionProcess executionProcess = null;
       Organization organization = null;
