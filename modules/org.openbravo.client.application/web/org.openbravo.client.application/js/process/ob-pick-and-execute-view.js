@@ -148,8 +148,8 @@ isc.OBPickAndExecuteView.addProperties({
 
   closeClick: function () {
     var tabSet = OB.MainView.TabSet;
-    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
     this.Super('closeClick', arguments);
+    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
   },
 
   _addIconField: function () {

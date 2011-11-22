@@ -300,8 +300,8 @@ isc.OBTabSetMain.addProperties({
       previousPane.destroy();
     }
 
-    if(refresh && pane.activeView && pane.activeView.refresh) {
-      this.fireOnPause('refreshRecordInView', {target: pane.activeView, methodName: 'refresh'}, 90);
+    if(refresh && pane.refresh) {
+      this.fireOnPause('refreshRecordInView', {target: pane, methodName: 'refresh'}, 120);
     }
   }
 });
