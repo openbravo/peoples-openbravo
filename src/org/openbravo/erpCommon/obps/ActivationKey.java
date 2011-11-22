@@ -30,7 +30,6 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -329,15 +328,11 @@ public class ActivationKey {
 
     // Check for dates to know if the instance is active
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-    Date startDate = null;
-    Date endDate = null;
-
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
 
     trial = "true".equals(getProperty("trial"));
     golden = "true".equals(getProperty("golden"));
 
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     try {
       startDate = sd.parse(getProperty("startdate"));
 
