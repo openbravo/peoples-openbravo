@@ -1334,7 +1334,11 @@ isc.OBStandardView.addProperties({
         callBackFunction();
       }
     };
-    
+
+    if(this.viewForm && this.viewForm.contextInfo) {
+      this.viewForm.contextInfo = null;
+    }
+
     this.getDataSource().fetchData(criteria, callback);
     this.refreshParentRecord(callBackFunction);
   },
