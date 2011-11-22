@@ -54,6 +54,9 @@ public class ApplicationConstants {
   // Identifier of the key holding the selected rows in a grid
   public static final String SELECTION_PROPERTY = "_selection";
 
+  // Identifier of the parameter key holding all rows in the grid
+  public static final String ALL_ROWS_PARAM = "_allRows";
+
   // Identifier of the key holding the value of the button clicked
   public static final String BUTTON_VALUE = "_buttonValue";
 

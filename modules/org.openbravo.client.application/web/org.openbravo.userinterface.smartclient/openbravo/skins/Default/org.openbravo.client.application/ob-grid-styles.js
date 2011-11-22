@@ -198,3 +198,12 @@ isc.OBAlertGrid.addProperties({
 });
 
 /******************************/
+
+isc.OBGridFormButton.addProperties({
+  baseStyle: 'OBGridFormButton',
+  titleStyle: 'OBFormButtonTitle',
+
+  width: 1,
+  height: 21,
+  overflow: 'visible'
+});

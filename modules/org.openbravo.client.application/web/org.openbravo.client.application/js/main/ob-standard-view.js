@@ -1334,7 +1334,11 @@ isc.OBStandardView.addProperties({
         callBackFunction();
       }
     };
-    
+
+    if(this.viewForm && this.viewForm.contextInfo) {
+      this.viewForm.contextInfo = null;
+    }
+
     this.getDataSource().fetchData(criteria, callback);
     this.refreshParentRecord(callBackFunction);
   },
@@ -1857,12 +1861,18 @@ isc.OBStandardView.addProperties({
       fld.originalShowIf = fld.showIf;
       fld.showIf = function(item, value, form, values) {
         var currentValues = values || form.view.getCurrentValues(),
-        context = form.getCachedContextInfo();
+          context = form.getCachedContextInfo(), 
+          originalShowIfValue = false;
 
         OB.Utilities.fixNull250(currentValues);
         
-        return !this.hiddenInForm && context && 
-          this.originalShowIf(item, value, form, currentValues, context);
+        try {
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+        } catch(_exception) {
+          isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+        }
+        
+        return !this.hiddenInForm && context && originalShowIfValue;
       };
     }
     if (fld.type === 'OBAuditSectionItem') {
@@ -1954,7 +1964,8 @@ isc.OBStandardView.addProperties({
       }
 
       // correct some stuff coming from the form fields
-      if (!fld.displayed) {
+      if (fld.displayed === false) {
+        fld.canEdit = false;
         fld.visible = true;
         fld.alwaysTakeSpace = true;
       }
@@ -1978,7 +1989,7 @@ isc.OBStandardView.addProperties({
       }
       
       type = isc.SimpleType.getType(fld.type);
-      if (type.editorType) {
+      if (type.editorType && !fld.editorType) {
         fld.editorType = type.editorType;
       }
       

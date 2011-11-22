@@ -25,7 +25,11 @@ isc.OBGrid.addProperties({
 
   dragTrackerMode: 'none',
   
-  recordComponentPoolingMode: 'recycle',
+  // recycle gives better performance but also results
+  // in strange results that not all record components are
+  // drawn when scrolling very fast
+  recordComponentPoolingMode: 'viewport',
+  
   showRecordComponentsByCell: true,
   recordComponentPosition: 'within',
   poolComponentsPerColumn: true,
@@ -667,3 +671,6 @@ isc.OBGridLinkButton.addProperties({
     this.owner.doAction();
   }
 });
+
+isc.ClassFactory.defineClass('OBGridFormButton', isc.OBFormButton);
+isc.OBGridFormButton.addProperties({});

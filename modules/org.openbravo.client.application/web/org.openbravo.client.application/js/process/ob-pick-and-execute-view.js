@@ -148,8 +148,8 @@ isc.OBPickAndExecuteView.addProperties({
 
   closeClick: function () {
     var tabSet = OB.MainView.TabSet;
-    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
     this.Super('closeClick', arguments);
+    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
   },
 
   _addIconField: function () {
@@ -196,11 +196,19 @@ isc.OBPickAndExecuteView.addProperties({
         len = selection.length;
 
     allProperties._selection = [];
+    allProperties._allRows = [];
     allProperties._buttonValue = btnValue || 'DONE';
 
     for (i = 0; i < len; i++) {
       tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(selection[i]));
       allProperties._selection.push(tmp);
+    }
+
+    len = (grid.data.allRows && grid.data.allRows.length) || 0;
+
+    for (i = 0; i < len; i++) {
+      tmp = isc.addProperties({}, grid.data.allRows[i], grid.getEditedRecord(grid.data.allRows[i]));
+      allProperties._allRows.push(tmp);
     }
 
     OB.RemoteCallManager.call(this.actionHandler, allProperties, {

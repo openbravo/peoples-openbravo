@@ -377,6 +377,10 @@ isc.OBViewGrid.addProperties({
     isc.addProperties(this.editFormDefaults, props);
   },
   
+  getCellVAlign: function() {
+    return 'center';
+  },
+  
   getCellAlign: function(record, rowNum, colNum){
     if (rowNum === this.getEditRow()) {
       return 'center';
@@ -1631,7 +1635,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i, ret, length = this.getFields().length;
+    var i, ret, fld, length = this.getFields().length;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
@@ -1654,10 +1658,28 @@ isc.OBViewGrid.addProperties({
       }    
     }
 
+    this.recomputeCanvasComponents(rowNum);
+    
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+    
     return ret;
   },
 
+  // recompute recordcomponents
+  recomputeCanvasComponents: function(rowNum) {
+    var i, fld, length = this.getFields().length;
+    
+    // remove client record components in edit mode
+    for (i = 0; i < length; i++) {
+      fld = this.getFields()[i];
+      if (fld.clientClass) {
+        this.refreshRecordComponent(rowNum, i);
+      }
+    }
+    
+    this.refreshRow(rowNum);
+  },
+  
   startEditingNew: function(rowNum){
     // several cases:
     // - no current rows, add at position 0
@@ -1779,6 +1801,7 @@ isc.OBViewGrid.addProperties({
     this.view.toolBar.updateButtonState(true);
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
+    this.recomputeCanvasComponents(rowNum);
   },
 
   undoEditSelectedRows: function(){
@@ -1890,7 +1913,9 @@ isc.OBViewGrid.addProperties({
       }
       
       this.view.standardWindow.cleanUpAutoSaveProperties();
-      
+
+      this.recomputeCanvasComponents(rowNum);
+   
       // update after removing the error msg
       this.view.updateTabTitle();
     }
@@ -2389,6 +2414,8 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   
   createRecordComponent: function(record, colNum){
+    var fld = this.getFields()[colNum], canvas,
+      rowNum = this.getRecordIndex(record), isEditRecord = rowNum === this.getEditRow();
     if (this.isEditLinkColumn(colNum)) {
       var layout = isc.OBGridButtonsComponent.create({
         record: record,
@@ -2400,18 +2427,38 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout = layout;
       return layout;
     }
+    if (fld.clientClass && !isEditRecord) {
+      canvas = isc.ClassFactory.newInstance(fld.clientClass, {grid: this, rowNum: rowNum, record: record, colNum: colNum});
+      if (canvas) {
+        if (canvas.setRecord) {
+          canvas.setRecord(record);
+        }
+        return canvas;
+      }
+    }
   },
   
   updateRecordComponent: function(record, colNum, component, recordChanged){
-    // clear the previous record pointer
-    if (recordChanged && component.record.editColumnLayout === component) {
-      component.record.editColumnLayout = null;
+    var rowNum = this.getRecordIndex(record), isEditRecord = rowNum === this.getEditRow();
+    if (component.editButton) {
+      if (recordChanged && component.record.editColumnLayout === component) {
+        component.record.editColumnLayout = null;
+      }
+      component.record = record;
+      record.editColumnLayout = component;
+      component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
+      component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
+      component.showEditOpen();
+    } if (isEditRecord) {
+      return null;
+    } else {
+      if (component.setRecord) {
+        component.setRecord(record);
+      } else {
+        component.record = record;
+      }
+      component.rowNum = rowNum;
     }
-    component.record = record;
-    record.editColumnLayout = component;
-    component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-    component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-    component.showEditOpen();
     return component;
   },
   

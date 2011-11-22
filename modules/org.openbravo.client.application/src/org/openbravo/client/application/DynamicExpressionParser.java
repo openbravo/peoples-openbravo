@@ -197,6 +197,9 @@ public class DynamicExpressionParser {
     ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
         .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
     for (Field field : cachedStructures.getFieldsOfTab(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
         fieldsInExpression.add(field);
         final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())

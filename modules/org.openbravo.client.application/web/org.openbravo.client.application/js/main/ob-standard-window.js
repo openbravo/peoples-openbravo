@@ -102,17 +102,57 @@ isc.OBStandardWindow.addProperties({
         className = '_',
         tabSet = OB.MainView.TabSet;
     
-    if(params.windowId) {
+    if (params.windowId) {
       className = className + params.windowId;
       if(len === 3) {
         // debug mode, we have added _timestamp
         className = className + '_' + parts[2];
       }
-      this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
-      tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+
+      if (isc[className]) {
+        this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
+        tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+      }
     }
   },
-  
+
+  refresh: function () {
+    var currentView = this.activeView, afterRefresh;
+
+    afterRefresh = function () {
+      // Refresh context view
+      //contextView.getTabMessage();
+      currentView.toolBar.refreshCustomButtons();
+//
+//      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+//        // Executing an action defined in parent tab, current tab is maximized,
+//        // let's set half for each in order to see the message
+//        contextView.setHalfSplit();
+//      }
+
+      // Refresh in order to show possible new records
+      currentView.refresh(null, false, true);
+    };
+
+    if(!currentView) {
+      return;
+    }
+
+    if (currentView.parentView) {
+      currentView.parentView.setChildsToRefresh();
+    } else {
+      currentView.setChildsToRefresh();
+    }
+
+    if (currentView.viewGrid.getSelectedRecord()) {
+      // There is a record selected, refresh it and its parent
+      currentView.refreshCurrentRecord(afterRefresh);
+    } else {
+      // No record selected, refresh parent
+      currentView.refreshParentRecord(afterRefresh);
+    }
+  },
+
   readWindowSettings: function() {
     var standardWindow = this;
     
