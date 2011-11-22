@@ -17684,7 +17684,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--97481F69F2B84927918A073C6466BAE2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--97481F69F2B84927918A073C6466BAE2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--97481F69F2B84927918A073C6466BAE2-->  <VALUE><![CDATA[OPS_EXPIRED_GOLDEN]]></VALUE>
-<!--97481F69F2B84927918A073C6466BAE2-->  <MSGTEXT><![CDATA[This instance was activated with a Golden Key for evaluation purposes. This license has expired and therefore, the instance cannot be user anymore.]]></MSGTEXT>
+<!--97481F69F2B84927918A073C6466BAE2-->  <MSGTEXT><![CDATA[This instance was activated with a Golden Key for evaluation purposes. This license has expired and therefore, the instance cannot be used anymore.]]></MSGTEXT>
 <!--97481F69F2B84927918A073C6466BAE2-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--97481F69F2B84927918A073C6466BAE2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--97481F69F2B84927918A073C6466BAE2--></AD_MESSAGE>
