@@ -766,8 +766,10 @@ public class ActivationKey {
         sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
       }
       sb.append("</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
-          .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      if (startDate != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
+            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      }
 
       sb.append("<tr><td>")
           .append(Utility.messageBD(conn, "OPSEndDate", lang))
@@ -1158,7 +1160,7 @@ public class ActivationKey {
    * Returns current subscription status
    */
   public SubscriptionStatus getSubscriptionStatus() {
-    if (!isOPSInstance()) {
+    if (!isOPSInstance() || inconsistentInstance) {
       return SubscriptionStatus.COMMUNITY;
     } else if (isSubscriptionConverted()) {
       return SubscriptionStatus.CANCEL;
