@@ -106,7 +106,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 	<field name="FAX" class="java.lang.String"/>
 	<field name="URL" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
-	<field name="DATEORDERED" class="java.lang.String"/>
+	<field name="DATEORDERED" class="java.util.Date"/>
 	<field name="ALBARAN" class="java.lang.String"/>
 	<field name="COMPLETE_NAME" class="java.lang.String"/>
 	<field name="ENTITY" class="java.lang.String"/>
@@ -211,7 +211,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
 				</textField>
 				<image scaleImage="RetainShape" hAlign="Right" vAlign="Top" isUsingCache="true">
 					<reportElement key="image-1" x="313" y="0" width="170" height="91">
