@@ -24,7 +24,7 @@ OB.RM = OB.RM || {};
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
   var movementQty = new BigDecimal(String(record.movementQuantity)),
-      returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.ZERO,
+      returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
       newReturnedQty = new BigDecimal(String(value));
   if ((value !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (value > 0)) {
     return true;
