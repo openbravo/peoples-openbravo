@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW M_RM_RECEIPT_PICK_EDIT">
-    <view name="M_RM_RECEIPT_PICK_EDIT"><![CDATA[SELECT COALESCE(iol.m_inoutline_id, ol.c_orderline_id) AS m_rm_receipt_pick_edit_id, ol.ad_client_id, COALESCE(iol.ad_org_id, ol.ad_org_id) AS ad_org_id, ol.isactive, ol.created, ol.createdby, COALESCE(iol.updated, ol.updated) AS updated, ol.updatedby, iol.m_inout_id, 
+    <view name="M_RM_RECEIPT_PICK_EDIT"><![CDATA[SELECT get_uuid() AS m_rm_receipt_pick_edit_id, ol.ad_client_id, COALESCE(iol.ad_org_id, ol.ad_org_id) AS ad_org_id, ol.isactive, ol.created, ol.createdby, COALESCE(iol.updated, ol.updated) AS updated, ol.updatedby, iol.m_inout_id, 
 CASE
 WHEN iol.m_inoutline_id IS NOT NULL THEN 'Y'
 ELSE 'N'
