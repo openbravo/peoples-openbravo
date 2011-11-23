@@ -47,6 +47,10 @@ isc.OBStandardWindow.addProperties({
   
   views: [],
   
+  stackZIndex: 'firstOnTop',
+  align: 'center',
+  defaultLayoutAlign: 'center',
+
   // is set when a form or grid editing results in dirty data
   // in the window
   dirtyEditForm: null,
@@ -54,6 +58,15 @@ isc.OBStandardWindow.addProperties({
   initWidget: function(){
 
     this.views = [];
+
+    this.processLayout = isc.VStack.create({
+      height: 1,
+      width: 1,
+      overflow: 'visible',
+      visibility: 'hidden'
+    });
+
+    this.addMember(this.processLayout);
     
     this.toolBarLayout = isc.HLayout.create({
       mouseDownCancelParentPropagation: true,
@@ -100,7 +113,7 @@ isc.OBStandardWindow.addProperties({
     var parts = this.getPrototype().Class.split('_'), 
         len = parts.length,
         className = '_',
-        tabSet = OB.MainView.TabSet;
+        tabSet = OB.MainView.TabSet, vStack;
     
     if (params.windowId) {
       className = className + params.windowId;
@@ -110,8 +123,17 @@ isc.OBStandardWindow.addProperties({
       }
 
       if (isc[className]) {
-        this.runningProcess = isc[className].create(isc.addProperties({}, params, {parentWindow: this}));
-        tabSet.updateTab(tabSet.getSelectedTab(), this.runningProcess);
+        this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+        this.runningProcess = isc[className].create(isc.addProperties({}, params, {
+          parentWindow: this,
+          width: this.width,
+          height: this.height
+        }));
+
+        this.processLayout.addMember(this.runningProcess);
+        this.toolBarLayout.hide();
+        this.view.hide();
+        this.processLayout.show();
       }
     }
   },
@@ -136,6 +158,11 @@ isc.OBStandardWindow.addProperties({
 
     if(!currentView) {
       return;
+    }
+
+    if(this.selectedState) {
+      currentView.viewGrid.setSelectedState(this.selectedState);
+      this.selectedState = null;
     }
 
     if (currentView.parentView) {

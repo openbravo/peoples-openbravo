@@ -5,5 +5,8 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="OBUIAPP_PROCESS" name="EM_OBUIAPP_PROCESS" onDelete="cascade">
+        <reference local="EM_OBUIAPP_PROCESS_ID" foreign="OBUIAPP_PROCESS_ID"/>
+      </foreign-key>
     </table>
   </database>
