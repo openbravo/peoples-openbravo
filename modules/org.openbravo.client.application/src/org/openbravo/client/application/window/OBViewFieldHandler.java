@@ -367,6 +367,10 @@ public class OBViewFieldHandler {
     statusBarFields = new ArrayList<String>();
     for (Field field : adFields) {
 
+      if (field.getColumn() == null) {
+        continue;
+      }
+
       if (field.isShownInStatusBar() == null || !field.isShownInStatusBar()) {
         continue;
       }

@@ -2449,7 +2449,7 @@ isc.OBViewGrid.addProperties({
       component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       component.showEditOpen();
-    } if (isEditRecord) {
+    } else if (isEditRecord) {
       return null;
     } else {
       if (component.setRecord) {

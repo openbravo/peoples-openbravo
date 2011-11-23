@@ -1187,6 +1187,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                   boolean changed = false;
                   if (inpFields.containsKey(name)) {
                     Column col = inpFields.get(name).getColumn();
+                    if (col == null) {
+                      continue;
+                    }
                     String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
                     if (element.get(1, null) instanceof NativeArray) {
                       // Combo data

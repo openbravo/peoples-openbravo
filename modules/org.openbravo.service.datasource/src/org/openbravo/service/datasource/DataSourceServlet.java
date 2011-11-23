@@ -349,7 +349,7 @@ public class DataSourceServlet extends BaseKernelServlet {
             } else if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
               Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
               for (Field field : tab.getADFieldList()) {
-                if (!field.getColumn().getId().equals(col.getId())) {
+                if (field.getColumn() == null || !field.getColumn().getId().equals(col.getId())) {
                   continue;
                 }
                 niceFieldProperties.put(prop.getName(), field.getName());
