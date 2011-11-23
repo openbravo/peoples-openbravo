@@ -367,6 +367,10 @@ public class OBViewFieldHandler {
     statusBarFields = new ArrayList<String>();
     for (Field field : adFields) {
 
+      if (field.getColumn() == null) {
+        continue;
+      }
+
       if (field.isShownInStatusBar() == null || !field.isShownInStatusBar()) {
         continue;
       }
@@ -941,7 +945,7 @@ public class OBViewFieldHandler {
     private int gridSort = 0;
 
     public String getClientClass() {
-      return field.getClientclass() == null ? "" : field.getClientclass();
+      return "";
     }
 
     public String getOnChangeFunction() {

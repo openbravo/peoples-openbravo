@@ -123,6 +123,9 @@ public class OBViewTab extends BaseTemplateComponent {
   public List<OtherField> getOtherFields() {
     final List<OtherField> otherFields = new ArrayList<OBViewTab.OtherField>();
     for (Field fld : fieldHandler.getIgnoredFields()) {
+      if (fld.getColumn() == null) {
+        continue;
+      }
       otherFields.add(new OtherField(fld.getColumn()));
     }
     return otherFields;

@@ -2070,8 +2070,6 @@ isc.OBStandardView.addProperties({
       return 1;
     });
     
-    
-    
     return result;
   }
   
