@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE OBPOS_CLOSEDCASH">
-    <table name="OBPOS_CLOSEDCASH" primaryKey="OBPOS_CLOSEDCASH_PK">
-      <column name="OBPOS_CLOSEDCASH_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE OBPOS_APP_PAYMENT">
+    <table name="OBPOS_APP_PAYMENT" primaryKey="OBPOS_APPPAY_PK">
+      <column name="OBPOS_APP_PAYMENT_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,15 +33,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="HOSTSEQUENCE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATESTART" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATEEND" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="FIN_FINANCIAL_ACCOUNT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_PAYMENTMETHOD_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,19 +53,24 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_CLOSEDCASH_AD_CLIENT">
+      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="OBPOS_APPPAY_ACCOUNT">
+        <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="OBPOS_CLOSEDCASH_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_APPPAY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="OBPOS_CLOSEDCASH_DATESTART" unique="false">
-        <index-column name="DATESTART"/>
-      </index>
-      <index name="OBPOS_CLOSEDCASH_HOSTSEQ" unique="true">
-        <index-column name="OBPOS_APPLICATIONS_ID"/>
-        <index-column name="HOSTSEQUENCE"/>
-      </index>
-      <check name="OBPOS_CLOSEDCASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_APPPAY_APPLICATIONS">
+        <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPPAY_DOCTYPE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="OBPOS_APPPAY_PAYMENT_METHOD">
+        <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
+      </foreign-key>
+      <check name="OBPOS_APPPAY_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
