@@ -138,12 +138,13 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     if (len > 0) {
+
       crit._constructor = 'AdvancedCriteria';
       crit._OrExpression = true; // trick to get a really _or_ in the backend
       crit.operator = 'or';
       crit.criteria = ids;
 
-      c = criteria.criteria;
+      c = (criteria && criteria.criteria) || [];
       found = false;
 
       for (i = 0; i < c.length; i++) {
@@ -154,6 +155,15 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
 
       if (!found) {
+
+        if (!criteria) {
+          criteria = {
+            _constructor: 'AdvancedCriteria',
+            operator: 'and',
+            criteria: []
+          };
+        }
+
         // adding an *always true* sentence
         criteria.criteria.push({
           fieldName: 'id',
