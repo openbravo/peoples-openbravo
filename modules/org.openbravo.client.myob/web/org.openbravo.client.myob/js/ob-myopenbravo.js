@@ -242,7 +242,7 @@ isc.OBMyOpenbravo.addProperties({
       canResizeRows: false,
       membersMargin: 10,
       columnBorder: 0,
-      overflow: 'auto',
+      overflow: 'visible', // Changed from 'auto' to 'visible' due to issue https://issues.openbravo.com/view.php?id=17870
       height: '100%',
       sendEvents: false,
 
