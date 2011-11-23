@@ -2422,7 +2422,7 @@
 <!--800097-->  <DESCRIPTION><![CDATA[Create a comprehensive and organized plan to request purchases over a specified time period.]]></DESCRIPTION>
 <!--800097-->  <HELP><![CDATA[Create a comprehensive and organized plan to request purchases over a specified time period.]]></HELP>
 <!--800097-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800097-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--800097-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800097-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800097-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
