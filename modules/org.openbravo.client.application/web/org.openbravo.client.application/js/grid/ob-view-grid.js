@@ -1676,8 +1676,6 @@ isc.OBViewGrid.addProperties({
         this.refreshRecordComponent(rowNum, i);
       }
     }
-    
-    this.refreshRow(rowNum);
   },
   
   startEditingNew: function(rowNum){

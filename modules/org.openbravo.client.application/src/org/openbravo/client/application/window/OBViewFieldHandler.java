@@ -945,7 +945,7 @@ public class OBViewFieldHandler {
     private int gridSort = 0;
 
     public String getClientClass() {
-      return field.getClientclass() == null ? "" : field.getClientclass();
+      return "";
     }
 
     public String getOnChangeFunction() {

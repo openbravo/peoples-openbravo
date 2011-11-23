@@ -27,6 +27,11 @@ isc.OBClientClassCanvasItem.addProperties({
 
   createCanvas: function() {
     var canvas = isc.ClassFactory.newInstance(this.clientClass, {canvasItem: this});
+    
+    if (!canvas) {
+      return isc.Label.create({contents:'Invalid Type ' + this.clientClass, width: 1, height: 1, overflow: 'visible', autoDraw: false});
+    }
+    
     if (canvas.noTitle) {
       this.showTitle = false;
     }
@@ -34,10 +39,7 @@ isc.OBClientClassCanvasItem.addProperties({
     if (this.form.itemChanged && canvas.onItemChanged) {
       canvas.observe(this.form, 'itemChanged', 'observer.onItemChanged(observed)');
     }
-    
-    if (!canvas) {
-      return isc.Label.create({contents:'Invalid Type ' + this.clientClass, width: 1, height: 1, overflow: 'visible', autoDraw: false});
-    }
+
     return canvas;
   },
   
