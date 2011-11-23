@@ -41,7 +41,9 @@ OB.RM.RMOrderSelectionChange = function (grid, record, state) {
   var contextInfo = null;
   if (state) {
     contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
-    record.returnReason = contextInfo.inpcReturnReasonId;
+    if (!record.returnReason) {
+      record.returnReason = contextInfo.inpcReturnReasonId;
+    }
   }
 };
 /**
@@ -65,7 +67,9 @@ OB.RM.RMReceiptSelectionChange = function (grid, record, state) {
     record.receiving = record.pending;
     contextInfo = grid.view.parentWindow.activeView.getContextInfo(false, true, true, true);
     record.storageBin = contextInfo.ReturnLocator;
-    record.conditionGoods = contextInfo.inpmConditionGoodsId;
+    if (!record.conditionGoods) {
+      record.conditionGoods = contextInfo.inpmConditionGoodsId;
+    }
   }
 };
 
