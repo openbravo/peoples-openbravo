@@ -27,6 +27,15 @@
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
+  <EmailTemplate id="75AA2DE295D6485B90FEAA71F7ED6D99" identifier="RTV Shipment template - ">
+    <id>75AA2DE295D6485B90FEAA71F7ED6D99</id>
+    <active>true</active>
+    <pocDocumentType id="C9566AD143FE485CB349638E6BF545FA" entity-name="DocumentTemplate" identifier="RTV Shipment template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>false</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
   <EmailTemplate id="878ECF0D5A238C7BE040007F010129BA" identifier="AR Invoice Report template - ">
     <id>878ECF0D5A238C7BE040007F010129BA</id>
     <active>true</active>
