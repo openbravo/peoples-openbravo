@@ -24,13 +24,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -38,6 +41,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -182,8 +186,14 @@ public abstract class FIN_BankStatementImport {
   private int saveFINBankStatementLines(List<FIN_BankStatementLine> bankStatementLines) {
     int counter = 0;
     for (FIN_BankStatementLine bankStatementLine : bankStatementLines) {
-      bankStatementLine
-          .setBusinessPartner(matchBusinessPartner(bankStatementLine.getBpartnername()));
+      BusinessPartner businessPartner;
+      try {
+        businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
+            bankStatementLine.getOrganization(), bankStatementLine.getBankStatement().getAccount());
+      } catch (Exception e) {
+        businessPartner = null;
+      }
+      bankStatementLine.setBusinessPartner(businessPartner);
       OBDal.getInstance().save(bankStatementLine);
       counter++;
     }
@@ -211,16 +221,21 @@ public abstract class FIN_BankStatementImport {
 
   }
 
-  BusinessPartner matchBusinessPartner(String partnername) {
+  private BusinessPartner matchBusinessPartner(String partnername, Organization organization,
+      FIN_FinancialAccount account) {
     // TODO extend with other matching methods. It will make it easier to later reconcile
-    BusinessPartner bp = matchBusinessPartnerByName(partnername);
+    BusinessPartner bp = matchBusinessPartnerByName(partnername, organization, account);
     if (bp == null) {
-      bp = finBPByName(partnername);
+      bp = finBPByName(partnername, organization);
+    }
+    if (bp == null) {
+      bp = matchBusinessPartnerByNameTokens(partnername, organization);
     }
     return bp;
   }
 
-  BusinessPartner matchBusinessPartnerByName(String partnername) {
+  private BusinessPartner matchBusinessPartnerByName(String partnername, Organization organization,
+      FIN_FinancialAccount account) {
     if (partnername == null || "".equals(partnername)) {
       return null;
     }
@@ -232,11 +247,18 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null");
+      whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
+      whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ?");
+      parameters.add(account.getId());
+      whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_ORGANIZATION + ".id in (");
+      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+          .getNaturalTree(organization.getId())) + ") ");
       whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
       parameters.add(partnername);
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
           FIN_BankStatementLine.class, whereClause.toString(), parameters);
+      bsl.setFilterOnReadableOrganization(false);
       List<FIN_BankStatementLine> matchedLines = bsl.list();
       if (matchedLines.size() == 0)
         return null;
@@ -248,7 +270,7 @@ public abstract class FIN_BankStatementImport {
     }
   }
 
-  BusinessPartner finBPByName(String partnername) {
+  private BusinessPartner finBPByName(String partnername, Organization organization) {
     if (partnername == null || "".equals(partnername)) {
       return null;
     }
@@ -260,8 +282,12 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" as bp ");
       whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = ?");
       parameters.add(partnername);
+      whereClause.append(" and bp." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
+      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+          .getNaturalTree(organization.getId())) + ") ");
       final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString(), parameters);
+      bp.setFilterOnReadableOrganization(false);
       List<BusinessPartner> matchedBP = bp.list();
       if (matchedBP.size() == 0)
         return null;
@@ -275,5 +301,74 @@ public abstract class FIN_BankStatementImport {
 
   public abstract List<FIN_BankStatementLine> loadFile(InputStream in,
       FIN_BankStatement targetBankStatement);
+
+  private BusinessPartner matchBusinessPartnerByNameTokens(String partnername,
+      Organization organization) {
+    if (partnername == null || "".equals(partnername)) {
+      return null;
+    }
+    StringTokenizer st = new StringTokenizer(partnername);
+    List<String> list = new ArrayList<String>();
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      if (token.length() > 3) {
+        list.add(token);
+      }
+    }
+    if (list.isEmpty()) {
+      return null;
+    }
+    final StringBuilder whereClause = new StringBuilder();
+    List<Object> parameters = new ArrayList<Object>();
+    OBContext.setAdminMode();
+    try {
+      whereClause.append(" as b ");
+      whereClause.append(" where (");
+      for (String token : list) {
+        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower(?) or ");
+        parameters.add("%" + token + "%");
+      }
+      whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
+      whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
+      whereClause.append(FIN_Utility.getInStrSet(new OrganizationStructureProvider()
+          .getNaturalTree(organization.getId())) + ") ");
+      final OBQuery<BusinessPartner> bl = OBDal.getInstance().createQuery(BusinessPartner.class,
+          whereClause.toString(), parameters);
+      bl.setFilterOnReadableOrganization(false);
+      List<BusinessPartner> businessPartners = bl.list();
+      if (businessPartners.size() == 0) {
+        return null;
+      } else if (businessPartners.size() == 1) {
+        return businessPartners.get(0);
+      } else {
+        return closest(businessPartners, partnername);
+      }
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private BusinessPartner closest(List<BusinessPartner> businessPartners, String partnername) {
+    BusinessPartner targetBusinessPartner = businessPartners.get(0);
+    int distance = StringUtils.getLevenshteinDistance(partnername, businessPartners.get(0)
+        .getName());
+    for (BusinessPartner bp : businessPartners) {
+      // Calculates distance between two strings meaning number of changes required for a string to
+      // convert in another string
+      int bpDistance = StringUtils.getLevenshteinDistance(partnername, bp.getName());
+      if (bpDistance < distance) {
+        distance = bpDistance;
+        targetBusinessPartner = bp;
+      }
+    }
+    // Tolerance: discard business partners where number of changes needed to match is higher than
+    // half of its length
+    if (distance > (partnername.length() / 2)) {
+      return null;
+    } else {
+      return targetBusinessPartner;
+    }
+  }
 
 }

@@ -180,7 +180,13 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         if ("CO".equals(strdocaction)) {
           // Need to refresh the invoice again from the db
           invoice = dao.getObject(Invoice.class, strC_Invoice_ID);
-          final String invoiceDocCategory = invoice.getDocumentType().getDocumentCategory();
+          OBContext.setAdminMode(false);
+          String invoiceDocCategory = "";
+          try {
+            invoiceDocCategory = invoice.getDocumentType().getDocumentCategory();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
           /*
            * Print a grid popup in case of credit payment
            */

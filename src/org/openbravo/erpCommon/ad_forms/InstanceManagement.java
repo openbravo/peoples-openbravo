@@ -63,6 +63,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       printPageActive(response, vars, ActivationKey.getInstance());
+    } else if (ActivationKey.getInstance().isGolden()) {
+      pageError(response);
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
@@ -236,7 +238,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "", "", "", "", "", "" };
+    String discard[] = { "", "", "", "", "", "", "", "" };
 
     switch (activationKey.getSubscriptionStatus()) {
     case COMMUNITY:
@@ -283,6 +285,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[4] = "OPSActive";
       discard[5] = "OPSExpiredCancel";
       break;
+    }
+
+    if (activationKey.isGolden()) {
+      discard[6] = "discardGolden";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

@@ -29,6 +29,8 @@ var OB = {
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}',
         purpose: '${data.instancePurpose?js_string}',
         licenseType: '${data.licenseType?js_string}',
+        isTrial: ${data.trialStringValue},
+        isGolden: ${data.goldenStringValue},
         versionDescription: '${data.versionDescription?js_string}'
     },
 

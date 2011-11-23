@@ -520,6 +520,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "bankLineBusinessPartner", FIN_BankStatementLines[i]
             .getBusinessPartner() != null ? FIN_BankStatementLines[i].getBusinessPartner()
             .getIdentifier() : FIN_BankStatementLines[i].getBpartnername());
+        FieldProviderFactory.setField(data[i], "textcolor",
+            FIN_BankStatementLines[i].getBusinessPartner() != null ? "bold" : "normal");
         FieldProviderFactory.setField(data[i], "bankLineReferenceNo",
             FIN_BankStatementLines[i].getReferenceNo());
         // CREDIT - DEBIT

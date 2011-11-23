@@ -164,7 +164,12 @@ isc.OBSearchItem.addProperties({
     var complementsNS4 = '';
     var auxField = '';
     var hidden, i;
-    
+    var displayedValue = '';
+
+    if (this.valueMap[this.getValue()]) {
+      displayedValue = this.valueMap[this.getValue()];
+    }
+
     if (url.indexOf('Location') !== -1) {
       height = 300;
       width = 600;
@@ -182,7 +187,7 @@ isc.OBSearchItem.addProperties({
     isc.OBSearchItem.openedWindow = null;
     
     if (strValueID) {
-      auxField = 'inpNameValue=' + encodeURIComponent(this.form.getValue(this.displayField));
+      auxField = 'inpNameValue=' + encodeURIComponent(displayedValue);
     }
     if (parameters) {
       var total = parameters.length;
@@ -236,5 +241,3 @@ isc.OBSearchItem.addProperties({
     };
   }
 });
-
-
