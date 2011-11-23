@@ -90,6 +90,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
 
+    this.orderByClause = this.gridProperties.orderByClause;
+
     this.Super('initWidget', arguments);
   },
 
@@ -244,6 +246,9 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     params[OB.Constants.ORG_PARAMETER] = this.getOrgParameter();
 
+    if (this.orderByClause) {
+      params[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
+    }
 
     if (this.filterClause) {
       if (props.whereClause) {

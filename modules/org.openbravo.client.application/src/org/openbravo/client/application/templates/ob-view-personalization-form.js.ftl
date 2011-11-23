@@ -25,6 +25,9 @@
         name: '${field.name?js_string}',
         title: '${field.label?js_string}',
         type: '${field.type}',
+        <#if field.clientClass != "">
+            clientClass: '${field.clientClass}',
+        </#if>
         <#if field.type = "text">
             editorType: 'OBTextItem',
         </#if>
