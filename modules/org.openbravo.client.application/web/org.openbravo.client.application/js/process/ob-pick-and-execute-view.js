@@ -35,6 +35,7 @@ isc.OBPickAndExecuteView.addProperties({
   width: '100%',
   height: '100%',
   overflow: 'auto',
+  position: 'absolute',
 
   dataSource: null,
 
@@ -130,6 +131,20 @@ isc.OBPickAndExecuteView.addProperties({
     this.viewGrid.fetchData();
   },
 
+  closeClick: function (refresh) {
+    var window = this.parentWindow;
+
+    window.processLayout.hide();
+    window.toolBarLayout.show();
+    window.view.show();
+
+    if (refresh) {
+      window.refresh();
+    }
+
+    this.Super('closeClick', arguments);
+  },
+
   prepareGridFields: function (fields) {
     var result = isc.OBStandardView.getPrototype().prepareGridFields.apply(this, arguments),
         i, f, len = result.length;
@@ -144,12 +159,6 @@ isc.OBPickAndExecuteView.addProperties({
     }
 
     this.gridFields = result;
-  },
-
-  closeClick: function () {
-    var tabSet = OB.MainView.TabSet;
-    this.Super('closeClick', arguments);
-    tabSet.updateTab(tabSet.getSelectedTab(), this.parentWindow, true);
   },
 
   _addIconField: function () {
@@ -215,8 +224,7 @@ isc.OBPickAndExecuteView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function () {
-      // do something nice, for now, close the window
-      view.closeClick();
+      view.closeClick(true);
     });
   }
 });

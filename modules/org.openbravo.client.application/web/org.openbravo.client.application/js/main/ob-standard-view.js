@@ -1260,7 +1260,11 @@ isc.OBStandardView.addProperties({
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
-    
+
+    if(this.viewForm && this.viewForm.contextInfo) {
+      this.viewForm.contextInfo = null;
+    }
+
     var me = this;
     var formRefresh = function() {
       if (refreshCallback) {
