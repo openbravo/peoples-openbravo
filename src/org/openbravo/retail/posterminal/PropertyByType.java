@@ -24,6 +24,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;

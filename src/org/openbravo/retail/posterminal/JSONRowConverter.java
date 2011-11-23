@@ -50,6 +50,10 @@ public class JSONRowConverter {
     this.fields = fields;
   }
 
+  public JSONRowConverter() {
+    this.fields = new String[0];
+  }
+
   public Object convert(Object obj) throws JSONException {
     return convert(fields, obj);
   }

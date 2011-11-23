@@ -21,10 +21,6 @@ package org.openbravo.retail.posterminal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,23 +31,10 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.process.ProcessInstance;
-import org.openbravo.service.db.CallProcess;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.BaseWebServiceServlet;
 import org.openbravo.service.web.InvalidContentException;
@@ -148,7 +131,7 @@ public class TerminalServlet extends BaseWebServiceServlet {
 
     if (pathparts.length == 1 || "hql".equals(pathparts[1])) {
       try {
-        JSONObject jsonResult = execHQLQueryArray(request, response, getContentAsJSON(content));
+        JSONObject jsonResult = execThingArray(request, response, getContentAsJSON(content));
         writeResult(response, jsonResult.toString());
       } catch (Exception e) {
         log.error(e.getMessage(), e);
@@ -162,11 +145,10 @@ public class TerminalServlet extends BaseWebServiceServlet {
     }
   }
 
-  private JSONObject execHQLQueryArray(HttpServletRequest request, HttpServletResponse response,
+  private JSONObject execThingArray(HttpServletRequest request, HttpServletResponse response,
       Object jsonContent) throws JSONException, ServletException {
 
     // get all sentences to execute.
-
     final JSONObject jsonResult = new JSONObject();
 
     if (jsonContent instanceof JSONArray) {
@@ -185,154 +167,38 @@ public class TerminalServlet extends BaseWebServiceServlet {
     return jsonResult;
   }
 
+  @SuppressWarnings("unchecked")
   private JSONObject execThing(JSONObject jsonsent) throws JSONException, ServletException {
 
-    if (jsonsent.has("query")) { // It is an HQL Query
-      return execHQLQuery(jsonsent);
+    if (jsonsent.has("className")) {
+      try {
+        return execClassName((Class<JSONProcess>) Class.forName(jsonsent.getString("className")),
+            jsonsent);
+      } catch (ClassNotFoundException e) {
+        throw new JSONException(e);
+      }
+    } else if (jsonsent.has("query")) { // It is an HQL Query
+      return execClassName(ProcessHQLQuery.class, jsonsent);
     } else if (jsonsent.has("process")) { // It is a Process
-      return execProcess(jsonsent);
+      return execClassName(ProcessProcedure.class, jsonsent);
     } else {
       throw new JSONException("Expected one of the following properties: \"query\" or \"process\".");
     }
   }
 
-  private JSONObject execHQLQuery(JSONObject jsonsent) throws JSONException {
+  private JSONObject execClassName(Class<? extends JSONProcess> process, JSONObject jsonsent)
+      throws JSONException,
+      ServletException {
 
-    final JSONObject jsonResponse = new JSONObject();
-    final JSONArray jsonData = new JSONArray();
-
-    final int startRow = 0;
-
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
-
-    final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(querybuilder.getHQLQuery());
-
-    if (jsonsent.has("parameters")) {
-      JSONObject jsonparams = jsonsent.getJSONObject("parameters");
-      Iterator<?> it = jsonparams.keys();
-      while (it.hasNext()) {
-        String key = (String) it.next();
-        Object value = jsonparams.get(key);
-        if (value instanceof JSONObject) {
-          JSONObject jsonvalue = (JSONObject) value;
-          query.setParameter(
-              key,
-              JsonToDataConverter.convertJsonToPropertyValue(
-                  PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
-        } else {
-          query.setParameter(key,
-              JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
-
-        }
-      }
+    try {
+      JSONProcess proc = process.newInstance();
+      return proc.exec(jsonsent);
+    } catch (InstantiationException e) {
+      throw new JSONException(e);
+    } catch (IllegalAccessException e) {
+      throw new JSONException(e);
     }
-
-    JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
-
-    List<?> listdata = query.list();
-    for (Object o : listdata) {
-      jsonData.put(converter.convert(o));
-    }
-
-    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
-        + startRow - 1 : 0));
-
-    if (jsonData.length() == 0) {
-      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
-    }
-
-    jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    return jsonResponse;
   }
-
-  private JSONObject execProcess(JSONObject jsonsent) throws JSONException, ServletException {
-    
-    ConnectionProvider dalconn = new DalConnectionProvider();
-    OBContext cnx = OBContext.getOBContext();
-    String user = cnx.getUser().getId();
-    String client = cnx.getCurrentClient().getId();
-    String organization = cnx.getCurrentOrganization().getId();
-    String role = cnx.getRole().getId();
-    VariablesSecureApp vars = new VariablesSecureApp(user, client,organization, role);
-    
-    OBCriteria<org.openbravo.model.ad.ui.Process> crProcess = OBDal.getInstance().createCriteria(
-        org.openbravo.model.ad.ui.Process.class);
-    crProcess.add(Restrictions.eq("searchKey", jsonsent.getString("process")));
-    crProcess.setFilterOnReadableClients(true);
-    crProcess.setFilterOnReadableOrganization(true);
-    crProcess.setFilterOnActive(true);
-    List<org.openbravo.model.ad.ui.Process> processes = crProcess.list();
-    if (processes.size() != 1) {
-      throw new JSONException(MessageFormat.format("Process \"{0}\" does not exist.",
-          jsonsent.getString("process")));
-    }
-    org.openbravo.model.ad.ui.Process process = processes.get(0);
-
-    // Calls the process
-    final ProcessInstance pinstance = CallProcess.getInstance().callProcess(process,
-        jsonsent.optString("record"), new HashMap<String, Object>());
-
-    final JSONObject jsonResponse = new JSONObject();
-
-    String message = pinstance.getErrorMsg();
-    int i = message.indexOf("@ERROR=");
-    if (i >= 0) {
-      throw new JSONException(message.substring(i + 7));
-    } else {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", pinstance.getResult());
-      jsonResponse.put("record", pinstance.getRecordID());
-      jsonResponse.put("message",
-          Utility.parseTranslation(dalconn, vars, vars.getLanguage(), message));
-    }
-
-    return jsonResponse;
-  }
-
-  // private JSONObject execJavaProcess(JSONObject jsonsent) throws JSONException, ServletException
-  // {
-  //
-  // OBContext cnx = OBContext.getOBContext();
-  // String user = cnx.getUser().getId();
-  // String client = cnx.getCurrentClient().getId();
-  // String organization = cnx.getCurrentOrganization().getId();
-  // String role = cnx.getRole().getId();
-  //
-  // OBError myMessage = null;
-  // ProcessBundle pb = new ProcessBundle(process.getId(), new VariablesSecureApp(user, client,
-  // organization, role)).init(dalconn);
-  //
-  // // HashMap<String, Object> params= new HashMap<String, Object>();
-  // // params.put("FIN_Bankstatement_ID", strFIN_Bankstatement_ID);
-  // // params.put("adOrgId", vars.getStringParameter("inpadOrgId"));
-  // // params.put("adClientId", vars.getStringParameter("inpadClientId"));
-  // // params.put("tabId", tabId);
-  // // pb.setParams(params);
-  //
-  // new ProcessRunner(pb).execute(dalconn);
-  // myMessage = (OBError) pb.getResult();
-  //
-  // final JSONObject jsonResponse = new JSONObject();
-  // jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-  //
-  // final JSONObject jsonResult = new JSONObject();
-  // jsonResult.put("title", myMessage.getTitle());
-  // jsonResult.put("message", myMessage.getMessage());
-  // jsonResponse.put("result", jsonResult);
-  //
-  // final JSONObject jsonResultLoc = new JSONObject();
-  // jsonResultLoc.put("title",
-  // Utility.parseTranslation(dalconn, vars, vars.getLanguage(), myMessage.getTitle()));
-  // jsonResultLoc.put("message",
-  // Utility.parseTranslation(dalconn, vars, vars.getLanguage(), myMessage.getMessage()));
-  // jsonResponse.put("resultLocalized", jsonResultLoc);
-  //
-  // return jsonResponse;
-  // }
 
   private String[] checkSetParameters(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
