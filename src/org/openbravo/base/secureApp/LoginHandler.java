@@ -216,6 +216,11 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
         goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
+      case EXPIRED_GOLDEN:
+        msg = Utility.messageBD(myPool, "OPS_EXPIRED_GOLDEN", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
+        updateDBSession(sessionId, false, "IOBPS");
+        goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html", doRedirect);
       case NO_RESTRICTION:
         break;
       }

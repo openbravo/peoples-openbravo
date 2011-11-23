@@ -175,7 +175,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
      return;
    }
 
-    if(OB.Application.licenseType === 'C') {
+    if(OB.Application.licenseType === 'C' || OB.Application.isTrial || OB.Application.isGolden) {
       isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBKMO_ActivateMessage')]), {
           isModal: true,
           showModalMask: true,

@@ -47,6 +47,8 @@ import javax.crypto.Cipher;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -89,8 +91,10 @@ public class ActivationKey {
   private LicenseClass licenseClass;
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
+  private List<String> goldenExcludedArtifacts;
   private Date lastRefreshTime;
   private boolean trial = false;
+  private boolean golden = false;
   private Date startDate;
   private Date endDate;
 
@@ -101,6 +105,7 @@ public class ActivationKey {
 
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
+  private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -108,7 +113,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN
   }
 
   public enum CommercialModuleStatus {
@@ -117,7 +122,8 @@ public class ActivationKey {
 
   public enum FeatureRestriction {
     NO_RESTRICTION(""), DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"), TIER1_RESTRICTION(
-        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION("");
+        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION(""), GOLDEN_RESTRICTION(
+        "RESTRICTED_TO_GOLDEN");
 
     private String msg;
 
@@ -163,6 +169,8 @@ public class ActivationKey {
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
+  private static final Long EXPIRATION_BASIC_DAYS = 30L;
+  private static final Long EXPIRATION_PROF_DAYS = 30L;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -236,10 +244,13 @@ public class ActivationKey {
     subscriptionActuallyConverted = false;
     tier1Artifacts = null;
     tier2Artifacts = null;
+    goldenExcludedArtifacts = null;
     trial = false;
+    golden = false;
     licenseClass = LicenseClass.COMMUNITY;
     startDate = null;
     endDate = null;
+    pendingTime = null;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -316,10 +327,13 @@ public class ActivationKey {
       licenseClass = LicenseClass.BASIC;
     }
 
-    subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
-    trial = "true".equals(getProperty("trial"));
-
+    // Check for dates to know if the instance is active
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
+
+    trial = "true".equals(getProperty("trial"));
+    golden = "true".equals(getProperty("golden"));
+
     try {
       startDate = sd.parse(getProperty("startdate"));
 
@@ -423,7 +437,8 @@ public class ActivationKey {
     DisabledModules.reload();
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
-    if (isActive() && licenseClass == LicenseClass.STD) {
+    goldenExcludedArtifacts = new ArrayList<String>();
+    if (isActive() && licenseClass == LicenseClass.STD && !golden) {
       // Don't read restrictions for Standard instances
       return;
     }
@@ -452,10 +467,15 @@ public class ActivationKey {
         // basic, restrict tier 2
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       }
+
+      if (isGolden()) {
+        goldenExcludedArtifacts.addAll(m1.get(GOLDEN_EXCLUDED));
+      }
     } catch (Exception e) {
       log4j.error("Error reading license restriction file", e);
       tier1Artifacts = null;
       tier2Artifacts = null;
+      goldenExcludedArtifacts = null;
     }
   }
 
@@ -596,6 +616,10 @@ public class ActivationKey {
 
     if (trial && !isHeartbeatActive()) {
       return LicenseRestriction.HB_NOT_ACTIVE;
+    }
+
+    if (!isActive && golden) {
+      return LicenseRestriction.EXPIRED_GOLDEN;
     }
 
     if (!isActive) {
@@ -743,8 +767,10 @@ public class ActivationKey {
         sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
       }
       sb.append("</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
-          .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      if (startDate != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
+            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      }
 
       sb.append("<tr><td>")
           .append(Utility.messageBD(conn, "OPSEndDate", lang))
@@ -1017,7 +1043,7 @@ public class ActivationKey {
       return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type:" + actualType + " id:" + id);
-    if (tier1Artifacts == null || tier2Artifacts == null) {
+    if (tier1Artifacts == null || tier2Artifacts == null || goldenExcludedArtifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -1068,7 +1094,7 @@ public class ActivationKey {
     }
 
     // Check core premium features restrictions
-    if (licenseClass == LicenseClass.STD) {
+    if (licenseClass == LicenseClass.STD && !golden) {
       return FeatureRestriction.NO_RESTRICTION;
     }
 
@@ -1077,6 +1103,9 @@ public class ActivationKey {
     }
     if (tier2Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER2_RESTRICTION;
+    }
+    if (goldenExcludedArtifacts.contains(actualType + artifactId)) {
+      return FeatureRestriction.GOLDEN_RESTRICTION;
     }
 
     if ("W".equals(actualType)) {
@@ -1132,7 +1161,7 @@ public class ActivationKey {
    * Returns current subscription status
    */
   public SubscriptionStatus getSubscriptionStatus() {
-    if (!isOPSInstance()) {
+    if (!isOPSInstance() || inconsistentInstance) {
       return SubscriptionStatus.COMMUNITY;
     } else if (isSubscriptionConverted()) {
       return SubscriptionStatus.CANCEL;
@@ -1147,5 +1176,74 @@ public class ActivationKey {
 
   public boolean isTrial() {
     return trial;
+  }
+
+  public boolean isGolden() {
+    return golden;
+  }
+
+  /**
+   * Returns a JSONObject with a message warning about near expiration or already expired instance.
+   * 
+   */
+  public JSONObject getExpirationMessage(String lang) {
+    JSONObject result = new JSONObject();
+    try {
+      // Community or professional without expiration
+      if (pendingTime == null || subscriptionActuallyConverted) {
+        return result;
+      }
+
+      if (!hasExpired) {
+        String msg;
+        Long daysToExpireMsg = getProperty("daysWarn") == null ? null : Long
+            .parseLong(getProperty("daysWarn"));
+        if (golden) {
+          msg = "OBPS_TO_EXPIRE_GOLDEN";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = 999L; // show always
+          }
+        } else if (trial) {
+          msg = "OBPS_TO_EXPIRE_TRIAL";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = 999L; // show always
+          }
+        } else if (licenseClass == LicenseClass.BASIC) {
+          msg = "OBPS_TO_EXPIRE_BASIC";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = EXPIRATION_BASIC_DAYS;
+          }
+        } else {
+          msg = "OBPS_TO_EXPIRE_PROF";
+          if (daysToExpireMsg == null) {
+            daysToExpireMsg = EXPIRATION_PROF_DAYS;
+          }
+        }
+
+        if (pendingTime <= daysToExpireMsg) {
+          result.put("type", "Error");
+          result.put("text", Utility.messageBD(new DalConnectionProvider(false), msg, lang, false)
+              .replace("@days@", pendingTime.toString()));
+        }
+      } else {
+        String msg;
+        if (golden) {
+          msg = "OBPS_EXPIRED_GOLDEN";
+          result.put("disableLogin", true);
+        } else if (trial) {
+          msg = "OBPS_EXPIRED_TRIAL";
+        } else if (licenseClass == LicenseClass.BASIC) {
+          msg = "OBPS_EXPIRED_BASIC";
+        } else {
+          msg = "OBPS_EXPIRED_PROF";
+        }
+
+        result.put("type", "Error");
+        result.put("text", Utility.messageBD(new DalConnectionProvider(false), msg, lang, false));
+      }
+    } catch (JSONException e) {
+      log4j.error("Error calculating expiration message", e);
+    }
+    return result;
   }
 }
