@@ -294,6 +294,13 @@ public class Utility {
   }
 
   /**
+   * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
+   */
+  public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
+    return messageBD(conn, strCode, strLanguage, true);
+  }
+
+  /**
    * Translate the given code into some message from the application dictionary.
    * 
    * @param conn
@@ -302,9 +309,12 @@ public class Utility {
    *          String with the code to search.
    * @param strLanguage
    *          String with the translation language.
+   * @param escape
+   *          Escape \n and " characters
    * @return String with the translated message.
    */
-  public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
+  public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage,
+      boolean escape) {
     String strMessage = "";
     if (strLanguage == null || strLanguage.equals(""))
       strLanguage = "en_US";
@@ -327,7 +337,10 @@ public class Utility {
     if (strMessage == null || strMessage.equals("")) {
       strMessage = strCode;
     }
-    return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    if (escape) {
+      strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    }
+    return strMessage;
   }
 
   /**

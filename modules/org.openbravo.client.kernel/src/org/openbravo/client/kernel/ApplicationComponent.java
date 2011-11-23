@@ -173,6 +173,14 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return ActivationKey.getInstance().getLicenseClass().getCode();
   }
 
+  public String getTrialStringValue() {
+    return Boolean.toString(ActivationKey.getInstance().isTrial());
+  }
+
+  public String getGoldenStringValue() {
+    return Boolean.toString(ActivationKey.getInstance().isGolden());
+  }
+
   public String getVersionDescription() {
     ActivationKey ak = ActivationKey.getInstance();
     String strVersion = OBVersion.getInstance().getMajorVersion();

@@ -196,6 +196,9 @@ isc.OBPersonalizationTreeGrid.addProperties({
     // to be dropped on the statusbar
     if (folder.name === OB.Personalization.STATUSBAR_GROUPNAME) {
       for (i = 0; i < length; i++) {
+        if (nodes[i].preventInStatusBar) {
+          return;
+        }
         if (!nodes[i].wasOnStatusBarField && nodes[i].required && !nodes[i].hasDefaultValue) {
           return;
         }

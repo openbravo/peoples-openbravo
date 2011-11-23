@@ -1657,25 +1657,10 @@ isc.OBViewGrid.addProperties({
         }
       }    
     }
-
-    this.recomputeCanvasComponents(rowNum);
     
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
     
     return ret;
-  },
-
-  // recompute recordcomponents
-  recomputeCanvasComponents: function(rowNum) {
-    var i, fld, length = this.getFields().length;
-    
-    // remove client record components in edit mode
-    for (i = 0; i < length; i++) {
-      fld = this.getFields()[i];
-      if (fld.clientClass) {
-        this.refreshRecordComponent(rowNum, i);
-      }
-    }
   },
   
   startEditingNew: function(rowNum){
@@ -1799,7 +1784,7 @@ isc.OBViewGrid.addProperties({
     this.view.toolBar.updateButtonState(true);
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
-    this.recomputeCanvasComponents(rowNum);
+    this.refreshRow(rowNum);
   },
 
   undoEditSelectedRows: function(){
@@ -1912,7 +1897,7 @@ isc.OBViewGrid.addProperties({
       
       this.view.standardWindow.cleanUpAutoSaveProperties();
 
-      this.recomputeCanvasComponents(rowNum);
+      this.refreshRow(rowNum);
    
       // update after removing the error msg
       this.view.updateTabTitle();

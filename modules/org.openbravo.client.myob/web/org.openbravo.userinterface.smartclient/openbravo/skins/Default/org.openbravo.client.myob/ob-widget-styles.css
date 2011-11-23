@@ -27,7 +27,7 @@
   font-family: 'lucida sans', sans-serif;
   font-weight: bold;
   padding-left: 5px;
-  padding-top: 2px;
+  padding-top: 4px;
   vertical-align: top;
 }
 
@@ -175,6 +175,7 @@
 .OBWidgetMenuButtonDisabled img,
 .OBWidgetMenuButtonFocused img,
 .OBWidgetMenuButtonFocusedOver img {
+  margin: 0px 2px 1px 0px;
   padding: 1px; 
   background: #91A777;
 }
