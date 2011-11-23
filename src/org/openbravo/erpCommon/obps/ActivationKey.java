@@ -1190,7 +1190,7 @@ public class ActivationKey {
     JSONObject result = new JSONObject();
     try {
       // Community or professional without expiration
-      if (pendingTime == null) {
+      if (pendingTime == null || subscriptionActuallyConverted) {
         return result;
       }
 
