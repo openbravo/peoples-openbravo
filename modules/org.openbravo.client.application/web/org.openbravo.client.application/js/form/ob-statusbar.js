@@ -161,14 +161,14 @@ isc.OBStatusBar.addProperties( {
   buttonBarProperties: {},
 
   initWidget : function() {
-    this.contentLabel = isc.OBStatusBarTextLabel.create( {
-      contents : '&nbsp;',
+    this.content = isc.HLayout.create( {
+      defaultLayoutAlign: 'center',
       width : '100%',
       height : '100%'
     });
 
     this.leftStatusBar = isc.OBStatusBarLeftBar.create({});
-    this.leftStatusBar.addMember(this.contentLabel);
+    this.leftStatusBar.addMember(this.content);
     
     this.buttonBar = isc.OBStatusBarIconButtonBar.create(this.buttonBarProperties);
     this.addCreateButtons();
@@ -351,16 +351,45 @@ isc.OBStatusBar.addProperties( {
       linkImageHeight = '';
     }
 
+    for (i = this.content.members.length - 1; i >= 0; i--) {
+      if (this.content.members[i].canvasItem) {
+        this.content.removeMember(this.content.members[i]);
+      }
+    }
+    
+    this.content.destroyAndRemoveMembers(this.content.members);
+    this.content.setMembers([]);
+    
     if (!isc.Page.isRTL()) { // LTR mode
       if (this.statusCode) {
-        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+        msg = '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+        this.content.addMember(isc.OBStatusBarTextLabel.create({
+          contents: msg
+        }));
       }
       if (arrayTitleField) {
         length = arrayTitleField[0].length;
         for (i = 0; i < length; i++) {
           if (i !== 0 || this.statusCode) {
-            msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+            msg = '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }
+          if (isc.isA.Canvas(arrayTitleField[1][i])) {
+            if (msg) {
+              this.content.addMember(isc.OBStatusBarTextLabel.create({
+                contents: msg
+              }));
+            }
+            if (arrayTitleField[0][i]) {
+              msg = '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ':&nbsp;' + '</span>';
+              this.content.addMember(isc.OBStatusBarTextLabel.create({
+                contents: msg
+              }));
+            }
+            arrayTitleField[1][i].show();
+            this.content.addMember(arrayTitleField[1][i]);
+            continue;
+          }
+          
           if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
             msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
               '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
@@ -370,24 +399,34 @@ isc.OBStatusBar.addProperties( {
             msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ':&nbsp;' + '</span>';
           }
           msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+          this.content.addMember(isc.OBStatusBarTextLabel.create({
+            contents: msg
+          }));
+          msg = null;
         }
       }
       if (message) {
         if (arrayTitleField || this.statusCode) {
-          msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          msg = '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
         msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+        this.content.addMember(isc.OBStatusBarTextLabel.create({
+          contents: msg
+        }));
       }
     } else { // RTL mode
       if (message) {
-        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+        msg = '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
         if (arrayTitleField || this.statusCode) {
           msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
+        this.content.addMember(isc.OBStatusBarTextLabel.create({
+          contents: msg
+        }));
       }
       if (arrayTitleField) {
         for (i = arrayTitleField[0].length-1; i >= 0; i--) {
-          msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+          msg = '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
           if (arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
             msg += '<span class="' + (this.titleLinkStyle?this.titleLinkStyle:'') + 
               '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + 
@@ -399,17 +438,23 @@ isc.OBStatusBar.addProperties( {
           if (i !== 0 || this.statusCode) {
             msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
           }
+          this.content.addMember(isc.OBStatusBarTextLabel.create({
+            contents: msg
+          }));
         }
       }
       if (this.statusCode) {
-        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+        msg = '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+        this.content.addMember(isc.OBStatusBarTextLabel.create({
+          contents: msg
+        }));
       }
     }
 
-    if (this.labelOverflowHidden) {
-      msg = '<nobr>' + msg + '</nobr>';
-    }
-    this.contentLabel.setContents(msg);
+//    if (this.labelOverflowHidden) {
+//      msg = '<nobr>' + msg + '</nobr>';
+//    }
+//    this.contentLabel.setContents(msg);
   },
   
   getValidValue: function(value) {

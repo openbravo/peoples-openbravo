@@ -24,7 +24,21 @@ isc.ClassFactory.defineClass('OBClientClassCanvasItem', isc.CanvasItem);
 
 isc.OBClientClassCanvasItem.addProperties({
   autoDestroy: true,
-
+  
+  // if the canvas is used somewhere else then
+  // don't redraw it
+  placeCanvas: function() {
+    if (this.canvas && this.canvas.parentElement === this.form) {
+      this.Super('placeCanvas', arguments);
+    }
+  },
+  
+  showValue: function(displayValue, dataValue, form, item) {
+    if (this.canvas && this.canvas.showValue) {
+      this.canvas.showValue(displayValue, dataValue, form, item);
+    }
+  },
+  
   createCanvas: function() {
     var canvas = isc.ClassFactory.newInstance(this.clientClass, {canvasItem: this});
     
@@ -49,4 +63,26 @@ isc.OBClientClassCanvasItem.addProperties({
     }
     this.Super('redrawing', arguments);
   }
+});
+
+isc.defineClass('OBTruncAddMinusDisplay', isc.Label);
+
+isc.OBTruncAddMinusDisplay.addProperties({
+  wrap: false,
+  height: 1,
+  width: 1,
+  overflow: 'visible',
+  
+  showValue: function(displayValue, dataValue, form, item) {
+    if (dataValue === 0) {
+      this.setContents(displayValue);
+    } else if (!displayValue) {
+      this.setContents('');
+    } else if (displayValue.startsWith('-')) {
+      this.setContents(displayValue.substring(1));
+    } else {
+      this.setContents('-' + displayValue);
+    }
+  }
+  
 });

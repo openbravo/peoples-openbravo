@@ -945,7 +945,7 @@ public class OBViewFieldHandler {
     private int gridSort = 0;
 
     public String getClientClass() {
-      return "";
+      return field.getClientclass() == null ? "" : field.getClientclass();
     }
 
     public String getOnChangeFunction() {
@@ -1086,6 +1086,10 @@ public class OBViewFieldHandler {
     }
 
     public String getFieldProperties() {
+
+      if (getClientClass().length() > 0) {
+        return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
+      }
 
       String jsonString = getUIDefinition().getFieldProperties(field).trim();
       if (jsonString == null || jsonString.trim().length() == 0) {

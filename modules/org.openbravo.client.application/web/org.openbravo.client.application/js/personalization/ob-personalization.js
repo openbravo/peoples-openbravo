@@ -108,11 +108,6 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
     dataField = dataFields[i];
     fld = fields.find('name', dataField.name);
     if (fld) {
-      if (fld.clientClass) {
-        dataField.preventInStatusBar = true;
-      } else {
-        delete dataField.preventInStatusBar;
-      }
       dataField.required = fld.required;
       dataField.hasDisplayLogic = 
           fld.hasShowIf === true || (fld.showIf !== undef && !isc.isA.OBSectionItem(fld));
@@ -212,7 +207,6 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
         colSpan : fld.colSpan,
         required: fld.required,
         hasDefaultValue: fld.hasDefaultValue,
-        preventInStatusBar: fld.clientClass,
         rowSpan : fld.rowSpan
       };
     }
