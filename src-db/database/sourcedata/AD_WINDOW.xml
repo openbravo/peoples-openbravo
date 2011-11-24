@@ -126,7 +126,7 @@
 <!--107-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--107-->  <NAME><![CDATA[Matched Invoices]]></NAME>
 <!--107-->  <DESCRIPTION><![CDATA[Track matching between purchase invoice lines and the corresponding shipment/receipt lines.]]></DESCRIPTION>
-<!--107-->  <HELP><![CDATA[Track matching between purchase invoice lines and the corresponding shipment/receipt lines.]]></HELP>
+<!--107-->  <HELP><![CDATA[This window helps you to post the discrepancies between inventory and financial accounting of those items for which the corresponding goods receipts were posted.]]></HELP>
 <!--107-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--107-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--107-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -890,7 +890,7 @@
 <!--181-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--181-->  <NAME><![CDATA[Purchase Order]]></NAME>
 <!--181-->  <DESCRIPTION><![CDATA[Create and edit orders to buy products from suppliers.]]></DESCRIPTION>
-<!--181-->  <HELP><![CDATA[Create and edit orders to buy products from suppliers.]]></HELP>
+<!--181-->  <HELP><![CDATA[Purchase Order window allows the procurement team to create and manage orders which once booked will be sent to the external suppliers.]]></HELP>
 <!--181-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--181-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--181-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -906,8 +906,8 @@
 <!--183-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--183-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--183-->  <NAME><![CDATA[Purchase Invoice]]></NAME>
-<!--183-->  <DESCRIPTION><![CDATA[Create and edit invoices received from your vendors and generate related goods receipts.]]></DESCRIPTION>
-<!--183-->  <HELP><![CDATA[Create and edit invoices received from your vendors and generate related goods receipts.]]></HELP>
+<!--183-->  <DESCRIPTION><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></DESCRIPTION>
+<!--183-->  <HELP><![CDATA[Purchase invoice window allows to register and manage suppliers invoices.]]></HELP>
 <!--183-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--183-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--183-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -924,7 +924,7 @@
 <!--184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--184-->  <NAME><![CDATA[Goods Receipt]]></NAME>
 <!--184-->  <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></DESCRIPTION>
-<!--184-->  <HELP><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></HELP>
+<!--184-->  <HELP><![CDATA[Goods Receipt window allows the warehouse management team to issue and manage items receipts as that is the team in charge of receiving the goods as well as the delivery notes attached to the goods.]]></HELP>
 <!--184-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--184-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--184-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1128,7 +1128,7 @@
 <!--228-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--228-->  <NAME><![CDATA[Matched Purchase Orders]]></NAME>
 <!--228-->  <DESCRIPTION><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></DESCRIPTION>
-<!--228-->  <HELP><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></HELP>
+<!--228-->  <HELP><![CDATA[This window tracks the link between purchase order, goods receipt and invoice lines.]]></HELP>
 <!--228-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--228-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--228-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2369,7 +2369,7 @@
 <!--800092-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800092-->  <NAME><![CDATA[Requisition]]></NAME>
 <!--800092-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessary items based on your defined plan.]]></DESCRIPTION>
-<!--800092-->  <HELP><![CDATA[Users create Requisitions in this window. Each requisition can have a preferred vendor and/or Price List. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
+<!--800092-->  <HELP><![CDATA[A requisition is a formal request of something needed by the organization or business unit.<br>Each requisition includes the item/s needed and could have a preferred vendor and/or Price List.]]></HELP>
 <!--800092-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800092-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800092-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2520,7 +2520,7 @@
 <!--1004400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400000-->  <NAME><![CDATA[Manage Requisitions]]></NAME>
-<!--1004400000-->  <HELP><![CDATA[The Purchase Manager manages the completed requisitions in this window. It is possible to create the purchase orders automatically or assign the Purchase Order Lines to the correspondent product demand manually.]]></HELP>
+<!--1004400000-->  <HELP><![CDATA[Manage Requisition window is intended to be used by the procurement team as it provides an overall picture of the items needed.<br>At the end of the day the procurement team is the one to decide what to do with the requisitions created by other members of the organization or business unit. ]]></HELP>
 <!--1004400000-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--1004400000-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--1004400000-->  <PROCESSING><![CDATA[N]]></PROCESSING>

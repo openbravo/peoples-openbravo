@@ -2968,7 +2968,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--290-->  <NAME><![CDATA[Header]]></NAME>
 <!--290-->  <DESCRIPTION><![CDATA[Create and edit a sales invoice.]]></DESCRIPTION>
-<!--290-->  <HELP><![CDATA[Create and edit a sales invoice.]]></HELP>
+<!--290-->  <HELP><![CDATA[Supplier invoices can be registered and booked in the header section of the purchase invoice window.]]></HELP>
 <!--290-->  <AD_TABLE_ID><![CDATA[318]]></AD_TABLE_ID>
 <!--290-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--290-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2995,7 +2995,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--291-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--291-->  <NAME><![CDATA[Lines]]></NAME>
 <!--291-->  <DESCRIPTION><![CDATA[Add products to be included in your invoice.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--291-->  <HELP><![CDATA[Add products to be included in your invoice.  Each product is added by creating a line.]]></HELP>
+<!--291-->  <HELP><![CDATA[Once the purchase invoice header has been properly filled in and saved, each purchase invoice line can be registered in this tab.]]></HELP>
 <!--291-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
 <!--291-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--291-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3019,7 +3019,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--292-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--292-->  <NAME><![CDATA[Tax]]></NAME>
 <!--292-->  <DESCRIPTION><![CDATA[View or edit taxes applied to your invoice.]]></DESCRIPTION>
-<!--292-->  <HELP><![CDATA[View or edit taxes applied to your invoice.]]></HELP>
+<!--292-->  <HELP><![CDATA[Summarized purchase invoice tax related information is shown in this tab.]]></HELP>
 <!--292-->  <AD_TABLE_ID><![CDATA[334]]></AD_TABLE_ID>
 <!--292-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--292-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -3045,7 +3045,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--293-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--293-->  <NAME><![CDATA[Lines]]></NAME>
 <!--293-->  <DESCRIPTION><![CDATA[Add products to be included in your purchase order.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--293-->  <HELP><![CDATA[Add products to be included in your purchase order.  Each product is added by creating a line.]]></HELP>
+<!--293-->  <HELP><![CDATA[Once the purchase order header has been properly filled in and saved, each purchase order line can be created in this tab.]]></HELP>
 <!--293-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--293-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--293-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3069,7 +3069,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--294-->  <NAME><![CDATA[Header]]></NAME>
 <!--294-->  <DESCRIPTION><![CDATA[Create a purchase order and process it when ready.]]></DESCRIPTION>
-<!--294-->  <HELP><![CDATA[Create a purchase order and process it when ready.]]></HELP>
+<!--294-->  <HELP><![CDATA[Purchase orders can be created and booked in the header section of the purchase order window.]]></HELP>
 <!--294-->  <AD_TABLE_ID><![CDATA[259]]></AD_TABLE_ID>
 <!--294-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--294-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3096,7 +3096,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--295-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--295-->  <NAME><![CDATA[Tax]]></NAME>
 <!--295-->  <DESCRIPTION><![CDATA[Edit taxes applied to your order.]]></DESCRIPTION>
-<!--295-->  <HELP><![CDATA[Edit taxes applied to your order.]]></HELP>
+<!--295-->  <HELP><![CDATA[Summarized purchase order tax related information is shown in this tab.]]></HELP>
 <!--295-->  <AD_TABLE_ID><![CDATA[314]]></AD_TABLE_ID>
 <!--295-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--295-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -3122,7 +3122,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--296-->  <NAME><![CDATA[Header]]></NAME>
 <!--296-->  <DESCRIPTION><![CDATA[Create and edit a goods receipt.]]></DESCRIPTION>
-<!--296-->  <HELP><![CDATA[Create and edit a goods receipt.]]></HELP>
+<!--296-->  <HELP><![CDATA[Goods Receipts can be issued and booked in the header section of the goods receipt window.]]></HELP>
 <!--296-->  <AD_TABLE_ID><![CDATA[319]]></AD_TABLE_ID>
 <!--296-->  <AD_WINDOW_ID><![CDATA[184]]></AD_WINDOW_ID>
 <!--296-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3149,7 +3149,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--297-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--297-->  <NAME><![CDATA[Lines]]></NAME>
 <!--297-->  <DESCRIPTION><![CDATA[Add products which are included in your goods receipt.  Each product is shown on its own line.]]></DESCRIPTION>
-<!--297-->  <HELP><![CDATA[Add products which are included in your goods receipt.  Each product is shown on its own line.]]></HELP>
+<!--297-->  <HELP><![CDATA[Once the goods receipt header has been properly filled in and saved each item received can be listed as a separate goods receipt line.]]></HELP>
 <!--297-->  <AD_TABLE_ID><![CDATA[320]]></AD_TABLE_ID>
 <!--297-->  <AD_WINDOW_ID><![CDATA[184]]></AD_WINDOW_ID>
 <!--297-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -4079,7 +4079,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--408-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--408-->  <NAME><![CDATA[Matched Invoice]]></NAME>
 <!--408-->  <DESCRIPTION><![CDATA[View which invoice line is related to which shipment line.]]></DESCRIPTION>
-<!--408-->  <HELP><![CDATA[View which invoice line is related to which shipment line.]]></HELP>
+<!--408-->  <HELP><![CDATA[Matched invoice tab lists each invoice line posted linked to the corresponding goods receipt lines, which could also be posted or not.]]></HELP>
 <!--408-->  <AD_TABLE_ID><![CDATA[472]]></AD_TABLE_ID>
 <!--408-->  <AD_WINDOW_ID><![CDATA[107]]></AD_WINDOW_ID>
 <!--408-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -4104,7 +4104,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--409-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--409-->  <NAME><![CDATA[Matched Purchase Order]]></NAME>
 <!--409-->  <DESCRIPTION><![CDATA[View which purchase order line is related to which shipment line.]]></DESCRIPTION>
-<!--409-->  <HELP><![CDATA[View which purchase order line is related to which shipment line.]]></HELP>
+<!--409-->  <HELP><![CDATA[Matched purchase order view informs about which purchase order line is linked to which receipt line and invoice line, if any.]]></HELP>
 <!--409-->  <AD_TABLE_ID><![CDATA[473]]></AD_TABLE_ID>
 <!--409-->  <AD_WINDOW_ID><![CDATA[228]]></AD_WINDOW_ID>
 <!--409-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -8783,7 +8783,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800211-->  <NAME><![CDATA[Discounts]]></NAME>
 <!--800211-->  <DESCRIPTION><![CDATA[Vendor discounts]]></DESCRIPTION>
-<!--800211-->  <HELP><![CDATA[Vendor discounts]]></HELP>
+<!--800211-->  <HELP><![CDATA[Discounts tab allows to review or add supplier discounts.]]></HELP>
 <!--800211-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800211-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800211-->  <SEQNO><![CDATA[31]]></SEQNO>
@@ -9697,7 +9697,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800249-->  <NAME><![CDATA[Requisition]]></NAME>
 <!--800249-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessary items based on your defined plan.]]></DESCRIPTION>
-<!--800249-->  <HELP><![CDATA[Users create Requisitions in this window. Each requisition can have a preferred vendor and/or Price List. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
+<!--800249-->  <HELP><![CDATA[Any member of the organization or business unit can create requisitions and monitor them in this window.]]></HELP>
 <!--800249-->  <AD_TABLE_ID><![CDATA[800212]]></AD_TABLE_ID>
 <!--800249-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
 <!--800249-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -9725,8 +9725,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800251-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800251-->  <NAME><![CDATA[Lines]]></NAME>
 <!--800251-->  <DESCRIPTION><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--800251-->  <HELP><![CDATA[
-Each line is a product demand for a specific date.  It is also possible to define a preferred vendor, price list and the correspondent prices. The demands are locked when are being used to generate the purchase orders so there are not created duplicate purchase orders for the same demand.  ]]></HELP>
+<!--800251-->  <HELP><![CDATA[Each requisition line is a product demand for a specific date. ]]></HELP>
 <!--800251-->  <AD_TABLE_ID><![CDATA[800214]]></AD_TABLE_ID>
 <!--800251-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
 <!--800251-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -10361,8 +10360,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1004400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400000-->  <NAME><![CDATA[Matched PO Lines]]></NAME>
-<!--1004400000-->  <HELP><![CDATA[
-Purchase Order lines created to fulfill the product demand.]]></HELP>
+<!--1004400000-->  <HELP><![CDATA[Once a requisition line has a purchase order line linked to it, the purchase order line information is shown in this tab.]]></HELP>
 <!--1004400000-->  <AD_TABLE_ID><![CDATA[1004400000]]></AD_TABLE_ID>
 <!--1004400000-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
 <!--1004400000-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -10387,7 +10385,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400001-->  <NAME><![CDATA[Header]]></NAME>
 <!--1004400001-->  <DESCRIPTION><![CDATA[Create a requisition for procurement.]]></DESCRIPTION>
-<!--1004400001-->  <HELP><![CDATA[By default appears all the completed requisitions. It is possible to create Purchase Orders automatically and close them when all the demand has been fulfilled. ]]></HELP>
+<!--1004400001-->  <HELP><![CDATA[Procurement management team can perform several actions regarding requisitions.<br>This window allows them to manage requisitions regardless their current status, therefore they can change or close a requisition and create purchase orders for those demands.]]></HELP>
 <!--1004400001-->  <AD_TABLE_ID><![CDATA[800212]]></AD_TABLE_ID>
 <!--1004400001-->  <AD_WINDOW_ID><![CDATA[1004400000]]></AD_WINDOW_ID>
 <!--1004400001-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -10413,7 +10411,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400002-->  <NAME><![CDATA[Lines]]></NAME>
 <!--1004400002-->  <DESCRIPTION><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--1004400002-->  <HELP><![CDATA[Each line is a product demand for a specific date.&nbsp; It is also possible to define a preferred vendor, price list and the correspondent prices. If the&nbsp; line is locked it is possible to view in this tab the user and the cause of the lock.]]></HELP>
+<!--1004400002-->  <HELP><![CDATA[Procurement team can perform a set of actions regarding requisitions lines. It is possible for them to either create lines or product demands or to cancel them.]]></HELP>
 <!--1004400002-->  <AD_TABLE_ID><![CDATA[800214]]></AD_TABLE_ID>
 <!--1004400002-->  <AD_WINDOW_ID><![CDATA[1004400000]]></AD_WINDOW_ID>
 <!--1004400002-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -10436,7 +10434,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400003-->  <NAME><![CDATA[Matched PO Lines]]></NAME>
-<!--1004400003-->  <HELP><![CDATA[Purchase Order lines created to fulfill the product demand. They can be inserted manually or automatically with the process to generate the purchase orders.]]></HELP>
+<!--1004400003-->  <HELP><![CDATA[This tab allows the procurement  management team to either review the purchase order line automatically linked to a requisition line or to manually link an existing purchase order line to the corresponding requisition line.]]></HELP>
 <!--1004400003-->  <AD_TABLE_ID><![CDATA[1004400000]]></AD_TABLE_ID>
 <!--1004400003-->  <AD_WINDOW_ID><![CDATA[1004400000]]></AD_WINDOW_ID>
 <!--1004400003-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -10582,6 +10580,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1011100001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1011100001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1011100001-->  <NAME><![CDATA[Discounts]]></NAME>
+<!--1011100001-->  <HELP><![CDATA[Discount tab alllows the procurement management team to include supplier discounts.]]></HELP>
 <!--1011100001-->  <AD_TABLE_ID><![CDATA[1011100000]]></AD_TABLE_ID>
 <!--1011100001-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--1011100001-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -10808,6 +10807,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--27456D8A387F4580B30EA784C63831BB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--27456D8A387F4580B30EA784C63831BB-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--27456D8A387F4580B30EA784C63831BB-->  <DESCRIPTION><![CDATA[Taxes related to the invoice line]]></DESCRIPTION>
+<!--27456D8A387F4580B30EA784C63831BB-->  <HELP><![CDATA[For each purchase invoice line, Openbravo automatically populates the line tax related information in this tab.]]></HELP>
 <!--27456D8A387F4580B30EA784C63831BB-->  <AD_TABLE_ID><![CDATA[2C75DEA0B5914305B4D789F76FCFD276]]></AD_TABLE_ID>
 <!--27456D8A387F4580B30EA784C63831BB-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--27456D8A387F4580B30EA784C63831BB-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -10994,7 +10994,7 @@ The corresponding tables have then the following setting:
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <NAME><![CDATA[Reversed Invoices]]></NAME>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <DESCRIPTION><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice]]></DESCRIPTION>
-<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[In this tab the user can define the reversed invoices (if any) associated with the invoice. When the user voids an invoice, the reversed invoice is automatically created, In case of a Credit Memo or a negative invoice, the user must manually create the reversed invoices.]]></HELP>
+<!--3ED38B380CD849B38F0AC1B52F992C34-->  <HELP><![CDATA[This tab allows you to review or link the purchase invoices reversed or voided.]]></HELP>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_TABLE_ID><![CDATA[43393FBD706A441D837C5CBA07D10ABE]]></AD_TABLE_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <SEQNO><![CDATA[80]]></SEQNO>
@@ -11742,6 +11742,8 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <DESCRIPTION><![CDATA[Taxes related to the order line.]]></DESCRIPTION>
+<!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <HELP><![CDATA[For each purchase oder line, Openbravo automatically populates the line tax related information in this tab.
+]]></HELP>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <AD_TABLE_ID><![CDATA[E42DDB42FF0B4F82B1CF3C711B3F0DC0]]></AD_TABLE_ID>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -12202,7 +12204,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--FF808181308EA4230130901AB2C60090-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181308EA4230130901AB2C60090-->  <NAME><![CDATA[Exchange rates]]></NAME>
 <!--FF808181308EA4230130901AB2C60090-->  <DESCRIPTION><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></DESCRIPTION>
-<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[In this tab the user can define another currency conversion rate for this document different than Openbravo systema exchange rate.]]></HELP>
+<!--FF808181308EA4230130901AB2C60090-->  <HELP><![CDATA[An exchange rate between the "transaction currency" and the "Organization accounting schema" currency/currencies can be enter in this tab. ]]></HELP>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_TABLE_ID><![CDATA[FF808181308EA42301308FB5F7BC0049]]></AD_TABLE_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--FF808181308EA4230130901AB2C60090-->  <SEQNO><![CDATA[90]]></SEQNO>
