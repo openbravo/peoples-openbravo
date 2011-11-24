@@ -53,7 +53,21 @@ OB.Utilities.truncTitle = function(title, cutLength, suffix){
   if (!title || title.length < cutLength) {
     return title;
   }
-  return title.substring(0, cutLength) + (suffix || '...');
+  var newTitle = title.substring(0, cutLength);
+  // To remove ugly title ends
+  while (newTitle.length > 4 && (newTitle.lastIndexOf(' - ') === newTitle.length - 3 || newTitle.lastIndexOf(' -') === newTitle.length - 2 || newTitle.lastIndexOf('  ') === newTitle.length - 2)) {
+    if (newTitle.lastIndexOf(' - ') === newTitle.length - 3) {
+      newTitle = newTitle.substring(0, newTitle.length - 2);
+    }
+    if (newTitle.lastIndexOf(' -') === newTitle.length - 2) {
+      newTitle = newTitle.substring(0, newTitle.length - 1);
+    }
+    if (newTitle.lastIndexOf('  ') === newTitle.length - 2) {
+      newTitle = newTitle.substring(0, newTitle.length - 1);
+    }
+  }
+  newTitle += suffix || '...';
+  return newTitle;
 };
 
 // ** {{{OB.Utilities.createDialog}}} **
