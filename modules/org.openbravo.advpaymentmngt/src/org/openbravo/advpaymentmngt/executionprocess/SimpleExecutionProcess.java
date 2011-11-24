@@ -30,12 +30,12 @@ public class SimpleExecutionProcess implements FIN_PaymentExecutionProcess {
 
   @Override
   public OBError execute(PaymentRun paymentRun) throws ServletException {
+    paymentRun.setStatus("PE");
+    OBDal.getInstance().save(paymentRun);
     for (PaymentRunPayment paymentRunPayment : paymentRun.getFinancialMgmtPaymentRunPaymentList()) {
       paymentRunPayment.getPayment().setStatus(
           paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM");
       paymentRunPayment.setResult("S");
-      paymentRun.setStatus("PE");
-      OBDal.getInstance().save(paymentRun);
       OBDal.getInstance().save(paymentRunPayment.getPayment());
       OBDal.getInstance().save(paymentRunPayment);
     }

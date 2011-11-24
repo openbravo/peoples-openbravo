@@ -15,6 +15,8 @@ public class LeaveAsCredit implements FIN_PaymentExecutionProcess {
 
   @Override
   public OBError execute(PaymentRun paymentRun) throws ServletException {
+    paymentRun.setStatus("PE");
+    OBDal.getInstance().save(paymentRun);
     for (PaymentRunPayment paymentRunPayment : paymentRun.getFinancialMgmtPaymentRunPaymentList()) {
       FIN_Payment payment = paymentRunPayment.getPayment();
       if (payment.getAmount().compareTo(BigDecimal.ZERO) < 0) {
@@ -23,8 +25,6 @@ public class LeaveAsCredit implements FIN_PaymentExecutionProcess {
       }
       payment.setStatus(payment.isReceipt() ? "RPR" : "PPM");
       paymentRunPayment.setResult("S");
-      paymentRun.setStatus("PE");
-      OBDal.getInstance().save(paymentRun);
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(paymentRunPayment);
     }
@@ -36,5 +36,4 @@ public class LeaveAsCredit implements FIN_PaymentExecutionProcess {
     result.setMessage("@Success@");
     return result;
   }
-
 }
