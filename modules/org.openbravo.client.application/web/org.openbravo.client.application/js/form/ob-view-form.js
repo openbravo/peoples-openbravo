@@ -104,6 +104,18 @@ OB.ViewFormProperties = {
       sourceWindowId = this.view.standardWindow.windowId;
       refColumnName = item.refColumnName;
       targetEntity = item.targetEntity;
+      if (item.canvas) {
+        if (item.canvas.noTitle) {
+          title = null;
+        }
+        statusBarFields[0].push(title);
+        statusBarFields[1].push(item.canvas);
+        statusBarFields[2].push(null);
+        statusBarFields[3].push(null);
+        statusBarFields[4].push(null);
+        statusBarFields[5].push(null);
+        continue;
+      }
       value = item.getValue();
       displayedValue = item.getValue();
       if(displayedValue !== null && displayedValue !== '') {
