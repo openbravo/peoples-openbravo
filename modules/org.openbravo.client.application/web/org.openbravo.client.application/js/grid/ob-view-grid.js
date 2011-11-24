@@ -1832,6 +1832,12 @@ isc.OBViewGrid.addProperties({
   // prevent multi-line content to show strangely
   // https://issues.openbravo.com/view.php?id=17531
   formatCellValue: function(value, record, rowNum, colNum) {
+    var fld = this.getFields()[colNum];
+    
+    if (fld.clientClass) {
+      return '';
+    }
+
     if (this.inCellHoverHTML || !isc.isA.String(value)) {
       return value;
     }
@@ -1840,6 +1846,7 @@ isc.OBViewGrid.addProperties({
     if (index !== -1) {
       return value.substring(0, index) + '...';
     } 
+    
     return value;
   },
   
@@ -2411,7 +2418,7 @@ isc.OBViewGrid.addProperties({
       return layout;
     }
     if (fld.clientClass && !isEditRecord) {
-      canvas = isc.ClassFactory.newInstance(fld.clientClass, {grid: this, rowNum: rowNum, record: record, colNum: colNum});
+      canvas = isc.ClassFactory.newInstance(fld.clientClass, {grid: this, fieldName: fld.name, rowNum: rowNum, record: record, colNum: colNum});
       if (canvas) {
         if (canvas.setRecord) {
           canvas.setRecord(record);

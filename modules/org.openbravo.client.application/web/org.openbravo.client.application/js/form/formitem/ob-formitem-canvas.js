@@ -73,8 +73,18 @@ isc.OBTruncAddMinusDisplay.addProperties({
   width: 1,
   overflow: 'visible',
   
+  setRecord: function(record) {
+    var fld = this.grid.getField(this.fieldName),
+      val = record[this.fieldName];
+    if (fld && fld.type && isc.SimpleType.getType(fld.type).normalDisplayFormatter) {
+      this.showValue(isc.SimpleType.getType(fld.type).normalDisplayFormatter(val), val);
+    } else {
+      this.showValue(String(record[this.fieldName]));
+    }
+  },
+  
   showValue: function(displayValue, dataValue, form, item) {
-    if (dataValue === 0) {
+    if (!dataValue || displayValue === '0') {
       this.setContents(displayValue);
     } else if (!displayValue) {
       this.setContents('');
