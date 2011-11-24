@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <OBPOS_POS id="00542C50252E46CD99E30033FE928CE2" identifier="payment.paper">
+  <OBPOS_POS id="00542C50252E46CD99E30033FE928CE2" identifier="payment.voucher">
     <id>00542C50252E46CD99E30033FE928CE2</id>
     <active>true</active>
-    <classname>payment.paper</classname>
+    <classname>payment.voucher</classname>
     <description xsi:nil="true"/>
   </OBPOS_POS>
   <OBPOS_POS id="02603D6CA7C24318BCBE313DA594411D" identifier="/com/openbravo/reports/inventoryb.bs">
@@ -234,10 +234,10 @@
     <classname>com.openbravo.pos.inventory.TaxCustCategoriesPanel</classname>
     <description xsi:nil="true"/>
   </OBPOS_POS>
-  <OBPOS_POS id="9F18F06121D54B4EA108F44791A97347" identifier="refund.paper">
+  <OBPOS_POS id="9F18F06121D54B4EA108F44791A97347" identifier="refund.voucher">
     <id>9F18F06121D54B4EA108F44791A97347</id>
     <active>true</active>
-    <classname>refund.paper</classname>
+    <classname>refund.voucher</classname>
     <description xsi:nil="true"/>
   </OBPOS_POS>
   <OBPOS_POS id="A498222FDD744AF2ACADFE78FC0BD46E" identifier="com.openbravo.pos.panels.JPanelCloseMoney">
