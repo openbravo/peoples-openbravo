@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -45,6 +46,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
+    OBContext.setAdminMode();
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
@@ -55,7 +57,9 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return jsonRequest;
   }

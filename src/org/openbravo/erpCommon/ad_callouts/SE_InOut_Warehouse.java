@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Warehouse;
 
@@ -36,9 +37,14 @@ public class SE_InOut_Warehouse extends SimpleCallout {
     final String strIsReturnWindow = info.vars.getStringParameter("isReturnMaterial", "N");
 
     if ("Y".equals(strIsSOTrx) && "Y".equals(strIsReturnWindow)) {
-      Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouseId);
-      if (warehouse.getReturnlocator().getId() != null) {
-        info.addResult("ReturnLocator", warehouse.getReturnlocator().getId());
+      OBContext.setAdminMode();
+      try {
+        Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouseId);
+        if (warehouse.getReturnlocator().getId() != null) {
+          info.addResult("ReturnLocator", warehouse.getReturnlocator().getId());
+        }
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
   }
