@@ -31,6 +31,8 @@ isc.setAutoDraw(false);
 // NOTE: disabled as now timezone is send from the client to the server
 // Time.setDefaultDisplayTimezone(0);
 
+isc.DataSource.serializeTimeAsDatetime=true;
+
 isc.Canvas.addProperties({
   
   // make sure that the datasources are also destroyed

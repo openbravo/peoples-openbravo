@@ -899,7 +899,8 @@ OB.ViewFormProperties = {
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field.type &&
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
-      isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
+      isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' ||
+      isc.SimpleType.getType(field.type).inheritsFrom === 'time');
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else if(columnValue.hasDateDefault){

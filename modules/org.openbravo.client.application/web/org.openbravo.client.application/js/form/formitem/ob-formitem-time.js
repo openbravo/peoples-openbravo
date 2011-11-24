@@ -30,16 +30,26 @@ isc.OBTimeItem.addProperties({
   shortTimeFormat: 'HH:MM:SS',
   long24TimeFormat: 'HH:MM:SS',
   longTimeFormat: 'HH:MM:SS',
+ 
   
   // make sure that the undo/save buttons get enabled, needs to be done like
-  // this because changeOnKeypress is false
+  // this because changeOnKeypress is false. Activating changeOnKeypress makes the
+  // item not editable as it is reformatted on keyStroke, the same happens calling
+  // from this method form.itemChangeActions
   keyPress: function(item, form, keyName, characterValue){
+    var i, f = this.form,
+        toolBarButtons = f.view.toolBar.leftMembers;
+    
     if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
-      if (this.form.itemChangeActions) {
-        this.form.itemChangeActions();
+      f.setHasChanged(true);
+      f.view.messageBar.hide();
+      for (i = 0; i < toolBarButtons.leftMembers.length; i++) {
+        if (toolBarButtons.leftMembers[i].updateState) {
+          toolBarButtons.leftMembers[i].updateState();
+        }
       }
     }
-    return this.Super('keyPress', arguments);
+   this.Super('keyPress', arguments);
   }
 });
 
