@@ -52,6 +52,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class DocFINFinAccTransaction extends AcctServer {
   /** Transaction type - Financial Account */
@@ -210,6 +211,18 @@ public class DocFINFinAccTransaction extends AcctServer {
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
+
+        try { // Get User1_ID and User2_ID using xsql
+          ConnectionProvider conn = new DalConnectionProvider(false);
+          DocFINFinAccTransactionData[] trxInfo = DocFINFinAccTransactionData.select(conn,
+              transaction.getId());
+          if (trxInfo.length > 0) {
+            FieldProviderFactory.setField(data[i], "user1Id", trxInfo[0].user1Id);
+            FieldProviderFactory.setField(data[i], "user2Id", trxInfo[0].user2Id);
+          }
+        } catch (Exception e) {
+          log4j.error("Error while retreiving user1 and user2 - ", e);
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -245,6 +258,19 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
             .getId());
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+
+      try { // Get User1_ID and User2_ID using xsql
+        ConnectionProvider conn = new DalConnectionProvider(false);
+        DocFINFinAccTransactionData[] trxInfo = DocFINFinAccTransactionData.select(conn,
+            transaction.getId());
+        if (trxInfo.length > 0) {
+          FieldProviderFactory.setField(data[0], "user1Id", trxInfo[0].user1Id);
+          FieldProviderFactory.setField(data[0], "user2Id", trxInfo[0].user2Id);
+        }
+      } catch (Exception e) {
+        log4j.error("Error while retreiving user1 and user2 - ", e);
+      }
+
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -835,9 +861,13 @@ public class DocFINFinAccTransaction extends AcctServer {
       FieldProviderFactory.setField(data[0], "C_SalesRegion_ID",
           transaction.getSalesRegion() != null ? transaction.getSalesRegion().getId() : "");
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
-      // This lines can be uncommented when User1 and User2 are implemented
-      // FieldProviderFactory.setField(data[0], "User1_ID", transaction.getNdDimension().getId());
-      // FieldProviderFactory.setField(data[0], "User2_ID", transaction.getNdDimension().getId());
+      // User1_ID and User2_ID
+      DocFINFinAccTransactionData[] trxInfo = DocFINFinAccTransactionData.select(conn,
+          transaction.getId());
+      if (trxInfo.length > 0) {
+        FieldProviderFactory.setField(data[0], "User1_ID", trxInfo[0].user1Id);
+        FieldProviderFactory.setField(data[0], "User2_ID", trxInfo[0].user2Id);
+      }
       FieldProviderFactory.setField(data[0], "FIN_Payment_ID",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getId() : "");
       final String cBPartnerId;
