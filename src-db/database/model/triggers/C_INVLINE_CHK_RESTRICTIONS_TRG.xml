@@ -83,6 +83,11 @@ BEGIN
     IF (:NEW.ISEDITLINENETAMT='Y' AND ROUND(TO_NUMBER(:NEW.QTYINVOICED) * TO_NUMBER(:NEW.PRICEACTUAL),v_Prec)!=TO_NUMBER(:NEW.LINENETAMT)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@LineAmountNotCorrect@') ;
     END IF;
+
+    IF (:NEW.account_id is null AND :NEW.m_product_id is null AND :NEW.linenetamt <> 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@InvoiceLineAmountMustBeZero@') ;
+    END IF;
+    
   END IF;
 END C_INVLINE_CHK_RESTRICTIONS_TRG
 ]]></body>
