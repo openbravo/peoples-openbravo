@@ -127,8 +127,9 @@ public class OBViewFieldHandler {
 
     // Processing dynamic expression (read-only logic)
     for (Field f : adFields) {
-      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
-          || !f.isActive() || !f.getColumn().isActive()) {
+      if (f.getColumn() == null || f.getColumn().getReadOnlyLogic() == null
+          || f.getColumn().getReadOnlyLogic().equals("") || !f.isActive()
+          || !f.getColumn().isActive()) {
         continue;
       }
 
@@ -148,6 +149,9 @@ public class OBViewFieldHandler {
     // Processing audit fields: if there's field for audit, don't put it in the "more info" section
     boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false, hasUpdatedByField = false;
     for (Field f : adFields) {
+      if (f.getColumn() == null) {
+        continue;
+      }
       String dbColName = f.getColumn().getDBColumnName().toLowerCase();
       if (!dbColName.startsWith("created") && !dbColName.startsWith("updated")) {
         continue;
@@ -188,8 +192,9 @@ public class OBViewFieldHandler {
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isActive()
+      if ((field.getColumn() == null && field.getClientclass() == null) || !field.isActive()
           || !(field.isDisplayed() || field.isShowInGridView())
+          || (field.getColumn() != null && !field.getColumn().isActive())
           || ApplicationUtils.isUIButton(field)) {
         ignoredFields.add(field);
         continue;
@@ -200,47 +205,90 @@ public class OBViewFieldHandler {
         continue;
       }
 
-      final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(),
-          false);
+      if (field.getColumn() == null) {
+        final OBClientClassField viewField = new OBClientClassField();
 
-      final OBViewField viewField = new OBViewField();
-      viewField.setField(field);
-      viewField.setProperty(property);
-      viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
-      viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
-      viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
-          : "");
-      // Positioning some fields in odd-columns
-      if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
-        final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
-        fields.add(spacer);
-        colNum++;
+        viewField.setField(field);
+        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
+        viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
+        viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
+            : "");
+        // Positioning some fields in odd-columns
+        if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
+          final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
+          fields.add(spacer);
+          colNum++;
+          if (colNum > 4) {
+            colNum = 1;
+          }
+        }
+
+        // change in fieldgroup
+        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+          // start of a fieldgroup use it
+          final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
+          fields.add(viewFieldGroup);
+          viewFieldGroup.setFieldGroup(field.getFieldGroup());
+
+          currentFieldGroup = viewFieldGroup;
+          currentADFieldGroup = field.getFieldGroup();
+          colNum = 1;
+        }
+
+        fields.add(viewField);
+
+        if (currentFieldGroup != null) {
+          currentFieldGroup.addChild(viewField);
+        }
+
+        colNum += viewField.getColSpan();
         if (colNum > 4) {
           colNum = 1;
         }
-      }
+      } else {
+        final OBViewField viewField = new OBViewField();
 
-      // change in fieldgroup
-      if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
-        // start of a fieldgroup use it
-        final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
-        fields.add(viewFieldGroup);
-        viewFieldGroup.setFieldGroup(field.getFieldGroup());
+        final Property property = KernelUtils.getInstance().getPropertyFromColumn(
+            field.getColumn(), false);
+        viewField.setProperty(property);
 
-        currentFieldGroup = viewFieldGroup;
-        currentADFieldGroup = field.getFieldGroup();
-        colNum = 1;
-      }
+        viewField.setField(field);
+        viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
+        viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
+        viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
+            : "");
+        // Positioning some fields in odd-columns
+        if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
+          final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
+          fields.add(spacer);
+          colNum++;
+          if (colNum > 4) {
+            colNum = 1;
+          }
+        }
 
-      fields.add(viewField);
+        // change in fieldgroup
+        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+          // start of a fieldgroup use it
+          final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
+          fields.add(viewFieldGroup);
+          viewFieldGroup.setFieldGroup(field.getFieldGroup());
 
-      if (currentFieldGroup != null) {
-        currentFieldGroup.addChild(viewField);
-      }
+          currentFieldGroup = viewFieldGroup;
+          currentADFieldGroup = field.getFieldGroup();
+          colNum = 1;
+        }
 
-      colNum += viewField.getColSpan();
-      if (colNum > 4) {
-        colNum = 1;
+        fields.add(viewField);
+
+        if (currentFieldGroup != null) {
+          currentFieldGroup.addChild(viewField);
+        }
+
+        colNum += viewField.getColSpan();
+        if (colNum > 4) {
+          colNum = 1;
+        }
       }
     }
 
@@ -292,6 +340,9 @@ public class OBViewFieldHandler {
       if (viewDef instanceof OBViewField && viewDef.getIsGridProperty()) {
         ((OBViewField) viewDef).setGridSort(sort++);
       }
+      if (viewDef instanceof OBClientClassField && viewDef.getIsGridProperty()) {
+        ((OBClientClassField) viewDef).setGridSort(sort++);
+      }
     }
 
     return fields;
@@ -315,6 +366,10 @@ public class OBViewFieldHandler {
     }
     statusBarFields = new ArrayList<String>();
     for (Field field : adFields) {
+
+      if (field.getColumn() == null) {
+        continue;
+      }
 
       if (field.isShownInStatusBar() == null || !field.isShownInStatusBar()) {
         continue;
@@ -348,6 +403,8 @@ public class OBViewFieldHandler {
     public boolean getShowColSpan();
 
     public boolean getShowStartRow();
+
+    public String getClientClass();
 
     public boolean getShowEndRow();
 
@@ -412,6 +469,7 @@ public class OBViewFieldHandler {
     public boolean isDisplayed();
 
     public boolean getHasDefaultValue();
+
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
@@ -524,6 +582,10 @@ public class OBViewFieldHandler {
       return true;
     }
 
+    public String getClientClass() {
+      return "";
+    }
+
     public boolean isShowInitiallyInGrid() {
       return false;
     }
@@ -626,6 +688,253 @@ public class OBViewFieldHandler {
       return true;
     }
 
+    public String getValidationFunction() {
+      return "";
+    }
+
+  }
+
+  public class OBClientClassField implements OBViewFieldDefinition {
+    private Field field;
+    private String label;
+    private boolean redrawOnChange = false;
+    private String showIf = "";
+    private String readOnlyIf = "";
+    private int gridSort = 0;
+
+    public String getOnChangeFunction() {
+      return field.getOnChangeFunction();
+    }
+
+    public boolean getShowColSpan() {
+      return getColSpan() != 1;
+    }
+
+    public boolean getShowStartRow() {
+      return getStartRow();
+    }
+
+    public boolean getShowEndRow() {
+      return getEndRow();
+    }
+
+    public boolean getHasChildren() {
+      return false;
+    }
+
+    public Long getGridPosition() {
+      return field.getGridPosition();
+    }
+
+    public String getClientClass() {
+      return field.getClientclass() == null ? "" : field.getClientclass();
+    }
+
+    public Long getSequenceNumber() {
+      return field.getSequenceNumber();
+    }
+
+    public String getCellAlign() {
+      return "left";
+    }
+
+    public boolean getAutoExpand() {
+      return false;
+    }
+
+    public boolean getIsAuditField() {
+      return false;
+    }
+
+    public String getGridFieldProperties() {
+      return ", canSort: false, canFilter: false";
+    }
+
+    public String getFilterEditorProperties() {
+      return "";
+    }
+
+    public String getGridEditorFieldProperties() {
+      return "";
+    }
+
+    /**
+     * @deprecated use {@link #setRedrawOnChange(boolean)}
+     */
+    @Deprecated
+    public void setReadrawOnChange(boolean value) {
+      this.setRedrawOnChange(value);
+    }
+
+    public boolean getIsGridProperty() {
+      return true;
+    }
+
+    public boolean getSessionProperty() {
+      return false;
+    }
+
+    public boolean getReadOnly() {
+      return getParentProperty() || field.isReadOnly();
+    }
+
+    public boolean getUpdatable() {
+      return true;
+    }
+
+    public boolean getPersonalizable() {
+      return true;
+    }
+
+    public boolean getParentProperty() {
+      return false;
+    }
+
+    public boolean isSearchField() {
+      return false;
+    }
+
+    public boolean isFirstFocusedField() {
+      return false;
+    }
+
+    public String getType() {
+      return "text";
+    }
+
+    public boolean getHasDefaultValue() {
+      return field.getColumn() != null && field.getColumn().getDefaultValue() != null;
+    }
+
+    public String getFieldProperties() {
+      return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
+    }
+
+    public String getName() {
+      return field.getName();
+    }
+
+    public String getColumnName() {
+      return "";
+    }
+
+    public String getInpColumnName() {
+      return "";
+    }
+
+    public String getReferencedKeyColumnName() {
+      return "";
+    }
+
+    public String getTargetEntity() {
+      return "";
+    }
+
+    public String getLabel() {
+      // compute the label
+      if (label == null) {
+        label = OBViewUtil.getLabel(field);
+      }
+      return label;
+    }
+
+    public void setLabel(String label) {
+      this.label = label;
+    }
+
+    public Field getField() {
+      return field;
+    }
+
+    public void setField(Field field) {
+      this.field = field;
+    }
+
+    public boolean getStandardField() {
+      return true;
+    }
+
+    public boolean getRequired() {
+      return false;
+    }
+
+    public Integer getLength() {
+      return field.getDisplayedLength() != null ? field.getDisplayedLength().intValue() : 0;
+    }
+
+    public boolean getForeignKeyField() {
+      return false;
+    }
+
+    public String getDataSourceId() {
+      return "";
+    }
+
+    public long getColSpan() {
+      if (field.getObuiappColspan() != null) {
+        return field.getObuiappColspan();
+      }
+      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || getRowSpan() == 2 ? 2 : 1;
+    }
+
+    public boolean getEndRow() {
+      return false;
+    }
+
+    public long getRowSpan() {
+      if (field.getObuiappRowspan() != null) {
+        return field.getObuiappRowspan();
+      }
+      return 1;
+    }
+
+    public boolean getStartRow() {
+      return field.isStartnewline();
+    }
+
+    public void setRedrawOnChange(boolean redrawOnChange) {
+      this.redrawOnChange = redrawOnChange;
+    }
+
+    public boolean getRedrawOnChange() {
+      return redrawOnChange;
+    }
+
+    public void setShowIf(String showIf) {
+      this.showIf = showIf;
+    }
+
+    public String getShowIf() {
+      return showIf;
+    }
+
+    public void setReadOnlyIf(String readOnlyExpression) {
+      this.readOnlyIf = readOnlyExpression;
+    }
+
+    public String getReadOnlyIf() {
+      return readOnlyIf;
+    }
+
+    public boolean isDisplayed() {
+      return field.isDisplayed() != null && field.isDisplayed();
+    }
+
+    public boolean isShowInitiallyInGrid() {
+      return field.isShowInGridView();
+    }
+
+    public int getGridSort() {
+      return gridSort;
+    }
+
+    public void setGridSort(int gridSort) {
+      this.gridSort = gridSort;
+    }
+
+    public String getValidationFunction() {
+      return "";
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -638,6 +947,10 @@ public class OBViewFieldHandler {
     private String showIf = "";
     private String readOnlyIf = "";
     private int gridSort = 0;
+
+    public String getClientClass() {
+      return field.getClientclass() == null ? "" : field.getClientclass();
+    }
 
     public String getOnChangeFunction() {
       return field.getOnChangeFunction();
@@ -715,6 +1028,9 @@ public class OBViewFieldHandler {
       if (!field.isActive()) {
         return false;
       }
+      if (field.getColumn() == null) {
+        return true;
+      }
       final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
       if (prop.isParent() && getWindowEntities().contains(prop.getTargetEntity().getName())) {
         return false;
@@ -770,10 +1086,14 @@ public class OBViewFieldHandler {
     }
 
     public boolean getHasDefaultValue() {
-      return field.getColumn().getDefaultValue() != null;
+      return field.getColumn() != null && field.getColumn().getDefaultValue() != null;
     }
 
     public String getFieldProperties() {
+
+      if (getClientClass().length() > 0) {
+        return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
+      }
 
       String jsonString = getUIDefinition().getFieldProperties(field).trim();
       if (jsonString == null || jsonString.trim().length() == 0) {
@@ -793,6 +1113,9 @@ public class OBViewFieldHandler {
     private UIDefinition getUIDefinition() {
       if (uiDefinition != null) {
         return uiDefinition;
+      }
+      if (field.getColumn() == null) {
+        return null;
       }
       uiDefinition = UIDefinitionController.getInstance().getUIDefinition(property.getColumnId());
       return uiDefinition;
@@ -962,12 +1285,23 @@ public class OBViewFieldHandler {
     public void setGridSort(int gridSort) {
       this.gridSort = gridSort;
     }
+
+    public String getValidationFunction() {
+      if (field.getObuiappValidator() != null) {
+        return field.getObuiappValidator();
+      }
+      return "";
+    }
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
 
     public String getOnChangeFunction() {
       return null;
+    }
+
+    public String getClientClass() {
+      return "";
     }
 
     public boolean getShowColSpan() {
@@ -1406,6 +1740,10 @@ public class OBViewFieldHandler {
 
     public boolean getShowColSpan() {
       return getColSpan() != 1;
+    }
+
+    public String getClientClass() {
+      return "";
     }
 
     public boolean getShowStartRow() {

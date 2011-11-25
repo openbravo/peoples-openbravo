@@ -505,6 +505,9 @@ public class SelectorComponent extends BaseTemplateComponent {
               outFields.add(outField);
             }
             for (Field associatedField : outFieldTargetFields) {
+              if (associatedField == null) {
+                continue;
+              }
               if (associatedField.getTab().getId().equals(tabId)) {
                 final OutSelectorField outField = new OutSelectorField();
                 outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));

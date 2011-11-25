@@ -74,6 +74,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
+      if (f.getColumn() == null) {
+        continue;
+      }
       Hibernate.initialize(f.getColumn());
       initializeColumn(f.getColumn());
     }

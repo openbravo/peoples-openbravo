@@ -50,6 +50,7 @@
   v_PUser VARCHAR2(32);
   v_is_included NUMBER:=0;
   v_DocType_ID VARCHAR2(32);
+  v_isreturndoctype CHAR(1);
   v_available_period NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
@@ -131,10 +132,10 @@
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
-      SELECT AD_Client_ID, AD_Org_ID, CreatedBy, C_DocType_ID, DateAcct
-        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct
-        FROM M_InOut
-        WHERE M_InOut_ID=v_Record_ID;
+      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype
+        FROM M_InOut io JOIN c_doctype dt ON io.c_doctype_id = dt.c_doctype_id
+        WHERE io.M_InOut_ID=v_Record_ID;
         IF(v_PUser IS NOT NULL) THEN
         	v_User:=v_PUser;
         END IF;
@@ -210,6 +211,17 @@
           RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineWithoutLocator@') ;
         END IF;	  
       
+    --Check negative quantities on return inouts
+    IF (v_isreturndoctype = 'Y') THEN
+      SELECT count(*) INTO v_count
+      FROM m_inoutline iol JOIN c_orderline ol ON iol.c_orderline_id = ol.c_orderline_id
+      WHERE iol.m_inout_id = v_record_id
+        AND iol.movementqty > 0
+        AND ol.c_order_discount_id IS NULL;
+      IF (v_Count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ReturnInOutNegativeQty@');
+      END IF;
+    END IF;
         -- Process Shipments
   
      -- Set org lines like the header
