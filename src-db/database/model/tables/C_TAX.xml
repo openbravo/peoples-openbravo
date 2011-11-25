@@ -181,7 +181,6 @@
         <unique-column name="NAME"/>
         <unique-column name="PARENT_TAX_ID"/>
       </unique>
-      <check name="C_TAX_BASEAMOUNT"><![CDATA[((BASEAMOUNT IN ('TBATAX', 'LNATAX', 'TAX'))) AND (C_TAXBASE_ID IS NOT NULL)) OR ((BASEAMOUNT) <> ALL (('TBATAX', 'LNATAX', 'TAX'))]]></check>
       <check name="C_TAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_TAX_ISTAXDEDUCTABLE"><![CDATA[ISTAXDEDUCTABLE IN ('Y', 'N')]]></check>
     </table>
