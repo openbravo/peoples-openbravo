@@ -52,7 +52,8 @@ BEGIN
   WHERE M_PRODUCT_ID = :new.M_PRODUCT_ID;
   
  -- Do not allow to de-activate products with OnHand Qty
-  IF (:new.IsActive='N' AND :old.IsActive='Y') THEN
+ -- or Change the attribute set
+  IF ((:new.IsActive='N' AND :old.IsActive='Y') OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))) THEN
    SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) INTO v_ControlNo
    FROM (SELECT QtyOnHand, 0 AS QtyReserved, 0 AS QtyOrdered
    FROM M_Storage_Detail s
@@ -65,7 +66,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20400, 'Product has active Inventory');
    END IF;
   END IF;
-
+	
   IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.')  OR COALESCE(:old.documentnote,'.') <> COALESCE(:new.documentnote,'.') ) THEN   
     
     UPDATE M_PRODUCT_Trl
