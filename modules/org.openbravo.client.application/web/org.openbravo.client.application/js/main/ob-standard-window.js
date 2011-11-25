@@ -46,12 +46,25 @@ isc.OBStandardWindow.addProperties({
   
   views: [],
   
+  stackZIndex: 'firstOnTop',
+  align: 'center',
+  defaultLayoutAlign: 'center',
+
   // is set when a form or grid editing results in dirty data
   // in the window
   dirtyEditForm: null,
   
   initWidget: function(){
     this.views = [];
+
+    this.processLayout = isc.VStack.create({
+      height: 1,
+      width: 1,
+      overflow: 'visible',
+      visibility: 'hidden'
+    });
+
+    this.addMember(this.processLayout);
     
     this.toolBarLayout = isc.HLayout.create({
       mouseDownCancelParentPropagation: true,
@@ -93,7 +106,78 @@ isc.OBStandardWindow.addProperties({
       this.setPersonalization(this.getClass().personalization);
     }
   },
-  
+
+  openProcess: function (params) {
+    var parts = this.getPrototype().Class.split('_'), 
+        len = parts.length,
+        className = '_',
+        tabSet = OB.MainView.TabSet, vStack;
+    
+    if (params.windowId) {
+      className = className + params.windowId;
+      if(len === 3) {
+        // debug mode, we have added _timestamp
+        className = className + '_' + parts[2];
+      }
+
+      if (isc[className]) {
+        this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+        this.runningProcess = isc[className].create(isc.addProperties({}, params, {
+          parentWindow: this,
+          width: this.width,
+          height: this.height
+        }));
+
+        this.processLayout.addMember(this.runningProcess);
+        this.toolBarLayout.hide();
+        this.view.hide();
+        this.processLayout.show();
+      }
+    }
+  },
+
+  refresh: function () {
+    var currentView = this.activeView, afterRefresh;
+
+    afterRefresh = function () {
+      // Refresh context view
+      //contextView.getTabMessage();
+      currentView.toolBar.refreshCustomButtons();
+//
+//      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+//        // Executing an action defined in parent tab, current tab is maximized,
+//        // let's set half for each in order to see the message
+//        contextView.setHalfSplit();
+//      }
+
+      // Refresh in order to show possible new records
+      currentView.refresh(null, false, true);
+    };
+
+    if(!currentView) {
+      return;
+    }
+
+    if(this.selectedState) {
+      currentView.viewGrid.setSelectedState(this.selectedState);
+      this.selectedState = null;
+    }
+
+    if (currentView.parentView) {
+      currentView.parentView.setChildsToRefresh();
+    } else {
+      currentView.setChildsToRefresh();
+    }
+
+    if (currentView.viewGrid.getSelectedRecord()) {
+      // There is a record selected, refresh it and its parent
+      currentView.refreshCurrentRecord(afterRefresh);
+    } else {
+      // No record selected, refresh parent
+      currentView.refreshParentRecord(afterRefresh);
+    }
+  },
+
   readWindowSettings: function() {
     var standardWindow = this;
     
@@ -214,6 +298,7 @@ isc.OBStandardWindow.addProperties({
       }
       
       // apply the default view
+      // maybe do this in a separate thread
       if (defaultView) {
         OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
       }

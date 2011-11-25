@@ -235,6 +235,7 @@
                                         FROM C_DOCTYPE
                                         WHERE DocBaseType='SOO'
                                         AND DocSubTypeSO NOT IN('ON', 'OB')
+                                        AND isReturn = 'N'
                  )
             -- Manually Selected
             AND((v_Selection='Y'

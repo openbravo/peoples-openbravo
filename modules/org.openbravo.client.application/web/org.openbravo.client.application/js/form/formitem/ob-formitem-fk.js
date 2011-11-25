@@ -25,7 +25,7 @@ isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
 
 isc.OBFKItem.addProperties({
   operator: 'iContains',
-    
+  
   // set the identifier field also, that's what gets displayed in the grid
   changed: function (form, item, value) {
     if (!this._pickedValue && value) {

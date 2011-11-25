@@ -40,8 +40,10 @@
         COALESCE(l.M_PRODUCT_UOM_ID,null,'0') as HAVESEC,'' as HAVESECUOM,'' AS LOCATOR
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  and m.M_InOutLine_ID IS NOT NULL,
-        C_ORDER o, C_UOM uom, M_PRODUCT p
+        C_ORDER o, C_UOM uom, M_PRODUCT p, C_DOCTYPE dt
         WHERE o.C_ORDER_ID = l.C_ORDER_ID 
+        AND o.C_DOCTYPE_ID = dt.C_DOCTYPE_ID
+        AND dt.isreturn = 'N'
         AND o.IsSOTrx='N' 
         AND o.DocStatus IN ('CL','CO') 
         AND o.AD_Client_ID IN ('1') 
@@ -66,7 +68,7 @@
     <Sql>
       <![CDATA[
         SELECT o.C_ORDER_ID as ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME
-        FROM C_ORDER o 
+        FROM C_ORDER o JOIN C_DOCTYPE dt ON o.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE o.IsSOTrx='N' 
         AND o.DocStatus IN ('CL','CO') 
         AND o.AD_Client_ID IN ('1') 
@@ -119,7 +121,7 @@
     <Sql>
       <![CDATA[
         SELECT o.C_ORDER_ID as ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME
-        FROM M_INOUT_CANDIDATE_V ic, C_ORDER o
+        FROM M_INOUT_CANDIDATE_V ic, C_ORDER o JOIN C_DOCTYPE dt ON o.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE o.C_ORDER_ID = ic.C_ORDER_ID 
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
@@ -320,7 +322,7 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
-        FROM C_INVOICE i 
+        FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE i.IsSOTrx='N' 
         AND i.DocStatus IN ('CL','CO') 
         AND i.AD_Client_ID IN ('1') 
@@ -345,7 +347,7 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
-        FROM C_INVOICE i 
+        FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
         WHERE i.AD_Client_ID IN ('1') 
         AND i.AD_Org_ID IN ('1')
         AND i.C_BPartner_ID = ?

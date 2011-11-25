@@ -36,6 +36,7 @@
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
+      AND dt.isreturn='N'
       AND l.value = ic.term
       AND ord.C_ORDER_ID=ic.C_ORDER_ID
       AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND (SELECT SUM(ol.QTYORDERED)-SUM(ol.QTYINVOICED) FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID) <> 0) OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
@@ -68,6 +69,7 @@
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
+      AND dt.isReturn='N'
       AND l.value = ic.term
       AND ord.C_ORDER_ID=ic.C_ORDER_ID
       AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND (SELECT SUM(ol.QTYORDERED)-SUM(ol.QTYINVOICED) FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID) <> 0) OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )

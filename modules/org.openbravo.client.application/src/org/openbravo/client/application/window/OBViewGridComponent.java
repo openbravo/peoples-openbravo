@@ -18,6 +18,9 @@
  */
 package org.openbravo.client.application.window;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
@@ -42,7 +45,13 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class OBViewGridComponent extends BaseTemplateComponent {
 
-  private static final String TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
+  private static final String DEFAULT_TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
+  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+
+  static {
+    // Map: WindowType - Template
+    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "EE3A4F4E485D47CB8057B90C40D134A0");
+  }
 
   private boolean applyTransactionalFilter = false;
   private Tab tab;
@@ -51,7 +60,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   private OBViewTab viewTab;
 
   protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
+    final String windowType = tab.getWindow().getWindowType();
+    if (TEMPLATE_MAP.containsKey(windowType)) {
+      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(windowType));
+    }
+    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
 
   public Tab getTab() {

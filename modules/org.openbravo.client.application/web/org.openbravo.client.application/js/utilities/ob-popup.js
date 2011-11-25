@@ -23,7 +23,7 @@ isc.ClassFactory.defineClass('OBPopup', isc.Window);
 //
 // The OBPopup is the Openbravo popup implementator.
 //
-isc.OBPopup.addProperties( {
+isc.OBPopup.addProperties({
   title : '',
   autoSize : true,
   autoCenter : true,
@@ -45,18 +45,6 @@ isc.OBPopup.addProperties( {
   closeClick : function() {
     this.Super('closeClick', arguments);
     this.Super('destroy', arguments);
-    /*
-     * getElementsByClass = function (className, tag) { var resultArray = [],
-     * inputs; if (!tag || tag == '' || tag == null || typeof tag ==
-     * 'undefined') { inputs = document.all; } else { tag = tag.toLowerCase()
-     * inputs = document.getElementsByTagName(tag); } for (var i=0; i<inputs.length;
-     * i++){ if (inputs.item(i).getAttribute('class') == className){
-     * resultArray.push(inputs.item(i)); } } return resultArray; } var
-     * dragOutline = getElementsByClass('dragOutline', 'div')[0];
-     * //dragOutline.style.display = 'none'; dragOutline.style.top = 0;
-     * dragOutline.style.left = 0; dragOutline.style.width = 0;
-     * dragOutline.style.height = 0;
-     */
   }
 });
 

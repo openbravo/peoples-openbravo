@@ -92,6 +92,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-form-button.js", true));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-canvas.js", true));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-checkbox.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-datechooser.js", true));
@@ -252,6 +254,20 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         .add(createStaticResource(
             "web/org.openbravo.client.application/js/personalization/ob-manage-views-toolbar.js",
             false));
+
+    // Process
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.client.application/js/process/ob-pick-and-execute-datasource.js",
+            false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-pick-and-execute-grid.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-pick-and-execute-view.js", false));
+
+    // Return Material
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/return-material/ob-return-material.js", false));
 
     // Styling
     globalResources.add(createStyleSheetResource(

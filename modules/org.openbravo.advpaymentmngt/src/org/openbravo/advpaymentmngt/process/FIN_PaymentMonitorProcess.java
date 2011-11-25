@@ -427,7 +427,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       }
       // payment amount * (generatedPaymentOverdueAmount / generatedPaymentTotalAmount)
       BigDecimal overdueAmountTmp = payment.getAmount().multiply(generatedPaymentOverdueAmount)
-          .divide(generatedPaymentTotalAmount);
+          .divide(generatedPaymentTotalAmount, BigDecimal.ROUND_HALF_UP);
       // set scale of the currency using standard precision
       overdueAmount = overdueAmount.add(overdueAmountTmp.setScale(payment.getCurrency()
           .getStandardPrecision().intValue(), RoundingMode.HALF_UP));

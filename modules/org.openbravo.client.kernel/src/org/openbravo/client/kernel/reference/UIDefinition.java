@@ -495,6 +495,9 @@ public abstract class UIDefinition {
   private FieldProvider generateTabData(List<Field> fields, Field currentField, String currentValue) {
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       String oldKey = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       Object value;
       if (currentField.getId().equals(field.getId())) {
