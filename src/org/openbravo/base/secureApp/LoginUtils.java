@@ -173,6 +173,9 @@ public class LoginUtils {
       String strUserAuth, String strLanguage, String strIsRTL, String strRol, String strCliente,
       String strOrg, String strAlmacen) throws ServletException {
 
+    // variable to save organization currency
+    AttributeData[] orgCurrency;
+
     // Check session options
     if (!validUserRole(conn, strUserAuth, strRol) || !validRoleClient(conn, strRol, strCliente)
         || !validRoleOrg(conn, strRol, strOrg)) {
@@ -217,6 +220,9 @@ public class LoginUtils {
     }
 
     try {
+      // set organization currency
+      orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
+
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
       if (data == null || data.length == 0) {
         OBContext.setOBContext(currentContext);
@@ -239,7 +245,10 @@ public class LoginUtils {
           Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
       if (attr != null && attr.length > 0) {
         vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
-        vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
+        if (orgCurrency.length > 0) {
+          vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
+        } else
+          vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
         vars.setSessionValue(
             "#StdPrecision",
             AttributeData.selectStdPrecision(conn, attr[0].attribute,

@@ -219,45 +219,40 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
-          try {
-            message = FIN_AddPayment.processPayment(vars, this,
-                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
-            String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
-                "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
-            message.setMessage(strNewPaymentMessage + " " + message.getMessage());
-            if (strDifferenceAction.equals("refund")) {
-              Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
-              FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
-                  refundAmount.negate(), exchangeRate);
-              OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
-                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
-              if (newPayment) {
-                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
-                    vars.getLanguage(),
-                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
-                    + ".";
-                message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
-                if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-                  payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage
-                      + "\n");
-                  OBDal.getInstance().save(payment);
-                  OBDal.getInstance().flush();
-                }
-              } else {
-                message = auxMessage;
-              }
-            }
 
-          } catch (Exception ex) {
-            message = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            log4j.error(ex);
-            if (!message.isConnectionAvailable()) {
-              bdErrorConnection(response);
-              return;
+          message = FIN_AddPayment.processPayment(vars, this,
+              (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+          String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
+              "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
+          message.setMessage(strNewPaymentMessage + " " + message.getMessage());
+          if (strDifferenceAction.equals("refund")) {
+            Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+            FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
+                refundAmount.negate(), exchangeRate);
+            OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
+                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+            if (newPayment) {
+              final String strNewRefundPaymentMessage = Utility
+                  .parseTranslation(this, vars, vars.getLanguage(), "@APRM_RefundPayment@" + ": "
+                      + refundPayment.getDocumentNo())
+                  + ".";
+              message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
+              if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
+                payment
+                    .setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
+                OBDal.getInstance().save(payment);
+                OBDal.getInstance().flush();
+              }
+            } else {
+              message = auxMessage;
             }
           }
         }
-
+      } catch (Exception ex) {
+        message = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        log4j.error(ex);
+        bdErrorGeneralPopUp(request, response, "Error", message.getMessage());
+        return;
       } finally {
         OBContext.restorePreviousMode();
       }

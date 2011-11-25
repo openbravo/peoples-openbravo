@@ -191,7 +191,7 @@
         AND wp.GROUPUSE='Y';
       IF(v_count<>0) THEN
         v_ResultStr:='Distributing product of global use';
-        MA_GLOBALUSE_DISTRIBUTE(v_Client_ID, v_Org_ID, v_User_ID, v_Record_ID) ;
+        MA_GLOBALUSE_DISTRIBUTE(v_Client_ID, v_AD_Org_ID, v_User_ID, v_Record_ID) ;
       END IF;
     END IF; --FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
@@ -309,7 +309,7 @@
           )
           ;
         IF(CUR_PL_Post.IsStocked<>'N') THEN
-          M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message) ;
+          M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_AD_Org_ID, v_Result, v_Message) ;
           IF (v_Result=0) THEN
             v_Message:=v_Message || ' @Inline@ ' || CUR_PL_Post.line;
             RAISE_APPLICATION_ERROR(-20000, v_Message);

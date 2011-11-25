@@ -141,7 +141,11 @@ public class FIN_AddPayment {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
           paymentCurrency, finTxnConvertRate, finTxnAmount);
-      OBDal.getInstance().flush();
+      try {
+        OBDal.getInstance().flush();
+      } catch (Exception e) {
+        throw new OBException(FIN_Utility.getExceptionMessage(e));
+      }
     }
 
     for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())

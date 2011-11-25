@@ -42,5 +42,20 @@
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
+  <SqlMethod name="selectPaymentTerm" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT pt.C_PaymentTerm_ID
+      FROM C_PaymentTerm pt
+      WHERE AD_ISORGINCLUDED(?, pt.ad_org_id, ?) <> -1
+      AND ad_client_id = ?
+      AND isdefault = 'Y'
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adClientId"/>
+  </SqlMethod>
 
 </SqlClass>

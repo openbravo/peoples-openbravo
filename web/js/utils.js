@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '14212';
+  var number = '14274';
   return number;
 }
 
@@ -251,6 +251,42 @@ function getElementsByName(name, tag) {
     var inputs = document.getElementsByTagName(tag);
     for (var i=0; i<inputs.length; i++){
       if (inputs.item(i).getAttribute('name') == name){
+        resultArray.push(inputs.item(i));
+      }
+    }
+  }
+  return resultArray;
+}
+
+
+/**
+* Get the array of elements with a given name and tag. Its purpose is to supply the lack of document.getElementsByClassName support in IE
+* @param {className} string Required - The desired className to search
+* @param {tag} string Required - The tag of the desired className array
+*/
+function getElementsByClassName(className, tag) {
+  var resultArray = [], classAttributeName;
+  if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+    classAttributeName = 'className';
+  } else {
+    classAttributeName = 'class';
+  }
+  if (!tag) {
+    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+      var inputs = document.all;
+      for (var i=0; i<inputs.length; i++) {
+        if (inputs.item(i).getAttribute(classAttributeName) === className){
+          resultArray.push(inputs.item(i));
+        }
+      }
+    } else {
+      resultArray = document.getElementsByClassName(className);
+    }
+  } else {
+    tag = tag.toLowerCase()
+    var inputs = document.getElementsByTagName(tag);
+    for (var i=0; i<inputs.length; i++) {
+      if (inputs.item(i).getAttribute(classAttributeName) === className){
         resultArray.push(inputs.item(i));
       }
     }

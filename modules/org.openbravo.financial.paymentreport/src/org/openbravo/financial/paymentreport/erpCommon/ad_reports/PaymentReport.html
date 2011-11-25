@@ -1111,27 +1111,12 @@ function onloadFunctions() {
                           </div>
                           <tr class="DataGrid_Body_Row">
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="10"></th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalTransAmount"></span></th>
-                            <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTransCurrency"></span></th>
+                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
                             <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalBaseAmount"></span></th>
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency"></span></th>
                           </tr>
                           <tr>
                             <th colspan="15" height="25px"/>
-                          </tr>
-                        </div>
-                        <div id="sectionTotal">
-                          <tr>
-                            <th colspan="15" height="25px"/>
-                          </tr>
-                          <tr class="DataGrid_Body_Row">
-                            <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Grand Total</span></th>
-                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="10"></th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalTransAmount"></span></th>
-                            <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTransCurrency"></span></th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalBaseAmount"></span></th>
-                            <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency"></th>
                           </tr>
                         </div>
                       </table>
@@ -1140,8 +1125,12 @@ function onloadFunctions() {
                       <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                           <div id="sectionGroupCrit">
                             <tr class="DataGrid_Body_Row">
-                              <th colspan="15" class="DataGrid_Header_Cell">Grouping Criteria<span>:&nbsp;</span>
+                              <th colspan="12" class="DataGrid_Header_Cell">Grouping Criteria<span>:&nbsp;</span>
                                 <span id="fieldGroupCritName">xxGroupCritName</span></th>
+                             <!-- <th class="DataGrid_Header_Cell">Balance</th>
+                              <th class="DataGrid_Header_Cell_Amount"><span id="sumBalanceAmount"></span></th>
+                              <th class="DataGrid_Header_Cell"><span id="fieldBaseCurrency2"></span></th> -->
+                              <th colspan="3" class="DataGrid_Header_Cell">Balance<span>:&nbsp;</span><span id="sumBalanceAmount"></span><span>&nbsp;</span><span id="fieldBaseCurrency2"></span></th>
                             </tr>
                             <div id="sectionStatus2">
                                 <tr class="DataGrid_Body_Row">
@@ -1197,37 +1186,14 @@ function onloadFunctions() {
                                 </div>
                                 <tr class="DataGrid_Body_Row">
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="10"></th>
-                                  <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalTransAmountStatus"></span></th>
-                                  <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTransCurrency2"></span></th>
+                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
                                   <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalBaseAmountStatus"></span></th>
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></span></th>
                                 </tr>
                               
                             </div>
-                            <tr class="DataGrid_Body_Row" id="sectionSubtotalGroupCrit">
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Group Crit)</span></th>
-                              <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="10"></th>
-                              <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalTransAmountGroupCrit"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTransCurrency2"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalBaseAmountGroupCrit"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></span></th>
-                            </tr>
                             <tr>
                               <th colspan="15" style="height:25px"/>
-                            </tr>
-                          </div>
-                          <div id="sectionTotal2">
-                            <tr>
-                              <th colspan="15" style="height:25px"/>
-                            </tr>
-                            <tr class="DataGrid_Body_Row">
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Grand Total</span></th>
-                              <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="10"></th>
-                              <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalTransAmount2"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTransCurrency2"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="totalBaseAmount2"></span></th>
-                              <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></th>
                             </tr>
                           </div>
                       </table>

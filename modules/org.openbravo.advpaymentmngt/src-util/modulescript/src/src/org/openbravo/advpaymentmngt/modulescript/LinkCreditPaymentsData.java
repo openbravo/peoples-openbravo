@@ -239,7 +239,12 @@ static Logger log4j = Logger.getLogger(LinkCreditPaymentsData.class);
       "        FROM C_BPARTNER BP" +
       "        WHERE EXISTS (SELECT 1" +
       "                      FROM FIN_PAYMENT P" +
-      "                      WHERE P.C_BPARTNER_ID = BP.C_BPARTNER_ID)";
+      "                      WHERE P.C_BPARTNER_ID = BP.C_BPARTNER_ID" +
+      "            AND USED_CREDIT > 0" +
+      "            AND GENERATED_CREDIT = 0" +
+      "            AND PROCESSED = 'Y'" +
+      "            AND NOT EXISTS(SELECT 1 FROM FIN_PAYMENT_CREDIT" +
+      "                    WHERE FIN_PAYMENT_CREDIT.FIN_PAYMENT_ID = P.FIN_PAYMENT_ID))";
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);

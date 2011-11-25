@@ -57,6 +57,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
+      <column name="ISADVANCEDFEATURE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_FORM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -66,6 +70,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_FORM_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_FORM_ADV_CHCK"><![CDATA[ISADVANCEDFEATURE IN ('Y', 'N')]]></check>
       <check name="AD_FORM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

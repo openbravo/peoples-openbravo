@@ -380,11 +380,9 @@ public class PaymentReportDao {
       }
 
       hsqlScript.append(", fpsd.");
-      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
+      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       hsqlScript.append(".");
-      hsqlScript.append(FIN_PaymentDetail.PROPERTY_ID);
-      hsqlScript.append(", inv.");
-      hsqlScript.append(Invoice.PROPERTY_ID);
+      hsqlScript.append(FIN_PaymentSchedule.PROPERTY_ID);
 
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
           FIN_PaymentScheduleDetail.class, hsqlScript.toString(), parameters);
@@ -400,6 +398,7 @@ public class PaymentReportDao {
       String previousFPSDInvoiceId = null;
       String previousPaymentId = null;
       BigDecimal amountSum = BigDecimal.ZERO;
+      BigDecimal balanceSum = BigDecimal.ZERO;
       FieldProvider previousRow = null;
       ConversionRate previousConvRate = null;
       boolean isReceipt = false;
@@ -631,6 +630,37 @@ public class PaymentReportDao {
         // baseCurrency
         FieldProviderFactory.setField(data[i], "TRANS_CURRENCY", transCurrency.getISOCode());
 
+        // Balance
+        String status = "RPAE";
+        try {
+          status = FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment().getStatus();
+        } catch (NullPointerException e) {
+        }
+        final boolean isCreditPayment = FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() == null
+            && FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment() != null;
+
+        BigDecimal balance = BigDecimal.ZERO;
+        if (isCreditPayment && status != null && "PWNC RPR RPPC PPM RDNC".indexOf(status) >= 0) {
+          balance = FIN_PaymentScheduleDetail[i]
+              .getPaymentDetails()
+              .getFinPayment()
+              .getGeneratedCredit()
+              .subtract(
+                  FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment().getUsedCredit());
+          if (isReceipt) {
+            balance = balance.negate();
+          }
+        } else if (!isCreditPayment && status != null
+            && "PWNC RPR RPPC PPM RDNC RPVOID".indexOf(status) == -1) {
+          balance = isReceipt ? transAmount : transAmount.negate();
+        }
+        if (convRate != null) {
+          final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
+          balance = balance.multiply(convRate.getMultipleRateBy()).setScale(stdPrecission,
+              BigDecimal.ROUND_HALF_UP);
+        }
+        FieldProviderFactory.setField(data[i], "BALANCE", balance.toString());
+
         finPaymDetail = FIN_PaymentScheduleDetail[i].getPaymentDetails();
 
         // Payment Schedule Detail grouping criteria
@@ -660,6 +690,7 @@ public class PaymentReportDao {
 
         if (mustGroup) {
           amountSum = amountSum.add(transAmount);
+          balanceSum = balanceSum.add(balance);
         } else {
           if (previousRow != null) {
             // The current row has nothing to do with the previous one. Because of that, the
@@ -669,6 +700,7 @@ public class PaymentReportDao {
             else
               FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate()
                   .toString());
+            FieldProviderFactory.setField(previousRow, "BALANCE", balanceSum.toString());
             if (previousConvRate == null) {
               if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
                 FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
@@ -714,6 +746,7 @@ public class PaymentReportDao {
           previousRow = data[i];
           previousConvRate = convRate;
           amountSum = transAmount;
+          balanceSum = balance;
         }
 
         // group_crit_id this is the column that has the ids of the grouping criteria selected
@@ -745,6 +778,7 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
         else
           FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate().toString());
+        FieldProviderFactory.setField(previousRow, "BALANCE", balanceSum.toString());
         if (previousConvRate == null) {
           if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
             FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());

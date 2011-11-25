@@ -97,12 +97,12 @@ var baseDirectory = "../../../../../web/";
           jsonResponse = eval("(" + XMLHttpRequestObj.responseText + ")");
 
           // revert all tree item icons to default state
-          var treeItems = document.getElementsByClassName('Tree_Row');
+          var treeItems = getElementsByClassName('Tree_Row');
           for (i=1;i<treeItems.length;i++) {
               treeItemChildren = treeItems[i].childNodes;
 
               for (j=1;j<treeItemChildren.length;j++) {
-                  if(treeItemChildren[j].id == "icon"){
+                  if (treeItemChildren[j].id === 'icon' && treeItemChildren[j].childNodes[1]) {
                       treeItemChildren[j].childNodes[1].setAttribute("class","");
                   }
               }

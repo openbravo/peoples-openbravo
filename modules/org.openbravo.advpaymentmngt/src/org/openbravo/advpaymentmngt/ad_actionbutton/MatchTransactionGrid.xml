@@ -31,6 +31,7 @@
     <FIELD id="fieldBLTransactionDate">bankLineTransactionDate</FIELD>
     <FIELD id="fieldBLBusinessPartner">bankLineBusinessPartner</FIELD>
     <FIELD id="fieldBLBusinessPartner" attribute="title">bankLineDescription</FIELD>
+    <FIELD id="fieldBLBusinessPartner" attribute="style" replace="xx">textcolor</FIELD>
     <FIELD id="fieldBLReferenceNo">bankLineReferenceNo</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="value" format="euroEdition">bankLineAmount</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="id" replace="xx">finBankLineId</FIELD>
