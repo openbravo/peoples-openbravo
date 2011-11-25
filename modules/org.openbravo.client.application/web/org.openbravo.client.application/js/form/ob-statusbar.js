@@ -385,6 +385,11 @@ isc.OBStatusBar.addProperties( {
                 contents: msg
               }));
             }
+
+            // required by the automatic smoke test
+            arrayTitleField[1][i]._title = arrayTitleField[0][i];
+            arrayTitleField[1][i]._value = arrayTitleField[1][i].contents;
+
             arrayTitleField[1][i].show();
             this.content.addMember(arrayTitleField[1][i]);
             continue;
@@ -400,7 +405,9 @@ isc.OBStatusBar.addProperties( {
           }
           msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
           this.content.addMember(isc.OBStatusBarTextLabel.create({
-            contents: msg
+            contents: msg,
+            _title: arrayTitleField[0][i],
+            _value: this.getValidValue(arrayTitleField[1][i])
           }));
           msg = null;
         }
