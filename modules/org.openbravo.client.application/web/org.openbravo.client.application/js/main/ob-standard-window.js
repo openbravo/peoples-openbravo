@@ -125,23 +125,23 @@ isc.OBStandardWindow.addProperties({
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
     }
-    
+
     // Field level permissions
     if (data && data.tabs) {
       alwaysReadOnly = function(view, record, context) {
         return true;
       };
-      for ( t = 0; t < data.tabs.length; t++) {
+      for (t = 0; t < data.tabs.length; t++) {
         tab = data.tabs[t];
         view = this.getView(tab.tabId);
-        for ( i = 0; i < view.viewForm.fields.length; i++) {
+        for (i = 0; i < view.viewForm.fields.length; i++) {
           field = view.viewForm.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.updatable = tab.fields[field.name];
             field.disabled = !tab.fields[field.name];
           }
         }
-        for ( i = 0; i < view.viewGrid.fields.length; i++) {
+        for (i = 0; i < view.viewGrid.fields.length; i++) {
           field = view.viewGrid.fields[i];
           if (tab.fields[field.name] !== undefined) {
             field.editorProperties.updatable = tab.fields[field.name];
@@ -150,26 +150,26 @@ isc.OBStandardWindow.addProperties({
         }
         for (i = 0; i <  view.toolBar.rightMembers.length; i++) {
           button = view.toolBar.rightMembers[i];
-            if (button.property && !tab.fields[button.property]) {
-              button.readOnlyIf = alwaysReadOnly;
-              // looking for this button in subtabs
-              for (st = 0; st<this.views.length; st++) {
-                stView = this.views[st];
-                if (stView===view) {
-                  continue;
+          if (button.property && !tab.fields[button.property]) {
+            button.readOnlyIf = alwaysReadOnly;
+            // looking for this button in subtabs
+            for (st = 0; st<this.views.length; st++) {
+              stView = this.views[st];
+              if (stView===view) {
+                continue;
+              }
+              for (stBtns=0; stBtns < stView.toolBar.rightMembers.length; stBtns++){
+                stBtn = stView.toolBar.rightMembers[stBtns];
+                if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[button.property]) {
+                  stBtn.readOnlyIf = alwaysReadOnly;
+                  break;
                 }
-                for (stBtns=0; stBtns < stView.toolBar.rightMembers.length; stBtns++){
-                  stBtn = stView.toolBar.rightMembers[stBtns];
-                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[button.property]) {
-                    stBtn.readOnlyIf = alwaysReadOnly;
-                    break;
-                  }
-               }
-             }
-           }
-         }
-       }
-     }
+              }
+            }
+          }
+        }
+      }
+    }
   },
 
   setPersonalization: function(personalization) {
