@@ -24,21 +24,17 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class ProcessHQLQuery implements JSONProcess {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
-    final int startRow = 0;
 
     SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
 
@@ -65,27 +61,9 @@ public class ProcessHQLQuery implements JSONProcess {
       }
     }
 
-    JSONRowConverter converter = new JSONRowConverter(query.getReturnAliases());
-    final JSONObject jsonResponse = new JSONObject();
-    final JSONArray jsonData = new JSONArray();
-
     List<?> listdata = query.list();
-    for (Object o : listdata) {
-      jsonData.put(converter.convert(o));
-    }
+    String[] aliases = query.getReturnAliases();
 
-    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
-        + startRow - 1 : 0));
-
-    if (jsonData.length() == 0) {
-      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
-    }
-
-    jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    return jsonResponse;
+    return JSONRowConverter.buildResponse(listdata, aliases);
   }
-
 }

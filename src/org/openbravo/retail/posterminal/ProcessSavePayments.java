@@ -19,6 +19,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class ProcessSavePayments implements JSONProcess {
@@ -107,13 +107,11 @@ public class ProcessSavePayments implements JSONProcess {
     } catch (Exception e) {
       throw new ServletException(e);
     }
-
+    
     // Return processed payment.
-    JSONRowConverter converter = new JSONRowConverter();
-    final JSONObject jsonResponse = new JSONObject();
-    jsonResponse.put(JsonConstants.RESPONSE_DATA, converter.convert(payment));
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    List<Object> data = new ArrayList<Object>();
+    data.add(payment);
 
-    return jsonResponse;
+    return JSONRowConverter.buildResponse(data, null);
   }
 }

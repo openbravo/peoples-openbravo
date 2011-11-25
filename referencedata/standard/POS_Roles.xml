@@ -638,7 +638,7 @@
     <id>5692DEC141B343CA8C46EE415EE44044</id>
     <active>true</active>
     <role id="9AE4B745AC9B4FD4931E65D2B2789EF3" entity-name="ADRole" identifier="POS Employee"/>
-    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.paper"/>
+    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="576D82AA9DA64350B406F5CD358E1A9F" identifier="POS Administrator">
     <id>576D82AA9DA64350B406F5CD358E1A9F</id>
@@ -782,7 +782,7 @@
     <id>7AB5BE2DE6D14D42BCA2A363DB02C52B</id>
     <active>true</active>
     <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
-    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.paper"/>
+    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="7B6AE8F5F5E648A894FCEC263102DDB8" identifier="POS Administrator">
     <id>7B6AE8F5F5E648A894FCEC263102DDB8</id>
@@ -968,7 +968,7 @@
     <id>A6038AFF030B4644AB638E79100CC39A</id>
     <active>true</active>
     <role id="9AE4B745AC9B4FD4931E65D2B2789EF3" entity-name="ADRole" identifier="POS Employee"/>
-    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.paper"/>
+    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="A716FB3379DB4F2FB59DF1F46E7ED36E" identifier="POS Administrator">
     <id>A716FB3379DB4F2FB59DF1F46E7ED36E</id>
@@ -1016,7 +1016,7 @@
     <id>AFB66ED36BDB43A483B92C684735099A</id>
     <active>true</active>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
-    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.paper"/>
+    <obposPos id="00542C50252E46CD99E30033FE928CE2" entity-name="OBPOS_POS" identifier="payment.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="B57B58710EF347BE8A1423D9035FB5D4" identifier="POS Administrator">
     <id>B57B58710EF347BE8A1423D9035FB5D4</id>
@@ -1028,7 +1028,7 @@
     <id>B9E05977297F48B5964A66CADEB6F43A</id>
     <active>true</active>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
-    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.paper"/>
+    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="BA83D1755D634706A1DD2C0FF02AADE3" identifier="POS Administrator">
     <id>BA83D1755D634706A1DD2C0FF02AADE3</id>
@@ -1148,7 +1148,7 @@
     <id>EB0C7FE7F7434990ADC36B423908E22C</id>
     <active>true</active>
     <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
-    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.paper"/>
+    <obposPos id="9F18F06121D54B4EA108F44791A97347" entity-name="OBPOS_POS" identifier="refund.voucher"/>
   </OBPOS_POS_Access>
   <OBPOS_POS_Access id="EB6EBD33A2E34052BA73469D45E3FBD3" identifier="POS Administrator">
     <id>EB6EBD33A2E34052BA73469D45E3FBD3</id>
@@ -1246,6 +1246,13 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="37A235E0E5AB4A439F994CE9FBC130DB" identifier="Payment In - POS Administrator">
+    <id>37A235E0E5AB4A439F994CE9FBC130DB</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716" entity-name="ADWindow" identifier="Payment In"/>
+    <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="37C6444FFB7A451E91E4F917D530D0A9" identifier="OBPOS Product View - POS Employee">
     <id>37C6444FFB7A451E91E4F917D530D0A9</id>
     <window id="FF80818133451BE9013345D23F8C007A" entity-name="ADWindow" identifier="OBPOS Product View"/>
@@ -1257,6 +1264,13 @@
     <id>37D5072D9F4C4D79B0ACFB94E3C83806</id>
     <window id="FF80818133451BE9013345D23F8C007A" entity-name="ADWindow" identifier="OBPOS Product View"/>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="38430653FAF64693BF17A061470089B6" identifier="Payment In - POS Guest">
+    <id>38430653FAF64693BF17A061470089B6</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716" entity-name="ADWindow" identifier="Payment In"/>
+    <role id="87C2ADC4B6C04116AC91041D03C2CC62" entity-name="ADRole" identifier="POS Guest"/>
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
@@ -1312,6 +1326,13 @@
   <ADWindowAccess id="66BC9CC033D74AEE978E81AF4F8258D4" identifier="Product - POS Administrator">
     <id>66BC9CC033D74AEE978E81AF4F8258D4</id>
     <window id="140" entity-name="ADWindow" identifier="Product"/>
+    <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="7D5E825CCF7B45658196848F8AA8C416" identifier="Payment Out - POS Administrator">
+    <id>7D5E825CCF7B45658196848F8AA8C416</id>
+    <window id="6F8F913FA60F4CBD93DC1D3AA696E76E" entity-name="ADWindow" identifier="Payment Out"/>
     <role id="3D5764CB14C140A8BC9F0655C7508652" entity-name="ADRole" identifier="POS Administrator"/>
     <active>true</active>
     <editableField>true</editableField>
@@ -1417,6 +1438,20 @@
   <ADWindowAccess id="F5163D5930984F2FBA4BF8658F046A52" identifier="Reservation - POS Manager">
     <id>F5163D5930984F2FBA4BF8658F046A52</id>
     <window id="FF8081813368B623013368C0AE7A0019" entity-name="ADWindow" identifier="Reservation"/>
+    <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="F6FD898FFEDE4493B7860C9313F05EA8" identifier="Payment In - POS Employee">
+    <id>F6FD898FFEDE4493B7860C9313F05EA8</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716" entity-name="ADWindow" identifier="Payment In"/>
+    <role id="9AE4B745AC9B4FD4931E65D2B2789EF3" entity-name="ADRole" identifier="POS Employee"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="FB9CF14843E84C6C85EB5C6F09E7F48F" identifier="Payment In - POS Manager">
+    <id>FB9CF14843E84C6C85EB5C6F09E7F48F</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716" entity-name="ADWindow" identifier="Payment In"/>
     <role id="58C14869508249C19C7B3D3ECBCDA509" entity-name="ADRole" identifier="POS Manager"/>
     <active>true</active>
     <editableField>true</editableField>

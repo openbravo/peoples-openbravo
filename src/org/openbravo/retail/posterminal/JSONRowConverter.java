@@ -21,6 +21,7 @@ package org.openbravo.retail.posterminal;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONArray;
@@ -30,6 +31,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -109,5 +111,31 @@ public class JSONRowConverter {
     } else {
       return value;
     }
+  }
+
+  public static JSONObject buildResponse(List<?> listdata, String[] aliases) throws JSONException {
+
+    JSONRowConverter converter = new JSONRowConverter(aliases);
+
+    final int startRow = 0;
+    final JSONObject jsonResponse = new JSONObject();
+    final JSONArray jsonData = new JSONArray();
+
+    for (Object o : listdata) {
+      jsonData.put(converter.convert(o));
+    }
+
+    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
+        + startRow - 1 : 0));
+
+    if (jsonData.length() == 0) {
+      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+    }
+
+    jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
+    return jsonResponse;
   }
 }
