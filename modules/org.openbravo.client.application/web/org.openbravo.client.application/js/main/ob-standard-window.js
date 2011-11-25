@@ -106,7 +106,8 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, dontDisplay;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, alwaysReadOnly,
+        st, stView, stBtns, stBtn;
 
     if (data && data.personalization) {
       this.setPersonalization(data.personalization);
@@ -127,8 +128,8 @@ isc.OBStandardWindow.addProperties({
     
     // Field level permissions
     if (data && data.tabs) {
-      dontDisplay = function(view, record, context) {
-        return false;
+      alwaysReadOnly = function(view, record, context) {
+        return true;
       };
       for ( t = 0; t < data.tabs.length; t++) {
         tab = data.tabs[t];
@@ -147,16 +148,28 @@ isc.OBStandardWindow.addProperties({
             field.editorProperties.disabled = !tab.fields[field.name];
           }
         }
-        for (i = 0; i < view.toolBar.rightMembers.length; i++) {
+        for (i = 0; i <  view.toolBar.rightMembers.length; i++) {
           button = view.toolBar.rightMembers[i];
             if (button.property && !tab.fields[button.property]) {
-              button.displayIf = dontDisplay;
-          }
-        }
-        view.viewForm.obFormProperties.view = view;
-        view.viewForm.obFormProperties.onFieldChanged(view.viewForm);
-      }
-    }
+              button.readOnlyIf = alwaysReadOnly;
+              // looking for this button in subtabs
+              for (st = 0; st<this.views.length; st++) {
+                stView = this.views[st];
+                if (stView===view) {
+                  continue;
+                }
+                for (stBtns=0; stBtns < stView.toolBar.rightMembers.length; stBtns++){
+                  stBtn = stView.toolBar.rightMembers[stBtns];
+                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[button.property]) {
+                    stBtn.readOnlyIf = alwaysReadOnly;
+                    break;
+                  }
+               }
+             }
+           }
+         }
+       }
+     }
   },
 
   setPersonalization: function(personalization) {
