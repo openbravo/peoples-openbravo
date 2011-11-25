@@ -4508,8 +4508,8 @@ This operation can take a long time to complete.]]></HELP>
 <!--800182-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800182-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800182-->  <VALUE><![CDATA[ReportMaterialDimensionalAnalysesJR]]></VALUE>
-<!--800182-->  <NAME><![CDATA[Material Receipts Dimensional Report]]></NAME>
-<!--800182-->  <DESCRIPTION><![CDATA[Material receipt dimensional analyses]]></DESCRIPTION>
+<!--800182-->  <NAME><![CDATA[Goods Receipts Dimensional Report]]></NAME>
+<!--800182-->  <DESCRIPTION><![CDATA[Goods receipt dimensional analyses]]></DESCRIPTION>
 <!--800182-->  <HELP><![CDATA[Material receipt dimensional analyses JR]]></HELP>
 <!--800182-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800182-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
@@ -4517,6 +4517,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800182-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800182-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800182-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800182-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800182-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800182-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
