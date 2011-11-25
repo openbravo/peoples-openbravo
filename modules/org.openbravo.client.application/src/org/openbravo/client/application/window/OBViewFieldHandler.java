@@ -931,6 +931,10 @@ public class OBViewFieldHandler {
     public void setGridSort(int gridSort) {
       this.gridSort = gridSort;
     }
+
+    public String getValidationFunction() {
+      return "";
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
