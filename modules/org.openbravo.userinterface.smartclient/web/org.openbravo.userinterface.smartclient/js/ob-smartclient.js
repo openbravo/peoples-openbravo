@@ -466,7 +466,11 @@ isc.FormItem.addProperties({
   
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
-      form.handleItemChange(this);
+      // give the form time to save out values before doing
+      // the item change stuff
+      form.fireOnPause('handleItemChange', function() {
+        form.handleItemChange(this);
+      });
     }
   },
   
