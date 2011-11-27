@@ -41,7 +41,7 @@ isc.OBNoteSectionItem.addProperties({
 
   prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
 
-  canvasItem : null,
+  noteCanvasItem : null,
 
   visible : true,
   
@@ -80,10 +80,10 @@ isc.OBNoteSectionItem.addProperties({
   },
 
   getNotePart : function() {
-    if (!this.canvasItem) {
-      this.canvasItem = this.form.getField(this.itemIds[0]);
+    if (!this.noteCanvasItem) {
+      this.noteCanvasItem = this.form.getField(this.itemIds[0]);
     }
-    return this.canvasItem.canvas;
+    return this.noteCanvasItem.canvas;
   },
 
   setRecordInfo : function(entity, id) {
@@ -101,10 +101,10 @@ isc.OBNoteSectionItem.addProperties({
 
   hide: function() {
     this.Super('hide',arguments);
-    if (this.canvasItem) {
+    if (this.noteCanvasItem) {
       // Solves issue #16663: Forcing call to canvas hide. 
       // Shouldn't this be invoked by SmartClient 
-      this.canvasItem.hide();
+      this.noteCanvasItem.hide();
     }
   }
 

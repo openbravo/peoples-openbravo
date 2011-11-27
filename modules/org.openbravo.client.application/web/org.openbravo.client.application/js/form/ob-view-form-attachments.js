@@ -42,7 +42,7 @@ isc.OBAttachmentsSectionItem.addProperties({
   
   prompt: OB.I18N.getLabel('OBUIAPP_AttachmentPrompt'),
   
-  canvasItem: null,
+  attachmentCanvasItem: null,
   
   visible: false,
   
@@ -61,10 +61,10 @@ isc.OBAttachmentsSectionItem.addProperties({
   },
 
   getAttachmentPart: function(){
-    if (!this.canvasItem) {
-      this.canvasItem = this.form.getField(this.itemIds[0]);
+    if (!this.attachmentCanvasItem) {
+      this.attachmentCanvasItem = this.form.getField(this.itemIds[0]);
     }
-    return this.canvasItem.canvas;
+    return this.attachmentCanvasItem.canvas;
   },
   
   setRecordInfo: function(entity, id, tabId){

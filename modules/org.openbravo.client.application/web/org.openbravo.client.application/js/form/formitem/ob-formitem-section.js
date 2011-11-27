@@ -39,6 +39,13 @@ isc.OBSectionItem.addProperties({
   
   alwaysTakeSpace: false,
 
+  click: function() {
+    this.focusInItem();
+    
+    var ret = this.Super('click', arguments);
+    return ret;
+  },
+
   setSectionItemInContent: function(form) {
     var i = 0, length = this.itemIds.length;
     for (i = 0; i < length; i++) {
@@ -76,61 +83,17 @@ isc.OBSectionItem.addProperties({
   },
   
   collapseSection: function(preventFocusChange) {
-    // when collapsing set the focus to the header
     this.updateAlwaysTakeSpace(false);
-    if (!preventFocusChange && this.isDrawn() && this.isVisible()) {
-      this.form.setFocusItem(this);
-    }
+
     var ret = this.Super('collapseSection', arguments);
     return ret;
   },
   
   expandSection: function() {
-    var enabled = this.isDrawn() && this.isVisible();
-
     this.updateAlwaysTakeSpace(true);
 
-    if (enabled && this.form.getFocusItem()) {
-      this.form.getFocusItem().blurItem();
-    }
-
     var ret = this.Super('expandSection', arguments);
-    
-    if (enabled && !this.form._preventFocusChanges) {
-      // when expanding set the focus to the first focusable item     
-      // set focus late to give the section time to draw and let
-      // other items to loose focus/redraw
-      this.delayCall('setNewFocusItemExpanding', [], 100);
-      
-      // NOTE: if the layout structure changes then this needs to be 
-      // changed probably to see where the scrollbar is to scroll
-      // the parentElement is not set initially when drawing
-      if (this.form.parentElement) {
-        // scroll after things have been expanded
-        this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
-      }
-    }
-
     return ret;
-  },
-
-  setNewFocusItemExpanding: function(){
-    var newFocusItem = null, i, length = this.itemIds.length;
-    for (i = 0; i < length; i++) {
-      var itemName = this.itemIds[i], item = this.form.getItem(itemName);
-      // isFocusable is a method added in ob-smartclient.js
-      if (item.isFocusable()) {
-        newFocusItem = item;
-        break;
-      }
-    }
-    if (!newFocusItem && this.handleFocus && this.handleFocus()) {
-      return;
-    } else if (!newFocusItem) {
-      this.focusInItem();
-    } else {
-      newFocusItem.focusInItem();
-    }
   },
 
   showIf: function(item, value, form, values) {
