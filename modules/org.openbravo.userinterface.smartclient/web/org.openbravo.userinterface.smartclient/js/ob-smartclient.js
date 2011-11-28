@@ -469,7 +469,7 @@ isc.FormItem.addProperties({
       // give the form time to save out values before doing
       // the item change stuff
       form.fireOnPause('handleItemChange', function() {
-        form.handleItemChange(this);
+        form.handleItemChange(item);
       });
     }
   },
