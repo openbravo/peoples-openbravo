@@ -369,6 +369,7 @@ public class TranslationManager {
       String rootDirectory, String moduleId, String moduleLanguage, String javaPackage, boolean trl) {
 
     Statement st = null;
+    StringBuffer sql = null;
     try {
       String trlTable = table;
       if (trl && !table.endsWith("_TRL"))
@@ -388,7 +389,7 @@ public class TranslationManager {
       }
 
       // Prepare query to retrieve translated rows
-      final StringBuffer sql = new StringBuffer("SELECT ");
+      sql = new StringBuffer("SELECT ");
       if (trl)
         sql.append("t.IsTranslated,");
       else
@@ -563,7 +564,7 @@ public class TranslationManager {
       transformer.transform(source, new StreamResult(osw));
       osw.close();
     } catch (final Exception e) {
-      log4j.error("Error exporting translation for table " + table, e);
+      log4j.error("Error exporting translation for table " + table + "\n" + sql, e);
     } finally {
       try {
         if (st != null)
