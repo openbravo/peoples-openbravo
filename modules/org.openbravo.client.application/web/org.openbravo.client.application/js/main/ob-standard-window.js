@@ -234,7 +234,7 @@ isc.OBStandardWindow.addProperties({
         }
         for (i = 0; i <  view.toolBar.rightMembers.length; i++) {
           button = view.toolBar.rightMembers[i];
-          if (button.property && !tab.fields[button.property]) {
+          if (tab.tabId === button.contextView.tabId && button.property && !tab.fields[button.property]) {
             button.readOnlyIf = alwaysReadOnly;
             // looking for this button in subtabs
             for (st = 0; st<this.views.length; st++) {
@@ -244,7 +244,7 @@ isc.OBStandardWindow.addProperties({
               }
               for (stBtns=0; stBtns < stView.toolBar.rightMembers.length; stBtns++){
                 stBtn = stView.toolBar.rightMembers[stBtns];
-                if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[button.property]) {
+                if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
                   stBtn.readOnlyIf = alwaysReadOnly;
                   break;
                 }
