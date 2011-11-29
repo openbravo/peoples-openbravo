@@ -42,8 +42,8 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * The default implementation of the {@link DataSourceService}. Supports data retrieval, update
@@ -180,16 +180,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   private void testAccessPermissions(Map<String, String> parameters, String content) {
     try {
-      if (parameters.get("tabId") == null)
+      if (parameters.get("tabId") == null) {
         return;
+      }
       final Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tabId"));
-      if (tab == null)
+      if (tab == null) {
         return;
+      }
       final String roleId = OBContext.getOBContext().getRole().getId();
 
       final JSONObject jsonObject = new JSONObject(content);
-      if (content == null)
+      if (content == null) {
         return;
+      }
 
       final JSONObject data = jsonObject.getJSONObject("data");
       String id = null;
@@ -223,7 +226,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           .getInstance()
           .createQuery(
               Field.class,
-              "as f where f.tab.id = :tabId and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false) or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId) and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false) or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId ) and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false)))");
+              "as f where f.tab.id = :tabId"
+                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false)"
+                  + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId)"
+                  + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false)"
+                  + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId)"
+                  + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false)))");
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
@@ -266,8 +274,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (entity == null) {
       dsProperties = super.getDataSourceProperties(parameters);
     } else {
-      dsProperties = getInitialProperties(entity, parameters
-          .containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
+      dsProperties = getInitialProperties(entity,
+          parameters.containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
     }
 
     // now see if there are additional properties, these are often property paths

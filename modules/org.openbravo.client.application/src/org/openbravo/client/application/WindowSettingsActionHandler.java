@@ -98,7 +98,6 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       json.put("tabs", tabs);
       for (WindowAccess winAccess : window.getADWindowAccessList()) {
         if (winAccess.getRole().getId().equals(roleId)) {
-          boolean winEditable = winAccess.isEditableField();
           for (TabAccess tabAccess : winAccess.getADTabAccessList()) {
             boolean tabEditable = tabAccess.isEditableField();
             final Entity entity = ModelProvider.getInstance().getEntityByTableId(
