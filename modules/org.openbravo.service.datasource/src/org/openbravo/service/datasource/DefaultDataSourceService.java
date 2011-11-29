@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -56,6 +57,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
   private static final long serialVersionUID = 1L;
+  private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
 
   /*
    * (non-Javadoc)
@@ -249,8 +251,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       }
 
     } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error("Unable to test access", e);
       throw new RuntimeException("Unable to test access", e);
     }
   }
