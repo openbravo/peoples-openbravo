@@ -344,6 +344,9 @@ isc.TextItem.addProperties({
     if (result.criteria && result.criteria.length === 0) {
       result = null;
     }
+    if (!result.fieldName) {
+      result.fieldName = fieldName;
+    }
   
     return result;
   },
