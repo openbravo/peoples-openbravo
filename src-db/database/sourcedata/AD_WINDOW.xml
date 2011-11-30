@@ -347,7 +347,7 @@
 <!--123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--123-->  <NAME><![CDATA[Business Partner]]></NAME>
 <!--123-->  <DESCRIPTION><![CDATA[Create and edit business partner information, templates, and bank accounts.]]></DESCRIPTION>
-<!--123-->  <HELP><![CDATA[Create and edit business partner information, templates, and bank accounts.]]></HELP>
+<!--123-->  <HELP><![CDATA[Business partner master data window is the place where you can easily organize and centralize the key data of the business partners of any type the company might have a business interest in or a business relationship with.]]></HELP>
 <!--123-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--123-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--123-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -398,7 +398,8 @@
 <!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--130-->  <NAME><![CDATA[Multiphase Project]]></NAME>
 <!--130-->  <DESCRIPTION><![CDATA[Create and edit projects and tasks potentially requiring sales invoicing.]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[Create and edit projects and tasks potentially requiring sales invoicing.]]></HELP>
+<!--130-->  <HELP><![CDATA[Create and edit projects and tasks potentially requiring sales invoicing.
+]]></HELP>
 <!--130-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--130-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--130-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -534,7 +535,7 @@
 <!--140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--140-->  <NAME><![CDATA[Product]]></NAME>
 <!--140-->  <DESCRIPTION><![CDATA[Create products and manage the related costing, purchasing, and pricing setup.]]></DESCRIPTION>
-<!--140-->  <HELP><![CDATA[Create products and manage the related costing, purchasing, and pricing setup.]]></HELP>
+<!--140-->  <HELP><![CDATA[Product master data window is the place where you can easily organize and centralize the key data of the products of any type  you might manage as part of the company processes and/or activities.]]></HELP>
 <!--140-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--140-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--140-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -975,7 +976,7 @@
 <!--192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--192-->  <NAME><![CDATA[Business Partner Category]]></NAME>
 <!--192-->  <DESCRIPTION><![CDATA[Create and edit information related to similar business partners at one time by grouping them.]]></DESCRIPTION>
-<!--192-->  <HELP><![CDATA[Create and edit information related to similar business partners at one time by grouping them.]]></HELP>
+<!--192-->  <HELP><![CDATA[Business partners can be grouped into different categories which must be created with the aim of helping their management and analysis.]]></HELP>
 <!--192-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--192-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--192-->  <PROCESSING><![CDATA[N]]></PROCESSING>

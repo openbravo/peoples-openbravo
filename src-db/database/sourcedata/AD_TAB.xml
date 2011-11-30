@@ -1887,7 +1887,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--212-->  <NAME><![CDATA[Customer Accounting]]></NAME>
 <!--212-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected customer.]]></DESCRIPTION>
-<!--212-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected customer.]]></HELP>
+<!--212-->  <HELP><![CDATA[Customer accounting tab allows you to configure the ledger accounts to be used while posting customer related transactions such as customer receivables and customer advances.]]></HELP>
 <!--212-->  <AD_TABLE_ID><![CDATA[183]]></AD_TABLE_ID>
 <!--212-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--212-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -1912,7 +1912,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--213-->  <NAME><![CDATA[Vendor Accounting]]></NAME>
 <!--213-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected vendor.]]></DESCRIPTION>
-<!--213-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected vendor.]]></HELP>
+<!--213-->  <HELP><![CDATA[Vendor accounting tab allows you to configure the ledger accounts to be used while posting vendor related transactions such as vendor liabilities and vendor advanced payments.]]></HELP>
 <!--213-->  <AD_TABLE_ID><![CDATA[185]]></AD_TABLE_ID>
 <!--213-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--213-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -1937,7 +1937,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--214-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--214-->  <NAME><![CDATA[Employee Accounting]]></NAME>
 <!--214-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected employee.]]></DESCRIPTION>
-<!--214-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected employee.]]></HELP>
+<!--214-->  <HELP><![CDATA[The ledger accounts to be used while posting employee related transactions such as paryroll accounting could be added in this tab.]]></HELP>
 <!--214-->  <AD_TABLE_ID><![CDATA[184]]></AD_TABLE_ID>
 <!--214-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--214-->  <SEQNO><![CDATA[70]]></SEQNO>
@@ -2011,7 +2011,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--220-->  <NAME><![CDATA[Business Partner]]></NAME>
 <!--220-->  <DESCRIPTION><![CDATA[Create a business partner to be used in the application.]]></DESCRIPTION>
-<!--220-->  <HELP><![CDATA[Create a business partner to be used in the application.]]></HELP>
+<!--220-->  <HELP><![CDATA[There are many business partner types such as customers, suppliers and employees you can define and configure.]]></HELP>
 <!--220-->  <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
 <!--220-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--220-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2036,7 +2036,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--222-->  <NAME><![CDATA[Location/Address]]></NAME>
 <!--222-->  <DESCRIPTION><![CDATA[Define locations or addresses for the business partner.]]></DESCRIPTION>
-<!--222-->  <HELP><![CDATA[Define locations or addresses for the business partner.]]></HELP>
+<!--222-->  <HELP><![CDATA[Business partner locations and full address details can be set up in this tab.]]></HELP>
 <!--222-->  <AD_TABLE_ID><![CDATA[293]]></AD_TABLE_ID>
 <!--222-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--222-->  <SEQNO><![CDATA[90]]></SEQNO>
@@ -2060,7 +2060,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--223-->  <NAME><![CDATA[Customer]]></NAME>
 <!--223-->  <DESCRIPTION><![CDATA[Define customer properties of a business partner that will purchase items from you.]]></DESCRIPTION>
-<!--223-->  <HELP><![CDATA[Define customer properties of a business partner that will purchase items from you.]]></HELP>
+<!--223-->  <HELP><![CDATA[Customer related data can be entered and configured once the "Customer" check-box is enabled.]]></HELP>
 <!--223-->  <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
 <!--223-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--223-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2085,7 +2085,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--224-->  <NAME><![CDATA[Vendor/Creditor]]></NAME>
 <!--224-->  <DESCRIPTION><![CDATA[Define a business partner as a vendor who will sell items.]]></DESCRIPTION>
-<!--224-->  <HELP><![CDATA[Define a business partner as a vendor who will sell items.]]></HELP>
+<!--224-->  <HELP><![CDATA[Vendor or Creditor related data can be entered and configured once the "Vendor" check-box is enabled.]]></HELP>
 <!--224-->  <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
 <!--224-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--224-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -2110,7 +2110,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--225-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--225-->  <NAME><![CDATA[Employee]]></NAME>
 <!--225-->  <DESCRIPTION><![CDATA[Define employee properties of a business partner.]]></DESCRIPTION>
-<!--225-->  <HELP><![CDATA[Define employee properties of a business partner.]]></HELP>
+<!--225-->  <HELP><![CDATA[A business partner can be set up as employee once the check-box "Employee" is enabled.]]></HELP>
 <!--225-->  <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
 <!--225-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--225-->  <SEQNO><![CDATA[60]]></SEQNO>
@@ -2135,7 +2135,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--226-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--226-->  <NAME><![CDATA[Bank Account]]></NAME>
 <!--226-->  <DESCRIPTION><![CDATA[Define bank accounts to be used for monetary transactions with this business partner.]]></DESCRIPTION>
-<!--226-->  <HELP><![CDATA[Define bank accounts to be used for monetary transactions with this business partner.]]></HELP>
+<!--226-->  <HELP><![CDATA[Bank account tab allows you to list and setup business partner bank accounts.]]></HELP>
 <!--226-->  <AD_TABLE_ID><![CDATA[298]]></AD_TABLE_ID>
 <!--226-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--226-->  <SEQNO><![CDATA[80]]></SEQNO>
@@ -3469,7 +3469,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--322-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--322-->  <NAME><![CDATA[Business Partner Category]]></NAME>
 <!--322-->  <DESCRIPTION><![CDATA[Create a business partner category.]]></DESCRIPTION>
-<!--322-->  <HELP><![CDATA[Create a business partner category.]]></HELP>
+<!--322-->  <HELP><![CDATA[Business partner category window allows you to create and configure every business partner category your company may need.]]></HELP>
 <!--322-->  <AD_TABLE_ID><![CDATA[394]]></AD_TABLE_ID>
 <!--322-->  <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
 <!--322-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3493,7 +3493,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--323-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--323-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--323-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected business partner group.]]></DESCRIPTION>
-<!--323-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected business partner group.]]></HELP>
+<!--323-->  <HELP><![CDATA[Each business partner category allows you to configure a different set of ledger accounts.]]></HELP>
 <!--323-->  <AD_TABLE_ID><![CDATA[395]]></AD_TABLE_ID>
 <!--323-->  <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
 <!--323-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -5050,7 +5050,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--496-->  <NAME><![CDATA[Contact]]></NAME>
 <!--496-->  <DESCRIPTION><![CDATA[Define contacts for dealing with a selected business partner.]]></DESCRIPTION>
-<!--496-->  <HELP><![CDATA[Define contacts for dealing with a selected business partner.]]></HELP>
+<!--496-->  <HELP><![CDATA[Contact tab allows you to add and configure the business partner contacts you deal with.]]></HELP>
 <!--496-->  <AD_TABLE_ID><![CDATA[114]]></AD_TABLE_ID>
 <!--496-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--496-->  <SEQNO><![CDATA[100]]></SEQNO>
@@ -6537,7 +6537,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800060-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800060-->  <NAME><![CDATA[Discount]]></NAME>
 <!--800060-->  <DESCRIPTION><![CDATA[Add discounts which may be made available to this business partner.]]></DESCRIPTION>
-<!--800060-->  <HELP><![CDATA[Add discounts which may be made available to this business partner.]]></HELP>
+<!--800060-->  <HELP><![CDATA[Discount tab allows you to add and configure business partner discounts.]]></HELP>
 <!--800060-->  <AD_TABLE_ID><![CDATA[800046]]></AD_TABLE_ID>
 <!--800060-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--800060-->  <SEQNO><![CDATA[110]]></SEQNO>
@@ -8783,7 +8783,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800211-->  <NAME><![CDATA[Discounts]]></NAME>
 <!--800211-->  <DESCRIPTION><![CDATA[Vendor discounts]]></DESCRIPTION>
-<!--800211-->  <HELP><![CDATA[Discounts tab allows to review or add supplier discounts.]]></HELP>
+<!--800211-->  <HELP><![CDATA[Discounts tab allows you to add or review supplier discounts.]]></HELP>
 <!--800211-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800211-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800211-->  <SEQNO><![CDATA[31]]></SEQNO>
