@@ -799,7 +799,7 @@ isc.OBViewGrid.addProperties({
     if (this.isOpenDirectMode && this.data && this.data.getLength() >= 1) {
       // now tell the parent grid to refresh on the basis of this parentRecordId also
       if (this.view.parentView) {
-        this.view.parentRecordId = this.data.get(0)[this.view.parentProperty];
+        this.view.parentRecordId = this.data.get(startRow)[this.view.parentProperty];
 
         this.view.parentView.viewGrid.isOpenDirectMode = true;
         // makes sure that the parent refresh will not fire back to cause a child refresh
