@@ -344,6 +344,9 @@ isc.TextItem.addProperties({
     if (result.criteria && result.criteria.length === 0) {
       result = null;
     }
+    if (!result.fieldName) {
+      result.fieldName = fieldName;
+    }
   
     return result;
   },
@@ -487,7 +490,7 @@ isc.FormItem.addProperties({
   
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
-      form.handleItemChange(this);
+      form.handleItemChange(item);
     }
   },
   

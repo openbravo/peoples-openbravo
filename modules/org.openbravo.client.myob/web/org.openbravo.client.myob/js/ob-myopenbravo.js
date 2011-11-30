@@ -212,9 +212,10 @@ isc.OBMyOpenbravo.addProperties({
     // the left layout containing the recent views and available widgets
     this.leftColumnLayout = isc.VStack.create({
       styleName: OB.Styles.OBMyOpenbravo.leftColumnLayout.styleName,
-      width: '15%',
-      height: 1,
-      overflow: 'visible',
+      width: 210,
+      height: '100%',
+      overflow: 'auto', // Changed from 'visible' to 'auto' due to issue https://issues.openbravo.com/view.php?id=17870
+      leaveScrollbarGap: true,
       members: [recentViewsLayout, recentDocumentsLayout, isc.LayoutSpacer.create({
         height: 5
       }), actionTitle, refreshLayout, addWidgetLayout]
@@ -236,14 +237,15 @@ isc.OBMyOpenbravo.addProperties({
     this.portalLayout = isc.PortalLayout.create({
       styleName: OB.Styles.OBMyOpenbravo.portalLayout.styleName,
       numColumns: 2,
-      width: '85%',
+      width: '*',
       showColumnMenus: false,
       canResizeColumns: false,
       canResizeRows: false,
       membersMargin: 10,
       columnBorder: 0,
-      overflow: 'visible', // Changed from 'auto' to 'visible' due to issue https://issues.openbravo.com/view.php?id=17870
+      overflow: 'auto',
       height: '100%',
+      leaveScrollbarGap: true,
       sendEvents: false,
 
       // the Column is an autochild of the PortalLayout with the
@@ -469,9 +471,9 @@ isc.OBMyOpenbravo.addProperties({
           recent.command = 'DEFAULT';
           
           lbl = isc.Label.create({
-            contents: OB.Utilities.truncTitle(recent.recentTitle, 20),
+            contents: OB.Utilities.truncTitle(recent.recentTitle, 18),
             recent: recent,
-            wrap: false,
+            wrap: true,
             width: '100%',
             showHover: true,
             showPrompt: true,

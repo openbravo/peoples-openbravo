@@ -25,7 +25,11 @@ isc.OBGrid.addProperties({
 
   dragTrackerMode: 'none',
   
-  recordComponentPoolingMode: 'recycle',
+  // recycle gives better performance but also results
+  // in strange results that not all record components are
+  // drawn when scrolling very fast
+  recordComponentPoolingMode: 'viewport',
+  
   showRecordComponentsByCell: true,
   recordComponentPosition: 'within',
   poolComponentsPerColumn: true,
@@ -155,36 +159,7 @@ isc.OBGrid.addProperties({
     return value;
   },
   
-  initWidget: function(){
-    // prevent the value to be displayed in case of a link
-    var i, thisGrid = this, length, field, 
-      formatCellValueFunction = function(value, record, rowNum, colNum, grid){
-        return '';
-      };
-
-    if (this.fields) {
-      length = this.fields.length;
-      for (i = 0; i < length; i++) {
-        field = this.fields[i];
-
-        if (!field.filterEditorProperties) {
-          field.filterEditorProperties = {};
-        }
-
-        field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
-
-        if (field.isLink) {
-          // store the originalFormatCellValue if not already set
-          if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
-            field.originalFormatCellValue = field.formatCellValue;
-          }
-          field.formatCellValueFunctionReplaced = true;
-          field.formatCellValue = formatCellValueFunction;
-        }
-      }
-    }
-    
-    this.filterEditorProperties = {
+  filterEditorProperties: {
 
       // http://forums.smartclient.com/showthread.php?p=73107
       // https://issues.openbravo.com/view.php?id=18557
@@ -366,23 +341,52 @@ isc.OBGrid.addProperties({
         showDisabled: false,
         prompt: OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip'),
         initWidget: function(){
-          thisGrid.filterImage = this;
+          this.recordEditor.sourceWidget.filterImage = this;
           this.recordEditor.filterImage = this;
-          if (thisGrid.filterClause) {
+          if (this.recordEditor.sourceWidget.filterClause) {
             this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
             this.visibility = 'inherit';
           }
           this.Super('initWidget', arguments);
         },
         click: function(){
-          thisGrid.clearFilter();
+          this.recordEditor.sourceWidget.clearFilter();
         }
       }
-    };
+    },
+
+  initWidget: function(){
+    // prevent the value to be displayed in case of a link
+    var i, length, field,
+      formatCellValueFunction = function(value, record, rowNum, colNum, grid){
+        return '';
+      };
+
+    if (this.fields) {
+      length = this.fields.length;
+      for (i = 0; i < length; i++) {
+        field = this.fields[i];
+
+        if (!field.filterEditorProperties) {
+          field.filterEditorProperties = {};
+        }
+
+        field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
+
+        if (field.isLink) {
+          // store the originalFormatCellValue if not already set
+          if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
+            field.originalFormatCellValue = field.formatCellValue;
+          }
+          field.formatCellValueFunctionReplaced = true;
+          field.formatCellValue = formatCellValueFunction;
+        }
+      }
+    }
     
     this.Super('initWidget', arguments);
   },
-  
+
   clearFilter: function(keepFilterClause, noPerformAction){
     var i = 0, fld, length;
     if (!keepFilterClause) {
@@ -498,7 +502,7 @@ isc.OBGrid.addProperties({
     length = criteria.length;
     for (i = 0; i < length; i++) {
       var criterion = criteria[i];
-      var prop = criterion.fieldName;
+      var prop = criterion && criterion.fieldName;
       var fullPropName = prop;
       if (!prop) {
         if (this.isGridFilteredWithCriteria(criterion.criteria)) {
@@ -667,3 +671,6 @@ isc.OBGridLinkButton.addProperties({
     this.owner.doAction();
   }
 });
+
+isc.ClassFactory.defineClass('OBGridFormButton', isc.OBFormButton);
+isc.OBGridFormButton.addProperties({});

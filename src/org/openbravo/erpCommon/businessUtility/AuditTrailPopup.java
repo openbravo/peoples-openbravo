@@ -869,7 +869,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     for (Field field : fields) {
       Column col = field.getColumn();
       // Remove grid generation for non audited columns
-      if (col.isExcludeAudit()) {
+      if (col == null || col.isExcludeAudit()) {
         continue;
       }
       gridCol = new SQLReturnObject();
@@ -1062,6 +1062,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
           continue;
         }
         Column col = field.getColumn();
+        if (col == null) {
+          continue;
+        }
         String value = row.getField(col.getDBColumnName());
         // beautify it
         value = getFormattedValue(vars, col, value);

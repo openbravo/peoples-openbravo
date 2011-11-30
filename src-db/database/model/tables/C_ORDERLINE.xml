@@ -193,6 +193,14 @@
         <default/>
         <onCreateDefault><![CDATA[LINENETAMT]]></onCreateDefault>
       </column>
+      <column name="M_INOUTLINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_RETURN_REASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -217,11 +225,17 @@
       <foreign-key foreignTable="C_ORDER_DISCOUNT" name="C_ORDERLINE_C_ORDER_DISCOUNT">
         <reference local="C_ORDER_DISCOUNT_ID" foreign="C_ORDER_DISCOUNT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_RETURN_REASON" name="C_ORDERLINE_C_RETURN_REASON">
+        <reference local="C_RETURN_REASON_ID" foreign="C_RETURN_REASON_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_TAX" name="C_ORDERLINE_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_ORDERLINE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INOUTLINE" name="C_ORDERLINE_INOUTLINE">
+        <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="C_ORDERLINE_M_ATTRIBUTESETINST">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
@@ -247,6 +261,9 @@
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
         <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
+      <index name="C_ORDERLINE_C_RETURN_REASON" unique="false">
+        <index-column name="C_RETURN_REASON_ID"/>
+      </index>
       <index name="C_ORDERLINE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>

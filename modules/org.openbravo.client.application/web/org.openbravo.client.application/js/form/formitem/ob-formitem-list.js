@@ -45,15 +45,6 @@ isc.OBListItem.addProperties({
 
   moveFocusOnPickValue: true,
 
-  // only fire change if a value gets picked
-  // explicitly
-  handleChange: function() {
-    if (!this._pickedValue) {
-      return;
-    }
-    return this.Super('handleChange', arguments);
-  },
-
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function(value) {
     this._pickedValue = true;

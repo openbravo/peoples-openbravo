@@ -49,6 +49,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class DocFINPayment extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -175,9 +176,17 @@ public class DocFINPayment extends AcctServer {
         FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
-        // This lines can be uncommented when User1 and User2 are implemented
-        // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
-        // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
+
+        try { // Get User1_ID and User2_ID using xsql
+          ConnectionProvider conn = new DalConnectionProvider(false);
+          DocFINPaymentData[] paymentInfo = DocFINPaymentData.select(conn, payment.getId());
+          if (paymentInfo.length > 0) {
+            FieldProviderFactory.setField(data[i], "user1Id", paymentInfo[0].user1Id);
+            FieldProviderFactory.setField(data[i], "user2Id", paymentInfo[0].user2Id);
+          }
+        } catch (Exception e) {
+          log4j.error("Error while retreiving user1 and user2 - ", e);
+        }
 
       }
     } finally {
@@ -470,9 +479,13 @@ public class DocFINPayment extends AcctServer {
         payment.getSalesCampaign() != null ? payment.getSalesCampaign().getId() : "");
     FieldProviderFactory.setField(data[0], "C_Activity_ID", payment.getActivity() != null ? payment
         .getActivity().getId() : "");
-    // This lines can be uncommented when User1 and User2 are implemented
-    // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
-    // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
+    // User1_ID and User2_ID
+    DocFINPaymentData[] paymentInfo = DocFINPaymentData.select(conn, payment.getId());
+    if (paymentInfo.length > 0) {
+      FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
+      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
+    }
+
     setObjectFieldProvider(data);
   }
 

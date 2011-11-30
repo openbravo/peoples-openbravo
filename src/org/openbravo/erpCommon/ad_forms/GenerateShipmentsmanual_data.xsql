@@ -34,6 +34,7 @@
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
+      AND dt.isreturn='N'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')
       AND 1=1

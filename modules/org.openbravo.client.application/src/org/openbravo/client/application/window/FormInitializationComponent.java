@@ -342,6 +342,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONObject jsonColumnValues = new JSONObject();
         for (Field field : getADFieldList(tab.getId())) {
+          if (field.getColumn() == null) {
+            continue;
+          }
+
           jsonColumnValues.put(
               field.getColumn().getDBColumnName(),
               columnValues.get("inp"
@@ -362,6 +366,9 @@ public class FormInitializationComponent extends BaseActionHandler {
 
         final Map<String, String> sessionAttributesMap = new HashMap<String, String>();
         for (Field field : getADFieldList(tab.getId())) {
+          if (field.getColumn() == null) {
+            continue;
+          }
           if (field.getColumn().getCallout() != null) {
             final String columnName = "inp"
                 + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
@@ -446,6 +453,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : getADFieldList(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       columnsOfFields.put(field.getColumn().getDBColumnName(), field);
     }
     List<String> changedCols = new ArrayList<String>();
@@ -570,6 +580,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     for (Field field : getADFieldList(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       String columnId = field.getColumn().getId();
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
       // We need to fire callouts if the field is a combo
@@ -622,6 +635,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : getADFieldList(tab.getId())) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       for (String col : columnsToComputeAgain) {
         if (col.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
           columnsOfFields.put(col, field);
@@ -708,6 +724,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (mode.equals("EDIT")) {
       // In EDIT mode we initialize them from the database
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
       }
     }
@@ -715,6 +734,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
         String inpColName = "inp"
             + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
@@ -769,6 +791,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private boolean referencedEntityIsParent(BaseOBObject parentRecord, Field field) {
+    if (field.getColumn() == null) {
+      return false;
+    }
+
     Entity parentEntity = parentRecord.getEntity();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         field.getTab().getTable().getId());
@@ -785,6 +811,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     List<String> columnsWithValidation = new ArrayList<String>();
     HashMap<String, String> validations = new HashMap<String, String>();
     for (Field field : fields) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       String columnName = field.getColumn().getDBColumnName();
       columns.add(columnName.toUpperCase());
       String validation = getValidation(field);
@@ -809,6 +838,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       // every column in the tab, instead firing reloads just for the dependant columns
       String changedCol = "";
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         String colName = field.getColumn().getDBColumnName();
         if (changedColumn.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(colName))) {
           sortedColumns.add(colName);
@@ -825,12 +857,18 @@ public class FormInitializationComponent extends BaseActionHandler {
     } else {
       // Add client and org first to compute dependencies correctly
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         String colName = field.getColumn().getDBColumnName();
         if (colName.equalsIgnoreCase("Ad_Client_Id")) {
           sortedColumns.add(colName);
         }
       }
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         String colName = field.getColumn().getDBColumnName();
         if (colName.equalsIgnoreCase("Ad_Org_Id")) {
           sortedColumns.add(colName);
@@ -839,6 +877,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       // we add the columns not included in the sortedColumns
       // (the ones which don't have validations)
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         String colName = field.getColumn().getDBColumnName();
         if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
             && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
@@ -855,6 +896,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     if (!mode.equalsIgnoreCase("CHANGE")) {
       for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
         String colName = field.getColumn().getDBColumnName();
         if (colName.equalsIgnoreCase("documentno")) {
           sortedColumns.add(colName);
@@ -882,6 +926,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     // require a combo reload because they are used in a validation, or there is a callout
     // associated with them)
     for (Field field : fields) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       String column = field.getColumn().getDBColumnName();
       if (columnsInValidation.get(column) != null && columnsInValidation.get(column).size() > 0) {
         for (String colInVal : columnsInValidation.get(column)) {
@@ -959,6 +1006,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setRequestContextParameter(Field field, JSONObject jsonObj) {
+    if (field.getColumn() == null) {
+      return;
+    }
+
     try {
       String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       RequestContext.get().setRequestParameter(
@@ -974,6 +1025,9 @@ public class FormInitializationComponent extends BaseActionHandler {
   private HashMap<String, Field> buildInpField(List<Field> fields) {
     HashMap<String, Field> inpFields = new HashMap<String, Field>();
     for (Field field : fields) {
+      if (field.getColumn() == null) {
+        continue;
+      }
       inpFields.put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
           field);
     }
@@ -1133,6 +1187,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                   boolean changed = false;
                   if (inpFields.containsKey(name)) {
                     Column col = inpFields.get(name).getColumn();
+                    if (col == null) {
+                      continue;
+                    }
                     String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
                     if (element.get(1, null) instanceof NativeArray) {
                       // Combo data
@@ -1378,6 +1435,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private String getValidation(Field field) {
+    if (field.getColumn() == null) {
+      return "";
+    }
+
     Column c = field.getColumn();
     String val = "";
     if (c.getValidation() != null && c.getValidation().getValidationCode() != null) {

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_MODULE_DEPENDENCY_MOD_TRG">
-    <trigger name="AD_MODULE_DEPENDENCY_MOD_TRG" table="AD_MODULE_DEPENDENCY" fires="before" insert="true" update="true" delete="false" foreach="row">
+    <trigger name="AD_MODULE_DEPENDENCY_MOD_TRG" table="AD_MODULE_DEPENDENCY" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -66,6 +66,10 @@ BEGIN
   END IF;
   
   IF (INSERTING AND devModule='N') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@20533@');
+  END IF;
+  
+  IF (DELETING AND devModule='N') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
   

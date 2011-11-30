@@ -84,17 +84,17 @@ public class CallStoredProcedure {
       final PreparedStatement ps = conn.prepareStatement(sb.toString(),
           ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
       int index = 0;
-      ;
+
       for (Object parameter : parameters) {
         final int sqlIndex = index + 1;
         if (parameter == null) {
           if (types == null || types.size() < index) {
-            ps.setNull(sqlIndex, Types.NVARCHAR);
+            ps.setNull(sqlIndex, Types.NULL);
           } else {
             ps.setNull(sqlIndex, getSqlType(types.get(index)));
           }
         } else if (parameter instanceof String && parameter.toString().equals("")) {
-          ps.setNull(sqlIndex, Types.NVARCHAR);
+          ps.setNull(sqlIndex, Types.VARCHAR);
         } else if (parameter instanceof Boolean) {
           ps.setObject(sqlIndex, ((Boolean) parameter) ? "Y" : "N");
         } else if (parameter instanceof BaseOBObject) {
@@ -126,7 +126,7 @@ public class CallStoredProcedure {
 
   private int getSqlType(Class<?> clz) {
     if (clz == null) {
-      return Types.NVARCHAR;
+      return Types.VARCHAR;
     }
     if (clz == Boolean.class) {
       return Types.VARCHAR;

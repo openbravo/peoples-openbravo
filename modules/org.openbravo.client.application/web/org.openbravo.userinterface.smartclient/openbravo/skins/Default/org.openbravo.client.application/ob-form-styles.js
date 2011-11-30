@@ -62,6 +62,8 @@ isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Default
 
 isc.OBEncryptedItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
+isc.OBClientClassCanvasItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+
 isc.OBTextAreaItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 isc.OBTextAreaItem.addProperties({
   height: 66

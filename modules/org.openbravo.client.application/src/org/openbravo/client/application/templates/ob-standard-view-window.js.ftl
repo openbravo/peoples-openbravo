@@ -32,3 +32,7 @@ isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBSt
     }
 });
 
+// Include the views used by processes in this window, avoid making an extra request
+<#list data.processViews as view>
+${view}
+</#list>

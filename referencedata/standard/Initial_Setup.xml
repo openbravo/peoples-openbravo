@@ -9,6 +9,33 @@
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
+  <EmailTemplate id="37EAD96829264AC49467C16390886555" identifier="RTV Order template - ">
+    <id>37EAD96829264AC49467C16390886555</id>
+    <active>true</active>
+    <pocDocumentType id="3A486843BD714A959B19C3A47344E6FA" entity-name="DocumentTemplate" identifier="RTV Order template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="5695010441024D0F90A2EEC418C64D24" identifier="RFC Receipt Template - ">
+    <id>5695010441024D0F90A2EEC418C64D24</id>
+    <active>true</active>
+    <pocDocumentType id="A95A4AF0956B4E249048E4A0A8F865E6" entity-name="DocumentTemplate" identifier="RFC Receipt Template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="75AA2DE295D6485B90FEAA71F7ED6D99" identifier="RTV Shipment template - ">
+    <id>75AA2DE295D6485B90FEAA71F7ED6D99</id>
+    <active>true</active>
+    <pocDocumentType id="C9566AD143FE485CB349638E6BF545FA" entity-name="DocumentTemplate" identifier="RTV Shipment template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>false</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
   <EmailTemplate id="878ECF0D5A238C7BE040007F010129BA" identifier="AR Invoice Report template - ">
     <id>878ECF0D5A238C7BE040007F010129BA</id>
     <active>true</active>
@@ -157,6 +184,15 @@
     <id>E8CBFC5AD3784396BC2D14CD1A104316</id>
     <active>true</active>
     <pocDocumentType id="FA45DFAC61A542658CC02B64E476F4C0" entity-name="DocumentTemplate" identifier="AP Payment Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="FD0FD659992343069B30982BA0040331" identifier="RFC Order template - ">
+    <id>FD0FD659992343069B30982BA0040331</id>
+    <active>true</active>
+    <pocDocumentType id="9EFA285F0D4F482FB000B6E1EAA8C0D9" entity-name="DocumentTemplate" identifier="RFC Order template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
@@ -361,6 +397,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="0CD50184705A42CCBECA4EC967646440" identifier="MM Shipment">
     <id>0CD50184705A42CCBECA4EC967646440</id>
@@ -384,6 +421,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="15C8DCE82DA841968ABCD614FED68576" identifier="Proposal">
     <id>15C8DCE82DA841968ABCD614FED68576</id>
@@ -407,6 +445,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="15F495A6290040F194A9AA4622FE0C01" identifier="Prepay Order">
     <id>15F495A6290040F194A9AA4622FE0C01</id>
@@ -430,6 +469,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="2030AD7DD4284E2B936E261662EF735A" identifier="MM Receipt">
     <id>2030AD7DD4284E2B936E261662EF735A</id>
@@ -453,6 +493,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="2D7C15F0F44E4F289A729415EFD700C1" identifier="Return Material">
     <id>2D7C15F0F44E4F289A729415EFD700C1</id>
@@ -476,6 +517,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="3DDDC41E36534A79B7CC1B725472882D" identifier="Inventory Move">
     <id>3DDDC41E36534A79B7CC1B725472882D</id>
@@ -499,6 +541,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="40EE9B1CD3B345FABEFDA62B407B407F" identifier="AR Invoice">
     <id>40EE9B1CD3B345FABEFDA62B407B407F</id>
@@ -522,6 +565,7 @@
     <documentCancelled id="67C3266D11A04078B7A14AC21E91C711" entity-name="DocumentType" identifier="Reversed Sales Invoice"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="42B7DE94BC324C3F9CC0934375E90FFF" identifier="AP CreditMemo">
     <id>42B7DE94BC324C3F9CC0934375E90FFF</id>
@@ -545,6 +589,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>true</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="51005B2C07EB41C5A2E7C25A4640ACD7" identifier="GL Journal">
     <id>51005B2C07EB41C5A2E7C25A4640ACD7</id>
@@ -568,6 +613,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="511A9371A0F74195AA3F6D66C722729D" identifier="POS Order">
     <id>511A9371A0F74195AA3F6D66C722729D</id>
@@ -591,6 +637,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="5C6E02993E9B4FCA81C07955EF676C62" identifier="AP Invoice">
     <id>5C6E02993E9B4FCA81C07955EF676C62</id>
@@ -614,6 +661,31 @@
     <documentCancelled id="AFFD4594FB734E9682D5769669A9D471" entity-name="DocumentType" identifier="Reversed Purchase Invoice"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
+  </DocumentType>
+  <DocumentType id="5E2546B377D04D4FB346C48683A2EF31" identifier="RTV Shipment">
+    <id>5E2546B377D04D4FB346C48683A2EF31</id>
+    <active>true</active>
+    <name>RTV Shipment</name>
+    <printText>RTV Shipment</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MMR</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="5926CC9BFB944A83856292A5398DFB66" entity-name="ADSequence" identifier="RTV Shipment"/>
+    <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="5EA6556D24034412B5F26F6BA7245318" identifier="Matched Invoices">
     <id>5EA6556D24034412B5F26F6BA7245318</id>
@@ -637,6 +709,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="6543EB94DC664371BAF61B8E8AC121F3" identifier="Bank Statement">
     <id>6543EB94DC664371BAF61B8E8AC121F3</id>
@@ -660,6 +733,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="67C3266D11A04078B7A14AC21E91C711" identifier="Reversed Sales Invoice">
     <id>67C3266D11A04078B7A14AC21E91C711</id>
@@ -683,6 +757,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="6B13D02AD3C44C4CB0CFBD1288E0CB10" identifier="Physical Inventory">
     <id>6B13D02AD3C44C4CB0CFBD1288E0CB10</id>
@@ -706,6 +781,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="6F3BBCA488F6474A806C59FD1137CBF5" identifier="Purchase Requisition">
     <id>6F3BBCA488F6474A806C59FD1137CBF5</id>
@@ -729,6 +805,31 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
+  </DocumentType>
+  <DocumentType id="6FC1637EEE784A368157D86E0BDD852A" identifier="RFC Receipt">
+    <id>6FC1637EEE784A368157D86E0BDD852A</id>
+    <active>true</active>
+    <name>RFC Receipt</name>
+    <printText>RFC Receipt</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MMS</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="826B4A81F9994113A667C5C56A3BBBA4" entity-name="ADSequence" identifier="RFC Receipt"/>
+    <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="76E7C671FCE34556908E563F825C2937" identifier="Warehouse Order">
     <id>76E7C671FCE34556908E563F825C2937</id>
@@ -752,6 +853,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="808F8818F724497D94282AC83493F394" identifier="Purchase Order">
     <id>808F8818F724497D94282AC83493F394</id>
@@ -775,6 +877,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="857F464FDEE34F6DB5AEC50981419FBF" identifier="Settlement">
     <id>857F464FDEE34F6DB5AEC50981419FBF</id>
@@ -798,6 +901,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="8F343D831EA6434D9720FECAF5FB957E" identifier="Debt Payment Management">
     <id>8F343D831EA6434D9720FECAF5FB957E</id>
@@ -821,6 +925,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="9883CB89E41E496D987D8838C3CE0DC7" identifier="Matched Purchase Orders">
     <id>9883CB89E41E496D987D8838C3CE0DC7</id>
@@ -844,6 +949,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="A0C72093D5614867906A6E878F96FBBD" identifier="Depreciation">
     <id>A0C72093D5614867906A6E878F96FBBD</id>
@@ -867,6 +973,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="A58B8296E0ED42E386468D4527DE8F30" identifier="Cash Journal">
     <id>A58B8296E0ED42E386468D4527DE8F30</id>
@@ -890,6 +997,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="AFFD4594FB734E9682D5769669A9D471" identifier="Reversed Purchase Invoice">
     <id>AFFD4594FB734E9682D5769669A9D471</id>
@@ -913,6 +1021,31 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>true</return>
+  </DocumentType>
+  <DocumentType id="B0745E66713C49199CE719BF5B88AF5C" identifier="RFC Order">
+    <id>B0745E66713C49199CE719BF5B88AF5C</id>
+    <active>true</active>
+    <name>RFC Order</name>
+    <printText>RFC Order</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>SO</sOSubType>
+    <documentTypeForShipment id="6FC1637EEE784A368157D86E0BDD852A" entity-name="DocumentType" identifier="RFC Receipt"/>
+    <documentTypeForInvoice id="67C3266D11A04078B7A14AC21E91C711" entity-name="DocumentType" identifier="Reversed Sales Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="78E54919CD7742EEA66B2CA1AD41C87E" entity-name="ADSequence" identifier="RFC Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="B476CFAE109047DEB5BC9AC80A03297A" identifier="AR Credit Memo">
     <id>B476CFAE109047DEB5BC9AC80A03297A</id>
@@ -936,6 +1069,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>true</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="B968C737ED3E4C808E425A72CC445DFE" identifier="Manual Settlement">
     <id>B968C737ED3E4C808E425A72CC445DFE</id>
@@ -959,6 +1093,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="CB6EEA256BBC41109911215C5A14D39B" identifier="Standard Order">
     <id>CB6EEA256BBC41109911215C5A14D39B</id>
@@ -982,6 +1117,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="D132517AE775435B8EB2832CC61FCAB1" identifier="AR Receipt">
     <id>D132517AE775435B8EB2832CC61FCAB1</id>
@@ -1005,6 +1141,31 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
+  </DocumentType>
+  <DocumentType id="D2CE210969384179A54A964C7AA6CE0C" identifier="RTV Order">
+    <id>D2CE210969384179A54A964C7AA6CE0C</id>
+    <active>true</active>
+    <name>RTV Order</name>
+    <printText>RTV Order</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>POO</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="5E2546B377D04D4FB346C48683A2EF31" entity-name="DocumentType" identifier="RTV Shipment"/>
+    <documentTypeForInvoice id="AFFD4594FB734E9682D5769669A9D471" entity-name="DocumentType" identifier="Reversed Purchase Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="76162FED6C5746A8976DDE7551B9BE02" entity-name="ADSequence" identifier="RTV Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
   </DocumentType>
   <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
     <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
@@ -1028,6 +1189,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="EC0B46C525A0417DA286823864620991" identifier="Production">
     <id>EC0B46C525A0417DA286823864620991</id>
@@ -1051,6 +1213,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="ED1E059C9CF54062BA43B79F3EB89C77" identifier="AP Payment">
     <id>ED1E059C9CF54062BA43B79F3EB89C77</id>
@@ -1074,6 +1237,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <DocumentType id="F8CC92C7234644DEAD9F63174F45B2BF" identifier="MM Shipment Indirect">
     <id>F8CC92C7234644DEAD9F63174F45B2BF</id>
@@ -1097,6 +1261,7 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+    <return>false</return>
   </DocumentType>
   <ADSequence id="01A4350CC9044517BA7B1B05EEF065FF" identifier="MM Shipment Indirect">
     <id>01A4350CC9044517BA7B1B05EEF065FF</id>
@@ -1170,6 +1335,18 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
+  <ADSequence id="5926CC9BFB944A83856292A5398DFB66" identifier="RTV Shipment">
+    <id>5926CC9BFB944A83856292A5398DFB66</id>
+    <active>true</active>
+    <name>RTV Shipment</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
   <ADSequence id="6D3C7477332F47CD8A0F6A5C4805EBD4" identifier="Prepay Order">
     <id>6D3C7477332F47CD8A0F6A5C4805EBD4</id>
     <active>true</active>
@@ -1191,6 +1368,30 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>900000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="76162FED6C5746A8976DDE7551B9BE02" identifier="RTV Order">
+    <id>76162FED6C5746A8976DDE7551B9BE02</id>
+    <active>true</active>
+    <name>RTV Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="78E54919CD7742EEA66B2CA1AD41C87E" identifier="RFC Order">
+    <id>78E54919CD7742EEA66B2CA1AD41C87E</id>
+    <active>true</active>
+    <name>RFC Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
@@ -1227,6 +1428,18 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="826B4A81F9994113A667C5C56A3BBBA4" identifier="RFC Receipt">
+    <id>826B4A81F9994113A667C5C56A3BBBA4</id>
+    <active>true</active>
+    <name>RFC Receipt</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
@@ -1482,6 +1695,18 @@
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
   </DocumentTemplate>
+  <DocumentTemplate id="3A486843BD714A959B19C3A47344E6FA" identifier="RTV Order template">
+    <id>3A486843BD714A959B19C3A47344E6FA</id>
+    <active>true</active>
+    <documentType id="D2CE210969384179A54A964C7AA6CE0C" entity-name="DocumentType" identifier="RTV Order"/>
+    <name>RTV Order template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>RTV Order - @our_ref@</reportFilename>
+    <templateFilename>C_RMOrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
   <DocumentTemplate id="4F23CD7CD64D468EA4753C0C7B09FD53" identifier="Return Material Report template">
     <id>4F23CD7CD64D468EA4753C0C7B09FD53</id>
     <active>true</active>
@@ -1518,6 +1743,18 @@
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
   </DocumentTemplate>
+  <DocumentTemplate id="9EFA285F0D4F482FB000B6E1EAA8C0D9" identifier="RFC Order template">
+    <id>9EFA285F0D4F482FB000B6E1EAA8C0D9</id>
+    <active>true</active>
+    <documentType id="B0745E66713C49199CE719BF5B88AF5C" entity-name="DocumentType" identifier="RFC Order"/>
+    <name>RFC Order template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>RFC Order - @our_ref@</reportFilename>
+    <templateFilename>C_RMOrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
   <DocumentTemplate id="9FB97CCA66EA49F29A0EF5080E2AFF29" identifier="AR Credit Memo Report template">
     <id>9FB97CCA66EA49F29A0EF5080E2AFF29</id>
     <active>true</active>
@@ -1550,6 +1787,18 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="A95A4AF0956B4E249048E4A0A8F865E6" identifier="RFC Receipt Template">
+    <id>A95A4AF0956B4E249048E4A0A8F865E6</id>
+    <active>true</active>
+    <documentType id="6FC1637EEE784A368157D86E0BDD852A" entity-name="DocumentType" identifier="RFC Receipt"/>
+    <name>RFC Receipt Template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>RTV Receipt - @our_ref@</reportFilename>
+    <templateFilename>RptM_RMInOut.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
@@ -1622,6 +1871,18 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="C9566AD143FE485CB349638E6BF545FA" identifier="RTV Shipment template">
+    <id>C9566AD143FE485CB349638E6BF545FA</id>
+    <active>true</active>
+    <documentType id="5E2546B377D04D4FB346C48683A2EF31" entity-name="DocumentType" identifier="RTV Shipment"/>
+    <name>RTV Shipment template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>RTV Shipment - @our_ref@</reportFilename>
+    <templateFilename>RptM_RMInOut.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>

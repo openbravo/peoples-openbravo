@@ -83,6 +83,7 @@ BEGIN
         COALESCE(:NEW.IsEncrypted , '.') != COALESCE(:OLD.IsEncrypted , '.') OR
         COALESCE(:NEW.ShowInRelation , '.') != COALESCE(:OLD.ShowInRelation , '.') OR
         COALESCE(:NEW.OnChangeFunction , '.') != COALESCE(:OLD.OnChangeFunction , '.') OR
+        COALESCE(:NEW.ClientClass , '.') != COALESCE(:OLD.ClientClass , '.') OR
         COALESCE(:NEW.Isfirstfocusedfield , '.') != COALESCE(:OLD.Isfirstfocusedfield , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
         1=2) THEN

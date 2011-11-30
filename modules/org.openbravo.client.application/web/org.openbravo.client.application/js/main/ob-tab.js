@@ -289,15 +289,19 @@ isc.OBTabSetMain.addProperties({
     return true;
   },
 
-  updateTab: function (tab, pane) {
+  updateTab: function (tab, pane, refresh) {
     var previousPane = tab && this.getTabObject(tab).pane;
     
     this.Super('updateTab', arguments);
 
     // Note: updateTab doesn't remove the previous loading tab
     // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
-    if(previousPane) {
+    if(previousPane && previousPane.isLoadingTab) {
       previousPane.destroy();
+    }
+
+    if(refresh && pane.refresh) {
+      this.fireOnPause('refreshRecordInView', {target: pane, methodName: 'refresh'}, 120);
     }
   }
 });

@@ -129,6 +129,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CLIENTCLASS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>

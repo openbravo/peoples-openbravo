@@ -183,7 +183,7 @@ isc.OBStandardView.addProperties({
   propertyToColumns:[],
 
   initWidget: function(properties){
-    var length;
+    var length, rightMemberButtons = [], leftMemberButtons = [], i, actionButton;
     
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -193,15 +193,11 @@ isc.OBStandardView.addProperties({
     if (this.isRootView) {
       this.buildStructure();
     }
-    
+
     OB.TestRegistry.register('org.openbravo.client.application.View_' + this.tabId, this);
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
-    
-    var rightMemberButtons = [];
-    var leftMemberButtons = [];
-    var i, actionButton;
-    
+ 
     if (this.actionToolbarButtons) {
       length = this.actionToolbarButtons.length;
       for (i = 0; i < length; i++) {
@@ -227,11 +223,9 @@ isc.OBStandardView.addProperties({
       rightMembers: rightMemberButtons
     });
 
-    var ret = this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
     
     this.toolBar.updateButtonState(true);
-
-    return ret;
   },
   
   show: function() {
@@ -1266,7 +1260,11 @@ isc.OBStandardView.addProperties({
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
-    
+
+    if(this.viewForm && this.viewForm.contextInfo) {
+      this.viewForm.contextInfo = null;
+    }
+
     var me = this;
     var formRefresh = function() {
       if (refreshCallback) {
@@ -1340,7 +1338,11 @@ isc.OBStandardView.addProperties({
         callBackFunction();
       }
     };
-    
+
+    if(this.viewForm && this.viewForm.contextInfo) {
+      this.viewForm.contextInfo = null;
+    }
+
     this.getDataSource().fetchData(criteria, callback);
     this.refreshParentRecord(callBackFunction);
   },
@@ -1863,12 +1865,18 @@ isc.OBStandardView.addProperties({
       fld.originalShowIf = fld.showIf;
       fld.showIf = function(item, value, form, values) {
         var currentValues = values || form.view.getCurrentValues(),
-        context = form.getCachedContextInfo();
+          context = form.getCachedContextInfo(), 
+          originalShowIfValue = false;
 
         OB.Utilities.fixNull250(currentValues);
         
-        return !this.hiddenInForm && context && 
-          this.originalShowIf(item, value, form, currentValues, context);
+        try {
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+        } catch(_exception) {
+          isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+        }
+        
+        return !this.hiddenInForm && context && originalShowIfValue;
       };
     }
     if (fld.type === 'OBAuditSectionItem') {
@@ -1960,7 +1968,8 @@ isc.OBStandardView.addProperties({
       }
 
       // correct some stuff coming from the form fields
-      if (!fld.displayed) {
+      if (fld.displayed === false) {
+        fld.canEdit = false;
         fld.visible = true;
         fld.alwaysTakeSpace = true;
       }
@@ -1984,7 +1993,7 @@ isc.OBStandardView.addProperties({
       }
       
       type = isc.SimpleType.getType(fld.type);
-      if (type.editorType) {
+      if (type.editorType && !fld.editorType) {
         fld.editorType = type.editorType;
       }
       
@@ -1996,6 +2005,23 @@ isc.OBStandardView.addProperties({
         fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
+
+      if(fld.validationFn) {
+
+        if(!fld.validators) {
+          fld.validators = [];
+        }
+
+        fld.validators.push({
+          type: 'custom',
+          condition: fld.validationFn
+        });
+      }
+
+      if (!fld.filterEditorProperties) {
+        fld.filterEditorProperties = {};
+      }
+      fld.filterEditorProperties.required = false;
       
       result.push(fld);
     }
@@ -2048,8 +2074,6 @@ isc.OBStandardView.addProperties({
       }
       return 1;
     });
-    
-    
     
     return result;
   }

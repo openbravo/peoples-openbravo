@@ -44,7 +44,7 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   prompt: OB.I18N.getLabel('OBUIAPP_LinkedItemsPrompt'),
   
-  canvasItem: null,
+  linkedItemCanvasItem: null,
   
   visible: false,
   
@@ -63,10 +63,10 @@ isc.OBLinkedItemSectionItem.addProperties({
   },
   
   getLinkedItemPart: function(){
-    if (!this.canvasItem) {
-      this.canvasItem = this.form.getField(this.itemIds[0]);
+    if (!this.linkedItemCanvasItem) {
+      this.linkedItemCanvasItem = this.form.getField(this.itemIds[0]);
     }
-    return this.canvasItem.canvas;
+    return this.linkedItemCanvasItem.canvas;
   },
   
   setRecordInfo: function(entity, id){

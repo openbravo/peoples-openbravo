@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -369,6 +370,7 @@ public class TranslationManager {
       String rootDirectory, String moduleId, String moduleLanguage, String javaPackage, boolean trl) {
 
     Statement st = null;
+    StringBuffer sql = null;
     try {
       String trlTable = table;
       if (trl && !table.endsWith("_TRL"))
@@ -388,7 +390,7 @@ public class TranslationManager {
       }
 
       // Prepare query to retrieve translated rows
-      final StringBuffer sql = new StringBuffer("SELECT ");
+      sql = new StringBuffer("SELECT ");
       if (trl)
         sql.append("t.IsTranslated,");
       else
@@ -418,23 +420,35 @@ public class TranslationManager {
       sql.append(" AND o.AD_Client_ID='0' ");
 
       if (!exportReferenceData) {
-        String strParentTable = null;
         String tempTrlTableName = trlTable;
-        if (!tempTrlTableName.toLowerCase().endsWith("_trl"))
+        if (!tempTrlTableName.toLowerCase().endsWith("_trl")) {
           tempTrlTableName = tempTrlTableName + "_Trl";
-        final TranslationData[] parentTable = TranslationData.parentTable(cp, tempTrlTableName);
-        if (parentTable.length > 0) {
-          strParentTable = parentTable[0].tablename;
         }
-        if (strParentTable == null) {
+        final TranslationData[] parentTable = TranslationData.parentTable(cp, tempTrlTableName);
+
+        if (parentTable.length == 0) {
           sql.append(" AND ").append(" o.ad_module_id='").append(moduleId).append("'");
         } else {
           /** Search for ad_module_id in the parent table */
-          sql.append(" AND ");
-          sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
-          sql.append("   where p.").append(strParentTable + "_ID").append("=")
-              .append("o." + strParentTable + "_ID");
-          sql.append("   and p.ad_module_id='").append(moduleId).append("')");
+          if (StringUtils.isEmpty(parentTable[0].grandparent)) {
+            String strParentTable = parentTable[0].tablename;
+            sql.append(" AND ");
+            sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
+            sql.append("   where p.").append(strParentTable + "_ID").append("=")
+                .append("o." + strParentTable + "_ID");
+            sql.append("   and p.ad_module_id='").append(moduleId).append("')");
+          } else {
+            String strParentTable = parentTable[0].tablename;
+            String strGandParentTable = parentTable[0].grandparent;
+
+            sql.append(" AND ");
+            sql.append(" exists ( select 1 from ").append(strGandParentTable).append(" gp, ")
+                .append(strParentTable).append(" p");
+            sql.append("   where p.").append(strParentTable + "_ID").append("=")
+                .append("o." + strParentTable + "_ID");
+            sql.append("   and p." + strGandParentTable + "_ID = gp." + strGandParentTable + "_ID");
+            sql.append("   and gp.ad_module_id='").append(moduleId).append("')");
+          }
         }
       }
       if (exportReferenceData && !exportAll) {
@@ -563,7 +577,7 @@ public class TranslationManager {
       transformer.transform(source, new StreamResult(osw));
       osw.close();
     } catch (final Exception e) {
-      log4j.error("Error exporting translation for table " + table, e);
+      log4j.error("Error exporting translation for table " + table + "\n" + sql, e);
     } finally {
       try {
         if (st != null)

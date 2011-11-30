@@ -42,14 +42,14 @@ public class PrintCheck implements FIN_PaymentExecutionProcess {
       return result;
     }
 
+    paymentRun.setStatus("PE");
+    OBDal.getInstance().save(paymentRun);
     for (PaymentRunPayment paymentRunPayment : paymentRun.getFinancialMgmtPaymentRunPaymentList()) {
       paymentRunPayment.getPayment().setStatus(
           paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM");
       paymentRunPayment.getPayment().setReferenceNo(String.valueOf(checkNumber));
       checkNumber += 1;
       paymentRunPayment.setResult("S");
-      paymentRun.setStatus("PE");
-      OBDal.getInstance().save(paymentRun);
       OBDal.getInstance().save(paymentRunPayment.getPayment());
       OBDal.getInstance().save(paymentRunPayment);
     }

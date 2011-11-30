@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       select '1' AS C, '' AS AD_MODULE_ID, '' AS VALUE, '' AS TABLENAME,
-             '' AS ISINDEVELOPMENT, '' AS AD_Table_ID, '' as AD_Language
+             '' AS ISINDEVELOPMENT, '' AS AD_Table_ID, '' as AD_Language, '' AS grandParent
       from dual 
     </Sql>
   </SqlMethod>
@@ -119,23 +119,48 @@
               and lower(t2.tablename)||'_id' = lower(c.columnname)
               and lower(t1.tablename) || '_trl' = lower(t.tablename)
               and exists (select 1 from ad_column where ad_table_id = t2.ad_table_id and lower(columnname) = 'ad_module_id')
+           union
+           select 1
+              from ad_table t1, ad_column c, ad_table t2, ad_column c2, ad_table t3, ad_column c3
+            where t2.ad_table_id = c2.ad_table_id
+              and t1.ad_table_id = c.ad_table_id
+              and c.isparent='Y'
+              and c2.isparent='Y'
+              and lower(t3.tablename)||'_id' = lower(c2.columnname)
+              and lower(t2.tablename)||'_id' = lower(c.columnname)
+              and lower(t1.tablename) || '_trl' = lower(t.tablename)
+              and exists (select 1 from ad_column where ad_table_id = t3.ad_table_id and lower(columnname) = 'ad_module_id')
+              and not exists (select 1 from ad_column where ad_table_id = t2.ad_table_id and lower(columnname) = 'ad_module_id')
            )
       </Sql>
   </SqlMethod> 
   
   <SqlMethod name="parentTable" type="preparedStatement" return="multiple">     
       <Sql>
-      select distinct t2.tablename as tablename
-       from ad_table t, ad_table t1, ad_column c, ad_table t2, ad_column c2
+      select t2.tablename as tablename, null as grandParent
+       from ad_table t, ad_table t1, ad_column c, ad_table t2
       where t1.ad_table_id = c.ad_table_id
         and c.isparent='Y'
         and lower(t2.tablename)||'_id' = lower(c.columnname)
         and lower(t1.tablename) || '_trl' = lower(t.tablename)
         and exists (select 1 from ad_column where ad_table_id = t2.ad_table_id and lower(columnname) = 'ad_module_id')
-        and lower(t.tablename) like '%trl'
         and not exists (select 1 from ad_column where ad_table_id = t1.ad_table_id and lower(columnname) = 'ad_module_id')
         and lower(t.tablename) = lower(?)
+      union
+      select t2.tablename, t3.tablename
+        from ad_table t, ad_table t1, ad_column c, ad_table t2, ad_column c2, ad_table t3
+       where t2.ad_table_id = c2.ad_table_id
+         and t1.ad_table_id = c.ad_table_id
+         and c.isparent='Y'
+         and c2.isparent='Y'
+         and lower(t3.tablename)||'_id' = lower(c2.columnname)
+         and lower(t2.tablename)||'_id' = lower(c.columnname)
+         and lower(t1.tablename) || '_trl' = lower(t.tablename)
+         and exists (select 1 from ad_column where ad_table_id = t3.ad_table_id and lower(columnname) = 'ad_module_id')
+         and not exists (select 1 from ad_column where ad_table_id = t2.ad_table_id and lower(columnname) = 'ad_module_id')
+         and lower(t.tablename) = lower(?)
       </Sql>
+      <Parameter name="tablename"/>
       <Parameter name="tablename"/>
   </SqlMethod> 
   

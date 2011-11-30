@@ -67,8 +67,11 @@ isc.OBStatusBarLeftBar.addProperties({
 });
 
 isc.OBStatusBarTextLabel.addProperties({
-  baseStyle: "OBStatusBarTextLabel",
-  overflow: 'hidden'
+  wrap: false,
+  width: 1,
+  height: 1,
+  overflow: 'visible',
+  baseStyle: "OBStatusBarTextLabel"
 });
 
 isc.OBStatusBarIconButtonBar.addProperties({
