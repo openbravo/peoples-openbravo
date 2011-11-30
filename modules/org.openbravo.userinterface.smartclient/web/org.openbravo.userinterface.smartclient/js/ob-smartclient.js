@@ -376,7 +376,18 @@ isc.FormItem.addProperties({
 
   // disable tab to icons
   canTabToIcons: false,
-  
+
+  _original_validate: isc.FormItem.getPrototype().validate,
+  validate: function() {
+    
+    // prevent validation when we are showing the editor and moving
+    // the focus around
+    if (this.form && this.form.grid && this.form.grid._showingEditor) {
+      return;
+    }
+    return this._original_validate();
+  },
+
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
     this.obShowIf = this.showIf; // Copy the reference of showIf definition

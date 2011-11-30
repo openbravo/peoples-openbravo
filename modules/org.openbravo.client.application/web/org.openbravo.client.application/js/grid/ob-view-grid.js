@@ -2140,8 +2140,8 @@ isc.OBViewGrid.addProperties({
     
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
     
-    delete this._showingEditor;
     if (!newRow) {
+      delete this._showingEditor;
       return ret;
     }
     
@@ -2183,6 +2183,7 @@ isc.OBViewGrid.addProperties({
     
     this.view.messageBar.hide();
     
+    delete this._showingEditor;
     return ret;
   },
   

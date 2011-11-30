@@ -429,6 +429,12 @@ isc.OBNumberItem.addProperties({
   blur: function(){
     var value;
     
+    // prevent validation/blurhandling when we are showing the editor and moving
+    // the focus around
+    if (this.form && this.form.grid && this.form.grid._showingEditor) {
+      return;
+    }
+
     if (this.doBlurLogic) {
       this.validate();  
 
