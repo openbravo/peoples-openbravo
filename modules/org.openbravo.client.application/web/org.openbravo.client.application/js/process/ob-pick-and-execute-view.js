@@ -31,6 +31,7 @@ isc.OBPickAndExecuteView.addProperties({
   showMinimizeButton: false,
   showMaximizeButton: false,
   showFooter: false,
+  showTitle: true,
 
   width: '100%',
   height: '100%',
@@ -74,6 +75,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
+    this.title = this.windowTitle;
 
     // the datasource object is defined on viewProperties, do not destroy it
     this.dataSource.potentiallyShared = true;

@@ -409,16 +409,16 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public boolean isAllowAdd() {
-    if (tab.isObuiappCanAdd() != null) {
-      return tab.isObuiappCanAdd();
-    }
+    // if (tab.isObuiappCanAdd() != null) {
+    // return tab.isObuiappCanAdd();
+    // }
     return false;
   }
 
   public boolean isAllowDelete() {
-    if (tab.isObuiappCanDelete() != null) {
-      return tab.isObuiappCanDelete();
-    }
+    // if (tab.isObuiappCanDelete() != null) {
+    // return tab.isObuiappCanDelete();
+    // }
     return false;
   }
 
@@ -436,6 +436,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private boolean modal = true;
     private String processId = "";
     private String windowId = "";
+    private String windowTitle = "";
     private boolean newDefinition = false;
 
     public ButtonField(Field fld) {
@@ -540,6 +541,7 @@ public class OBViewTab extends BaseTemplateComponent {
         } else {
           setWindowId(p.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow()
               .getId());
+          setWindowTitle(p.getName());
         }
         return;
       } else if (p.getReference().getId().equals(ApplicationConstants.BUTTON_LIST_REFERENCE_ID)) {
@@ -636,6 +638,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public void setWindowId(String windowId) {
       this.windowId = windowId;
+    }
+
+    public String getWindowTitle() {
+      return windowTitle;
+    }
+
+    public void setWindowTitle(String windowTitle) {
+      this.windowTitle = windowTitle;
     }
 
     public class Value {
