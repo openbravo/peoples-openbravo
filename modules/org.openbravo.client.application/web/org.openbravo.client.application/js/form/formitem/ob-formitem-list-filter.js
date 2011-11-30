@@ -30,6 +30,19 @@ isc.OBListFilterItem.addProperties({
   filterOnKeypress: false,
   addUnknownValues: false,
   
+  init: function() {
+    if (this.valueMap) {
+      // add the empty value in this way to make sure that the 
+      // space is shown first
+      this.valueMap = isc.addProperties({'' : ''}, this.valueMap);
+    }
+    this.Super('init', arguments);
+  },
+
+  setValueMap: function(valueMap) {
+    this.Super('setValueMap', [isc.addProperties({'' : ''}, valueMap)]);
+  },
+  
   // note: can't override changed as it is used by the filter editor 
   // itself, see the RecordEditor source code and the changed event
   change: function(form, item, value, oldValue) {

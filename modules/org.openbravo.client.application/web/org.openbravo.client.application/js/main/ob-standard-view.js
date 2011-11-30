@@ -2018,6 +2018,11 @@ isc.OBStandardView.addProperties({
         });
       }
 
+      if (!fld.filterEditorProperties) {
+        fld.filterEditorProperties = {};
+      }
+      fld.filterEditorProperties.required = false;
+      
       result.push(fld);
     }
     
