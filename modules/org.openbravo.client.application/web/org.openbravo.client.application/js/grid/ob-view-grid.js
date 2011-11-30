@@ -1021,7 +1021,7 @@ isc.OBViewGrid.addProperties({
       criteria.criteria = [];
     }
     
-    if (this.targetRecordId) {
+    if (!this.notRemoveFilter && this.targetRecordId) {
       // do not filter on anything with a targetrecord
       criteria = {
         operator: 'and', 
@@ -1030,11 +1030,6 @@ isc.OBViewGrid.addProperties({
         
       // add a dummy criteria to force a fetch
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-      
-      if (!this.notRemoveFilter) {
-        // remove the filter clause we don't want to use it anymore
-        this.filterClause = null;
-      }
     } else if (this.forceRefresh) {
       // add a dummy criteria to force a fetch
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
