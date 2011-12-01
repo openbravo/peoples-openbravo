@@ -57,7 +57,7 @@ public class BaseWebServiceServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  protected void service(HttpServletRequest request, HttpServletResponse response)
+  protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
     // already logged in?
@@ -116,7 +116,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
-  protected boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
+  protected final boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
     final String login = request.getParameter(LOGIN_PARAM);
     final String password = request.getParameter(PASSWORD_PARAM);
     String userId = null;
