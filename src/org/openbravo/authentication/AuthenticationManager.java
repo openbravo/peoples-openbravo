@@ -20,11 +20,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -33,6 +40,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author iperdomo
  */
 public abstract class AuthenticationManager {
+
+  private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
 
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
@@ -91,6 +100,13 @@ public abstract class AuthenticationManager {
 
     final String userId = doAuthenticate(request, response);
 
+    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+    if (StringUtils.isEmpty(vars.getSessionValue("#AD_SESSION_ID"))) {
+      final String sessionId = createDBSession(request, "", userId);
+      vars.setSessionValue(userId, sessionId);
+      vars.setSessionValue("#AD_SESSION_ID", sessionId);
+    }
+
     if (userId == null && !response.isCommitted()) {
       response.sendRedirect(localAdress + defaultServletUrl);
       return null;
@@ -141,5 +157,42 @@ public abstract class AuthenticationManager {
    */
   protected abstract void doLogout(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException;
+
+  protected final String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("S");
+      }
+
+      sl.setUserName(strUser);
+      sl.setServerUrl(HttpBaseUtils.getLocalAddress(req));
+      sl.save();
+      return sl.getSessionID();
+    } catch (Exception e) {
+      log4j.error("Error creating DB session", e);
+      return null;
+    }
+  }
+
+  protected final void updateDBSession(String sessionId, boolean sessionActive, String status) {
+    try {
+      OBContext.setAdminMode();
+      Session session = OBDal.getInstance().get(Session.class, sessionId);
+      session.setSessionActive(sessionActive);
+      session.setLoginStatus(status);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+  }
 
 }
