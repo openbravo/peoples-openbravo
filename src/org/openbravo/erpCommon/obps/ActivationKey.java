@@ -113,7 +113,7 @@ public class ActivationKey {
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
   private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
-  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -374,10 +374,10 @@ public class ActivationKey {
     }
 
     try {
-      startDate = dateFormat.parse(getProperty("startdate"));
+      startDate = sDateFormat.parse(getProperty("startdate"));
 
       if (getProperty("enddate") != null) {
-        endDate = dateFormat.parse(getProperty("enddate"));
+        endDate = sDateFormat.parse(getProperty("enddate"));
       }
     } catch (Exception e) {
       errorMessage = "@ErrorReadingDates@";
@@ -1306,10 +1306,10 @@ public class ActivationKey {
     if (!limitedWsAccess) {
       return WSRestriction.NO_RESTRICTION;
     }
-
     try {
       if (initWsCountTime == null
-          || dateFormat.parse(dateFormat.format(new Date())).getTime() != initWsCountTime.getTime()) {
+          || sDateFormat.parse(sDateFormat.format(new Date())).getTime() != initWsCountTime
+              .getTime()) {
         initializeWsDayCounter();
       }
     } catch (ParseException e) {
@@ -1325,7 +1325,7 @@ public class ActivationKey {
 
   private void initializeWsDayCounter() {
     try {
-      initWsCountTime = dateFormat.parse(dateFormat.format(new Date()));
+      initWsCountTime = sDateFormat.parse(sDateFormat.format(new Date()));
       // TODO: take into account DB time zone
     } catch (ParseException e) {
       initWsCountTime = new Date();
