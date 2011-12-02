@@ -452,15 +452,6 @@ isc.FormItem.addProperties({
       this._selectValue();
     }
   },
-  
-  // prevent to many calls to focus in item if there is already focus
-  _focusInItem: isc.FormItem.getPrototype().focusInItem,
-  focusInItem: function() {
-    if (this.hasFocus) {
-      return;
-    }
-    this._focusInItem();
-  },
 
   titleClick: function(form, item){
     item.focusInItem();
