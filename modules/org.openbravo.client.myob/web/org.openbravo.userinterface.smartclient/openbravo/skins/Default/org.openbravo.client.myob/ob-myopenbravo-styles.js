@@ -70,9 +70,11 @@ OB.Styles.OBMyOBAddWidgetDialog = {
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
+  pickListTallBaseStyle: 'OBFormFieldPickListCell',
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
+  pickListCellHeight: 22,
   pickListProperties: {
     bodyStyleName: 'OBPickListBody'
   }
@@ -84,9 +86,11 @@ OB.Styles.OBMyOBAdminModeDialog = {
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
+  pickListTallBaseStyle: 'OBFormFieldPickListCell',
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
+  pickListCellHeight: 22,
   pickListProperties: {
     bodyStyleName: 'OBPickListBody'
   }
