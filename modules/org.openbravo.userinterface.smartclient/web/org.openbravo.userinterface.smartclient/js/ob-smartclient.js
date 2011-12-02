@@ -427,6 +427,14 @@ isc.FormItem.addProperties({
     if (val1NullOrUndefined && val2NullOrUndefined) {
       return true;
     }
+    // a special case, smartclient makes a mistake when comparing
+    // zero against an empty string
+    if (value1 === 0 && value2 !== 0) {
+      return false;
+    }
+    if (value2 !== 0 && value2 === 0) {
+      return false;
+    }
     return this._original_compareValues(value1, value2);
   },
   
