@@ -29,10 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationManager;
-import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
@@ -48,8 +45,6 @@ import org.openbravo.dal.core.SessionHandler;
 
 public class BaseWebServiceServlet extends HttpServlet {
   private static final Logger log = Logger.getLogger(BaseWebServiceServlet.class);
-
-  private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
   public static final String LOGIN_PARAM = "l";
   public static final String PASSWORD_PARAM = "p";
@@ -117,23 +112,7 @@ public class BaseWebServiceServlet extends HttpServlet {
   }
 
   protected final boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
-    AuthenticationManager authManager;
-    String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
-    if (authClass == null || authClass.equals("")) {
-      // If not defined, load default
-      authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
-    }
-    try {
-      authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
-          .newInstance();
-      authManager.init(this);
-    } catch (Exception e) {
-      log.error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
-
-      authManager = new DefaultAuthenticationManager(this);
-    }
-
+    AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
     String userId = authManager.webServiceAuthenticate(request);
 
     // TODO: catch auth exception

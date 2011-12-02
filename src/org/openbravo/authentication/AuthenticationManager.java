@@ -30,6 +30,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -46,6 +48,7 @@ import org.openbravo.service.web.BaseWebServiceServlet;
 public abstract class AuthenticationManager {
 
   private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
+  private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
   private static final String SUCCESS_SESSION_STANDARD = "S";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
@@ -55,6 +58,30 @@ public abstract class AuthenticationManager {
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
   protected String localAdress = null;
+
+  /**
+   * Returns an instance of AuthenticationManager subclass, based on the authentication.class
+   * property in Openbravo.properties
+   */
+  public final static AuthenticationManager getAuthenticationManager(HttpServlet s) {
+    AuthenticationManager authManager;
+    String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
+    if (authClass == null || authClass.equals("")) {
+      // If not defined, load default
+      authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
+    }
+    try {
+      authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
+          .newInstance();
+      authManager.init(s);
+    } catch (Exception e) {
+      log4j
+          .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+      authManager = new DefaultAuthenticationManager(s);
+    }
+    return authManager;
+  }
 
   public AuthenticationManager() {
   }
