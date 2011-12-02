@@ -44,6 +44,7 @@ import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -97,9 +98,11 @@ public class ActivationKey {
   private boolean golden = false;
   private Date startDate;
   private Date endDate;
+  private boolean limitedWsAccess = true;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
+  private int maxWsCalls;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -251,6 +254,7 @@ public class ActivationKey {
     startDate = null;
     endDate = null;
     pendingTime = null;
+    limitedWsAccess = false;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -333,6 +337,27 @@ public class ActivationKey {
 
     trial = "true".equals(getProperty("trial"));
     golden = "true".equals(getProperty("golden"));
+
+    limitedWsAccess = "false".equals(getProperty("unlimitedWsAccess"));
+    if (limitedWsAccess) {
+      String packs = getProperty("wsPacks");
+      String unitsPack = getProperty("wsUnitsPerUnit");
+
+      if (StringUtils.isEmpty(packs) || StringUtils.isEmpty(unitsPack)) {
+        log.warn("Couldn't determine ws call limitation, setting unlimited.");
+        limitedWsAccess = false;
+      } else {
+        try {
+          Integer nPacks = Integer.parseInt(packs);
+          Integer nUnitsPack = Integer.parseInt(unitsPack);
+          maxWsCalls = nPacks * nUnitsPack;
+          log.debug("Maximum ws calls: " + maxWsCalls);
+        } catch (Exception e) {
+          log.error("Error setting ws call limitation, setting unlimited.", e);
+          limitedWsAccess = false;
+        }
+      }
+    }
 
     try {
       startDate = sd.parse(getProperty("startdate"));
@@ -798,6 +823,18 @@ public class ActivationKey {
           .append("</td><td>")
           .append(Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang))
           .append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
+          .append("</td><td>");
+      if (!limitedWsAccess) {
+        sb.append(Utility.messageBD(conn, "OPSWSUnlimited", lang)).append("</td></tr>");
+      } else {
+        String packs = getProperty("wsPacks");
+        String unitsPack = getProperty("wsUnitsPerUnit");
+        sb.append(Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
+            .replace("@unitsPerPack@", unitsPack));
+      }
+      sb.append("</td></tr>");
 
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
