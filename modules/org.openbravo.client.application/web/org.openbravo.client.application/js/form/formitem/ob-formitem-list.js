@@ -45,6 +45,18 @@ isc.OBListItem.addProperties({
 
   moveFocusOnPickValue: true,
 
+  hidePickListOnBlur: function() {
+    
+    // when the form gets redrawn the the focus may not be in
+    // the item but it is still the item which gets the focus
+    // after redrawing
+    if (this.form && this.form.redrawing && this.form.getFocusItem() === this) {
+      return true;
+    }
+    
+    this.Super('hidePickListOnBlur', arguments);
+  },
+  
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function(value) {
     this._pickedValue = true;
