@@ -176,6 +176,9 @@ public abstract class AuthenticationManager {
     switch (ActivationKey.getInstance().checkNewWSCall()) {
     case NO_RESTRICTION:
       return userId;
+    case EXCEEDED_WARN_WS_CALLS:
+      log4j.warn("Number of webservice calls exceeded today.");
+      return userId;
     case EXCEEDED_MAX_WS_CALLS:
       log4j.warn("Cannot use WS, exceeded number of calls");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");

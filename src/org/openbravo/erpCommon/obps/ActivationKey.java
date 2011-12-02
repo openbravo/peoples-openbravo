@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -103,10 +104,13 @@ public class ActivationKey {
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
-  private int maxWsCalls;
 
+  private long maxWsCalls;
   private long wsDayCounter;
   private Date initWsCountTime;
+  private List<Date> exceededInLastDays;
+  private final static int WS_DAYS_EXCEEDING_ALLOWED = 5;
+  private final static int WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -146,7 +150,7 @@ public class ActivationKey {
   }
 
   public enum WSRestriction {
-    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS;
+    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS, EXCEEDED_WARN_WS_CALLS;
   }
 
   public enum LicenseClass {
@@ -365,7 +369,7 @@ public class ActivationKey {
           Integer nUnitsPack = Integer.parseInt(unitsPack);
           maxWsCalls = nPacks * nUnitsPack;
           log.debug("Maximum ws calls: " + maxWsCalls);
-          initializeWsDayCounter();
+          initializeWsCounter();
         } catch (Exception e) {
           log.error("Error setting ws call limitation, setting unlimited.", e);
           limitedWsAccess = false;
@@ -1306,31 +1310,46 @@ public class ActivationKey {
     if (!limitedWsAccess) {
       return WSRestriction.NO_RESTRICTION;
     }
-    try {
-      if (initWsCountTime == null
-          || sDateFormat.parse(sDateFormat.format(new Date())).getTime() != initWsCountTime
-              .getTime()) {
-        initializeWsDayCounter();
-      }
-    } catch (ParseException e) {
-      log.error("Error checking if ws counter should be reinitialized", e);
+    Date today = getDayAt0(new Date());
+
+    if (initWsCountTime == null || today.getTime() != initWsCountTime.getTime()) {
+      initializeWsDayCounter();
     }
+
     wsDayCounter++;
 
     if (wsDayCounter > maxWsCalls) {
-      return WSRestriction.EXCEEDED_MAX_WS_CALLS;
+      while (!exceededInLastDays.isEmpty()
+          && exceededInLastDays.get(0).getTime() < today.getTime()
+              - WS_DAYS_EXCEEDING_ALLOWED_PERIOD * MILLSECS_PER_DAY) {
+        Date removed = exceededInLastDays.remove(0);
+        log.info("Removed date from exceeded days " + removed);
+      }
+
+      if (!exceededInLastDays.contains(today)) {
+        exceededInLastDays.add(today);
+      }
+
+      if (exceededInLastDays.size() > WS_DAYS_EXCEEDING_ALLOWED) {
+        return WSRestriction.EXCEEDED_MAX_WS_CALLS;
+      } else {
+        return WSRestriction.EXCEEDED_WARN_WS_CALLS;
+      }
     }
     return WSRestriction.NO_RESTRICTION;
   }
 
-  private void initializeWsDayCounter() {
+  private Date getDayAt0(Date date) {
     try {
-      initWsCountTime = sDateFormat.parse(sDateFormat.format(new Date()));
-      // TODO: take into account DB time zone
+      return sDateFormat.parse(sDateFormat.format(date));
     } catch (ParseException e) {
-      initWsCountTime = new Date();
-      log.error("Error getting today at 0:00", e);
+      log.error("Error getting day " + date + " at 0:00", e);
+      return new Date();
     }
+  }
+
+  private void initializeWsDayCounter() {
+    initWsCountTime = getDayAt0(new Date());
     OBContext.setAdminMode();
     try {
       OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
@@ -1341,5 +1360,29 @@ public class ActivationKey {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void initializeWsCounter() {
+    StringBuffer hql = new StringBuffer();
+    hql.append("select min(creationDate)\n");
+    hql.append("  from ADSession\n");
+    hql.append(" where loginStatus = 'WS'\n");
+    hql.append("   and creationDate > :firstDay\n");
+    hql.append(" group by day(creationDate), month(creationDate), year(creationDate)\n");
+    hql.append("having count(*) > :maxWsPerDay\n");
+    hql.append(" order by 1\n");
+
+    Query qExceededDays = OBDal.getInstance().getSession().createQuery(hql.toString());
+    qExceededDays.setParameter("firstDay", new Date(getDayAt0(new Date()).getTime()
+        - WS_DAYS_EXCEEDING_ALLOWED_PERIOD * MILLSECS_PER_DAY));
+    qExceededDays.setParameter("maxWsPerDay", maxWsCalls);
+
+    exceededInLastDays = new ArrayList<Date>();
+    for (Object d : qExceededDays.list()) {
+      Date day = getDayAt0((Date) d);
+      exceededInLastDays.add(day);
+      log.info("Addind exceeded day " + day);
+    }
+    initializeWsDayCounter();
   }
 }
