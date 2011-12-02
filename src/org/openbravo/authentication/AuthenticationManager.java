@@ -35,6 +35,7 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -166,12 +167,21 @@ public abstract class AuthenticationManager {
 
     final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
 
-    if (userId != null) {
-      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
+    if (userId == null) {
+      return null;
     }
 
-    // TODO: check consumption here
-    return userId;
+    updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
+
+    switch (ActivationKey.getInstance().checkNewWSCall()) {
+    case NO_RESTRICTION:
+      return userId;
+    case EXCEEDED_MAX_WS_CALLS:
+      log4j.warn("Cannot use WS, exceeded number of calls");
+      throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
+    }
+
+    return null;
   }
 
   /**

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
@@ -54,16 +55,36 @@ public class BaseWebServiceServlet extends HttpServlet {
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-
     // already logged in?
     if (OBContext.getOBContext() != null) {
       doService(request, response);
-      // do the login action
-    } else if (isLoggedIn(request, response)) {
+      return;
+    }
+
+    // do the login action
+    AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
+
+    String userId = null;
+    try {
+      userId = authManager.webServiceAuthenticate(request);
+    } catch (AuthenticationException e) {
+      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+      response.setContentType("text/plain;charset=UTF-8");
+      final Writer w = response.getWriter();
+      w.write(e.getMessage());
+      w.close();
+      return;
+    }
+
+    if (userId != null) {
+      OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
+      OBContext.setOBContextInSession(request, OBContext.getOBContext());
+
       doService(request, response);
     } else {
+      // not logged in
       response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
-      response.setStatus(401);
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }
 
@@ -110,20 +131,4 @@ public class BaseWebServiceServlet extends HttpServlet {
       w.close();
     }
   }
-
-  protected final boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
-    AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
-    String userId = authManager.webServiceAuthenticate(request);
-
-    // TODO: catch auth exception
-
-    if (userId != null) {
-      OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
-      OBContext.setOBContextInSession(request, OBContext.getOBContext());
-      return true;
-    } else {
-      return false;
-    }
-  }
-
 }

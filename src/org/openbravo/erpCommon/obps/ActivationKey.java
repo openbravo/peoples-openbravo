@@ -30,6 +30,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,11 +105,15 @@ public class ActivationKey {
   private boolean inconsistentInstance = false;
   private int maxWsCalls;
 
+  private long wsDayCounter;
+  private Date initWsCountTime;
+
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
   private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   /**
    * Number of minutes since last license refresh to wait before doing it again
@@ -138,6 +143,10 @@ public class ActivationKey {
     public String toString() {
       return msg;
     }
+  }
+
+  public enum WSRestriction {
+    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS;
   }
 
   public enum LicenseClass {
@@ -220,12 +229,17 @@ public class ActivationKey {
    * @deprecated
    */
   public ActivationKey() {
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
-    strPublicKey = sys.getInstanceKey();
-    String activationKey = sys.getActivationKey();
-    loadInfo(activationKey);
-    loadRestrictions();
+    OBContext.setAdminMode();
+    try {
+      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.System.class, "0");
+      strPublicKey = sys.getInstanceKey();
+      String activationKey = sys.getActivationKey();
+      loadInfo(activationKey);
+      loadRestrictions();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public ActivationKey(String publicKey, String activationKey) {
@@ -332,7 +346,6 @@ public class ActivationKey {
     }
 
     // Check for dates to know if the instance is active
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
 
     trial = "true".equals(getProperty("trial"));
@@ -352,6 +365,7 @@ public class ActivationKey {
           Integer nUnitsPack = Integer.parseInt(unitsPack);
           maxWsCalls = nPacks * nUnitsPack;
           log.debug("Maximum ws calls: " + maxWsCalls);
+          initializeWsDayCounter();
         } catch (Exception e) {
           log.error("Error setting ws call limitation, setting unlimited.", e);
           limitedWsAccess = false;
@@ -360,10 +374,10 @@ public class ActivationKey {
     }
 
     try {
-      startDate = sd.parse(getProperty("startdate"));
+      startDate = dateFormat.parse(getProperty("startdate"));
 
       if (getProperty("enddate") != null) {
-        endDate = sd.parse(getProperty("enddate"));
+        endDate = dateFormat.parse(getProperty("enddate"));
       }
     } catch (Exception e) {
       errorMessage = "@ErrorReadingDates@";
@@ -1282,5 +1296,50 @@ public class ActivationKey {
       log4j.error("Error calculating expiration message", e);
     }
     return result;
+  }
+
+  /**
+   * This method is invoked on each new web service call. It checks web service can be called and
+   * increments the number of calls by one.
+   */
+  public synchronized WSRestriction checkNewWSCall() {
+    if (!limitedWsAccess) {
+      return WSRestriction.NO_RESTRICTION;
+    }
+
+    try {
+      if (initWsCountTime == null
+          || dateFormat.parse(dateFormat.format(new Date())).getTime() != initWsCountTime.getTime()) {
+        initializeWsDayCounter();
+      }
+    } catch (ParseException e) {
+      log.error("Error checking if ws counter should be reinitialized", e);
+    }
+    wsDayCounter++;
+
+    if (wsDayCounter > maxWsCalls) {
+      return WSRestriction.EXCEEDED_MAX_WS_CALLS;
+    }
+    return WSRestriction.NO_RESTRICTION;
+  }
+
+  private void initializeWsDayCounter() {
+    try {
+      initWsCountTime = dateFormat.parse(dateFormat.format(new Date()));
+      // TODO: take into account DB time zone
+    } catch (ParseException e) {
+      initWsCountTime = new Date();
+      log.error("Error getting today at 0:00", e);
+    }
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
+      qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
+      qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, initWsCountTime));
+      wsDayCounter = qLogins.count();
+      log.info("Initialized ws count to " + wsDayCounter + " from " + initWsCountTime);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
