@@ -20,12 +20,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.VariablesBase;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -33,6 +36,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.web.BaseWebServiceServlet;
 
 /**
  * 
@@ -42,6 +46,11 @@ import org.openbravo.service.db.DalConnectionProvider;
 public abstract class AuthenticationManager {
 
   private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
+
+  private static final String SUCCESS_SESSION_STANDARD = "S";
+  private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
+  private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
+  private static final String FAILED_SESSION = "F";
 
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
@@ -102,9 +111,7 @@ public abstract class AuthenticationManager {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     if (StringUtils.isEmpty(vars.getSessionValue("#AD_SESSION_ID"))) {
-      final String sessionId = createDBSession(request, "", userId);
-      vars.setSessionValue(userId, sessionId);
-      vars.setSessionValue("#AD_SESSION_ID", sessionId);
+      setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
     if (userId == null && !response.isCommitted()) {
@@ -113,6 +120,68 @@ public abstract class AuthenticationManager {
     }
 
     return userId;
+  }
+
+  /**
+   * Authentication for web services and external services. All authenticated requests not using the
+   * standard UI *MUST* use this authentication.
+   * 
+   * @param request
+   *          HTTP request object to handle parameters and session attributes
+   * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
+   * @throws AuthenticationException
+   *           in case of an authentication error different than incorrect user/password (which just
+   *           returns null)
+   */
+  public final String webServiceAuthenticate(HttpServletRequest request)
+      throws AuthenticationException {
+    final String userId = doWebServiceAuthenticate(request);
+
+    final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
+
+    if (userId != null) {
+      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
+    }
+
+    // TODO: check consumption here
+    return userId;
+  }
+
+  /**
+   * Authentication for approved connectors. Only authorized connectors are allowed to use this
+   * authentication.
+   * 
+   * @param request
+   *          HTTP request object to handle parameters and session attributes
+   * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
+   * @throws AuthenticationException
+   *           in case of an authentication error different than incorrect user/password (which just
+   *           returns null)
+   */
+  public final String connectorAuthenticate(HttpServletRequest request)
+      throws AuthenticationException {
+    final String userId = doWebServiceAuthenticate(request);
+
+    final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_CONNECTOR, false);
+
+    if (userId != null) {
+      updateDBSession(dbSessionId, false, SUCCESS_SESSION_CONNECTOR);
+    }
+
+    return userId;
+  }
+
+  private String setDBSession(HttpServletRequest request, String userId, String successSessionType,
+      boolean setSession) {
+    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+    String dbSessionId = vars.getSessionValue("#AD_SESSION_ID");
+    if (StringUtils.isEmpty(dbSessionId)) {
+      dbSessionId = createDBSession(request, "", userId, successSessionType);
+      if (setSession) {
+        vars.setSessionValue("#AD_SESSION_ID", dbSessionId);
+      }
+    }
+    return dbSessionId;
   }
 
   /**
@@ -147,6 +216,33 @@ public abstract class AuthenticationManager {
       throws AuthenticationException, ServletException, IOException;
 
   /**
+   * Authentication used by web services and connectors. This authentication can be overriden by
+   * subclasses. By default it looks for user and password parameters in the request, if they are
+   * not present, Basic authentication is performed
+   * 
+   * @param request
+   *          HTTP request object, used for handling parameters and session attributes
+   * @return <ul>
+   *         <li>The user id (AD_User_ID) if the request is already authenticated or the
+   *         authentication process succeeded</li>
+   *         <li><b>null</b> if the request is not authenticated or authentication process failed
+   *         (e.g. wrong password)</li>
+   *         </ul>
+   */
+  protected String doWebServiceAuthenticate(HttpServletRequest request) {
+    final String login = request.getParameter(BaseWebServiceServlet.LOGIN_PARAM);
+    final String password = request.getParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+    String userId = null;
+    if (login != null && password != null) {
+      userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+    } else { // use basic authentication
+      userId = doBasicAuthentication(request);
+    }
+
+    return userId;
+  }
+
+  /**
    * Method called from the <b>logout</b> method after clearing all session attributes. The usual
    * process is to redirect the user to the login page
    * 
@@ -159,15 +255,20 @@ public abstract class AuthenticationManager {
       throws ServletException, IOException;
 
   protected final String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
+    return createDBSession(req, strUser, strUserAuth, "S");
+  }
+
+  protected final String createDBSession(HttpServletRequest req, String strUser,
+      String strUserAuth, String successSessionType) {
     try {
       String usr = strUserAuth == null ? "0" : strUserAuth;
 
       final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
 
       if (strUserAuth == null) {
-        sl.setStatus("F");
+        sl.setStatus(FAILED_SESSION);
       } else {
-        sl.setStatus("S");
+        sl.setStatus(successSessionType);
       }
 
       sl.setUserName(strUser);
@@ -193,6 +294,34 @@ public abstract class AuthenticationManager {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  private String doBasicAuthentication(HttpServletRequest request) {
+    try {
+      final String auth = request.getHeader("Authorization");
+      if (auth == null) {
+        return null;
+      }
+      if (!auth.toUpperCase().startsWith("BASIC ")) {
+        return null; // only BASIC supported
+      }
+
+      // user and password come after BASIC
+      final String userpassEncoded = auth.substring(6);
+
+      // Decode it, using any base 64 decoder
+      final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
+      final int index = decodedUserPass.indexOf(":");
+      if (index == -1) {
+        return null;
+      }
+      final String login = decodedUserPass.substring(0, index);
+      final String password = decodedUserPass.substring(index + 1);
+      String userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
   }
 
 }

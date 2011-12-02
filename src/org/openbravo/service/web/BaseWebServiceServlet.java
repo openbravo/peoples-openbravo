@@ -27,16 +27,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.openbravo.base.HttpBaseUtils;
-import org.openbravo.base.exception.OBException;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.erpCommon.security.SessionLogin;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -50,6 +48,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class BaseWebServiceServlet extends HttpServlet {
   private static final Logger log = Logger.getLogger(BaseWebServiceServlet.class);
+
+  private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
   public static final String LOGIN_PARAM = "l";
   public static final String PASSWORD_PARAM = "p";
@@ -117,14 +117,26 @@ public class BaseWebServiceServlet extends HttpServlet {
   }
 
   protected final boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response) {
-    final String login = request.getParameter(LOGIN_PARAM);
-    final String password = request.getParameter(PASSWORD_PARAM);
-    String userId = null;
-    if (login != null && password != null) {
-      userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
-    } else { // use basic authentication
-      userId = doBasicAuthentication(request);
+    AuthenticationManager authManager;
+    String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
+    if (authClass == null || authClass.equals("")) {
+      // If not defined, load default
+      authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
     }
+    try {
+      authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
+          .newInstance();
+      authManager.init(this);
+    } catch (Exception e) {
+      log.error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+
+      authManager = new DefaultAuthenticationManager(this);
+    }
+
+    String userId = authManager.webServiceAuthenticate(request);
+
+    // TODO: catch auth exception
 
     if (userId != null) {
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
@@ -135,52 +147,4 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
   }
 
-  private void createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
-    try {
-      String usr = strUserAuth == null ? "0" : strUserAuth;
-
-      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
-
-      if (strUserAuth == null) {
-        sl.setStatus("F");
-      } else {
-        sl.setStatus("S");
-      }
-
-      sl.setUserName(strUser);
-      sl.setServerUrl(HttpBaseUtils.getLocalAddress(req));
-      sl.save();
-    } catch (Exception e) {
-      log.error("Error creating DB session", e);
-    }
-  }
-
-  protected String doBasicAuthentication(HttpServletRequest request) {
-    try {
-      final String auth = request.getHeader("Authorization");
-      if (auth == null) {
-        return null;
-      }
-      if (!auth.toUpperCase().startsWith("BASIC ")) {
-        return null; // only BASIC supported
-      }
-
-      // user and password come after BASIC
-      final String userpassEncoded = auth.substring(6);
-
-      // Decode it, using any base 64 decoder
-      final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
-      final int index = decodedUserPass.indexOf(":");
-      if (index == -1) {
-        return null;
-      }
-      final String login = decodedUserPass.substring(0, index);
-      final String password = decodedUserPass.substring(index + 1);
-      String userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
-      createDBSession(request, login, userId);
-      return userId;
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
-  }
 }
