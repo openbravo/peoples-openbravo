@@ -416,7 +416,7 @@ isc.FormItem.addProperties({
     if (value1 === 0 && value2 !== 0) {
       return false;
     }
-    if (value2 !== 0 && value2 === 0) {
+    if (value1 !== 0 && value2 === 0) {
       return false;
     }
     return this._original_compareValues(value1, value2);
