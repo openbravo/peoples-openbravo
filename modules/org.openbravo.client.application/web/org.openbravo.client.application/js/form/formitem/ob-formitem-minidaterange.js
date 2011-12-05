@@ -61,6 +61,10 @@ isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   // after leaving the quantity field the next time the rangeitem is visited the 
   // focus should go to the value field again
   blur: function() {
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
+
     this.Super('blur', arguments);
     this.form.setFocusItem(this.form.getItem('valueField'));
   }
@@ -257,6 +261,10 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
   
   blur: function() {
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
+
     if (this.expandSingleValue()) {
       this.form.grid.performAction();
     }    
