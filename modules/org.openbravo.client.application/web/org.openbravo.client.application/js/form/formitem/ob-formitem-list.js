@@ -50,8 +50,8 @@ isc.OBListItem.addProperties({
     // when the form gets redrawn the the focus may not be in
     // the item but it is still the item which gets the focus
     // after redrawing
-    if (this.form && this.form.redrawing && this.form.getFocusItem() === this) {
-      return true;
+    if (this.form && this.form._isRedrawing && this.form.getFocusItem() === this) {
+      return;
     }
     
     this.Super('hidePickListOnBlur', arguments);

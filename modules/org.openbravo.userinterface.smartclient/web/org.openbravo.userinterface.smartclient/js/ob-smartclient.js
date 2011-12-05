@@ -396,6 +396,14 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  _handleEditorExit: isc.FormItem.getPrototype().handleEditorExit,
+  handleEditorExit: function() {
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
+    return this._handleEditorExit();
+  },
+  
   // make sure that the datasources are also destroyed
   _original_destroy: isc.FormItem.getPrototype().destroy,
   destroy: function() {
