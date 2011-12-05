@@ -507,6 +507,9 @@ isc.FormItem.addProperties({
   },
   
   blur: function(form, item){
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(item);
     }
@@ -515,7 +518,7 @@ isc.FormItem.addProperties({
   // prevent a jscript error in ie when closing a tab
   // https://issues.openbravo.com/view.php?id=18890
   blurItem: function() {
-    if (!this.form || this.form.destroyed) {
+    if (!this.form || this.form.destroyed || this.form._isRedrawing) {
       return;
     }
     this.Super('blurItem', arguments);
