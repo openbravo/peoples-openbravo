@@ -270,7 +270,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         
         //Coming from AddPaymentFromTransaction and Deposit option is selected
         if (closeAutomatically === "Y") {
-          reloadParentGrid();
+            reloadWindowGrid();
           closeThisPage();
         }
       } else {
@@ -281,6 +281,21 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   }
   return true;
 }
+function reloadWindowGrid() {
+      var f, dad;
+      try {
+        f = getFrame('LayoutMDI');
+        if (f && f.OB.MainView.TabSet.getSelectedTab().pane.view) {
+          var theView = f.OB.MainView.TabSet.getSelectedTab().pane.view;
+          theView.refresh(function(){
+              theView.getTabMessage();
+              theView.toolBar.refreshCustomButtons();
+          });
+        }
+      } catch(e) {
+        // not possible to reload parent grid
+      }
+    }
 </script>
 <script language="JavaScript" type="text/javascript">
   function onLoadDo(){
