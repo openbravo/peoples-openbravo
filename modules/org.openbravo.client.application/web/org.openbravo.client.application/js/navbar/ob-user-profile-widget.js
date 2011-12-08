@@ -111,6 +111,7 @@ isc.OBUserProfile.addProperties({
       cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
       textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
+      pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
       controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
       width: '*',
       pickListBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,

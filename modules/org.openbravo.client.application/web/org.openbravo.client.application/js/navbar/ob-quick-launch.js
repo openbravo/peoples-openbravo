@@ -124,6 +124,7 @@ isc.OBQuickLaunch.addProperties({
         cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
         titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
         textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
+        pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
         controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
         pickListBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
         pickListTallBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
@@ -134,6 +135,7 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName : this.recentPropertyName,
+        addUnknownValues: false,
 
         getControlTableCSS: function(){
           // prevent extra width settings, super class
