@@ -67,15 +67,7 @@ BEGIN
     WHERE C_PaymentTerm_ID=:new.C_PaymentTerm_ID;
   END IF;
  END IF;
- -- Updating
- IF (INSERTING OR UPDATING) THEN
- --Checking if the Fixed Due Date is Checked or not and if the related fields are empty when the checkbox is unchecked
-  IF (:new.isduefixed = 'N') THEN
-    IF(COALESCE(:new.fixmonthday,-9999) <> -9999 OR COALESCE(:new.fixmonthday2,-9999) <> -9999 OR COALESCE(:new.fixmonthday3,-9999) <> -9999) THEN
-      RAISE NO_DATA_FOUND;
-    END IF;
-  END IF;
- END IF;
+-- Updating
 END C_PAYMENTTERM_TRG
 ]]></body>
     </trigger>
