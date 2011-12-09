@@ -60,6 +60,8 @@ isc.OBTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Default
 
 isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
+isc.OBFKFilterTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+
 isc.OBEncryptedItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
 isc.OBClientClassCanvasItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
