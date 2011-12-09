@@ -135,7 +135,6 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName : this.recentPropertyName,
-        addUnknownValues: false,
 
         getControlTableCSS: function(){
           // prevent extra width settings, super class

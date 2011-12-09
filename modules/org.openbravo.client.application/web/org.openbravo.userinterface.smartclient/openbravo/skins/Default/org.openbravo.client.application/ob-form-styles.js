@@ -100,7 +100,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  pendingTextBoxStyle: 'OBFormFieldSelectInputPending',
+  pendingTextBoxStyle: null, //'OBFormFieldSelectInputPending',
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconStyle: 'OBFormFieldSelectPickerIcon',
   pickListBaseStyle: 'OBFormFieldPickListCell',
