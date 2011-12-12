@@ -1826,8 +1826,8 @@ isc.OBViewGrid.addProperties({
   
   // prevent multi-line content to show strangely
   // https://issues.openbravo.com/view.php?id=17531
-  formatCellValue: function(value, record, rowNum, colNum) {
-    var fld = this.getFields()[colNum];
+  formatDisplayValue: function(value, record, rowNum, colNum) {
+    var fld = this.getFields()[colNum], index;
     
     if (fld.clientClass) {
       return '';
@@ -1837,7 +1837,7 @@ isc.OBViewGrid.addProperties({
       return value;
     }
   
-    var index = value.indexOf('\n');
+    index = value.indexOf('\n');
     if (index !== -1) {
       return value.substring(0, index) + '...';
     } 
