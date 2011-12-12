@@ -97,7 +97,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       width: '100%',
       styleName: ''
     }), url, params = {},
-    showFilter = this.viewMode === 'maximized';
+    showFilter = (this.viewMode === 'maximized');
     
     isc.addProperties(this.gridProperties, {
       showFilterEditor: showFilter
