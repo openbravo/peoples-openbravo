@@ -267,6 +267,9 @@ isc.OBDateItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Default
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 
+isc.OBTruncAddMinusDisplay.addProperties({
+  baseStyle: 'OBLabelCanvasItem'
+});
 
 isc.OBNumberItem.addProperties({
   cellStyle: 'OBFormField',
