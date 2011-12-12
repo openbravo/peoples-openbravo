@@ -352,13 +352,32 @@ isc.FormItem.addProperties({
 
   // disable tab to icons
   canTabToIcons: false,
-  
+
+  _original_validate: isc.FormItem.getPrototype().validate,
+  validate: function() {
+    
+    // prevent validation when we are showing the editor and moving
+    // the focus around
+    if (this.form && this.form.grid && this.form.grid._showingEditor) {
+      return;
+    }
+    return this._original_validate();
+  },
+
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
     this.obShowIf = this.showIf; // Copy the reference of showIf definition
     OB.Utilities.addRequiredSuffixToBaseStyle(this);
     // and continue with the original init
     this._original_init();
+  },
+  
+  _handleEditorExit: isc.FormItem.getPrototype().handleEditorExit,
+  handleEditorExit: function() {
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
+    return this._handleEditorExit();
   },
   
   // make sure that the datasources are also destroyed
@@ -392,6 +411,14 @@ isc.FormItem.addProperties({
     if (val1NullOrUndefined && val2NullOrUndefined) {
       return true;
     }
+    // a special case, smartclient makes a mistake when comparing
+    // zero against an empty string
+    if (value1 === 0 && value2 !== 0) {
+      return false;
+    }
+    if (value1 !== 0 && value2 === 0) {
+      return false;
+    }
     return this._original_compareValues(value1, value2);
   },
   
@@ -416,15 +443,6 @@ isc.FormItem.addProperties({
     } else {
       this._selectValue();
     }
-  },
-  
-  // prevent to many calls to focus in item if there is already focus
-  _focusInItem: isc.FormItem.getPrototype().focusInItem,
-  focusInItem: function() {
-    if (this.hasFocus) {
-      return;
-    }
-    this._focusInItem();
   },
 
   titleClick: function(form, item){
@@ -465,15 +483,18 @@ isc.FormItem.addProperties({
   },
   
   blur: function(form, item){
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
     if (item._hasChanged && form && form.handleItemChange) {
-      form.handleItemChange(this);
+      form.handleItemChange(item);
     }
   },
   
   // prevent a jscript error in ie when closing a tab
   // https://issues.openbravo.com/view.php?id=18890
   blurItem: function() {
-    if (!this.form || this.form.destroyed) {
+    if (!this.form || this.form.destroyed || this.form._isRedrawing) {
       return;
     }
     this.Super('blurItem', arguments);
@@ -655,16 +676,11 @@ isc.screenReader = false;
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({
-  
   // workaround for this issue:
   // http://forums.smartclient.com/showthread.php?p=75186#post75186
   // https://issues.openbravo.com/view.php?id=18841
   compareAdvancedCriteria: function(newCriterion, oldCriterion) {
-    // simple check...
-    if (newCriterion === oldCriterion) {
-      return 0;
-    }
-    return 1;
+    return -1;
   },
   
   _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,

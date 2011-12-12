@@ -1635,7 +1635,9 @@ OB.ViewFormProperties = {
   },
   
   redraw: function() {
+    this._isRedrawing = true;
     this.Super('redraw', arguments);
+    delete this._isRedrawing;
     this.selectOnFocus = this.previousSelectOnFocus;
     delete this.previousSelectOnFocus;
   },

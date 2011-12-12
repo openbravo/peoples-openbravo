@@ -547,6 +547,13 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
+    var me = this;
+    this.fireOnPause('updateButtonState', function() {
+      me.pausedUpdateButtonState(noSetSession, changeEvent);
+    });
+  },
+   
+  pausedUpdateButtonState: function(noSetSession, changeEvent) { 
     var length = this.leftMembers.length, i, 
       form = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm;
     

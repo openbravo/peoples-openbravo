@@ -106,6 +106,15 @@ public class OBViewTab extends BaseTemplateComponent {
     for (Field fld : fieldHandler.getIgnoredFields()) {
       otherFields.add(new OtherField(fld.getColumn()));
     }
+
+    // Adding PK as additional field
+    if (entity.getIdProperties().size() == 1) {
+      Property pkProperty = entity.getIdProperties().get(0);
+      OtherField pkField = new OtherField(pkProperty);
+      pkField.inpColumnName = pkProperty.getColumnName();
+      pkField.session = true;
+      otherFields.add(pkField);
+    }
     return otherFields;
   }
 
@@ -614,9 +623,17 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public class OtherField {
     private Property property;
+    private boolean session;
+    private String inpColumnName;
 
     private OtherField(Column col) {
-      this.property = KernelUtils.getInstance().getPropertyFromColumn(col, false);
+      this(KernelUtils.getInstance().getPropertyFromColumn(col, false));
+    }
+
+    private OtherField(Property property) {
+      this.property = property;
+      session = property.isStoredInSession();
+      inpColumnName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
     }
 
     public String getPropertyName() {
@@ -624,7 +641,7 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public String getInpColumnName() {
-      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+      return inpColumnName;
     }
 
     public String getDbColumnName() {
@@ -636,7 +653,7 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     public boolean getSession() {
-      return property.isStoredInSession();
+      return session;
     }
   }
 }
