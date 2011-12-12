@@ -25,6 +25,7 @@ isc.OBTimeItem.addProperties({
   operator: 'equals',
   validateOnExit: true,
   showHint: false,
+  timeFormatter: 'to24HourTime',
   displayFormat: 'to24HourTime',
   short24TimeFormat: 'HH:MM:SS',
   shortTimeFormat: 'HH:MM:SS',
