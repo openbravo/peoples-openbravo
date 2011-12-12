@@ -67,7 +67,9 @@ isc.Button.addProperties({
   }
 });
 
-isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
+isc.StaticTextItem.addProperties({
+  canFocus: false
+});
 
 isc.Layout.addProperties({
   
