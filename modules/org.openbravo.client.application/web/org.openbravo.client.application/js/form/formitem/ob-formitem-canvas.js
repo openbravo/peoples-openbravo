@@ -25,6 +25,14 @@ isc.ClassFactory.defineClass('OBClientClassCanvasItem', isc.CanvasItem);
 isc.OBClientClassCanvasItem.addProperties({
   autoDestroy: true,
   
+  // if the canvas is used somewhere else (in the statusbar) then
+  // don't do placeCanvas.
+  placeCanvas: function() {
+    if (this.canvas && !this.canvas.inStatusBar) {
+      this.Super('placeCanvas', arguments);
+    }
+  },
+  
   showValue: function(displayValue, dataValue, form, item) {
     if (this.canvas && this.canvas.showValue) {
       this.canvas.showValue(displayValue, dataValue, form, item);
