@@ -43,9 +43,9 @@ isc.OBTimeItem.addProperties({
     if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
       f.setHasChanged(true);
       f.view.messageBar.hide();
-      for (i = 0; i < toolBarButtons.leftMembers.length; i++) {
-        if (toolBarButtons.leftMembers[i].updateState) {
-          toolBarButtons.leftMembers[i].updateState();
+      for (i = 0; i < toolBarButtons.length; i++) {
+        if (toolBarButtons[i].updateState) {
+          toolBarButtons[i].updateState();
         }
       }
     }
