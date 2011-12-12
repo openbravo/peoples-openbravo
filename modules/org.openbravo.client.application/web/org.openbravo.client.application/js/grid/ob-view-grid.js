@@ -1655,6 +1655,8 @@ isc.OBViewGrid.addProperties({
     
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
     
+    this.recomputeCanvasComponents(rowNum);
+    
     return ret;
   },
   
@@ -1676,7 +1678,21 @@ isc.OBViewGrid.addProperties({
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
+    this.recomputeCanvasComponents(insertRow);
     this.view.refreshChildViews();
+  },
+  
+  // recompute recordcomponents
+  recomputeCanvasComponents: function(rowNum) {
+    var i, fld, length = this.getFields().length;
+
+    // remove client record components in edit mode
+    for (i = 0; i < length; i++) {
+      fld = this.getFields()[i];
+      if (fld.clientClass) {
+        this.refreshRecordComponent(rowNum, i);
+      }
+    }
   },
   
   initializeEditValues: function(rowNum, colNum){
