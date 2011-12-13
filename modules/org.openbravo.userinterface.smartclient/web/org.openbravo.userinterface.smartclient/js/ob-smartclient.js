@@ -29,9 +29,7 @@ isc.setAutoDraw(false);
 // for all our date/times we use GMT on both the server and the client
 // NOTE: causes issue https://issues.openbravo.com/view.php?id=16014
 // NOTE: disabled as now timezone is send from the client to the server
-// NOTE: enabled again for https://issues.openbravo.com/view.php?id=18561
-// as part of this change the issue with timezones seems have been solved
-isc.Time.setDefaultDisplayTimezone(0);
+// Time.setDefaultDisplayTimezone(0);
 
 isc.DataSource.serializeTimeAsDatetime=true;
 
