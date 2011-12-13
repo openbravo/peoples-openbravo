@@ -194,11 +194,28 @@ public class ActivationKey {
   private static ActivationKey instance = new ActivationKey();
 
   /**
-   * Obtains the ActivationKey instance. Instances should be get in this way, rather than creating a
-   * new one.
+   * @see ActivationKey#getInstance(boolean)
    * 
    */
   public static synchronized ActivationKey getInstance() {
+    return getInstance(false);
+  }
+
+  /**
+   * Obtains the ActivationKey instance. Instances should be get in this way, rather than creating a
+   * new one.
+   * 
+   * If refreshIfNeeded parameter is true, license is tried to be refreshed if it is needed to.
+   * 
+   * @param refreshIfNeeded
+   *          refresh license if needed to
+   * 
+   */
+  public static synchronized ActivationKey getInstance(boolean refreshIfNeeded) {
+    if (refreshIfNeeded) {
+      instance.refreshIfNeeded();
+    }
+
     if (instance.startDate != null) {
       // check dates in case there is a license with dates
       instance.checkDates();
@@ -1031,57 +1048,83 @@ public class ActivationKey {
         return CommercialModuleStatus.NO_SUBSCRIBED;
       }
 
-      Date timeToRefresh = null;
-      if (lastRefreshTime != null) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(lastRefreshTime);
-        calendar.add(Calendar.MINUTE, REFRESH_MIN_TIME);
-        timeToRefresh = calendar.getTime();
-      }
+      boolean refreshed = refreshLicense(REFRESH_MIN_TIME);
 
-      if (timeToRefresh == null || new Date().after(timeToRefresh)) {
-        log4j.debug("Trying to refresh license, last refresh "
-            + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("publicKey", strPublicKey);
-        params.put("purpose", getProperty("purpose"));
-        params.put("instanceNo", getProperty("instanceno"));
-        params.put("activate", true);
-        ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
-        pb.setParams(params);
-
-        boolean refreshed = false;
-        try {
-          new ActiveInstanceProcess().execute(pb);
-          OBError msg = (OBError) pb.getResult();
-          refreshed = msg.getType().equals("Success");
-          if (refreshed) {
-            log4j.debug("Instance refreshed");
-          } else {
-            log4j.info("Problem refreshing instance " + msg.getMessage());
-          }
-        } catch (Exception e) {
-          log4j.error("Error refreshing instance", e);
-          refreshed = false;
-        }
-
-        if (refreshed) {
-          return ActivationKey.instance.isModuleSubscribed(moduleId);
-        } else {
-          // Even license couldn't be refreshed, set lastRefreshTime not to try to refresh in the
-          // following period of time
-          lastRefreshTime = new Date();
-          return CommercialModuleStatus.NO_SUBSCRIBED;
-        }
+      if (refreshed) {
+        return ActivationKey.instance.isModuleSubscribed(moduleId);
       } else {
-        log4j.debug("Not refreshing, last refresh was " + lastRefreshTime.toString()
-            + ". Next time to refresh " + timeToRefresh.toString());
         return CommercialModuleStatus.NO_SUBSCRIBED;
       }
     }
 
     return moduleList.get(moduleId);
+  }
+
+  /**
+   * Refreshes license online in case of:
+   * <ul>
+   * <li>Old license (has no unlimitedWsAccess property)
+   * <li>It expired
+   * <li>Maximum number of WS calls has been reached during last 30 days
+   * <li>Maximum number of concurrent users has been reached
+   * </ul>
+   */
+  private void refreshIfNeeded() {
+    if (hasActivationKey
+        && !subscriptionConvertedProperty
+        && (getProperty("unlimitedWsAccess") == null || hasExpired
+            || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
+      refreshLicense(24 * 60);
+    }
+  }
+
+  private synchronized boolean refreshLicense(int minutesToRefresh) {
+    Date timeToRefresh = null;
+    if (lastRefreshTime != null) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(lastRefreshTime);
+      calendar.add(Calendar.MINUTE, minutesToRefresh);
+      timeToRefresh = calendar.getTime();
+    }
+
+    if (timeToRefresh == null || new Date().after(timeToRefresh)) {
+      log4j.debug("Trying to refresh license, last refresh "
+          + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
+
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("publicKey", strPublicKey);
+      params.put("purpose", getProperty("purpose"));
+      params.put("instanceNo", getProperty("instanceno"));
+      params.put("activate", true);
+      ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
+      pb.setParams(params);
+
+      boolean refreshed = false;
+      try {
+        new ActiveInstanceProcess().execute(pb);
+        OBError msg = (OBError) pb.getResult();
+        refreshed = msg.getType().equals("Success");
+        if (refreshed) {
+          log4j.debug("Instance refreshed");
+        } else {
+          log4j.info("Problem refreshing instance " + msg.getMessage());
+        }
+      } catch (Exception e) {
+        log4j.error("Error refreshing instance", e);
+        refreshed = false;
+      }
+
+      if (!refreshed) {
+        // Even license couldn't be refreshed, set lastRefreshTime not to try to refresh in the
+        // following period of time
+        lastRefreshTime = new Date();
+      }
+      return refreshed;
+    } else {
+      log4j.debug("Not refreshing, last refresh was " + lastRefreshTime.toString()
+          + ". Next time to refresh " + timeToRefresh.toString());
+      return false;
+    }
   }
 
   /**

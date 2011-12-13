@@ -121,7 +121,7 @@ public class LoginHandler extends HttpBaseServlet {
       ServletException {
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = ActivationKey.getInstance();
+      ActivationKey ak = ActivationKey.getInstance(true);
       boolean hasSystem = false;
 
       try {
