@@ -1421,7 +1421,7 @@ public class ActivationKey {
   }
 
   private void initializeWsCounter() {
-    StringBuffer hql = new StringBuffer();
+    StringBuilder hql = new StringBuilder();
     hql.append("select min(creationDate)\n");
     hql.append("  from ADSession\n");
     hql.append(" where loginStatus = 'WS'\n");
