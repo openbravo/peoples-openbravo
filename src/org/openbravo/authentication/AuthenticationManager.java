@@ -173,7 +173,7 @@ public abstract class AuthenticationManager {
 
     updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
 
-    switch (ActivationKey.getInstance().checkNewWSCall()) {
+    switch (ActivationKey.getInstance().checkNewWSCall(true)) {
     case NO_RESTRICTION:
       return userId;
     case EXCEEDED_WARN_WS_CALLS:

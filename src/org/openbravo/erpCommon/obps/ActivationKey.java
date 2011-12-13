@@ -1306,10 +1306,13 @@ public class ActivationKey {
   }
 
   /**
-   * This method is invoked on each new web service call. It checks web service can be called and
-   * increments the number of calls by one.
+   * This method checks web service can be called. If <code>updateCounter</code> parameter is
+   * <code>true</code> number of daily calls is increased by one.
+   * 
+   * @param updateCounter
+   *          daily calls should be updated
    */
-  public synchronized WSRestriction checkNewWSCall() {
+  public synchronized WSRestriction checkNewWSCall(boolean updateCounter) {
     if (!limitedWsAccess) {
       return WSRestriction.NO_RESTRICTION;
     }
@@ -1319,10 +1322,17 @@ public class ActivationKey {
       initializeWsDayCounter();
     }
 
-    wsDayCounter++;
+    if (updateCounter) {
+      wsDayCounter++;
+    }
 
     if (wsDayCounter > maxWsCalls) {
-      cleanUpOldExcededDays(today);
+      // clean up old days
+      while (!exceededInLastDays.isEmpty()
+          && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+        Date removed = exceededInLastDays.remove(0);
+        log.info("Removed date from exceeded days " + removed);
+      }
 
       if (!exceededInLastDays.contains(today)) {
         exceededInLastDays.add(today);
@@ -1335,14 +1345,6 @@ public class ActivationKey {
       }
     }
     return WSRestriction.NO_RESTRICTION;
-  }
-
-  private synchronized void cleanUpOldExcededDays(Date today) {
-    while (!exceededInLastDays.isEmpty()
-        && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
-      Date removed = exceededInLastDays.remove(0);
-      log.info("Removed date from exceeded days " + removed);
-    }
   }
 
   private Date getDayAt0(Date date) {
@@ -1396,7 +1398,6 @@ public class ActivationKey {
    * Returns the number of days during last 30 days exceeding the maximum allowed number of calls
    */
   public int getWsCallsExceededDays() {
-    cleanUpOldExcededDays(getDayAt0(new Date()));
     if (exceededInLastDays == null) {
       return 0;
     }

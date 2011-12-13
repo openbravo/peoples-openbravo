@@ -228,16 +228,22 @@ public class LoginHandler extends HttpBaseServlet {
       if (hasSystem && ak.getWsCallsExceededDays() > 0) {
         String msg;
         String title = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_TITLE", vars.getLanguage());
-        if (ak.getExtraWsExceededDaysAllowed() > 0) {
+
+        switch (ak.checkNewWSCall(false)) {
+        case NO_RESTRICTION:
+          break;
+        case EXCEEDED_WARN_WS_CALLS:
           msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage())
               .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
               .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()));
-        } else {
+          goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+          return;
+        case EXCEEDED_MAX_WS_CALLS:
           msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage()).replace(
               "@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
+          goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+          return;
         }
-        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
-        return;
       }
 
       try {
