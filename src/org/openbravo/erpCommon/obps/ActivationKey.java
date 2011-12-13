@@ -109,8 +109,6 @@ public class ActivationKey {
   private long wsDayCounter;
   private Date initWsCountTime;
   private List<Date> exceededInLastDays;
-  private final static int WS_DAYS_EXCEEDING_ALLOWED = 5;
-  private final static int WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
@@ -187,6 +185,11 @@ public class ActivationKey {
   private static final int PING_TIMEOUT_SECS = 120;
   private static final Long EXPIRATION_BASIC_DAYS = 30L;
   private static final Long EXPIRATION_PROF_DAYS = 30L;
+
+  private final static long WS_DAYS_EXCEEDING_ALLOWED = 5L;
+  private final static long WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30L;
+  private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
+      * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -1320,8 +1323,7 @@ public class ActivationKey {
 
     if (wsDayCounter > maxWsCalls) {
       while (!exceededInLastDays.isEmpty()
-          && exceededInLastDays.get(0).getTime() < today.getTime()
-              - WS_DAYS_EXCEEDING_ALLOWED_PERIOD * MILLSECS_PER_DAY) {
+          && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
         Date removed = exceededInLastDays.remove(0);
         log.info("Removed date from exceeded days " + removed);
       }
@@ -1374,14 +1376,14 @@ public class ActivationKey {
 
     Query qExceededDays = OBDal.getInstance().getSession().createQuery(hql.toString());
     qExceededDays.setParameter("firstDay", new Date(getDayAt0(new Date()).getTime()
-        - WS_DAYS_EXCEEDING_ALLOWED_PERIOD * MILLSECS_PER_DAY));
+        - WS_MS_EXCEEDING_ALLOWED_PERIOD));
     qExceededDays.setParameter("maxWsPerDay", maxWsCalls);
 
     exceededInLastDays = new ArrayList<Date>();
     for (Object d : qExceededDays.list()) {
       Date day = getDayAt0((Date) d);
       exceededInLastDays.add(day);
-      log.info("Addind exceeded day " + day);
+      log.info("Addind exceeded ws calls day " + day);
     }
     initializeWsDayCounter();
   }
