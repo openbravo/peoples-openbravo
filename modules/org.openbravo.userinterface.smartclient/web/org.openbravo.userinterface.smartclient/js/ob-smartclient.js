@@ -667,6 +667,44 @@ isc.RelativeDateItem.addProperties({
 
 });
 
+isc.addProperties(isc.Date, {
+//http://forums.smartclient.com/showthread.php?p=77883#post77883
+  createLogicalDate: function (year, month, date, suppressConversion) {
+    var d = new Date(); 
+    d.setHours(12);
+    d.setMinutes(0);
+    d.setSeconds(0);
+    d.setMilliseconds(0);
+    if (date !== null) {
+      d.setDate(1);
+    }
+    if (year !== null) {
+      d.setFullYear(year);
+    }
+    if (month !== null) {
+      d.setMonth(month);
+    }
+    if (date !== null) {
+      d.setDate(date);
+    }
+    
+    if (suppressConversion) {
+        // If the 'suppressConversion' flag was passed, we will want to return null to indicate
+        // we were passed an invalid date if the values passed in had to be converted
+        // (For example a month of 13 effecting the year, etc)
+        var isValid = (d.getFullYear() === year &&
+                       d.getMonth() === month &&
+                       d.getDate() === date );
+        if (!isValid) {
+          return null;
+        }
+    }
+    
+    d.logicalDate = true;
+    return d;
+  }
+});
+
 isc.DateItem.changeDefaults('textFieldDefaults', {
   isDisabled: function() {
     var disabled = this.Super('isDisabled', arguments);
