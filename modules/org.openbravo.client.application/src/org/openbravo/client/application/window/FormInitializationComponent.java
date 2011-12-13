@@ -930,6 +930,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         continue;
       }
       String column = field.getColumn().getDBColumnName();
+      String columninp = "inp" + Sqlc.TransformaNombreColumna(column);
+      if (column.equalsIgnoreCase("Ad_Org_Id") && !changeEventCols.contains(columninp)) {
+        changeEventCols.add(columninp);
+      }
       if (columnsInValidation.get(column) != null && columnsInValidation.get(column).size() > 0) {
         for (String colInVal : columnsInValidation.get(column)) {
           final String columnName = "inp" + Sqlc.TransformaNombreColumna(colInVal);
