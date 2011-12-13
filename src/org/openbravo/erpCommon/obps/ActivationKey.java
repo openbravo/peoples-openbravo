@@ -186,7 +186,7 @@ public class ActivationKey {
   private static final Long EXPIRATION_BASIC_DAYS = 30L;
   private static final Long EXPIRATION_PROF_DAYS = 30L;
 
-  private final static long WS_DAYS_EXCEEDING_ALLOWED = 5L;
+  private final static int WS_DAYS_EXCEEDING_ALLOWED = 5;
   private final static long WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30L;
   private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
       * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
@@ -1322,11 +1322,7 @@ public class ActivationKey {
     wsDayCounter++;
 
     if (wsDayCounter > maxWsCalls) {
-      while (!exceededInLastDays.isEmpty()
-          && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
-        Date removed = exceededInLastDays.remove(0);
-        log.info("Removed date from exceeded days " + removed);
-      }
+      cleanUpOldExcededDays(today);
 
       if (!exceededInLastDays.contains(today)) {
         exceededInLastDays.add(today);
@@ -1339,6 +1335,14 @@ public class ActivationKey {
       }
     }
     return WSRestriction.NO_RESTRICTION;
+  }
+
+  private synchronized void cleanUpOldExcededDays(Date today) {
+    while (!exceededInLastDays.isEmpty()
+        && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+      Date removed = exceededInLastDays.remove(0);
+      log.info("Removed date from exceeded days " + removed);
+    }
   }
 
   private Date getDayAt0(Date date) {
@@ -1386,5 +1390,24 @@ public class ActivationKey {
       log.info("Addind exceeded ws calls day " + day);
     }
     initializeWsDayCounter();
+  }
+
+  /**
+   * Returns the number of days during last 30 days exceeding the maximum allowed number of calls
+   */
+  public int getWsCallsExceededDays() {
+    cleanUpOldExcededDays(getDayAt0(new Date()));
+    if (exceededInLastDays == null) {
+      return 0;
+    }
+    return exceededInLastDays.size();
+  }
+
+  /**
+   * Returns the number of days that can exceed the maximum number of ws calls taking into account
+   * the ones that exceeded it during last 30 days.
+   */
+  public int getExtraWsExceededDaysAllowed() {
+    return WS_DAYS_EXCEEDING_ALLOWED - getWsCallsExceededDays();
   }
 }

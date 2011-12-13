@@ -224,6 +224,22 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      // WS calls restrictions
+      if (hasSystem && ak.getWsCallsExceededDays() > 0) {
+        String msg;
+        String title = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_TITLE", vars.getLanguage());
+        if (ak.getExtraWsExceededDaysAllowed() > 0) {
+          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage())
+              .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
+              .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()));
+        } else {
+          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage()).replace(
+              "@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
+        }
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
+      }
+
       try {
         LoginUtils.getLoginDefaults(strUserAuth, "", myPool);
       } catch (DefaultValidationException e) {
