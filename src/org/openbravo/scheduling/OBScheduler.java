@@ -370,15 +370,11 @@ public class OBScheduler {
 
         } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
           trigger = new SimpleTrigger();
-          Date date = new SimpleDateFormat("dd-MM-yyyy").parse(data.startDate);
-          start = timestamp(new SimpleDateFormat(dateTimeFormat).format(date), data.startTime,
-              dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
           trigger.setStartTime(start.getTime());
 
         } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
-          Date date = new SimpleDateFormat("dd-MM-yyyy").parse(data.startDate);
-          start = timestamp(new SimpleDateFormat(dateTimeFormat).format(date), data.startTime,
-              dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
 
           final int second = start.get(Calendar.SECOND);
           final int minute = start.get(Calendar.MINUTE);
