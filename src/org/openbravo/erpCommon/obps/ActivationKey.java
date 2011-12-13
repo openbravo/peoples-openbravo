@@ -864,14 +864,7 @@ public class ActivationKey {
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
           .append("</td><td>");
-      if (!limitedWsAccess) {
-        sb.append(Utility.messageBD(conn, "OPSWSUnlimited", lang)).append("</td></tr>");
-      } else {
-        String packs = getProperty("wsPacks");
-        String unitsPack = getProperty("wsUnitsPerUnit");
-        sb.append(Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
-            .replace("@unitsPerPack@", unitsPack));
-      }
+      sb.append(getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
     } else {
@@ -890,6 +883,20 @@ public class ActivationKey {
 
     } else {
       return Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang);
+    }
+  }
+
+  /**
+   * Returns a message explaining WS call limitations
+   */
+  public String getWSExplanation(ConnectionProvider conn, String lang) {
+    if (!limitedWsAccess) {
+      return Utility.messageBD(conn, "OPSWSUnlimited", lang);
+    } else {
+      String packs = getProperty("wsPacks");
+      String unitsPack = getProperty("wsUnitsPerUnit");
+      return Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
+          .replace("@unitsPerPack@", unitsPack);
     }
   }
 
