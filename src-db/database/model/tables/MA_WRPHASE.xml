@@ -107,7 +107,7 @@
       </column>
       <column name="USEDMATERIAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
@@ -132,5 +132,6 @@
       <check name="MA_WRPHASE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MA_WRPHASE_NOQTY_CHECK"><![CDATA[NOQTY IN ('Y', 'N')]]></check>
       <check name="MA_WRPHASE_OUTSOURCED_CHECK"><![CDATA[OUTSOURCED IN ('Y', 'N')]]></check>
+      <check name="MA_WRPHASE_USEDMATERIAL_CHECK"><![CDATA[USEDMATERIAL IN ('Y', 'N')]]></check>
     </table>
   </database>

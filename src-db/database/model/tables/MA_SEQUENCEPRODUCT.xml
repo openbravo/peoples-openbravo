@@ -122,6 +122,7 @@
         <unique-column name="MA_SEQUENCE_ID"/>
         <unique-column name="LINE"/>
       </unique>
+      <check name="MA_SEQATTPROD_UNATTCON_CHECK"><![CDATA[UNIQUEATTCONSUM IN ('Y', 'N')]]></check>
       <check name="MA_SEQUENCEPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MA_SEQUENCEPRODUCT_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
     </table>
