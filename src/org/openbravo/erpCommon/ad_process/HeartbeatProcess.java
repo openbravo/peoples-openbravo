@@ -376,13 +376,6 @@ public class HeartbeatProcess implements Process {
         }
 
         try {
-          hbLog.setWSCallsTotal(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WS_CALLS_TOTAL.getLabel())));
-        } catch (NumberFormatException e) {
-          log.warn("Incorrect total number of ws calls during last 30 days: "
-              + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_TOTAL.getLabel()));
-        }
-        try {
           hbLog.setWSCallsMaximum(Long.parseLong(systemInfo
               .getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
@@ -395,6 +388,21 @@ public class HeartbeatProcess implements Process {
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of ws calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel()));
+        }
+
+        try {
+          hbLog.setWSRejectedMaximum(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect max number of ws rejected calls during last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel()));
+        }
+        try {
+          hbLog.setWSRejectedAverage(new BigDecimal(systemInfo
+              .getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect avg number of ws rejected calls during last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel()));
         }
 
         try {
