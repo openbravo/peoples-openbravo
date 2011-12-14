@@ -53,6 +53,7 @@ public abstract class AuthenticationManager {
 
   private static final String SUCCESS_SESSION_STANDARD = "S";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
+  private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
   private static final String FAILED_SESSION = "F";
 
@@ -171,15 +172,16 @@ public abstract class AuthenticationManager {
       return null;
     }
 
-    updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
-
     switch (ActivationKey.getInstance().checkNewWSCall(true)) {
     case NO_RESTRICTION:
+      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
       return userId;
     case EXCEEDED_WARN_WS_CALLS:
       log4j.warn("Number of webservice calls exceeded today.");
+      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
       return userId;
     case EXCEEDED_MAX_WS_CALLS:
+      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
       log4j.warn("Cannot use WS, exceeded number of calls");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
     }
