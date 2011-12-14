@@ -55,7 +55,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.utils.Replace;
 
-public class CreateStandars implements org.openbravo.scheduling.Process {
+public class CreateStandards implements org.openbravo.scheduling.Process {
 
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
@@ -74,7 +74,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
       ProductionPlan productionPlan = OBDal.getInstance().get(ProductionPlan.class,
           strMProductionPlanID);
 
-      createStandars(productionPlan, conn, vars);
+      createStandards(productionPlan, conn, vars);
       OBDal.getInstance().save(productionPlan);
       OBDal.getInstance().flush();
 
@@ -107,7 +107,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     }
   }
 
-  private void createStandars(ProductionPlan productionplan, ConnectionProvider conn,
+  private void createStandards(ProductionPlan productionplan, ConnectionProvider conn,
       VariablesSecureApp vars) throws Exception {
 
     OBContext.setAdminMode();
@@ -144,7 +144,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     OBDal.getInstance().getSession().refresh(pInstance);
 
     if (pInstance.getResult() == 0) {
-      // Error Processing
+      // error processing
       OBError myMessage = Utility
           .getProcessInstanceMessage(conn, vars, getPInstanceData(pInstance));
       throw new OBException("ERROR: " + myMessage.getMessage());
@@ -167,29 +167,29 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
   private void copyAttributes(ConnectionProvider conn, VariablesSecureApp vars,
       ProductionPlan productionPlan) throws Exception {
 
-    // CHECK PHASE EXITS
+    // check phase exists
     if (productionPlan.getWRPhase() != null && productionPlan.getWRPhase().getMASequence() != null) {
 
-      // LOOP PRODUCTIONLINES
+      // loop production lines
       for (OperationProduct opProduct : productionPlan.getWRPhase().getMASequence()
           .getManufacturingOperationProductList()) {
-        // ONLY PRODUCTION TYPE + AND HAS ATTSET AND HAS ATTLIST
+        // only production type + and has attset and has attlist
         if (opProduct.getProductionType() != null && opProduct.getProductionType().equals("+")
             && !opProduct.getManufacturingOperationProductAttributeList().isEmpty()
             && opProduct.getProduct() != null && opProduct.getProduct().getAttributeSet() != null) {
 
-          // NEW ATTRIBUTE
+          // new Attribute
           AttributeSetInstanceValue attSetInstanceTo = new AttributeSetInstanceValue();
           HashMap<String, String> attValues = new HashMap<String, String>();
 
-          // LOOP ATTRIBUTES
+          // loop attributes
           for (OperationProductAttribute opProductAtt : opProduct
               .getManufacturingOperationProductAttributeList()) {
 
-            // CHECK ATTFROM EXISTS
+            // check attFrom exists
             AttributeSetInstance attSetInstanceFrom = null;
 
-            OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
+            OBCriteria<ProductionLine> ProductionLineCriteria = OBDal.getInstance().createCriteria(
                 ProductionLine.class);
             ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
                 productionPlan));
@@ -211,33 +211,33 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
             if (attSetInstanceFrom != null && !attSetInstanceFrom.getId().equals("0")) {
               if (opProductAtt.isSpecialatt()) {
-                // SPECIAL ATT
-                // LOT
+                // special att
+                // lot
                 if (opProductAtt.getSpecialatt().equals(lotSearchKey))
                   attSetInstanceTo.setLot(attSetInstanceFrom.getLotName());
-                // SERNO
+                // serNo
                 if (opProductAtt.getSpecialatt().equals(serialNoSearchKey))
                   attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
-                // GDate //
+                // gDate
                 if (opProductAtt.getSpecialatt().equals(expirationDateSearchKey)) {
                   attSetInstanceTo.setGuaranteeDate(dateToString(attSetInstanceFrom
                       .getExpirationDate()));
                 }
               } else {
-                // NORMAL ATT
-                // CHECK ATT_TO EXISTS
+                // normal att
+                // check attTo exists
                 if (opProductAtt.getAttributeuseto() != null
                     && opProductAtt.getAttributeuseto().getAttribute() != null) {
-                  // GetValue From
-                  OBCriteria attributeInstanceCriteria = OBDal.getInstance().createCriteria(
-                      AttributeInstance.class);
+                  // getValue from
+                  OBCriteria<AttributeInstance> attributeInstanceCriteria = OBDal.getInstance()
+                      .createCriteria(AttributeInstance.class);
                   attributeInstanceCriteria.add(Restrictions.eq(
                       AttributeInstance.PROPERTY_ATTRIBUTESETVALUE, attSetInstanceFrom));
                   attributeInstanceCriteria.add(Restrictions.eq(
                       AttributeInstance.PROPERTY_ATTRIBUTE, opProductAtt.getAttributeUse()
                           .getAttribute()));
                   List<AttributeInstance> AttributeInstanceList = attributeInstanceCriteria.list();
-                  // Add value
+                  // add value
                   if (!AttributeInstanceList.isEmpty()) {
                     if (AttributeInstanceList.get(0).getAttributeValue() == null) {
                       attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute()
@@ -252,11 +252,11 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
               }
             }
             OBContext.restorePreviousMode();
-          } // END LOOP ATTRIBUTES
+          } // end loop attributes
 
-          // UPDATE LINES
+          // update lines
 
-          OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
+          OBCriteria<ProductionLine> ProductionLineCriteria = OBDal.getInstance().createCriteria(
               ProductionLine.class);
           ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
               productionPlan));
@@ -269,13 +269,13 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
           for (ProductionLine pline : plinesToCopyTo) {
 
-            // CREATE ATRIBUTE
+            // create attribute
             if (pline.getProduct().getAttributeSet().isExpirationDate()
                 && (attSetInstanceTo.getGuaranteeDate() == null || attSetInstanceTo
                     .getGuaranteeDate().equals(""))
                 && pline.getProduct().getAttributeSet().getGuaranteedDays() != null
                 && pline.getProduct().getAttributeSet().getGuaranteedDays() != 0L) {
-              // Set GuaranteeDate if is not copied
+              // set guaranteeDate if is not copied
               Date movementdate = ((productionPlan.getProductionplandate() != null) ? productionPlan
                   .getProductionplandate() : productionPlan.getProduction().getMovementDate());
               int days = pline.getProduct().getAttributeSet().getGuaranteedDays().intValue();
@@ -286,8 +286,9 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
             OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn,
                 vars, data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N",
                 opProduct.getProduct().getId(), attValues);
-            if (!createAttributeInstanceError.getType().equals("Success"))
+            if (!createAttributeInstanceError.getType().equals("Success")) {
               throw new OBException(createAttributeInstanceError.getMessage());
+            }
 
             OBDal.getInstance().flush();
 
@@ -296,9 +297,8 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
             pline.setAttributeSetValue(newAttSetinstance);
             OBDal.getInstance().save(pline);
-            OBDal.getInstance().flush();
           }
-
+          OBDal.getInstance().flush();
         }
       }
     }
@@ -306,16 +306,17 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
   private void createInstanciableAttributes(ConnectionProvider conn, VariablesSecureApp vars,
       ProductionPlan productionPlan) throws Exception {
-    OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(ProductionLine.class);
+    OBCriteria<ProductionLine> ProductionLineCriteria = OBDal.getInstance().createCriteria(
+        ProductionLine.class);
     ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
         productionPlan));
     ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
     List<ProductionLine> plines = ProductionLineCriteria.list();
     for (ProductionLine line : plines) {
-      // Check has empty attribute
+      // check has empty attribute
       if (line.getProduct().getAttributeSet() != null && line.getAttributeSetValue() == null) {
         AttributeSet attSet = line.getProduct().getAttributeSet();
-        // Check if has automatic attributes
+        // check if has automatic attributes
         if ((attSet.isLot() && attSet.getLotControl() != null)
             || (attSet.isSerialNo() && attSet.getSerialNoControl() != null)
             || (attSet.isExpirationDate() && attSet.getGuaranteedDays() != null && attSet
@@ -344,8 +345,8 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
 
           line.setAttributeSetValue(newAttSetinstance);
           OBDal.getInstance().save(line);
-          OBDal.getInstance().flush();
         }
+        OBDal.getInstance().flush();
       }
     }
   }

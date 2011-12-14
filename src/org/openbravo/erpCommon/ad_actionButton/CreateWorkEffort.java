@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -66,18 +65,19 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
 
       Date date = dateformater.parse(strdate);
       String dateformatTime = dateTimeformater.format(date);
-      if (strStartTime == null || strStartTime.equals(""))
+      if (strStartTime == null || strStartTime.equals("")) {
         strStartTime = "00:00:00";
-      if (strEndTime == null || strEndTime.equals(""))
+      }
+      if (strEndTime == null || strEndTime.equals("")) {
         strEndTime = "00:00:00";
-
+      }
       Timestamp starttime = Timestamp.valueOf(dateformatTime + " " + strStartTime + ".0");
       Timestamp endtime = Timestamp.valueOf(dateformatTime + " " + strEndTime + ".0");
 
       // Search Phases To Be Created
       WorkRequirement workReq = OBDal.getInstance().get(WorkRequirement.class, strWorkRequirement);
 
-      OBCriteria workReqOpCriteria = OBDal.getInstance().createCriteria(
+      OBCriteria<WorkRequirementOperation> workReqOpCriteria = OBDal.getInstance().createCriteria(
           WorkRequirementOperation.class);
       workReqOpCriteria.add(Restrictions.eq(WorkRequirementOperation.PROPERTY_WORKREQUIREMENT,
           workReq));
@@ -91,8 +91,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       for (WorkRequirementOperation wrOp : workReqOpList) {
         // Check if exits one not processed;
 
-        OBCriteria productionPlanCriteria = OBDal.getInstance()
-            .createCriteria(ProductionPlan.class);
+        OBCriteria<ProductionPlan> productionPlanCriteria = OBDal.getInstance().createCriteria(
+            ProductionPlan.class);
         productionPlanCriteria.add(Restrictions.eq(ProductionPlan.PROPERTY_WRPHASE, wrOp));
         productionPlanCriteria.createAlias(ProductionPlan.PROPERTY_PRODUCTION, "pro");
         productionPlanCriteria.add(Restrictions.eq("pro."
@@ -160,8 +160,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           }
 
           // Get CostCenterVersion
-          OBCriteria costcenterVersionCriteria = OBDal.getInstance().createCriteria(
-              CostcenterVersion.class);
+          OBCriteria<CostcenterVersion> costcenterVersionCriteria = OBDal.getInstance()
+              .createCriteria(CostcenterVersion.class);
           costcenterVersionCriteria.add(Restrictions.eq(CostcenterVersion.PROPERTY_COSTCENTER, wrOp
               .getActivity().getCostCenter()));
           costcenterVersionCriteria.add(Restrictions.lt(CostcenterVersion.PROPERTY_VALIDFROMDATE,
@@ -183,10 +183,11 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             params.put("M_ProductionPlan_ID", productionPlan.getId());
             ProcessBundle pb = new ProcessBundle(strProcessId, vars).init(conn);
             pb.setParams(params);
-            new org.openbravo.erpCommon.ad_actionButton.CreateStandars().execute(pb);
+            new org.openbravo.erpCommon.ad_actionButton.CreateStandards().execute(pb);
             OBError pbResult = (OBError) pb.getResult();
-            if (!pbResult.getType().equals("Success"))
+            if (!pbResult.getType().equals("Success")) {
               throw new OBException(pbResult.getMessage());
+            }
           }
 
         }
@@ -217,18 +218,6 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       }
       msg.setTitle("Error occurred");
       bundle.setResult(msg);
-    }
-  }
-
-  public static Long getNeededQtyLineNum(String phaseId) throws Exception {
-    String hql = "  SELECT (QUANTITY - DONEQUANTITY) AS DefaultValue FROM MA_WRPhase WHERE MA_WRPhase_ID = '"
-        + phaseId + "'";
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
-
-    if (q.list().size() > 0) {
-      return new Long(q.list().get(0).toString());
-    } else {
-      return 0L;
     }
   }
 
