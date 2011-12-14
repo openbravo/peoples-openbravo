@@ -115,7 +115,7 @@
       </column>
       <column name="ESTIMATEDTIME" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[0]]></onCreateDefault>
       </column>
       <column name="RUNTIME" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
@@ -123,7 +123,7 @@
       </column>
       <column name="CLOSEPHASE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[0]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="VALIDATING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
@@ -157,6 +157,7 @@
       <index name="M_PRODUCTIONPLAN_PRODUCTION" unique="false">
         <index-column name="M_PRODUCTION_ID"/>
       </index>
+      <check name="M_PRODUCTIONPLAN_CLOPHASE_CHK"><![CDATA[CLOSEPHASE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCTIONPLAN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCTIONPLAN_OUTSOURCE_CHK"><![CDATA[OUTSOURCED IN ('Y', 'N')]]></check>
     </table>

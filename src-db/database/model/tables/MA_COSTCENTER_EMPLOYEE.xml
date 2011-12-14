@@ -66,5 +66,6 @@
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
       <check name="MA_COSTCENTER_E_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_COSTCENTER_E_SPLIT_CHECK"><![CDATA[SPLIT IN ('Y', 'N')]]></check>
     </table>
   </database>

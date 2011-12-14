@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.NumberFilter;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.manufacturing.transaction.WorkRequirementOperation;
 
@@ -35,21 +36,23 @@ public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
+    try {
+      OBContext.setAdminMode();
+      String strmWRPhase = info.getStringParameter("inpmaWrphaseId", idFilter);
+      String strQty = info.getStringParameter("inpproductionqty", numFilter);
 
-    // String strLastFieldChanged = info.getLastFieldChanged();
-    String strmWRPhase = info.getStringParameter("inpmaWrphaseId", idFilter);
-    String strQty = info.getStringParameter("inpproductionqty", numFilter);
-
-    WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
-        strmWRPhase);
-    BigDecimal qty = new BigDecimal(strQty);
-    BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
-    if (wrPhaseEstTime != null) {
-      if (wrPhase.getQuantity() != null && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-        info.addResult("inpestimatedtime",
-            wrPhaseEstTime.divide(wrPhase.getQuantity()).multiply(qty).toPlainString());
+      WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
+          strmWRPhase);
+      BigDecimal qty = new BigDecimal(strQty);
+      BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
+      if (wrPhaseEstTime != null) {
+        if (wrPhase.getQuantity() != null && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
+          info.addResult("inpestimatedtime",
+              wrPhaseEstTime.divide(wrPhase.getQuantity()).multiply(qty).toPlainString());
+        }
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
   }
 }
