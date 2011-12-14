@@ -51,6 +51,15 @@ isc.OBTimeItem.addProperties({
       }
     }
    this.Super('keyPress', arguments);
+  },
+
+  // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
+  // string contains time zone. So time in this format is kept: 12:00+01:00
+  setValue: function(value){
+    if (isc.isA.String(value) && (value.contains('+') || value.contains('-'))) {
+      value = isc.Time.parseInput(value,null,null,true);
+    }
+    return this.Super('setValue', arguments);
   }
 });
 
