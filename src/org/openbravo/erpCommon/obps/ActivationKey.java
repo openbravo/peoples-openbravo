@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -63,6 +65,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
@@ -77,6 +80,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
   private final static String OB_PUBLIC_KEY2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeivfuzeE+hdv7mXEyOWTpGglsT1J+UHcp9RrHydgLgccPdQ5EjqtKVSc/jzzJV5g+9XaSxz9pK5TuzzdN4fJHPCnuO0EiwWI2dxS/t1Boo+gGageGZyFRMhMsULU4902gzmw1qugEskUSKONJcR65H06HYRn2fTgVbGvEhFMASwIDAQAB";
+
+  private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
@@ -1386,6 +1391,26 @@ public class ActivationKey {
 
       if (!exceededInLastDays.contains(today)) {
         exceededInLastDays.add(today);
+
+        // Adding a new failing day, send a new beat to butler
+        Runnable sendBeatProcess = new Runnable() {
+          @Override
+          public void run() {
+            try {
+              String content = "?beatType=WSR";
+              content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
+              content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
+              content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
+              URL url = new URL(HEARTBEAT_URL);
+              HttpsUtils.sendSecure(url, content);
+            } catch (Exception e) {
+              log.error("Error connecting server", e);
+            }
+
+          }
+        };
+        Thread sendBeat = new Thread(sendBeatProcess);
+        sendBeat.start();
       }
 
       if (exceededInLastDays.size() > WS_DAYS_EXCEEDING_ALLOWED) {
