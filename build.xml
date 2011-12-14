@@ -95,23 +95,23 @@ export.database: exports database structure and data to xml files.
   <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
-  <property name="calculate.core.revision" value="true" />
-  <property name="stopOnWadError" value="false" />
-  <property name="friendlyWarnings" value="false" />
-  <property name="checkTranslationConsistency" value="true" />
-  <property name="buildValidation" value="true" />
-  <property name="disableCheckReferencedOrganizations" value="false" />
+  <property name="calculate.core.revision" value="true"/>
+  <property name="stopOnWadError" value="false"/>
+  <property name="friendlyWarnings" value="false"/>
+  <property name="checkTranslationConsistency" value="true"/>
+  <property name="buildValidation" value="true"/>
+  <property name="disableCheckReferencedOrganizations" value="true"/>
 
   <available file=".hg" property="is.hg" />
 
   <condition property="calculate.core.rev">
-    <istrue value="${calculate.core.revision}" />
+   <istrue value="${calculate.core.revision}"/>
   </condition>
-
+  
   <condition property="xml.core.rev">
-    <isfalse value="${calculate.core.revision}" />
+     <isfalse value="${calculate.core.revision}"/>
   </condition>
-
+  
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -280,7 +280,7 @@ export.database: exports database structure and data to xml files.
       <include name="*/lib/**" />
     </fileset>
   </path>
-
+  
   <!-- This classpath is needed only for the apply.module task-->
   <path id="apply.module.runtime.classpath">
     <dirset dir="${base.modules}">
@@ -312,26 +312,21 @@ export.database: exports database structure and data to xml files.
       <include name="*/lib/**" />
     </fileset>
   </path>
-
+  
   <macrodef name="updatesystemstatus">
-    <attribute name="v" default="NOT SET" />
-    <sequential>
-      <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-        <classpath>
-          <fileset dir="${base.lib}">
-            <include name="**/*.jar">
-            </include>
-          </fileset>
-        </classpath>
-        <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+     <attribute name="v" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
                        DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
          </transaction>
-      </sql>
-    </sequential>
+       </sql>
+     </sequential>
   </macrodef>
-
+  
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
-
+  
   <target name="init" depends="code.rev">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
@@ -345,8 +340,8 @@ export.database: exports database structure and data to xml files.
 
   <target name="set.code.rev" if="is.hg">
     <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
-      <arg value="id" />
-      <arg value="-i" />
+      <arg value="id"/>
+      <arg value="-i"/>
     </exec>
   </target>
 
@@ -358,28 +353,30 @@ export.database: exports database structure and data to xml files.
     <property name="smart.mode" value="true" />
     <property name="onlyIfModified" value="true" />
     <antcall target="core.lib" />
-
+    
     <condition property="no.local">
       <not>
         <istrue value="${local}" />
       </not>
     </condition>
     <antcall target="update.database.if.no.local" />
-
+    
     <antcall target="wad.lib" />
-
+    
     <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
       <classpath refid="project.class.path" />
     </taskdef>
-
-    <CheckSumCondition obDir="${basedir}" type="md5.wad" property="test.md5.wad" />
+    
+    <CheckSumCondition obDir="${basedir}"
+                       type="md5.wad"
+                       property="test.md5.wad"/>
 
     <condition property="new.wad">
-      <istrue value="${test.md5.wad}" />
+        <istrue value="${test.md5.wad}"/>
     </condition>
 
     <antcall target="trl.lib" />
-
+    
     <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick" />
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
@@ -387,7 +384,7 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
-    <updatesystemstatus v="RB51" />
+    <updatesystemstatus v="RB51"/>
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -430,17 +427,17 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="buildvalidation" depends="init, core.lib">
-    <updatesystemstatus v="RB11" />
+    <updatesystemstatus v="RB11"/> 
     <condition property="buildValidation.var">
-      <istrue value="${buildValidation}" />
+      <istrue value="${buildValidation}"  />
     </condition>
     <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
   </target>
-
+  
   <target name="compile.buildvalidation" depends="init, core.lib">
     <ant dir="src-util/buildvalidation" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
-
+  
   <target name="compile.modulescript" depends="init, core.lib">
     <ant dir="src-util/modulescript" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
@@ -451,23 +448,25 @@ export.database: exports database structure and data to xml files.
     <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
       <classpath refid="project.class.path" />
     </taskdef>
-
-    <CheckSumCondition obDir="${basedir}" type="md5.wad" property="test.md5.wad" />
+    
+    <CheckSumCondition obDir="${basedir}"
+                           type="md5.wad"
+                           property="test.md5.wad"/>
   </target>
 
   <target name="compile.complete.development" depends="init" unless="mode.war">
-    <updatesystemstatus v="RB43" />
+    <updatesystemstatus v="RB43"/>
     <ant dir="${base.src}" target="compile.complete.development" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="compile.complete.war" depends="init" if="mode.war">
-    <updatesystemstatus v="RB43" />
+    <updatesystemstatus v="RB43"/>
     <antcall target="compile.complete" />
     <antcall target="war" />
   </target>
 
   <target name="compile.deploy" depends="compile.war, compile.development">
-    <updatesystemstatus v="RB51" />
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="compile.development" depends="init" unless="mode.war">
@@ -526,12 +525,12 @@ export.database: exports database structure and data to xml files.
 
   <target name="generate.java.doc">
     <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.core}/src:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" linksource="no" maxmemory="1024M">
-      <excludepackage name="org.openbravo.erpWindows.*" />
+      <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
-        <path refid="project.class.path" />
+        <path refid="project.class.path"/>
         <pathelement path="lib/build/js.jar" />
       </classpath>
-      <link href="http://java.sun.com/javase/6/docs/api/" />
+      <link href="http://java.sun.com/javase/6/docs/api/"/>
     </javadoc>
   </target>
 
@@ -557,7 +556,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="run.webservice.tests" depends="init">
-    <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
+      <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.quick.tests" depends="init">
@@ -567,12 +566,20 @@ export.database: exports database structure and data to xml files.
   <target name="run.api.test.javascript">
     <ant dir="${base.src}" target="run.api.test.javascript" inheritAll="true" inheritRefs="true" />
   </target>
-
-  <target name="run.api.test.model" description="Checks current xml db model and dictionary API for not-allowed changes. Requires stableDBdir parameter">
+  
+  <target name="run.api.test.model" 
+          description="Checks current xml db model and dictionary API for not-allowed changes. Requires stableDBdir parameter">
     <taskdef name="checkAPI" classname="org.openbravo.ddlutils.task.CheckAPIDistribution">
       <classpath refid="project.class.path" />
     </taskdef>
-    <checkAPI driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" stableDBdir="${stableDBdir}" testDBdir="${basedir}" verbosity="${bbdd.verbosity}" />
+    <checkAPI driver="${bbdd.driver}" 
+                  url="${bbdd.owner.url}" 
+                  user="${bbdd.user}" 
+                  password="${bbdd.password}" 
+                  stableDBdir="${stableDBdir}"
+                  testDBdir="${basedir}"
+                  verbosity="${bbdd.verbosity}"
+    />    
   </target>
 
   <target name="export.sample.data" depends="code.rev">
@@ -668,12 +675,12 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
-    <echo message="applying modules" />
+    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
-    <updatesystemstatus v="RB51" />
+    <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
@@ -685,14 +692,14 @@ export.database: exports database structure and data to xml files.
   <target name="eclipse.install.source" depends="init, create.database">
     <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
     <echo message="Building OpenbravoCore project..." level="info" />
-    <eclipse.incrementalBuild project="OpenbravoCore" kind="full" />
-    <antcall target="eclipse.wad.lib" />
-    <antcall target="eclipse.trl.lib" />
-    <antcall target="eclipse.compile.complete" />
-    <echo message="applying modules" />
+    <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
+    <antcall target="eclipse.wad.lib"/>
+    <antcall target="eclipse.trl.lib"/>
+    <antcall target="eclipse.compile.complete"/>
+    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
-    <updatesystemstatus v="RB51" />
+    <updatesystemstatus v="RB51"/>
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -702,14 +709,14 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="update.database" depends="init, core.lib, database.lib, buildvalidation">
-    <updatesystemstatus v="RB12" />
+    <updatesystemstatus v="RB12"/>
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <antcall target="generate.entities.quick" />
     <antcall target="apply.module" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
-    <updatesystemstatus v="RB12" />
+    <updatesystemstatus v="RB12"/>
     <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
     <antcall target="generate.entities.quick" />
     <antcall target="apply.module" />
@@ -746,20 +753,20 @@ export.database: exports database structure and data to xml files.
   <target name="apply.modules">
 
     <condition property="apply.modules.complete.compilation.var">
-      <istrue value="${apply.modules.complete.compilation}" />
+      <istrue value="${apply.modules.complete.compilation}"  />
     </condition>
-
+    
     <condition property="apply.modules.simple.compilation.var">
       <isfalse value="${apply.modules.complete.compilation.var}" />
     </condition>
 
-    <updatesystemstatus v="RB43" />
-    <antcall target="apply.modules.compile" />
+    <updatesystemstatus v="RB43"/>
+    <antcall target="apply.modules.compile"/>
 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
   </target>
-
+  
   <target name="apply.module.forked">
     <!-- 
     Note: set reinitializeModel to false because otherwise the dal is re-initialized with classes and a model
@@ -770,14 +777,14 @@ export.database: exports database structure and data to xml files.
     <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <applyModule userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
+    <applyModule userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
-
+  
   <target name="compile.apply.module" depends="init">
-    <updatesystemstatus v="RB31" />
+    <updatesystemstatus v="RB31"/>
     <ant dir="${base.src}" target="compile.apply.module" inheritAll="true" inheritRefs="true" />
   </target>
-
+  
   <!--
   This task uses a special classpath.
   This classpath is equivalent to the normal project.class.path, except for the fact that that the normal build folder
@@ -790,22 +797,22 @@ export.database: exports database structure and data to xml files.
       <arg line="'${base.src}' '${friendlyWarnings}'" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
-    <delete includeEmptyDirs="true" dir="${build.apply.module}" />
+   <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
   </target>
-
+  
   <target name="apply.modules.compile" depends="wad.lib">
-    <antcall target="apply.modules.compile.simple" />
-    <antcall target="apply.modules.compile.complete" />
+    <antcall target="apply.modules.compile.simple"/>
+    <antcall target="apply.modules.compile.complete"/>
   </target>
-
+  
   <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
     <antcall target="compile.deploy" />
   </target>
-
+  
   <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
-    <antcall target="compile.complete.deploy" />
+     <antcall target="compile.complete.deploy" />
   </target>
-
+  
   <!-- 
 		apparently this does not overwrite the default catalina_opts, only
 		if it is not set will it be set to the value below 
@@ -838,7 +845,7 @@ export.database: exports database structure and data to xml files.
     <sleep description="Wait to give tomcat time to stop" seconds="20" />
 
     <!-- if deploy.mode=class this will sync (& delete orphan) jarfiles from WebContent -> tomcat-->
-    <antcall target="copy.files.jarsync" />
+    <antcall target="copy.files.jarsync"/>
 
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true">
       <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
@@ -916,14 +923,16 @@ export.database: exports database structure and data to xml files.
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-
+    
     <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
       <classpath refid="project.class.path" />
     </taskdef>
-
+            
     <echo message="Validating Module..." />
-
-    <WADValidation propertiesFile="${base.config}/Openbravo.properties" modules="${module}" stoponerror="true" />
+    
+    <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                   modules="${module}"
+                   stoponerror="true"/>
 
     <validateModules moduleJavaPackage="${module}" failOnError="true" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
@@ -1025,66 +1034,69 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="package.core" depends="init, set.version.number">
-    <property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
-
-    <exec executable="hg">
-      <arg value="archive" />
-      <arg value="${tmpdir}" />
-    </exec>
-
-    <replaceregexp file="${tmpdir}/src-db/database/sourcedata/AD_MODULE.xml" match="(VERSION.*\[CDATA\[).*\..*\.(.*)(\]\])" replace="\1${core.rev}\3" byline="true" />
-
-    <echo message="${hg.id}" file="${tmpdir}/config/instance.revision" />
-
+	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
+   
+  	<exec executable="hg" >
+  		<arg value="archive"/>
+  		<arg value="${tmpdir}"/>
+  	</exec>
+  	
+  	<replaceregexp file="${tmpdir}/src-db/database/sourcedata/AD_MODULE.xml"
+                   match="(VERSION.*\[CDATA\[).*\..*\.(.*)(\]\])"
+                   replace="\1${core.rev}\3"
+                   byline="true"/>
+    
+    <echo message="${hg.id}" file="${tmpdir}/config/instance.revision"/>
+	
     <delete includeEmptyDirs="true">
-      <fileset dir="${tmpdir}/modules" includes="**/*" defaultexcludes="no" />
+      <fileset dir="${tmpdir}/modules" includes="**/*" defaultexcludes="no"/>
     </delete>
+    
+    <zip destfile="${basedir}/core-${core.rev}.obx" basedir="${tmpdir}"/>
+    
+    <delete dir="${tmpdir}"/>
 
-    <zip destfile="${basedir}/core-${core.rev}.obx" basedir="${tmpdir}" />
-
-    <delete dir="${tmpdir}" />
-
-  </target>
-
-  <target name="set.version.number" depends="set.version.from.file, set.version.calculated" />
-
+   </target>
+ 
+  <target name="set.version.number" depends="set.version.from.file, set.version.calculated"/>
+  
   <target name="set.version.calculated" if="calculate.core.rev">
-    <echo message="calculating core revision..." />
+    <echo message="calculating core revision..."/>
     <exec executable="hg" outputproperty="hg.idno" failifexecutionfails="false">
-      <arg value="id" />
-      <arg value="-n" />
+      <arg value="id"/>
+      <arg value="-n"/>
     </exec>
     <taskdef name="CoreRevision" classname="org.openbravo.erpCommon.utility.CalculateCoreRevision">
-      <classpath refid="project.class.path" />
-    </taskdef>
+            <classpath refid="project.class.path" />
+          </taskdef>
 
-    <CoreRevision hgRevNo="${hg.idno}" revision="core.rev" />
+    <CoreRevision hgRevNo="${hg.idno}" revision="core.rev"/>
   </target>
-
+  
   <target name="set.version.from.file" if="xml.core.rev">
-    <echo message="reading core revision from xml file..." />
+    <echo message="reading core revision from xml file..."/>
     <loadfile property="core.rev" srcfile="${basedir}/src-db/database/sourcedata/AD_MODULE.xml">
       <filterchain>
         <linecontains>
-          <contains value="VERSION>" />
+          <contains value="VERSION>"/>
         </linecontains>
         <tokenfilter>
-          <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2" />
+            <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2"/>
         </tokenfilter>
-        <striplinebreaks />
+        <striplinebreaks/>
       </filterchain>
     </loadfile>
   </target>
-
-
+  
+  
   <target name="load.logoimages">
     <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
-
+  
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
-
+  
   <target name="UIrebuild" depends="core.lib">
     <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
@@ -1103,18 +1115,18 @@ export.database: exports database structure and data to xml files.
       </classpath>
     </java>
   </target>
-
+  
   <target name="check.module.consistency">
     <taskdef name="checkConsistency" classname="org.openbravo.erpCommon.modules.CheckLocalConsistency">
       <classpath refid="project.class.path" />
     </taskdef>
-    <checkConsistency userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
+    <checkConsistency userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
-
+  
   <target name="check.window.compatibility">
     <taskdef name="showclassicwindows" classname="org.openbravo.client.application.WindowsInClassicModeTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <showclassicwindows userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
+    <showclassicwindows userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
 </project>

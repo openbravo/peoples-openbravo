@@ -225,13 +225,11 @@ public class OBInterceptor extends EmptyInterceptor {
     doEvent(entity, currentState, propertyNames);
 
     // also check for new records
-    // commented out for now, re-apply in MP9
-    // see issue https://issues.openbravo.com/view.php?id=19273
-    // if (disableCheckReferencedOrganizations.get() == null
-    // || !disableCheckReferencedOrganizations.get()) {
-    // checkReferencedOrganizations(entity, currentState, new Object[currentState.length],
-    // propertyNames);
-    // }
+    if (disableCheckReferencedOrganizations.get() == null
+        || !disableCheckReferencedOrganizations.get()) {
+      checkReferencedOrganizations(entity, currentState, new Object[currentState.length],
+          propertyNames);
+    }
 
     boolean listenerResult = false;
     if (getInterceptorListener() != null) {
