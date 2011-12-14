@@ -1075,7 +1075,6 @@ public class ActivationKey {
   /**
    * Refreshes license online in case of:
    * <ul>
-   * <li>Old license (has no unlimitedWsAccess property)
    * <li>It expired
    * <li>Maximum number of WS calls has been reached during last 30 days
    * <li>Maximum number of concurrent users has been reached
@@ -1084,8 +1083,7 @@ public class ActivationKey {
   private void refreshIfNeeded() {
     if (hasActivationKey
         && !subscriptionConvertedProperty
-        && (getProperty("unlimitedWsAccess") == null || hasExpired
-            || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
+        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
       refreshLicense(24 * 60);
     }
   }
