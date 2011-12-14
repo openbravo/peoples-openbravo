@@ -92,47 +92,50 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
 
   private void validateWorkEffort(ProductionTransaction production, ConnectionProvider conn,
       VariablesSecureApp vars) throws Exception {
-
-    OBContext.setAdminMode();
-
-    org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, "800106");
-
-    final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
-    pInstance.setProcess(process);
-    pInstance.setActive(true);
-    pInstance.setRecordID(production.getId());
-    pInstance.setUserContact(OBContext.getOBContext().getUser());
-
-    OBDal.getInstance().save(pInstance);
-    OBDal.getInstance().flush();
-
     try {
-      final Connection connection = OBDal.getInstance().getConnection();
-      PreparedStatement ps = null;
-      final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-      if (obProps.getProperty("bbdd.rdbms") != null
-          && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        ps = connection.prepareStatement("SELECT * FROM ma_workeffort_validate(?)");
-      } else {
-        ps = connection.prepareStatement("CALL ma_workeffort_validate(?)");
+      OBContext.setAdminMode();
+
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+          org.openbravo.model.ad.ui.Process.class, "800106");
+
+      final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
+      pInstance.setProcess(process);
+      pInstance.setActive(true);
+      pInstance.setRecordID(production.getId());
+      pInstance.setUserContact(OBContext.getOBContext().getUser());
+
+      OBDal.getInstance().save(pInstance);
+      OBDal.getInstance().flush();
+
+      try {
+        final Connection connection = OBDal.getInstance().getConnection();
+        PreparedStatement ps = null;
+        final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+        if (obProps.getProperty("bbdd.rdbms") != null
+            && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+          ps = connection.prepareStatement("SELECT * FROM ma_workeffort_validate(?)");
+        } else {
+          ps = connection.prepareStatement("CALL ma_workeffort_validate(?)");
+        }
+        ps.setString(1, pInstance.getId());
+        ps.execute();
+
+      } catch (Exception e) {
+        throw new IllegalStateException(e);
       }
-      ps.setString(1, pInstance.getId());
-      ps.execute();
 
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
+      OBDal.getInstance().getSession().refresh(pInstance);
+
+      if (pInstance.getResult() == 0) {
+        // Error Processing
+        OBError myMessage = Utility.getProcessInstanceMessage(conn, vars,
+            getPInstanceData(pInstance));
+        throw new OBException("ERROR: " + myMessage.getMessage());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
-    OBDal.getInstance().getSession().refresh(pInstance);
-
-    if (pInstance.getResult() == 0) {
-      // Error Processing
-      OBError myMessage = Utility
-          .getProcessInstanceMessage(conn, vars, getPInstanceData(pInstance));
-      throw new OBException("ERROR: " + myMessage.getMessage());
-    }
-    OBContext.restorePreviousMode();
   }
 
   private PInstanceProcessData[] getPInstanceData(ProcessInstance pInstance) throws Exception {

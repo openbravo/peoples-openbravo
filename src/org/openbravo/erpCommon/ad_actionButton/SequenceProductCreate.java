@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
@@ -98,19 +99,24 @@ public class SequenceProductCreate implements Process {
       OBDal.getInstance().flush();
 
       // Copy Attributes
-      if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
-          && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
-        // Special Attribute
-        if (newProduct.getAttributeSet().isLot())
-          copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
-        if (newProduct.getAttributeSet().isSerialNo())
-          copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
-        if (newProduct.getAttributeSet().isExpirationDate())
-          copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
-        // Normal Attribute
-        for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
-          copyAtt(newOpProduct, opProduct, false, "", attributeuse);
+      try {
+        OBContext.setAdminMode();
+        if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
+            && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
+          // Special Attribute
+          if (newProduct.getAttributeSet().isLot())
+            copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
+          if (newProduct.getAttributeSet().isSerialNo())
+            copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
+          if (newProduct.getAttributeSet().isExpirationDate())
+            copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
+          // Normal Attribute
+          for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
+            copyAtt(newOpProduct, opProduct, false, "", attributeuse);
+          }
         }
+      } finally {
+        OBContext.restorePreviousMode();
       }
 
       OBDal.getInstance().flush();
