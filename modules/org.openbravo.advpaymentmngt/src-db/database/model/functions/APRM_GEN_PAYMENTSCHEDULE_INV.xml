@@ -238,8 +238,10 @@ BEGIN
         FROM (
             SELECT line, percentage, onremainder, excludetax,
                    COALESCE(paymentrule, v_paymentrule) AS paymentrule,
-                   fixmonthday, fixmonthday2, fixmonthday3, netdays,
-                   fixmonthoffset, netday, isnextbusinessday
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
+                   netdays, fixmonthoffset, netday, isnextbusinessday
             FROM c_paymenttermline
             WHERE c_paymentterm_id=v_paymentterm
               AND isactive = 'Y'
@@ -247,16 +249,20 @@ BEGIN
             -- Header of paymentTerm is processed at last
             SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
                    v_paymentRule AS paymentrule,
-                   fixmonthday, fixmonthday2, fixmonthday3, netdays,
-                   fixmonthoffset, netday, isnextbusinessday
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
+                   netdays, fixmonthoffset, netday, isnextbusinessday
             FROM c_paymentterm
             WHERE c_paymentterm_id=v_paymentterm) a;
 
         FOR cur_payments IN (
             SELECT line, percentage, onremainder, excludetax,
                    COALESCE(paymentrule, v_paymentrule) AS paymentrule,
-                   fixmonthday, fixmonthday2, fixmonthday3, netdays,
-                   fixmonthoffset, netday, isnextbusinessday
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
+                   netdays, fixmonthoffset, netday, isnextbusinessday
             FROM c_paymenttermline
             WHERE c_paymentterm_id=v_paymentterm
               AND isactive = 'Y'
@@ -264,8 +270,10 @@ BEGIN
             -- Header of paymentTerm is processed at last
             SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
                    v_paymentRule AS paymentrule,
-                   fixmonthday, fixmonthday2, fixmonthday3, netdays,
-                   fixmonthoffset, netday, isnextbusinessday
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
+                   (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
+                   netdays, fixmonthoffset, netday, isnextbusinessday
             FROM c_paymentterm
             WHERE c_paymentterm_id=v_paymentterm
             ORDER BY line
