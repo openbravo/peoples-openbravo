@@ -380,24 +380,38 @@ public class ActivationKey {
     trial = "true".equals(getProperty("trial"));
     golden = "true".equals(getProperty("golden"));
 
-    limitedWsAccess = "false".equals(getProperty("unlimitedWsAccess"));
-    if (limitedWsAccess) {
-      String packs = getProperty("wsPacks");
-      String unitsPack = getProperty("wsUnitsPerUnit");
+    String strUnlimitedWsAccess = getProperty("unlimitedWsAccess");
 
-      if (StringUtils.isEmpty(packs) || StringUtils.isEmpty(unitsPack)) {
-        log.warn("Couldn't determine ws call limitation, setting unlimited.");
-        limitedWsAccess = false;
+    if (StringUtils.isEmpty(strUnlimitedWsAccess)) {
+      // old license, setting defaults
+      if (trial || golden) {
+        limitedWsAccess = true;
+        maxWsCalls = 500L;
+        instanceProperties.put("wsPacks", "1");
+        instanceProperties.put("wsUnitsPerUnit", "500");
       } else {
-        try {
-          Integer nPacks = Integer.parseInt(packs);
-          Integer nUnitsPack = Integer.parseInt(unitsPack);
-          maxWsCalls = nPacks * nUnitsPack;
-          log.debug("Maximum ws calls: " + maxWsCalls);
-          initializeWsCounter();
-        } catch (Exception e) {
-          log.error("Error setting ws call limitation, setting unlimited.", e);
+        limitedWsAccess = false;
+      }
+    } else {
+      limitedWsAccess = "false".equals(getProperty("unlimitedWsAccess"));
+      if (limitedWsAccess) {
+        String packs = getProperty("wsPacks");
+        String unitsPack = getProperty("wsUnitsPerUnit");
+
+        if (StringUtils.isEmpty(packs) || StringUtils.isEmpty(unitsPack)) {
+          log.warn("Couldn't determine ws call limitation, setting unlimited.");
           limitedWsAccess = false;
+        } else {
+          try {
+            Integer nPacks = Integer.parseInt(packs);
+            Integer nUnitsPack = Integer.parseInt(unitsPack);
+            maxWsCalls = nPacks * nUnitsPack;
+            log.debug("Maximum ws calls: " + maxWsCalls);
+            initializeWsCounter();
+          } catch (Exception e) {
+            log.error("Error setting ws call limitation, setting unlimited.", e);
+            limitedWsAccess = false;
+          }
         }
       }
     }
