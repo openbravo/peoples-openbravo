@@ -64,6 +64,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
     final String strUser = vars.getStringParameter("user");
     final String strPass = vars.getStringParameter("password");
+    username = strUser;
 
     if (StringUtils.isEmpty(strUser)) {
       // redirects to the menu or the menu with the target

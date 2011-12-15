@@ -60,6 +60,7 @@ public abstract class AuthenticationManager {
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
   protected String localAdress = null;
+  protected String username = "";
 
   /**
    * Returns an instance of AuthenticationManager subclass, based on the authentication.class
@@ -218,7 +219,7 @@ public abstract class AuthenticationManager {
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     String dbSessionId = vars.getSessionValue("#AD_SESSION_ID");
     if (StringUtils.isEmpty(dbSessionId)) {
-      dbSessionId = createDBSession(request, "", userId, successSessionType);
+      dbSessionId = createDBSession(request, username, userId, successSessionType);
       if (setSession) {
         vars.setSessionValue("#AD_SESSION_ID", dbSessionId);
       }
@@ -276,6 +277,7 @@ public abstract class AuthenticationManager {
     final String password = request.getParameter(BaseWebServiceServlet.PASSWORD_PARAM);
     String userId = null;
     if (login != null && password != null) {
+      username = login;
       userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
@@ -360,6 +362,7 @@ public abstract class AuthenticationManager {
       final String login = decodedUserPass.substring(0, index);
       final String password = decodedUserPass.substring(index + 1);
       String userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      username = login;
       return userId;
     } catch (final Exception e) {
       throw new OBException(e);
