@@ -25,6 +25,7 @@ isc.OBTimeItem.addProperties({
   operator: 'equals',
   validateOnExit: true,
   showHint: false,
+  timeFormatter: 'to24HourTime',
   displayFormat: 'to24HourTime',
   short24TimeFormat: 'HH:MM:SS',
   shortTimeFormat: 'HH:MM:SS',
@@ -43,13 +44,22 @@ isc.OBTimeItem.addProperties({
     if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
       f.setHasChanged(true);
       f.view.messageBar.hide();
-      for (i = 0; i < toolBarButtons.leftMembers.length; i++) {
-        if (toolBarButtons.leftMembers[i].updateState) {
-          toolBarButtons.leftMembers[i].updateState();
+      for (i = 0; i < toolBarButtons.length; i++) {
+        if (toolBarButtons[i].updateState) {
+          toolBarButtons[i].updateState();
         }
       }
     }
    this.Super('keyPress', arguments);
+  },
+
+  // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
+  // string contains time zone. So time in this format is kept: 12:00+01:00
+  setValue: function(value){
+    if (isc.isA.String(value) && (value.contains('+') || value.contains('-'))) {
+      value = isc.Time.parseInput(value,null,null,true);
+    }
+    return this.Super('setValue', arguments);
   }
 });
 

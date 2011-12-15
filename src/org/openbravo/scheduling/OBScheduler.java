@@ -362,7 +362,6 @@ public class OBScheduler {
 
       Calendar start = null;
       Calendar finish = null;
-
       try {
         final String timingOption = data.timingOption;
         if ("".equals(timingOption) || timingOption.equals(TIMING_OPTION_IMMEDIATE)) {
@@ -370,11 +369,11 @@ public class OBScheduler {
 
         } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
           trigger = new SimpleTrigger();
-          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime, "dd-MM-yyyy HH:mm:ss");
           trigger.setStartTime(start.getTime());
 
         } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
-          start = timestamp(data.startDate, data.startTime, dateTimeFormat);
+          start = timestamp(data.startDate, data.startTime, "dd-MM-yyyy HH:mm:ss");
 
           final int second = start.get(Calendar.SECOND);
           final int minute = start.get(Calendar.MINUTE);
@@ -473,12 +472,12 @@ public class OBScheduler {
             trigger.setStartTime(start.getTime());
           } else {
             Calendar nextTriggerTime = timestamp(data.nextFireTime, data.nextFireTime,
-                dateTimeFormat);
+                "dd-MM-yyyy HH:mm:ss");
             trigger.setStartTime(nextTriggerTime.getTime());
           }
 
           if (data.finishes.equals(FINISHES)) {
-            finish = timestamp(data.finishesDate, data.finishesTime, dateTimeFormat);
+            finish = timestamp(data.finishesDate, data.finishesTime, "dd-MM-yyyy HH:mm:ss");
             trigger.setEndTime(finish.getTime());
           }
 
