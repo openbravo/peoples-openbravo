@@ -202,7 +202,7 @@ public abstract class AuthenticationManager {
       return null;
     }
 
-    switch (ActivationKey.getInstance().checkNewWSCall(true)) {
+    switch (ActivationKey.getInstance(true).checkNewWSCall(true)) {
     case NO_RESTRICTION:
       return userId;
     case EXCEEDED_WARN_WS_CALLS:
