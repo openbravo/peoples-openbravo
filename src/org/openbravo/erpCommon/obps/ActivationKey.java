@@ -1393,7 +1393,8 @@ public class ActivationKey {
       wsDayCounter++;
     }
 
-    if (wsDayCounter > maxWsCalls) {
+    // Adding 1 to maxWsCalls because session is already saved in DB
+    if (wsDayCounter > maxWsCalls + 1) {
       // clean up old days
       while (!exceededInLastDays.isEmpty()
           && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
@@ -1415,6 +1416,7 @@ public class ActivationKey {
               content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
               URL url = new URL(HEARTBEAT_URL);
               HttpsUtils.sendSecure(url, content);
+              log.info("Sending CWSR beat");
             } catch (Exception e) {
               log.error("Error connecting server", e);
             }
