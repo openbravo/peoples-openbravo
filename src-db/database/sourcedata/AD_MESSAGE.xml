@@ -19501,7 +19501,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <VALUE><![CDATA[OPS_MAX_WS_CALLS_MSG]]></VALUE>
-<!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTEXT><![CDATA[During last 30 days, @daysExceeding@ days exceeded the maximum allowed number of Web Service calls. New calls are not allowed anymore.]]></MSGTEXT>
+<!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTEXT><![CDATA[During last 30 days, @daysExceeding@ days exceeded the maximum allowed number of Web Service calls. New calls are not allowed anymore until tomorrow at 0:00.]]></MSGTEXT>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A--></AD_MESSAGE>
