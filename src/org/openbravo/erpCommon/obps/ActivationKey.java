@@ -153,7 +153,7 @@ public class ActivationKey {
   }
 
   public enum WSRestriction {
-    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS, EXCEEDED_WARN_WS_CALLS;
+    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS, EXCEEDED_WARN_WS_CALLS, EXPIRED;
   }
 
   public enum LicenseClass {
@@ -1382,6 +1382,10 @@ public class ActivationKey {
   public synchronized WSRestriction checkNewWSCall(boolean updateCounter) {
     if (!limitedWsAccess) {
       return WSRestriction.NO_RESTRICTION;
+    }
+
+    if (hasExpired) {
+      return WSRestriction.EXPIRED;
     }
     Date today = getDayAt0(new Date());
 

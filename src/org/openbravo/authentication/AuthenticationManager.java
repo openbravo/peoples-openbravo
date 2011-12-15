@@ -212,6 +212,10 @@ public abstract class AuthenticationManager {
       updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
       log4j.warn("Cannot use WS, exceeded number of calls");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
+    case EXPIRED:
+      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      log4j.warn("Cannot use WS, license expired");
+      throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
     }
 
     return null;
