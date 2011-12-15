@@ -1389,12 +1389,14 @@ public class ActivationKey {
       initializeWsDayCounter();
     }
 
+    long checkCalls = maxWsCalls;
     if (updateCounter) {
-      wsDayCounter++;
+      wsDayCounter += 1;
+      // Adding 1 to maxWsCalls because session is already saved in DB
+      checkCalls += 1;
     }
 
-    // Adding 1 to maxWsCalls because session is already saved in DB
-    if (wsDayCounter > maxWsCalls + 1) {
+    if (wsDayCounter > checkCalls) {
       // clean up old days
       while (!exceededInLastDays.isEmpty()
           && exceededInLastDays.get(0).getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
