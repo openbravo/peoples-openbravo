@@ -154,7 +154,8 @@ public abstract class AuthenticationManager {
 
   /**
    * Authentication for web services and external services. All authenticated requests not using the
-   * standard UI *MUST* use this authentication.
+   * standard UI *MUST* use this authentication or
+   * {@link AuthenticationManager#webServiceAuthenticate(String, String)}.
    * 
    * @param request
    *          HTTP request object to handle parameters and session attributes
@@ -169,17 +170,43 @@ public abstract class AuthenticationManager {
 
     final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
 
+    return webServicePostAuthenticate(userId, dbSessionId);
+  }
+
+  /**
+   * Authentication for web services and external services. All authenticated requests not using the
+   * standard UI *MUST* use this authentication or
+   * {@link AuthenticationManager#webServiceAuthenticate(HttpServletRequest)}. This one is intended
+   * for authentications for non standard REST web services (such as SOAP).
+   * 
+   * @param user
+   *          User name to authenticate
+   * @param password
+   *          Password to validate user
+   * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
+   * @throws AuthenticationExceptionin
+   *           case of an authentication error different than incorrect user/password (which just
+   *           returns null)
+   */
+  public final String webServiceAuthenticate(String user, String password)
+      throws AuthenticationException {
+    username = user;
+    final String userId = doWebServiceAuthenticate(user, password);
+    final String dbSessionId = setDBSession(null, userId, SUCCESS_SESSION_WEB_SERVICE, false);
+    return webServicePostAuthenticate(userId, dbSessionId);
+  }
+
+  private String webServicePostAuthenticate(String userId, String dbSessionId)
+      throws AuthenticationException {
     if (userId == null) {
       return null;
     }
 
     switch (ActivationKey.getInstance().checkNewWSCall(true)) {
     case NO_RESTRICTION:
-      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
       return userId;
     case EXCEEDED_WARN_WS_CALLS:
       log4j.warn("Number of webservice calls exceeded today.");
-      updateDBSession(dbSessionId, false, SUCCESS_SESSION_WEB_SERVICE);
       return userId;
     case EXCEEDED_MAX_WS_CALLS:
       updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
@@ -205,11 +232,29 @@ public abstract class AuthenticationManager {
       throws AuthenticationException {
     final String userId = doWebServiceAuthenticate(request);
 
-    final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_CONNECTOR, false);
+    setDBSession(request, userId, SUCCESS_SESSION_CONNECTOR, false);
 
-    if (userId != null) {
-      updateDBSession(dbSessionId, false, SUCCESS_SESSION_CONNECTOR);
-    }
+    return userId;
+  }
+
+  /**
+   * Authentication for approved connectors. Only authorized connectors are allowed to use this
+   * authentication.
+   * 
+   * @param user
+   *          User name to authenticate
+   * @param password
+   *          Password to validate user
+   * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
+   * @throws AuthenticationExceptionin
+   *           case of an authentication error different than incorrect user/password (which just
+   *           returns null)
+   */
+  public final String connectorAuthenticate(String user, String password)
+      throws AuthenticationException {
+    final String userId = doWebServiceAuthenticate(user, password);
+
+    setDBSession(null, userId, SUCCESS_SESSION_CONNECTOR, false);
 
     return userId;
   }
@@ -286,6 +331,10 @@ public abstract class AuthenticationManager {
     return userId;
   }
 
+  protected String doWebServiceAuthenticate(String user, String password) {
+    return LoginUtils.getValidUserId(new DalConnectionProvider(), user, password);
+  }
+
   /**
    * Method called from the <b>logout</b> method after clearing all session attributes. The usual
    * process is to redirect the user to the login page
@@ -316,7 +365,9 @@ public abstract class AuthenticationManager {
       }
 
       sl.setUserName(strUser);
-      sl.setServerUrl(HttpBaseUtils.getLocalAddress(req));
+      if (req != null) {
+        sl.setServerUrl(HttpBaseUtils.getLocalAddress(req));
+      }
       sl.save();
       return sl.getSessionID();
     } catch (Exception e) {
