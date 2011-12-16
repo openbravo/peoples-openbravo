@@ -391,6 +391,21 @@ public class HeartbeatProcess implements Process {
         }
 
         try {
+          hbLog.setConnectorCallsMax(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect max number of wsc calls during last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel()));
+        }
+        try {
+          hbLog.setConnectorCallsAverage(new BigDecimal(systemInfo
+              .getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect avg number of wsc calls during last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel()));
+        }
+
+        try {
           hbLog.setWSRejectedMaximum(Long.parseLong(systemInfo
               .getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
