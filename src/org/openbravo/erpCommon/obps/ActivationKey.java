@@ -1419,9 +1419,11 @@ public class ActivationKey {
           @Override
           public void run() {
             try {
-              String content = "?beatType=CWSR";
-              content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
-              content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
+              String content = "beatType=CWSR";
+              content += "&systemIdentifier="
+                  + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
+              content += "&dbIdentifier="
+                  + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
               content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
               URL url = new URL(HEARTBEAT_URL);
               HttpsUtils.sendSecure(url, content);
