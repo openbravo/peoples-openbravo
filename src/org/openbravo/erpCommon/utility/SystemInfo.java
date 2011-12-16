@@ -593,7 +593,7 @@ public class SystemInfo {
   /**
    * In case it is an OBPS instance, it returns the CRC of the activation key
    */
-  private static String getOBPSInstance() {
+  public static String getOBPSInstance() {
     if (ActivationKey.getInstance().isOPSInstance()) {
       return ActivationKey.getInstance().getOpsLogId();
     } else {
@@ -604,7 +604,7 @@ public class SystemInfo {
   /**
    * In case it is an OBPS instance, it returns the number of instance
    */
-  private static String getOBPSIntanceNumber() {
+  public static String getOBPSIntanceNumber() {
     if (ActivationKey.getInstance().isOPSInstance()) {
       return ActivationKey.getInstance().getProperty("instanceno");
     } else {

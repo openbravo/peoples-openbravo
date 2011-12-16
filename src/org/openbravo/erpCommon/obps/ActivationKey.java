@@ -1425,6 +1425,10 @@ public class ActivationKey {
               content += "&dbIdentifier="
                   + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
               content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
+              content += "&obpsId=" + URLEncoder.encode(SystemInfo.getOBPSInstance(), "utf-8");
+              content += "&instanceNo="
+                  + URLEncoder.encode(SystemInfo.getOBPSIntanceNumber(), "utf-8");
+
               URL url = new URL(HEARTBEAT_URL);
               HttpsUtils.sendSecure(url, content);
               log.info("Sending CWSR beat");
