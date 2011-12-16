@@ -1124,6 +1124,7 @@ public class ActivationKey {
       pb.setParams(params);
 
       boolean refreshed = false;
+      OBContext.setAdminMode();
       try {
         new ActiveInstanceProcess().execute(pb);
         OBError msg = (OBError) pb.getResult();
@@ -1136,6 +1137,8 @@ public class ActivationKey {
       } catch (Exception e) {
         log4j.error("Error refreshing instance", e);
         refreshed = false;
+      } finally {
+        OBContext.restorePreviousMode();
       }
 
       if (!refreshed) {
