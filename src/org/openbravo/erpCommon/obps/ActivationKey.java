@@ -1097,6 +1097,8 @@ public class ActivationKey {
   private void refreshIfNeeded() {
     if (hasActivationKey
         && !subscriptionConvertedProperty
+        && !golden
+        && !trial
         && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
       refreshLicense(24 * 60);
     }
