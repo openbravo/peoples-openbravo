@@ -15843,7 +15843,9 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--3DEC8135BCE049449BFDF228C9FB8F34-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3DEC8135BCE049449BFDF228C9FB8F34-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3DEC8135BCE049449BFDF228C9FB8F34-->  <VALUE><![CDATA[OPS_MAX_WS_CALLS_SOFT_MSG]]></VALUE>
-<!--3DEC8135BCE049449BFDF228C9FB8F34-->  <MSGTEXT><![CDATA[In the last 30 days this instance has exceeded the limit of Web Service calls allowed by its license for @daysExceeding@ days. You should consider upgrading your license. Be aware that if it happens @extraDays@ days more the system will abort any Web Service call everyday after it exceeds the limit.]]></MSGTEXT>
+<!--3DEC8135BCE049449BFDF228C9FB8F34-->  <MSGTEXT><![CDATA[Your system is still processing web services calls. However, in the last 30 days this instance has exceeded the daily limit of web service calls allowed by your subscription for @daysExceeding@ days.
+You should consider increasing your web service subscription allowance.
+Be aware that if the daily limit is exceeded @extraDays@ more times in the @numberOfDays@ next days, the system will stop processing any web service calls after the daily limit is exceeded.]]></MSGTEXT>
 <!--3DEC8135BCE049449BFDF228C9FB8F34-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--3DEC8135BCE049449BFDF228C9FB8F34-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3DEC8135BCE049449BFDF228C9FB8F34--></AD_MESSAGE>
@@ -19501,7 +19503,8 @@ You can revert your changes by reloading the current record from the database cl
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <VALUE><![CDATA[OPS_MAX_WS_CALLS_MSG]]></VALUE>
-<!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTEXT><![CDATA[In the last 30 days this instance has exceeded the limit of Web Service calls allowed by its license for @daysExceeding@ days. From now till tomorrow at 00:00 the system will not respond to any web service call. You should consider upgrading your license.]]></MSGTEXT>
+<!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTEXT><![CDATA[Your system is not processing any web service calls at the moment.
+In the last 30 days this instance has exceeded the limit of web service calls allowed by your subscription for @daysExceeding@ days. From now till tomorrow at 00:00 the system will not respond to any web service call. You should consider increasing your web service subscription allowance.]]></MSGTEXT>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F0CCA1CD581C4188BDFFFEF3767AFF7A--></AD_MESSAGE>

@@ -1506,4 +1506,28 @@ public class ActivationKey {
   public int getExtraWsExceededDaysAllowed() {
     return WS_DAYS_EXCEEDING_ALLOWED - getWsCallsExceededDays();
   }
+
+  /**
+   * Returns the number of days pending till the end of ws calls verification period.
+   */
+  public int getNuberOfDaysLeftInPeriod() {
+    if (exceededInLastDays == null || exceededInLastDays.size() == 0) {
+      return (int) WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
+    }
+
+    Date today = getDayAt0(new Date());
+    Date firstDayOfPeriod = exceededInLastDays.get(0);
+
+    long lastDayOfPeriod;
+    if (today.getTime() + (getExtraWsExceededDaysAllowed() * MILLSECS_PER_DAY) < firstDayOfPeriod
+        .getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+      lastDayOfPeriod = firstDayOfPeriod.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;
+    } else {
+      lastDayOfPeriod = today.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;
+    }
+    new Date(lastDayOfPeriod);
+    long pendingMs = lastDayOfPeriod - today.getTime()
+        - (exceededInLastDays.size() * MILLSECS_PER_DAY);
+    return (int) (pendingMs / MILLSECS_PER_DAY);
+  }
 }

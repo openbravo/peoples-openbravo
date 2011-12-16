@@ -234,14 +234,15 @@ public class LoginHandler extends HttpBaseServlet {
         case EXPIRED:
           break;
         case EXCEEDED_WARN_WS_CALLS:
-          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage())
+          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)
               .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
-              .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()));
+              .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()))
+              .replace("@numberOfDays@", Integer.toString(ak.getNuberOfDaysLeftInPeriod()));
           goToRetry(res, vars, msg, title, msgType, action, doRedirect);
           return;
         case EXCEEDED_MAX_WS_CALLS:
-          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage()).replace(
-              "@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
+          msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage(), false)
+              .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
           goToRetry(res, vars, msg, title, msgType, action, doRedirect);
           return;
         }
