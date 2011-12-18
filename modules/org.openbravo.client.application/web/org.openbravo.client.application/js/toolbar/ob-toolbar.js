@@ -233,10 +233,17 @@ isc.OBToolbar.addClassProperties({
       var selectedRows = this.view.viewGrid.getSelectedRecords(),
           attachmentExists = this.view.attachmentExists, i;
       if(this.view.isShowingForm){
-        this.view.viewForm.getItem('_attachments_').expandSection();
-        this.view.viewForm.scrollToBottom();
+        if (!this.view.viewForm.getItem('_attachments_').isExpanded()) {
+          this.view.viewForm.getItem('_attachments_').expandSection();
+        }
+        this.view.viewForm.getItem('_attachments_').focusInItem();
+        if (this.view.viewForm.parentElement) {
+          // scroll after things have been expanded
+          this.view.viewForm.parentElement.delayCall('scrollTo', [null, this.view.viewForm.getItem('_attachments_').getTop()], 100);
+        }
+
         if(!attachmentExists){
-          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
+          this.view.viewForm.getItem('_attachments_').attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
         }
         return;
       }
@@ -246,7 +253,7 @@ isc.OBToolbar.addClassProperties({
         this.view.viewForm.expandAttachments = true;
         this.view.editRecord(selectedRows[0]);
         if(!attachmentExists){
-          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
+          this.view.viewForm.getItem('_attachments_').attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
         }
       } else {
         var recordIds = "";
