@@ -43,3 +43,6 @@ Thumbs.db
 
 sources
 scripts
+
+modules/org.openbravo.widgetinform.demo
+modules/org.openbravo.activitii
