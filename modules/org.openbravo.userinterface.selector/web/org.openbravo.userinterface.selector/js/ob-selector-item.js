@@ -339,6 +339,7 @@ isc.OBSelectorItem.addProperties({
 
   setUpPickList: function (show, queueFetches, request) {
     // Set the pickListWidth just before being shown.
+    this.pickListProperties.canResizeFields = true;
     this.setPickListWidth();
     this.Super('setUpPickList', arguments);
   },
