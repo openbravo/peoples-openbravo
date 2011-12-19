@@ -389,6 +389,7 @@ public class ActivationKey {
         maxWsCalls = 500L;
         instanceProperties.put("wsPacks", "1");
         instanceProperties.put("wsUnitsPerUnit", "500");
+        initializeWsCounter();
       } else {
         limitedWsAccess = false;
       }
@@ -1493,6 +1494,7 @@ public class ActivationKey {
     qExceededDays.setParameter("maxWsPerDay", maxWsCalls);
 
     exceededInLastDays = new ArrayList<Date>();
+
     for (Object d : qExceededDays.list()) {
       Date day = getDayAt0((Date) d);
       exceededInLastDays.add(day);
