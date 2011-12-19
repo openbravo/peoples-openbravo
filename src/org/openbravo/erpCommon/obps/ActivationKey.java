@@ -1132,6 +1132,7 @@ public class ActivationKey {
         OBError msg = (OBError) pb.getResult();
         refreshed = msg.getType().equals("Success");
         if (refreshed) {
+          OBDal.getInstance().flush();
           log4j.debug("Instance refreshed");
         } else {
           log4j.info("Problem refreshing instance " + msg.getMessage());
