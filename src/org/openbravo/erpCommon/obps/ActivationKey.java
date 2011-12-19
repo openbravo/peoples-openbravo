@@ -1524,7 +1524,7 @@ public class ActivationKey {
   /**
    * Returns the number of days pending till the end of ws calls verification period.
    */
-  public int getNuberOfDaysLeftInPeriod() {
+  public int getNumberOfDaysLeftInPeriod() {
     if (exceededInLastDays == null || exceededInLastDays.size() == 0) {
       return (int) WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
     }

@@ -237,7 +237,7 @@ public class LoginHandler extends HttpBaseServlet {
           msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)
               .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
               .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()))
-              .replace("@numberOfDays@", Integer.toString(ak.getNuberOfDaysLeftInPeriod()));
+              .replace("@numberOfDays@", Integer.toString(ak.getNumberOfDaysLeftInPeriod()));
           goToRetry(res, vars, msg, title, msgType, action, doRedirect);
           return;
         case EXCEEDED_MAX_WS_CALLS:
