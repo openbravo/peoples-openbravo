@@ -327,7 +327,7 @@ public abstract class AuthenticationManager {
     String userId = null;
     if (login != null && password != null) {
       username = login;
-      userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      userId = LoginUtils.getValidUserId(new DalConnectionProvider(false), login, password);
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
     }
@@ -336,7 +336,7 @@ public abstract class AuthenticationManager {
   }
 
   protected String doWebServiceAuthenticate(String user, String password) {
-    return LoginUtils.getValidUserId(new DalConnectionProvider(), user, password);
+    return LoginUtils.getValidUserId(new DalConnectionProvider(false), user, password);
   }
 
   /**
