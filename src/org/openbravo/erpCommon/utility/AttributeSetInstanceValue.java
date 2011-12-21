@@ -25,7 +25,9 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.utils.Replace;
 
 public class AttributeSetInstanceValue {
@@ -112,6 +114,7 @@ public class AttributeSetInstanceValue {
       HashMap<String, String> attributeValues) throws ServletException {
 
     String strNewInstance = "";
+    AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
 
     OBError myMessage = null;
     myMessage = new OBError();
@@ -170,17 +173,17 @@ public class AttributeSetInstanceValue {
         if (AttributeSetInstanceValueData.updateHeader(conn, conProv, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
             strInstance) == 0) {
-          AttributeSetInstanceValueData.insertHeader(conn, conProv, strInstance, vars.getClient(),
-              vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate,
-              "", locked, lockDescription);
+          AttributeSetInstanceValueData.insertHeader(conn, conProv, strInstance, attset.getClient()
+              .getId(), attset.getOrganization().getId(), vars.getUser(), data[0].mAttributesetId,
+              serno, lot, guaranteedate, "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
         // editable,if it's requestable or doesn't exist the identic, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
-        AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, vars.getClient(),
-            vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
-            locked, lockDescription);
+        AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, attset
+            .getClient().getId(), attset.getOrganization().getId(), vars.getUser(),
+            data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription);
       }
       if (hasToUpdate) {
         if (!data[0].elementname.equals("")) {
@@ -201,8 +204,9 @@ public class AttributeSetInstanceValue {
                   data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance,
-                    strNewInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(),
-                    vars.getUser(), (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
+                    strNewInstance, data[i].mAttributeId, attset.getClient().getId(), attset
+                        .getOrganization().getId(), vars.getUser(),
+                    (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             } else {
               if (AttributeSetInstanceValueData.update(conn, conProv, vars.getUser(),
@@ -210,8 +214,9 @@ public class AttributeSetInstanceValue {
                   data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance,
-                    strInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(),
-                    vars.getUser(), (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
+                    strInstance, data[i].mAttributeId, attset.getClient().getId(), attset
+                        .getOrganization().getId(), vars.getUser(),
+                    (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             }
             description += (description.equals("") ? "" : "_") + strDescValue;
@@ -223,8 +228,6 @@ public class AttributeSetInstanceValue {
             description, (strNewInstance.equals("") ? strInstance : strNewInstance));
       }
       conProv.releaseCommitConnection(conn);
-      vars.setSessionValue("AttributeSetInstance.instance",
-          (strNewInstance.equals("") ? strInstance : strNewInstance));
       this.attSetInstanceId = (strNewInstance.equals("") ? strInstance : strNewInstance);
     } catch (Exception e) {
       try {
