@@ -855,12 +855,14 @@ public class ActivationKey {
             .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
       }
 
-      sb.append("<tr><td>")
-          .append(Utility.messageBD(conn, "OPSEndDate", lang))
-          .append("</td><td>")
-          .append(
-              (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
-                  : outputFormat.format(endDate))).append("</td></tr>");
+      if (endDate != null) {
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSEndDate", lang))
+            .append("</td><td>")
+            .append(
+                (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
+                    : outputFormat.format(endDate))).append("</td></tr>");
+      }
 
       sb.append("<tr><td>")
           .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
