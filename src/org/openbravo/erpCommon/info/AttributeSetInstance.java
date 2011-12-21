@@ -149,12 +149,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
               vars.getStringParameter("inp" + replace(data[i].elementname)));
       }
 
-      // OBError myMessage = writeFields(this, vars, data, strAttributeSet, strInstance,
-      // strWindowId,
-      // strIsSOTrx, strProduct);
-
       OBError myMessage = attSetValue.setAttributeInstance(this, vars, data, strAttributeSet,
           strInstance, strWindowId, strIsSOTrx, strProduct, attValues);
+      vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
       vars.setMessage(strTabId, myMessage);

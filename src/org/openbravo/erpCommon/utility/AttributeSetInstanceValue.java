@@ -223,8 +223,6 @@ public class AttributeSetInstanceValue {
             description, (strNewInstance.equals("") ? strInstance : strNewInstance));
       }
       conProv.releaseCommitConnection(conn);
-      vars.setSessionValue("AttributeSetInstance.instance",
-          (strNewInstance.equals("") ? strInstance : strNewInstance));
       this.attSetInstanceId = (strNewInstance.equals("") ? strInstance : strNewInstance);
     } catch (Exception e) {
       try {
