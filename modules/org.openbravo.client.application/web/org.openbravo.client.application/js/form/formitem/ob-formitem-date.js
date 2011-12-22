@@ -94,7 +94,7 @@ OB.DateItemProperties = {
     var i, str = this.blurValue(), 
       length = str.length, 
       parts = [ '', '', '' ], partIndex = 0, result;
-    if (!str || isc.isA.Date(str)) {
+    if (!str || isc.isA.Date(str) || str.replace(/0/g, '') === '') {
       return str;
     }
     for (i = 0; i < length; i++) {
@@ -117,7 +117,11 @@ OB.DateItemProperties = {
       }
     }
     for (i = 0; i < 3; i++) {
-      parts[i] = this.expandPart(parts[i], i);
+      if ((parts[i] === '0' || parts[i] === '00') && (this.dateParts[i] === 'D' || this.dateParts[i] === 'M')) {
+        return str;
+      } else {
+        parts[i] = this.expandPart(parts[i], i);
+      }
     }
     return parts[0] + this.dateSeparator + parts[1] + this.dateSeparator
         + parts[2];

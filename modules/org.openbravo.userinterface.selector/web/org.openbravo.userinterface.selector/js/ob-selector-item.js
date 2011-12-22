@@ -326,7 +326,19 @@ isc.OBSelectorItem.addProperties({
     }
   },
 
+  hidePickListOnBlur: function() {    
+    // when the form gets redrawn the focus may not be in
+    // the item but it is still the item which gets the focus
+    // after redrawing
+    if (this.form && this.form._isRedrawing && this.form.getFocusItem() === this) {
+      return;
+    }
+    
+    this.Super('hidePickListOnBlur', arguments);
+  },
+
   setUpPickList: function (show, queueFetches, request) {
+    this.pickListProperties.canResizeFields = true;
     // Set the pickListWidth just before being shown.
     this.setPickListWidth();
     this.Super('setUpPickList', arguments);

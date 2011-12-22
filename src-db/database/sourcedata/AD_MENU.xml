@@ -3917,8 +3917,8 @@
 <!--800267-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800267-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800267-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800267-->  <NAME><![CDATA[Material Receipts Dimensional Report]]></NAME>
-<!--800267-->  <DESCRIPTION><![CDATA[Material receipt dimensional analyses]]></DESCRIPTION>
+<!--800267-->  <NAME><![CDATA[Goods Receipts Dimensional Report]]></NAME>
+<!--800267-->  <DESCRIPTION><![CDATA[Goods receipt dimensional analyses]]></DESCRIPTION>
 <!--800267-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800267-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800267-->  <AD_PROCESS_ID><![CDATA[800182]]></AD_PROCESS_ID>

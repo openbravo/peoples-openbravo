@@ -31,6 +31,8 @@ isc.setAutoDraw(false);
 // NOTE: disabled as now timezone is send from the client to the server
 // Time.setDefaultDisplayTimezone(0);
 
+isc.DataSource.serializeTimeAsDatetime=true;
+
 isc.Canvas.addProperties({
   
   // make sure that the datasources are also destroyed
@@ -65,7 +67,9 @@ isc.Button.addProperties({
   }
 });
 
-isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
+isc.StaticTextItem.addProperties({
+  canFocus: false
+});
 
 isc.Layout.addProperties({
   
@@ -376,13 +380,32 @@ isc.FormItem.addProperties({
 
   // disable tab to icons
   canTabToIcons: false,
-  
+
+  _original_validate: isc.FormItem.getPrototype().validate,
+  validate: function() {
+    
+    // prevent validation when we are showing the editor and moving
+    // the focus around
+    if (this.form && this.form.grid && this.form.grid._showingEditor) {
+      return;
+    }
+    return this._original_validate();
+  },
+
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
     this.obShowIf = this.showIf; // Copy the reference of showIf definition
     OB.Utilities.addRequiredSuffixToBaseStyle(this);
     // and continue with the original init
     this._original_init();
+  },
+  
+  _handleEditorExit: isc.FormItem.getPrototype().handleEditorExit,
+  handleEditorExit: function() {
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
+    return this._handleEditorExit();
   },
   
   // make sure that the datasources are also destroyed
@@ -416,6 +439,14 @@ isc.FormItem.addProperties({
     if (val1NullOrUndefined && val2NullOrUndefined) {
       return true;
     }
+    // a special case, smartclient makes a mistake when comparing
+    // zero against an empty string
+    if (value1 === 0 && value2 !== 0) {
+      return false;
+    }
+    if (value1 !== 0 && value2 === 0) {
+      return false;
+    }
     return this._original_compareValues(value1, value2);
   },
   
@@ -440,15 +471,6 @@ isc.FormItem.addProperties({
     } else {
       this._selectValue();
     }
-  },
-  
-  // prevent to many calls to focus in item if there is already focus
-  _focusInItem: isc.FormItem.getPrototype().focusInItem,
-  focusInItem: function() {
-    if (this.hasFocus) {
-      return;
-    }
-    this._focusInItem();
   },
 
   titleClick: function(form, item){
@@ -489,6 +511,9 @@ isc.FormItem.addProperties({
   },
   
   blur: function(form, item){
+    if (this.form && this.form._isRedrawing) {
+      return;
+    }
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(item);
     }
@@ -497,7 +522,7 @@ isc.FormItem.addProperties({
   // prevent a jscript error in ie when closing a tab
   // https://issues.openbravo.com/view.php?id=18890
   blurItem: function() {
-    if (!this.form || this.form.destroyed) {
+    if (!this.form || this.form.destroyed || this.form._isRedrawing) {
       return;
     }
     this.Super('blurItem', arguments);
@@ -640,6 +665,44 @@ isc.RelativeDateItem.addProperties({
     return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
   }
 
+});
+
+isc.addProperties(isc.Date, {
+//http://forums.smartclient.com/showthread.php?p=77883#post77883
+  createLogicalDate: function (year, month, date, suppressConversion) {
+    var d = new Date(); 
+    d.setHours(12);
+    d.setMinutes(0);
+    d.setSeconds(0);
+    d.setMilliseconds(0);
+    if (date !== null) {
+      d.setDate(1);
+    }
+    if (year !== null) {
+      d.setFullYear(year);
+    }
+    if (month !== null) {
+      d.setMonth(month);
+    }
+    if (date !== null) {
+      d.setDate(date);
+    }
+    
+    if (suppressConversion) {
+        // If the 'suppressConversion' flag was passed, we will want to return null to indicate
+        // we were passed an invalid date if the values passed in had to be converted
+        // (For example a month of 13 effecting the year, etc)
+        var isValid = (d.getFullYear() === year &&
+                       d.getMonth() === month &&
+                       d.getDate() === date );
+        if (!isValid) {
+          return null;
+        }
+    }
+    
+    d.logicalDate = true;
+    return d;
+  }
 });
 
 isc.DateItem.changeDefaults('textFieldDefaults', {

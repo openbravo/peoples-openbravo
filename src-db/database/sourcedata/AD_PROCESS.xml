@@ -2549,7 +2549,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800040-->  <CLASSNAME><![CDATA[ad_process/PriceListCreateAll.html]]></CLASSNAME>
 <!--800040-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800040-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800040-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800040-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800040-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800040-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
@@ -2839,7 +2838,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800075-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800075-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800075-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800075-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800075-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800075-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
@@ -4291,7 +4289,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800171-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800171-->  <ISJASPER><![CDATA[Y]]></ISJASPER>
 <!--800171-->  <JRNAME><![CDATA[@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPurchaseOrder.jrxml]]></JRNAME>
-<!--800171-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800171-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800171-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
@@ -4501,7 +4498,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800181-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800181-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800181-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800181-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800181-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800181-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
@@ -4513,9 +4509,9 @@ This operation can take a long time to complete.]]></HELP>
 <!--800182-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800182-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800182-->  <VALUE><![CDATA[ReportMaterialDimensionalAnalysesJR]]></VALUE>
-<!--800182-->  <NAME><![CDATA[Material Receipts Dimensional Report]]></NAME>
-<!--800182-->  <DESCRIPTION><![CDATA[Material receipt dimensional analyses]]></DESCRIPTION>
-<!--800182-->  <HELP><![CDATA[This report provides information about goods receipts amounts and received quantities which can be split and then grouped by several dimensions]]></HELP>
+<!--800182-->  <NAME><![CDATA[Goods Receipts Dimensional Report]]></NAME>
+<!--800182-->  <DESCRIPTION><![CDATA[Goods receipt dimensional analyses]]></DESCRIPTION>
+<!--800182-->  <HELP><![CDATA[Material receipt dimensional analyses JR]]></HELP>
 <!--800182-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800182-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800182-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -4543,7 +4539,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800183-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800183-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800183-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800183-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800183-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800183-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>

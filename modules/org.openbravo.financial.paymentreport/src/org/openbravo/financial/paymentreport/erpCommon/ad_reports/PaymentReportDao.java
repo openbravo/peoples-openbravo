@@ -156,8 +156,8 @@ public class PaymentReportDao {
 
       // Exclude payments that use credit payment
       if (!strInclPaymentUsingCredit.equalsIgnoreCase("Y")) {
-        hsqlScript.append(" and not (pay.amount = 0 ");
-        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) ");
+        hsqlScript.append(" and (not (pay.amount = 0 ");
+        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) or pay is null)");
       }
 
       // due date from - due date to

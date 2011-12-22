@@ -35,7 +35,28 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   escapeHTML: true,
-  bodyProperties: {canSelectText:true},
+  bodyProperties: {
+    canSelectText:true,
+ 
+    // the redraw on change should not only redraw the current item
+    // but the whole edit row, make sure that happens asynchronously
+    redrawFormItem: function(item, reason) {
+      var lg = this.grid, row = lg.getEditRow(), 
+        col = lg.getColNum(item.getFieldName());
+      
+      // If the user has edited the cell, or setValue() has been called on the item
+      // we don't want a call to redraw() on the item to drop that value
+      if (lg.getEditCol() === col) {
+        lg.storeUpdatedEditorValue();
+      }
+      
+      if (row === 0 || row > 0) {
+        lg.fireOnPause('refreshEditRow', function() {
+          lg.refreshRow(row);
+        });
+      }
+    }
+  },
 
   enableShortcuts: function() {
     var me = this;

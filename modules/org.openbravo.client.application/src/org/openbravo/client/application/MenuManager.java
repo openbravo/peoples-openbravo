@@ -345,7 +345,7 @@ public class MenuManager implements Serializable {
     if (role.getPrimaryTreeMenu() != null) {
       tree = role.getPrimaryTreeMenu();
     } else {
-      tree = OBDal.getInstance().createQuery(Tree.class, "id='10'").list().get(0);
+      tree = OBDal.getInstance().get(Tree.class, "10");
     }
     menuOptions = new ArrayList<MenuOption>();
     OBCriteria<TreeNode> treeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
