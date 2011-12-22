@@ -296,7 +296,7 @@
 <!--120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--120-->  <NAME><![CDATA[Unit of Measure]]></NAME>
 <!--120-->  <DESCRIPTION><![CDATA[Create units of measure and conversions rates to be applied to products.]]></DESCRIPTION>
-<!--120-->  <HELP><![CDATA[Create units of measure and conversions rates to be applied to products.]]></HELP>
+<!--120-->  <HELP><![CDATA[A unit of measure is a standard unit or system of units which allow a product quantity is accounted for and expressed.]]></HELP>
 <!--120-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--120-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--120-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -347,7 +347,7 @@
 <!--123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--123-->  <NAME><![CDATA[Business Partner]]></NAME>
 <!--123-->  <DESCRIPTION><![CDATA[Create and edit business partner information, templates, and bank accounts.]]></DESCRIPTION>
-<!--123-->  <HELP><![CDATA[Business partner master data window is the place where you can easily organize and centralize the key data of the business partners of any type the company might have a business interest in or a business relationship with.]]></HELP>
+<!--123-->  <HELP><![CDATA[Business partner master data window is the place where you can easily organize and centralize business partner data. ]]></HELP>
 <!--123-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--123-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--123-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -535,7 +535,7 @@
 <!--140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--140-->  <NAME><![CDATA[Product]]></NAME>
 <!--140-->  <DESCRIPTION><![CDATA[Create products and manage the related costing, purchasing, and pricing setup.]]></DESCRIPTION>
-<!--140-->  <HELP><![CDATA[Product master data window is the place where you can easily organize and centralize the key data of the products of any type  you might manage as part of the company processes and/or activities.]]></HELP>
+<!--140-->  <HELP><![CDATA[Product master data window is the place where you can easily organize and centralize the key data of the items of any type you might manage as part of the company processes and/or activities.]]></HELP>
 <!--140-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--140-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--140-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -552,7 +552,7 @@
 <!--141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--141-->  <NAME><![CDATA[Payment Term]]></NAME>
 <!--141-->  <DESCRIPTION><![CDATA[Define payment terms to be used for business partners taking part in transactions.]]></DESCRIPTION>
-<!--141-->  <HELP><![CDATA[Define payment terms to be used for business partners taking part in transactions.]]></HELP>
+<!--141-->  <HELP><![CDATA[A payment term specifies the period allowed to pay off an amount due.]]></HELP>
 <!--141-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--141-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--141-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -603,7 +603,7 @@
 <!--144-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--144-->  <NAME><![CDATA[Product Category]]></NAME>
 <!--144-->  <DESCRIPTION><![CDATA[Create product categories to better organize your products and create more powerful reports.]]></DESCRIPTION>
-<!--144-->  <HELP><![CDATA[Create product categories to better organize your products and create more powerful reports.]]></HELP>
+<!--144-->  <HELP><![CDATA[Similar products can be grouped into different categories which must be created with the aim of helping their management and analysis.]]></HELP>
 <!--144-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--144-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--144-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -620,7 +620,8 @@
 <!--146-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--146-->  <NAME><![CDATA[Price List]]></NAME>
 <!--146-->  <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></DESCRIPTION>
-<!--146-->  <HELP><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></HELP>
+<!--146-->  <HELP><![CDATA[A price list is a listing of prices for different products or services. <br>It is possible to create as many price list and price list versions as required depending on the company trade policy.
+]]></HELP>
 <!--146-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--146-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--146-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -637,7 +638,7 @@
 <!--147-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--147-->  <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--147-->  <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners.]]></DESCRIPTION>
-<!--147-->  <HELP><![CDATA[Define invoice schedules to be used for business partners.]]></HELP>
+<!--147-->  <HELP><![CDATA[Invoice schedule window allows to define and configure how often and by when the company can issue invoices to be sent to customers.]]></HELP>
 <!--147-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--147-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--147-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -875,13 +876,13 @@
 <!--178-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--178-->  <NAME><![CDATA[Title]]></NAME>
 <!--178-->  <DESCRIPTION><![CDATA[Define titles to be used to address a business partner.]]></DESCRIPTION>
-<!--178-->  <HELP><![CDATA[Define titles to be used to address a business partner.]]></HELP>
+<!--178-->  <HELP><![CDATA[Title window allows to setup business partner titles such as Mr or Madame to be used while contacting business partners.]]></HELP>
 <!--178-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--178-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--178-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--178-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--178-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--178-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--178--></AD_WINDOW>
 
 <!--181--><AD_WINDOW>
@@ -925,7 +926,7 @@
 <!--184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--184-->  <NAME><![CDATA[Goods Receipt]]></NAME>
 <!--184-->  <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></DESCRIPTION>
-<!--184-->  <HELP><![CDATA[Goods Receipt window allows the warehouse management team to issue and manage items receipts as that is the team in charge of receiving the goods as well as the delivery notes attached to the goods.]]></HELP>
+<!--184-->  <HELP><![CDATA[A Goods Receipt is a document issued to acknowledge the receipt of the items listed in it.]]></HELP>
 <!--184-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--184-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--184-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1146,7 +1147,7 @@
 <!--233-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--233-->  <NAME><![CDATA[Price List Schema]]></NAME>
 <!--233-->  <DESCRIPTION><![CDATA[Define a Price List Schema to be assigned to business partners.]]></DESCRIPTION>
-<!--233-->  <HELP><![CDATA[Define a Price List Schema to be assigned to business partners.]]></HELP>
+<!--233-->  <HELP><![CDATA[A price list schema is a set of commercial rules which allows to define price lists and different versions of a price list.]]></HELP>
 <!--233-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--233-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--233-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1299,7 +1300,7 @@
 <!--256-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--256-->  <NAME><![CDATA[Attribute Set]]></NAME>
 <!--256-->  <DESCRIPTION><![CDATA[Define a group of attributes to apply to specific products.]]></DESCRIPTION>
-<!--256-->  <HELP><![CDATA[Define a group of attributes to apply to specific products.]]></HELP>
+<!--256-->  <HELP><![CDATA[An attribute set can be defined by a single attribute or by a set of attributes to apply to specific products.]]></HELP>
 <!--256-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--256-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--256-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1333,7 +1334,7 @@
 <!--258-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--258-->  <NAME><![CDATA[Lot Number Sequence]]></NAME>
 <!--258-->  <DESCRIPTION><![CDATA[Define a number sequence to assign lot numbers to products.]]></DESCRIPTION>
-<!--258-->  <HELP><![CDATA[Define a number sequence to assign lot numbers to products.]]></HELP>
+<!--258-->  <HELP><![CDATA[A product attribute can be a Lot Number.]]></HELP>
 <!--258-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--258-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--258-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1350,7 +1351,7 @@
 <!--259-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--259-->  <NAME><![CDATA[Serial Number Sequence]]></NAME>
 <!--259-->  <DESCRIPTION><![CDATA[Define a serial number sequence to assign serial numbers to products.]]></DESCRIPTION>
-<!--259-->  <HELP><![CDATA[Define a serial number sequence to assign serial numbers to products.]]></HELP>
+<!--259-->  <HELP><![CDATA[A product attribute can be a serial number.]]></HELP>
 <!--259-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--259-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--259-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1367,7 +1368,8 @@
 <!--260-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--260-->  <NAME><![CDATA[Attribute]]></NAME>
 <!--260-->  <DESCRIPTION><![CDATA[Create and edit attributes to be combined into attribute sets and subsequently added to products.]]></DESCRIPTION>
-<!--260-->  <HELP><![CDATA[Create and edit attributes to be combined into attribute sets and subsequently added to products.]]></HELP>
+<!--260-->  <HELP><![CDATA[Products can have an attribute or a set of attributes which makes them different to the rest. 
+]]></HELP>
 <!--260-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--260-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--260-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1554,14 +1556,14 @@
 <!--800003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800003-->  <NAME><![CDATA[Volume Discount]]></NAME>
 <!--800003-->  <DESCRIPTION><![CDATA[Create volume discounts related to products and product categories to be assigned to selected business partners.]]></DESCRIPTION>
-<!--800003-->  <HELP><![CDATA[Create volume discounts related to products and product categories to be assigned to selected business partners.]]></HELP>
+<!--800003-->  <HELP><![CDATA[Volume discounts are discounts which apply after getting a certain volume of sales of specific products or product groups.]]></HELP>
 <!--800003-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800003-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800003-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800003-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800003-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800003-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800003-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800003--></AD_WINDOW>
 
 <!--800005--><AD_WINDOW>
@@ -1707,7 +1709,7 @@
 <!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800017-->  <NAME><![CDATA[Discount]]></NAME>
 <!--800017-->  <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
-<!--800017-->  <HELP><![CDATA[Create and edit product price percentage discounts.]]></HELP>
+<!--800017-->  <HELP><![CDATA[A discount is a deduction from the total amount of an invoice.]]></HELP>
 <!--800017-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800017-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800017-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1816,7 +1818,7 @@
 <!--800028-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800028-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800028-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800028-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800028-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800028--></AD_WINDOW>
 
 <!--800029--><AD_WINDOW>

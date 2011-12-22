@@ -2549,9 +2549,10 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800040-->  <CLASSNAME><![CDATA[ad_process/PriceListCreateAll.html]]></CLASSNAME>
 <!--800040-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800040-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800040-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800040-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800040-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800040-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800040-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800040--></AD_PROCESS>
 
 <!--800046--><AD_PROCESS>
@@ -2707,13 +2708,14 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800067-->  <VALUE><![CDATA[ReportPricelist]]></VALUE>
 <!--800067-->  <NAME><![CDATA[Price List Report]]></NAME>
 <!--800067-->  <DESCRIPTION><![CDATA[Price List Report]]></DESCRIPTION>
-<!--800067-->  <HELP><![CDATA[Price List Report]]></HELP>
+<!--800067-->  <HELP><![CDATA[Price List Report is a report which shows Price List information which can filtered for a specif "Product Category" or a set of selected "Products".]]></HELP>
 <!--800067-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800067-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800067-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800067-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800067-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800067-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800067-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800067-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800067-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800067-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
@@ -2840,7 +2842,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800075-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800075-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800075-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800075-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800075--></AD_PROCESS>
 
 <!--800076--><AD_PROCESS>
@@ -4292,7 +4294,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800171-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800171-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800171-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800171-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800171--></AD_PROCESS>
 
 <!--800172--><AD_PROCESS>
@@ -4481,7 +4483,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800180-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800180-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800180-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--800180-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--800180--></AD_PROCESS>
 
 <!--800181--><AD_PROCESS>

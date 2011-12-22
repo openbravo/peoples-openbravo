@@ -720,7 +720,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--133-->  <NAME><![CDATA[Unit of Measure]]></NAME>
 <!--133-->  <DESCRIPTION><![CDATA[Create a non monetary unit of measure.]]></DESCRIPTION>
-<!--133-->  <HELP><![CDATA[Create a non monetary unit of measure.]]></HELP>
+<!--133-->  <HELP><![CDATA[Products of any type are accounted for and managed in non-monetary units of measure.]]></HELP>
 <!--133-->  <AD_TABLE_ID><![CDATA[146]]></AD_TABLE_ID>
 <!--133-->  <AD_WINDOW_ID><![CDATA[120]]></AD_WINDOW_ID>
 <!--133-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1407,7 +1407,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--180-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--180-->  <NAME><![CDATA[Product]]></NAME>
 <!--180-->  <DESCRIPTION><![CDATA[Create a product.]]></DESCRIPTION>
-<!--180-->  <HELP><![CDATA[Create a product.]]></HELP>
+<!--180-->  <HELP><![CDATA[Product window allows the creation of items such as products, raw materials, resources, services, etc.]]></HELP>
 <!--180-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--180-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--180-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1459,7 +1459,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--183-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--183-->  <NAME><![CDATA[Price]]></NAME>
 <!--183-->  <DESCRIPTION><![CDATA[Define prices which will be used to buy or sell this product.]]></DESCRIPTION>
-<!--183-->  <HELP><![CDATA[Define prices which will be used to buy or sell this product.]]></HELP>
+<!--183-->  <HELP><![CDATA[A product can be part of many Price List Versions which are valid for a given time period. ]]></HELP>
 <!--183-->  <AD_TABLE_ID><![CDATA[251]]></AD_TABLE_ID>
 <!--183-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--183-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1486,7 +1486,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--184-->  <NAME><![CDATA[Header]]></NAME>
 <!--184-->  <DESCRIPTION><![CDATA[Create a payment term.]]></DESCRIPTION>
-<!--184-->  <HELP><![CDATA[Create a payment term.]]></HELP>
+<!--184-->  <HELP><![CDATA[Payment Term window allows to create and configure the payment terms to be linked to the business partners.]]></HELP>
 <!--184-->  <AD_TABLE_ID><![CDATA[113]]></AD_TABLE_ID>
 <!--184-->  <AD_WINDOW_ID><![CDATA[141]]></AD_WINDOW_ID>
 <!--184-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1593,7 +1593,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--189-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--189-->  <NAME><![CDATA[Product Category]]></NAME>
 <!--189-->  <DESCRIPTION><![CDATA[Create a product category.]]></DESCRIPTION>
-<!--189-->  <HELP><![CDATA[Create a product category.]]></HELP>
+<!--189-->  <HELP><![CDATA[Product category window allows you to create and configure every product group your company may need. ]]></HELP>
 <!--189-->  <AD_TABLE_ID><![CDATA[209]]></AD_TABLE_ID>
 <!--189-->  <AD_WINDOW_ID><![CDATA[144]]></AD_WINDOW_ID>
 <!--189-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1619,7 +1619,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--191-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--191-->  <NAME><![CDATA[Price List]]></NAME>
 <!--191-->  <DESCRIPTION><![CDATA[Create price lists to be used in application transactions.]]></DESCRIPTION>
-<!--191-->  <HELP><![CDATA[Create price lists to be used in application transactions.]]></HELP>
+<!--191-->  <HELP><![CDATA[Price List window allows to create purchase and sales price lists to be assigned to the business for its use in purchase and sales transactions such as orders and invoices.]]></HELP>
 <!--191-->  <AD_TABLE_ID><![CDATA[255]]></AD_TABLE_ID>
 <!--191-->  <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
 <!--191-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1645,7 +1645,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--192-->  <NAME><![CDATA[Product Price]]></NAME>
 <!--192-->  <DESCRIPTION><![CDATA[Add products and edit their prices for a selected price list.]]></DESCRIPTION>
-<!--192-->  <HELP><![CDATA[Add products and edit their prices for a selected price list.]]></HELP>
+<!--192-->  <HELP><![CDATA[Product Price tab allows to either add or edit products and their prices for a selected price list.]]></HELP>
 <!--192-->  <AD_TABLE_ID><![CDATA[251]]></AD_TABLE_ID>
 <!--192-->  <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
 <!--192-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -1674,7 +1674,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--193-->  <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--193-->  <DESCRIPTION><![CDATA[Create invoice schedules to be used for business partners.]]></DESCRIPTION>
-<!--193-->  <HELP><![CDATA[Create invoice schedules to be used for business partners.]]></HELP>
+<!--193-->  <HELP><![CDATA[The company can agree and therefore define specific schedules for issuing invoices, schedules which will then need to be linked to the corresponding customers.]]></HELP>
 <!--193-->  <AD_TABLE_ID><![CDATA[257]]></AD_TABLE_ID>
 <!--193-->  <AD_WINDOW_ID><![CDATA[147]]></AD_WINDOW_ID>
 <!--193-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1989,7 +1989,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--210-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--210-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product.]]></DESCRIPTION>
-<!--210-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product.]]></HELP>
+<!--210-->  <HELP><![CDATA[Accounting tab allows to configure the ledger accounts to be used while posting product related transactions such as product purchase or sales. ]]></HELP>
 <!--210-->  <AD_TABLE_ID><![CDATA[273]]></AD_TABLE_ID>
 <!--210-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--210-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2466,7 +2466,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--233-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--233-->  <NAME><![CDATA[Translation]]></NAME>
 <!--233-->  <DESCRIPTION><![CDATA[Edit your payment perm translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--233-->  <HELP><![CDATA[Edit your payment perm translations for the predefined languages of your choice.]]></HELP>
+<!--233-->  <HELP><![CDATA[Payment Terms can be translated to the language required.]]></HELP>
 <!--233-->  <AD_TABLE_ID><![CDATA[303]]></AD_TABLE_ID>
 <!--233-->  <AD_WINDOW_ID><![CDATA[141]]></AD_WINDOW_ID>
 <!--233-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2492,7 +2492,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--235-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--235-->  <NAME><![CDATA[Translation]]></NAME>
 <!--235-->  <DESCRIPTION><![CDATA[Edit your product name translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--235-->  <HELP><![CDATA[Edit your product name translations for the predefined languages of your choice.]]></HELP>
+<!--235-->  <HELP><![CDATA[Product names can be translated to any language. ]]></HELP>
 <!--235-->  <AD_TABLE_ID><![CDATA[312]]></AD_TABLE_ID>
 <!--235-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--235-->  <SEQNO><![CDATA[120]]></SEQNO>
@@ -2546,7 +2546,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--238-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--238-->  <NAME><![CDATA[Price List Version]]></NAME>
 <!--238-->  <DESCRIPTION><![CDATA[Create versions of the price list which will be valid for a defined time period and potentially using price list schemas.]]></DESCRIPTION>
-<!--238-->  <HELP><![CDATA[Create versions of the price list which will be valid for a defined time period and potentially using price list schemas.]]></HELP>
+<!--238-->  <HELP><![CDATA[There could be as many versions of an existing price list as required, versions which can be valid for a given time period and which can be  defined according to certain commercial rules.]]></HELP>
 <!--238-->  <AD_TABLE_ID><![CDATA[295]]></AD_TABLE_ID>
 <!--238-->  <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
 <!--238-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2572,7 +2572,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--239-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--239-->  <NAME><![CDATA[Purchasing]]></NAME>
 <!--239-->  <DESCRIPTION><![CDATA[Define information necessary to purchase this product from a specific vendor.]]></DESCRIPTION>
-<!--239-->  <HELP><![CDATA[Define information necessary to purchase this product from a specific vendor.]]></HELP>
+<!--239-->  <HELP><![CDATA[Purchasing tab information is used for products that are planned by the purchasing plan.
+]]></HELP>
 <!--239-->  <AD_TABLE_ID><![CDATA[210]]></AD_TABLE_ID>
 <!--239-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--239-->  <SEQNO><![CDATA[60]]></SEQNO>
@@ -3080,7 +3081,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--273-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--273-->  <NAME><![CDATA[Translation]]></NAME>
 <!--273-->  <DESCRIPTION><![CDATA[Edit your UOM translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--273-->  <HELP><![CDATA[Edit your UOM translations for the predefined languages of your choice.]]></HELP>
+<!--273-->  <HELP><![CDATA[Units of Measure can be translated to any language required.]]></HELP>
 <!--273-->  <AD_TABLE_ID><![CDATA[339]]></AD_TABLE_ID>
 <!--273-->  <AD_WINDOW_ID><![CDATA[120]]></AD_WINDOW_ID>
 <!--273-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3106,7 +3107,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--282-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--282-->  <NAME><![CDATA[Title]]></NAME>
 <!--282-->  <DESCRIPTION><![CDATA[Create titles to be used for business partners and contacts.]]></DESCRIPTION>
-<!--282-->  <HELP><![CDATA[Create titles to be used for business partners and contacts.]]></HELP>
+<!--282-->  <HELP><![CDATA[There are many titles to use while contacting business partners of any type as well as contacts.]]></HELP>
 <!--282-->  <AD_TABLE_ID><![CDATA[346]]></AD_TABLE_ID>
 <!--282-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--282-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -3131,7 +3132,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--283-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--283-->  <NAME><![CDATA[Translation]]></NAME>
 <!--283-->  <DESCRIPTION><![CDATA[Edit your Title translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--283-->  <HELP><![CDATA[Edit your Title translations for the predefined languages of your choice.]]></HELP>
+<!--283-->  <HELP><![CDATA[Business partner titles can be translated to any language required.]]></HELP>
 <!--283-->  <AD_TABLE_ID><![CDATA[347]]></AD_TABLE_ID>
 <!--283-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--283-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3181,7 +3182,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--289-->  <NAME><![CDATA[Transactions]]></NAME>
 <!--289-->  <DESCRIPTION><![CDATA[View all transactions related to this product.]]></DESCRIPTION>
-<!--289-->  <HELP><![CDATA[View all transactions related to this product.]]></HELP>
+<!--289-->  <HELP><![CDATA[Transaction tab is a summarized view of all the transactions of a product. ]]></HELP>
 <!--289-->  <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--289-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--289-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -3804,7 +3805,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--324-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--324-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--324-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product category.]]></DESCRIPTION>
-<!--324-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product category.]]></HELP>
+<!--324-->  <HELP><![CDATA[Each product category allows you to configure a different set of ledger accounts. ]]></HELP>
 <!--324-->  <AD_TABLE_ID><![CDATA[401]]></AD_TABLE_ID>
 <!--324-->  <AD_WINDOW_ID><![CDATA[144]]></AD_WINDOW_ID>
 <!--324-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -4327,7 +4328,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--404-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--404-->  <NAME><![CDATA[Header]]></NAME>
 <!--404-->  <DESCRIPTION><![CDATA[Create a price list schema to assign item prices to your business partners.]]></DESCRIPTION>
-<!--404-->  <HELP><![CDATA[Create a price list schema to assign item prices to your business partners.]]></HELP>
+<!--404-->  <HELP><![CDATA[Price list schema window supports the creation of as many price list schemas as required with the aim of getting an easy management of price lists and price list versions.]]></HELP>
 <!--404-->  <AD_TABLE_ID><![CDATA[475]]></AD_TABLE_ID>
 <!--404-->  <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
 <!--404-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -4354,7 +4355,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--405-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--405-->  <NAME><![CDATA[Lines]]></NAME>
 <!--405-->  <DESCRIPTION><![CDATA[Add prices and discounts to your price list.  Each piece of information is added by creating a line.]]></DESCRIPTION>
-<!--405-->  <HELP><![CDATA[Add prices and discounts to your price list.  Each piece of information is added by creating a line.]]></HELP>
+<!--405-->  <HELP><![CDATA[Price list schema lines tab allows to define a set of price rules such as to apply a discount % to the net unit price of a given product category or specific product.
+]]></HELP>
 <!--405-->  <AD_TABLE_ID><![CDATA[477]]></AD_TABLE_ID>
 <!--405-->  <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
 <!--405-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -4381,7 +4383,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--407-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--407-->  <NAME><![CDATA[Assigned Products]]></NAME>
 <!--407-->  <DESCRIPTION><![CDATA[Add products to your product category.]]></DESCRIPTION>
-<!--407-->  <HELP><![CDATA[Add products to your product category.]]></HELP>
+<!--407-->  <HELP><![CDATA[Assigned products is a view of the all the products which belong to a product category.]]></HELP>
 <!--407-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--407-->  <AD_WINDOW_ID><![CDATA[144]]></AD_WINDOW_ID>
 <!--407-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -5048,7 +5050,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--461-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--461-->  <NAME><![CDATA[Attribute Set]]></NAME>
 <!--461-->  <DESCRIPTION><![CDATA[Create an attribute set to define products with multiple characteristics.]]></DESCRIPTION>
-<!--461-->  <HELP><![CDATA[Create an attribute set to define products with multiple characteristics.]]></HELP>
+<!--461-->  <HELP><![CDATA[Attribute Set window allows to create as many combination of attributes as required for defining products with few or multiple characteristics.]]></HELP>
 <!--461-->  <AD_TABLE_ID><![CDATA[560]]></AD_TABLE_ID>
 <!--461-->  <AD_WINDOW_ID><![CDATA[256]]></AD_WINDOW_ID>
 <!--461-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5075,7 +5077,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--462-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--462-->  <NAME><![CDATA[Attribute]]></NAME>
 <!--462-->  <DESCRIPTION><![CDATA[Create and edit attributes to be assigned to attribute sets.]]></DESCRIPTION>
-<!--462-->  <HELP><![CDATA[Create and edit attributes to be assigned to attribute sets.]]></HELP>
+<!--462-->  <HELP><![CDATA[Attribute window allows to create and edit attributes such as color or size to be assigned to attribute sets. 
+]]></HELP>
 <!--462-->  <AD_TABLE_ID><![CDATA[562]]></AD_TABLE_ID>
 <!--462-->  <AD_WINDOW_ID><![CDATA[260]]></AD_WINDOW_ID>
 <!--462-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5102,7 +5105,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--463-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--463-->  <NAME><![CDATA[Attribute Value]]></NAME>
 <!--463-->  <DESCRIPTION><![CDATA[Define individual characteristic values of this attribute.]]></DESCRIPTION>
-<!--463-->  <HELP><![CDATA[Define individual characteristic values of this attribute.]]></HELP>
+<!--463-->  <HELP><![CDATA[An attribute can have several values or individual characteristics to be detailed for each attribute. 
+]]></HELP>
 <!--463-->  <AD_TABLE_ID><![CDATA[558]]></AD_TABLE_ID>
 <!--463-->  <AD_WINDOW_ID><![CDATA[260]]></AD_WINDOW_ID>
 <!--463-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -5156,7 +5160,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--465-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--465-->  <NAME><![CDATA[Lot Control]]></NAME>
 <!--465-->  <DESCRIPTION><![CDATA[Define your lot number sequence.]]></DESCRIPTION>
-<!--465-->  <HELP><![CDATA[Define your lot number sequence.]]></HELP>
+<!--465-->  <HELP><![CDATA[A Lot Number is a unique number given to a particular quantity of a product which can be defined to have a prefix or a sufix among other characteristics.]]></HELP>
 <!--465-->  <AD_TABLE_ID><![CDATA[556]]></AD_TABLE_ID>
 <!--465-->  <AD_WINDOW_ID><![CDATA[258]]></AD_WINDOW_ID>
 <!--465-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5183,7 +5187,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--466-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--466-->  <NAME><![CDATA[Number Control]]></NAME>
 <!--466-->  <DESCRIPTION><![CDATA[Define your serial number sequence.]]></DESCRIPTION>
-<!--466-->  <HELP><![CDATA[Define your serial number sequence.]]></HELP>
+<!--466-->  <HELP><![CDATA[A Serial Number is a unique number given to each unit of a product/item which can be defined to have a prefix or a sufix among other characteristics.]]></HELP>
 <!--466-->  <AD_TABLE_ID><![CDATA[555]]></AD_TABLE_ID>
 <!--466-->  <AD_WINDOW_ID><![CDATA[259]]></AD_WINDOW_ID>
 <!--466-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5210,7 +5214,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--467-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--467-->  <NAME><![CDATA[Assigned Attribute]]></NAME>
 <!--467-->  <DESCRIPTION><![CDATA[Add individually defined attributes to an attribute set.]]></DESCRIPTION>
-<!--467-->  <HELP><![CDATA[Add individually defined attributes to an attribute set.]]></HELP>
+<!--467-->  <HELP><![CDATA[An attribute set can have a single or a set of attributes assigned.]]></HELP>
 <!--467-->  <AD_TABLE_ID><![CDATA[563]]></AD_TABLE_ID>
 <!--467-->  <AD_WINDOW_ID><![CDATA[256]]></AD_WINDOW_ID>
 <!--467-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -6068,7 +6072,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800005-->  <NAME><![CDATA[Supplier]]></NAME>
 <!--800005-->  <DESCRIPTION><![CDATA[Add suppliers from whom you will buy products if necessary.]]></DESCRIPTION>
-<!--800005-->  <HELP><![CDATA[Add suppliers from whom you will buy products if necessary.]]></HELP>
+<!--800005-->  <HELP><![CDATA[The suppliers from whom you will buy products are listed here.]]></HELP>
 <!--800005-->  <AD_TABLE_ID><![CDATA[800002]]></AD_TABLE_ID>
 <!--800005-->  <AD_WINDOW_ID><![CDATA[800001]]></AD_WINDOW_ID>
 <!--800005-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -6259,7 +6263,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800014-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800014-->  <NAME><![CDATA[Volume Discounts]]></NAME>
 <!--800014-->  <DESCRIPTION><![CDATA[Create a volume discount.]]></DESCRIPTION>
-<!--800014-->  <HELP><![CDATA[Create a volume discount.]]></HELP>
+<!--800014-->  <HELP><![CDATA[Volume Discount window allows to create and properly configure volume discounts related to specific products and/or product groups which are later on assigned to selected business partners.]]></HELP>
 <!--800014-->  <AD_TABLE_ID><![CDATA[800010]]></AD_TABLE_ID>
 <!--800014-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800014-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -6286,7 +6290,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800015-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800015-->  <NAME><![CDATA[Product Category]]></NAME>
 <!--800015-->  <DESCRIPTION><![CDATA[Add product categories to be included in the volume discount.]]></DESCRIPTION>
-<!--800015-->  <HELP><![CDATA[Add product categories to be included in the volume discount.]]></HELP>
+<!--800015-->  <HELP><![CDATA[A volumen discount can be configure for a set of product categories or can be configure for all products categories but for a set of them.]]></HELP>
 <!--800015-->  <AD_TABLE_ID><![CDATA[800011]]></AD_TABLE_ID>
 <!--800015-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800015-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -6313,7 +6317,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800016-->  <NAME><![CDATA[Business Partners]]></NAME>
 <!--800016-->  <DESCRIPTION><![CDATA[Add business partners to be included in the volume discount.]]></DESCRIPTION>
-<!--800016-->  <HELP><![CDATA[Add business partners to be included in the volume discount.]]></HELP>
+<!--800016-->  <HELP><![CDATA[Volume Discounts can be assigned to selected business partners within a given time period.]]></HELP>
 <!--800016-->  <AD_TABLE_ID><![CDATA[800012]]></AD_TABLE_ID>
 <!--800016-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800016-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -6979,7 +6983,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800057-->  <NAME><![CDATA[Costing]]></NAME>
 <!--800057-->  <DESCRIPTION><![CDATA[Define cost information for this specific product.]]></DESCRIPTION>
-<!--800057-->  <HELP><![CDATA[Define cost information for this specific product.]]></HELP>
+<!--800057-->  <HELP><![CDATA[Costing tab collects and summarize item cost related information as a result of items movements.]]></HELP>
 <!--800057-->  <AD_TABLE_ID><![CDATA[800043]]></AD_TABLE_ID>
 <!--800057-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--800057-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -7008,7 +7012,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800058-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800058-->  <NAME><![CDATA[Discount]]></NAME>
 <!--800058-->  <DESCRIPTION><![CDATA[Create a discount.]]></DESCRIPTION>
-<!--800058-->  <HELP><![CDATA[Create a discount.]]></HELP>
+<!--800058-->  <HELP><![CDATA[A total discount can be created and configured by entering a discount name, a discount product and a discount %.]]></HELP>
 <!--800058-->  <AD_TABLE_ID><![CDATA[800044]]></AD_TABLE_ID>
 <!--800058-->  <AD_WINDOW_ID><![CDATA[800017]]></AD_WINDOW_ID>
 <!--800058-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -7198,7 +7202,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800074-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800074-->  <NAME><![CDATA[Lines]]></NAME>
 <!--800074-->  <DESCRIPTION><![CDATA[Add individual payment term criteria to be included in your payment in the case of a split payment.  Each term is shown on its own line.]]></DESCRIPTION>
-<!--800074-->  <HELP><![CDATA[Add individual payment term criteria to be included in your payment in the case of a split payment.  Each term is shown on its own line.]]></HELP>
+<!--800074-->  <HELP><![CDATA[It is possible to split payments terms into more than just one payment term line.]]></HELP>
 <!--800074-->  <AD_TABLE_ID><![CDATA[800058]]></AD_TABLE_ID>
 <!--800074-->  <AD_WINDOW_ID><![CDATA[141]]></AD_WINDOW_ID>
 <!--800074-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -9180,7 +9184,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800198-->  <NAME><![CDATA[Product]]></NAME>
 <!--800198-->  <DESCRIPTION><![CDATA[Add products to be included in the volume discount.]]></DESCRIPTION>
-<!--800198-->  <HELP><![CDATA[Add products to be included in the volume discount.]]></HELP>
+<!--800198-->  <HELP><![CDATA[A volume discount can be configure for a set of products or can be configure for all products but a set of them.]]></HELP>
 <!--800198-->  <AD_TABLE_ID><![CDATA[800166]]></AD_TABLE_ID>
 <!--800198-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800198-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -9207,7 +9211,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800199-->  <NAME><![CDATA[Volume Discount Parameters]]></NAME>
 <!--800199-->  <DESCRIPTION><![CDATA[Define the parameters for the volume discount.]]></DESCRIPTION>
-<!--800199-->  <HELP><![CDATA[Define the parameters for the volume discount.]]></HELP>
+<!--800199-->  <HELP><![CDATA[Volume discount parameters are a discount % as well as the minimum amount up to which the discount % is applied.]]></HELP>
 <!--800199-->  <AD_TABLE_ID><![CDATA[800167]]></AD_TABLE_ID>
 <!--800199-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800199-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -9483,7 +9487,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800211-->  <NAME><![CDATA[Discounts]]></NAME>
 <!--800211-->  <DESCRIPTION><![CDATA[Vendor discounts]]></DESCRIPTION>
-<!--800211-->  <HELP><![CDATA[Discounts tab allows you to add or review supplier discounts.]]></HELP>
+<!--800211-->  <HELP><![CDATA[Lists information about discounts automatically applied based on the supplier configuration and / or manually entered for the purchase invoice.]]></HELP>
 <!--800211-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800211-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--800211-->  <SEQNO><![CDATA[31]]></SEQNO>
@@ -10281,7 +10285,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800241-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800241-->  <NAME><![CDATA[Org Specific]]></NAME>
 <!--800241-->  <DESCRIPTION><![CDATA[Define specific characteristics which allow this product to be used in an organization.]]></DESCRIPTION>
-<!--800241-->  <HELP><![CDATA[Define specific characteristics which allow this product to be used in an organization.]]></HELP>
+<!--800241-->  <HELP><![CDATA[Manufacturing tab is used for products that are planned by the manufacturing plan.]]></HELP>
 <!--800241-->  <AD_TABLE_ID><![CDATA[800205]]></AD_TABLE_ID>
 <!--800241-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--800241-->  <SEQNO><![CDATA[75]]></SEQNO>
@@ -11422,7 +11426,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1011100001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1011100001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1011100001-->  <NAME><![CDATA[Discounts]]></NAME>
-<!--1011100001-->  <HELP><![CDATA[Discount tab alllows the procurement management team to include supplier discounts.]]></HELP>
+<!--1011100001-->  <HELP><![CDATA[Lists information about discounts automatically applied based on the supplier configuration and / or manually entered for the purchase order.]]></HELP>
 <!--1011100001-->  <AD_TABLE_ID><![CDATA[1011100000]]></AD_TABLE_ID>
 <!--1011100001-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--1011100001-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -12941,7 +12945,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <NAME><![CDATA[Line Tax]]></NAME>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <DESCRIPTION><![CDATA[Taxes related to the order line.]]></DESCRIPTION>
-<!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <HELP><![CDATA[For each purchase oder line, Openbravo automatically populates the line tax related information in this tab.
+<!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <HELP><![CDATA[For each purchase order line, Openbravo automatically populates the line tax related information in this tab.
 ]]></HELP>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <AD_TABLE_ID><![CDATA[E42DDB42FF0B4F82B1CF3C711B3F0DC0]]></AD_TABLE_ID>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>

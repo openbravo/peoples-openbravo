@@ -61,7 +61,7 @@
 <!--6707D7449A8D45DB851F608BA88329C8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6707D7449A8D45DB851F608BA88329C8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6707D7449A8D45DB851F608BA88329C8-->  <NAME><![CDATA[Payment Out Details]]></NAME>
-<!--6707D7449A8D45DB851F608BA88329C8-->  <HELP><![CDATA[Every time a prepayment is made against an order, the correspondng payment information is stored in this tab.]]></HELP>
+<!--6707D7449A8D45DB851F608BA88329C8-->  <HELP><![CDATA[Displays the details of the payments (pre-payments or regular payments) received for the order or for the invoice/s of the order.]]></HELP>
 <!--6707D7449A8D45DB851F608BA88329C8-->  <AD_TABLE_ID><![CDATA[DC63963AB3F1489BAAB5A9A7EFD1B407]]></AD_TABLE_ID>
 <!--6707D7449A8D45DB851F608BA88329C8-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--6707D7449A8D45DB851F608BA88329C8-->  <SEQNO><![CDATA[36]]></SEQNO>
@@ -299,7 +299,7 @@
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <NAME><![CDATA[Payment Out Plan]]></NAME>
-<!--FA57D75B1BBB4583B4A777008A29BF54-->  <HELP><![CDATA[Every time a purchase order is booked a payment plan or payment out plan is created for that order.]]></HELP>
+<!--FA57D75B1BBB4583B4A777008A29BF54-->  <HELP><![CDATA[Shows the total amount expected to be paid upon order booking as well as the amount/s pre-paid or paid against the invoice/s for the order.]]></HELP>
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <AD_TABLE_ID><![CDATA[70E57DEA195843729FF303C9A71EBCA3]]></AD_TABLE_ID>
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--FA57D75B1BBB4583B4A777008A29BF54-->  <SEQNO><![CDATA[35]]></SEQNO>
