@@ -339,6 +339,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
+    if (account != null){
+     if (!financialAccounts.contains(account)){
+    	 strFinancialAccountId = financialAccounts.get(0).getId();
+     }
+    }
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
