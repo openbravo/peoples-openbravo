@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -39,6 +40,8 @@ import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class ValidateWorkEffort_ProductionRun implements org.openbravo.scheduling.Process {
+
+  private static final Logger log4j = Logger.getLogger(ValidateWorkEffort_ProductionRun.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -73,7 +76,7 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log4j.error("Error validating work effort", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {

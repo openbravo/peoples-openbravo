@@ -60,7 +60,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
   private static final String expirationDateSearchKey = "EXD";
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  private static final Logger log4j = Logger.getLogger(CreateStandards.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -89,8 +89,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
-      log4j.error(e);
+      log4j.error("Error creating standards", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {

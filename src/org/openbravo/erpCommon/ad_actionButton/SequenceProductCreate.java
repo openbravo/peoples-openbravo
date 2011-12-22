@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.math.BigDecimal;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
@@ -41,6 +42,7 @@ public class SequenceProductCreate implements Process {
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
   private static final String expirationDateSearchKey = "EXD";
+  private static final Logger log4j = Logger.getLogger(SequenceProductCreate.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -143,7 +145,7 @@ public class SequenceProductCreate implements Process {
 
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log4j.error("Error creating copy of product in sequence", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
