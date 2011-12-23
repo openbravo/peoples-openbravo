@@ -18,19 +18,15 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -52,6 +48,7 @@ import org.openbravo.model.manufacturing.transaction.WorkRequirementProduct;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.utils.Replace;
 
 public class CreateStandards implements org.openbravo.scheduling.Process {
@@ -113,51 +110,18 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
       org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
           org.openbravo.model.ad.ui.Process.class, "800105");
 
-      final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
-      pInstance.setProcess(process);
-      pInstance.setActive(true);
-      pInstance.setRecordID(productionplan.getId());
-      pInstance.setUserContact(OBContext.getOBContext().getUser());
-
-      OBDal.getInstance().save(pInstance);
-      OBDal.getInstance().flush();
-
-      try {
-        final Connection connection = OBDal.getInstance().getConnection();
-        PreparedStatement ps = null;
-        final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-        if (obProps.getProperty("bbdd.rdbms") != null
-            && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-          ps = connection.prepareStatement("SELECT * FROM ma_productionrun_standard(?)");
-        } else {
-          ps = connection.prepareStatement("CALL ma_productionrun_standard(?)");
-        }
-        ps.setString(1, pInstance.getId());
-        ps.execute();
-
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-
-      OBDal.getInstance().getSession().refresh(pInstance);
+      final ProcessInstance pInstance = CallProcess.getInstance().call(process,
+          productionplan.getId(), null);
 
       if (pInstance.getResult() == 0) {
         // error processing
         OBError myMessage = Utility.getProcessInstanceMessage(conn, vars,
-            getPInstanceData(pInstance));
+            PInstanceProcessData.select(conn, pInstance.getId()));
         throw new OBException("ERROR: " + myMessage.getMessage());
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private PInstanceProcessData[] getPInstanceData(ProcessInstance pInstance) throws Exception {
-    PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
-    pinstanceData[0].result = pInstance.getResult().toString();
-    pinstanceData[0].errormsg = pInstance.getErrorMsg();
-    pinstanceData[0].pMsg = "";
-    return pinstanceData;
   }
 
   private void copyAttributes(ConnectionProvider conn, VariablesSecureApp vars,
