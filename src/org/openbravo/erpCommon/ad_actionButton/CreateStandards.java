@@ -191,22 +191,19 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
           // check attFrom exists
           AttributeSetInstance attSetInstanceFrom = null;
 
-          OBCriteria<ProductionLine> ProductionLineCriteria = OBDal.getInstance().createCriteria(
+          OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance().createCriteria(
               ProductionLine.class);
-          ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
+          productionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
               productionPlan));
-          ProductionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
-          ProductionLineCriteria.add(Restrictions.eq("wrpp."
+          productionLineCriteria.add(Restrictions
+              .isNotNull(ProductionLine.PROPERTY_ATTRIBUTESETVALUE));
+          productionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
+          productionLineCriteria.add(Restrictions.eq("wrpp."
               + WorkRequirementProduct.PROPERTY_SEQUENCEPRODUCT, opProductAtt.getProductFrom()));
 
-          List<ProductionLine> plinesToCopyFrom = ProductionLineCriteria.list();
-
+          List<ProductionLine> plinesToCopyFrom = productionLineCriteria.list();
           if (!plinesToCopyFrom.isEmpty()) {
-            int i = 0;
-            while (attSetInstanceFrom == null) {
-              attSetInstanceFrom = plinesToCopyFrom.get(i).getAttributeSetValue();
-              i++;
-            }
+            attSetInstanceFrom = plinesToCopyFrom.get(0).getAttributeSetValue();
           }
 
           if (attSetInstanceFrom != null && !attSetInstanceFrom.getId().equals("0")) {
