@@ -30,6 +30,11 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.utils.Replace;
 
+/**
+ * 
+ * Create a new attribute set instance value.
+ * 
+ */
 public class AttributeSetInstanceValue {
 
   private String lot = "";
@@ -108,6 +113,30 @@ public class AttributeSetInstanceValue {
     return ((this.attSetInstanceId == null) ? "" : this.attSetInstanceId);
   }
 
+  /**
+   * Checks if the record has attachments associated.
+   * 
+   * @param conProv
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          AttributeSetInstanceValueData with the attribute set info.
+   * @param strAttributeSet
+   *          String with the record attributeSetId.
+   * @param strInstance
+   *          String with the instanceId.
+   * @param strWindow
+   *          String with the windowId.
+   * @param strIsSOTrx
+   *          String with the isSotrx.
+   * @param strProduct
+   *          String with the productId.
+   * @param attributeValues
+   *          Map with the attribute values.
+   * @return OBError with the result.
+   * @throws ServletException
+   */
   public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
       AttributeSetInstanceValueData[] data, String strAttributeSet, String strInstance,
       String strWindow, String strIsSOTrx, String strProduct, Map<String, String> attributeValues)
