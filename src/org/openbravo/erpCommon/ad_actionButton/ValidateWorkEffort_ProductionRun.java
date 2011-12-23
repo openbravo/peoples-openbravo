@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -143,14 +142,10 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
   }
 
   private PInstanceProcessData[] getPInstanceData(ProcessInstance pInstance) throws Exception {
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PInstanceProcessData objectPInstanceProcessData = new PInstanceProcessData();
-    objectPInstanceProcessData.result = pInstance.getResult().toString();
-    objectPInstanceProcessData.errormsg = pInstance.getErrorMsg();
-    objectPInstanceProcessData.pMsg = "";
-    vector.addElement(objectPInstanceProcessData);
     PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
-    vector.copyInto(pinstanceData);
+    pinstanceData[0].result = pInstance.getResult().toString();
+    pinstanceData[0].errormsg = pInstance.getErrorMsg();
+    pinstanceData[0].pMsg = "";
     return pinstanceData;
   }
 }
