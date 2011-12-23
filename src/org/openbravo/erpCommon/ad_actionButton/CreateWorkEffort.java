@@ -50,14 +50,14 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
-    try {
+    final String strWorkRequirement = (String) bundle.getParams().get("MA_Workrequirement_ID");
+    final String strdate = (String) bundle.getParams().get("date");
+    String strStartTime = (String) bundle.getParams().get("starttime");
+    String strEndTime = (String) bundle.getParams().get("endtime");
+    final ConnectionProvider conn = bundle.getConnection();
+    final VariablesSecureApp vars = bundle.getContext().toVars();
 
-      final String strWorkRequirement = (String) bundle.getParams().get("MA_Workrequirement_ID");
-      final String strdate = (String) bundle.getParams().get("date");
-      String strStartTime = (String) bundle.getParams().get("starttime");
-      String strEndTime = (String) bundle.getParams().get("endtime");
-      final ConnectionProvider conn = bundle.getConnection();
-      final VariablesSecureApp vars = bundle.getContext().toVars();
+    try {
 
       // ConvertVariables
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -219,7 +219,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     }
   }

@@ -37,7 +37,7 @@ public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       String strmWRPhase = info.getStringParameter("inpmaWrphaseId", idFilter);
       String strQty = info.getStringParameter("inpproductionqty", numFilter);
 

@@ -65,11 +65,11 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
-    try {
+    final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
+    final ConnectionProvider conn = bundle.getConnection();
+    final VariablesSecureApp vars = bundle.getContext().toVars();
 
-      final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
-      final ConnectionProvider conn = bundle.getConnection();
-      final VariablesSecureApp vars = bundle.getContext().toVars();
+    try {
 
       ProductionPlan productionPlan = OBDal.getInstance().get(ProductionPlan.class,
           strMProductionPlanID);
@@ -101,7 +101,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     }
   }
@@ -109,7 +109,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   private void createStandards(ProductionPlan productionplan, ConnectionProvider conn,
       VariablesSecureApp vars) throws Exception {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
           org.openbravo.model.ad.ui.Process.class, "800105");
@@ -168,7 +168,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   private void copyAttributes(ConnectionProvider conn, VariablesSecureApp vars,
       ProductionPlan productionPlan) throws Exception {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       // check phase exists
       if (productionPlan.getWRPhase() != null
@@ -314,7 +314,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   private void createInstanciableAttributes(ConnectionProvider conn, VariablesSecureApp vars,
       ProductionPlan productionPlan) throws Exception {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       OBCriteria<ProductionLine> ProductionLineCriteria = OBDal.getInstance().createCriteria(
           ProductionLine.class);
       ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,

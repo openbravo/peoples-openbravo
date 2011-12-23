@@ -26,8 +26,7 @@
     <Sql>
       <![CDATA[
       SELECT (wrp.QUANTITY - wrp.DONEQUANTITY) AS neededqty, w.secondaryunit, w.conversionrate, ccv.MA_CostCenter_Version_ID, wrp.estimatedtime, wrp.quantity
-      FROM MA_WRPhase wrp
-      LEFT JOIN MA_Sequence se ON  wrp.MA_Sequence_ID = se.MA_Sequence_ID, MA_WorkRequirement w, MA_Process p
+      FROM MA_WRPhase wrp, MA_WorkRequirement w, MA_Process p
            LEFT JOIN MA_CostCenter cc ON p.MA_COSTCENTER_ID = cc.MA_CostCenter_Id
            LEFT JOIN (SELECT MA_COSTCENTER_VERSION_ID,MA_COstcenter_ID 
                       FROM MA_CostCenter_Version maccv2

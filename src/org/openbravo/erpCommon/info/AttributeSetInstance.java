@@ -140,7 +140,6 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           strAttributeSet);
       HashMap<String, String> attValues = new HashMap<String, String>();
       for (int i = 0; i < data.length; i++) {
-        String strValue = "";
         if (data[i].ismandatory.equals("Y"))
           attValues.put(replace(data[i].elementname),
               vars.getRequiredStringParameter("inp" + replace(data[i].elementname)));

@@ -124,7 +124,6 @@ public class AttributeSetInstanceValue {
     if (data == null || data.length == 0) {
       myMessage.setType("Error");
       myMessage.setMessage(Utility.messageBD(conProv, "FindZeroRecords", vars.getLanguage()));
-      // Utility.messageBD(this, "FindZeroRecords", vars.getLanguage());
       return myMessage;
     }
 
@@ -141,7 +140,7 @@ public class AttributeSetInstanceValue {
           lot = AttributeSetInstanceValueData.selectNextLot(conProv, data[0].mLotctlId);
           AttributeSetInstanceValueData.updateLotSequence(conn, conProv, vars.getUser(),
               data[0].mLotctlId);
-          description_first += (description_first.equals("") ? "" : "_") + lot;// esto
+          description_first += (description_first.equals("") ? "" : "_") + lot;
         } else {
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
         }
@@ -168,7 +167,7 @@ public class AttributeSetInstanceValue {
       }
       boolean hasToUpdate = false;
       if ((!strInstance.equals("")) && (isinstance)) {
-        // Si if it's existant and requestable, it edits it
+        // if it's existent and requestable, it edits it
         hasToUpdate = true;
         if (AttributeSetInstanceValueData.updateHeader(conn, conProv, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
@@ -178,7 +177,7 @@ public class AttributeSetInstanceValue {
               serno, lot, guaranteedate, "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
-        // editable,if it's requestable or doesn't exist the identic, then it inserts a new one
+        // editable,if it's requestable or doesn't exist the same one, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
         AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, attset
@@ -234,7 +233,7 @@ public class AttributeSetInstanceValue {
         conProv.releaseRollbackConnection(conn);
       } catch (Exception ignored) {
       }
-      log4j.error("Rollback in transaction: " + e);
+      log4j.error("Rollback in transaction: ", e);
     }
 
     return myMessage;
@@ -258,7 +257,7 @@ public class AttributeSetInstanceValue {
       String description_first = "";
       if (data[0].islot.equals("Y")) {
         if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
-          description_first += (description_first.equals("") ? "" : "_") + lot;// esto
+          description_first += (description_first.equals("") ? "" : "_") + lot;
         } else
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
       }

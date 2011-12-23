@@ -42,43 +42,6 @@
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
-   <SqlMethod name="selectInstance" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT A_S.DESCRIPTION, A_S.GUARANTEEDATE, A_S.LOT, A_S.SERNO, A_S.M_ATTRIBUTESET_ID, 
-        A.M_ATTRIBUTEVALUE_ID, A.M_ATTRIBUTE_ID, A.VALUE, A_S.ISLOCKED, A_S.LOCK_DESCRIPTION 
-        FROM M_ATTRIBUTESETINSTANCE A_S left join M_ATTRIBUTEINSTANCE A on A_S.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID
-        WHERE A_S.M_ATTRIBUTESETINSTANCE_ID = ?
-      ]]></Sql>
-        <Parameter name="mAttributesetinstanceId"/>
-   </SqlMethod>
-   <SqlMethod name="selectList" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT M_ATTRIBUTEVALUE_ID AS VALUE, NAME, DESCRIPTION 
-        FROM M_ATTRIBUTEVALUE
-        WHERE M_ATTRIBUTE_ID = ?
-        AND ISACTIVE='Y'
-        ORDER BY NAME
-      ]]></Sql>
-        <Parameter name="mAttributeId"/>
-   </SqlMethod>
-   <SqlMethod name="existingInstance" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT m.m_attributesetinstance_id 
-        FROM m_storage_detail m, M_AttributeSetInstance a 
-        WHERE m.M_ATTRIBUTESETINSTANCE_ID = a.M_ATTRIBUTESETINSTANCE_ID 
-        and m.M_LOCATOR_ID = ? 
-        and upper(description) = upper(?)
-      ]]></Sql>
-        <Parameter name="mLocatorId"/>
-        <Parameter name="description"/>
-   </SqlMethod>
    <SqlMethod name="hasIdentical" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
@@ -91,13 +54,6 @@
         <Parameter name="description"/>
         <Parameter name="mAttributeSet"/>
    </SqlMethod>
-   <SqlMethod name="selectDescription" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE_ID = ?
-      ]]></Sql>
-        <Parameter name="mAttributesetinstanceId"/>
-   </SqlMethod>
    <SqlMethod name="selectNextLot" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
@@ -106,17 +62,7 @@
         WHERE M_LOTCTL_ID = ?
       ]]></Sql>
         <Parameter name="mLotctlId"/>
-   </SqlMethod>
-   <SqlMethod name="selectNextSerNo" type="preparedStatement" return="String" default="0">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT COALESCE(TO_CHAR(PREFIX),'') || CURRENTNEXT || COALESCE(TO_CHAR(SUFFIX),'') AS TOTAL
-        FROM M_SERNOCTL 
-        WHERE M_SERNOCTL_ID = ?
-      ]]></Sql>
-        <Parameter name="mSernoctlId"/>
-   </SqlMethod>
-   
+   </SqlMethod>   
    <SqlMethod name="selectNextSerNo" type="preparedStatement" return="String" connection="true" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
@@ -125,23 +71,6 @@
         WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
         <Parameter name="mSernoctlId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="selectProductAttr" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT m_attributeset_id, m_attributesetinstance_id FROM M_PRODUCT WHERE m_product_id=?
-      ]]></Sql>
-        <Parameter name="mProductId"/>
-   </SqlMethod>
-   <SqlMethod name="selectAttributeSet" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT s.M_ATTRIBUTESET_ID
-        FROM M_ATTRIBUTESETINSTANCE s
-        WHERE s.M_ATTRIBUTESETINSTANCE_ID = ?
-      ]]></Sql>
-        <Parameter name="mAttributesetinstanceId"/>
    </SqlMethod>
    <SqlMethod name="isInstanceAttribute" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
@@ -153,20 +82,6 @@
         FROM M_ATTRIBUTESET A_S
         WHERE A_S.ISACTIVE = 'Y'
         AND A_S.M_ATTRIBUTESET_ID = ? 
-      ]]></Sql>
-        <Parameter name="mAttributesetId"/>
-   </SqlMethod>
-   <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT A_S.M_ATTRIBUTESET_ID, A_S.NAME, A_S.DESCRIPTION, A_S.GUARANTEEDAYS, A_S.ISGUARANTEEDATE, A_S.ISLOT, A_S.ISSERNO, 
-        A_S.M_LOTCTL_ID, A_S.M_SERNOCTL_ID, A_S.ISLOCKABLE, A.ISINSTANCEATTRIBUTE, '' AS M_ATTRIBUTESETINSTANCE_ID 
-        FROM M_ATTRIBUTESET A_S left join M_ATTRIBUTEUSE A_U on a_s.M_ATTRIBUTESET_ID = a_u.M_ATTRIBUTESET_ID
-                                left join M_ATTRIBUTE A on A_U.M_ATTRIBUTE_ID = A.M_ATTRIBUTE_ID 
-                                                        and A_U.ISACTIVE = 'Y'
-        WHERE  A_S.ISACTIVE = 'Y'
-        AND A_S.M_ATTRIBUTESET_ID = ? 
-        ORDER BY A_U.SEQNO
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
    </SqlMethod>

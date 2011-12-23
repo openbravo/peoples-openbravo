@@ -47,103 +47,98 @@ public class SequenceProductCreate implements Process {
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
+    final String sequenceProductId = (String) bundle.getParams().get("MA_Sequenceproduct_ID");
+    final String value = (String) bundle.getParams().get("value");
+    final String name = (String) bundle.getParams().get("name");
+    final String productionType = (String) bundle.getParams().get("productiontype");
+    final String qty = (String) bundle.getParams().get("qty");
+    final ConnectionProvider conn = bundle.getConnection();
+    final String copyAttribute = (String) bundle.getParams().get("copyattribute");
+    final String productCategoryId = (String) bundle.getParams().get("mProductCategoryId");
+
     try {
-      final String sequenceProductId = (String) bundle.getParams().get("MA_Sequenceproduct_ID");
-      final String value = (String) bundle.getParams().get("value");
-      final String name = (String) bundle.getParams().get("name");
-      final String productionType = (String) bundle.getParams().get("productiontype");
-      final String qty = (String) bundle.getParams().get("qty");
-      final ConnectionProvider conn = bundle.getConnection();
-      final String copyAttribute = (String) bundle.getParams().get("copyattribute");
-      final String productCategoryId = (String) bundle.getParams().get("mProductCategoryId");
+      OBContext.setAdminMode(true);
 
-      try {
-        OBContext.setAdminMode();
+      // Create new product copy of selected
+      OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
+          sequenceProductId);
 
-        // Create new product copy of selected
-        OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
-            sequenceProductId);
+      Product originalProduct = opProduct.getProduct();
+      Product newProduct = (Product) DalUtil.copy(originalProduct);
 
-        Product originalProduct = opProduct.getProduct();
-        Product newProduct = (Product) DalUtil.copy(originalProduct);
+      // Modifies values
+      newProduct.setSearchKey(value);
+      newProduct.setName(name);
 
-        // Modifies values
-        newProduct.setSearchKey(value);
-        newProduct.setName(name);
+      // Empty values copied and filled by m_product_trg
+      newProduct.setProductAccountsList(null);
+      newProduct.setProductTrlList(null);
 
-        // Empty values copied and filled by m_product_trg
-        newProduct.setProductAccountsList(null);
-        newProduct.setProductTrlList(null);
+      // Product Category
+      ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
+      if (pcategory != null)
+        newProduct.setProductCategory(pcategory);
 
-        // Product Category
-        ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class,
-            productCategoryId);
-        if (pcategory != null)
-          newProduct.setProductCategory(pcategory);
+      // Save product
+      OBDal.getInstance().save(newProduct);
 
-        // Save product
-        OBDal.getInstance().save(newProduct);
+      OBDal.getInstance().flush();
 
-        OBDal.getInstance().flush();
+      // Create Operation Product line
 
-        // Create Operation Product line
+      OperationProduct newOpProduct = OBProvider.getInstance().get(OperationProduct.class);
 
-        OperationProduct newOpProduct = OBProvider.getInstance().get(OperationProduct.class);
+      newOpProduct.setMASequence(opProduct.getMASequence());
+      newOpProduct.setClient(opProduct.getClient());
+      newOpProduct.setOrganization(opProduct.getOrganization());
+      newOpProduct.setLineNo(getLineNum(opProduct.getMASequence().getId()));
+      newOpProduct.setProduct(newProduct);
+      newOpProduct.setQuantity(new BigDecimal(qty));
+      newOpProduct.setUOM(newProduct.getUOM());
+      newOpProduct.setProductionType(productionType);
 
-        newOpProduct.setMASequence(opProduct.getMASequence());
-        newOpProduct.setClient(opProduct.getClient());
-        newOpProduct.setOrganization(opProduct.getOrganization());
-        newOpProduct.setLineNo(getLineNum(opProduct.getMASequence().getId()));
-        newOpProduct.setProduct(newProduct);
-        newOpProduct.setQuantity(new BigDecimal(qty));
-        newOpProduct.setUOM(newProduct.getUOM());
-        newOpProduct.setProductionType(productionType);
+      // Save Operation Product line
+      OBDal.getInstance().save(newOpProduct);
 
-        // Save Operation Product line
-        OBDal.getInstance().save(newOpProduct);
+      OBDal.getInstance().flush();
 
-        OBDal.getInstance().flush();
+      // Copy Attributes
 
-        // Copy Attributes
-
-        if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
-            && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
-          // Special Attribute
-          if (newProduct.getAttributeSet().isLot())
-            copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
-          if (newProduct.getAttributeSet().isSerialNo())
-            copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
-          if (newProduct.getAttributeSet().isExpirationDate())
-            copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
-          // Normal Attribute
-          for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
-            copyAtt(newOpProduct, opProduct, false, "", attributeuse);
-          }
+      if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
+          && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
+        // Special Attribute
+        if (newProduct.getAttributeSet().isLot())
+          copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
+        if (newProduct.getAttributeSet().isSerialNo())
+          copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
+        if (newProduct.getAttributeSet().isExpirationDate())
+          copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
+        // Normal Attribute
+        for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
+          copyAtt(newOpProduct, opProduct, false, "", attributeuse);
         }
-
-        OBDal.getInstance().flush();
-
-        final OBError msg = new OBError();
-        msg.setType("Success");
-        msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
-        String message = Utility.messageBD(conn, "SequenceProductCreated", bundle.getContext()
-            .getLanguage())
-            + newProduct.getName() + " " + qty + " P" + productionType;
-        if (copyAttribute.equals("Y")
-            && (productionType.equals("-") || opProduct.getProductionType().equals("+"))) {
-          message = message
-              + ". "
-              + Utility.messageBD(conn, "SequenceProductAttNotCopied", bundle.getContext()
-                  .getLanguage());
-        }
-        msg.setMessage(message);
-        bundle.setResult(msg);
-
-      } finally {
-        OBContext.restorePreviousMode();
       }
 
+      OBDal.getInstance().flush();
+
+      final OBError msg = new OBError();
+      msg.setType("Success");
+      msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
+      String message = Utility.messageBD(conn, "SequenceProductCreated", bundle.getContext()
+          .getLanguage())
+          + newProduct.getName() + " " + qty + " P" + productionType;
+      if (copyAttribute.equals("Y")
+          && (productionType.equals("-") || opProduct.getProductionType().equals("+"))) {
+        message = message
+            + ". "
+            + Utility.messageBD(conn, "SequenceProductAttNotCopied", bundle.getContext()
+                .getLanguage());
+      }
+      msg.setMessage(message);
+      bundle.setResult(msg);
+
     } catch (final Exception e) {
+
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Error creating copy of product in sequence", e);
       final OBError msg = new OBError();
@@ -157,8 +152,11 @@ public class SequenceProductCreate implements Process {
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 

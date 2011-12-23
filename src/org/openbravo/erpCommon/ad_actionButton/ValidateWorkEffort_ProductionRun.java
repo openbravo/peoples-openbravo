@@ -46,10 +46,11 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
+    final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
+    final ConnectionProvider conn = bundle.getConnection();
+
     try {
 
-      final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
-      final ConnectionProvider conn = bundle.getConnection();
       ProductionPlan productionPlan = OBDal.getInstance().get(ProductionPlan.class,
           strMProductionPlanID);
       ProductionTransaction production = productionPlan.getProduction();
@@ -88,7 +89,7 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     }
   }
@@ -96,7 +97,7 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
   private void validateWorkEffort(ProductionTransaction production, ConnectionProvider conn,
       VariablesSecureApp vars) throws Exception {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
           org.openbravo.model.ad.ui.Process.class, "800106");
