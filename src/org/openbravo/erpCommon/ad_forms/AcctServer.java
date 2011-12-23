@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
@@ -47,6 +48,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.common.currency.ConversionRateDoc;
@@ -1025,10 +1027,10 @@ public abstract class AcctServer {
       log4j.warn(e);
       e.printStackTrace();
     }
-    if (m_fact[index] == null)
-      return STATUS_Error;
     if (!Status.equals(STATUS_NotPosted))
       return Status;
+    if (m_fact[index] == null)
+      return STATUS_Error;
     Status = STATUS_PostPrepared;
 
     // Distinguish multi-currency Documents
@@ -1625,8 +1627,26 @@ public abstract class AcctServer {
           && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment)
         strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
     }
-    if (strValidCombination.equals(""))
-      return null;
+    if (strValidCombination.equals("")) {
+      Map<String, String> parameters = new HashMap<String, String>();
+      parameters.put("Account", isReceipt ? (isPrepayment ? "@CustomerPrepayment@"
+          : "@CustomerReceivables@") : (isPrepayment ? "@VendorPrepayment@" : "@VendorLiability@"));
+      BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
+      if (bp != null) {
+        parameters.put("Entity", bp.getIdentifier());
+      }
+      parameters.put(
+          "AccountingSchema",
+          OBDal
+              .getInstance()
+              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                  as.getC_AcctSchema_ID()).getIdentifier());
+      setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
+          STATUS_InvalidAccount, "error", parameters);
+      throw new IllegalStateException();
+    }
     return new Account(conn, strValidCombination);
   } // getAccount
 
@@ -1658,6 +1678,24 @@ public abstract class AcctServer {
         account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
     } finally {
       OBContext.restorePreviousMode();
+      if (account == null) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("Account", bIsReceipt ? "@GlitemCreditAccount@" : "@GlitemDebitAccount@");
+        if (glItem != null) {
+          parameters.put("Entity", glItem.getIdentifier());
+        }
+        parameters.put(
+            "AccountingSchema",
+            OBDal
+                .getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                    as.getC_AcctSchema_ID()).getIdentifier());
+        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
+            STATUS_InvalidAccount, "error", parameters);
+        throw new IllegalStateException();
+      }
     }
     return account;
   }
@@ -1680,10 +1718,28 @@ public abstract class AcctServer {
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
       if (accountList == null || accountList.size() == 0)
-        return null;
+        return account;
       account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
     } finally {
       OBContext.restorePreviousMode();
+      if (account == null) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("Account", "@BankfeeAccount@");
+        if (finAccount != null) {
+          parameters.put("Entity", finAccount.getIdentifier());
+        }
+        parameters.put(
+            "AccountingSchema",
+            OBDal
+                .getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                    as.getC_AcctSchema_ID()).getIdentifier());
+        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
+            STATUS_InvalidAccount, "error", parameters);
+        throw new IllegalStateException();
+      }
     }
     return account;
   }
@@ -1711,10 +1767,28 @@ public abstract class AcctServer {
       else if ("WIT".equals(use))
         strvalidCombination = financialAccountAccounting.getWithdrawalAccount().getId();
       else
-        return null;
+        return account;
       account = new Account(conn, strvalidCombination);
     } finally {
       OBContext.restorePreviousMode();
+      if (account == null) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        String strAccount = bIsReceipt ? ("INT".equals(use) ? "@InTransitPaymentAccountIN@"
+            : ("DEP".equals(use) ? "@DepositAccount@" : "@ClearedPaymentAccount@")) : ("INT"
+            .equals(use) ? "@InTransitPaymentAccountOUT@"
+            : ("CLE".equals(use) ? "@ClearedPaymentAccountOUT@" : "@WithdrawalAccount@"));
+        parameters.put("Account", strAccount);
+        if (financialAccountAccounting.getAccount() != null) {
+          parameters.put("Entity", financialAccountAccounting.getAccount().getIdentifier());
+        }
+        parameters.put("AccountingSchema", financialAccountAccounting.getAccountingSchema()
+            .getIdentifier());
+        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
+            STATUS_InvalidAccount, "error", parameters);
+        throw new IllegalStateException();
+      }
     }
     return account;
   }
@@ -1798,10 +1872,20 @@ public abstract class AcctServer {
    */
   public void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
       String strMessageType) {
-    if (strStatus == null || strStatus.equals(""))
-      strStatus = getStatus();
+    setMessageResult(conn, vars, strStatus, strMessageType, null);
+    return;
+  }
+
+  /*
+   * Sets OBError message for the given status
+   */
+  public void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String _strStatus,
+      String strMessageType, Map<String, String> _parameters) {
+    String strStatus = StringUtils.isEmpty(_strStatus) ? getStatus() : _strStatus;
+    setStatus(strStatus);
     String strTitle = "";
-    Map<String, String> parameters = new HashMap<String, String>();
+    Map<String, String> parameters = _parameters != null ? _parameters
+        : new HashMap<String, String>();
     if (messageResult == null)
       messageResult = new OBError();
     if (strMessageType == null || strMessageType.equals(""))
@@ -1822,7 +1906,14 @@ public abstract class AcctServer {
       strTitle = "@BackgroundDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_InvalidAccount)) {
-      strTitle = "@InvalidAccount@";
+      if (parameters.isEmpty()) {
+        strTitle = "@InvalidAccount@";
+      } else {
+        strTitle = "@InvalidWhichAccount@";
+        // Transalate account name from messages
+        parameters.put("Account",
+            Utility.parseTranslation(conn, vars, vars.getLanguage(), parameters.get("Account")));
+      }
     } else if (strStatus.equals(STATUS_PeriodClosed)) {
       strTitle = "@PeriodClosed@";
     } else if (strStatus.equals(STATUS_NotConvertible)) {
@@ -1845,6 +1936,14 @@ public abstract class AcctServer {
     if (strMessage != null)
       messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
           Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
+  }
+
+  public Map<String, String> getInvalidAccountParameters() {
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("Account", "");
+    parameters.put("Entity", "");
+    parameters.put("AccountingSchema", "");
+    return parameters;
   }
 
   public OBError getMessageResult() {
