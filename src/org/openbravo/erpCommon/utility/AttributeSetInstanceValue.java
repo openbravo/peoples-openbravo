@@ -19,7 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -110,8 +110,8 @@ public class AttributeSetInstanceValue {
 
   public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
       AttributeSetInstanceValueData[] data, String strAttributeSet, String strInstance,
-      String strWindow, String strIsSOTrx, String strProduct,
-      HashMap<String, String> attributeValues) throws ServletException {
+      String strWindow, String strIsSOTrx, String strProduct, Map<String, String> attributeValues)
+      throws ServletException {
 
     String strNewInstance = "";
     AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
@@ -248,7 +248,7 @@ public class AttributeSetInstanceValue {
 
   private String getDescription(ConnectionProvider conProv, VariablesSecureApp vars,
       AttributeSetInstanceValueData[] data, String strIsSOTrx, String strWindowId,
-      HashMap<String, String> attributeValues) {
+      Map<String, String> attributeValues) {
     if (data == null || data.length == 0)
       return "";
     String description = "";
