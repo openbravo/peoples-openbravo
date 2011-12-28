@@ -359,18 +359,23 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    try {
+      OBContext.setAdminMode(true);
 
-    final Currency financialAccountCurrency = dao
-        .getFinancialAccountCurrency(strFinancialAccountId);
-    if (financialAccountCurrency != null) {
-      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-          .getStandardPrecision().toString());
+      final Currency financialAccountCurrency = dao
+          .getFinancialAccountCurrency(strFinancialAccountId);
+      if (financialAccountCurrency != null) {
+        xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+        xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+            .getStandardPrecision().toString());
+      }
+      String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
+          OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
+      xmlDocument.setParameter("exchangeRate", exchangeRate);
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
-        OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
-    xmlDocument.setParameter("exchangeRate", exchangeRate);
 
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = isForcedFinancialAccountTransaction(isReceipt,
