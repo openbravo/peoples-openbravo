@@ -185,12 +185,12 @@ public class SequenceProductCreate implements Process {
     String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= '"
         + SequenceId + "'";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
-
-    if (q.list().size() > 0) {
-      return new Long(q.list().get(0).toString());
-    } else {
+    try {
+      String result = (String) q.uniqueResult();
+      return result == null ? 0L : new Long(result);
+    } catch (Exception e) {
+      // Unique result throws exception if more than one line is returned.
       return 0L;
     }
   }
-
 }
