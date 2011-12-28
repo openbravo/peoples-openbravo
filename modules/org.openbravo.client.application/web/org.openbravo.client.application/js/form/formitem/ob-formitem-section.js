@@ -99,11 +99,8 @@ isc.OBSectionItem.addProperties({
   showIf: function(item, value, form, values) {
     var i, field, length;
     
-    if(!this.itemIds) {
-      return false;
-    }
-
-    if (item.hiddenInForm === true || item.displayed === false ) {
+    if (!this.itemIds || item.hiddenInForm === true || item.displayed === false ) {
+      this.updateAlwaysTakeSpace(false); // To avoid an empty space if the section is not shown
       return false;
     }
     
@@ -125,6 +122,7 @@ isc.OBSectionItem.addProperties({
       }
     }
     
+    this.updateAlwaysTakeSpace(false); // To avoid an empty space if the section is not shown
     return false;
   }
 });
