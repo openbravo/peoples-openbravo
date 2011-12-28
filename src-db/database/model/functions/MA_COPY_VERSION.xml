@@ -102,6 +102,7 @@
         AND datefrom > v_DateFrom;
     END IF;
     v_ResultStr:='InsertVersion';
+    
     Ad_Sequence_Next('MA_ProcessPlan_Version', v_Client_ID, v_ProcessPlanVersion_ID) ;
     Ad_Sequence_Doc('DocumentNo_MA_ProcessPlan_Version', v_Client_ID, 'Y', v_DocumentNo) ;
     INSERT
@@ -179,7 +180,7 @@
 	)
 	LOOP
 		v_ResultStr:='InsertProductsCopyFromAttribute';
-		Ad_Sequence_Next('MA_SequenceProductAtt', v_Client_ID, v_ProductAtt_ID) ;
+		v_ProductAtt_ID := get_uuid();
 
 		SELECT MA_SequenceProduct_ID
 		INTO v_MASequenceProductFrom_ID

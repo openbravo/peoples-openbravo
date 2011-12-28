@@ -42,7 +42,7 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       String strmSequenceProductId = info
           .getStringParameter("inpmaSequenceproductfromId", idFilter);
       String strmProductSequenceId = info.getStringParameter("inpmaSequenceproductId", idFilter);

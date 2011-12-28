@@ -19,7 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -30,6 +30,11 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.utils.Replace;
 
+/**
+ * 
+ * Create a new attribute set instance value.
+ * 
+ */
 public class AttributeSetInstanceValue {
 
   private String lot = "";
@@ -46,18 +51,16 @@ public class AttributeSetInstanceValue {
 
   public AttributeSetInstanceValue(String strlot, String strserno, String strguaranteedate,
       String strlocked, String strlockDescription) {
-    this.lot = strlot;
-    this.serno = strserno;
-    this.guaranteedate = strguaranteedate;
-    this.locked = strlocked;
-    this.lockDescription = strlockDescription;
+    this.lot = strlot == null ? "" : strlot;
+    this.serno = strserno == null ? "" : strserno;
+    this.guaranteedate = strguaranteedate == null ? "" : strguaranteedate;
+    this.locked = strlocked == null ? "" : strlocked;
+    this.lockDescription = strlockDescription == null ? "" : strlockDescription;
 
   }
 
   public void setLot(String _data) {
-    if (_data == null)
-      _data = "";
-    this.lot = _data;
+    this.lot = _data == null ? "" : _data;
   }
 
   public String getLot() {
@@ -65,9 +68,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setSerialNumber(String _data) {
-    if (_data == null)
-      _data = "";
-    this.serno = _data;
+    this.serno = _data == null ? "" : _data;
   }
 
   public String getSerialNumber() {
@@ -75,9 +76,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setGuaranteeDate(String _data) {
-    if (_data == null)
-      _data = "";
-    this.guaranteedate = _data;
+    this.guaranteedate = _data == null ? "" : _data;
   }
 
   public String getGuaranteeDate() {
@@ -85,9 +84,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setLockDescription(String _data) {
-    if (_data == null)
-      _data = "";
-    this.lockDescription = _data;
+    this.lockDescription = _data == null ? "" : _data;
   }
 
   public String getLockDescription() {
@@ -95,9 +92,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setLocked(String _data) {
-    if (_data == null)
-      _data = "";
-    this.locked = _data;
+    this.locked = _data == null ? "" : _data;
   }
 
   public String getLocked() {
@@ -108,10 +103,33 @@ public class AttributeSetInstanceValue {
     return ((this.attSetInstanceId == null) ? "" : this.attSetInstanceId);
   }
 
+  /**
+   * Checks if the record has attachments associated.
+   * 
+   * @param conProv
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param data
+   *          AttributeSetInstanceValueData with the attribute set info.
+   * @param strAttributeSet
+   *          String with the record attributeSetId.
+   * @param strInstance
+   *          String with the instanceId.
+   * @param strWindow
+   *          String with the windowId.
+   * @param strIsSOTrx
+   *          String with the isSotrx.
+   * @param strProduct
+   *          String with the productId.
+   * @param attributeValues
+   *          Map with the attribute values.
+   * @return OBError with the result.
+   * @throws ServletException
+   */
   public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
-      AttributeSetInstanceValueData[] data, String strAttributeSet, String strInstance,
-      String strWindow, String strIsSOTrx, String strProduct,
-      HashMap<String, String> attributeValues) throws ServletException {
+      String strAttributeSet, String strInstance, String strWindow, String strIsSOTrx,
+      String strProduct, Map<String, String> attributeValues) throws ServletException {
 
     String strNewInstance = "";
     AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
@@ -121,10 +139,11 @@ public class AttributeSetInstanceValue {
     myMessage.setTitle("");
     myMessage.setType("Success");
     myMessage.setMessage(Utility.messageBD(conProv, "Success", vars.getLanguage()));
+    AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conProv,
+        strAttributeSet);
     if (data == null || data.length == 0) {
       myMessage.setType("Error");
       myMessage.setMessage(Utility.messageBD(conProv, "FindZeroRecords", vars.getLanguage()));
-      // Utility.messageBD(this, "FindZeroRecords", vars.getLanguage());
       return myMessage;
     }
 
@@ -141,7 +160,7 @@ public class AttributeSetInstanceValue {
           lot = AttributeSetInstanceValueData.selectNextLot(conProv, data[0].mLotctlId);
           AttributeSetInstanceValueData.updateLotSequence(conn, conProv, vars.getUser(),
               data[0].mLotctlId);
-          description_first += (description_first.equals("") ? "" : "_") + lot;// esto
+          description_first += (description_first.equals("") ? "" : "_") + lot;
         } else {
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
         }
@@ -168,7 +187,7 @@ public class AttributeSetInstanceValue {
       }
       boolean hasToUpdate = false;
       if ((!strInstance.equals("")) && (isinstance)) {
-        // Si if it's existant and requestable, it edits it
+        // if it's existent and requestable, it edits it
         hasToUpdate = true;
         if (AttributeSetInstanceValueData.updateHeader(conn, conProv, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
@@ -178,7 +197,7 @@ public class AttributeSetInstanceValue {
               serno, lot, guaranteedate, "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
-        // editable,if it's requestable or doesn't exist the identic, then it inserts a new one
+        // editable,if it's requestable or doesn't exist the same one, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
         AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, attset
@@ -234,7 +253,7 @@ public class AttributeSetInstanceValue {
         conProv.releaseRollbackConnection(conn);
       } catch (Exception ignored) {
       }
-      log4j.error("Rollback in transaction: " + e);
+      log4j.error("Rollback in transaction: ", e);
     }
 
     return myMessage;
@@ -249,7 +268,7 @@ public class AttributeSetInstanceValue {
 
   private String getDescription(ConnectionProvider conProv, VariablesSecureApp vars,
       AttributeSetInstanceValueData[] data, String strIsSOTrx, String strWindowId,
-      HashMap<String, String> attributeValues) {
+      Map<String, String> attributeValues) {
     if (data == null || data.length == 0)
       return "";
     String description = "";
@@ -258,7 +277,7 @@ public class AttributeSetInstanceValue {
       String description_first = "";
       if (data[0].islot.equals("Y")) {
         if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
-          description_first += (description_first.equals("") ? "" : "_") + lot;// esto
+          description_first += (description_first.equals("") ? "" : "_") + lot;
         } else
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
       }

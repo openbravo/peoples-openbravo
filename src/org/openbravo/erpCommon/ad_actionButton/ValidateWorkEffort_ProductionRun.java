@@ -18,15 +18,9 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.Properties;
-import java.util.Vector;
-
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -37,16 +31,20 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallProcess;
 
 public class ValidateWorkEffort_ProductionRun implements org.openbravo.scheduling.Process {
+
+  private static final Logger log4j = Logger.getLogger(ValidateWorkEffort_ProductionRun.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
+    final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
+    final ConnectionProvider conn = bundle.getConnection();
+
     try {
 
-      final String strMProductionPlanID = (String) bundle.getParams().get("M_ProductionPlan_ID");
-      final ConnectionProvider conn = bundle.getConnection();
       ProductionPlan productionPlan = OBDal.getInstance().get(ProductionPlan.class,
           strMProductionPlanID);
       ProductionTransaction production = productionPlan.getProduction();
@@ -73,7 +71,7 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log4j.error("Error validating work effort", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
@@ -85,7 +83,7 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     }
   }
@@ -93,60 +91,22 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
   private void validateWorkEffort(ProductionTransaction production, ConnectionProvider conn,
       VariablesSecureApp vars) throws Exception {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
           org.openbravo.model.ad.ui.Process.class, "800106");
 
-      final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
-      pInstance.setProcess(process);
-      pInstance.setActive(true);
-      pInstance.setRecordID(production.getId());
-      pInstance.setUserContact(OBContext.getOBContext().getUser());
-
-      OBDal.getInstance().save(pInstance);
-      OBDal.getInstance().flush();
-
-      try {
-        final Connection connection = OBDal.getInstance().getConnection();
-        PreparedStatement ps = null;
-        final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-        if (obProps.getProperty("bbdd.rdbms") != null
-            && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-          ps = connection.prepareStatement("SELECT * FROM ma_workeffort_validate(?)");
-        } else {
-          ps = connection.prepareStatement("CALL ma_workeffort_validate(?)");
-        }
-        ps.setString(1, pInstance.getId());
-        ps.execute();
-
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-
-      OBDal.getInstance().getSession().refresh(pInstance);
+      final ProcessInstance pInstance = CallProcess.getInstance().call(process, production.getId(),
+          null);
 
       if (pInstance.getResult() == 0) {
         // Error Processing
         OBError myMessage = Utility.getProcessInstanceMessage(conn, vars,
-            getPInstanceData(pInstance));
+            PInstanceProcessData.select(conn, pInstance.getId()));
         throw new OBException("ERROR: " + myMessage.getMessage());
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-
-  }
-
-  private PInstanceProcessData[] getPInstanceData(ProcessInstance pInstance) throws Exception {
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PInstanceProcessData objectPInstanceProcessData = new PInstanceProcessData();
-    objectPInstanceProcessData.result = pInstance.getResult().toString();
-    objectPInstanceProcessData.errormsg = pInstance.getErrorMsg();
-    objectPInstanceProcessData.pMsg = "";
-    vector.addElement(objectPInstanceProcessData);
-    PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
-    vector.copyInto(pinstanceData);
-    return pinstanceData;
   }
 }

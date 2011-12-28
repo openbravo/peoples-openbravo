@@ -233,7 +233,7 @@
 		  END LOOP;
 
 	  ELSE
-		  Ad_Sequence_Next('M_ProductionLine', v_Client_ID, v_ProductionLine_ID) ;
+		  v_ProductionLine_ID := get_uuid();
 		  v_Line:=v_Line + 10;
 		  INSERT
 		  INTO M_ProductionLine
@@ -538,7 +538,7 @@
 				 CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
 				 M_PRODUCTIONPLAN_ID, C_SALARY_CATEGORY_ID, QUANTITY)
 				 VALUES
-				(AD_Get_Next_Sequence('MA_PL_Employee', v_Client_ID),
+				(get_uuid(),
 				 now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_PlanOrg_ID, 'Y',
 				 v_Record_ID, Cur_CostCenter_Employee.C_Salary_Category_ID, 1)
 				 ;
@@ -551,7 +551,7 @@
 			 CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
 			 M_PRODUCTIONPLAN_ID, C_SALARY_CATEGORY_ID, QUANTITY)
 			 VALUES
-			(AD_Get_Next_Sequence('MA_PL_Employee', v_Client_ID),
+			(get_uuid(),
 			 now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_PlanOrg_ID, 'Y',
 			 v_Record_ID, Cur_CostCenter_Employee.C_Salary_Category_ID, Cur_CostCenter_Employee.Quantity)
 			 ;

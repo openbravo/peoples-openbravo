@@ -65,6 +65,9 @@
       <foreign-key foreignTable="M_STORAGE_DETAIL" name="M_STORAGEDET_MSTOCKPROPOSED">
         <reference local="M_STORAGE_DETAIL_ID" foreign="M_STORAGE_DETAIL_ID"/>
       </foreign-key>
+      <index name="M_STOCK_PROPOSED_PINSTANCE_ID" unique="false">
+        <index-column name="AD_PINSTANCE_ID"/>
+      </index>
       <check name="M_STOCKPROPOSED_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

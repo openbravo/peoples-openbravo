@@ -75,6 +75,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="MA_SEQUENCEATTPRODUCT_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <index name="MA_SEQUENCEPRODUCTATT_PARENT" unique="false">
+        <index-column name="MA_SEQUENCEPRODUCT_ID"/>
+      </index>
       <check name="MA_SEQATTPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MA_SEQATTPROD_ISSPEATT_CHECK"><![CDATA[ISSPECIALATT IN ('Y', 'N')]]></check>
     </table>

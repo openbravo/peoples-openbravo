@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -44,17 +45,19 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class CreateWorkEffort implements org.openbravo.scheduling.Process {
 
+  private static final Logger log4j = Logger.getLogger(CreateWorkEffort.class);
+
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
-    try {
+    final String strWorkRequirement = (String) bundle.getParams().get("MA_Workrequirement_ID");
+    final String strdate = (String) bundle.getParams().get("date");
+    String strStartTime = (String) bundle.getParams().get("starttime");
+    String strEndTime = (String) bundle.getParams().get("endtime");
+    final ConnectionProvider conn = bundle.getConnection();
+    final VariablesSecureApp vars = bundle.getContext().toVars();
 
-      final String strWorkRequirement = (String) bundle.getParams().get("MA_Workrequirement_ID");
-      final String strdate = (String) bundle.getParams().get("date");
-      String strStartTime = (String) bundle.getParams().get("starttime");
-      String strEndTime = (String) bundle.getParams().get("endtime");
-      final ConnectionProvider conn = bundle.getConnection();
-      final VariablesSecureApp vars = bundle.getContext().toVars();
+    try {
 
       // ConvertVariables
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -204,7 +207,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      e.printStackTrace(System.err);
+      log4j.error("Error creating work effort", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
@@ -216,7 +219,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       } else {
         msg.setMessage(e.getMessage());
       }
-      msg.setTitle("Error occurred");
+      msg.setTitle(Utility.messageBD(conn, "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     }
   }

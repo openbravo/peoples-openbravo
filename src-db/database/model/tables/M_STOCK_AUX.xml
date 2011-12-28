@@ -69,6 +69,12 @@
       <foreign-key foreignTable="M_STORAGE_DETAIL" name="M_STORAGEDETAIL_MSTOCKAUX">
         <reference local="M_STORAGE_DETAIL_ID" foreign="M_STORAGE_DETAIL_ID"/>
       </foreign-key>
+      <index name="M_STOCK_AUX_AUX_ID" unique="false">
+        <index-column name="AUX_ID"/>
+      </index>
+      <index name="M_STOCK_AUX_STORAGE_DETAIL_ID" unique="false">
+        <index-column name="M_STORAGE_DETAIL_ID"/>
+      </index>
       <check name="M_STOCK_AUX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
