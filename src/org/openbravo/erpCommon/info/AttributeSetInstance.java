@@ -131,12 +131,10 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
       // Set Attributes
-      AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue();
-      attSetValue.setLot(vars.getStringParameter("inplot"));
-      attSetValue.setSerialNumber(vars.getStringParameter("inpserno"));
-      attSetValue.setGuaranteeDate(vars.getStringParameter("inpDateFrom"));
-      attSetValue.setLocked(vars.getStringParameter("inpislocked", "N"));
-      attSetValue.setLockDescription(vars.getStringParameter("inplockDescription"));
+      AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue(
+          vars.getStringParameter("inplot"), vars.getStringParameter("inpserno"),
+          vars.getStringParameter("inpDateFrom"), vars.getStringParameter("inpislocked", "N"),
+          vars.getStringParameter("inplockDescription"));
       AttributeSet attSet = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
       HashMap<String, String> attValues = new HashMap<String, String>();
       for (AttributeUse attrUse : attSet.getAttributeUseList()) {
