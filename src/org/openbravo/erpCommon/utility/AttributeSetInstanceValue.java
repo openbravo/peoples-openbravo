@@ -51,18 +51,16 @@ public class AttributeSetInstanceValue {
 
   public AttributeSetInstanceValue(String strlot, String strserno, String strguaranteedate,
       String strlocked, String strlockDescription) {
-    this.lot = strlot;
-    this.serno = strserno;
-    this.guaranteedate = strguaranteedate;
-    this.locked = strlocked;
-    this.lockDescription = strlockDescription;
+    this.lot = strlot == null ? "" : strlot;
+    this.serno = strserno == null ? "" : strserno;
+    this.guaranteedate = strguaranteedate == null ? "" : strguaranteedate;
+    this.locked = strlocked == null ? "" : strlocked;
+    this.lockDescription = strlockDescription == null ? "" : strlockDescription;
 
   }
 
   public void setLot(String _data) {
-    if (_data == null)
-      _data = "";
-    this.lot = _data;
+    this.lot = _data == null ? "" : _data;
   }
 
   public String getLot() {
@@ -70,9 +68,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setSerialNumber(String _data) {
-    if (_data == null)
-      _data = "";
-    this.serno = _data;
+    this.serno = _data == null ? "" : _data;
   }
 
   public String getSerialNumber() {
@@ -80,9 +76,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setGuaranteeDate(String _data) {
-    if (_data == null)
-      _data = "";
-    this.guaranteedate = _data;
+    this.guaranteedate = _data == null ? "" : _data;
   }
 
   public String getGuaranteeDate() {
@@ -90,9 +84,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setLockDescription(String _data) {
-    if (_data == null)
-      _data = "";
-    this.lockDescription = _data;
+    this.lockDescription = _data == null ? "" : _data;
   }
 
   public String getLockDescription() {
@@ -100,9 +92,7 @@ public class AttributeSetInstanceValue {
   }
 
   public void setLocked(String _data) {
-    if (_data == null)
-      _data = "";
-    this.locked = _data;
+    this.locked = _data == null ? "" : _data;
   }
 
   public String getLocked() {
