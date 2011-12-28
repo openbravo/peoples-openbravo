@@ -257,10 +257,10 @@ OB.ViewFormProperties = {
         this.noteSection.collapseSection(true);
         delete this.noteSection.hiddenInForm;
         this.noteSection.refresh();
-        this.noteSection.show(true);
+        this.noteSection.show();
       } else {
         this.noteSection.hiddenInForm = true;
-        this.noteSection.hide(true);
+        this.noteSection.hide();
       }
   },
   
@@ -272,10 +272,10 @@ OB.ViewFormProperties = {
       this.linkedItemSection.collapseSection(true);
       this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
       delete this.linkedItemSection.hiddenInForm;
-      this.linkedItemSection.show(true);
+      this.linkedItemSection.show();
     } else {
       this.linkedItemSection.hiddenInForm = true;
-      this.linkedItemSection.hide(true);
+      this.linkedItemSection.hide();
     }
   },
   
@@ -287,10 +287,10 @@ OB.ViewFormProperties = {
       this.attachmentsSection.collapseSection(true);
       this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
       delete this.attachmentsSection.hiddenInForm;
-      this.attachmentsSection.show(true);
+      this.attachmentsSection.show();
     } else {
       this.attachmentsSection.hiddenInForm = true;
-      this.attachmentsSection.hide(true);
+      this.attachmentsSection.hide();
     }
   },
   
