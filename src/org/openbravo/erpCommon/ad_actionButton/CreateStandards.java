@@ -35,7 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.AttributeSetInstanceValue;
-import org.openbravo.erpCommon.utility.AttributeSetInstanceValueData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -242,11 +241,9 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
             int days = attrSet.getGuaranteedDays().intValue();
             attSetInstanceTo.setGuaranteeDate(dateToString(addDays(movementdate, days)));
           }
-          AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
-              opProduct.getProduct().getAttributeSet().getId());
           OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn, vars,
-              data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N", opProduct
-                  .getProduct().getId(), attValues);
+              opProduct.getProduct().getAttributeSet().getId(), "", "", "N", opProduct.getProduct()
+                  .getId(), attValues);
           if (!createAttributeInstanceError.getType().equals("Success")) {
             throw new OBException(createAttributeInstanceError.getMessage());
           }
@@ -298,10 +295,8 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
               int days = attSet.getGuaranteedDays().intValue();
               attSetInstance.setGuaranteeDate(dateToString(addDays(movementdate, days)));
             }
-            AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
-                attSet.getId());
             OBError createAttributeInstanceError = attSetInstance.setAttributeInstance(conn, vars,
-                data, attSet.getId(), "", "", "N", line.getProduct().getId(), attValues);
+                attSet.getId(), "", "", "N", line.getProduct().getId(), attValues);
             if (!createAttributeInstanceError.getType().equals("Success"))
               throw new OBException(createAttributeInstanceError.getMessage());
 

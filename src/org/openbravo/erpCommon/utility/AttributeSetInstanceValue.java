@@ -138,9 +138,8 @@ public class AttributeSetInstanceValue {
    * @throws ServletException
    */
   public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
-      AttributeSetInstanceValueData[] data, String strAttributeSet, String strInstance,
-      String strWindow, String strIsSOTrx, String strProduct, Map<String, String> attributeValues)
-      throws ServletException {
+      String strAttributeSet, String strInstance, String strWindow, String strIsSOTrx,
+      String strProduct, Map<String, String> attributeValues) throws ServletException {
 
     String strNewInstance = "";
     AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
@@ -150,6 +149,8 @@ public class AttributeSetInstanceValue {
     myMessage.setTitle("");
     myMessage.setType("Success");
     myMessage.setMessage(Utility.messageBD(conProv, "Success", vars.getLanguage()));
+    AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conProv,
+        strAttributeSet);
     if (data == null || data.length == 0) {
       myMessage.setType("Error");
       myMessage.setMessage(Utility.messageBD(conProv, "FindZeroRecords", vars.getLanguage()));
