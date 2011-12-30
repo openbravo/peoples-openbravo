@@ -93,7 +93,7 @@
 			closeThisPage();
 		}
 		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
+		  new windowTableId('client')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -181,7 +181,7 @@
 	<tr>
 		<td>
 
-		<div style="margin: 10px;">
+		<div style="margin: 10px;" id="client">
 
 		<table cellspacing="0" cellpadding="0 style="height: 150px; overflow: auto;" class="form_table">
 
@@ -199,7 +199,7 @@
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="contactEmail" id="contactEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="contactName" id="contactName" value="" style="padding-left: 10px"></span>
+									required="true"><span class="LabelText" name="contactName" id="contactName" value="" style="padding-left: 10px"></span>
 									
 						</td>
 					</tr>
@@ -214,7 +214,7 @@
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="salesrepEmail" id="salesrepEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText" name="salesrepName" id="salesrepName" value="" style="padding-left: 10px"></span>
+									required="true"><span class="LabelText" name="salesrepName" id="salesrepName" value="" style="padding-left: 10px"></span>
 									
 						</td>
 					</tr>
@@ -229,7 +229,7 @@
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 										class="dojoValidateValid required TextBox_btn_TwoCells_width"
 										maxlength="200" name="emailSubject" id="emailSubject" value=""
-										required="true" onkeyup="validateTextBox(this.id);">
+										required="true">
 						</td>
 						
 					</tr>
