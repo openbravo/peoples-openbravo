@@ -146,7 +146,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (changedColumn != null) {
         log.debug("Changed field: " + changedColumn);
       }
-      if (rowId != null) {
+      if (rowId != null && !rowId.equals("null")) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
       JSONObject jsContent = new JSONObject();
