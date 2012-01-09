@@ -1485,7 +1485,7 @@ isc.OBStandardView.addProperties({
           }
         }
       };
-      isc.ask(msg, callback);
+      isc.ask(msg, callback, {title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord')});
     }
   },
   
