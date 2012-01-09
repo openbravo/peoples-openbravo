@@ -1390,6 +1390,15 @@ OB.ViewFormProperties = {
         // of the attachments section are created
         if(savingNewRecord){
           this.attachmentsSection.fillAttachments(null);
+          // We also do a call to the FIC on SETSESSION mode to set the session variables
+          // to fix issue 18453
+          var sessionProperties = this.view.getContextInfo(true, true, false, true);
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
+            MODE: 'SETSESSION',
+            TAB_ID: this.view.tabId,
+            PARENT_ID: this.view.getParentId(),
+            ROW_ID: this.values.id
+          }, null);
         }
         
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
