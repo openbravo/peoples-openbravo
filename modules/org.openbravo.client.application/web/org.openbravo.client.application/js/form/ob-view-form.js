@@ -264,6 +264,26 @@ OB.ViewFormProperties = {
       }
   },
   
+  enableAuditSection: function(enable){
+      var auditSection,i;
+      for(i=0;i<this.items.length;i++) {
+        if(this.items[i].type==='OBAuditSectionItem') {
+          auditSection = this.items[i];
+        }
+      }
+      if (!auditSection) {
+        return;
+      }
+      if (enable) {
+        delete auditSection.hiddenInForm;
+        auditSection.show();
+      } else {
+        auditSection.collapseSection(false);
+        auditSection.hiddenInForm = true;
+        auditSection.hide();
+      }
+  },
+
   enableLinkedItemSection: function(enable){
     if (!this.linkedItemSection) {
       return;
@@ -328,6 +348,7 @@ OB.ViewFormProperties = {
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
     this.enableAttachmentsSection(!isNew);
+    this.enableAuditSection(!isNew);
     
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
