@@ -61,7 +61,6 @@
   v_PendingQty NUMBER; 
   v_InsertQty NUMBER;
   v_AD_Pinstance_ID VARCHAR2(32);
-  v_UniqueAttConsum CHAR(1);
   --  Toolset Types to process
   Cur_ToolsetProcess RECORD;
   --  WRPhase products created
@@ -286,36 +285,50 @@
               Cur_Stock_ISOPEN:=false;
             END IF;
             -- Call M_GET_STOCK
-            v_AD_Pinstance_ID := GET_UUID();
-            INSERT INTO AD_PINSTANCE (
-                AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISACTIVE, 
-                AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY,
-                UPDATED, UPDATEDBY
-            ) VALUES (
-                v_AD_Pinstance_ID,'FF80818132C964E30132C9747257002E',v_Record_ID,'Y',
-                v_User_ID, v_Client_ID, v_PlanOrg_ID, now(), v_User_ID,
-                now(), v_User_ID
-            );
+            DECLARE
+              v_pinstance_result AD_PInstance.result%TYPE;
+              v_pinstance_msg AD_PInstance.errormsg%TYPE;
+              v_UniqueAttConsum CHAR(1);
+            BEGIN
+              v_AD_Pinstance_ID := GET_UUID();
+              INSERT INTO AD_PINSTANCE (
+                  AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISACTIVE, 
+                  AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY,
+                  UPDATED, UPDATEDBY
+              ) VALUES (
+                  v_AD_Pinstance_ID,'FF80818132C964E30132C9747257002E',v_Record_ID,'Y',
+                  v_User_ID, v_Client_ID, v_PlanOrg_ID, now(), v_User_ID,
+                  now(), v_User_ID
+              );
 
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '10', 'AD_Client_ID', v_Client_ID, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '20', 'M_Product_ID', v_Product_old, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '30', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '40', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '50', 'AD_Org_ID', v_PlanOrg_ID, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '60', 'AuxID', v_Production_ID, null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '70', 'TableId', '325', null, null, null, null, null);
-            AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '80', 'LineNo', null, null, v_PlanLine, null, null, null);
-            SELECT COALESCE(SP.UNIQUEATTCONSUM, 'N')
-              INTO v_UniqueAttConsum
-            FROM MA_WRPHASEPRODUCT WRPP
-                    LEFT JOIN MA_SEQUENCEPRODUCT SP ON WRPP.MA_SEQUENCEPRODUCT_ID = SP.MA_SEQUENCEPRODUCT_ID
-            WHERE MA_WRPHASEPRODUCT_ID = Cur_WRPUsed.MA_WRPhaseProduct_ID;
-            IF (v_UniqueAttConsum='Y') THEN 
-              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '90', 'UniqueAttribute', v_UniqueAttConsum, null, null, null, null, null);
-              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'Quantity', null, null, v_DoneQuantity*Cur_WRPUsed.MovementQty, null, null, null);
-            END IF;
-            M_GET_STOCK(v_AD_Pinstance_ID);
-            -- End Call M_GET_STOCK
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '10', 'AD_Client_ID', v_Client_ID, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '20', 'M_Product_ID', v_Product_old, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '30', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '40', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '50', 'AD_Org_ID', v_PlanOrg_ID, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '60', 'AuxID', v_Production_ID, null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '70', 'TableId', '325', null, null, null, null, null);
+              AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '80', 'LineNo', null, null, v_PlanLine, null, null, null);
+              SELECT COALESCE(SP.UNIQUEATTCONSUM, 'N')
+                INTO v_UniqueAttConsum
+              FROM MA_WRPHASEPRODUCT WRPP
+                      LEFT JOIN MA_SEQUENCEPRODUCT SP ON WRPP.MA_SEQUENCEPRODUCT_ID = SP.MA_SEQUENCEPRODUCT_ID
+              WHERE MA_WRPHASEPRODUCT_ID = Cur_WRPUsed.MA_WRPhaseProduct_ID;
+              IF (v_UniqueAttConsum='Y') THEN 
+                AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '90', 'UniqueAttribute', v_UniqueAttConsum, null, null, null, null, null);
+                AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'Quantity', null, null, v_DoneQuantity*Cur_WRPUsed.MovementQty, null, null, null);
+              END IF;
+              M_GET_STOCK(v_AD_Pinstance_ID, FALSE);
+              -- Check result
+              SELECT result, errormsg
+                INTO v_pinstance_result, v_pinstance_msg
+              FROM ad_pinstance
+              WHERE ad_pinstance_id = v_ad_pinstance_id;
+              IF (v_pinstance_result = 0) THEN
+                -- Error on m_get_stock
+                RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
+              END IF;
+            END; -- End Call M_GET_STOCK
             OPEN CUR_STOCK(v_AD_Pinstance_ID);
             Cur_Stock_ISOPEN:=true;
             FETCH CUR_STOCK INTO v_storage;
