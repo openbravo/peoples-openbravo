@@ -56,7 +56,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
 
     okButton = isc.OBFormButton.create({
-      title: 'Done',
+      title: OB.I18N.getLabel('OBUIAPP_Done'),
       _buttonValue: 'DONE',
       click: actionClick
     });
