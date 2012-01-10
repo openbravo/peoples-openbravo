@@ -1158,10 +1158,11 @@ isc.OBToolbar.addProperties({
         this.hideShowRightMembers(false);
       }
       
-      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
       }
+
+      var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
 
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
         if(this.view.tabId===currentContext.tabId){
@@ -1184,7 +1185,7 @@ isc.OBToolbar.addProperties({
         allProperties = currentContext.getContextInfo(false, true, false, true);
         OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
       } else {
-        doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons, noneOrMultipleRecordsSelected, this);
+        doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1,this);
       }
     }
 
