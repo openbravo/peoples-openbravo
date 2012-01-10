@@ -177,7 +177,7 @@ isc.OBNoteLayout.addProperties({
         });
         noteSection.setNoteCount(noteSection.noteCount - 1);
       }
-    },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+    },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteNote')});
   },
 
   /**
