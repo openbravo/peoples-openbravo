@@ -671,12 +671,6 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (callback) {
             callback();
           }
-          
-          // update the information in the global class
-          // so that the settings are maintained when the window
-          // is re-opened
-          personalization = me.getStandardWindow().getClass().personalization;
-          personalization[me.tabId] = me.personalizationData;          
         });
   },
 
