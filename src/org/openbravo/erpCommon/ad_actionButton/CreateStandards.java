@@ -116,7 +116,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
         // error processing
         OBError myMessage = Utility.getProcessInstanceMessage(conn, vars,
             PInstanceProcessData.select(conn, pInstance.getId()));
-        throw new OBException("ERROR: " + myMessage.getMessage());
+        throw new OBException(myMessage.getMessage());
       }
     } finally {
       OBContext.restorePreviousMode();
