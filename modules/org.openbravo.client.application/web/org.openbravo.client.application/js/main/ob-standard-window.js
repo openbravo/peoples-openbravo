@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,9 +60,9 @@ isc.OBStandardWindow.addProperties({
     this.views = [];
 
     this.processLayout = isc.VStack.create({
-      height: 1,
-      width: 1,
-      overflow: 'visible',
+      height: '100%',
+      width: '100%',
+      overflow: 'auto',
       visibility: 'hidden'
     });
 
@@ -125,9 +125,7 @@ isc.OBStandardWindow.addProperties({
       if (isc[className]) {
         this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
         this.runningProcess = isc[className].create(isc.addProperties({}, params, {
-          parentWindow: this,
-          width: this.width,
-          height: this.height
+          parentWindow: this
         }));
 
         this.processLayout.addMember(this.runningProcess);
