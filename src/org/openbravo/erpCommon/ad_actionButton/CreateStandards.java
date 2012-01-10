@@ -48,6 +48,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallProcess;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class CreateStandards implements org.openbravo.scheduling.Process {
@@ -115,7 +116,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
       if (pInstance.getResult() == 0) {
         // error processing
         OBError myMessage = Utility.getProcessInstanceMessage(conn, vars,
-            PInstanceProcessData.select(conn, pInstance.getId()));
+            PInstanceProcessData.select(new DalConnectionProvider(), pInstance.getId()));
         throw new OBException(myMessage.getMessage());
       }
     } finally {
