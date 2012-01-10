@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.base.secureApp.VariablesSecureApp;
-
 public class EmailConfiguration_Port extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
@@ -31,10 +29,10 @@ public class EmailConfiguration_Port extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     String strSmtpConnectionSecurity = info.getStringParameter("inpsmtpconnectionsecurity", null);
 
-    info.addResult("inpsmtpport", getSuggestedPort(info.vars, strSmtpConnectionSecurity));
+    info.addResult("inpsmtpport", getSuggestedPort(strSmtpConnectionSecurity));
   }
 
-  private String getSuggestedPort(VariablesSecureApp vars, String strSmtpConnectionSecurity) {
+  private String getSuggestedPort(String strSmtpConnectionSecurity) {
     String recommendedPort = "";
     if (strSmtpConnectionSecurity.equals("N")) {
       recommendedPort = "25";
