@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1705,7 +1705,8 @@ isc.OBViewGrid.addProperties({
   },
   
   createNewRecordForEditing: function(rowNum){
-    // note: the id is dummy, will be replaced when the save succeeds 
+    // note: the id is dummy, will be replaced when the save succeeds, 
+    // it MUST start with _ to identify it is a temporary id 
     var record = {
       _new: true,
       id: '_' + new Date().getTime()
