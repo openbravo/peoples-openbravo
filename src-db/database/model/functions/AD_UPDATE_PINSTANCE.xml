@@ -17,7 +17,7 @@
         <default/>
       </parameter>
       <parameter name="p_docommit" type="VARCHAR" mode="in">
-        <default><![CDATA[TRUE]]></default>
+        <default><![CDATA[Y]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -45,7 +45,7 @@ BEGIN
     Result=p_Result, -- 1=success
     ErrorMsg=p_Message
   WHERE AD_PInstance_ID=p_PInstance_ID;
-  IF (p_doCommit) THEN
+  IF (p_doCommit = 'Y') THEN
     COMMIT;
   END IF;
 END AD_UPDATE_PINSTANCE

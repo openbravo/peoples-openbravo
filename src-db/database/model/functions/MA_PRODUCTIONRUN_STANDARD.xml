@@ -318,7 +318,7 @@
                 AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '90', 'UniqueAttribute', v_UniqueAttConsum, null, null, null, null, null);
                 AD_PINSTANCE_PARA_INSERT(v_AD_Pinstance_ID, '100', 'Quantity', null, null, v_DoneQuantity*Cur_WRPUsed.MovementQty, null, null, null);
               END IF;
-              M_GET_STOCK(v_AD_Pinstance_ID, FALSE);
+              M_GET_STOCK(v_AD_Pinstance_ID, 'N');
               -- Check result
               SELECT result, errormsg
                 INTO v_pinstance_result, v_pinstance_msg

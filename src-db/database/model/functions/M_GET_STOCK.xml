@@ -5,7 +5,7 @@
         <default/>
       </parameter>
       <parameter name="p_calledfromapp" type="VARCHAR" mode="in">
-        <default><![CDATA[TRUE]]></default>
+        <default><![CDATA[Y]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -272,7 +272,7 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr, p_calledfromapp);
-  IF (p_calledfromapp) THEN
+  IF (p_calledfromapp = 'Y') THEN
     RETURN;
   ELSE
     RAISE;
