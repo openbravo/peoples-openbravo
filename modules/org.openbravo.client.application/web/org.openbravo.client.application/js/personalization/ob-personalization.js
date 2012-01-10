@@ -180,7 +180,6 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
     if (dataField) {
       // will be corrected in a later loop
       delete dataField.isStatusBarField;
-      delete dataField.parentName;
       continue;
     }
 
@@ -233,7 +232,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
       for (j = 0; j < dataFields[i].childNames.length; j++) {
         // find is a smartclient extension
         record = dataFields.find('name', dataFields[i].childNames[j]);
-        if (record) {
+        if (record && !record.parentName) {
           record.parentName = dataFields[i].name;
         }
       }
