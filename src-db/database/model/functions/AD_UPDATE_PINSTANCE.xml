@@ -16,6 +16,9 @@
       <parameter name="p_message" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_docommit" type="VARCHAR" mode="in">
+        <default><![CDATA[TRUE]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -42,7 +45,9 @@ BEGIN
     Result=p_Result, -- 1=success
     ErrorMsg=p_Message
   WHERE AD_PInstance_ID=p_PInstance_ID;
-  COMMIT;
+  IF (p_doCommit) THEN
+    COMMIT;
+  END IF;
 END AD_UPDATE_PINSTANCE
 ]]></body>
     </function>
