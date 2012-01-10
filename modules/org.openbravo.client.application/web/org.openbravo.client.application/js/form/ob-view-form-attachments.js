@@ -374,7 +374,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachment')});
       }
     });
     hLayout.addMember(downloadAllButton);
@@ -403,7 +403,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachment')});
       };
     
       length = attachments.length;
