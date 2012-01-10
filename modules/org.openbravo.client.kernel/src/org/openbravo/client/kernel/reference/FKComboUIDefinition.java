@@ -47,6 +47,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     try {
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (!getSafeBoolean(field.isDisplayed()) && !getSafeBoolean(field.isShowInGridView())
+          && !getSafeBoolean(field.isShownInStatusBar())
           && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
         return value.toString();
       }

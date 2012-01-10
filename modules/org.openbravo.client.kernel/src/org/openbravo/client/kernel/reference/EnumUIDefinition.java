@@ -66,6 +66,7 @@ public class EnumUIDefinition extends UIDefinition {
     try {
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (!getSafeBoolean(field.isDisplayed()) && !getSafeBoolean(field.isShowInGridView())
+          && !getSafeBoolean(field.isShownInStatusBar())
           && field.getColumn().getDefaultValue() == null
           && !getSafeBoolean(field.getColumn().isMandatory())) {
         return value.toString();
