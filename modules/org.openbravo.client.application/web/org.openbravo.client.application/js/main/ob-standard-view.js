@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1485,7 +1485,7 @@ isc.OBStandardView.addProperties({
           }
         }
       };
-      isc.ask(msg, callback);
+      isc.ask(msg, callback, {title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord')});
     }
   },
   
@@ -1705,7 +1705,14 @@ isc.OBStandardView.addProperties({
         // if in edit mode then the grid always has the current record selected
         record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
       }
-      
+
+      // New records in grid have a dummy id (see OBViewGrid.createNewRecordForEditing)
+      // whereas new form records don't have it. This temporary id starts with _. Removing this
+      // id so it behaves in the same way in form and grid
+      if (record[OB.Constants.ID] && record[OB.Constants.ID].startsWith('_')) {
+        record[OB.Constants.ID] = undefined;
+      }
+
       length = properties.length;
       for (i = 0; i < length; i++) {
         propertyObj = properties[i];

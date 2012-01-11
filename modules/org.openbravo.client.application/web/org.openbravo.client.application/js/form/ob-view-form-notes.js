@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -177,7 +177,7 @@ isc.OBNoteLayout.addProperties({
         });
         noteSection.setNoteCount(noteSection.noteCount - 1);
       }
-    },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+    },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteNote')});
   },
 
   /**

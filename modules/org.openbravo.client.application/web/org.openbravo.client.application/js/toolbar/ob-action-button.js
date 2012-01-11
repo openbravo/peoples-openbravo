@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,13 +48,18 @@ isc.OBToolbarActionButton.addProperties({
       parameters: [rowNum]
     };
 
-    theView.standardWindow.doActionAfterAutoSave(actionObject);
+    if (this.autosave) {
+      theView.standardWindow.doActionAfterAutoSave(actionObject);
+    } else {
+      OB.Utilities.callAction(actionObject);
+    }
   },
 
   doAction: function (rowNum) {
     var theView = this.contextView,
         me = this,
         standardWindow = this.view.standardWindow,
+        autosaveButton = this.autosave,
         param, allProperties, sessionProperties, callbackFunction, popupParams;
 
     if (rowNum && !theView.viewGrid.getSelectedRecord()) {
@@ -99,7 +104,10 @@ isc.OBToolbarActionButton.addProperties({
       allProperties.Command = this.command;
       callbackFunction = function(){
         var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
-        popup.activeViewWhenClosed = theView;
+        if (autosaveButton) {
+          // Back to header if autosave button
+          popup.activeViewWhenClosed = theView;
+        }
       };
     } else {
       popupParams = {
@@ -142,18 +150,29 @@ isc.OBToolbarActionButton.addProperties({
           currentView.refresh(null, false, true);
         };
 
-    if (currentView.parentView) {
-      currentView.parentView.setChildsToRefresh();
+    if (this.autosave) {
+      if (currentView.parentView) {
+        currentView.parentView.setChildsToRefresh();
+      } else {
+        currentView.setChildsToRefresh();
+      }
+
+      if (currentView.viewGrid.getSelectedRecord()) {
+        // There is a record selected, refresh it and its parent
+        currentView.refreshCurrentRecord(afterRefresh);
+      } else {
+        // No record selected, refresh parent
+        currentView.refreshParentRecord(afterRefresh);
+      }
     } else {
-      currentView.setChildsToRefresh();
-    }
-        
-    if (currentView.viewGrid.getSelectedRecord()) {
-      // There is a record selected, refresh it and its parent
-      currentView.refreshCurrentRecord(afterRefresh);
-    } else {
-      // No record selected, refresh parent
-      currentView.refreshParentRecord(afterRefresh);
+      // If the button is not autosave, do not refresh but get message.
+      contextView.getTabMessage();
+      currentView.toolBar.refreshCustomButtons();
+      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+        // Executing an action defined in parent tab, current tab is maximized,
+        // let's set half for each in order to see the message
+        contextView.setHalfSplit();
+      }
     }
 
     OB.ActionButton.executingProcess = null;
@@ -180,9 +199,12 @@ isc.OBToolbarActionButton.addProperties({
     }
   },
   
-  updateState: function(record, hide, context) {
-    var currentValues = record || this.contextView.getCurrentValues() || {};
-    if (hide || !record) {
+  updateState: function(record, hide, context, keepNonAutosave) {
+    var currentValues = record || this.contextView.getCurrentValues() || {},
+        // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
+        hideButton = hide && (!keepNonAutosave || this.autosave);
+
+    if (hideButton || !record) {
       this.hide();
       return;
     }
