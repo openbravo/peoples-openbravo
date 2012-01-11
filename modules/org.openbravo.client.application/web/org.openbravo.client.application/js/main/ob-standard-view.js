@@ -1393,11 +1393,13 @@ isc.OBStandardView.addProperties({
         return;
       }
     
-      var msg, view = this, deleteCount = this.viewGrid.getSelection().length;
+      var msg, dialogTitle, view = this, deleteCount = this.viewGrid.getSelection().length;
       if (deleteCount === 1) {
         msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
+        dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord');
       } else {
         msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
+        dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecords');
       }
     
       var callback = function(ok){
@@ -1485,7 +1487,7 @@ isc.OBStandardView.addProperties({
           }
         }
       };
-      isc.ask(msg, callback, {title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord')});
+      isc.ask(msg, callback, {title: dialogTitle});
     }
   },
   
