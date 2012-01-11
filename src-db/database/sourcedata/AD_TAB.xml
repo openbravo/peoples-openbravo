@@ -720,7 +720,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--133-->  <NAME><![CDATA[Unit of Measure]]></NAME>
 <!--133-->  <DESCRIPTION><![CDATA[Create a non monetary unit of measure.]]></DESCRIPTION>
-<!--133-->  <HELP><![CDATA[Products of any type are accounted for and managed in non-monetary units of measure.]]></HELP>
+<!--133-->  <HELP><![CDATA[Products of any type are managed in non-monetary units of measure.]]></HELP>
 <!--133-->  <AD_TABLE_ID><![CDATA[146]]></AD_TABLE_ID>
 <!--133-->  <AD_WINDOW_ID><![CDATA[120]]></AD_WINDOW_ID>
 <!--133-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1619,7 +1619,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--191-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--191-->  <NAME><![CDATA[Price List]]></NAME>
 <!--191-->  <DESCRIPTION><![CDATA[Create price lists to be used in application transactions.]]></DESCRIPTION>
-<!--191-->  <HELP><![CDATA[Price List window allows to create purchase and sales price lists to be assigned to the business for its use in purchase and sales transactions such as orders and invoices.]]></HELP>
+<!--191-->  <HELP><![CDATA[Price List window allows to create purchase and sales price lists to be assigned to the business partners for its use in purchase and sales transactions such as orders and invoices.]]></HELP>
 <!--191-->  <AD_TABLE_ID><![CDATA[255]]></AD_TABLE_ID>
 <!--191-->  <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
 <!--191-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1674,7 +1674,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--193-->  <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--193-->  <DESCRIPTION><![CDATA[Create invoice schedules to be used for business partners.]]></DESCRIPTION>
-<!--193-->  <HELP><![CDATA[The company can agree and therefore define specific schedules for issuing invoices, schedules which will then need to be linked to the corresponding customers.]]></HELP>
+<!--193-->  <HELP><![CDATA[An organization can agree and therefore define specific schedules for issuing invoices, schedules which will then need to be linked to the corresponding customers.]]></HELP>
 <!--193-->  <AD_TABLE_ID><![CDATA[257]]></AD_TABLE_ID>
 <!--193-->  <AD_WINDOW_ID><![CDATA[147]]></AD_WINDOW_ID>
 <!--193-->  <SEQNO><![CDATA[10]]></SEQNO>

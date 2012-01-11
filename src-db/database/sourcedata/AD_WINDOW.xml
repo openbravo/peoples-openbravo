@@ -296,7 +296,7 @@
 <!--120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--120-->  <NAME><![CDATA[Unit of Measure]]></NAME>
 <!--120-->  <DESCRIPTION><![CDATA[Create units of measure and conversions rates to be applied to products.]]></DESCRIPTION>
-<!--120-->  <HELP><![CDATA[A unit of measure is a standard unit or system of units which allow a product quantity is accounted for and expressed.]]></HELP>
+<!--120-->  <HELP><![CDATA[A unit of measure is a standard unit or combination of units to be used alongside the quantity of a product.]]></HELP>
 <!--120-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--120-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--120-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -535,7 +535,7 @@
 <!--140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--140-->  <NAME><![CDATA[Product]]></NAME>
 <!--140-->  <DESCRIPTION><![CDATA[Create products and manage the related costing, purchasing, and pricing setup.]]></DESCRIPTION>
-<!--140-->  <HELP><![CDATA[Product master data window is the place where you can easily organize and centralize the key data of the items of any type you might manage as part of the company processes and/or activities.]]></HELP>
+<!--140-->  <HELP><![CDATA[Product master data window is the place where you can easily organize and centralize the key data of the items of any type you might manage as part of the organization processes and/or activities.]]></HELP>
 <!--140-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--140-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--140-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -620,7 +620,7 @@
 <!--146-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--146-->  <NAME><![CDATA[Price List]]></NAME>
 <!--146-->  <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></DESCRIPTION>
-<!--146-->  <HELP><![CDATA[A price list is a listing of prices for different products or services. <br>It is possible to create as many price list and price list versions as required depending on the company trade policy.
+<!--146-->  <HELP><![CDATA[A price list is a listing of prices for different products or services. <br>It is possible to create as many price list and price list versions as required depending on the organization needs.
 ]]></HELP>
 <!--146-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--146-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
@@ -638,7 +638,7 @@
 <!--147-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--147-->  <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--147-->  <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners.]]></DESCRIPTION>
-<!--147-->  <HELP><![CDATA[Invoice schedule window allows to define and configure how often and by when the company can issue invoices to be sent to customers.]]></HELP>
+<!--147-->  <HELP><![CDATA[Invoice schedule window allows to define and configure how often and by when an organization can issue invoices to be sent to customers.]]></HELP>
 <!--147-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--147-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--147-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1130,7 +1130,7 @@
 <!--228-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--228-->  <NAME><![CDATA[Matched Purchase Orders]]></NAME>
 <!--228-->  <DESCRIPTION><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></DESCRIPTION>
-<!--228-->  <HELP><![CDATA[This window tracks the link between purchase order, goods receipt and invoice lines.]]></HELP>
+<!--228-->  <HELP><![CDATA[This window informs about the matching between each purchase order, goods receipt and invoice line.]]></HELP>
 <!--228-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--228-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--228-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1147,7 +1147,7 @@
 <!--233-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--233-->  <NAME><![CDATA[Price List Schema]]></NAME>
 <!--233-->  <DESCRIPTION><![CDATA[Define a Price List Schema to be assigned to business partners.]]></DESCRIPTION>
-<!--233-->  <HELP><![CDATA[A price list schema is a set of commercial rules which allows to define price lists and different versions of a price list.]]></HELP>
+<!--233-->  <HELP><![CDATA[A price list schema is a template used to automatically populate a new version of a price list ]]></HELP>
 <!--233-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--233-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--233-->  <PROCESSING><![CDATA[N]]></PROCESSING>
