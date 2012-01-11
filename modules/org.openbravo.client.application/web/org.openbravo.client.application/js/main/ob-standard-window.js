@@ -213,6 +213,11 @@ isc.OBStandardWindow.addProperties({
   setPersonalization: function(personalization) {
     var i, defaultView, persDefaultValue, views, length, me = this;
     
+    // only personalize if there is a professional license
+    if (!OB.Utilities.checkProfessionalLicense(null, true)) {
+      return;
+    }
+    
     // cache the original view so that it can be restored
     if (!this.getClass().originalView) {
       this.getClass().originalView = {};
@@ -255,6 +260,17 @@ isc.OBStandardWindow.addProperties({
       // maybe do this in a separate thread
       if (defaultView) {
         OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
+      } else {
+        // check the default form and grid viewstates
+        length = this.views.length;
+        for (i = 0; i < length; i++) {
+          if (personalization.forms && personalization.forms[this.views[i].tabId]) {
+            OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
+          }
+          if (this.viewState && this.viewState[this.views[i].tabId]) {
+            this.views[i].viewGrid.setViewState(this.viewState[this.views[i].tabId]);
+          }
+        }
       }
       
       this.getClass().personalization.views.sort(function(v1, v2) {
@@ -273,12 +289,8 @@ isc.OBStandardWindow.addProperties({
     var views, length, i, personalization = this.getClass().personalization,    
       defaultView,
       persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
-
-    if (!personalization) {
-      return null;
-    }
     
-    if (personalization.views) {
+    if (personalization && personalization.views) {
       views = personalization.views;
       length = views.length;
       if (persDefaultValue) {
@@ -302,6 +314,10 @@ isc.OBStandardWindow.addProperties({
     if (defaultView && defaultView.viewDefinition && 
         defaultView.viewDefinition[tabId]) {
       return defaultView.viewDefinition[tabId].grid;
+    }
+    
+    if (this.viewState && this.viewState[tabId]) {
+      return this.viewState[tabId];
     }
     
     return null;
@@ -783,10 +799,11 @@ isc.OBStandardWindow.addProperties({
   storeViewState: function(){
     var result = {}, i, length = this.views.length;
     for (i = 0; i < length; i++) {
-      if(this.views[i].viewGrid){
-        result[this.views[i].tabId]=this.views[i].viewGrid.getViewState();
+      if ( this.views[i].viewGrid ) {
+        result[this.views[i].tabId] = this.views[i].viewGrid.getViewState();
       }
     }
+    this.viewState = result;
     OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
   }
 });
