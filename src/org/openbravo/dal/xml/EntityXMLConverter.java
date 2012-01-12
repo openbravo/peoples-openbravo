@@ -437,7 +437,8 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : childObjects) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            final DataSetTable dst = dataSetTablesByEntity.get(obObject.getEntity());
+            final DataSetTable dst = (obObject != null && obObject.getEntity() != null) ? dataSetTablesByEntity
+                .get(obObject.getEntity()) : null;
             if ((excludeAuditInfo != null && excludeAuditInfo)
                 || (dst != null && dst.isExcludeAuditInfo())) {
               export((BaseOBObject) o, false, true);
