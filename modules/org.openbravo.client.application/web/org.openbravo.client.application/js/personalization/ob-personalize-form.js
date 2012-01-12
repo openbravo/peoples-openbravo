@@ -597,7 +597,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   save: function(callback) {
     var params, me = this, newDataFields, 
       formPers = this.form.view.getFormPersonalization();
-
+    
     // if there is a personalization id then use that
     // this ensures that a specific record will be updated
     // on the server
