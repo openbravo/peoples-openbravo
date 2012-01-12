@@ -82,7 +82,7 @@
 <!--108-->  <AD_MENU_ID><![CDATA[108]]></AD_MENU_ID>
 <!--108-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--108-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--108-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--108-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--108-->  <NAME><![CDATA[Location]]></NAME>
 <!--108-->  <DESCRIPTION><![CDATA[Define addresses or service points of your organizations.]]></DESCRIPTION>
 <!--108-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -693,7 +693,7 @@
 <!--170-->  <AD_MENU_ID><![CDATA[170]]></AD_MENU_ID>
 <!--170-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--170-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--170-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--170-->  <NAME><![CDATA[Tree and Node Image]]></NAME>
 <!--170-->  <DESCRIPTION><![CDATA[Defines the descriptions and images that will be used when a tree is displayed.]]></DESCRIPTION>
 <!--170-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -831,7 +831,7 @@
 <!--193-->  <AD_MENU_ID><![CDATA[193]]></AD_MENU_ID>
 <!--193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--193-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--193-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--193-->  <NAME><![CDATA[Generate Shipments]]></NAME>
 <!--193-->  <DESCRIPTION><![CDATA[Generate shipment]]></DESCRIPTION>
 <!--193-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -1334,7 +1334,7 @@
 <!--296-->  <AD_MENU_ID><![CDATA[296]]></AD_MENU_ID>
 <!--296-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--296-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--296-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--296-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--296-->  <NAME><![CDATA[Application Image]]></NAME>
 <!--296-->  <DESCRIPTION><![CDATA[Create and edit images that later will be used in other windows.]]></DESCRIPTION>
 <!--296-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -2074,7 +2074,7 @@
 <!--800023-->  <AD_MENU_ID><![CDATA[800023]]></AD_MENU_ID>
 <!--800023-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800023-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800023-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800023-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800023-->  <NAME><![CDATA[Total Product Template Report]]></NAME>
 <!--800023-->  <DESCRIPTION><![CDATA[Report Total Product Template]]></DESCRIPTION>
 <!--800023-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -2488,7 +2488,7 @@
 <!--800085-->  <AD_MENU_ID><![CDATA[800085]]></AD_MENU_ID>
 <!--800085-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800085-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800085-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800085-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800085-->  <NAME><![CDATA[Sales Order Returns Dimensional Report]]></NAME>
 <!--800085-->  <DESCRIPTION><![CDATA[Report refund sales order dimensional analyses]]></DESCRIPTION>
 <!--800085-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -3557,7 +3557,7 @@
 <!--800231-->  <AD_MENU_ID><![CDATA[800231]]></AD_MENU_ID>
 <!--800231-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800231-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800231-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800231-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800231-->  <NAME><![CDATA[Sales Report by Partner and Product]]></NAME>
 <!--800231-->  <DESCRIPTION><![CDATA[Report Sales by partner and Product]]></DESCRIPTION>
 <!--800231-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -4033,7 +4033,7 @@
 <!--800288-->  <AD_MENU_ID><![CDATA[800288]]></AD_MENU_ID>
 <!--800288-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800288-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800288-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800288-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800288-->  <NAME><![CDATA[Sales Order Open Item]]></NAME>
 <!--800288-->  <DESCRIPTION><![CDATA[SalesOrderOpenItem]]></DESCRIPTION>
 <!--800288-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
