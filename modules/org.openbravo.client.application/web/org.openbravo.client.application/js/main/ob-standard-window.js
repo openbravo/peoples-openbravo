@@ -260,7 +260,7 @@ isc.OBStandardWindow.addProperties({
       // maybe do this in a separate thread
       if (defaultView) {
         OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
-      } else if (!this.getClass().personalization.views) {
+      } else if (!this.getClass().personalization.views || this.getClass().personalization.views.length === 0) {
         // only apply the default form/grid if there are no views
         // otherwise you get strange interference
         // check the default form and grid viewstates
@@ -318,7 +318,7 @@ isc.OBStandardWindow.addProperties({
       return defaultView.viewDefinition[tabId].grid;
     }
         
-    if ((!personalization || !personalization.views) && this.viewState && this.viewState[tabId]) {
+    if ((!personalization || !personalization.views || personalization.views.length === 0) && this.viewState && this.viewState[tabId]) {
       return this.viewState[tabId];
     }
     
