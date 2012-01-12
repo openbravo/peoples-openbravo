@@ -374,7 +374,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachment')});
+        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachments')});
       }
     });
     hLayout.addMember(downloadAllButton);
