@@ -46,13 +46,9 @@ public class Location extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String strOrgId = null;
     if (vars.commandIn("DEFAULT")) {
       vars.getRequestGlobalVariable("inpIDValue", "Location.inpcLocationId");
-      vars.getRequestGlobalVariable("inpadOrgId", "Location.inpadOrgId");
-      try {
-        strOrgId = vars.getRequiredStringParameter("inpadOrgId");
-      } catch (Exception ex) {
+      if ("".equals(vars.getRequestGlobalVariable("inpadOrgId", "Location.inpadOrgId"))) {
         throw new ServletException("@SaveFirstTheRecord@");
       }
       // String strcLocationId =
