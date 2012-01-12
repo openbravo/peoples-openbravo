@@ -27,7 +27,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 
 /**
- * Compresses a JavaScript source using Closure Compiler http://code.google.com/p/closure-compiler/
+ * Compresses a JavaScript source using JSMin <br>
+ * http://code.google.com/p/jsmin-ant-task/
  * 
  * @author mtaal
  * @author iperdomo

@@ -22,7 +22,7 @@
 // tab and field combination. Multiple callouts can be registered
 // for one field.
 OB.OnChangeRegistry = {
-    registry: [],
+    registry: {},
     
     register: function(tabId, field, callback, id) {
       var tabEntry, fieldEntry, i, overwritten = false;

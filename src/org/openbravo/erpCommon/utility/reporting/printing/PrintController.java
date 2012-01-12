@@ -747,7 +747,8 @@ public class PrintController extends HttpSecureAppServlet {
 
         EmailData.insertEmail(conn, this, newEmailId, clientId, organizationId, userId,
             EmailType.OUTGOING.getStringValue(), from, to, cc, bcc, dateOfEmail, subject, body,
-            bPartnerId);
+            bPartnerId, ToolsData.getTableId(this, report.getDocumentType().getTableName()),
+            documentData.documentId);
 
         releaseCommitConnection(conn);
       } catch (final NoConnectionAvailableException exception) {
