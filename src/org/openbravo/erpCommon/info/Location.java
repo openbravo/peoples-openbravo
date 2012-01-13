@@ -48,13 +48,14 @@ public class Location extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       vars.getRequestGlobalVariable("inpIDValue", "Location.inpcLocationId");
-      if ("".equals(vars.getRequestGlobalVariable("inpadOrgId", "Location.inpadOrgId"))) {
-        throw new ServletException("@SaveFirstTheRecord@");
-      }
       // String strcLocationId =
       // vars.getRequestGlobalVariable("inpNameValue",
       // "Location.inpcLocationId");
-      vars.getRequestGlobalVariable("inpwindowId", "Location.inpwindowId");
+      String windowId = vars.getRequestGlobalVariable("WindowID", "Location.inpwindowId");
+      String adOrgId = vars.getGlobalVariable("inpadOrgId", windowId + "|AD_Org_ID", "");
+      if (!"".equals(adOrgId)) {
+        vars.setSessionValue("Location.inpadOrgId", adOrgId);
+      }
       printPageFS(response, vars);
     } else if (vars.commandIn("KEY")) {
       String strcLocationId = vars.getStringParameter("inpIDValue");
@@ -103,6 +104,9 @@ public class Location extends HttpSecureAppServlet {
     data.cLocationId = vars.getStringParameter("inpCLocationId");
     data.adClientId = vars.getClient();
     data.adOrgId = vars.getStringParameter("inpadOrgId");
+    if ("".equals(data.adOrgId)) {
+      data.adOrgId = vars.getOrg();
+    }
     data.createdby = vars.getUser();
     data.updatedby = vars.getUser();
     data.cCountryId = vars.getStringParameter("inpcCountryId");
