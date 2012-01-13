@@ -1314,7 +1314,7 @@
 <!--257-->  <AD_WINDOW_ID><![CDATA[257]]></AD_WINDOW_ID>
 <!--257-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--257-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--257-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--257-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--257-->  <NAME><![CDATA[Lot]]></NAME>
 <!--257-->  <DESCRIPTION><![CDATA[Create and edit lots for your products.]]></DESCRIPTION>
 <!--257-->  <HELP><![CDATA[Create and edit lots for your products.]]></HELP>
