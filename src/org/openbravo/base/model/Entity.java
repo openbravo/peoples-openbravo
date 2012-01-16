@@ -149,8 +149,9 @@ public class Entity {
       if (p.isParent()) {
         parentProperties.add(p);
       }
-      if (p.isOrderByProperty())
+      if (p.isOrderByProperty()) {
         orderByProperties.add(p);
+      }
     }
 
     Collections.sort(identifierProperties, new Comparator<Property>() {
