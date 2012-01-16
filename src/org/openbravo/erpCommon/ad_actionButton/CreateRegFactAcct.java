@@ -202,9 +202,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
             revenue[j].totalamtcr, revenue[j].totalamtdr, revenue[j].totalamtcr,
             Fact_Acct_Group_ID, Integer.toString((i + j + 3) * 10), revenue[j].acctdescription,
             revenue[j].acctvalue, revenue[j].cBpartnerId, revenue[j].recordId2,
-            revenue[j].mProductId, revenue[j].aAssetId, strRegEntry, revenue[i].cTaxId,
-            revenue[i].cProjectId, revenue[i].cActivityId, revenue[i].user1Id, revenue[i].user2Id,
-            revenue[i].cCampaignId, revenue[i].cSalesregionId);
+            revenue[j].mProductId, revenue[j].aAssetId, strRegEntry, revenue[j].cTaxId,
+            revenue[j].cProjectId, revenue[j].cActivityId, revenue[j].user1Id, revenue[j].user2Id,
+            revenue[j].cCampaignId, revenue[j].cSalesregionId);
     }
     CreateRegFactAcctData[] account = CreateRegFactAcctData.incomesummary(this, strAcctSchema);
     if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).signum() > 0) {
