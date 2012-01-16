@@ -39,6 +39,11 @@ v_bpartner_id c_order.c_bpartner_id%TYPE;
 v_docSubType c_doctype.docsubtypeso%TYPE;
 v_PaymentPriority VARCHAR(32);
 
+v_Outstandingamt NUMBER;
+v_Paidamt NUMBER;
+v_Amount NUMBER;
+v_FinPaymentScheduleId VARCHAR2(32);
+
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
 
@@ -199,19 +204,49 @@ BEGIN
     END;
   ELSIF (p_docaction = 'CL') THEN
     DECLARE
-      v_difference NUMBER;
+      v_OldGrandTotal NUMBER;
     BEGIN
-      SELECT sum(amount) - v_grandtotal INTO v_difference
+      SELECT sum(amount) INTO v_OldGrandTotal
       FROM fin_payment_schedule
       WHERE c_order_id = p_record_id;
-      IF (v_difference <> 0) THEN
-        UPDATE fin_payment_schedule
-        SET amount = amount - v_difference,
-        outstandingamt = outstandingamt - v_difference,
-        updated = now(),
-        updatedby = p_user
-        WHERE c_order_id = p_record_id
-          AND outstandingamt > v_difference;
+      --IF (v_difference <> 0) THEN
+      --  UPDATE fin_payment_schedule
+      --  SET amount = amount - v_difference,
+      --  outstandingamt = outstandingamt - v_difference,
+      --  updated = TO_DATE(NOW()),
+      --  updatedby = p_user
+      --  WHERE c_order_id = p_record_id
+      --    AND outstandingamt > v_difference;
+      --END IF;
+      --This part of code Update the tables fin_payment_schedule and fin_payment_scheduledetail when one order is closed and the pyment is not
+      --the same of the expected amount when the order is closed
+      SELECT co.grandtotal,fps.outstandingamt,fps.paidamt,fps.amount,fps.fin_payment_schedule_id
+      INTO v_GrandTotal,v_Outstandingamt,v_Paidamt,v_Amount,v_FinPaymentScheduleId
+      FROM c_order co LEFT JOIN c_orderline col ON co.c_order_id=col.c_order_id
+      LEFT JOIN fin_payment_schedule fps ON fps.c_order_id = col.c_order_id
+      WHERE co.C_Order_ID=p_record_id
+      GROUP BY co.c_order_id,co.grandtotal,fps.outstandingamt,fps.paidamt,fps.amount,fps.fin_payment_schedule_id;
+
+      IF (v_OldGrandTotal <> v_GrandTotal) THEN
+         IF (v_Paidamt < v_OldGrandTotal) THEN
+            UPDATE fin_payment_scheduledetail set amount = v_GrandTotal - v_Paidamt where fin_payment_detail_id IS NULL
+            AND fin_payment_schedule_order = v_FinPaymentScheduleId;
+         ELSE
+            INSERT INTO fin_payment_scheduledetail (
+            fin_payment_scheduledetail_id,ad_client_id,ad_org_id,created,createdby,updated,updatedby,
+            fin_payment_detail_id,fin_payment_schedule_order,fin_payment_schedule_invoice,amount,
+            isactive,writeoffamt,iscanceled,c_bpartner_id, c_activity_id,m_product_id,c_campaign_id,
+            c_project_id,c_salesregion_id
+            )
+            VALUES(
+            get_uuid(),v_Client_ID,v_Org_ID,now(),p_user,now(),p_user,
+            null,v_FinPaymentScheduleId,null,v_GrandTotal-v_OldGrandTotal,
+            'Y',0 ,'N',v_bpartner_id, null,null,null,
+            null,null
+            );
+        END IF;
+        UPDATE fin_payment_schedule SET amount = v_GrandTotal,outstandingamt = v_GrandTotal-v_Paidamt
+        WHERE fin_payment_schedule_id = v_FinPaymentScheduleId;
       END IF;
     END;
   END IF;
