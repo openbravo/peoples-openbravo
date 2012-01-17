@@ -362,7 +362,12 @@
         AND NOT EXISTS (SELECT 1 FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o 
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID
-        AND ic.term = 'N') 
+        AND ic.term = 'N')
+        AND (SELECT CASE o.INVOICERULE WHEN 'O' THEN SUM(ol.qtyordered) = SUM(ol.qtydelivered) ELSE true END
+        FROM C_ORDER o , C_ORDERLINE ol
+        WHERE o.C_ORDER_ID = s.C_ORDER_ID
+        AND o.C_ORDER_ID = ol.C_ORDER_ID
+        GROUP BY o.INVOICERULE)
         ORDER BY NAME
       ]]>
     </Sql>
