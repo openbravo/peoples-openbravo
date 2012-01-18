@@ -560,8 +560,8 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--127-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--127-->  <NAME><![CDATA[Conversion Rates]]></NAME>
-<!--127-->  <DESCRIPTION><![CDATA[Create conversion rates for a selected currency.]]></DESCRIPTION>
-<!--127-->  <HELP><![CDATA[Create conversion rates for a selected currency.]]></HELP>
+<!--127-->  <DESCRIPTION><![CDATA[Conversion rates tab list the available conversion rates for a given currency.]]></DESCRIPTION>
+<!--127-->  <HELP><![CDATA[Conversion rates tab list the available conversion rates for a given currency.]]></HELP>
 <!--127-->  <AD_TABLE_ID><![CDATA[140]]></AD_TABLE_ID>
 <!--127-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--127-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -773,7 +773,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--135-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--135-->  <NAME><![CDATA[Country]]></NAME>
 <!--135-->  <DESCRIPTION><![CDATA[Define countries to be used in the application.]]></DESCRIPTION>
-<!--135-->  <HELP><![CDATA[Define countries to be used in the application.]]></HELP>
+<!--135-->  <HELP><![CDATA[This window allows to visualize and/or to create and maintain the countries and the regions to be used in daily business activities.]]></HELP>
 <!--135-->  <AD_TABLE_ID><![CDATA[170]]></AD_TABLE_ID>
 <!--135-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--135-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -799,7 +799,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--136-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--136-->  <NAME><![CDATA[Region]]></NAME>
 <!--136-->  <DESCRIPTION><![CDATA[Define regions to be used in the application.]]></DESCRIPTION>
-<!--136-->  <HELP><![CDATA[Define regions to be used in the application. In order to add regions please select the 'Has Regions' field in the Country tab.]]></HELP>
+<!--136-->  <HELP><![CDATA[Regions tab allows to visualize and/or to create and maintain the regions of any type of a country.]]></HELP>
 <!--136-->  <AD_TABLE_ID><![CDATA[164]]></AD_TABLE_ID>
 <!--136-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--136-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -905,8 +905,8 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--151-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--151-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--151-->  <NAME><![CDATA[Currency]]></NAME>
-<!--151-->  <DESCRIPTION><![CDATA[Define currencies to be used in the application.]]></DESCRIPTION>
-<!--151-->  <HELP><![CDATA[Define currencies to be used in the application.]]></HELP>
+<!--151-->  <DESCRIPTION><![CDATA[Currency window allows to create and configure the currencies to use in monetary transaction.]]></DESCRIPTION>
+<!--151-->  <HELP><![CDATA[Currency window allows to visualize or to create and configure the currencies to use in monetary transaction.visualize]]></HELP>
 <!--151-->  <AD_TABLE_ID><![CDATA[141]]></AD_TABLE_ID>
 <!--151-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--151-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5733,7 +5733,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--549-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--549-->  <NAME><![CDATA[Translation]]></NAME>
 <!--549-->  <DESCRIPTION><![CDATA[Edit your country, region, and city translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--549-->  <HELP><![CDATA[Edit your country, region, and city translations for the predefined languages of your choice.]]></HELP>
+<!--549-->  <HELP><![CDATA[Countries and regions can be translated to any language.]]></HELP>
 <!--549-->  <AD_TABLE_ID><![CDATA[616]]></AD_TABLE_ID>
 <!--549-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--549-->  <SEQNO><![CDATA[15]]></SEQNO>
@@ -5903,8 +5903,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--557-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--557-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--557-->  <NAME><![CDATA[Translation]]></NAME>
-<!--557-->  <DESCRIPTION><![CDATA[Edit your currency translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--557-->  <HELP><![CDATA[Edit your currency translations for the predefined languages of your choice.]]></HELP>
+<!--557-->  <DESCRIPTION><![CDATA[Currencies can be translated to any language if required.]]></DESCRIPTION>
+<!--557-->  <HELP><![CDATA[Currencies can be translated to any language if required.]]></HELP>
 <!--557-->  <AD_TABLE_ID><![CDATA[617]]></AD_TABLE_ID>
 <!--557-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--557-->  <SEQNO><![CDATA[30]]></SEQNO>

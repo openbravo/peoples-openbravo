@@ -563,7 +563,7 @@
 <!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--155-->  <NAME><![CDATA[General Setup]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[General Setup is the Openbravo application area where basics settings such as languages, currencies, organizations can be created and configured.]]></DESCRIPTION>
+<!--155-->  <DESCRIPTION><![CDATA[General Setup is the Openbravo application area where basics settings such as currencies, countries, clients, organizations or users can be created and configured.]]></DESCRIPTION>
 <!--155-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--155--></AD_MENU>

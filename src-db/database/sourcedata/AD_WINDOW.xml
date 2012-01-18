@@ -99,7 +99,7 @@
 <!--105-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--105-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--105-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
+<!--105-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--105--></AD_WINDOW>
 
 <!--106--><AD_WINDOW>
@@ -228,7 +228,7 @@
 <!--115-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--115-->  <NAME><![CDATA[Currency]]></NAME>
 <!--115-->  <DESCRIPTION><![CDATA[Define currencies and conversion rates to be used in the application.]]></DESCRIPTION>
-<!--115-->  <HELP><![CDATA[Define currencies and conversion rates to be used in the application.]]></HELP>
+<!--115-->  <HELP><![CDATA[Currencies and conversion rates are basic settings to share within Openbravo.]]></HELP>
 <!--115-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--115-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--115-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -245,7 +245,7 @@
 <!--116-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--116-->  <NAME><![CDATA[Conversion Rates]]></NAME>
 <!--116-->  <DESCRIPTION><![CDATA[Define conversion rates to be used for currencies defined in the application.]]></DESCRIPTION>
-<!--116-->  <HELP><![CDATA[Define conversion rates to be used for currencies defined in the application.]]></HELP>
+<!--116-->  <HELP><![CDATA[Conversion rate also called currency exchange rate is the rate at which one currency may be converted into another one.]]></HELP>
 <!--116-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--116-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--116-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -330,7 +330,7 @@
 <!--122-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--122-->  <NAME><![CDATA[Country Region and City]]></NAME>
 <!--122-->  <DESCRIPTION><![CDATA[Define countries with regions and cities to be used in the application.]]></DESCRIPTION>
-<!--122-->  <HELP><![CDATA[Define countries with regions and cities to be used in the application.]]></HELP>
+<!--122-->  <HELP><![CDATA[Countries and regions are basic settings to share within Openbravo.]]></HELP>
 <!--122-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--122-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--122-->  <PROCESSING><![CDATA[N]]></PROCESSING>
