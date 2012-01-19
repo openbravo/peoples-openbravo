@@ -184,7 +184,7 @@ isc.OBNoteLayout.addProperties({
    * Returns Notes data source.
    */
   getNoteDataSource : function() {
-    return isc.DataSource.getDataSource(this.noteDSId);
+    return this.noteListGrid.dataSource;
   },
 
   /**
@@ -192,9 +192,6 @@ isc.OBNoteLayout.addProperties({
    */
   initWidget : function() {
     this.Super('initWidget', arguments);
-
-    // register note DS
-    OB.Datasource.get(this.noteDSId);
 
     var hLayout = isc.HLayout.create({
       width : '50%',
@@ -260,7 +257,6 @@ isc.OBNoteLayout.addProperties({
       alternateRecordStyles : false,
       autoFetchData : true,
       baseStyle : 'OBNoteListGridCell',
-      dataSource : this.noteDSId,
       fixedRecordHeights : false,
       filterOnKeypress : true,
       headerHeight : 0,
@@ -272,6 +268,10 @@ isc.OBNoteLayout.addProperties({
       showEmptyMessage : false,
       styleName : 'OBNoteListGrid',
       wrapCells : true,
+      
+      setDataSource: function (dataSource, fields) {
+        this.Super('setDataSource', [dataSource, this.fields]);
+      },
 
       fetchData : function(criteria, callback, requestProperties) {
         if (this.layout.getForm() && this.layout.getForm().noteSection && 
@@ -363,7 +363,9 @@ isc.OBNoteLayout.addProperties({
     });
     
     this.addMember(this.noteListGrid);
-
+    
+    // register note DS
+    OB.Datasource.get(this.noteDSId, this.noteListGrid, null, true);
   },
 
   /**
