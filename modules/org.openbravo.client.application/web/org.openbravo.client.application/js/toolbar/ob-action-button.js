@@ -102,7 +102,7 @@ isc.OBToolbarActionButton.addProperties({
     // ad_process definition handling
     if (this.modal) {
       allProperties.Command = this.command;
-      callbackFunction = function(){
+      callbackFunction = function () {
         var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
         if (autosaveButton) {
           // Back to header if autosave button
@@ -135,7 +135,10 @@ isc.OBToolbarActionButton.addProperties({
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh = function(){
+        afterRefresh = function (doRefresh) {
+          var undef,
+              refresh = (doRefresh === undef || doRefresh);
+
           // Refresh context view
           contextView.getTabMessage();
           currentView.toolBar.refreshCustomButtons();
@@ -147,7 +150,9 @@ isc.OBToolbarActionButton.addProperties({
           }
 
           // Refresh in order to show possible new records
-          currentView.refresh(null, false, true);
+          if (refresh) {
+            currentView.refresh(null, false, true);
+          }
         };
 
     if (this.autosave) {
@@ -166,13 +171,7 @@ isc.OBToolbarActionButton.addProperties({
       }
     } else {
       // If the button is not autosave, do not refresh but get message.
-      contextView.getTabMessage();
-      currentView.toolBar.refreshCustomButtons();
-      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
-        // Executing an action defined in parent tab, current tab is maximized,
-        // let's set half for each in order to see the message
-        contextView.setHalfSplit();
-      }
+      afterRefresh(false);
     }
 
     OB.ActionButton.executingProcess = null;

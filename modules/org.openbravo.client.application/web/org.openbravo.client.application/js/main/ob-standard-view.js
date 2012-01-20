@@ -1711,7 +1711,7 @@ isc.OBStandardView.addProperties({
       // New records in grid have a dummy id (see OBViewGrid.createNewRecordForEditing)
       // whereas new form records don't have it. This temporary id starts with _. Removing this
       // id so it behaves in the same way in form and grid
-      if (record[OB.Constants.ID] && record[OB.Constants.ID].startsWith('_')) {
+      if (record[OB.Constants.ID] && record[OB.Constants.ID].indexOf('_') === 0) { // startsWith a SC function, is slower than indexOf
         record[OB.Constants.ID] = undefined;
       }
 
