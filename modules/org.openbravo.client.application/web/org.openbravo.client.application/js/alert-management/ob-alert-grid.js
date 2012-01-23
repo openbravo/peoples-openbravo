@@ -119,7 +119,7 @@ isc.OBAlertGrid.addProperties({
     
     OB.Datasource.get('ADAlert', this, null, true);
     
-    if (OB.AlertManager && OB.AlertManager.lastData.data){
+    if (OB.AlertManager && OB.AlertManager.lastData && isc.is.Array(OB.AlertManager.lastData.data)){
         this.dataPageSize = OB.AlertManager.lastData.data.length;
     }
 
