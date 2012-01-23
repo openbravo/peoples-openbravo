@@ -405,6 +405,9 @@ public class PaymentReportDao {
       boolean isAmtInLimit = false;
 
       for (int i = 0; i < data.length; i++) {
+
+        // If the payment schedule detail has a payment detail, then, the information is taken from
+        // the payment. If not, the information is taken from the invoice (the else).
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
           BusinessPartner bp = getDocumentBusinessPartner(FIN_PaymentScheduleDetail[i]);
           if (bp == null) {
@@ -509,6 +512,16 @@ public class PaymentReportDao {
           }
         }
 
+        /*
+         * - If the payment schedule detail has an invoice, the line is filled normally.
+         * 
+         * - If it has a payment it does not have an invoice or it should have entered the first if,
+         * thus, it is a credit payment. If it is a credit payment, it is checked whether it pays
+         * one or multiple invoices. If it is one, the information of that invoice is provided. If
+         * not, it is filled with '**'.
+         * 
+         * - Otherwise, it is filled empty.
+         */
         if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
           fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i],
               FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule(), false);
@@ -516,9 +529,9 @@ public class PaymentReportDao {
           java.util.List<Invoice> invoices = getInvoicesUsingCredit(FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment());
           if (invoices.size() == 1) {
-            FIN_PaymentSchedule ps = getInvoicePaymentSchedule(FIN_PaymentScheduleDetail[i]
+            java.util.List<FIN_PaymentSchedule> ps = getInvoicePaymentSchedules(FIN_PaymentScheduleDetail[i]
                 .getPaymentDetails().getFinPayment());
-            fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i], ps, true);
+            fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i], ps.get(0), true);
           } else {
             // project
             FieldProviderFactory.setField(data[i], "PROJECT", "");
@@ -1062,6 +1075,26 @@ public class PaymentReportDao {
     }
   }
 
+  public java.util.List<FIN_PaymentSchedule> getInvoicePaymentSchedules(FIN_Payment credit_payment) {
+    final StringBuilder sql = new StringBuilder();
+    sql.append(" select ps ");
+    sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
+    sql.append(" FIN_Payment_Schedule ps ");
+    sql.append(" where pc.payment = pdv.payment ");
+    sql.append(" and ps.id = pdv.invoicePaymentPlan ");
+    sql.append(" and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ");
+
+    try {
+      OBContext.setAdminMode(true);
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(sql.toString());
+      return query.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Deprecated
   public FIN_PaymentSchedule getInvoicePaymentSchedule(FIN_Payment credit_payment) {
     final StringBuilder sql = new StringBuilder();
     sql.append(" select ps ");
