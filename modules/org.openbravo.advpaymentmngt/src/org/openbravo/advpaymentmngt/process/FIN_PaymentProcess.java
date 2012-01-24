@@ -41,7 +41,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRateDoc;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -734,9 +733,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final BigDecimal usedAmount = newPayment.getUsedCredit();
       final BusinessPartner bp = newPayment.getBusinessPartner();
       final boolean isReceipt = newPayment.isReceipt();
-      final Organization OrgId = newPayment.getOrganization();
 
-      List<FIN_Payment> creditPayments = dao.getCustomerPaymentsWithCredit(bp, isReceipt, OrgId);
+      List<FIN_Payment> creditPayments = dao.getCustomerPaymentsWithCredit(bp, isReceipt);
       BigDecimal pendingToAllocateAmount = usedAmount;
       for (FIN_Payment creditPayment : creditPayments) {
         BigDecimal availableAmount = creditPayment.getGeneratedCredit().subtract(

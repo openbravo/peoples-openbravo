@@ -298,16 +298,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("orgId", strOrgId);
     xmlDocument.setParameter("invoiceId", strInvoiceId);
     xmlDocument.setParameter("isReceipt", (isReceipt ? "Y" : "N"));
-
-    try {
-      OBContext.setAdminMode(true);
-      xmlDocument.setParameter(
-          "credit",
-          dao.getCustomerCredit(bp, isReceipt,
-              OBDal.getInstance().get(Organization.class, strOrgId)).toString());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    xmlDocument.setParameter("credit", dao.getCustomerCredit(bp, isReceipt).toString());
 
     // get DocumentNo
     final List<Object> parameters = new ArrayList<Object>();
@@ -348,10 +339,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
-    if (account != null) {
-      if (!financialAccounts.contains(account)) {
-        strFinancialAccountId = financialAccounts.get(0).getId();
-      }
+    if (account != null){
+     if (!financialAccounts.contains(account)){
+    	 strFinancialAccountId = financialAccounts.get(0).getId();
+     }
     }
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);

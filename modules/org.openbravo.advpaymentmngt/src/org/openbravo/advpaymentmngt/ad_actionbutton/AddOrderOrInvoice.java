@@ -292,10 +292,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     if (payment.getBusinessPartner() != null) {
       xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
       xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
-      xmlDocument.setParameter(
-          "credit",
-          dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt(),
-              payment.getOrganization()).toString());
+      xmlDocument.setParameter("credit",
+          dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt()).toString());
       xmlDocument.setParameter("customerBalance",
           payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
               .getCreditUsed().toString() : BigDecimal.ZERO.toString());
