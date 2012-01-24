@@ -128,8 +128,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     } else if (vars.commandIn("LOADCREDIT")) {
       final String strBusinessPartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
       final boolean isReceipt = "Y".equals(vars.getRequiredStringParameter("isReceipt"));
-      BigDecimal customerCredit = dao.getCustomerCredit(
-          OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId), isReceipt);
+      final String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
+      BigDecimal customerCredit;
+      try {
+        OBContext.setAdminMode(true);
+        customerCredit = dao.getCustomerCredit(
+            OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId), isReceipt, OBDal
+                .getInstance().get(Organization.class, strOrgId));
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       response.setContentType("text/html; charset=UTF-8");
       response.setHeader("Cache-Control", "no-cache");
       PrintWriter out = response.getWriter();
