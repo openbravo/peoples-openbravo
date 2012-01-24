@@ -136,7 +136,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      * Provides the coder friendly methods to retrieve certain environment, session and servlet call
      * variables.
      */
-    public final VariablesSecureApp vars;
+    public VariablesSecureApp vars;
 
 
     private CalloutInfo(VariablesSecureApp vars, String classname, ServletConfig config) {
