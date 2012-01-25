@@ -26,23 +26,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -56,15 +43,17 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
-import org.openbravo.erpCommon.utility.poc.PocException;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
 import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
@@ -74,6 +63,9 @@ import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 import com.lowagie.text.Document;
@@ -643,9 +635,8 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<Object> object,
-      PocData documentData, String senderAddess, HashMap<String, Boolean> checks)
+      PocData documentData, String senderAddress, HashMap<String, Boolean> checks)
       throws IOException, ServletException {
-    final String documentId = report.getDocumentId();
     final String attachmentFileLocation = report.getTargetLocation();
 
     final String ourReference = report.getOurReference();
@@ -715,113 +706,112 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@cus_nam@", contactName);
     emailBody = emailBody.replaceAll("@sal_nam@", salesrepName);
 
+    OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
+        EmailServerConfiguration.class);
+    mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
+        .getInstance().get(Client.class, vars.getClient())));
+    final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
+
+    if (mailConfigList.size() == 0) {
+      throw new ServletException("No Poc configuration found for this client.");
+    }
+
+    // TODO: There should be a mechanism to select the desired Email server configuration, until
+    // then, first search for the current organization (and use the first returned one), then for
+    // organization '0' (and use the first returned one) and then for any other of the organization
+    // tree where current organization belongs to (and use the first returned one).
+    EmailServerConfiguration mailConfig = null;
+
+    for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
+      if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
+        mailConfig = currentOrgConfig;
+        break;
+      }
+    }
+    if (mailConfig == null) {
+      for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
+        if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
+          mailConfig = zeroOrgConfig;
+          break;
+        }
+      }
+    }
+    if (mailConfig == null) {
+      mailConfig = mailConfigList.get(0);
+    }
+
+    final String host = mailConfig.getSmtpServer();
+    Boolean auth = true;
+    if ("N".equals(mailConfig.isSMTPAuthentification())) {
+      auth = false;
+    }
+    final String username = mailConfig.getSmtpServerAccount();
+    final String password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(),
+        false);
+    final String connSecurity = mailConfig.getSmtpConnectionSecurity();
+    final int port = mailConfig.getSmtpPort().intValue();
+    final String recipientTO = contactEmail;
+    final String recipientCC = null;
+    String recipientBCC = null;
+    if (userEmail != null && userEmail.length() > 0) {
+      recipientBCC = userEmail;
+    }
+    final String replyTo = salesrepEmail;
+    final String contentType = "text/plain; charset=utf-8";
+
+    List<File> attachments = new ArrayList<File>();
+    attachments.add(new File(attachmentFileLocation));
+
+    if (object != null) {
+      final Vector<Object> vector = (Vector<Object>) object;
+      for (int i = 0; i < vector.size(); i++) {
+        final AttachContent objContent = (AttachContent) vector.get(i);
+        final File file = prepareFile(objContent);
+        attachments.add(file);
+      }
+    }
+
     try {
+      EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
+          recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
+          attachments, null, null);
+    } catch (Exception exception) {
+      log4j.error(exception);
+      final String exceptionClass = exception.getClass().toString().replace("class ", "");
+      String exceptionString = "Problems while sending the email" + exception;
+      exceptionString = exceptionString.replace(exceptionClass, "");
+      throw new ServletException(exceptionString);
+    }
 
-      final Session session = EmailManager
-          .newMailSession(this, vars.getClient(), report.getOrgId());
+    // Store the email in the database
+    Connection conn = null;
+    try {
+      conn = this.getTransactionConnection();
 
-      final Message message = new MimeMessage(session);
+      // First store the email message
+      final String newEmailId = SequenceIdData.getUUID();
+      if (log4j.isDebugEnabled())
+        log4j.debug("New email id: " + newEmailId);
 
-      Address[] address = new InternetAddress[1];
-      address[0] = new InternetAddress(salesrepEmail);
-      message.setReplyTo(address);
-      message.setFrom(new InternetAddress(senderAddess));
-      message.addRecipient(Message.RecipientType.TO, new InternetAddress(contactEmail));
+      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), vars.getOrg(),
+          vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
+          recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
+          report.getBPartnerId(),
+          ToolsData.getTableId(this, report.getDocumentType().getTableName()),
+          documentData.documentId);
 
-      // message.addRecipient(Message.RecipientType.BCC, new InternetAddress(salesrepEmail));
-
-      if (userEmail != null && userEmail.length() > 0)
-        message.addRecipient(Message.RecipientType.BCC, new InternetAddress(userEmail));
-
-      message.setSubject(emailSubject);
-
-      // Content consists of 2 parts, the message body and the attachment
-      // We therefor use a multipart message
-      final Multipart multipart = new MimeMultipart();
-
-      // Create the message part
-      MimeBodyPart messageBodyPart = new MimeBodyPart();
-      messageBodyPart.setText(emailBody);
-      multipart.addBodyPart(messageBodyPart);
-
-      // Create the attachment part
-      messageBodyPart = new MimeBodyPart();
-      final DataSource source = new FileDataSource(attachmentFileLocation);
-      messageBodyPart.setDataHandler(new DataHandler(source));
-      messageBodyPart.setFileName(attachmentFileLocation.substring(attachmentFileLocation
-          .lastIndexOf("/") + 1));
-      multipart.addBodyPart(messageBodyPart);
-
-      // Add aditional attached documents
-      if (object != null) {
-        final Vector<Object> vector = (Vector<Object>) object;
-        for (int i = 0; i < vector.size(); i++) {
-          final AttachContent content = (AttachContent) vector.get(i);
-          final File file = prepareFile(content);
-          messageBodyPart = new MimeBodyPart();
-          messageBodyPart.attachFile(file);
-          multipart.addBodyPart(messageBodyPart);
-        }
-      }
-
-      message.setContent(multipart);
-
-      // Send the email
-      Transport.send(message);
-
-      final String clientId = vars.getClient();
-      final String organizationId = vars.getOrg();
-      final String userId = vars.getUser();
-      final String from = salesrepEmail;
-      final String to = contactEmail;
-      final String cc = "";
-      String bcc = salesrepEmail;
-      if (userEmail != null && userEmail.length() > 0)
-        bcc = bcc + "; " + userEmail;
-      final String subject = emailSubject;
-      final String body = emailBody;
-      final String dateOfEmail = Utility.formatDate(new Date(), "yyyyMMddHHmmss");
-      final String bPartnerId = report.getBPartnerId();
-
-      // Store the email in the database
-      Connection conn = null;
+      releaseCommitConnection(conn);
+    } catch (final NoConnectionAvailableException exception) {
+      log4j.error(exception);
+      throw new ServletException(exception);
+    } catch (final SQLException exception) {
+      log4j.error(exception);
       try {
-        conn = this.getTransactionConnection();
-
-        // First store the email message
-        final String newEmailId = SequenceIdData.getUUID();
-        if (log4j.isDebugEnabled())
-          log4j.debug("New email id: " + newEmailId);
-
-        EmailData.insertEmail(conn, this, newEmailId, clientId, organizationId, userId,
-            EmailType.OUTGOING.getStringValue(), from, to, cc, bcc, dateOfEmail, subject, body,
-            bPartnerId, ToolsData.getTableId(this, report.getDocumentType().getTableName()),
-            documentData.documentId);
-
-        releaseCommitConnection(conn);
-      } catch (final NoConnectionAvailableException exception) {
-        log4j.error(exception);
-        throw new ServletException(exception);
-      } catch (final SQLException exception) {
-        log4j.error(exception);
-        try {
-          releaseRollbackConnection(conn);
-        } catch (final Exception ignored) {
-        }
-
-        throw new ServletException(exception);
+        releaseRollbackConnection(conn);
+      } catch (final Exception ignored) {
       }
 
-    } catch (final PocException exception) {
-      log4j.error(exception);
       throw new ServletException(exception);
-    } catch (final AddressException exception) {
-      log4j.error(exception);
-      throw new ServletException(exception);
-    } catch (final MessagingException exception) {
-      log4j.error(exception);
-      throw new ServletException("problems with the SMTP server configuration: "
-          + exception.getMessage(), exception);
     }
   }
 
