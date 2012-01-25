@@ -36,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -1641,10 +1642,7 @@ public abstract class AcctServer {
               .getInstance()
               .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                   as.getC_AcctSchema_ID()).getIdentifier());
-      setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-          OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-          STATUS_InvalidAccount, "error", parameters);
+      setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
       throw new IllegalStateException();
     }
     return new Account(conn, strValidCombination);
@@ -1690,10 +1688,7 @@ public abstract class AcctServer {
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1734,10 +1729,7 @@ public abstract class AcctServer {
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1783,10 +1775,7 @@ public abstract class AcctServer {
         }
         parameters.put("AccountingSchema", financialAccountAccounting.getAccountingSchema()
             .getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1872,8 +1861,16 @@ public abstract class AcctServer {
    */
   public void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
       String strMessageType) {
-    setMessageResult(conn, vars, strStatus, strMessageType, null);
-    return;
+    setMessageResult(conn, strStatus, strMessageType, null);
+  }
+
+  /*
+   * Sets OBError message for the given status
+   */
+  public void setMessageResult(ConnectionProvider conn, String _strStatus, String strMessageType,
+      Map<String, String> _parameters) {
+    VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
+    setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);
   }
 
   /*
@@ -1938,11 +1935,12 @@ public abstract class AcctServer {
           Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
   }
 
-  public Map<String, String> getInvalidAccountParameters() {
+  public Map<String, String> getInvalidAccountParameters(String strAccount, String strEntity,
+      String strAccountingSchema) {
     Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("Account", "");
-    parameters.put("Entity", "");
-    parameters.put("AccountingSchema", "");
+    parameters.put("Account", strAccount);
+    parameters.put("Entity", strEntity);
+    parameters.put("AccountingSchema", strAccountingSchema);
     return parameters;
   }
 

@@ -1190,10 +1190,7 @@ public class DocFINReconciliation extends AcctServer {
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1261,10 +1258,7 @@ public class DocFINReconciliation extends AcctServer {
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1307,20 +1301,14 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
-        Map<String, String> parameters = getInvalidAccountParameters();
-        parameters.put("Account", bIsReceipt ? "@ClearedPaymentAccount@"
-            : "@ClearedPaymentAccountOUT@");
-        parameters.put("Entity", finAccount.getIdentifier());
-        parameters.put(
-            "AccountingSchema",
+        Map<String, String> parameters = getInvalidAccountParameters(
+            (bIsReceipt ? "@ClearedPaymentAccount@" : "@ClearedPaymentAccountOUT@"),
+            finAccount.getIdentifier(),
             OBDal
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1356,19 +1344,14 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
-        Map<String, String> parameters = getInvalidAccountParameters();
-        parameters.put("Account", bIsReceipt ? "ReceivePayment" : "MakePayment");
-        parameters.put("Entity", finAccount.getIdentifier());
-        parameters.put(
-            "AccountingSchema",
+        Map<String, String> parameters = getInvalidAccountParameters(
+            (bIsReceipt ? "ReceivePayment" : "MakePayment"),
+            finAccount.getIdentifier(),
             OBDal
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1422,20 +1405,18 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
-        Map<String, String> parameters = getInvalidAccountParameters();
-        parameters.put("Account", payment.isReceipt() ? "@UponReceiptUse@" : "@UponPaymentUse@");
-        parameters.put("Entity", payment.getAccount().getIdentifier() + " - "
-            + payment.getPaymentMethod().getIdentifier());
-        parameters.put(
-            "AccountingSchema",
+        Map<String, String> parameters = getInvalidAccountParameters(
+            OBDal
+                .getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                    as.getC_AcctSchema_ID()).getIdentifier(),
+            payment.getAccount().getIdentifier() + " - "
+                + payment.getPaymentMethod().getIdentifier(),
             OBDal
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1489,21 +1470,15 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
-        Map<String, String> parameters = getInvalidAccountParameters();
-        parameters.put("Account", payment.isReceipt() ? "@INUponClearingUse@"
-            : "@OUTUponClearingUse@");
-        parameters.put("Entity", payment.getAccount().getIdentifier() + " - "
-            + payment.getPaymentMethod().getIdentifier());
-        parameters.put(
-            "AccountingSchema",
+        Map<String, String> parameters = getInvalidAccountParameters(
+            payment.isReceipt() ? "@INUponClearingUse@" : "@OUTUponClearingUse@",
+            payment.getAccount().getIdentifier() + " - "
+                + payment.getPaymentMethod().getIdentifier(),
             OBDal
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
@@ -1572,23 +1547,15 @@ public class DocFINReconciliation extends AcctServer {
       e.printStackTrace();
     } finally {
       if (acct == null) {
-        Map<String, String> parameters = getInvalidAccountParameters();
-        parameters.put("Account", AcctType.equals(ACCTTYPE_WriteOff) ? "@WriteOffAccount@"
-            : "@WriteOff_RevenueAccount@");
         BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
-        if (bp != null) {
-          parameters.put("Entity", bp.getIdentifier());
-        }
-        parameters.put(
-            "AccountingSchema",
+        Map<String, String> parameters = getInvalidAccountParameters(
+            AcctType.equals(ACCTTYPE_WriteOff) ? "@WriteOffAccount@" : "@WriteOff_RevenueAccount@",
+            bp != null ? bp.getIdentifier() : "",
             OBDal
                 .getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.getC_AcctSchema_ID()).getIdentifier());
-        setMessageResult(conn, new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()),
-            STATUS_InvalidAccount, "error", parameters);
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
     }
