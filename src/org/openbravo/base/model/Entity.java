@@ -222,7 +222,7 @@ public class Entity {
       }
       if (duplicatedIdentifier != null) {
         identifierProperties.remove(duplicatedIdentifier);
-        log.debug("Removed duplicated idenfitier property " + property);
+        log.debug("Removed duplicated identifier property " + property);
       }
       getIdentifierProperties().add(property);
     }
