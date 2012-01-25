@@ -852,7 +852,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--145-->  <NAME><![CDATA[Client]]></NAME>
 <!--145-->  <DESCRIPTION><![CDATA[Add client's detailed information.]]></DESCRIPTION>
-<!--145-->  <HELP><![CDATA[Add client's detailed information.]]></HELP>
+<!--145-->  <HELP><![CDATA[Client window allows to view and maintain the clients created by running the Initiial Client Setup process.]]></HELP>
 <!--145-->  <AD_TABLE_ID><![CDATA[112]]></AD_TABLE_ID>
 <!--145-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--145-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -906,7 +906,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--151-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--151-->  <NAME><![CDATA[Currency]]></NAME>
 <!--151-->  <DESCRIPTION><![CDATA[Currency window allows to create and configure the currencies to use in monetary transaction.]]></DESCRIPTION>
-<!--151-->  <HELP><![CDATA[Currency window allows to visualize or to create and configure the currencies to use in monetary transaction.visualize]]></HELP>
+<!--151-->  <HELP><![CDATA[Currency window allows to visualize or to create and configure the currencies to use in monetary transactions.]]></HELP>
 <!--151-->  <AD_TABLE_ID><![CDATA[141]]></AD_TABLE_ID>
 <!--151-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--151-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -984,7 +984,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--156-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--156-->  <NAME><![CDATA[Preference]]></NAME>
 <!--156-->  <DESCRIPTION><![CDATA[Create a preference.  If this preference is in conflict with any other default in the application, this preference will take priority.]]></DESCRIPTION>
-<!--156-->  <HELP><![CDATA[Create a preference.  If this preference is in conflict with any other default in the application, this preference will take priority.]]></HELP>
+<!--156-->  <HELP><![CDATA[Preference window allow to define and maintain session values which can be visible and therefore applied to different levels such as Client, Organization, User, Role and Window.]]></HELP>
 <!--156-->  <AD_TABLE_ID><![CDATA[195]]></AD_TABLE_ID>
 <!--156-->  <AD_WINDOW_ID><![CDATA[129]]></AD_WINDOW_ID>
 <!--156-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1171,7 +1171,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--169-->  <NAME><![CDATA[Information]]></NAME>
 <!--169-->  <DESCRIPTION><![CDATA[Add client's advanced settings to be used in the application.]]></DESCRIPTION>
-<!--169-->  <HELP><![CDATA[Add client's advanced settings to be used in the application.]]></HELP>
+<!--169-->  <HELP><![CDATA[Information tab allows to add, edit and maintain client generic information such as default units of measure and images.]]></HELP>
 <!--169-->  <AD_TABLE_ID><![CDATA[227]]></AD_TABLE_ID>
 <!--169-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--169-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1700,7 +1700,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--198-->  <NAME><![CDATA[Conversion Rate]]></NAME>
 <!--198-->  <DESCRIPTION><![CDATA[Define conversion rates to be used for multi currency application transactions.]]></DESCRIPTION>
-<!--198-->  <HELP><![CDATA[Define conversion rates to be used for multi currency application transactions.]]></HELP>
+<!--198-->  <HELP><![CDATA[Conversion rates window allow to create the rates to be used for multi currency transactions.]]></HELP>
 <!--198-->  <AD_TABLE_ID><![CDATA[140]]></AD_TABLE_ID>
 <!--198-->  <AD_WINDOW_ID><![CDATA[116]]></AD_WINDOW_ID>
 <!--198-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -10807,7 +10807,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800265-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800265-->  <NAME><![CDATA[Alert Rule]]></NAME>
 <!--800265-->  <DESCRIPTION><![CDATA[Define the alert rule in the SQL format.]]></DESCRIPTION>
-<!--800265-->  <HELP><![CDATA[Define the alert rule in the SQL format.]]></HELP>
+<!--800265-->  <HELP><![CDATA[Alert window allows the definition of alert rules as SQL queries which define the event to be monitored and how it will be monitored.]]></HELP>
 <!--800265-->  <AD_TABLE_ID><![CDATA[593]]></AD_TABLE_ID>
 <!--800265-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--800265-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -10834,7 +10834,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800266-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800266-->  <NAME><![CDATA[Translation]]></NAME>
 <!--800266-->  <DESCRIPTION><![CDATA[Edit your alert rule translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--800266-->  <HELP><![CDATA[Edit your alert rule translations for the predefined languages of your choice.]]></HELP>
+<!--800266-->  <HELP><![CDATA[Alerts can be translated to any language required.]]></HELP>
 <!--800266-->  <AD_TABLE_ID><![CDATA[800227]]></AD_TABLE_ID>
 <!--800266-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--800266-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -10861,7 +10861,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800267-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800267-->  <NAME><![CDATA[Alert Recipient]]></NAME>
 <!--800267-->  <DESCRIPTION><![CDATA[Add recipients for a selected alert.]]></DESCRIPTION>
-<!--800267-->  <HELP><![CDATA[Add recipients for a selected alert.]]></HELP>
+<!--800267-->  <HELP><![CDATA[Alerts can be allocated to specific users or contact or to all of them.]]></HELP>
 <!--800267-->  <AD_TABLE_ID><![CDATA[592]]></AD_TABLE_ID>
 <!--800267-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--800267-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -10888,7 +10888,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800268-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800268-->  <NAME><![CDATA[Alert]]></NAME>
 <!--800268-->  <DESCRIPTION><![CDATA[Create alerts that will inform you about any critical or important situation in the application.]]></DESCRIPTION>
-<!--800268-->  <HELP><![CDATA[Create alerts that will inform you about any critical or important situation in the application.]]></HELP>
+<!--800268-->  <HELP><![CDATA[Alert tab list the events happening which generate the corresponding alert.]]></HELP>
 <!--800268-->  <AD_TABLE_ID><![CDATA[594]]></AD_TABLE_ID>
 <!--800268-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--800268-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -10915,6 +10915,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1000500000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500000-->  <NAME><![CDATA[Email Configuration]]></NAME>
 <!--1000500000-->  <DESCRIPTION><![CDATA[Configuration tab for the Point of Contact features]]></DESCRIPTION>
+<!--1000500000-->  <HELP><![CDATA[Documents such as orders or invoices can be sent out by e-mail. Email configuration tab allows to configure the email server, account and password, variables which require to be properly setup prior sending documents by email. ]]></HELP>
 <!--1000500000-->  <AD_TABLE_ID><![CDATA[1000500000]]></AD_TABLE_ID>
 <!--1000500000-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--1000500000-->  <SEQNO><![CDATA[30]]></SEQNO>

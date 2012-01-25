@@ -160,7 +160,7 @@
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--109-->  <NAME><![CDATA[Client]]></NAME>
 <!--109-->  <DESCRIPTION><![CDATA[Define client characteristics, additional information, and defaults.]]></DESCRIPTION>
-<!--109-->  <HELP><![CDATA[Define client characteristics, additional information, and defaults.]]></HELP>
+<!--109-->  <HELP><![CDATA[A Client can be a "Company" or an "Entity" of any type executing on a given business activity in an independent  way. Client/s are at the highest level of the enterprise structure and could have "Sub-divisions" or "Organizations" at a lower level.]]></HELP>
 <!--109-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--109-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--109-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -381,7 +381,7 @@
 <!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--129-->  <NAME><![CDATA[Preference]]></NAME>
 <!--129-->  <DESCRIPTION><![CDATA[Create and edit extremely restrictive values for a specified user, window, or for the entire application.]]></DESCRIPTION>
-<!--129-->  <HELP><![CDATA[Create and edit extremely restrictive values for a specified user, window, or for the entire application.]]></HELP>
+<!--129-->  <HELP><![CDATA[A preference is a type of session value which can either be an attribute or a property.]]></HELP>
 <!--129-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--129-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--129-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1437,7 +1437,7 @@
 <!--276-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--276-->  <NAME><![CDATA[Alert]]></NAME>
 <!--276-->  <DESCRIPTION><![CDATA[Create and edit alerts that will inform you about any critical or important situation in the application.]]></DESCRIPTION>
-<!--276-->  <HELP><![CDATA[Create and edit alerts that will inform you about any critical or important situation in the application.]]></HELP>
+<!--276-->  <HELP><![CDATA[Alerts are notifications which inform about events happening whenever an alert rule has been properly defined to monitor those events.]]></HELP>
 <!--276-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--276-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--276-->  <PROCESSING><![CDATA[N]]></PROCESSING>

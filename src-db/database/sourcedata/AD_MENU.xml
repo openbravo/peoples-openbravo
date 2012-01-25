@@ -574,7 +574,7 @@
 <!--156-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--156-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--156-->  <NAME><![CDATA[Client]]></NAME>
-<!--156-->  <DESCRIPTION><![CDATA[Open a folder where you can create and edit clients, roles, and users.]]></DESCRIPTION>
+<!--156-->  <DESCRIPTION><![CDATA[Client folder collects client configuration as well as the role of the client to be assigned to those Openbravo users do not linked to a Google account.]]></DESCRIPTION>
 <!--156-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--156--></AD_MENU>
@@ -628,7 +628,7 @@
 <!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <NAME><![CDATA[Application]]></NAME>
-<!--161-->  <DESCRIPTION><![CDATA[Open a folder where you can define information related to menu, address, language.]]></DESCRIPTION>
+<!--161-->  <DESCRIPTION><![CDATA[Application folder gathers multi-data settings, attributes values or specific properties settings at different levels as well as alerts configuration. ]]></DESCRIPTION>
 <!--161-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--161--></AD_MENU>

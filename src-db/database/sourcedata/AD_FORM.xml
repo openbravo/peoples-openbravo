@@ -177,6 +177,7 @@
 <!--1003100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1003100000-->  <NAME><![CDATA[Session Preferences]]></NAME>
 <!--1003100000-->  <DESCRIPTION><![CDATA[View session information and set certain system settings.]]></DESCRIPTION>
+<!--1003100000-->  <HELP><![CDATA[Session preferences allow showing or hiding accounting tabs or translation tabs for a given user, role, client and organization.]]></HELP>
 <!--1003100000-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--1003100000-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ShowSessionPreferences]]></CLASSNAME>
 <!--1003100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
