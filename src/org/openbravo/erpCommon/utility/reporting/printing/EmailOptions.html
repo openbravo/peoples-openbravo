@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,8 +135,35 @@
     }
     object.style.display = '';
   }
-	
-  </script>
+
+  function templateChanged() {
+    var callback = function (paramXMLParticular, XMLHttpRequestObj) {
+        var o, fileName;
+        if (getReadyStateHandler(XMLHttpRequestObj)) {
+          try {
+            if (XMLHttpRequestObj.responseText) {
+              strText = XMLHttpRequestObj.responseText;
+            }
+          } catch (e) {}
+          o = eval('('+strText+')');
+          if (!o.error) {
+            document.getElementById('emailSubject').value = o.subject;
+            document.getElementById('emailBody').innerHTML = o.body;
+
+            if (o.filename){
+              fileName = document.getElementById('fileDocName');
+              fileName.removeChild(fileName.childNodes[0]);
+              fileName.appendChild(document.createTextNode(o.filename));
+            }
+          }
+        }
+        return true;
+      },
+    frm = document.frmMain;
+
+    return submitXmlHttpRequest(callback, frm, 'UPDATE_TEMPLATE', 'PrintOptions.html', false);
+  }
+</script>
 
 </head>
 
@@ -219,7 +246,7 @@
 
 					<tr id="salesRep">
 						<td style="width: 1%; text-align: right;">
-							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">From</span>
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Reply-to</span>
 						</td>						
 						<td id="salesrepEmailArea" colspan="2">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
@@ -269,7 +296,7 @@
 					<tr id="discardSelect">
  						<td class="TitleCell"><span class="LabelText">Template to use</span></td>
 						<td colspan="2">
-	    					<select style="width: 55%;" name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
+	    					<select style="width: 55%;" name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="templateChanged();return true;">
 	                    	<div id="reportEmail"></div>
 	        			</select>
 						</td>

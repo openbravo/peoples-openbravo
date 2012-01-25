@@ -288,11 +288,6 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced)
       throws SAXException {
-    export(obObject, isAddedBecauseReferenced, null);
-  }
-
-  protected void export(BaseOBObject obObject, boolean isAddedBecauseReferenced,
-      Boolean excludeAuditInfo) throws SAXException {
     final String entityName = DalUtil.getEntityName(obObject);
 
     final AttributesImpl entityAttrs = new AttributesImpl();
@@ -332,10 +327,7 @@ public class EntityXMLConverter implements OBNotSingleton {
       exportableProperties = DataSetService.getInstance().getExportableProperties(obObject, dst,
           dst.getDataSetColumnList(), optionExportTransientInfo);
     } else {
-      exportableProperties = new ArrayList<Property>(obObject.getEntity().getProperties());
-      if (excludeAuditInfo != null && excludeAuditInfo) {
-        DataSetService.getInstance().removeAuditInfo(exportableProperties);
-      }
+      exportableProperties = obObject.getEntity().getProperties();
     }
 
     // export each property
@@ -437,14 +429,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : childObjects) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null) ? dataSetTablesByEntity
-                .get(obObject.getEntity()) : null;
-            if ((excludeAuditInfo != null && excludeAuditInfo)
-                || (dst != null && dst.isExcludeAuditInfo())) {
-              export((BaseOBObject) o, false, true);
-            } else {
-              export((BaseOBObject) o, false);
-            }
+            export((BaseOBObject) o, false);
           } else {
             // add the child as a tag, the child entityname is
             // used as the tagname

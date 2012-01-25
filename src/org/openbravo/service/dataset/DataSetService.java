@@ -454,20 +454,16 @@ public class DataSetService implements OBSingleton {
 
     // Remove the auditinfo
     if (dataSetTable.isExcludeAuditInfo()) {
-      removeAuditInfo(exportables);
+      final List<Property> toRemove = new ArrayList<Property>();
+      for (final Property p : exportables) {
+        if (p.isAuditInfo()) {
+          toRemove.add(p);
+        }
+      }
+      exportables.removeAll(toRemove);
     }
 
     return exportables;
-  }
-
-  public void removeAuditInfo(List<Property> properties) {
-    final List<Property> toRemove = new ArrayList<Property>();
-    for (final Property p : properties) {
-      if (p.isAuditInfo()) {
-        toRemove.add(p);
-      }
-    }
-    properties.removeAll(toRemove);
   }
 
   // compares the content of a list by converting the id to a hex
