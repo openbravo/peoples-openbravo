@@ -33,19 +33,6 @@ isc.setAutoDraw(false);
 
 isc.DataSource.serializeTimeAsDatetime=true;
 
-isc.ListGrid.addProperties({
-  // overridden to prevent too aggressive viewstate change notifications
-  // Override handleSelectionChanged() to fire our viewStateChanged method
-  handleSelectionChanged : function (record,state) {
-      var returnVal = this.Super("handleSelectionChanged", arguments);
-      return returnVal;
-  },
-
-  handleSortChanged : function (sortSpecifiers) {
-    this.sortChanged(sortSpecifiers);
-  }
-});
-
 isc.Canvas.addProperties({
   
   // make sure that the datasources are also destroyed
