@@ -80,6 +80,9 @@ OB.ViewFormProperties = {
   
   // is set in the OBAttachmentsSectionItem.initWidget
   attachmentsSection: null,
+  
+  // is set in the OBAuditSectionItem.init
+  auditSection: null,
 
   selectOnFocus: true,
   
@@ -265,12 +268,8 @@ OB.ViewFormProperties = {
   },
   
   enableAuditSection: function(enable){
-      var auditSection,i;
-      for(i=0;i<this.items.length;i++) {
-        if(this.items[i].type==='OBAuditSectionItem') {
-          auditSection = this.items[i];
-        }
-      }
+      var auditSection;
+      auditSection = this.auditSection;
       if (!auditSection) {
         return;
       }
