@@ -26449,6 +26449,9 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <COLUMNNAME><![CDATA[Ischeckonsave]]></COLUMNNAME>
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <NAME><![CDATA[Check On Save]]></NAME>
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <PRINTNAME><![CDATA[Check On Save]]></PRINTNAME>
+<!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <DESCRIPTION><![CDATA[Check On Save]]></DESCRIPTION>
+<!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <HELP><![CDATA[Fields that are marked as "Check On Save" and are read only for the role, when they are modified in that tab, backend raises an error.
+In case they are not "Check On Save", this verification is skipped. The purpose is to allow fields to be read only  for a concrete role to be modified through callouts.]]></HELP>
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--8AEBA5C2A41E4DDB855DAE0A58D77EE7--></AD_ELEMENT>
