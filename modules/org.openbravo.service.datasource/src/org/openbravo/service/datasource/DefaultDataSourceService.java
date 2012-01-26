@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -244,9 +245,11 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           String newValue = getValue(data, key);
           String oldValue = getValue(oldData, key);
           if (oldValue == null && newValue != null || oldValue != null
-              && !oldValue.equals(newValue))
-            throw new RuntimeException(OBContext.getOBContext().getRole().getName()
-                + " does not have access to the field " + f.getName());
+              && !oldValue.equals(newValue)) {
+            throw new RuntimeException(KernelUtils.getInstance().getI18N(
+                "OBSERDS_RoleHasNoFieldAccess",
+                new String[] { OBContext.getOBContext().getRole().getName(), f.getName() }));
+          }
         }
       }
 
