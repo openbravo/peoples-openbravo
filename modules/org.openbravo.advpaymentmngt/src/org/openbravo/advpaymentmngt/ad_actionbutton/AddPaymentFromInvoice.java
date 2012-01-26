@@ -298,7 +298,16 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("orgId", strOrgId);
     xmlDocument.setParameter("invoiceId", strInvoiceId);
     xmlDocument.setParameter("isReceipt", (isReceipt ? "Y" : "N"));
-    xmlDocument.setParameter("credit", dao.getCustomerCredit(bp, isReceipt).toString());
+
+    try {
+      OBContext.setAdminMode(true);
+      xmlDocument.setParameter(
+          "credit",
+          dao.getCustomerCredit(bp, isReceipt,
+              OBDal.getInstance().get(Organization.class, strOrgId)).toString());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     // get DocumentNo
     final List<Object> parameters = new ArrayList<Object>();
@@ -339,6 +348,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
+    if (account != null) {
+      if (!financialAccounts.contains(account)) {
+        strFinancialAccountId = financialAccounts.get(0).getId();
+      }
+    }
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
@@ -354,18 +368,23 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    try {
+      OBContext.setAdminMode(true);
 
-    final Currency financialAccountCurrency = dao
-        .getFinancialAccountCurrency(strFinancialAccountId);
-    if (financialAccountCurrency != null) {
-      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-          .getStandardPrecision().toString());
+      final Currency financialAccountCurrency = dao
+          .getFinancialAccountCurrency(strFinancialAccountId);
+      if (financialAccountCurrency != null) {
+        xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+        xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+            .getStandardPrecision().toString());
+      }
+      String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
+          OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
+      xmlDocument.setParameter("exchangeRate", exchangeRate);
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
-        OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
-    xmlDocument.setParameter("exchangeRate", exchangeRate);
 
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = isForcedFinancialAccountTransaction(isReceipt,

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,11 +31,12 @@ isc.OBPickAndExecuteView.addProperties({
   showMinimizeButton: false,
   showMaximizeButton: false,
   showFooter: false,
+  showTitle: true,
 
   width: '100%',
   height: '100%',
   overflow: 'auto',
-  position: 'absolute',
+  autoSize: false,
 
   dataSource: null,
 
@@ -55,8 +56,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
 
     okButton = isc.OBFormButton.create({
-      //FIXME: Move to AD_Message
-      title: 'Done',
+      title: OB.I18N.getLabel('OBUIAPP_Done'),
       _buttonValue: 'DONE',
       click: actionClick
     });
@@ -74,6 +74,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
+    this.title = this.windowTitle;
 
     // the datasource object is defined on viewProperties, do not destroy it
     this.dataSource.potentiallyShared = true;
@@ -81,7 +82,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this,
       fields: this.gridFields,
-      height: (this.parentWindow.height - 200),
+      height: '80%',
       dataSource: this.dataSource,
       gridProperties: this.viewProperties.gridProperties
     });

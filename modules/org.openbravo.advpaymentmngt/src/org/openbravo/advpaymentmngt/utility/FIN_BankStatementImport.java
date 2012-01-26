@@ -245,6 +245,7 @@ public abstract class FIN_BankStatementImport {
     try {
       whereClause.append(" as bsl ");
       whereClause.append(" where bsl." + FIN_BankStatementLine.PROPERTY_BPARTNERNAME + " = ?");
+      parameters.add(partnername);
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
@@ -255,7 +256,6 @@ public abstract class FIN_BankStatementImport {
           .getNaturalTree(organization.getId())) + ") ");
       whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
-      parameters.add(partnername);
       final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
           FIN_BankStatementLine.class, whereClause.toString(), parameters);
       bsl.setFilterOnReadableOrganization(false);

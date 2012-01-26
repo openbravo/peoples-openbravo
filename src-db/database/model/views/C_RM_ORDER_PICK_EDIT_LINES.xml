@@ -4,7 +4,7 @@
 CASE
 WHEN rol.c_orderline_id IS NOT NULL THEN 'Y'
 ELSE 'N'
-END AS ob_selected, il.m_inoutline_id, rol.c_order_id AS returnorderid, i.documentno AS inoutno, i.movementdate, il.m_product_id, il.m_attributesetinstance_id, il.movementqty, il.c_uom_id, (-1) * rol.qtyordered AS returned, ol.priceactual, rol.c_return_reason_id, o.documentno AS orderno, i.issotrx, (-1) * retol.returnedqty AS returnedqty
+END AS ob_selected, il.m_inoutline_id, rol.c_order_id AS returnorderid, i.documentno AS inoutno, i.movementdate, il.m_product_id, il.m_attributesetinstance_id, il.movementqty, il.c_uom_id, (-1) * rol.qtyordered AS returned, COALESCE(rol.priceactual, ol.priceactual) AS priceactual, rol.c_return_reason_id, o.documentno AS orderno, i.issotrx, (-1) * retol.returnedqty AS returnedqty
 FROM m_inoutline il
 JOIN m_inout i ON il.m_inout_id = i.m_inout_id AND i.processed = 'Y' AND i.docstatus <> 'VO'
 JOIN c_doctype dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn = 'N'

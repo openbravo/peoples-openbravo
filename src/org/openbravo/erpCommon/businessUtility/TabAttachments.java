@@ -109,6 +109,7 @@ public class TabAttachments extends HttpSecureAppServlet {
             Tab tab = OBDal.getInstance().get(Tab.class, strTab);
             JSONObject obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
             String buttonId = vars.getStringParameter("buttonId");
+            response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
             writer.write("<HTML><BODY><script type=\"text/javascript\">");
             writer.write("top." + buttonId + ".callback(" + obj.toString() + ");");
@@ -280,6 +281,7 @@ public class TabAttachments extends HttpSecureAppServlet {
   private OBError insert(VariablesSecureApp vars, String strFileReference, String tableId,
       String key, String strDataType, String strText) throws IOException, ServletException {
 
+    String cFileId = strFileReference;
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
@@ -309,12 +311,16 @@ public class TabAttachments extends HttpSecureAppServlet {
       for (TabAttachmentsData data : files) {
         if (data.name.equals(strName)) {
           fileExists = true;
+          cFileId = data.cFileId;
         }
       }
       if (!fileExists) {
         // We only insert a new record if there is no record for this file
-        TabAttachmentsData.insert(conn, this, strFileReference, vars.getClient(), vars.getOrg(),
+        TabAttachmentsData.insert(conn, this, cFileId, vars.getClient(), vars.getOrg(),
             vars.getUser(), tableId, key, strDataType, strText, strName);
+      } else {
+        // We update the existing record
+        TabAttachmentsData.update(this, vars.getUser(), strDataType, strText, cFileId);
       }
       try {
         // FIXME: Get the directory separator from Java runtime

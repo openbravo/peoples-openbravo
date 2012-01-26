@@ -132,10 +132,10 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
       }
       String description = transaction.getDescription();
       String oldGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem", bundle
-          .getContext().toVars().getLanguage())
+          .getContext().getLanguage())
           + ": " + oldGLItem.getName();
       String newGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem", bundle
-          .getContext().toVars().getLanguage())
+          .getContext().getLanguage())
           + ": " + newGLItem.getName();
       if (!description.isEmpty()) {
         description = description.indexOf(oldGlItemString) != -1 ? description.substring(0,

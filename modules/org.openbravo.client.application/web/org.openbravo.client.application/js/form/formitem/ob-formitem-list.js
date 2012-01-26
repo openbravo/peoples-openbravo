@@ -45,15 +45,18 @@ isc.OBListItem.addProperties({
 
   moveFocusOnPickValue: true,
 
-  // only fire change if a value gets picked
-  // explicitly
-  handleChange: function() {
-    if (!this._pickedValue) {
+  hidePickListOnBlur: function() {
+    
+    // when the form gets redrawn the the focus may not be in
+    // the item but it is still the item which gets the focus
+    // after redrawing
+    if (this.form && this.form._isRedrawing && this.form.getFocusItem() === this) {
       return;
     }
-    return this.Super('handleChange', arguments);
+    
+    this.Super('hidePickListOnBlur', arguments);
   },
-
+  
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function(value) {
     this._pickedValue = true;

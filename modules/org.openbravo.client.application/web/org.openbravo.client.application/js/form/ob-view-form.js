@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -255,13 +255,35 @@ OB.ViewFormProperties = {
       if (enable) {
         this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
         this.noteSection.collapseSection(true);
+        delete this.noteSection.hiddenInForm;
         this.noteSection.refresh();
         this.noteSection.show();
       } else {
+        this.noteSection.hiddenInForm = true;
         this.noteSection.hide();
       }
   },
   
+  enableAuditSection: function(enable){
+      var auditSection,i;
+      for(i=0;i<this.items.length;i++) {
+        if(this.items[i].type==='OBAuditSectionItem') {
+          auditSection = this.items[i];
+        }
+      }
+      if (!auditSection) {
+        return;
+      }
+      if (enable) {
+        delete auditSection.hiddenInForm;
+        auditSection.show();
+      } else {
+        auditSection.collapseSection(false);
+        auditSection.hiddenInForm = true;
+        auditSection.hide();
+      }
+  },
+
   enableLinkedItemSection: function(enable){
     if (!this.linkedItemSection) {
       return;
@@ -269,8 +291,10 @@ OB.ViewFormProperties = {
     if (enable) {
       this.linkedItemSection.collapseSection(true);
       this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+      delete this.linkedItemSection.hiddenInForm;
       this.linkedItemSection.show();
     } else {
+      this.linkedItemSection.hiddenInForm = true;
       this.linkedItemSection.hide();
     }
   },
@@ -279,11 +303,13 @@ OB.ViewFormProperties = {
     if (!this.attachmentsSection) {
       return;
     }
-    if(enable){
+    if (enable) {
       this.attachmentsSection.collapseSection(true);
       this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
+      delete this.attachmentsSection.hiddenInForm;
       this.attachmentsSection.show();
-    }else{
+    } else {
+      this.attachmentsSection.hiddenInForm = true;
       this.attachmentsSection.hide();
     }
   },
@@ -322,6 +348,7 @@ OB.ViewFormProperties = {
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
     this.enableAttachmentsSection(!isNew);
+    this.enableAuditSection(!isNew);
     
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
@@ -899,7 +926,8 @@ OB.ViewFormProperties = {
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field.type &&
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
-      isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
+      isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' ||
+      isc.SimpleType.getType(field.type).inheritsFrom === 'time');
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else if(columnValue.hasDateDefault){
@@ -1068,8 +1096,12 @@ OB.ViewFormProperties = {
       return;
     }
 
+    if (this.grid) {
+      this.grid.setEditValue(this.grid.getEditRow(), item.name, value); 
+    }
+    
     this.setValue(item, value);
-
+    
     // fire any new callouts
     if (this.view) {
       view = this.view;
@@ -1078,7 +1110,7 @@ OB.ViewFormProperties = {
     }
 
     if (view && OB.OnChangeRegistry.hasOnChange(view.tabId, item)) {
-      OB.OnChangeRegistry.call(view.tabId, item, view, view.viewForm, view.viewGrid);
+      OB.OnChangeRegistry.call(view.tabId, item, view, this, view.viewGrid);
     }
   },
   
@@ -1103,7 +1135,7 @@ OB.ViewFormProperties = {
       }
 
       if (view && OB.OnChangeRegistry.hasOnChange(view.tabId, item)) {
-        OB.OnChangeRegistry.call(view.tabId, item, view, view.viewForm, view.viewGrid);
+        OB.OnChangeRegistry.call(view.tabId, item, view, this, view.viewGrid);
       } else {
         // call the classic callout if there
         length = this.dynamicCols.length;
@@ -1379,6 +1411,15 @@ OB.ViewFormProperties = {
         // of the attachments section are created
         if(savingNewRecord){
           this.attachmentsSection.fillAttachments(null);
+          // We also do a call to the FIC on SETSESSION mode to set the session variables
+          // to fix issue 18453
+          var sessionProperties = this.view.getContextInfo(true, true, false, true);
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
+            MODE: 'SETSESSION',
+            TAB_ID: this.view.tabId,
+            PARENT_ID: this.view.getParentId(),
+            ROW_ID: this.values.id
+          }, null);
         }
         
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
@@ -1647,7 +1688,9 @@ OB.ViewFormProperties = {
   },
   
   redraw: function() {
+    this._isRedrawing = true;
     this.Super('redraw', arguments);
+    delete this._isRedrawing;
     this.selectOnFocus = this.previousSelectOnFocus;
     delete this.previousSelectOnFocus;
   },

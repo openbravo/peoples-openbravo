@@ -161,9 +161,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <AD_COLUMN_ID><![CDATA[2902]]></AD_COLUMN_ID>
-<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <NAME><![CDATA[Name]]></NAME>
-<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
-<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
+<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <NAME><![CDATA[Commercial Name]]></NAME>
+<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <DESCRIPTION><![CDATA[Commercial Name of the Business Partner]]></DESCRIPTION>
+<!--616F97738AFD4595B74A6A60C8D4B5C4-->  <HELP><![CDATA[Commercial Name of the Business Partner]]></HELP>
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--616F97738AFD4595B74A6A60C8D4B5C4-->  <SORT><![CDATA[Y]]></SORT>

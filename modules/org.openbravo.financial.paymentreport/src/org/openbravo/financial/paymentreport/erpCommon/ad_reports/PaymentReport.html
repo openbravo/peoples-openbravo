@@ -145,7 +145,7 @@ function onloadFunctions() {
                 lastOrd = ord[i];
             }
             else {
-            	ord[i].style.visibility = '';
+                ord[i].style.visibility = '';
             }
                 
         }
@@ -162,7 +162,7 @@ function onloadFunctions() {
                 lastSho = sho[i];
             }
             else {
-            	sho[i].style.visibility = '';
+                sho[i].style.visibility = '';
             }
                 
         }
@@ -185,25 +185,25 @@ function onloadFunctions() {
         for (i = 0; i < ord.length; i++){
             // Duplicates between left and right.
             for (j = 0; j < sho.length; j++){
-	            if (ord.options[i].value == sho.options[j].value){
-	                elementsToRemove.push(i);
-	            }
+                if (ord.options[i].value == sho.options[j].value){
+                    elementsToRemove.push(i);
+                }
             }
             // Duplicates in left part.
             for (j = 0; j < ord.length; j++){
-	            if (ord.options[i].value == ord.options[j].value && i != j){
-	                if (ord.options[i].style.visibility == "hidden"){
-	                	elementsToRemove.push(i);
-	                } else {
-	                	elementsToRemove.push(j);
-	                }
-	            }
+                if (ord.options[i].value == ord.options[j].value && i != j){
+                    if (ord.options[i].style.visibility == "hidden"){
+                        elementsToRemove.push(i);
+                    } else {
+                        elementsToRemove.push(j);
+                    }
+                }
             }
         }
         
         elementsToRemove = elementsToRemove.sort(sortNumber);
         for (i = 0; i < elementsToRemove.length; i++){
-        	ord.options.remove(elementsToRemove[i]);
+            ord.options.remove(elementsToRemove[i]);
         }
 
         // Ordering criteria left: Moving to last position intermediate hidden objects.
@@ -218,9 +218,9 @@ function onloadFunctions() {
         // Ordering criteria right: Moving to last position intermediate hidden objects.
         for (i = 0; i < sho.length; i++){
             if (sho.options[i].style.visibility == "hidden"){
-	            hiddenElement = sho[i];
-	            sho.remove(i);
-	            sho.add(hiddenElement, null);
+                hiddenElement = sho[i];
+                sho.remove(i);
+                sho.add(hiddenElement, null);
             }
         }
     }
@@ -228,26 +228,26 @@ function onloadFunctions() {
         return b - a;
     }
     function selectedStatuses(){
-    	var selStatus = document.frmMain.inpSelectedStatuses;
-    	var strSelStatus;
-    	var arrSelStatus;
-    	var status = document.frmMain.paramfinPaymSt;
-    	
-    	var i;
-    	var j;
-    	
-    	strSelStatus = selStatus.value.replace("('","");
-    	strSelStatus = strSelStatus.replace("')","");
-    	
-    	arrSelStatus = strSelStatus.split("', '");
-    	
-    	for (i = 0; i < arrSelStatus.length; i++ ){
-    		for (j = 0; j < status.options.length; j++){
-    			if (arrSelStatus[i] == status.options[j].value){
-    				status.options[j].selected = true;
-    			}
-    		}
-    	}
+        var selStatus = document.frmMain.inpSelectedStatuses;
+        var strSelStatus;
+        var arrSelStatus;
+        var status = document.frmMain.paramfinPaymSt;
+        
+        var i;
+        var j;
+        
+        strSelStatus = selStatus.value.replace("('","");
+        strSelStatus = strSelStatus.replace("')","");
+        
+        arrSelStatus = strSelStatus.split("', '");
+        
+        for (i = 0; i < arrSelStatus.length; i++ ){
+            for (j = 0; j < status.options.length; j++){
+                if (arrSelStatus[i] == status.options[j].value){
+                    status.options[j].selected = true;
+                }
+            }
+        }
     }
     function openPaymentTab(isReceipt, recordId) {
        var myframe = getFrame('LayoutMDI') || top.opener;
@@ -407,13 +407,13 @@ function onloadFunctions() {
                                 </tbody>
                               </table>
                             <!-- USER CONTROLS -->
-						  </td>
-						</tr>
-					  </table>
-					
-					</td>
-				   </tr>
-				 </table>		
+                          </td>
+                        </tr>
+                      </table>
+                    
+                    </td>
+                   </tr>
+                 </table>       
               <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
@@ -1057,7 +1057,7 @@ function onloadFunctions() {
                       <table border="0" cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                         <div id="sectionStatus">
                           <tr class="DataGrid_Body_Row">
-                            <th colspan="15" class="DataGrid_Header_Cell">Status<span>:&nbsp;</span>
+                            <th colspan="15"  class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                             <span id="fieldStatus">xxStatusName</span></th>
                           </tr>
                     
@@ -1068,15 +1068,15 @@ function onloadFunctions() {
                             <th width="10%" class="DataGrid_Header_Cell">Project</th>
                             <th width="10%" class="DataGrid_Header_Cell">Sales Person</th>
                             <th width="10%" class="DataGrid_Header_Cell">Invoice Number</th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount">Invoice Date</th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount">Payment</th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount">Due Date</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Payment</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
                             <th width="10%" class="DataGrid_Header_Cell">PlannedDSO</th>
                             <th width="10%" class="DataGrid_Header_Cell">CurrentDSO</th>
                             <th width="10%" class="DataGrid_Header_Cell">Overdue</th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount">Trans. Amount</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Trans. Amount</th>
                             <th width="10%" class="DataGrid_Header_Cell">Trans. Currency</th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount">Base Amount</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Base Amount</th>
                             <th width="10%" class="DataGrid_Header_Cell">Base Currency</th>
                           </tr>
                     
@@ -1093,26 +1093,26 @@ function onloadFunctions() {
                                 <span id="fieldInvoiceNumber_nolink" class="DataGrid_Body_Cell" style="xx">xx14500.34</span>
                               </td>
                                 
-                              <td width="10%" id="fieldInvoiceDate" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                              <td width="10%" id="fieldInvoiceDate" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" class="DataGrid_Body_Cell_Amount">
                                 <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx" title="xx">
                                   <span id="fieldPayment">xx14500.34</span>
                                 </a>
                               </td>
-                              <td width="10%" id="fieldDueDate" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                              <td width="10%" id="fieldPlannedDSO" class="DataGrid_Body_Cell">xx14500.34</td>
-                              <td width="10%" id="fieldCurrentDSO" class="DataGrid_Body_Cell">xx14500.34</td>
-                              <td width="10%" id="fieldOverdue" class="DataGrid_Body_Cell">xx14500.34</td>
+                              <td width="10%" id="fieldDueDate" class="DataGrid_Body_Cell">xx14500.34</td>
+                              <td width="10%" id="fieldPlannedDSO" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                              <td width="10%" id="fieldCurrentDSO" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                              <td width="10%" id="fieldOverdue" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" id="fieldTransAmount" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" id="fieldTransCurrency" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" id="fieldBaseAmount" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                              <td width="10%" id="fieldBaseCurrency" class="DataGrid_Body_Cell">xx14500.34</td>
+                              <td width="10%" id="fieldBaseCurrency" class="DataGrid_Body_Cell" style="text-align:center">xx14500.34</td>
                             </tr>
                           </div>
                           <tr class="DataGrid_Body_Row">
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
                             <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
-                            <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalBaseAmount"></span></th>
+                            <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmount"></span></th>
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency"></span></th>
                           </tr>
                           <tr>
@@ -1125,16 +1125,16 @@ function onloadFunctions() {
                       <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                           <div id="sectionGroupCrit">
                             <tr class="DataGrid_Body_Row">
-                              <th colspan="12" class="DataGrid_Header_Cell">Grouping Criteria<span>:&nbsp;</span>
+                              <th colspan="12" class="DataGrid_Header_Cell" style="text-align:left">Grouping Criteria<span>:&nbsp;</span>
                                 <span id="fieldGroupCritName">xxGroupCritName</span></th>
                              <!-- <th class="DataGrid_Header_Cell">Balance</th>
                               <th class="DataGrid_Header_Cell_Amount"><span id="sumBalanceAmount"></span></th>
                               <th class="DataGrid_Header_Cell"><span id="fieldBaseCurrency2"></span></th> -->
-                              <th colspan="3" class="DataGrid_Header_Cell">Balance<span>:&nbsp;</span><span id="sumBalanceAmount"></span><span>&nbsp;</span><span id="fieldBaseCurrency2"></span></th>
+                              <th colspan="3" class="DataGrid_Header_Cell" style="text-align:right">Balance:&nbsp;<span id="sumBalanceAmount"></span>&nbsp;<span id="fieldBaseCurrency2"></span>&nbsp;</th>
                             </tr>
                             <div id="sectionStatus2">
                                 <tr class="DataGrid_Body_Row">
-                                  <th colspan="15" class="DataGrid_Header_Cell">Status<span>:&nbsp;</span>
+                                  <th colspan="15" class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                                 <span id="fieldStatus2">xxStatusName</span></th>
                                 </tr>
                         
@@ -1144,15 +1144,15 @@ function onloadFunctions() {
                                     <th width="10%" class="DataGrid_Header_Cell">Project</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Sales Person</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Invoice Number</th>
-                                    <th width="10%" class="DataGrid_Header_Cell_Amount">Invoice Date</th>
-                                    <th width="10%" class="DataGrid_Header_Cell_Amount">Payment</th>
-                                    <th width="10%" class="DataGrid_Header_Cell_Amount">Due Date</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Payment</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
                                     <th width="10%" class="DataGrid_Header_Cell">PlannedDSO</th>
                                     <th width="10%" class="DataGrid_Header_Cell">CurrentDSO</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Overdue</th>
-                                    <th width="10%" class="DataGrid_Header_Cell_Amount">Trans. Amount</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Trans. Amount</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Trans. Currency</th>
-                                    <th width="10%" class="DataGrid_Header_Cell_Amount">Base Amount</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Base Amount</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Base Currency</th>
                                 </tr>
                         
@@ -1168,26 +1168,26 @@ function onloadFunctions() {
                                       </a>
                                       <span id="fieldInvoiceNumber2_nolink" class="DataGrid_Body_Cell" style="xx">xx14500.34</span>
                                     </td>
-                                    <td width="10%" id="fieldInvoiceDate2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                                    <td width="10%" id="fieldInvoiceDate2" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" class="DataGrid_Body_Cell_Amount">
                                       <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx" title="xx">
                                         <span id="fieldPayment2">xx14500.34</span>
                                       </a>
                                     </td>
-                                    <td width="10%" id="fieldDueDate2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                                    <td width="10%" id="fieldPlannedDSO2" class="DataGrid_Body_Cell">xx14500.34</td>
-                                    <td width="10%" id="fieldCurrentDSO2" class="DataGrid_Body_Cell">xx14500.34</td>
-                                    <td width="10%" id="fieldOverdue2" class="DataGrid_Body_Cell">xx14500.34</td>
+                                    <td width="10%" id="fieldDueDate2" class="DataGrid_Body_Cell">xx14500.34</td>
+                                    <td width="10%" id="fieldPlannedDSO2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                                    <td width="10%" id="fieldCurrentDSO2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                                    <td width="10%" id="fieldOverdue2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" id="fieldTransAmount2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" id="fieldTransCurrency2" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" id="fieldBaseAmount2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                                    <td width="10%" id="fieldBaseCurrency2" class="DataGrid_Body_Cell">xx14500.34</td>
+                                    <td width="10%" id="fieldBaseCurrency2" class="DataGrid_Body_Cell" style="text-align:center">xx14500.34</td>
                                   </tr>
                                 </div>
                                 <tr class="DataGrid_Body_Row">
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
                                   <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="12"></th>
-                                  <th width="10%" class="DataGrid_Header_Cell_Amount"><span class="Bold" id="subtotalBaseAmountStatus"></span></th>
+                                  <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmountStatus"></span></th>
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></span></th>
                                 </tr>
                               
@@ -1203,13 +1203,13 @@ function onloadFunctions() {
 
                       <!-- USER CONTROLS -->
                 <table class="Main_Client_TableEdition">
-			      <tr>
-				   <td>					
-				    <div id="paramShowOneAsterisk" style="xx" class="RelationInfoContent">* Invoice paid using a credit payment</div>
-				    <div id="paramShowTwoAsterisk" style="xx" class="RelationInfoContent">** Several invoices have been paid using the same credit payment</div>
-				   </td>
-				  </tr>
-			  </table>		
+                  <tr>
+                   <td>                 
+                    <div id="paramShowOneAsterisk" style="xx" class="RelationInfoContent">* Invoice paid using a credit payment</div>
+                    <div id="paramShowTwoAsterisk" style="xx" class="RelationInfoContent">** Several invoices have been paid using the same credit payment</div>
+                   </td>
+                  </tr>
+              </table>      
               </tr>
               </table>
         
@@ -1218,7 +1218,7 @@ function onloadFunctions() {
             <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"/></td>
           </tr>
         </table>
-	</div>
+    </div>
       </td>
       <td valign="top">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">

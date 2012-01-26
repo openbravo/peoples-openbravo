@@ -167,7 +167,7 @@
       WHERE C_CURRENCY_ID = v_C_CURRENCY_ID;
       IF(v_AMORTIZATIONTYPE='LI') THEN
         IF(v_ASSETSCHEDULE='YE' OR v_AMORTIZATIONCALCTYPE='PE') THEN
-          if v_USELIFEYEARS=v_DepreciatedLines then
+          if ((v_USELIFEYEARS=v_DepreciatedLines) or (v_USELIFEYEARS=v_DepreciatedLines-1)) then
             FINISH_PROCESS:=true;
           end if;
           IF(NOT FINISH_PROCESS) THEN
@@ -282,7 +282,7 @@
         END IF;
         IF(NOT FINISH_PROCESS) THEN
           IF(v_ASSETSCHEDULE='MO') THEN
-            if v_USELIFEMonths=v_DepreciatedLines then
+            if ((v_USELIFEMonths=v_DepreciatedLines) or (v_USELIFEMonths=v_DepreciatedLines - 1)) then
               FINISH_PROCESS:=true;
             end if;
           END IF; --FINISH_PROCESS
@@ -329,7 +329,7 @@
             while not finish
             loop
               IF(v_COUNT=1 AND to_number(v_BEGINING_DATE-v_FIRST_DAY_DATE)<>0) THEN
-                v_Percentage:=to_number(to_number(last_day(v_BEGINING_DATE) -v_BEGINING_DATE)) / (trunc((last_day(v_BEGINING_DATE) -(TO_DATE('01-'||to_char(TO_DATE(v_BEGINING_DATE), 'MM-YYYY'), 'DD-MM-YYYY')))) +1) * v_PercentageGeneral;
+                v_Percentage:=(to_number(to_number(last_day(v_BEGINING_DATE) -v_BEGINING_DATE)) + 1) / (trunc((last_day(v_BEGINING_DATE) -(TO_DATE('01-'||to_char(TO_DATE(v_BEGINING_DATE), 'MM-YYYY'), 'DD-MM-YYYY')))) +1) * v_PercentageGeneral;
                 v_USELIFEMONTHS:=v_USELIFEMONTHS+1;
               ELSE
                 v_Percentage:=v_PercentageGeneral;

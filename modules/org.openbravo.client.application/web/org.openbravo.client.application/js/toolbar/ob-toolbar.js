@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -231,22 +231,62 @@ isc.OBToolbar.addClassProperties({
   ATTACHMENTS_BUTTON_PROPERTIES: {
     action: function(){
       var selectedRows = this.view.viewGrid.getSelectedRecords(),
-          attachmentExists = this.view.attachmentExists, i;
+          attachmentExists = this.view.attachmentExists,
+          attachmentSection = this.view.viewForm.getItem('_attachments_'),
+          me = this, i;
       if(this.view.isShowingForm){
-        this.view.viewForm.getItem('_attachments_').expandSection();
-        this.view.viewForm.scrollToBottom();
+        if (!attachmentSection.isExpanded()) {
+          attachmentSection.expandSection();
+        }
+        attachmentSection.focusInItem();
+        if (this.view.viewForm.parentElement) {
+          // scroll after things have been expanded
+          this.view.viewForm.parentElement.delayCall('scrollTo', [null, attachmentSection.getTop()], 100);
+        }
+
         if(!attachmentExists){
-          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
+          attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
         }
         return;
       }
       if(selectedRows.size() === 1){
-        this.view.viewForm.setFocusItem(this.view.viewForm.getItem('_attachments_'));
+        this.view.viewForm.setFocusItem(attachmentSection);
         this.view.viewForm.forceFocusedField = '_attachments_';
         this.view.viewForm.expandAttachments = true;
         this.view.editRecord(selectedRows[0]);
+
+        // Move from grid view to form view could take a while.
+        // Section needs to be expanded before the viewport adjustment.
+        var expandedCount = 0, expandedInterval;
+        expandedInterval = setInterval(function() {
+          expandedCount += 1;
+          if(attachmentSection.isExpanded()){
+            me.view.viewForm.parentElement.scrollTo(null, attachmentSection.getTop());
+            clearInterval(expandedInterval);
+          }
+          if (expandedCount === 50) {
+            clearInterval(expandedInterval);
+          }
+        }, 100);
+
         if(!attachmentExists){
-          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
+          if (attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
+            attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
+          } else {
+            // The first time the form view is loaded, the section is not already built and it could take a while to be.
+            // Section needs to be built before the click event.
+            var clickCount = 0, clickInterval;
+            clickInterval = setInterval(function() {
+              clickCount += 1;
+              if(attachmentSection.attachmentCanvasItem.canvas.getMember(0)){
+                attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
+                clearInterval(clickInterval);
+              }
+              if (clickCount === 50) {
+                clearInterval(clickInterval);
+              }
+            }, 100);
+          }
         }
       } else {
         var recordIds = "";
@@ -547,6 +587,13 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
+    var me = this;
+    this.fireOnPause('updateButtonState', function() {
+      me.pausedUpdateButtonState(noSetSession, changeEvent);
+    });
+  },
+   
+  pausedUpdateButtonState: function(noSetSession, changeEvent) { 
     var length = this.leftMembers.length, i, 
       form = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm;
     
@@ -1020,7 +1067,7 @@ isc.OBToolbar.addProperties({
   //
   refreshCustomButtons: function(noSetSession){
     var selectedRecords, multipleSelectedRowIds, allProperties, i;
-    function doRefresh(buttons, currentValues, hideAllButtons, me) {
+    function doRefresh(buttons, currentValues, hideAllButtons, noneOrMultipleRecordsSelected, me) {
       var i, length = me.rightMembers.length;
       for (i = 0; i < length; i++) { // To disable any button previous defined keyboard shortcut
         me.rightMembers[i].disableShortcut();
@@ -1028,7 +1075,7 @@ isc.OBToolbar.addProperties({
       length = buttons.length;
       for (i = 0; i < length; i++) {
         if (buttons[i].updateState) {
-          buttons[i].updateState(currentValues, hideAllButtons);
+          buttons[i].updateState(currentValues, hideAllButtons, null, !noneOrMultipleRecordsSelected);
         }
       }
       length = me.leftMembers.length;
@@ -1087,7 +1134,7 @@ isc.OBToolbar.addProperties({
           }
         }
         currentContext.viewForm.view.attachmentExists = attachmentExists;
-        doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, me);
+        doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
       };
     };
 
@@ -1111,10 +1158,11 @@ isc.OBToolbar.addProperties({
         this.hideShowRightMembers(false);
       }
       
-      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
       }
+
+      var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
 
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
         if(this.view.tabId===currentContext.tabId){
@@ -1137,7 +1185,7 @@ isc.OBToolbar.addProperties({
         allProperties = currentContext.getContextInfo(false, true, false, true);
         OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
       } else {
-        doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
+        doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1,this);
       }
     }
 
@@ -1174,13 +1222,20 @@ isc.OBToolbar.addProperties({
   },
   
   hideShowRightMembers: function(show) {
-    var i;
+    var i, button, context;
     // if showing make sure that they are not always shown
     if (show) {
       this.refreshCustomButtons(false);
     } else {
       for (i = 0; i < this.rightMembers.length; i++) {
-        this.rightMembers[i].hide();
+        button = this.rightMembers[i];
+        if (button.autosave) {
+          button.hide();
+        } else{
+          // do not hide non autosave buttons, keep them in case display logic allows it
+          context = button.contextView;
+          button.updateState(context.getCurrentValues(), false, context.getContextInfo(false, true, true));
+        }
       }
     }
   },

@@ -345,7 +345,7 @@ public class MenuManager implements Serializable {
     if (role.getPrimaryTreeMenu() != null) {
       tree = role.getPrimaryTreeMenu();
     } else {
-      tree = OBDal.getInstance().createQuery(Tree.class, "id='10'").list().get(0);
+      tree = OBDal.getInstance().get(Tree.class, "10");
     }
     menuOptions = new ArrayList<MenuOption>();
     OBCriteria<TreeNode> treeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
@@ -360,8 +360,8 @@ public class MenuManager implements Serializable {
       if (!addOption) {
         Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
         if (menuEntry != null) {
-          addOption = menuEntry.isActive();
-          inactiveSummary = menuEntry.isSummaryLevel();
+          addOption = menuEntry.isSummaryLevel();
+          inactiveSummary = true;
         }
       }
 
@@ -369,7 +369,8 @@ public class MenuManager implements Serializable {
         final MenuOption menuOption = new MenuOption();
         menuOption.setTreeNode(treeNode);
         menuOption.setDbId(treeNode.getId());
-        if (inactiveSummary) {
+        Menu menuEntry = OBDal.getInstance().get(Menu.class, treeNode.getNode());
+        if (menuEntry != null && !menuEntry.isActive()) {
           menuOption.setVisible(false);
         }
         menuOptions.add(menuOption);

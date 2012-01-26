@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,7 @@ isc.OBAttachmentsSectionItem.addProperties({
   
   prompt: OB.I18N.getLabel('OBUIAPP_AttachmentPrompt'),
   
-  canvasItem: null,
+  attachmentCanvasItem: null,
   
   visible: false,
   
@@ -61,10 +61,10 @@ isc.OBAttachmentsSectionItem.addProperties({
   },
 
   getAttachmentPart: function(){
-    if (!this.canvasItem) {
-      this.canvasItem = this.form.getField(this.itemIds[0]);
+    if (!this.attachmentCanvasItem) {
+      this.attachmentCanvasItem = this.form.getField(this.itemIds[0]);
     }
-    return this.canvasItem.canvas;
+    return this.attachmentCanvasItem.canvas;
   },
   
   setRecordInfo: function(entity, id, tabId){
@@ -374,7 +374,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachments')});
       }
     });
     hLayout.addMember(downloadAllButton);
@@ -403,7 +403,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+        },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_RemoveAttachment')});
       };
     
       length = attachments.length;

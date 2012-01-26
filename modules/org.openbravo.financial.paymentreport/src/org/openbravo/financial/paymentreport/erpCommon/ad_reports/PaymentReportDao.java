@@ -111,7 +111,8 @@ public class PaymentReportDao {
     OBContext.setAdminMode();
     try {
 
-      hsqlScript.append(" as fpsd ");
+      hsqlScript
+          .append("select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a from FIN_Payment_ScheduleDetail as fpsd ");
       hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment pay");
       hsqlScript.append(" left outer join pay.businessPartner paybp");
       hsqlScript.append(" left outer join paybp.businessPartnerCategory paybpc");
@@ -156,8 +157,8 @@ public class PaymentReportDao {
 
       // Exclude payments that use credit payment
       if (!strInclPaymentUsingCredit.equalsIgnoreCase("Y")) {
-        hsqlScript.append(" and not (pay.amount = 0 ");
-        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) ");
+        hsqlScript.append(" and (not (pay.amount = 0 ");
+        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) or pay is null)");
       }
 
       // due date from - due date to
@@ -336,7 +337,7 @@ public class PaymentReportDao {
         hsqlScript.append("), ");
       }
 
-      hsqlScript.append(" coalesce(pay.");
+      hsqlScript.append(" a, coalesce(pay.");
       hsqlScript.append(FIN_Payment.PROPERTY_STATUS);
       hsqlScript.append(", 'RPAP')");
 
@@ -383,11 +384,25 @@ public class PaymentReportDao {
       hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       hsqlScript.append(".");
       hsqlScript.append(FIN_PaymentSchedule.PROPERTY_ID);
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hsqlScript.toString());
 
-      final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
-          FIN_PaymentScheduleDetail.class, hsqlScript.toString(), parameters);
-      obqPSD.setFilterOnReadableOrganization(false);
-      java.util.List<FIN_PaymentScheduleDetail> obqPSDList = obqPSD.list();
+      boolean firstMember = true;
+      java.util.List<FIN_PaymentScheduleDetail> obqPSDList = new ArrayList<FIN_PaymentScheduleDetail>();
+      for (Object resultObject : query.list()) {
+        if (resultObject.getClass().isArray()) {
+          final Object[] values = (Object[]) resultObject;
+          for (Object value : values) {
+            if (firstMember) {
+              obqPSDList.add(OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+                  (String) value));
+              firstMember = false;
+            } else {
+              firstMember = true;
+            }
+          }
+        }
+      }
       data = FieldProviderFactory.getFieldProviderArray(obqPSDList);
 
       FIN_PaymentScheduleDetail[] FIN_PaymentScheduleDetail = new FIN_PaymentScheduleDetail[0];
@@ -405,6 +420,9 @@ public class PaymentReportDao {
       boolean isAmtInLimit = false;
 
       for (int i = 0; i < data.length; i++) {
+
+        // If the payment schedule detail has a payment detail, then, the information is taken from
+        // the payment. If not, the information is taken from the invoice (the else).
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
           BusinessPartner bp = getDocumentBusinessPartner(FIN_PaymentScheduleDetail[i]);
           if (bp == null) {
@@ -481,7 +499,8 @@ public class PaymentReportDao {
               .getCurrency();
           FieldProviderFactory.setField(data[i], "TRANS_CURRENCY", transCurrency.getISOCode());
           // paymentMethod
-          FieldProviderFactory.setField(data[i], "PAYMENT_METHOD", "");
+          FieldProviderFactory.setField(data[i], "PAYMENT_METHOD", FIN_PaymentScheduleDetail[i]
+              .getInvoicePaymentSchedule().getFinPaymentmethod().getIdentifier());
           // payment
           FieldProviderFactory.setField(data[i], "PAYMENT", "");
           // payment_id
@@ -509,6 +528,16 @@ public class PaymentReportDao {
           }
         }
 
+        /*
+         * - If the payment schedule detail has an invoice, the line is filled normally.
+         * 
+         * - If it has a payment it does not have an invoice or it should have entered the first if,
+         * thus, it is a credit payment. If it is a credit payment, it is checked whether it pays
+         * one or multiple invoices. If it is one, the information of that invoice is provided. If
+         * not, it is filled with '**'.
+         * 
+         * - Otherwise, it is filled empty.
+         */
         if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
           fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i],
               FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule(), false);
@@ -516,9 +545,9 @@ public class PaymentReportDao {
           java.util.List<Invoice> invoices = getInvoicesUsingCredit(FIN_PaymentScheduleDetail[i]
               .getPaymentDetails().getFinPayment());
           if (invoices.size() == 1) {
-            FIN_PaymentSchedule ps = getInvoicePaymentSchedule(FIN_PaymentScheduleDetail[i]
+            java.util.List<FIN_PaymentSchedule> ps = getInvoicePaymentSchedules(FIN_PaymentScheduleDetail[i]
                 .getPaymentDetails().getFinPayment());
-            fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i], ps, true);
+            fillLine(dateFormat, data[i], FIN_PaymentScheduleDetail[i], ps.get(0), true);
           } else {
             // project
             FieldProviderFactory.setField(data[i], "PROJECT", "");
@@ -1062,6 +1091,26 @@ public class PaymentReportDao {
     }
   }
 
+  public java.util.List<FIN_PaymentSchedule> getInvoicePaymentSchedules(FIN_Payment credit_payment) {
+    final StringBuilder sql = new StringBuilder();
+    sql.append(" select ps ");
+    sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
+    sql.append(" FIN_Payment_Schedule ps ");
+    sql.append(" where pc.payment = pdv.payment ");
+    sql.append(" and ps.id = pdv.invoicePaymentPlan ");
+    sql.append(" and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ");
+
+    try {
+      OBContext.setAdminMode(true);
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(sql.toString());
+      return query.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Deprecated
   public FIN_PaymentSchedule getInvoicePaymentSchedule(FIN_Payment credit_payment) {
     final StringBuilder sql = new StringBuilder();
     sql.append(" select ps ");

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -41,7 +41,7 @@ isc.OBNoteSectionItem.addProperties({
 
   prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
 
-  canvasItem : null,
+  noteCanvasItem : null,
 
   visible : true,
   
@@ -80,10 +80,10 @@ isc.OBNoteSectionItem.addProperties({
   },
 
   getNotePart : function() {
-    if (!this.canvasItem) {
-      this.canvasItem = this.form.getField(this.itemIds[0]);
+    if (!this.noteCanvasItem) {
+      this.noteCanvasItem = this.form.getField(this.itemIds[0]);
     }
-    return this.canvasItem.canvas;
+    return this.noteCanvasItem.canvas;
   },
 
   setRecordInfo : function(entity, id) {
@@ -101,10 +101,10 @@ isc.OBNoteSectionItem.addProperties({
 
   hide: function() {
     this.Super('hide',arguments);
-    if (this.canvasItem) {
+    if (this.noteCanvasItem) {
       // Solves issue #16663: Forcing call to canvas hide. 
       // Shouldn't this be invoked by SmartClient 
-      this.canvasItem.hide();
+      this.noteCanvasItem.hide();
     }
   }
 
@@ -177,14 +177,14 @@ isc.OBNoteLayout.addProperties({
         });
         noteSection.setNoteCount(noteSection.noteCount - 1);
       }
-    },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+    },{title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteNote')});
   },
 
   /**
    * Returns Notes data source.
    */
   getNoteDataSource : function() {
-    return isc.DataSource.getDataSource(this.noteDSId);
+    return this.noteListGrid.dataSource;
   },
 
   /**
@@ -192,9 +192,6 @@ isc.OBNoteLayout.addProperties({
    */
   initWidget : function() {
     this.Super('initWidget', arguments);
-
-    // register note DS
-    OB.Datasource.get(this.noteDSId);
 
     var hLayout = isc.HLayout.create({
       width : '50%',
@@ -260,7 +257,6 @@ isc.OBNoteLayout.addProperties({
       alternateRecordStyles : false,
       autoFetchData : true,
       baseStyle : 'OBNoteListGridCell',
-      dataSource : this.noteDSId,
       fixedRecordHeights : false,
       filterOnKeypress : true,
       headerHeight : 0,
@@ -272,6 +268,10 @@ isc.OBNoteLayout.addProperties({
       showEmptyMessage : false,
       styleName : 'OBNoteListGrid',
       wrapCells : true,
+      
+      setDataSource: function (dataSource, fields) {
+        this.Super('setDataSource', [dataSource, this.fields]);
+      },
 
       fetchData : function(criteria, callback, requestProperties) {
         if (this.layout.getForm() && this.layout.getForm().noteSection && 
@@ -363,7 +363,9 @@ isc.OBNoteLayout.addProperties({
     });
     
     this.addMember(this.noteListGrid);
-
+    
+    // register note DS
+    OB.Datasource.get(this.noteDSId, this.noteListGrid, null, true);
   },
 
   /**

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,7 +146,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (changedColumn != null) {
         log.debug("Changed field: " + changedColumn);
       }
-      if (rowId != null) {
+      if (rowId != null && !rowId.equals("null")) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
       JSONObject jsContent = new JSONObject();
@@ -382,16 +382,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 field.getDisplayLogic(), tab);
-
-            for (String attrName : parser.getSessionAttributes()) {
-              if (!sessionAttributesMap.containsKey(attrName)) {
-                final String attrValue = Utility
-                    .getContext(new DalConnectionProvider(false), RequestContext.get()
-                        .getVariablesSecureApp(), attrName, tab.getWindow().getId());
-                sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_")
-                    : attrName, attrValue);
-              }
-            }
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
+                .getId());
+          }
+          // We also add session attributes from readonly logic fields
+          if (field.getColumn().getReadOnlyLogic() != null && field.isDisplayed()
+              && field.isActive()) {
+            final DynamicExpressionParser parser = new DynamicExpressionParser(field.getColumn()
+                .getReadOnlyLogic(), tab);
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
+                .getId());
           }
 
         }
@@ -442,6 +442,19 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.error("Error while generating the final JSON object: ", e);
       return null;
     }
+  }
+
+  private void setSessionAttributesFromParserResult(DynamicExpressionParser parser,
+      Map<String, String> sessionAttributesMap, String windowId) {
+    for (String attrName : parser.getSessionAttributes()) {
+      if (!sessionAttributesMap.containsKey(attrName)) {
+        final String attrValue = Utility.getContext(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), attrName, windowId);
+        sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_") : attrName,
+            attrValue);
+      }
+    }
+
   }
 
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
@@ -931,6 +944,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         continue;
       }
       String column = field.getColumn().getDBColumnName();
+      String columninp = "inp" + Sqlc.TransformaNombreColumna(column);
+      if (column.equalsIgnoreCase("Ad_Org_Id") && !changeEventCols.contains(columninp)) {
+        changeEventCols.add(columninp);
+      }
       if (columnsInValidation.get(column) != null && columnsInValidation.get(column).size() > 0) {
         for (String colInVal : columnsInValidation.get(column)) {
           final String columnName = "inp" + Sqlc.TransformaNombreColumna(colInVal);

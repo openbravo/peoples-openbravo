@@ -380,10 +380,6 @@ public class OBViewFieldHandler {
 
       statusBarFields.add(property.getName());
 
-      if (field.isDisplayed()) {
-        continue;
-      }
-
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
       viewField.setProperty(property);
@@ -1263,7 +1259,9 @@ public class OBViewFieldHandler {
     }
 
     public void setReadOnlyIf(String readOnlyExpression) {
-      this.readOnlyIf = readOnlyExpression;
+      if (!this.getReadOnly()) {
+        this.readOnlyIf = readOnlyExpression;
+      }
     }
 
     public String getReadOnlyIf() {

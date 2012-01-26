@@ -69,6 +69,7 @@
        processId: '${field.processId?js_string}',
        <#if field.newDefinition>newDefinition: ${field.newDefinition?string},</#if>
        <#if field.windowId != "">windowId: '${field.windowId?js_string}',</#if>
+       <#if field.windowTitle != "">windowTitle: '${field.windowTitle?js_string}',</#if>
        <#if !field.modal>modal: ${field.modal?string},</#if>
        <#if field.hasLabelValues>
        labelValue: {<#list field.labelValues as value>
