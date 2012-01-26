@@ -229,7 +229,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           .createQuery(
               Field.class,
               "as f where f.tab.id = :tabId"
-                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false)"
+                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false and fa.ischeckonsave = true)"
                   + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId)"
                   + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false)"
                   + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId)"
