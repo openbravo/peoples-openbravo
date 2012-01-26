@@ -801,6 +801,10 @@ isc.OBStandardWindow.addProperties({
   storeViewState: function(){
     var result = {}, i, length = this.views.length;
     
+    if (!OB.Utilities.checkProfessionalLicense(null, true)) {
+      return;
+    }
+    
     for (i = 0; i < length; i++) {
       if ( this.views[i].viewGrid ) {
         result[this.views[i].tabId] = this.views[i].viewGrid.getViewState();
