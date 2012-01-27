@@ -1110,7 +1110,7 @@
 <!--227-->  <AD_WINDOW_ID><![CDATA[227]]></AD_WINDOW_ID>
 <!--227-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--227-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--227-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--227-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--227-->  <NAME><![CDATA[Application Image]]></NAME>
 <!--227-->  <DESCRIPTION><![CDATA[Create and edit images that later will be used in other windows.]]></DESCRIPTION>
 <!--227-->  <HELP><![CDATA[Create and edit images that later will be used in other windows.]]></HELP>
