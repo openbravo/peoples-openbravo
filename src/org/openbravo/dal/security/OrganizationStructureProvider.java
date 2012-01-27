@@ -32,6 +32,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
@@ -363,5 +364,22 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  /**
+   * Returns the legal entity of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntity(final Organization org) {
+    for (final String orgId : getParentList(org.getId(), true)) {
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.getOrganizationType().isLegalEntity()) {
+        return parentOrg;
+      }
+    }
+    return null;
   }
 }
