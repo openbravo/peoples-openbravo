@@ -93,6 +93,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="TRANSACTIONCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
         <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
