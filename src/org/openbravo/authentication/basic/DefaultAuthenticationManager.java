@@ -80,7 +80,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
 
-      if (LoginUtils.checkUserPassword(conn, strUser, "") == null) {
+      if (LoginUtils.checkUserPassword(conn, strUser, strPass) == null) {
         log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
         errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
