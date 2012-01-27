@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -44,6 +44,8 @@
   v_PriceNew NUMBER;
   v_Client VARCHAR2(32);
   v_BaseCurrency VARCHAR2(32);
+  v_Incremental BOOLEAN := FALSE;
+  v_doNothing BOOLEAN := FALSE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -85,6 +87,9 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_User:=Cur_Parameter.AD_User_ID;
       v_Client:=Cur_Parameter.AD_Client_ID;
+      IF (Cur_Parameter.ParameterName = 'IsIncremental') THEN
+        v_Incremental := COALESCE(Cur_Parameter.P_String, 'N')='Y';
+      END IF;
     END LOOP; --  Get Parameter
     SELECT AD_CLIENT.C_CURRENCY_ID 
       INTO v_BaseCurrency
@@ -94,16 +99,43 @@
     -- BEGIN CHECK IF COST USED TO POST A DOCUMENT
     -- If a document has been posted, and in the entry the costing has been used to calculate any amount,
     -- process is not allowed to be launched.
-    SELECT MIN(DATEFROM)
-    INTO v_MinDateCosting
-    FROM M_COSTING
-    WHERE ISPERMANENT='N'
-      AND ISMANUAL='N'
-      AND COSTTYPE='AV'
-      AND ISPRODUCTION = 'N'
-      AND AD_CLIENT_ID = v_Client;
+
+    IF (v_Incremental) THEN
+      -- In case of incremental computation, calculate since first m_inOut.MovementDate from the ones
+      -- not included yet in any costing
+      SELECT MIN(M_INOUT.MOVEMENTDATE)
+      INTO v_MinDateCosting
+      FROM M_INOUT, M_INOUTLINE, M_PRODUCT
+      WHERE M_INOUT.M_INOUT_ID=M_INOUTLINE.M_INOUT_ID
+        AND M_INOUTLINE.M_PRODUCT_ID=M_PRODUCT.M_PRODUCT_ID
+        AND M_PRODUCT.COSTTYPE='AV'
+        AND M_INOUT.ISSOTRX='N'
+        AND M_INOUT.PROCESSED='Y'
+        AND M_INOUTLINE.MOVEMENTQTY>0
+        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE' AND M_INOUT.DOCSTATUS <> 'VO'
+        AND M_INOUT.AD_CLIENT_ID = v_Client
+        AND NOT EXISTS
+           (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID);
+       IF (v_MinDateCosting IS NOT NULL) THEN
+         v_MinDateCosting := TRUNC(v_MinDateCosting);
+       ELSE
+         -- There is no M_InOut with lines without costing, nothing to do
+         v_Message := '@NoNewCostingGenerationNeeded@';
+         v_doNothing := TRUE;
+       END IF;
+    ELSE
+      SELECT MIN(DATEFROM)
+      INTO v_MinDateCosting
+      FROM M_COSTING
+      WHERE ISPERMANENT='N'
+        AND ISMANUAL='N'
+        AND COSTTYPE='AV'
+        AND ISPRODUCTION = 'N'
+        AND AD_CLIENT_ID = v_Client;
+    END IF;
 
     v_CheckResultStr := '';
+   IF (NOT v_doNothing) THEN
     SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_MOVEMENT WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
     IF (v_MinDateCosting <= v_Date) THEN
       v_FirstIteration:=TRUE;
@@ -127,7 +159,7 @@
       END LOOP;
       v_CheckResultStr:=v_CheckResultStr || '.';
     END IF;
-
+   
     SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_INVENTORY WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
     IF (v_MinDateCosting <= v_Date) THEN
       v_FirstIteration:=TRUE;
@@ -230,24 +262,27 @@
       END LOOP;
       v_CheckResultStr:=v_CheckResultStr || '.';
     END IF;
-
+  
     IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN
       RAISE_APPLICATION_ERROR(-20000, v_CheckResultStr);
     END IF;
     -- END CHECK IF COST USED TO POST A DOCUMENT
 
-    DELETE
-    FROM M_COSTING
-    WHERE ISPERMANENT='N'
-      AND ISMANUAL='N'
-      AND COSTTYPE='AV'
-      AND ISPRODUCTION = 'N'
-      AND AD_CLIENT_ID = v_Client;
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Deleted:=v_Deleted + v_rowcount;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
-    --RECALCULATE THE DATETO OF MANUAL COSTS
+    IF (NOT v_Incremental) THEN
+      DELETE
+      FROM M_COSTING
+      WHERE ISPERMANENT='N'
+        AND ISMANUAL='N'
+        AND COSTTYPE='AV'
+        AND ISPRODUCTION = 'N'
+        AND AD_CLIENT_ID = v_Client;
+      v_rowcount:=SQL%ROWCOUNT;
+      v_Deleted:=v_Deleted + v_rowcount;
+      v_rowcount:=SQL%ROWCOUNT;
+      DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
+    END IF;
+
+    --RECALCULATE THE DATETO OF ALREADY CALCULATED COSTS
     FOR Cur_ManualCost IN
       (SELECT M_COSTING_ID, M_PRODUCT_ID, DATEFROM
        FROM M_COSTING
@@ -441,6 +476,7 @@
       v_DateOld:=Cur_InOutLine.MOVEMENTDATE;
       v_ProductOld:=Cur_InOutLine.M_PRODUCT_ID;
     END LOOP;
+   END IF;  
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
