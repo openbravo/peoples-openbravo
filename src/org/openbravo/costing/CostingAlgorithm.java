@@ -251,7 +251,7 @@ public abstract class CostingAlgorithm {
         CostingServer transactionCost = new CostingServer(transaction);
         try {
           transactionCost.process();
-          totalCost = totalCost.add(transactionCost.getTrxCost());
+          totalCost = totalCost.add(transactionCost.getTransactionCost());
         } catch (OBException e) {
           log4j.error(e.getMessage(), e);
         }

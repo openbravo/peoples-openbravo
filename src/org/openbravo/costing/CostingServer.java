@@ -59,7 +59,11 @@ public class CostingServer {
     trxCost = transaction.getTransactionCost();
   }
 
-  public void process() throws OBException {
+  /**
+   * Calculates and stores in the database the cost of the transaction.
+   * 
+   */
+  public void process() {
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -112,12 +116,11 @@ public class CostingServer {
     TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setCost(trxCost);
-    // FIXME: review which date should be used
     transactionCost.setCostDate(transaction.getCreationDate());
     OBDal.getInstance().save(transactionCost);
   }
 
-  public BigDecimal getTrxCost() {
+  public BigDecimal getTransactionCost() {
     return trxCost;
   }
 }
