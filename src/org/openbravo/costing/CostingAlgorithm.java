@@ -94,11 +94,11 @@ public abstract class CostingAlgorithm {
     case InventoryDecrease:
       return getOutgoingTransactionCost();
     case InventoryIncrease:
-      return getPhysicalInventoryCost();
-    case IntMovementOrigin:
+      return getIncomingPhysicalInventoryCost();
+    case IntMovementFrom:
       return getOutgoingTransactionCost();
-    case IntMovementDest:
-      return getInternalMovementDestinationCost();
+    case IntMovementTo:
+      return getInternalMovementToCost();
     case InternalCons:
       return getOutgoingTransactionCost();
     case BOMPart:
@@ -199,14 +199,14 @@ public abstract class CostingAlgorithm {
    * 
    * @return
    */
-  private BigDecimal getPhysicalInventoryCost() {
+  private BigDecimal getIncomingPhysicalInventoryCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
         transaction.getCreationDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
 
   }
 
-  private BigDecimal getInternalMovementDestinationCost() {
+  private BigDecimal getInternalMovementToCost() {
     // Get transaction of Origin movement to retrieve it's cost.
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
@@ -251,7 +251,7 @@ public abstract class CostingAlgorithm {
   }
 
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, Receipt, ReceiptReturn, ReceiptVoid, InventoryIncrease, InventoryDecrease, IntMovementOrigin, IntMovementDest, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, Receipt, ReceiptReturn, ReceiptVoid, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
     private static TrxType getTrxType(MaterialTransaction transaction) {
       if (transaction.getGoodsShipmentLine() != null) {
         // Receipt / Shipment
@@ -297,11 +297,11 @@ public abstract class CostingAlgorithm {
       } else if (transaction.getMovementLine() != null) {
         // Internal movement
         if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
-          log4j.debug("Internal Movement dest: " + transaction.getMovementLine().getIdentifier());
-          return IntMovementDest;
+          log4j.debug("Internal Movement to: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementTo;
         } else {
-          log4j.debug("Internal Movement origin " + transaction.getMovementLine().getIdentifier());
-          return IntMovementOrigin;
+          log4j.debug("Internal Movement from: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementFrom;
         }
       } else if (transaction.getInternalConsumptionLine() != null) {
         log4j.debug("Internal Consumption: "
