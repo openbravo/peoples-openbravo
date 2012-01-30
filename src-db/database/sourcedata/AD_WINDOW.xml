@@ -160,7 +160,7 @@
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--109-->  <NAME><![CDATA[Client]]></NAME>
 <!--109-->  <DESCRIPTION><![CDATA[Define client characteristics, additional information, and defaults.]]></DESCRIPTION>
-<!--109-->  <HELP><![CDATA[A Client can be a "Company" or an "Entity" of any type executing on a given business activity in an independent  way. Client/s are at the highest level of the enterprise structure and could have "Sub-divisions" or "Organizations" at a lower level.]]></HELP>
+<!--109-->  <HELP><![CDATA[A client is an independent entity composed of at least an enterprise or organization.  A client includes and manages the master data to share among all the organizations which belong to it and groups the transactional data booked in any of the organizations which belong to it.]]></HELP>
 <!--109-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--109-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--109-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -177,7 +177,7 @@
 <!--110-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--110-->  <NAME><![CDATA[Organization]]></NAME>
 <!--110-->  <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></DESCRIPTION>
-<!--110-->  <HELP><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></HELP>
+<!--110-->  <HELP><![CDATA[An organization is an enterprise of a Client. Each client must have at least one enterprise or organization created by running the Initial Organization Setup process. The process of creating an organization ends after setting it as "Ready".]]></HELP>
 <!--110-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--110-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--110-->  <PROCESSING><![CDATA[N]]></PROCESSING>

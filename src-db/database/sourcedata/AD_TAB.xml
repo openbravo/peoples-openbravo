@@ -825,7 +825,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--143-->  <NAME><![CDATA[Organization]]></NAME>
 <!--143-->  <DESCRIPTION><![CDATA[Create organizations to manage your company's organizational structure.]]></DESCRIPTION>
-<!--143-->  <HELP><![CDATA[Create organizations to manage your company's organizational structure.]]></HELP>
+<!--143-->  <HELP><![CDATA[Organization window allows to maintain the organizations which compose an enterprise model.]]></HELP>
 <!--143-->  <AD_TABLE_ID><![CDATA[155]]></AD_TABLE_ID>
 <!--143-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--143-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1197,7 +1197,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--170-->  <NAME><![CDATA[Information]]></NAME>
 <!--170-->  <DESCRIPTION><![CDATA[Add complementary information for a selected organization.]]></DESCRIPTION>
-<!--170-->  <HELP><![CDATA[Add complementary information for a selected organization.]]></HELP>
+<!--170-->  <HELP><![CDATA[Information tab allows to add relevant information of an organization, information such as location and tax ID number.]]></HELP>
 <!--170-->  <AD_TABLE_ID><![CDATA[228]]></AD_TABLE_ID>
 <!--170-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--170-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12510,8 +12510,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <NAME><![CDATA[Period Control]]></NAME>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <DESCRIPTION><![CDATA[View to display the Period Control for the selected organization]]></DESCRIPTION>
-<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HELP><![CDATA[The Period Control depends on the fiscal calendar of the selected organization.
-This tab is read only. If you want to control the periods you must use the "Open/Close Period Control" window inside Financial Management || Accounting || Transactions]]></HELP>
+<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HELP><![CDATA[Period control tab is a read-only tab which lists the fiscal calendar period status of an organization.]]></HELP>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_TABLE_ID><![CDATA[CB391C8A13D74B688A34017B5B5D1F5D]]></AD_TABLE_ID>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -12627,7 +12626,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <NAME><![CDATA[Org Schema]]></NAME>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <DESCRIPTION><![CDATA[It is used for configuring the accounting schemas attached to the organization]]></DESCRIPTION>
-<!--7580F9AE37704571BB0D3935252CAC5A-->  <HELP><![CDATA[A business unit or a legal entity can have one or several schemas attached to it.]]></HELP>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <HELP><![CDATA[Org Schema tabs allows to add or to review the accounting schema/s of the organization.]]></HELP>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_TABLE_ID><![CDATA[088ED0B6930847508865BCB06E75228A]]></AD_TABLE_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -13872,7 +13871,7 @@ AND @Order.businessPartner@ = e.goodsShipmentLine.shipmentReceipt.businessPartne
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <NAME><![CDATA[Data Sets]]></NAME>
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <DESCRIPTION><![CDATA[Data sets applied to this organization]]></DESCRIPTION>
-<!--E166858871CA4F74BBC0E1BBDC5C9887-->  <HELP><![CDATA[Data sets applied to this organization]]></HELP>
+<!--E166858871CA4F74BBC0E1BBDC5C9887-->  <HELP><![CDATA[Data sets tab allows to view the reference data applied to the organization and informs in case there is any updated of a reference data applied availabe.]]></HELP>
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <AD_TABLE_ID><![CDATA[66C2A14049FD44808B686F2B5B0A321E]]></AD_TABLE_ID>
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--E166858871CA4F74BBC0E1BBDC5C9887-->  <SEQNO><![CDATA[60]]></SEQNO>
