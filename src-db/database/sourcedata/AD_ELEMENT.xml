@@ -16378,9 +16378,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800572-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800572-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800572-->  <COLUMNNAME><![CDATA[Plannedtime]]></COLUMNNAME>
-<!--800572-->  <NAME><![CDATA[Planned Time]]></NAME>
-<!--800572-->  <PRINTNAME><![CDATA[Planned Time]]></PRINTNAME>
-<!--800572-->  <HELP><![CDATA[Estimated time for the operation.]]></HELP>
+<!--800572-->  <NAME><![CDATA[Planned Time (Hours)]]></NAME>
+<!--800572-->  <PRINTNAME><![CDATA[Planned Time (Hours)]]></PRINTNAME>
+<!--800572-->  <HELP><![CDATA[Estimated time in hours for the operation.]]></HELP>
 <!--800572-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800572-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800572--></AD_ELEMENT>
@@ -17948,9 +17948,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800719-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800719-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800719-->  <COLUMNNAME><![CDATA[Improductivehoursyear]]></COLUMNNAME>
-<!--800719-->  <NAME><![CDATA[Idle Time/Year]]></NAME>
-<!--800719-->  <PRINTNAME><![CDATA[Improductive hours year]]></PRINTNAME>
-<!--800719-->  <HELP><![CDATA[Total no productive hours per year.]]></HELP>
+<!--800719-->  <NAME><![CDATA[Days/Year]]></NAME>
+<!--800719-->  <PRINTNAME><![CDATA[Improductive days  year]]></PRINTNAME>
+<!--800719-->  <HELP><![CDATA[Total no productive days per year.]]></HELP>
 <!--800719-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800719-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800719--></AD_ELEMENT>
@@ -18011,10 +18011,10 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800724-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800724-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800724-->  <COLUMNNAME><![CDATA[Amortization]]></COLUMNNAME>
-<!--800724-->  <NAME><![CDATA[Amortization]]></NAME>
-<!--800724-->  <PRINTNAME><![CDATA[Amortization]]></PRINTNAME>
+<!--800724-->  <NAME><![CDATA[Amortization (years)]]></NAME>
+<!--800724-->  <PRINTNAME><![CDATA[Amortization (years)]]></PRINTNAME>
 <!--800724-->  <DESCRIPTION><![CDATA[The depreciation or reduction of a product value over time.]]></DESCRIPTION>
-<!--800724-->  <HELP><![CDATA[Amortization amount.]]></HELP>
+<!--800724-->  <HELP><![CDATA[Amortization amount in years.]]></HELP>
 <!--800724-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800724-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800724--></AD_ELEMENT>
