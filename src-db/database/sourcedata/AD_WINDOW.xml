@@ -143,7 +143,7 @@
 <!--108-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--108-->  <NAME><![CDATA[User]]></NAME>
 <!--108-->  <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions.]]></DESCRIPTION>
-<!--108-->  <HELP><![CDATA[Create users and manage user roles to give access permissions.]]></HELP>
+<!--108-->  <HELP><![CDATA[A user is an entity which can log into Openbravo whenever it has a password and at least one role assigned to it.]]></HELP>
 <!--108-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--108-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--108-->  <PROCESSING><![CDATA[N]]></PROCESSING>
