@@ -1996,7 +1996,7 @@
 <!--800007-->  <AD_MENU_ID><![CDATA[800007]]></AD_MENU_ID>
 <!--800007-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800007-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800007-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800007-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800007-->  <NAME><![CDATA[Service Project]]></NAME>
 <!--800007-->  <DESCRIPTION><![CDATA[Create and edit potential projects which your business partner's are bidding on.  Create plans to purchase and proposals to your products if a business partner bid is won.]]></DESCRIPTION>
 <!--800007-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -2165,7 +2165,7 @@
 <!--800032-->  <AD_MENU_ID><![CDATA[800032]]></AD_MENU_ID>
 <!--800032-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800032-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800032-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800032-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800032-->  <NAME><![CDATA[Service Project Report]]></NAME>
 <!--800032-->  <DESCRIPTION><![CDATA[Service Project Report]]></DESCRIPTION>
 <!--800032-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -2204,7 +2204,7 @@
 <!--800037-->  <AD_MENU_ID><![CDATA[800037]]></AD_MENU_ID>
 <!--800037-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800037-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800037-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800037-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800037-->  <NAME><![CDATA[Project Proposal Tracker]]></NAME>
 <!--800037-->  <DESCRIPTION><![CDATA[View all proposals made to you during a Budget Project.]]></DESCRIPTION>
 <!--800037-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
