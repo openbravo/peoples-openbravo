@@ -14771,9 +14771,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800336-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800336-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800336-->  <COLUMNNAME><![CDATA[Strtime]]></COLUMNNAME>
-<!--800336-->  <NAME><![CDATA[Starting Time]]></NAME>
+<!--800336-->  <NAME><![CDATA[Work Incidence Downtime]]></NAME>
 <!--800336-->  <PRINTNAME><![CDATA[Start time]]></PRINTNAME>
-<!--800336-->  <HELP><![CDATA[Start time in hours.]]></HELP>
+<!--800336-->  <HELP><![CDATA[Work Incidence Downtime in hours.]]></HELP>
 <!--800336-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800336-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800336--></AD_ELEMENT>
