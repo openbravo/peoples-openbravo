@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION M_GET_TRANSACTION_COST">
+    <function name="M_GET_TRANSACTION_COST" type="NUMERIC">
+      <parameter name="p_transaction_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_date" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2012 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_product_id     M_Transaction.M_Product_ID%TYPE;
+  v_quantity       NUMBER;
+  v_costamt        NUMBER;
+  --TYPE RECORD IS REF CURSOR;
+  --  Cur_Cost RECORD;
+BEGIN
+  SELECT sum(cost) INTO v_costamt
+  FROM m_transaction_cost
+  WHERE m_transaction_id = p_transaction_id
+    AND costdate <= p_date;
+  IF (v_costamt IS NOT NULL) THEN
+    RETURN v_costamt;
+  END IF;
+
+  SELECT m_product_id, movementqty
+    INTO v_product_id, v_quantity
+  FROM M_Transaction
+  WHERE m_transaction_id = p_transaction_id;
+
+  RETURN m_get_product_cost(v_product_id, p_date, 'AV') * v_quantity;
+END M_GET_TRANSACTION_COST
+]]></body>
+    </function>
+  </database>
