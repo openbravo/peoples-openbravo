@@ -14568,7 +14568,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800292-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800292-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800292-->  <COLUMNNAME><![CDATA[Usecycle]]></COLUMNNAME>
-<!--800292-->  <NAME><![CDATA[Lifespan]]></NAME>
+<!--800292-->  <NAME><![CDATA[Lifespan (years)]]></NAME>
 <!--800292-->  <PRINTNAME><![CDATA[Usecycle]]></PRINTNAME>
 <!--800292-->  <HELP><![CDATA[Indicates the number of years that it's useful]]></HELP>
 <!--800292-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
