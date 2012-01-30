@@ -45,6 +45,7 @@ public abstract class CostingAlgorithm {
   protected HashMap<CostDimension, BaseOBObject> costDimensions;
   protected Organization costOrg;
   protected Currency costCurrency;
+  protected TrxType trxType;
 
   public Currency getCostCurrency() {
     return costCurrency;
@@ -67,6 +68,7 @@ public abstract class CostingAlgorithm {
     if (costCurrency == null) {
       costCurrency = transaction.getClient().getCurrency();
     }
+    this.trxType = TrxType.getTrxType(this.transaction);
   }
 
   public BigDecimal getTransactionCost() {
@@ -76,80 +78,49 @@ public abstract class CostingAlgorithm {
         && getZeroMovementQtyCost() != null) {
       return getZeroMovementQtyCost();
     }
-    if (transaction.getGoodsShipmentLine() != null) {
-      // Receipt / Shipment
-      ShipmentInOut inout = transaction.getGoodsShipmentLine().getShipmentReceipt();
-      if (inout.isSalesTransaction()) {
-        // Shipment
-        if (inout.getDocumentType().isReversal()) {
-          log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
-          // Reversal shipment. Get cost from original shipment.
-          return getShipmentReturnAmount();
-        } else {
-          log4j.debug("Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
-          return getOutgoingTransactionCost();
-        }
-      } else {
-        // Receipt
-        if (inout.getDocumentType().isReversal()) {
-          log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
-          // Reversal receipt. Create adjustments for original receipt.
-          // TODO: pending to implement reversal receipts.
-        } else {
-          log4j.debug("Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
-          return getReceiptAmount();
-        }
-      }
-    } else if (transaction.getPhysicalInventoryLine() != null) {
-      // Physical Inventory
-      if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
-        log4j.debug("Physical inventory, increments stock: "
-            + transaction.getPhysicalInventoryLine().getIdentifier());
-        // Calculate cost of new stock.
-        return getPhysicalInventoryCost();
-      } else {
-        log4j.debug("Physical inventory, decreases stock "
-            + transaction.getPhysicalInventoryLine().getIdentifier());
-        return getOutgoingTransactionCost();
-      }
-    } else if (transaction.getMovementLine() != null) {
-      // Internal movement
-      if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
-        log4j.debug("Internal Movement dest: " + transaction.getMovementLine().getIdentifier());
-        // Destination movement.
-        return getInternalMovementDestinationCost();
-      } else {
-        log4j.debug("Internal Movement origin " + transaction.getMovementLine().getIdentifier());
-        // Origin movement.
-        return getOutgoingTransactionCost();
-      }
-    } else if (transaction.getInternalConsumptionLine() != null) {
-      log4j.debug("Internal Consumption: "
-          + transaction.getInternalConsumptionLine().getIdentifier());
-      // Internal Consumption
+    switch (trxType) {
+    case Shipment:
       return getOutgoingTransactionCost();
-    } else if (transaction.getProductionLine() != null) {
-      // Production Line
-      if (transaction.getProductionLine().getProductionPlan().getProduction().isSalesTransaction()) {
-        // BOM Production
-        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
-          log4j.debug("Produced BOM product: " + transaction.getProductionLine().getIdentifier());
-          // Produced BOM
-          return getBOMProductionCost();
-        } else {
-          log4j.debug("Used BOM Part: " + transaction.getProductionLine().getIdentifier());
-          // Used parts
-          return getOutgoingTransactionCost();
-        }
-      } else {
-        log4j.debug("Manufacturing Product");
-        // Work Effort
-        // TODO: Pending to implement manufacturing cost management.
-      }
+    case ShipmentReturn:
+      return getShipmentReturnAmount();
+    case ShipmentVoid:
+      return getShipmentVoidAmount();
+    case Receipt:
+      return getReceiptAmount();
+    case ReceiptReturn:
+      return getReceiptReturnAmount();
+    case ReceiptVoid:
+      return getReceiptVoidAmount();
+    case InventoryDecrease:
+      return getOutgoingTransactionCost();
+    case InventoryIncrease:
+      return getPhysicalInventoryCost();
+    case IntMovementOrigin:
+      return getOutgoingTransactionCost();
+    case IntMovementDest:
+      return getInternalMovementDestinationCost();
+    case InternalCons:
+      return getOutgoingTransactionCost();
+    case BOMPart:
+      return getOutgoingTransactionCost();
+    case BOMProduct:
+      return getBOMProductionCost();
+    case Manufacturing:
+      break;
+    case Unknown:
+      break;
+    default:
+      break;
     }
-
     return transactionCost;
   }
+
+  /**
+   * Calculates the total cost amount of an outgoing transaction.
+   * 
+   * @return Transaction total cost amount.
+   */
+  abstract protected BigDecimal getOutgoingTransactionCost();
 
   /**
    * Auxiliary method for transactions with 0 Movement qty. It can be overwritten by Costing
@@ -161,12 +132,15 @@ public abstract class CostingAlgorithm {
     return BigDecimal.ZERO;
   }
 
-  /**
-   * Calculates the total cost amount of an outgoing transaction.
-   * 
-   * @return Transaction total cost amount.
-   */
-  abstract protected BigDecimal getOutgoingTransactionCost();
+  private BigDecimal getShipmentReturnAmount() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  private BigDecimal getShipmentVoidAmount() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
   /*
    * Default method to get Receipts Transaction amount based on receipt's related order price.
@@ -207,7 +181,12 @@ public abstract class CostingAlgorithm {
     return trxCost.setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
-  private BigDecimal getShipmentReturnAmount() {
+  private BigDecimal getReceiptVoidAmount() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  private BigDecimal getReceiptReturnAmount() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -221,8 +200,10 @@ public abstract class CostingAlgorithm {
    * @return
    */
   private BigDecimal getPhysicalInventoryCost() {
-    // TODO Auto-generated method stub
-    return BigDecimal.ZERO;
+    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
+        transaction.getCreationDate(), costDimensions);
+    return transaction.getMovementQuantity().multiply(standardCost);
+
   }
 
   private BigDecimal getInternalMovementDestinationCost() {
@@ -267,6 +248,88 @@ public abstract class CostingAlgorithm {
 
   public enum CostDimension {
     Warehouse, LegalEntity
+  }
+
+  public enum TrxType {
+    Shipment, ShipmentReturn, ShipmentVoid, Receipt, ReceiptReturn, ReceiptVoid, InventoryIncrease, InventoryDecrease, IntMovementOrigin, IntMovementDest, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
+    private static TrxType getTrxType(MaterialTransaction transaction) {
+      if (transaction.getGoodsShipmentLine() != null) {
+        // Receipt / Shipment
+        ShipmentInOut inout = transaction.getGoodsShipmentLine().getShipmentReceipt();
+        if (inout.isSalesTransaction()) {
+          // Shipment
+          if (inout.getDocumentType().isReversal()) {
+            log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentVoid;
+          } else {
+            log4j.debug("Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Shipment;
+          }
+        } else {
+          // Receipt
+          if (inout.getDocumentType().isReversal()) {
+            log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptVoid;
+          } else {
+            log4j.debug("Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Receipt;
+          }
+        }
+      } else if (transaction.getPhysicalInventoryLine() != null) {
+        // Physical Inventory
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Physical inventory, increments stock: "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryIncrease;
+        } else {
+          log4j.debug("Physical inventory, decreases stock "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryDecrease;
+        }
+      } else if (transaction.getMovementLine() != null) {
+        // Internal movement
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Internal Movement dest: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementDest;
+        } else {
+          log4j.debug("Internal Movement origin " + transaction.getMovementLine().getIdentifier());
+          return IntMovementOrigin;
+        }
+      } else if (transaction.getInternalConsumptionLine() != null) {
+        log4j.debug("Internal Consumption: "
+            + transaction.getInternalConsumptionLine().getIdentifier());
+        return InternalCons;
+      } else if (transaction.getProductionLine() != null) {
+        // Production Line
+        if (transaction.getProductionLine().getProductionPlan().getProduction()
+            .isSalesTransaction()) {
+          // BOM Production
+          if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+            log4j.debug("Produced BOM product: " + transaction.getProductionLine().getIdentifier());
+            return BOMProduct;
+          } else {
+            log4j.debug("Used BOM Part: " + transaction.getProductionLine().getIdentifier());
+            // Used parts
+            return BOMPart;
+          }
+        } else {
+          log4j.debug("Manufacturing Product");
+          // Work Effort
+          // TODO: Pending to implement manufacturing cost management.
+          return Manufacturing;
+        }
+      }
+      return Unknown;
+    }
+
   }
 
 }
