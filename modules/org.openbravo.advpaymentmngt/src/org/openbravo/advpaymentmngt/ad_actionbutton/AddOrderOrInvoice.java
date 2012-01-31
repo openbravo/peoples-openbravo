@@ -130,7 +130,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
-      String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
       BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
           "1"));
