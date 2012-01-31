@@ -3237,7 +3237,7 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800103-->  <VALUE><![CDATA[MA_WorkRequirement]]></VALUE>
 <!--800103-->  <NAME><![CDATA[Process Work Requirement]]></NAME>
 <!--800103-->  <DESCRIPTION><![CDATA[Process to create, if explodePhases is checked, the phases and all the products of the phases.]]></DESCRIPTION>
-<!--800103-->  <HELP><![CDATA[With this process the operations and the products will be generated from the selected production plan. If the plan is not of type "explodePhases", only the products from the previously registered phases will be generated.]]></HELP>
+<!--800103-->  <HELP><![CDATA[With this process the operations and the products will be generated from the selected production plan. If the plan is not of type "explodeOperations", only the products from the previously registered operations will be generated.]]></HELP>
 <!--800103-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800103-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800103-->  <PROCEDURENAME><![CDATA[MA_WorkRequirement_Process]]></PROCEDURENAME>
@@ -3245,6 +3245,7 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800103-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800103-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800103-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800103-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800103-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800103-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>

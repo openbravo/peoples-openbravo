@@ -15142,9 +15142,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800453-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800453-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800453-->  <COLUMNNAME><![CDATA[Explodephases]]></COLUMNNAME>
-<!--800453-->  <NAME><![CDATA[Include Phases when inserting]]></NAME>
-<!--800453-->  <PRINTNAME><![CDATA[Include Phases when inserting]]></PRINTNAME>
-<!--800453-->  <HELP><![CDATA[Indicates if the work requirement phases will be generated automatically.]]></HELP>
+<!--800453-->  <NAME><![CDATA[Include Operations when inserting]]></NAME>
+<!--800453-->  <PRINTNAME><![CDATA[Include Operations when inserting]]></PRINTNAME>
+<!--800453-->  <HELP><![CDATA[Indicates if the work requirement operations will be generated automatically.]]></HELP>
 <!--800453-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800453-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800453--></AD_ELEMENT>
