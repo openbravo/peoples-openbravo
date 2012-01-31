@@ -71,7 +71,7 @@ public abstract class CostingAlgorithm {
     this.trxType = TrxType.getTrxType(this.transaction);
   }
 
-  public BigDecimal getTransactionCost() {
+  public BigDecimal getTransactionCost() throws OBException {
     log4j.debug("Get transactions cost.");
     BigDecimal transactionCost = null;
     if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
@@ -133,8 +133,8 @@ public abstract class CostingAlgorithm {
   }
 
   private BigDecimal getShipmentReturnAmount() {
-    // TODO Auto-generated method stub
-    return null;
+    // Shipment return's cost is calculated as a regular receipt.
+    return getReceiptAmount();
   }
 
   private BigDecimal getShipmentVoidAmount() {
@@ -149,15 +149,9 @@ public abstract class CostingAlgorithm {
     BigDecimal trxCost = BigDecimal.ZERO;
     BigDecimal addQty = BigDecimal.ZERO;
     ShipmentInOutLine receiptline = transaction.getGoodsShipmentLine();
-    if (receiptline.getShipmentReceipt().getDocumentStatus().equals("VO")
-        && transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == -1) {
-      // Receipt that voids another receipt.
-      // FIXME: Pending to implement receipt cancellations.
-      return null;
-    }
     if (receiptline.getSalesOrderLine() == null) {
-      // Receipt without order. Returns standard cost.
-      // TODO: Review if standard cost is the correct approach.
+      // Receipt without order. Returns cost based on price list.
+      // FIXME: return Price List price
       return transaction.getMovementQuantity().multiply(
           CostingUtils.getStandardCost(transaction.getProduct(), transaction.getCreationDate(),
               costDimensions));
@@ -187,8 +181,8 @@ public abstract class CostingAlgorithm {
   }
 
   private BigDecimal getReceiptReturnAmount() {
-    // TODO Auto-generated method stub
-    return null;
+    // Return's cost is calculated as outgoing transactions.
+    return getOutgoingTransactionCost();
   }
 
   /**
@@ -237,7 +231,6 @@ public abstract class CostingAlgorithm {
           log4j.error(e.getMessage(), e);
         }
       } else {
-        // FIXME: using cost stored in M_Transaction
         totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
             transaction.getCreationDate()));
       }
