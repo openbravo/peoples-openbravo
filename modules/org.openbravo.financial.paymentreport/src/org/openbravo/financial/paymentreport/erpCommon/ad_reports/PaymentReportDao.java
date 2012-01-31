@@ -39,7 +39,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
@@ -1104,7 +1103,9 @@ public class PaymentReportDao {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(sql.toString());
-      return query.list();
+      @SuppressWarnings("unchecked")
+      java.util.List<FIN_PaymentSchedule> psList = query.list();
+      return psList;
     } finally {
       OBContext.restorePreviousMode();
     }

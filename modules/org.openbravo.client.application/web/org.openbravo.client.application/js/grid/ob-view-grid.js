@@ -427,11 +427,29 @@ isc.OBViewGrid.addProperties({
     delete this.inCellHoverHTML;
     return ret;
   },
- 
-  viewStateChanged: function() {
-    if (OB.Utilities.checkProfessionalLicense(null, true)) {
-      this.view.standardWindow.storeViewState();
-    }
+  
+  reorderField: function(fieldNum, moveToPosition){
+    var res = this.Super('reorderField', arguments);
+    this.view.standardWindow.storeViewState();
+    return res;
+  },
+
+  hideField: function(field, suppressRelayout){
+    var res = this.Super('hideField', arguments);
+    this.view.standardWindow.storeViewState();
+    return res;
+  },
+
+  showField: function(field, suppressRelayout){
+    var res = this.Super('showField', arguments);
+    this.view.standardWindow.storeViewState();
+    return res;
+  },
+
+  resizeField: function(fieldNum, newWidth, storeWidth){
+    var res = this.Super('resizeField', arguments);
+    this.view.standardWindow.storeViewState();
+    return res;
   },
   
   // also store the filter criteria
@@ -445,6 +463,9 @@ isc.OBViewGrid.addProperties({
         state.noFilterClause = true;
       }
     }
+    
+    // get rid of the selected state
+    delete state.selected;
     
     if (returnObject) {
       return state;

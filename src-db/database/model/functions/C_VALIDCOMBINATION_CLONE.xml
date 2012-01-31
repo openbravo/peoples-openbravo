@@ -98,7 +98,7 @@ BEGIN
 	INTO v_Exist
 	FROM C_ElementValue WHERE VALUE =v_New_Subaccount_No;
         IF (v_Exist > 0) THEN
-          RAISE NO_DATA_FOUND;  --OBTG:-20000--
+          RAISE_APPLICATION_ERROR(-20000, '@DuplicateAccount@');
         END IF;
 	/*
 		Inserting the new element value for new account for Business Partner Or Product. 	
