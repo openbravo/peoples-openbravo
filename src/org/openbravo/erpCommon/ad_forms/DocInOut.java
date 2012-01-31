@@ -194,9 +194,7 @@ public class DocInOut extends AcctServer {
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
           setStatus(STATUS_InvalidCost);
-          continue;
-        } else {
-          setStatus(STATUS_NotPosted);// Default status. LoadDocument
+          break;
         }
         // CoGS DR
         dr = fact.createLine(line, cogsAccount, as.getC_Currency_ID(), strCosts, "",
@@ -234,10 +232,7 @@ public class DocInOut extends AcctServer {
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
           setStatus(STATUS_InvalidCost);
-          continue;
-        } else {
-          setStatus(STATUS_NotPosted);// Default status. LoadDocument
-
+          break;
         }
         Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
             as, conn);
@@ -360,17 +355,25 @@ public class DocInOut extends AcctServer {
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       String strDateAcct = outputFormat.format(inOut.getAccountingDate());
+      int validLines = 0;
       for (int i = 0; i < data.length; i++) {
-        if (!DocInOutData.existsCost(conn, strDateAcct, data[i].getField("mProductId")).equals("0")) {
-          return true;
+        if (DocInOutData.existsCost(conn, strDateAcct, data[i].getField("mProductId")).equals("0")) {
+          setStatus(STATUS_InvalidCost);
+          return false;
+        } else if (!ProductInfoData.selectProductAverageCost(conn, data[i].getField("mProductId"),
+            strDateAcct).equals("0")) {
+          validLines++;
         }
+      }
+      if (validLines == 0) {
+        setStatus(STATUS_DocumentDisabled);
+        return false;
       }
     } catch (ServletException e) {
       log4j.error("Servlet Exception in document confirmation", e);
       return false;
     }
-    setStatus(STATUS_DocumentDisabled);
-    return false;
+    return true;
   }
 
   public String getServletInfo() {
