@@ -15502,9 +15502,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800495-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800495-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800495-->  <COLUMNNAME><![CDATA[Days]]></COLUMNNAME>
-<!--800495-->  <NAME><![CDATA[Waiting Period]]></NAME>
+<!--800495-->  <NAME><![CDATA[Waiting Period (Hours)]]></NAME>
 <!--800495-->  <PRINTNAME><![CDATA[Days]]></PRINTNAME>
-<!--800495-->  <HELP><![CDATA[Delay in days from the beginning of the case to perform the test.]]></HELP>
+<!--800495-->  <HELP><![CDATA[Delay in hours from the beginning of the case to perform the test.]]></HELP>
 <!--800495-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800495-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800495--></AD_ELEMENT>
