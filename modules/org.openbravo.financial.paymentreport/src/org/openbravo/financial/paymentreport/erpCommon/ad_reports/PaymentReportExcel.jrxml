@@ -345,7 +345,7 @@ Amount]]></text>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{BASE_AMOUNT}== null ? " " : $F{BASE_AMOUNT}.toString())]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{BASE_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="1451" y="0" width="46" height="25"/>
@@ -360,7 +360,7 @@ Amount]]></text>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TRANS_AMOUNT}.toString() + " "]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TRANS_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-16" style="Report_Footer" x="1311" y="0" width="60" height="25"/>
