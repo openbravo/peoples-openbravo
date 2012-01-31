@@ -162,7 +162,7 @@ public class EmailManager {
       }
 
       transport.connect();
-      transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+      transport.sendMessage(message, message.getAllRecipients());
       transport.close();
     } catch (final AddressException exception) {
       log4j.error(exception);
@@ -293,6 +293,10 @@ public class EmailManager {
     }
   }
 
+  /**
+   * Since Openbravo 3.0MP9 only {@link #sendEmail()} is used for the full email sending cycle
+   */
+  @Deprecated
   private InternetAddress[] getAddressesFrom(String[] textualAddresses) {
     InternetAddress internetAddresses[] = new InternetAddress[textualAddresses.length];
     for (int index = 0; index < textualAddresses.length; index++) {

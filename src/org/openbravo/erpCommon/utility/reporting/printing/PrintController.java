@@ -377,8 +377,7 @@ public class PrintController extends HttpSecureAppServlet {
               if (log4j.isDebugEnabled())
                 log4j.debug("Document is not attached.");
             }
-            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
-                report.getOrgId());
+            final String senderAddress = vars.getStringParameter("fromEmail");
             sendDocumentEmail(report, vars,
                 (Vector<Object>) request.getSession().getAttribute("files"), documentData,
                 senderAddress, checks);
@@ -645,52 +644,36 @@ public class PrintController extends HttpSecureAppServlet {
       log4j.debug("our document ref: " + ourReference);
     if (log4j.isDebugEnabled())
       log4j.debug("cus document ref: " + cusReference);
-    // Also send it to the current user
-    final PocData[] currentUserInfo = PocData.getContactDetailsForUser(this, vars.getUser());
-    final String userName = currentUserInfo[0].userName;
-    final String userEmail = currentUserInfo[0].userEmail;
-    if (log4j.isDebugEnabled())
-      log4j.debug("user name: " + userName);
-    if (log4j.isDebugEnabled())
-      log4j.debug("user email: " + userEmail);
-    final String contactName = documentData.contactName;
-    String contactEmail = null;
-    final String salesrepName = documentData.salesrepName;
-    String salesrepEmail = null;
+
+    final String toName = documentData.contactName;
+    String toEmail = null;
+    final String replyToName = documentData.salesrepName;
+    String replyToEmail = null;
 
     boolean moreThanOneCustomer = checks.get("moreThanOneCustomer").booleanValue();
     boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
     if (moreThanOneCustomer) {
-      contactEmail = documentData.contactEmail;
+      toEmail = documentData.contactEmail;
     } else {
-      contactEmail = vars.getStringParameter("contactEmail");
+      toEmail = vars.getStringParameter("toEmail");
     }
 
     if (moreThanOnesalesRep) {
-      salesrepEmail = documentData.contactEmail;
+      replyToEmail = documentData.salesrepEmail;
     } else {
-      salesrepEmail = vars.getStringParameter("salesrepEmail");
+      replyToEmail = vars.getStringParameter("replyToEmail");
     }
     String emailSubject = vars.getStringParameter("emailSubject");
     String emailBody = vars.getStringParameter("emailBody");
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("sales rep name: " + salesrepName);
-    if (log4j.isDebugEnabled())
-      log4j.debug("sales rep email: " + salesrepEmail);
-    if (log4j.isDebugEnabled())
-      log4j.debug("recipient name: " + contactName);
-    if (log4j.isDebugEnabled())
-      log4j.debug("recipient email: " + contactEmail);
-
     // TODO: Move this to the beginning of the print handling and do nothing
     // if these conditions fail!!!)
 
-    if ((salesrepEmail == null || salesrepEmail.length() == 0)) {
+    if ((replyToEmail == null || replyToEmail.length() == 0)) {
       throw new ServletException(Utility.messageBD(this, "NoSalesRepEmail", vars.getLanguage()));
     }
 
-    if ((contactEmail == null || contactEmail.length() == 0)) {
+    if ((toEmail == null || toEmail.length() == 0)) {
       throw new ServletException(Utility.messageBD(this, "NoCustomerEmail", vars.getLanguage()));
     }
 
@@ -698,47 +681,16 @@ public class PrintController extends HttpSecureAppServlet {
 
     emailSubject = emailSubject.replaceAll("@cus_ref@", cusReference);
     emailSubject = emailSubject.replaceAll("@our_ref@", ourReference);
-    emailSubject = emailSubject.replaceAll("@cus_nam@", contactName);
-    emailSubject = emailSubject.replaceAll("@sal_nam@", salesrepName);
+    emailSubject = emailSubject.replaceAll("@cus_nam@", toName);
+    emailSubject = emailSubject.replaceAll("@sal_nam@", replyToName);
 
     emailBody = emailBody.replaceAll("@cus_ref@", cusReference);
     emailBody = emailBody.replaceAll("@our_ref@", ourReference);
-    emailBody = emailBody.replaceAll("@cus_nam@", contactName);
-    emailBody = emailBody.replaceAll("@sal_nam@", salesrepName);
+    emailBody = emailBody.replaceAll("@cus_nam@", toName);
+    emailBody = emailBody.replaceAll("@sal_nam@", replyToName);
 
-    OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
-        EmailServerConfiguration.class);
-    mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
-        .getInstance().get(Client.class, vars.getClient())));
-    final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
-
-    if (mailConfigList.size() == 0) {
-      throw new ServletException("No Poc configuration found for this client.");
-    }
-
-    // TODO: There should be a mechanism to select the desired Email server configuration, until
-    // then, first search for the current organization (and use the first returned one), then for
-    // organization '0' (and use the first returned one) and then for any other of the organization
-    // tree where current organization belongs to (and use the first returned one).
-    EmailServerConfiguration mailConfig = null;
-
-    for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
-      if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
-        mailConfig = currentOrgConfig;
-        break;
-      }
-    }
-    if (mailConfig == null) {
-      for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
-        if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
-          mailConfig = zeroOrgConfig;
-          break;
-        }
-      }
-    }
-    if (mailConfig == null) {
-      mailConfig = mailConfigList.get(0);
-    }
+    final EmailServerConfiguration mailConfig = OBDal.getInstance().get(
+        EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
 
     final String host = mailConfig.getSmtpServer();
     Boolean auth = true;
@@ -750,14 +702,19 @@ public class PrintController extends HttpSecureAppServlet {
         false);
     final String connSecurity = mailConfig.getSmtpConnectionSecurity();
     final int port = mailConfig.getSmtpPort().intValue();
-    final String recipientTO = contactEmail;
-    final String recipientCC = null;
-    String recipientBCC = null;
-    if (userEmail != null && userEmail.length() > 0) {
-      recipientBCC = userEmail;
-    }
-    final String replyTo = salesrepEmail;
+    final String recipientTO = toEmail;
+    final String recipientCC = vars.getStringParameter("ccEmail");
+    final String recipientBCC = vars.getStringParameter("bccEmail");
+    final String replyTo = replyToEmail;
     final String contentType = "text/plain; charset=utf-8";
+
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("From: " + senderAddress);
+      log4j.debug("Recipient TO (contact email): " + recipientTO);
+      log4j.debug("Recipient CC: " + recipientCC);
+      log4j.debug("Recipient BCC (user email): " + recipientBCC);
+      log4j.debug("Reply-to (sales rep email): " + replyTo);
+    }
 
     List<File> attachments = new ArrayList<File>();
     attachments.add(new File(attachmentFileLocation));
@@ -900,11 +857,6 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         emailDefinition = reports.values().iterator().next().getEmailDefinition();
       }
-
-      if (log4j.isDebugEnabled())
-        log4j.debug("Crm configuration, template subject: " + emailDefinition.getSubject());
-      if (log4j.isDebugEnabled())
-        log4j.debug("Crm configuration, template body: " + emailDefinition.getBody());
     } catch (final OBException exception) {
       final OBError on = new OBError();
       on.setMessage(Utility.messageBD(this, "There is no email configuration configured",
@@ -919,6 +871,43 @@ public class PrintController extends HttpSecureAppServlet {
     } catch (ReportingException e) {
       log4j.error(e);
     }
+
+    OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
+        EmailServerConfiguration.class);
+    mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
+        .getInstance().get(Client.class, vars.getClient())));
+    final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
+
+    if (mailConfigList.size() == 0) {
+      throw new ServletException("No Poc configuration found for this client.");
+    }
+
+    // TODO: There should be a mechanism to select the desired Email server configuration, until
+    // then, first search for the current organization (and use the first returned one), then for
+    // organization '0' (and use the first returned one) and then for any other of the organization
+    // tree where current organization belongs to (and use the first returned one).
+    EmailServerConfiguration mailConfig = null;
+
+    for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
+      if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
+        mailConfig = currentOrgConfig;
+        break;
+      }
+    }
+    if (mailConfig == null) {
+      for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
+        if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
+          mailConfig = zeroOrgConfig;
+          break;
+        }
+      }
+    }
+    if (mailConfig == null) {
+      mailConfig = mailConfigList.get(0);
+    }
+
+    final String fromEmail = mailConfig.getSmtpServerSenderAddress();
+    final String fromEmailId = mailConfig.getId();
 
     // Get additional document information
     String draftDocumentIds = "";
@@ -1071,23 +1060,49 @@ public class PrintController extends HttpSecureAppServlet {
       log4j.debug("Documents still in draft: " + draftDocumentIds);
     xmlDocument.setParameter("draftDocumentIds", draftDocumentIds);
 
-    if (vars.commandIn("ADD") || vars.commandIn("DEL")) {
-      final String emailSubject = vars.getStringParameter("emailSubject");
-      final String emailBody = vars.getStringParameter("emailBody");
-      xmlDocument.setParameter("emailSubject", emailSubject);
-      xmlDocument.setParameter("emailBody", emailBody);
-      xmlDocument.setParameter("contactEmail", vars.getStringParameter("contactEmail"));
-      xmlDocument.setParameter("salesrepEmail", vars.getStringParameter("salesrepEmail"));
-    } else {
-      xmlDocument.setParameter("emailSubject", emailDefinition.getSubject());
-      xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
-      xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
-      xmlDocument.setParameter("emailBody", emailDefinition.getBody());
+    final PocData[] currentUserInfo = PocData.getContactDetailsForUser(this, vars.getUser());
+    final String userName = currentUserInfo[0].userName;
+    final String userEmail = currentUserInfo[0].userEmail;
+    String bccEmail = "";
+    String bccName = "";
+    if (userEmail != null && userEmail.length() > 0) {
+      bccEmail = userEmail;
+      bccName = userName;
     }
 
+    if (vars.commandIn("ADD") || vars.commandIn("DEL")) {
+      xmlDocument.setParameter("fromEmailId", vars.getStringParameter("fromEmailId"));
+      xmlDocument.setParameter("fromEmail", vars.getStringParameter("fromEmail"));
+      xmlDocument.setParameter("toEmail", vars.getStringParameter("toEmail"));
+      xmlDocument.setParameter("toEmailOrig", vars.getStringParameter("toEmailOrig"));
+      xmlDocument.setParameter("ccEmail", vars.getStringParameter("ccEmail"));
+      xmlDocument.setParameter("ccEmailOrig", vars.getStringParameter("ccEmailOrig"));
+      xmlDocument.setParameter("bccEmail", vars.getStringParameter("bccEmail"));
+      xmlDocument.setParameter("bccEmailOrig", vars.getStringParameter("bccEmailOrig"));
+      xmlDocument.setParameter("replyToEmail", vars.getStringParameter("replyToEmail"));
+      xmlDocument.setParameter("replyToEmailOrig", vars.getStringParameter("replyToEmailOrig"));
+      xmlDocument.setParameter("emailSubject", vars.getStringParameter("emailSubject"));
+      xmlDocument.setParameter("emailBody", vars.getStringParameter("emailBody"));
+    } else {
+      xmlDocument.setParameter("fromEmailId", fromEmailId);
+      xmlDocument.setParameter("fromEmail", fromEmail);
+      xmlDocument.setParameter("toEmail", pocData[0].contactEmail);
+      xmlDocument.setParameter("toEmailOrig", pocData[0].contactEmail);
+      xmlDocument.setParameter("ccEmail", "");
+      xmlDocument.setParameter("ccEmailOrig", "");
+      xmlDocument.setParameter("bccEmail", bccEmail);
+      xmlDocument.setParameter("bccEmailOrig", bccEmail);
+      xmlDocument.setParameter("replyToEmail", pocData[0].salesrepEmail);
+      xmlDocument.setParameter("replyToEmailOrig", pocData[0].salesrepEmail);
+      xmlDocument.setParameter("emailSubject", emailDefinition.getSubject());
+      xmlDocument.setParameter("emailBody", emailDefinition.getBody());
+    }
     xmlDocument.setParameter("inpArchive", vars.getStringParameter("inpArchive"));
-    xmlDocument.setParameter("contactName", pocData[0].contactName);
-    xmlDocument.setParameter("salesrepName", pocData[0].salesrepName);
+    xmlDocument.setParameter("fromName", "");
+    xmlDocument.setParameter("toName", pocData[0].contactName);
+    xmlDocument.setParameter("ccName", "");
+    xmlDocument.setParameter("bccName", bccName);
+    xmlDocument.setParameter("replyToName", pocData[0].salesrepName);
     xmlDocument.setParameter("inpArchive", vars.getStringParameter("inpArchive"));
     xmlDocument.setParameter("multCusCount", String.valueOf(numberOfCustomers));
     xmlDocument.setParameter("multSalesRepCount", String.valueOf(numberOfSalesReps));
@@ -1166,15 +1181,15 @@ public class PrintController extends HttpSecureAppServlet {
 
     // check the number of customer and the number of
     // sales Rep. to choose one of the 3 possibilities
-    // 1.- n customer n sales rep (hide both inputs)
-    // 2.- n customers 1 sales rep (hide only first input)
+    // 1.- n customer n sales rep (hide "To" and "Reply-to" inputs)
+    // 2.- n customers 1 sales rep (hide "To" input)
     // 3.- Otherwise show both
     if (moreThanOneCustomer && moreThanOnesalesRep) {
-      discard = new String[] { "customer", "salesRep" };
+      discard = new String[] { "to", "to_bottomMargin", "replyTo", "replyTo_bottomMargin" };
     } else if (moreThanOneCustomer) {
-      discard = new String[] { "customer", "multSalesRep", "multSalesRepCount" };
+      discard = new String[] { "to", "to_bottomMargin", "multSalesRep", "multSalesRepCount" };
     } else {
-      discard = new String[] { "multipleCustomer" };
+      discard = new String[] { "multipleCustomer", "multipleCustomer_bottomMargin" };
     }
 
     // check the templates
