@@ -92,7 +92,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strDueDateFrom = vars.getStringParameter("inpDueDateFrom", "");
       String strDueDateTo = vars.getStringParameter("inpDueDateTo", "");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
-      String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId");
+      String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
+          "", null);
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       Boolean showAlternativePM = "Y".equals(vars.getStringParameter("inpAlternativePaymentMethod",
           filterYesNo));
@@ -110,7 +111,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
       String strPaymentId = vars.getRequiredStringParameter("inpfinPaymentId");
       String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
-          "inpScheduledPaymentDetailId", "");
+          "inpScheduledPaymentDetailId", "", null);
       String strAddedGLItems = vars.getStringParameter("inpGLItems");
       JSONArray addedGLITemsArray = null;
       try {
