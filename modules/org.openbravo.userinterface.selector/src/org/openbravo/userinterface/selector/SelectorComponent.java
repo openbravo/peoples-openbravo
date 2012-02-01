@@ -44,7 +44,6 @@ import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -784,14 +783,10 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
-        System.out.println(getUIDefinition().getClass());
         if (getUIDefinition() instanceof FKComboUIDefinition && isSelectorItem) {
           return ", filterOperator: 'equals', filterOnKeypress: true, canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
               + getEntityName() + "', displayField: '" + JsonConstants.IDENTIFIER + "'}";
-        } else if (getUIDefinition() instanceof EnumUIDefinition) {
-          return getUIDefinition().getFilterEditorProperties(null);
         }
-
         return getUIDefinition().getFilterEditorProperties(null);
       }
       return ", filterEditorType: 'OBTextItem'";
@@ -811,9 +806,6 @@ public class SelectorComponent extends BaseTemplateComponent {
         }
       }
       result.add(createLocalSelectorFieldProperty("type", getType()));
-      if (domainType != null) {
-        System.out.println("dt:" + domainType.getClass());
-      }
       if ((domainType instanceof PrimitiveDomainType)) {
         final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
         if (Date.class.isAssignableFrom(primitiveDomainType.getPrimitiveType())) {
