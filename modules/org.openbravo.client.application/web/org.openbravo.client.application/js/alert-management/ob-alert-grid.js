@@ -36,6 +36,7 @@ isc.OBAlertGrid.addProperties({
   editOnFocus: true,
   showCellContextMenus: true,
   selectOnEdit: false,
+  dataPageSize: 100,
  
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
@@ -118,10 +119,6 @@ isc.OBAlertGrid.addProperties({
     this.contextMenu = this.getMenuConstructor().create({items: []});
     
     OB.Datasource.get('ADAlert', this, null, true);
-    
-    if (OB.AlertManager && OB.AlertManager.lastData && isc.is.Array(OB.AlertManager.lastData.data)){
-        this.dataPageSize = OB.AlertManager.lastData.data.length;
-    }
 
     this.Super('initWidget', arguments);
   },
