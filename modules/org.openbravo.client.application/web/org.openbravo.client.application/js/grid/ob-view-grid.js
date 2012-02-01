@@ -487,7 +487,10 @@ isc.OBViewGrid.addProperties({
     }
     
     if (this.getDataSource()) {
-      this.Super('setViewState', arguments);
+      // old versions stored selected records in grid view, this can cause
+      // problems if record is not selected yet
+      delete localState.selected;
+      this.Super('setViewState', ['(' + isc.Comm.serialize(localState,false) + ')']);
     }
 
     if (localState.noFilterClause) {

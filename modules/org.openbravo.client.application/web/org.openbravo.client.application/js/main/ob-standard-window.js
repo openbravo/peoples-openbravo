@@ -192,15 +192,17 @@ isc.OBStandardWindow.addProperties({
   setWindowSettings: function(data) {
     var i, views, length;
 
+    if (data){
+      this.getClass().autoSave = data.autoSave;
+      this.getClass().windowSettingsRead = true;
+      this.getClass().uiPattern = data.uiPattern;
+      this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
+    }
+
     if (data && data.personalization) {
       this.setPersonalization(data.personalization);
     }
 
-    this.getClass().windowSettingsRead = true;
-
-    this.getClass().uiPattern = data.uiPattern;
-    this.getClass().autoSave = data.autoSave;
-    this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
     // set the views to readonly
     length = this.views.length;
     for (i = 0; i < length; i++) {
