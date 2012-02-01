@@ -63,7 +63,7 @@ public class CostingServer {
    * Calculates and stores in the database the cost of the transaction.
    * 
    */
-  public void process() {
+  public void process() throws OBException {
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -76,13 +76,9 @@ public class CostingServer {
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
-      if (trxCost == null) {
-        trxCost = CostingUtils.getStandardCost(transaction.getProduct(),
-            transaction.getCreationDate(), costDimensions);
-      }
       // FIXME: Check why is still null and throw an error message stopping the processes
       if (trxCost == null) {
-        trxCost = BigDecimal.ZERO;
+        throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }
 
       trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision().intValue(),

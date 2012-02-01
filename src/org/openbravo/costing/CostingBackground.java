@@ -23,8 +23,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -48,6 +51,10 @@ public class CostingBackground extends DalBaseProcess {
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
+    OBError result = new OBError();
+    result.setType("Success");
+    result.setTitle(Utility.messageBD("Success"));
+
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     obcTrx.add(Restrictions.isNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
@@ -65,6 +72,17 @@ public class CostingBackground extends DalBaseProcess {
       } catch (OBException e) {
         log4j.error(e.getMessage(), e);
         logger.logln(e.getMessage());
+        result.setTitle(Utility.messageBD("Error"));
+        result.setMessage(Utility.parseTranslation(e.getMessage()));
+        bundle.setResult(result);
+        return;
+      } catch (Exception e) {
+        result = Utility.translateError(bundle.getConnection(), bundle.getContext().toVars(),
+            OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+        log4j.error(result.getMessage(), e);
+        logger.logln(result.getMessage());
+        bundle.setResult(result);
+        return;
       }
     }
   }

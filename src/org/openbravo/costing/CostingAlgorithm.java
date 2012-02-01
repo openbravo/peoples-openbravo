@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -73,7 +72,6 @@ public abstract class CostingAlgorithm {
 
   public BigDecimal getTransactionCost() throws OBException {
     log4j.debug("Get transactions cost.");
-    BigDecimal transactionCost = null;
     if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
         && getZeroMovementQtyCost() != null) {
       return getZeroMovementQtyCost();
@@ -106,13 +104,13 @@ public abstract class CostingAlgorithm {
     case BOMProduct:
       return getBOMProductionCost();
     case Manufacturing:
-      break;
+      // Manufacturing transaction are not implemented.
+      return BigDecimal.ZERO;
     case Unknown:
-      break;
+      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
     default:
-      break;
+      throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
     }
-    return transactionCost;
   }
 
   /**
@@ -160,17 +158,11 @@ public abstract class CostingAlgorithm {
       addQty = addQty.add(matchPO.getQuantity());
       BigDecimal orderAmt = matchPO.getQuantity().multiply(
           matchPO.getSalesOrderLine().getUnitPrice());
-      String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateFormat.java");
       // TODO: Check if conversion is done correctly.
       trxCost = trxCost.add(new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(), matchPO
-          .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(), Utility
-          .formatDate(transaction.getCreationDate(), pattern), "", transaction.getClient().getId(),
+          .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(),
+          Utility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
           costOrg.getId(), new DalConnectionProvider())));
-    }
-    if (addQty.compareTo(transaction.getMovementQuantity()) != 0) {
-      // Quantity related to orders does not match receipts quantity.
-      return null;
     }
     return trxCost.setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
@@ -197,19 +189,20 @@ public abstract class CostingAlgorithm {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
         transaction.getCreationDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
-
   }
 
-  private BigDecimal getInternalMovementToCost() {
-    // Get transaction of Origin movement to retrieve it's cost.
+  private BigDecimal getInternalMovementToCost() throws OBException {
+    // Get transaction of From movement to retrieve it's cost.
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
       if (movementTransaction.getId().equals(transaction.getId())) {
         continue;
       }
+      // TODO: Check if transaction has been processed.
       return CostingUtils.getTransactionCost(movementTransaction, transaction.getCreationDate());
     }
-    return null;
+    // If no transaction is found throw an exception.
+    throw new OBException();
   }
 
   private BigDecimal getBOMProductionCost() {
