@@ -174,10 +174,10 @@ isc.OBPickAndExecuteView.addProperties({
       canEdit: false,
       canFilter: false,
       canSort: false,
-      width: 32,
+      width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="web/org.openbravo.client.application/images/iconPin.png" />';
+          return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
         }
         return '';
       },
