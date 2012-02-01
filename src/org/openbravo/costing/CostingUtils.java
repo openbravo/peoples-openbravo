@@ -24,10 +24,12 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -54,7 +56,13 @@ public class CostingUtils {
   }
 
   public static BigDecimal getStandardCost(Product product, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions) {
+      HashMap<CostDimension, BaseOBObject> costDimensions) throws OBException {
+    return getStandardCost(product, date, costDimensions, true);
+  }
+
+  public static BigDecimal getStandardCost(Product product, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions)
+      throws OBException {
     // Get cost from M_Costing for given date.
     OBCriteria<Costing> obcCosting = OBDal.getInstance().createCriteria(Costing.class);
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
@@ -74,8 +82,12 @@ public class CostingUtils {
         log4j.warn("More than one cost found for same date");
       }
       return obcCosting.list().get(0).getCost();
+    } else if (recheckWithoutDimensions) {
+      return getStandardCost(product, date, getEmptyDimensions(), false);
     }
-    return null;
+    // If no standard cost is found throw an exception.
+    throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @date@: "
+        + Utility.formatDate(date));
   }
 
   public static HashMap<CostDimension, BaseOBObject> getEmptyDimensions() {
@@ -84,4 +96,5 @@ public class CostingUtils {
     costDimensions.put(CostDimension.LegalEntity, null);
     return costDimensions;
   }
+
 }
