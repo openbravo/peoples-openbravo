@@ -82,7 +82,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this,
       fields: this.gridFields,
-      height: '80%',
+      height: '*',
       dataSource: this.dataSource,
       gridProperties: this.viewProperties.gridProperties
     });
@@ -118,6 +118,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.items = [this.viewGrid, isc.HLayout.create({
       align: 'center',
       width: '100%',
+      height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
       members: [isc.HLayout.create({
         width: 1,
         overflow: 'visible',
