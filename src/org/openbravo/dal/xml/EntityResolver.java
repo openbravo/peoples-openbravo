@@ -22,8 +22,6 @@ package org.openbravo.dal.xml;
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -51,7 +48,6 @@ import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The entity resolver will resolve an entity name and id to a business object. The resolver will
@@ -136,6 +132,7 @@ public class EntityResolver implements OBNotSingleton {
       if (result != null) {
         return result;
       }
+
       result = searchInstance(entity, id);
     }
 
@@ -241,89 +238,64 @@ public class EntityResolver implements OBNotSingleton {
     if (al == AccessLevel.SYSTEM) {
       result = searchSystem(id, entity);
     } else if (al == AccessLevel.SYSTEM_CLIENT) {
-      final List<RefDataLoaded> refLoadeds = getRefLoadedsUsingSql(id, entity, null, false);
       // search client and system
-      result = searchClientRefLoaded(id, entity, refLoadeds);
+      result = searchClient(id, entity);
       if (result == null) {
         result = searchSystem(id, entity);
       }
     } else if (al == AccessLevel.CLIENT) {
-      final List<RefDataLoaded> refLoadeds = getRefLoadedsUsingSql(id, entity, null, false);
-      result = searchClientRefLoaded(id, entity, refLoadeds);
+      result = searchClient(id, entity);
     } else if (al == AccessLevel.ORGANIZATION) {
-      final List<RefDataLoaded> refLoadeds = getRefLoadedsUsingSql(id, entity, null, false);
-      result = searchClientOrganizationRefLoaded(id, entity, refLoadeds);
+      result = searchClientOrganization(id, entity);
+
       if (result == null) {
-        result = searchClientReadableOrgRefLoaded(id, entity, refLoadeds);
+        // still null, try all the orgs the user has access to
+        for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
+          }
+        }
       }
     } else if (al == AccessLevel.CLIENT_ORGANIZATION) {
       // search 2 levels
-      final List<RefDataLoaded> refLoadeds = getRefLoadedsUsingSql(id, entity, null, false);
-      result = searchClientOrganizationRefLoaded(id, entity, refLoadeds);
+      result = searchClientOrganization(id, entity);
       if (result == null) {
-        result = searchClientRefLoaded(id, entity, refLoadeds);
+        result = searchClient(id, entity);
       }
       if (result == null
           && (entity.getName().compareTo(AttributeSetInstance.ENTITY_NAME) == 0 || entity.getName()
               .compareTo(AttributeSet.ENTITY_NAME) == 0)) {
-        result = OBDal.getInstance().get(entity.getName(), id);
-      }
-      if (result == null) {
-        result = searchClientReadableOrgRefLoaded(id, entity, refLoadeds);
+        result = searchSystem(id, entity);
       }
 
+      if (result == null) {
+        // still null, try all the orgs the user has access to
+        for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
+          }
+        }
+      }
     } else if (al == AccessLevel.ALL) {
-      final List<RefDataLoaded> refLoadeds = getRefLoadedsUsingSql(id, entity, null, false);
-      // First check if there is one with same client/org
-
-      result = searchClientOrganizationRefLoaded(id, entity, refLoadeds);
       // search all three levels from the bottom
+      result = searchClientOrganization(id, entity);
       if (result == null) {
-        result = searchClientRefLoaded(id, entity, refLoadeds);
+        result = searchClient(id, entity);
       }
       if (result == null) {
         result = searchSystem(id, entity);
       }
-      if (result == null) {
-        result = searchClientReadableOrgRefLoaded(id, entity, refLoadeds);
-      }
-    }
-    return result;
-  }
 
-  private BaseOBObject searchClientReadableOrgRefLoaded(String id, Entity entity,
-      List<RefDataLoaded> refLoadeds) {
-    BaseOBObject result = null;
-    for (RefDataLoaded refLoaded : refLoadeds) {
-      if (refLoaded.getClientId().equals(client.getId())) {
+      if (result == null) {
+        // still null, try all the orgs the user has access to
         for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
-          if (refLoaded.getOrgId().equals(orgId)) {
-            result = doSearch(refLoaded.getGenericId(), entity, client.getId(), orgId);
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
           }
         }
-      }
-    }
-    return result;
-  }
-
-  private BaseOBObject searchClientOrganizationRefLoaded(String id, Entity entity,
-      List<RefDataLoaded> refLoadeds) {
-    BaseOBObject result = null;
-    for (RefDataLoaded refLoaded : refLoadeds) {
-      if (refLoaded.getClientId().equals(client.getId())
-          && refLoaded.getOrgId().equals(organization.getId())) {
-        result = doSearch(refLoaded.getGenericId(), entity, client.getId(), organization.getId());
-      }
-    }
-    return result;
-  }
-
-  private BaseOBObject searchClientRefLoaded(String id, Entity entity,
-      List<RefDataLoaded> refLoadeds) {
-    BaseOBObject result = null;
-    for (RefDataLoaded refLoaded : refLoadeds) {
-      if (refLoaded.getClientId().equals(client.getId()) && refLoaded.getOrgId().equals("0")) {
-        result = doSearch(refLoaded.getGenericId(), entity, client.getId(), "0");
       }
     }
     return result;
@@ -390,85 +362,11 @@ public class EntityResolver implements OBNotSingleton {
     return null;
   }
 
-  private List<RefDataLoaded> getRefLoadedsUsingSql(String id, Entity entity, String orgId,
-      boolean filterByClient) {
-    try {
-      String st = "Select specific_id, generic_id, ad_client_id, ad_org_id from ad_ref_data_loaded where ad_client_id in ('"
-          + client.getId()
-          + "', '0') and generic_id='"
-          + id
-          + "' and ad_table_id='"
-          + entity.getTableId() + "'";
-      PreparedStatement ps = new DalConnectionProvider(false).getPreparedStatement(st);
-      ps.execute();
-      ResultSet rs = ps.getResultSet();
-      List<RefDataLoaded> refDataLoadeds = new ArrayList<EntityResolver.RefDataLoaded>();
-      while (rs.next()) {
-        RefDataLoaded rfl = new RefDataLoaded();
-        rfl.setSpecificId(rs.getString(1));
-        rfl.setGenericId(rs.getString(1));
-        rfl.setClientId(rs.getString(2));
-        rfl.setOrgId(rs.getString(3));
-      }
-      return refDataLoadeds;
-    } catch (Exception e) {
-      throw new OBException("Error while accessing the ad_ref_data_loaded table", e);
-    }
-  }
-
-  private class RefDataLoaded {
-    private String specificId;
-    private String genericId;
-    private String clientId;
-    private String orgId;
-
-    public String getGenericId() {
-      return genericId;
-    }
-
-    public void setGenericId(String genericId) {
-      this.genericId = genericId;
-    }
-
-    public String getSpecificId() {
-      return specificId;
-    }
-
-    public void setSpecificId(String specificId) {
-      this.specificId = specificId;
-    }
-
-    public String getClientId() {
-      return clientId;
-    }
-
-    public void setClientId(String clientId) {
-      this.clientId = clientId;
-    }
-
-    public String getOrgId() {
-      return orgId;
-    }
-
-    public void setOrgId(String orgId) {
-      this.orgId = orgId;
-    }
-  }
-
-  private List<String> getId(String id, Entity entity, String orgId) {
-    List<ReferenceDataStore> rdls = getRefLoadeds(id, entity, orgId, true);
-    final List<String> result = new ArrayList<String>();
-    for (final ReferenceDataStore rdl : rdls) {
-      result.add(rdl.getSpecific());
-    }
-    return result;
-  }
-
   // get the new id which was created in previous imports
   // note that there is a rare case that when an instance is removed
   // and then re-imported that it occurs multiple times.
-  private List<ReferenceDataStore> getRefLoadeds(String id, Entity entity, String orgId,
-      boolean filterByClient) {
+  private List<String> getId(String id, Entity entity, String orgId) {
+    final String[] searchOrgIds = getOrgIds(orgId);
     OBContext.setAdminMode();
     try {
       final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal.getInstance().createCriteria(
@@ -477,25 +375,19 @@ public class EntityResolver implements OBNotSingleton {
       rdlCriteria.setFilterOnReadableOrganization(false);
       rdlCriteria.setFilterOnReadableClients(false);
       rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_GENERIC, id));
-      if (filterByClient) {
-        rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_CLIENT + "."
-            + Client.PROPERTY_ID, client.getId()));
-      } else {
-        String[] clients = new String[2];
-        clients[0] = client.getId();
-        clients[1] = "0";
-        rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_CLIENT + "."
-            + Client.PROPERTY_ID, clients));
-      }
-      if (orgId != null) {
-        final String[] searchOrgIds = getOrgIds(orgId);
-        rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_ORGANIZATION + "."
-            + Organization.PROPERTY_ID, searchOrgIds));
-      }
+      rdlCriteria.add(Restrictions.eq(
+          ReferenceDataStore.PROPERTY_CLIENT + "." + Client.PROPERTY_ID, client.getId()));
+      rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_ORGANIZATION + "."
+          + Organization.PROPERTY_ID, searchOrgIds));
       rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_TABLE + "." + Table.PROPERTY_ID,
           entity.getTableId()));
       final List<ReferenceDataStore> rdls = rdlCriteria.list();
-      return rdls;
+
+      final List<String> result = new ArrayList<String>();
+      for (final ReferenceDataStore rdl : rdls) {
+        result.add(rdl.getSpecific());
+      }
+      return result;
     } finally {
       OBContext.restorePreviousMode();
     }
