@@ -76,7 +76,6 @@ public class CostingServer {
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
-      // FIXME: Check why is still null and throw an error message stopping the processes
       if (trxCost == null) {
         throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }

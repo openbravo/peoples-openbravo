@@ -94,8 +94,8 @@ public class CostingUtils {
     }
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
-        // TODO: Add product and date to the log.
-        log4j.warn("More than one cost found for same date");
+        log4j.warn("More than one cost found for same date: " + Utility.formatDate(date)
+            + " for product: " + product.getName() + " (" + product.getId() + ")");
       }
       if (obcCosting.list().get(0).getCost() == null) {
         throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
