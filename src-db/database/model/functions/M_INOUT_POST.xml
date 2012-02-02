@@ -632,7 +632,7 @@
               v_RInOut_ID, Cur_InOut.C_Order_ID, Cur_InOut.IsSOTrx, Cur_InOut.AD_Client_ID,
               Cur_InOut.AD_Org_ID, 'Y', now(), v_User,
               now(), v_User, v_RDocumentNo, v_DoctypeReversed_ID,
-               '(*R*: ' || Cur_InOut.DocumentNo || ') ' || Cur_InOut.Description, 'N', Cur_InOut.MovementType, Cur_InOut.MovementDate,
+               '(*R*: ' || Cur_InOut.DocumentNo || ') ' || COALESCE(TO_CHAR(Cur_InOut.Description), ''), 'N', Cur_InOut.MovementType, Cur_InOut.MovementDate,
               Cur_InOut.DateAcct, Cur_InOut.C_BPartner_ID, Cur_InOut.C_BPartner_Location_ID, Cur_InOut.AD_User_ID,
               Cur_InOut.M_Warehouse_ID, Cur_InOut.POReference, Cur_InOut.DateOrdered, Cur_InOut.DeliveryRule,
               Cur_InOut.FreightCostRule, Cur_InOut.FreightAmt * -1, Cur_InOut.C_Project_ID, Cur_InOut.C_Activity_ID,
@@ -669,7 +669,7 @@
                 Cur_InOut.AD_Client_ID, Cur_InOut.AD_Org_ID, 'Y', now(),
                 v_User, now(), v_User, Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
-                 '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
+                 '*R*: ' || COALESCE(TO_CHAR(Cur_InOutLine.Description), ''), Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription
               )
               ;
@@ -692,7 +692,21 @@
             Updated=now(),
             UpdatedBy=v_User
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
-         
+
+	   FOR Cur_InOutLine IN
+            (SELECT *
+            FROM M_INOUTLINE
+            WHERE M_InOut_ID=Cur_InOut.M_InOut_ID
+              AND IsActive='Y'  FOR UPDATE
+            )
+	  LOOP
+            UPDATE M_INOUTLINE
+              SET Description=COALESCE(TO_CHAR(Cur_InOutLine.Description), '') || ' : *R*',
+              Updated=now(),
+              UpdatedBy=v_User
+            WHERE M_INOUTLINE.M_INOUTLINE_ID=Cur_InOutLine.M_INOUTLINE_ID;
+          END LOOP;
+          
           -- Post Reversal
           v_ResultStr:='PostReversal';
           M_INOUT_POST(NULL, v_RInOut_ID) ;
