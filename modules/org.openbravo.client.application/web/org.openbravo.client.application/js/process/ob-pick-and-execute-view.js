@@ -83,6 +83,7 @@ isc.OBPickAndExecuteView.addProperties({
       view: this,
       fields: this.gridFields,
       height: '*',
+      cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
       dataSource: this.dataSource,
       gridProperties: this.viewProperties.gridProperties
     });
