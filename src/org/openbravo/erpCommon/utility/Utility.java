@@ -71,7 +71,6 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -1095,9 +1094,12 @@ public class Utility {
    * @return String translated.
    */
   public static String parseTranslation(String text) {
-    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    // final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    final VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser()
+        .getId(), OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+        .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
     final String language = OBContext.getOBContext().getLanguage().getLanguage();
-    return parseTranslation(new DalConnectionProvider(), vars, null, language, text);
+    return parseTranslation(new DalConnectionProvider(false), vars, null, language, text);
   }
 
   /**
