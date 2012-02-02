@@ -45,7 +45,7 @@ import org.openbravo.utils.FormatUtilities;
 public class EmailManager {
   private static Logger log4j = Logger.getLogger(EmailManager.class);
 
-  public static void sendEmail(String host, Boolean auth, String username, String password,
+  public static void sendEmail(String host, boolean auth, String username, String password,
       String connSecurity, int port, String senderAddress, String recipientTO, String recipientCC,
       String recipientBCC, String replyTo, String subject, String content, String contentType,
       List<File> attachments, Date sentDate, List<String> headerExtras) throws Exception {

@@ -93,6 +93,7 @@ public class AlertProcess implements Process {
    * @param conn
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")
   private void processAlert(AlertProcessData alertRule, ConnectionProvider conn) throws Exception {
     logger.log("Processing rule " + alertRule.name + "\n");
 
@@ -158,10 +159,6 @@ public class AlertProcess implements Process {
             // Getting the SMTP server parameters
             OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
                 .createCriteria(EmailServerConfiguration.class);
-            if (OBContext.getOBContext().isInAdministratorMode()) {
-              mailConfigCriteria.setFilterOnReadableClients(false);
-              mailConfigCriteria.setFilterOnReadableOrganization(false);
-            }
             mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
                 .getInstance().get(Client.class, adClientId)));
             final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
@@ -196,10 +193,6 @@ public class AlertProcess implements Process {
 
               OBCriteria<AlertRecipient> alertRecipientsCriteria = OBDal.getInstance()
                   .createCriteria(AlertRecipient.class);
-              if (OBContext.getOBContext().isInAdministratorMode()) {
-                alertRecipientsCriteria.setFilterOnReadableClients(false);
-                alertRecipientsCriteria.setFilterOnReadableOrganization(false);
-              }
               alertRecipientsCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, OBDal
                   .getInstance().get(AlertRule.class, alertRule.adAlertruleId)));
 
@@ -222,10 +215,6 @@ public class AlertProcess implements Process {
                 } else {
                   OBCriteria<UserRoles> userRolesCriteria = OBDal.getInstance().createCriteria(
                       UserRoles.class);
-                  if (OBContext.getOBContext().isInAdministratorMode()) {
-                    userRolesCriteria.setFilterOnReadableClients(false);
-                    userRolesCriteria.setFilterOnReadableOrganization(false);
-                  }
                   userRolesCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ROLE,
                       currentAlertRecipient.getRole()));
                   userRolesCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_CLIENT,
@@ -303,8 +292,9 @@ public class AlertProcess implements Process {
           // Send all the stored emails
           for (Object[] emailToSend : emailsToSendList) {
             try {
-              EmailManager.sendEmail((String) emailToSend[0], (Boolean) emailToSend[1],
-                  (String) emailToSend[2], (String) emailToSend[3], (String) emailToSend[4],
+              EmailManager.sendEmail((String) emailToSend[0],
+                  ((Boolean) emailToSend[1]).booleanValue(), (String) emailToSend[2],
+                  (String) emailToSend[3], (String) emailToSend[4],
                   ((Number) emailToSend[5]).intValue(), (String) emailToSend[6],
                   (String) emailToSend[7], (String) emailToSend[8], (String) emailToSend[9],
                   (String) emailToSend[10], (String) emailToSend[11], (String) emailToSend[12],
@@ -319,7 +309,9 @@ public class AlertProcess implements Process {
             }
           }
         } else {
-          // @Deprecated : This full "else" statement is deprecated.
+          // @Deprecated : This full "else" statement is deprecated from OB 3.0MP9. It happens only
+          // when there is an email configured directly in the AD_CLIENT (new way is configure it in
+          // C_POC_CONFIGURATION)
           AlertProcessData[] mail = AlertProcessData.prepareMails(conn, alertRule.adAlertruleId);
 
           if (mail != null) {

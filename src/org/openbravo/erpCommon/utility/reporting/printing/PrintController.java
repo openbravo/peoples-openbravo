@@ -43,10 +43,10 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -63,7 +63,6 @@ import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -689,19 +688,31 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@cus_nam@", toName);
     emailBody = emailBody.replaceAll("@sal_nam@", replyToName);
 
-    final EmailServerConfiguration mailConfig = OBDal.getInstance().get(
-        EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
+    String host = null;
+    boolean auth = true;
+    String username = null;
+    String password = null;
+    String connSecurity = null;
+    int port = 25;
 
-    final String host = mailConfig.getSmtpServer();
-    Boolean auth = true;
-    if ("N".equals(mailConfig.isSMTPAuthentification())) {
-      auth = false;
+    OBContext.setAdminMode(true);
+    try {
+      final EmailServerConfiguration mailConfig = OBDal.getInstance().get(
+          EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
+
+      host = mailConfig.getSmtpServer();
+
+      if ("N".equals(mailConfig.isSMTPAuthentification())) {
+        auth = false;
+      }
+      username = mailConfig.getSmtpServerAccount();
+      password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(), false);
+      connSecurity = mailConfig.getSmtpConnectionSecurity();
+      port = mailConfig.getSmtpPort().intValue();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    final String username = mailConfig.getSmtpServerAccount();
-    final String password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(),
-        false);
-    final String connSecurity = mailConfig.getSmtpConnectionSecurity();
-    final int port = mailConfig.getSmtpPort().intValue();
+
     final String recipientTO = toEmail;
     final String recipientCC = vars.getStringParameter("ccEmail");
     final String recipientBCC = vars.getStringParameter("bccEmail");
@@ -770,6 +781,7 @@ public class PrintController extends HttpSecureAppServlet {
 
       throw new ServletException(exception);
     }
+
   }
 
   void createPrintOptionsPage(HttpServletRequest request, HttpServletResponse response,
@@ -872,42 +884,48 @@ public class PrintController extends HttpSecureAppServlet {
       log4j.error(e);
     }
 
-    OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
-        EmailServerConfiguration.class);
-    mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
-        .getInstance().get(Client.class, vars.getClient())));
-    final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
+    String fromEmail = null;
+    String fromEmailId = null;
 
-    if (mailConfigList.size() == 0) {
-      throw new ServletException("No Poc configuration found for this client.");
-    }
+    OBContext.setAdminMode(true);
+    try {
+      OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
+          EmailServerConfiguration.class);
+      final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
 
-    // TODO: There should be a mechanism to select the desired Email server configuration, until
-    // then, first search for the current organization (and use the first returned one), then for
-    // organization '0' (and use the first returned one) and then for any other of the organization
-    // tree where current organization belongs to (and use the first returned one).
-    EmailServerConfiguration mailConfig = null;
-
-    for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
-      if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
-        mailConfig = currentOrgConfig;
-        break;
+      if (mailConfigList.size() == 0) {
+        throw new ServletException("No Poc configuration found for this client.");
       }
-    }
-    if (mailConfig == null) {
-      for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
-        if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
-          mailConfig = zeroOrgConfig;
+
+      // TODO: There should be a mechanism to select the desired Email server configuration, until
+      // then, first search for the current organization (and use the first returned one), then for
+      // organization '0' (and use the first returned one) and then for any other of the
+      // organization tree where current organization belongs to (and use the first returned one).
+      EmailServerConfiguration mailConfig = null;
+
+      for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
+        if (vars.getOrg().equals(currentOrgConfig.getOrganization().getId())) {
+          mailConfig = currentOrgConfig;
           break;
         }
       }
-    }
-    if (mailConfig == null) {
-      mailConfig = mailConfigList.get(0);
-    }
+      if (mailConfig == null) {
+        for (EmailServerConfiguration zeroOrgConfig : mailConfigList) {
+          if ("0".equals(zeroOrgConfig.getOrganization().getId())) {
+            mailConfig = zeroOrgConfig;
+            break;
+          }
+        }
+      }
+      if (mailConfig == null) {
+        mailConfig = mailConfigList.get(0);
+      }
 
-    final String fromEmail = mailConfig.getSmtpServerSenderAddress();
-    final String fromEmailId = mailConfig.getId();
+      fromEmail = mailConfig.getSmtpServerSenderAddress();
+      fromEmailId = mailConfig.getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     // Get additional document information
     String draftDocumentIds = "";
