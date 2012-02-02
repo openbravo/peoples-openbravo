@@ -174,6 +174,12 @@ isc.OBPickAndExecuteView.addProperties({
       canEdit: false,
       canFilter: false,
       canSort: false,
+      canReorder: false,
+      canHide: false,
+      canFreeze: false,
+      canDragResize: false,
+      canGroupBy: false,
+      autoExpand: false,
       width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
