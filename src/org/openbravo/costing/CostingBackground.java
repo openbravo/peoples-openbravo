@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -58,7 +59,8 @@ public class CostingBackground extends DalBaseProcess {
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     obcTrx.add(Restrictions.isNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
-    obcTrx.addOrderBy(MaterialTransaction.PROPERTY_CREATIONDATE, true);
+    // obcTrx.addOrderBy(MaterialTransaction.PROPERTY_CREATIONDATE, true);
+    obcTrx.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
     List<MaterialTransaction> trxs = obcTrx.list();
     int counter = 0, total = trxs.size();
 
@@ -72,6 +74,7 @@ public class CostingBackground extends DalBaseProcess {
       } catch (OBException e) {
         log4j.error(e.getMessage(), e);
         logger.logln(e.getMessage());
+        result.setType("Error");
         result.setTitle(Utility.messageBD("Error"));
         result.setMessage(Utility.parseTranslation(e.getMessage()));
         bundle.setResult(result);
@@ -84,6 +87,8 @@ public class CostingBackground extends DalBaseProcess {
         bundle.setResult(result);
         return;
       }
+      // If cost has been calculated successfully do a commit.
+      SessionHandler.getInstance().commitAndStart();
     }
   }
 }
