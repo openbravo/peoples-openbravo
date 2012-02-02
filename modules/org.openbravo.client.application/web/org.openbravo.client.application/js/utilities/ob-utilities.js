@@ -856,8 +856,8 @@ OB.Utilities.formatTimePassedMessage = function(
 /* number of time units */n, /*
                  * message id
                  */messageId) {
-  var message = OB.I18N.getLabel(messageId);
-  return message.replace(/^N/, n);
+  var message = OB.I18N.getLabel(messageId,[n]);
+  return message;
 };
 
 OB.Utilities.getTimePassed = function(
