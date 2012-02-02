@@ -386,7 +386,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   private List<PaymentTerm> getPaymentTerms() {
     final OBCriteria<PaymentTerm> obc = OBDal.getInstance().createCriteria(PaymentTerm.class);
-    obc.add(Restrictions.ilike("name", "1328196616866" + "%"));
+    obc.add(Restrictions.ilike("name", PREFIX + "%"));
     return obc.list();
   }
 
