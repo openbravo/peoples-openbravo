@@ -65,6 +65,7 @@
         <unique-column name="AD_TAB_ACCESS_ID"/>
         <unique-column name="AD_FIELD_ID"/>
       </unique>
+      <check name="AD_FLDACCESS_CHKSAVE_CHK"><![CDATA[ISCHECKONSAVE IN ('Y', 'N')]]></check>
       <check name="AD_FLDACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_FLDACCESS_ISREADWRI_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
