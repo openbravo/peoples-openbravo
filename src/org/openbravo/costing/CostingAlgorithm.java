@@ -136,8 +136,8 @@ public abstract class CostingAlgorithm {
   }
 
   private BigDecimal getShipmentVoidAmount() {
-    // TODO Auto-generated method stub
-    return null;
+    // Voided shipment gets cost from original shipment line.
+    return getOriginalInOutLineAmount();
   }
 
   /*
@@ -168,8 +168,8 @@ public abstract class CostingAlgorithm {
   }
 
   private BigDecimal getReceiptVoidAmount() {
-    // TODO Auto-generated method stub
-    return null;
+    // Voided receipt gets cost from original receipt line.
+    return getOriginalInOutLineAmount();
   }
 
   private BigDecimal getReceiptReturnAmount() {
@@ -198,11 +198,12 @@ public abstract class CostingAlgorithm {
       if (movementTransaction.getId().equals(transaction.getId())) {
         continue;
       }
-      // TODO: Check if transaction has been processed.
-      return CostingUtils.getTransactionCost(movementTransaction, transaction.getCreationDate());
+      // Calculate transaction cost if it is not calculated yet.
+      return CostingUtils.getTransactionCost(movementTransaction, transaction.getCreationDate(),
+          true);
     }
     // If no transaction is found throw an exception.
-    throw new OBException();
+    throw new OBException("@NoInternalMovementTransactionFound@");
   }
 
   private BigDecimal getBOMProductionCost() {
@@ -214,22 +215,24 @@ public abstract class CostingAlgorithm {
     for (ProductionLine prodLine : productionLines) {
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
-      // FIXME: review check to know if cost has been calculated
-      if (CostingUtils.getTransactionCost(partTransaction, transaction.getCreationDate()) == null) {
-        CostingServer transactionCost = new CostingServer(transaction);
-        try {
-          transactionCost.process();
-          totalCost = totalCost.add(transactionCost.getTransactionCost());
-        } catch (OBException e) {
-          log4j.error(e.getMessage(), e);
-        }
-      } else {
-        totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
-            transaction.getCreationDate()));
-      }
+      // Calculate transaction cost if it is not calculated yet.
+      totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
+          transaction.getCreationDate(), true));
     }
 
     return totalCost;
+  }
+
+  private BigDecimal getOriginalInOutLineAmount() {
+    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
+      log4j.error("No canceled line found for transaction: " + transaction.getId());
+      throw new OBException("@NoCanceledLineFoundForTrx@: " + transaction.getIdentifier());
+    }
+    MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
+        .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
+
+    // FIXME: set third parameter temporarily
+    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate(), true);
   }
 
   public enum CostDimension {
@@ -248,7 +251,8 @@ public abstract class CostingAlgorithm {
             log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ShipmentReturn;
           } else if (inout.getDocumentStatus().equals("VO")
-              && transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) < 0) {
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ShipmentVoid;
           } else {
@@ -261,7 +265,8 @@ public abstract class CostingAlgorithm {
             log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ReceiptReturn;
           } else if (inout.getDocumentStatus().equals("VO")
-              && transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) < 0) {
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ReceiptVoid;
           } else {
