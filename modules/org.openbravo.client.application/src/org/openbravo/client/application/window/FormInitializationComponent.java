@@ -435,6 +435,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (!jsExcuteCode.isEmpty()) {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
       }
+
       log.debug(finalObject.toString(1));
       return finalObject;
     } catch (JSONException e) {

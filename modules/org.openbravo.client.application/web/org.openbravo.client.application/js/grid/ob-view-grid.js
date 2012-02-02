@@ -487,7 +487,10 @@ isc.OBViewGrid.addProperties({
     }
     
     if (this.getDataSource()) {
-      this.Super('setViewState', arguments);
+      // old versions stored selected records in grid view, this can cause
+      // problems if record is not selected yet
+      delete localState.selected;
+      this.Super('setViewState', ['(' + isc.Comm.serialize(localState,false) + ')']);
     }
 
     if (localState.noFilterClause) {
@@ -1681,6 +1684,14 @@ isc.OBViewGrid.addProperties({
           colNum = i;
         }
       }    
+      if (colNum < length && this.getFields()[colNum].disabled) {
+        for (i = 0; i < length; i++) {
+          if (this.getFields()[i].editorProperties && !this.getFields()[i].disabled && this.getFields()[i].visible) {
+            colNum = i;
+            break;
+          }
+        }
+      }
     }
     
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);

@@ -385,7 +385,14 @@ public class PaymentReportDao {
       hsqlScript.append(FIN_PaymentSchedule.PROPERTY_ID);
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hsqlScript.toString());
-
+      int pos = 0;
+      for (final Object param : parameters) {
+        if (param instanceof BaseOBObject) {
+          query.setEntity(pos++, param);
+        } else {
+          query.setParameter(pos++, param);
+        }
+      }
       boolean firstMember = true;
       java.util.List<FIN_PaymentScheduleDetail> obqPSDList = new ArrayList<FIN_PaymentScheduleDetail>();
       for (Object resultObject : query.list()) {

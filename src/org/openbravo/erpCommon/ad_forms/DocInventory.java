@@ -163,7 +163,8 @@ public class DocInventory extends AcctServer {
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
       BigDecimal b_Costs = new BigDecimal(costs);
-      if (line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn) == null) {
+      Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
+      if (assetAccount == null) {
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
         org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
             .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
@@ -176,13 +177,11 @@ public class DocInventory extends AcctServer {
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
         log4j.error("No Cost Associated to product: " + product.getName());
         setStatus(STATUS_InvalidCost);
-        continue;
-      } else {
-        setStatus(STATUS_NotPosted);// Default status. LoadDocument
+        break;
       }
       // Inventory DR CR
-      dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      dr = fact.createLine(line, assetAccount, as.getC_Currency_ID(), costs, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
       // may be zero difference - no line created.
       if (dr == null) {
         continue;

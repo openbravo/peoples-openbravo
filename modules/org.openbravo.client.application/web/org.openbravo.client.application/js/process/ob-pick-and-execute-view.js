@@ -82,7 +82,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this,
       fields: this.gridFields,
-      height: '80%',
+      height: '*',
       dataSource: this.dataSource,
       gridProperties: this.viewProperties.gridProperties
     });
@@ -118,6 +118,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.items = [this.viewGrid, isc.HLayout.create({
       align: 'center',
       width: '100%',
+      height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
       members: [isc.HLayout.create({
         width: 1,
         overflow: 'visible',
@@ -174,10 +175,16 @@ isc.OBPickAndExecuteView.addProperties({
       canEdit: false,
       canFilter: false,
       canSort: false,
-      width: 32,
+      canReorder: false,
+      canHide: false,
+      canFreeze: false,
+      canDragResize: false,
+      canGroupBy: false,
+      autoExpand: false,
+      width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="web/org.openbravo.client.application/images/iconPin.png" />';
+          return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
         }
         return '';
       },
