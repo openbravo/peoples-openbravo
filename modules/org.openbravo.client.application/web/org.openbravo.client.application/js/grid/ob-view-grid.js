@@ -1684,6 +1684,14 @@ isc.OBViewGrid.addProperties({
           colNum = i;
         }
       }    
+      if (colNum < length && this.getFields()[colNum].disabled) {
+        for (i = 0; i < length; i++) {
+          if (this.getFields()[i].editorProperties && !this.getFields()[i].disabled && this.getFields()[i].visible) {
+            colNum = i;
+            break;
+          }
+        }
+      }
     }
     
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
