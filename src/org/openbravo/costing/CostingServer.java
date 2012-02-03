@@ -96,14 +96,19 @@ public class CostingServer {
   }
 
   private CostingAlgorithm getCostingAlgorithm() {
-    try {
-      // Algorithm class is retrieved from costDimensionRule
-      String strAlgorithmClass = "org.openbravo.costing.DummyAlgorithm";
+    // Algorithm class is retrieved from costDimensionRule
+    // FIXME: temporarily hard code uuid of dummy algorithm
+    String strAlgorithmId = "B069080A0AE149A79CF1FA0E24F16AB6";
+    org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = OBDal.getInstance().get(
+        org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class, strAlgorithmId);
 
-      final Class<?> clz = OBClassLoader.getInstance().loadClass(strAlgorithmClass);
+    try {
+      final Class<?> clz = OBClassLoader.getInstance().loadClass(costAlgorithm.getJavaClassName());
       return (CostingAlgorithm) clz.newInstance();
     } catch (Exception e) {
-      throw new OBException(e);
+      log4j.error("Exception loading Algorithm class: " + costAlgorithm.getJavaClassName()
+          + " algorithm: " + costAlgorithm.getIdentifier());
+      throw new OBException("@AlgorithmClassNotLoaded@: " + costAlgorithm.getName(), e);
     }
   }
 
