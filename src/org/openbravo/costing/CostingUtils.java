@@ -84,7 +84,8 @@ public class CostingUtils {
     obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "ST"));
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      // TODO: Add warehouse column on m_costing table to filter.
+      obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
+          costDimensions.get(CostDimension.Warehouse)));
     }
     if (costDimensions.get(CostDimension.LegalEntity) != null) {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION,
