@@ -481,7 +481,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--119-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--119-->  <NAME><![CDATA[Role]]></NAME>
 <!--119-->  <DESCRIPTION><![CDATA[Create roles to give the user the complete or partial access to the application's elements.]]></DESCRIPTION>
-<!--119-->  <HELP><![CDATA[Create roles to give the user the complete or partial access to the application's elements.]]></HELP>
+<!--119-->  <HELP><![CDATA[Role window allows to review, create, configure and maintain the roles to use in a given client.]]></HELP>
 <!--119-->  <AD_TABLE_ID><![CDATA[156]]></AD_TABLE_ID>
 <!--119-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--119-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -507,7 +507,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--120-->  <NAME><![CDATA[User Assignment]]></NAME>
 <!--120-->  <DESCRIPTION><![CDATA[Add users to be assigned to the specified role.]]></DESCRIPTION>
-<!--120-->  <HELP><![CDATA[Add users to be assigned to the specified role.]]></HELP>
+<!--120-->  <HELP><![CDATA[User Assignment tab allows to add users to a given role.]]></HELP>
 <!--120-->  <AD_TABLE_ID><![CDATA[157]]></AD_TABLE_ID>
 <!--120-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--120-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -3484,7 +3484,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--304-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--304-->  <NAME><![CDATA[Window Access]]></NAME>
 <!--304-->  <DESCRIPTION><![CDATA[Edit the selected role's access to specified application windows.]]></DESCRIPTION>
-<!--304-->  <HELP><![CDATA[Edit the selected role's access to specified application windows.]]></HELP>
+<!--304-->  <HELP><![CDATA[This tab lists and/or allows to add the windows to which a role will have access to.]]></HELP>
 <!--304-->  <AD_TABLE_ID><![CDATA[201]]></AD_TABLE_ID>
 <!--304-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--304-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -3511,7 +3511,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--305-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--305-->  <NAME><![CDATA[Process Access]]></NAME>
 <!--305-->  <DESCRIPTION><![CDATA[Edit the selected role's access to the specified application processes.]]></DESCRIPTION>
-<!--305-->  <HELP><![CDATA[Edit the selected role's access to the specified application processes.]]></HELP>
+<!--305-->  <HELP><![CDATA[This tab lists and/or allows to add the processes to which a role will have access to.]]></HELP>
 <!--305-->  <AD_TABLE_ID><![CDATA[197]]></AD_TABLE_ID>
 <!--305-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--305-->  <SEQNO><![CDATA[60]]></SEQNO>
@@ -3538,7 +3538,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--306-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--306-->  <NAME><![CDATA[Form Access]]></NAME>
 <!--306-->  <DESCRIPTION><![CDATA[Edit the selected role's access to specified application forms.]]></DESCRIPTION>
-<!--306-->  <HELP><![CDATA[Edit the selected role's access to specified application forms.]]></HELP>
+<!--306-->  <HELP><![CDATA[This tab lists and/or allows to add the forms to which a role will have access to.]]></HELP>
 <!--306-->  <AD_TABLE_ID><![CDATA[378]]></AD_TABLE_ID>
 <!--306-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--306-->  <SEQNO><![CDATA[70]]></SEQNO>
@@ -4091,7 +4091,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--351-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--351-->  <NAME><![CDATA[Org Access]]></NAME>
 <!--351-->  <DESCRIPTION><![CDATA[Edit the selected role's access to the specified organizations.]]></DESCRIPTION>
-<!--351-->  <HELP><![CDATA[Edit the selected role's access to the specified organizations.]]></HELP>
+<!--351-->  <HELP><![CDATA[Org Access tab allows to define the organization/s to which a given role will have access rights to.]]></HELP>
 <!--351-->  <AD_TABLE_ID><![CDATA[422]]></AD_TABLE_ID>
 <!--351-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--351-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -10285,7 +10285,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800241-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800241-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800241-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800241-->  <NAME><![CDATA[Org Specific]]></NAME>
+<!--800241-->  <NAME><![CDATA[Manufacturing]]></NAME>
 <!--800241-->  <DESCRIPTION><![CDATA[Define specific characteristics which allow this product to be used in an organization.]]></DESCRIPTION>
 <!--800241-->  <HELP><![CDATA[Manufacturing tab is used for products that are planned by the manufacturing plan.]]></HELP>
 <!--800241-->  <AD_TABLE_ID><![CDATA[800205]]></AD_TABLE_ID>
@@ -11897,7 +11897,7 @@ The corresponding tables have then the following setting:
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <NAME><![CDATA[Audit Trail]]></NAME>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <DESCRIPTION><![CDATA[Display historical information about data changes of record via the audit trail system]]></DESCRIPTION>
-<!--3690EB6BA1614375A6F058BBA61B19BC-->  <HELP><![CDATA[This tab displays a read-only view of all recorded data changes for the tables for which the audit trail feature has been enabled.]]></HELP>
+<!--3690EB6BA1614375A6F058BBA61B19BC-->  <HELP><![CDATA[Audit Trail view displays  read-only infromation about all the recorded data changes done in the tables for which the audit trail feature has been enabled.]]></HELP>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <AD_TABLE_ID><![CDATA[D728885674EB49DA9595AD66A26B2D28]]></AD_TABLE_ID>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <AD_WINDOW_ID><![CDATA[FEB8679CAA0D47E5978F10E22566FCEA]]></AD_WINDOW_ID>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -12835,7 +12835,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <NAME><![CDATA[Process Execution]]></NAME>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <DESCRIPTION><![CDATA[View the details and output of individual Process executions that have been requested, using Process Requests, throughout the application and from the Process Request window.]]></DESCRIPTION>
-<!--8E5972CF3664486D9D887BDEDA88627D-->  <HELP><![CDATA[View the details and output of individual Process executions that have been requested, using Process Requests, throughout the application and from the Process Request window.]]></HELP>
+<!--8E5972CF3664486D9D887BDEDA88627D-->  <HELP><![CDATA[Process Monitor window shows read-only information about individual process execution.]]></HELP>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <AD_TABLE_ID><![CDATA[7F900CBEF00C45D2833F897E12BAE86E]]></AD_TABLE_ID>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <AD_WINDOW_ID><![CDATA[EF3E837705944F4DBF398D683D36ACE0]]></AD_WINDOW_ID>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -13681,7 +13681,7 @@ AND @Order.businessPartner@ = e.goodsShipmentLine.shipmentReceipt.businessPartne
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <NAME><![CDATA[Process Request]]></NAME>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <DESCRIPTION><![CDATA[Request processes and reports to be scheduled and executed in the background.]]></DESCRIPTION>
-<!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HELP><![CDATA[Request processes and reports to be scheduled and executed in the background.]]></HELP>
+<!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HELP><![CDATA[Process Request window allows to review and add background processes which can be scheduled or unschedule as required.]]></HELP>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <AD_TABLE_ID><![CDATA[82D4EDCF39AE44FB9B24E95A1B18B21C]]></AD_TABLE_ID>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <AD_WINDOW_ID><![CDATA[48E7EDE7D1104A59B46FC7449D9FB267]]></AD_WINDOW_ID>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <SEQNO><![CDATA[10]]></SEQNO>

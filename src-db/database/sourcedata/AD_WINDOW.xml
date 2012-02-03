@@ -194,7 +194,7 @@
 <!--111-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--111-->  <NAME><![CDATA[Role]]></NAME>
 <!--111-->  <DESCRIPTION><![CDATA[Create roles with assigned users, and edit roles access to organizations, windows, processes, etc.]]></DESCRIPTION>
-<!--111-->  <HELP><![CDATA[Create roles with assigned users, and edit roles access to organizations, windows, processes, etc.]]></HELP>
+<!--111-->  <HELP><![CDATA[The aim of a role is to group user/s depending on what parts of Openbravo they are allowed to access to and therefore to work in.]]></HELP>
 <!--111-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--111-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--111-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2763,7 +2763,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <NAME><![CDATA[Process Request]]></NAME>
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <DESCRIPTION><![CDATA[Request processes and reports to be scheduled and executed in the background.]]></DESCRIPTION>
-<!--48E7EDE7D1104A59B46FC7449D9FB267-->  <HELP><![CDATA[Request processes and reports to be scheduled and executed in the background.]]></HELP>
+<!--48E7EDE7D1104A59B46FC7449D9FB267-->  <HELP><![CDATA[A background process is a system action requested by the user who has to previously provide auxiliary parameter values to execute that action.]]></HELP>
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--48E7EDE7D1104A59B46FC7449D9FB267-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3022,7 +3022,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <NAME><![CDATA[Process Monitor]]></NAME>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <DESCRIPTION><![CDATA[Monitor the results, run time, start and finish times of execution of process requests.]]></DESCRIPTION>
-<!--EF3E837705944F4DBF398D683D36ACE0-->  <HELP><![CDATA[Monitor the results, run time, start and finish times of execution of process requests.]]></HELP>
+<!--EF3E837705944F4DBF398D683D36ACE0-->  <HELP><![CDATA[Process monitor feature allows to review the status of processes executed by a user as well as the ones scheduled in the process request window.]]></HELP>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3039,6 +3039,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <NAME><![CDATA[Audit Trail]]></NAME>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <DESCRIPTION><![CDATA[Display historical information about data changes of record via the audit trail system]]></DESCRIPTION>
+<!--FEB8679CAA0D47E5978F10E22566FCEA-->  <HELP><![CDATA[Audit Trail allows to monitor every data change done in any table or entity through the user interface.]]></HELP>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <PROCESSING><![CDATA[N]]></PROCESSING>

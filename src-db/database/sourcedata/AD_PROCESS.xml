@@ -2985,8 +2985,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800085-->  <VALUE><![CDATA[GenerateAverageCosts]]></VALUE>
 <!--800085-->  <NAME><![CDATA[Generate Average Costs]]></NAME>
 <!--800085-->  <DESCRIPTION><![CDATA[Generates raw materials average costs.]]></DESCRIPTION>
-<!--800085-->  <HELP><![CDATA[Using the previous raw material receipts, calculates its medium cost.<br>
-The product price of each receipt is calculated based on the on the product price in the purchase invoice. If the invoice does not exist the price of the purchase order is used, if the order neither exists the price list of the provider is used. If none of these criterias exist, a warning is generated and the previous cost is used.]]></HELP>
 <!--800085-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800085-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800085-->  <PROCEDURENAME><![CDATA[M_Generate_Average_Costs]]></PROCEDURENAME>
@@ -4979,29 +4977,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--1000500000-->  <VALUE><![CDATA[Pareto Product Report]]></VALUE>
 <!--1000500000-->  <NAME><![CDATA[Pareto Product Report]]></NAME>
 <!--1000500000-->  <DESCRIPTION><![CDATA[Pareto Product Report]]></DESCRIPTION>
-<!--1000500000-->  <HELP><![CDATA[The rationale for a Pareto report is usually that 20% of your products have 80% of the value and therefore these reports are usually structured as:
-
-· Product Code
-
-· Product Description
-
-· Quantity On Hand
-
-· Cost (either std or avg)
-
-· Value (Qty*Cost)
-
-· Class (A, B or C)
-
-Then, based on the classification you assign different frequency of cycle counting (A products are counted weekly, B products are counted monthly and C products yearly or never).
-
-Purpose
-
-This window can be used for two different purposes.
-
-First of them is to develop a report that classifies the products into three classes (A, B or C) depending on a concrete conditions selected by the user (Average Cost in this case) clicking on the Search button.
-
-The second one is to update one property in the product organization specific table following the same criteria so it could be used as filtering condition in the Create Inventory Count List process. This process is launched clicking on the Update ABC button.]]></HELP>
 <!--1000500000-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--1000500000-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--1000500000-->  <ISREPORT><![CDATA[Y]]></ISREPORT>

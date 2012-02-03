@@ -143,7 +143,7 @@ The view implementation defines the component which is capable of generating the
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <NAME><![CDATA[View Implementation]]></NAME>
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <DESCRIPTION><![CDATA[Edit the selected role's access to specified application view impementations.]]></DESCRIPTION>
-<!--FF8080812EFBEA81012EFBED3F58000C-->  <HELP><![CDATA[Edit the selected role's access to specified application view implementations.]]></HELP>
+<!--FF8080812EFBEA81012EFBED3F58000C-->  <HELP><![CDATA[View implementation tab allows to select customized views.]]></HELP>
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <AD_TABLE_ID><![CDATA[E6F29F8A30BC4603B1D1195051C4F3A6]]></AD_TABLE_ID>
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--FF8080812EFBEA81012EFBED3F58000C-->  <SEQNO><![CDATA[110]]></SEQNO>

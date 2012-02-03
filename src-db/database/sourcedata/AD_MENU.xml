@@ -720,7 +720,7 @@
 <!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--175-->  <NAME><![CDATA[Enterprise]]></NAME>
+<!--175-->  <NAME><![CDATA[Enterprise Model]]></NAME>
 <!--175-->  <DESCRIPTION><![CDATA[Open a folder where you can create and edit enterprise items such as organizations.]]></DESCRIPTION>
 <!--175-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -3378,7 +3378,7 @@
 <!--800212-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800212-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800212-->  <NAME><![CDATA[Material Requirement (MRP)]]></NAME>
+<!--800212-->  <NAME><![CDATA[Material Requirement Planning]]></NAME>
 <!--800212-->  <DESCRIPTION><![CDATA[MRP provides the tools to plan and monitor purchase and production planning by tracking several inputs such as sales forecast and current stock levels.]]></DESCRIPTION>
 <!--800212-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
