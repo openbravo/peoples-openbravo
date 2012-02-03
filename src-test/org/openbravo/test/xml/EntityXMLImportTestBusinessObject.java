@@ -52,7 +52,7 @@ import org.openbravo.service.db.ImportResult;
 public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   // prefix is used to uniquely identify the payment terms used in this test case
-  private static final String PREFIX = "testtest2";// + System.currentTimeMillis();
+  private static final String PREFIX = "" + System.currentTimeMillis();
 
   private static final Logger log = Logger.getLogger(EntityXMLImportTestBusinessObject.class);
 
