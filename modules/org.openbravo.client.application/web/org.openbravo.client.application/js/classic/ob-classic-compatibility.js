@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -344,6 +344,8 @@
       // 
       // returns the created OBClassicPopupWindow
       open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal){
+        var urlCharacter = (url && url.indexOf('?') !== -1)?'&':'?';
+
         if (showMinimizeControl !== false) {
           showMinimizeControl = true;
         }
@@ -374,7 +376,7 @@
             '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl +
             'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>'+
             '</frameset><body></body></html>',
-          popupURL: url
+          popupURL: url+urlCharacter+'IsPopUpCall=1'
         });
         cPopup.show();
         cobcomp.Popup.postOpen(cPopup, postParams);
