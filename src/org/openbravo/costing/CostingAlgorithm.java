@@ -231,8 +231,7 @@ public abstract class CostingAlgorithm {
     MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
         .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
 
-    // FIXME: set third parameter temporarily
-    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate(), true);
+    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate());
   }
 
   public enum CostDimension {
