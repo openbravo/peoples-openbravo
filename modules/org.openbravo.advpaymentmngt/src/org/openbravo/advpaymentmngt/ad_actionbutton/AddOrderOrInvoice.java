@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -44,6 +45,7 @@ import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -562,24 +564,32 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   private HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount, Set<String> psdSet) {
     BigDecimal remainingAmount = recordAmount;
     HashMap<String, BigDecimal> recordsAmounts = new HashMap<String, BigDecimal>();
-    for (String psdId : psdSet) {
-      FIN_PaymentScheduleDetail paymentScheduleDetail = OBDal.getInstance().get(
-          FIN_PaymentScheduleDetail.class, psdId);
+    // PSD needs to be properly ordered to ensure negative amounts are processed first
+    List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdSet);
+    for (FIN_PaymentScheduleDetail paymentScheduleDetail : psds) {
       BigDecimal outstandingAmount = paymentScheduleDetail.getAmount();
       // Manage negative amounts
       if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
           .compareTo(outstandingAmount) >= 0)
           || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
               .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
-        recordsAmounts.put(psdId, outstandingAmount);
+        recordsAmounts.put(paymentScheduleDetail.getId(), outstandingAmount);
         remainingAmount = remainingAmount.subtract(outstandingAmount);
       } else {
-        recordsAmounts.put(psdId, remainingAmount);
+        recordsAmounts.put(paymentScheduleDetail.getId(), remainingAmount);
         remainingAmount = BigDecimal.ZERO;
       }
 
     }
     return recordsAmounts;
+  }
+
+  private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(Set<String> psdSet) {
+    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
+        FIN_PaymentScheduleDetail.class);
+    orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
+    orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
+    return orderedPSDs.list();
   }
 
   public String getServletInfo() {
