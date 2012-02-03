@@ -53,6 +53,7 @@ public class CostingUtils {
     if (obcTrxCost.count() == 0) {
       // Transaction hasn't been calculated yet.
       if (calculateTrx) {
+        log4j.debug("Cost for transaction will be calculated." + transaction.getIdentifier());
         CostingServer transactionCost = new CostingServer(transaction);
         transactionCost.process();
         return transactionCost.getTransactionCost();
