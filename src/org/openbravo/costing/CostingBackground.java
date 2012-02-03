@@ -59,8 +59,7 @@ public class CostingBackground extends DalBaseProcess {
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     obcTrx.add(Restrictions.isNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
-    // obcTrx.addOrderBy(MaterialTransaction.PROPERTY_CREATIONDATE, true);
-    obcTrx.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
+    obcTrx.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     List<MaterialTransaction> trxs = obcTrx.list();
     int counter = 0, total = trxs.size();
 
