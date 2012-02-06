@@ -70,7 +70,8 @@ isc.OBQuickLaunch.addProperties({
   },
 
   beforeShow: function(){
-    var recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
+    var valueField = this.members[2].getField('value'),
+      recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
 
     if (recent && recent.length > 0) {
       var newFields = [];
@@ -95,8 +96,12 @@ isc.OBQuickLaunch.addProperties({
 
       this.layout.showMember(this.members[1]);
     }
-    this.members[2].getField('value').setValue(null);
-    this.members[2].getField('value').setElementValue('', null);
+    
+    if (valueField.pickList) {
+      valueField.pickList.deselectAllRecords();
+    }
+    valueField.setValue(null);
+    valueField.setElementValue('', null);
   },
 
   // handle the case that someone entered a url in the quick launch
@@ -107,6 +112,7 @@ isc.OBQuickLaunch.addProperties({
         OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command);
       }
     }
+
     this.Super('doHide', arguments);
   },
 
