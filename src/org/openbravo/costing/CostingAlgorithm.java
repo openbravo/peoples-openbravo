@@ -45,13 +45,23 @@ public abstract class CostingAlgorithm {
   protected Organization costOrg;
   protected Currency costCurrency;
   protected TrxType trxType;
-
-  public Currency getCostCurrency() {
-    return costCurrency;
-  }
-
   protected static Logger log4j = Logger.getLogger(CostingAlgorithm.class);
 
+  /**
+   * Initializes the instance of the CostingAlgorith with the MaterailTransaction that is being to
+   * be calculated and the cost dimensions values in case they have to be used.
+   * 
+   * It initializes several values: <list><li>Organization, it's used the Legal Entity dimension. If
+   * this is null Asterisk organization is used. <li>Currency, it takes the currency defined for the
+   * Organization. If this is null it uses the currency defined for the Client. <li>Transaction
+   * Type, it calculates its type. </list>
+   * 
+   * @param _transaction
+   *          MaterialTransaction to calculate its cost.
+   * @param _costDimensions
+   *          Dimension values to calculate the cost based on them. A null value means that the
+   *          dimension is not used.
+   */
   public void init(MaterialTransaction _transaction,
       HashMap<CostDimension, BaseOBObject> _costDimensions) {
     this.transaction = _transaction;
@@ -70,6 +80,14 @@ public abstract class CostingAlgorithm {
     this.trxType = TrxType.getTrxType(this.transaction);
   }
 
+  /**
+   * Based on the transaction type, calls the corresponding method to calculate and return the total
+   * cost amount of the transaction.
+   * 
+   * @return the total cost amount of the transaction.
+   * @throws OBException
+   *           when the transaction type is unknown.
+   */
   public BigDecimal getTransactionCost() throws OBException {
     log4j.debug("Get transactions cost.");
     if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
@@ -115,26 +133,30 @@ public abstract class CostingAlgorithm {
 
   /**
    * Calculates the total cost amount of an outgoing transaction.
-   * 
-   * @return Transaction total cost amount.
    */
   abstract protected BigDecimal getOutgoingTransactionCost();
 
   /**
-   * Auxiliary method for transactions with 0 Movement qty. It can be overwritten by Costing
+   * Auxiliary method for transactions with 0 Movement quantity. It can be overwritten by Costing
    * Algorithms if further actions are needed.
-   * 
-   * @return Transaction total cost amount.
    */
   private BigDecimal getZeroMovementQtyCost() {
     return BigDecimal.ZERO;
   }
 
+  /**
+   * Method to calculate cost of Returned Shipments. By default the cost is calculated as a regular
+   * receipt, based on the price of the related Return Sales Order.
+   */
   private BigDecimal getShipmentReturnAmount() {
     // Shipment return's cost is calculated as a regular receipt.
     return getReceiptAmount();
   }
 
+  /**
+   * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
+   * cost of the original payment.
+   */
   private BigDecimal getShipmentVoidAmount() {
     // Voided shipment gets cost from original shipment line.
     return getOriginalInOutLineAmount();
@@ -167,23 +189,41 @@ public abstract class CostingAlgorithm {
     return trxCost.setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
-  private BigDecimal getReceiptVoidAmount() {
-    // Voided receipt gets cost from original receipt line.
-    return getOriginalInOutLineAmount();
-  }
-
+  /**
+   * Method to calculate cost of Returned Receipts. By default the cost is calculated as a regular
+   * receipt, based on the price of the related Return Sales Order.
+   */
   private BigDecimal getReceiptReturnAmount() {
     // Return's cost is calculated as outgoing transactions.
     return getOutgoingTransactionCost();
   }
 
   /**
+   * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
+   * cost of the original payment.
+   */
+  private BigDecimal getReceiptVoidAmount() {
+    // Voided receipt gets cost from original receipt line.
+    return getOriginalInOutLineAmount();
+  }
+
+  /**
+   * Returns the cost of the canceled Shipment/Receipt line on the date it is canceled.
+   */
+  private BigDecimal getOriginalInOutLineAmount() {
+    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
+      log4j.error("No canceled line found for transaction: " + transaction.getId());
+      throw new OBException("@NoCanceledLineFoundForTrx@: " + transaction.getIdentifier());
+    }
+    MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
+        .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
+
+    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate());
+  }
+
+  /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
-   * 
-   * This method can be overridden by Costing Algorithms.
-   * 
-   * @return
    */
   private BigDecimal getIncomingPhysicalInventoryCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
@@ -191,7 +231,12 @@ public abstract class CostingAlgorithm {
     return transaction.getMovementQuantity().multiply(standardCost);
   }
 
-  private BigDecimal getInternalMovementToCost() throws OBException {
+  /**
+   * Calculates the total cost amount of an incoming internal movement. The cost amount is the same
+   * than the related outgoing transaction. The outgoing transaction cost is calculated if it has
+   * not been yet.
+   */
+  private BigDecimal getInternalMovementToCost() {
     // Get transaction of From movement to retrieve it's cost.
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
@@ -206,6 +251,10 @@ public abstract class CostingAlgorithm {
     throw new OBException("@NoInternalMovementTransactionFound@");
   }
 
+  /**
+   * Calculates the cost of a produced BOM product. Its cost is the sum of the used products
+   * transactions costs. If these has not been calculated yet they are calculated.
+   */
   private BigDecimal getBOMProductionCost() {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
         .getManufacturingProductionLineList();
@@ -223,23 +272,28 @@ public abstract class CostingAlgorithm {
     return totalCost;
   }
 
-  private BigDecimal getOriginalInOutLineAmount() {
-    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
-      log4j.error("No canceled line found for transaction: " + transaction.getId());
-      throw new OBException("@NoCanceledLineFoundForTrx@: " + transaction.getIdentifier());
-    }
-    MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
-        .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
-
-    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate());
+  /**
+   * @return the base currency used to calculate all the costs.
+   */
+  public Currency getCostCurrency() {
+    return costCurrency;
   }
 
+  /**
+   * Dimensions available to manage the cost on an entity.
+   */
   public enum CostDimension {
     Warehouse, LegalEntity
   }
 
+  /**
+   * Transaction types implemented on the cost engine.
+   */
   public enum TrxType {
     Shipment, ShipmentReturn, ShipmentVoid, Receipt, ReceiptReturn, ReceiptVoid, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
+    /**
+     * Given a Material Management transaction returns its type.
+     */
     private static TrxType getTrxType(MaterialTransaction transaction) {
       if (transaction.getGoodsShipmentLine() != null) {
         // Receipt / Shipment
