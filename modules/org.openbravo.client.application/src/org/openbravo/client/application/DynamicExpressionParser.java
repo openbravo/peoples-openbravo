@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
@@ -152,12 +154,33 @@ public class DynamicExpressionParser {
    * Transform values into JavaScript equivalent, e.g. <b>'Y'</b> into <b>true</b>, based in a
    * defined map. Often used in dynamic expression comparisons
    * 
+   * If the value is enclosed between brackets, it is extracted, translated and enclosed again
+   * 
    * @param value
    *          A string expression like <b>'Y'</b>
    * @return A equivalent value in JavaScript or the same string if has no mapping value
    */
   private String transformValue(String value) {
-    return exprToJSMap.get(value) != null ? exprToJSMap.get(value) : value;
+    if (value == null) {
+      return null;
+    }
+    String removeBracketsRegExp = "[\\[\\(]*(.*?)[\\)\\]]*";
+    Pattern pattern = Pattern.compile(removeBracketsRegExp);
+    Matcher matcher = pattern.matcher(value);
+    String transformedValueWithBrackets = null;
+    // It is always matched: zero or plus opening brackets, followed by any string, follow by zero
+    // or plus closing brackets
+    if (matcher.matches()) {
+      // Extracts the value
+      String valueWithoutBrackets = matcher.group(1);
+      // Transforms the value
+      String transformedValueWithoutBrackets = exprToJSMap.get(valueWithoutBrackets) != null ? exprToJSMap
+          .get(valueWithoutBrackets) : valueWithoutBrackets;
+      // Re-encloses the value
+      transformedValueWithBrackets = value.replace(valueWithoutBrackets,
+          transformedValueWithoutBrackets);
+    }
+    return transformedValueWithBrackets;
   }
 
   /*
