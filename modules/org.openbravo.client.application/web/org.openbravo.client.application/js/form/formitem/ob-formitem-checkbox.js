@@ -22,7 +22,13 @@
 isc.ClassFactory.defineClass('OBCheckboxItem', isc.CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
-  operator: 'equals'
-  // no validation on change or exit here
-});
+	  operator: 'equals', 
+	  changed: function(form, item, value) {
+		    this.Super('changed', arguments);
+		    //A change on a checkbox item should be handled  on the changed event, not on blur 
+		    if (this._hasChanged && this.form && this.form.handleItemChange) {
+		      this.form.handleItemChange(this);
+		    }
+		  }  
+	});
 
