@@ -35,7 +35,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -63,8 +62,8 @@ public class ProcessSavePayments implements JSONProcess {
     BusinessPartner bp = order.getBusinessPartner();
     DocumentType docType = OBDal.getInstance().get(DocumentType.class,
         jsonsent.getString("docType"));
-    String documentNo = Utility.getDocumentNoByDocumentType(conn, vars.getClient(),
-        jsonsent.getString("docType"), true);
+    String documentNo = "xx"; // Utility.getDocumentNoByDocumentType(conn, vars.getClient(),
+                              // jsonsent.getString("docType"), true);
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class, jsonsent.getString("paymentMethod"));
     FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
         jsonsent.getString("account"));
