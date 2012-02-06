@@ -140,7 +140,7 @@ public abstract class CostingAlgorithm {
    * Auxiliary method for transactions with 0 Movement quantity. It can be overwritten by Costing
    * Algorithms if further actions are needed.
    */
-  private BigDecimal getZeroMovementQtyCost() {
+  protected BigDecimal getZeroMovementQtyCost() {
     return BigDecimal.ZERO;
   }
 
@@ -148,7 +148,7 @@ public abstract class CostingAlgorithm {
    * Method to calculate cost of Returned Shipments. By default the cost is calculated as a regular
    * receipt, based on the price of the related Return Sales Order.
    */
-  private BigDecimal getShipmentReturnAmount() {
+  protected BigDecimal getShipmentReturnAmount() {
     // Shipment return's cost is calculated as a regular receipt.
     return getReceiptAmount();
   }
@@ -157,7 +157,7 @@ public abstract class CostingAlgorithm {
    * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
    * cost of the original payment.
    */
-  private BigDecimal getShipmentVoidAmount() {
+  protected BigDecimal getShipmentVoidAmount() {
     // Voided shipment gets cost from original shipment line.
     return getOriginalInOutLineAmount();
   }
@@ -165,7 +165,7 @@ public abstract class CostingAlgorithm {
   /*
    * Default method to get Receipts Transaction amount based on receipt's related order price.
    */
-  private BigDecimal getReceiptAmount() {
+  protected BigDecimal getReceiptAmount() {
     BigDecimal trxCost = BigDecimal.ZERO;
     BigDecimal addQty = BigDecimal.ZERO;
     ShipmentInOutLine receiptline = transaction.getGoodsShipmentLine();
@@ -193,7 +193,7 @@ public abstract class CostingAlgorithm {
    * Method to calculate cost of Returned Receipts. By default the cost is calculated as a regular
    * receipt, based on the price of the related Return Sales Order.
    */
-  private BigDecimal getReceiptReturnAmount() {
+  protected BigDecimal getReceiptReturnAmount() {
     // Return's cost is calculated as outgoing transactions.
     return getOutgoingTransactionCost();
   }
@@ -202,7 +202,7 @@ public abstract class CostingAlgorithm {
    * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
    * cost of the original payment.
    */
-  private BigDecimal getReceiptVoidAmount() {
+  protected BigDecimal getReceiptVoidAmount() {
     // Voided receipt gets cost from original receipt line.
     return getOriginalInOutLineAmount();
   }
@@ -210,7 +210,7 @@ public abstract class CostingAlgorithm {
   /**
    * Returns the cost of the canceled Shipment/Receipt line on the date it is canceled.
    */
-  private BigDecimal getOriginalInOutLineAmount() {
+  protected BigDecimal getOriginalInOutLineAmount() {
     if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
       log4j.error("No canceled line found for transaction: " + transaction.getId());
       throw new OBException("@NoCanceledLineFoundForTrx@: " + transaction.getIdentifier());
@@ -225,7 +225,7 @@ public abstract class CostingAlgorithm {
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
    */
-  private BigDecimal getIncomingPhysicalInventoryCost() {
+  protected BigDecimal getIncomingPhysicalInventoryCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
         transaction.getCreationDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
@@ -236,7 +236,7 @@ public abstract class CostingAlgorithm {
    * than the related outgoing transaction. The outgoing transaction cost is calculated if it has
    * not been yet.
    */
-  private BigDecimal getInternalMovementToCost() {
+  protected BigDecimal getInternalMovementToCost() {
     // Get transaction of From movement to retrieve it's cost.
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
@@ -255,7 +255,7 @@ public abstract class CostingAlgorithm {
    * Calculates the cost of a produced BOM product. Its cost is the sum of the used products
    * transactions costs. If these has not been calculated yet they are calculated.
    */
-  private BigDecimal getBOMProductionCost() {
+  protected BigDecimal getBOMProductionCost() {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
