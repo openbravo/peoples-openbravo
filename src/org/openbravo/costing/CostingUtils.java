@@ -21,15 +21,21 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -117,5 +123,40 @@ public class CostingUtils {
     costDimensions.put(CostDimension.Warehouse, null);
     costDimensions.put(CostDimension.LegalEntity, null);
     return costDimensions;
+  }
+
+  public static BigDecimal getCurrentStock(Product product, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
+        MaterialTransaction.class);
+    obcTrx.createAlias(MaterialTransaction.PROPERTY_STORAGEBIN, "locator");
+    obcTrx.setFilterOnReadableOrganization(false);
+    obcTrx.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
+    obcTrx.add(Restrictions.le(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, date));
+    // Include only transactions that have its cost calculated
+    obcTrx.add(Restrictions.isNotNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      obcTrx.add(Restrictions.eq("locator." + Locator.PROPERTY_WAREHOUSE,
+          costDimensions.get(CostDimension.Warehouse)));
+    }
+    if (costDimensions.get(CostDimension.LegalEntity) != null) {
+      // Get child tree of organizations.
+      Set<String> orgs = OBContext
+          .getOBContext()
+          .getOrganizationStructureProvider()
+          .getChildTree(((Organization) costDimensions.get(CostDimension.LegalEntity)).getId(),
+              true);
+      obcTrx.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
+    }
+    obcTrx.setProjection(Projections.sum(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY));
+
+    if (obcTrx.list() != null && obcTrx.list().size() > 0) {
+      @SuppressWarnings("rawtypes")
+      List o = obcTrx.list();
+      Object resultSet = (Object) o.get(0);
+      return (resultSet != null) ? (BigDecimal) resultSet : BigDecimal.ZERO;
+    }
+
+    return BigDecimal.ZERO;
   }
 }
