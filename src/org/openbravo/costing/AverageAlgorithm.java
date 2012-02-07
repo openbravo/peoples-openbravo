@@ -62,8 +62,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setCost(newCost);
     cost.setStartingDate(transaction.getTransactionProcessDate());
     cost.setEndingDate(dateTo);
-    cost.setManual(false);
-    cost.setPermanent(false);
+    cost.setInventoryTransaction(transaction);
     cost.setProduct(transaction.getProduct());
     cost.setOrganization(costOrg);
     cost.setQuantity(transaction.getMovementQuantity());
@@ -71,6 +70,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setPrice(trxCost.divide(transaction.getMovementQuantity(), costCurrency
         .getCostingPrecision().intValue()));
     cost.setCostType("AV");
+    cost.setManual(false);
+    cost.setPermanent(false);
     cost.setProduction(false);
     cost.setWarehouse((Warehouse) costDimensions.get(CostDimension.Warehouse));
     // TODO: set inoutline id, what about other transaction types ?
