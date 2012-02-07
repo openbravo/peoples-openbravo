@@ -74,7 +74,6 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setPermanent(false);
     cost.setProduction(false);
     cost.setWarehouse((Warehouse) costDimensions.get(CostDimension.Warehouse));
-    // TODO: set inoutline id, what about other transaction types ?
     OBDal.getInstance().save(cost);
   }
 
