@@ -5,13 +5,13 @@
     <active>true</active>
     <name>Standard Algorithm</name>
     <description>Algorithm that implements Standard Cositng management.</description>
-    <javaClassName>org.openbravo.avgcosting.StandardAlgorithm</javaClassName>
+    <javaClassName>org.openbravo.costing.StandardAlgorithm</javaClassName>
   </CostingAlgorithm>
   <CostingAlgorithm id="B069080A0AE149A79CF1FA0E24F16AB6" identifier="Average Algorithm">
     <id>B069080A0AE149A79CF1FA0E24F16AB6</id>
     <active>true</active>
     <name>Average Algorithm</name>
     <description>Algorithm that implements average costing management</description>
-    <javaClassName>org.openbravo.avgcosting.AverageAlgorithm</javaClassName>
+    <javaClassName>org.openbravo.costing.AverageAlgorithm</javaClassName>
   </CostingAlgorithm>
 </ob:Openbravo>
