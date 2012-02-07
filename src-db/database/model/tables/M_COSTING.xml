@@ -93,6 +93,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_COSTING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -107,6 +111,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_COSTING_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_TRANSACTION" name="M_COSTING_TRANSACTION">
+        <reference local="M_TRANSACTION_ID" foreign="M_TRANSACTION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="M_COSTING_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
