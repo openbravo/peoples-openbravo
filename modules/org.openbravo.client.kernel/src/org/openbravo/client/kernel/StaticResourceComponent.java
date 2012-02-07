@@ -119,9 +119,8 @@ public class StaticResourceComponent extends BaseComponent {
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
       }
-      result.append("document.write(\"<s\" + \"cript type='text/javascript' src='"
-          + getContextUrl() + GEN_TARGET_LOCATION + "/" + getStaticResourceFileName()
-          + ".js'><\\/s\"+\"cript>\");");
+      result.append("OBCreateScriptTag('" + getContextUrl() + GEN_TARGET_LOCATION + "/"
+          + getStaticResourceFileName() + ".js');");
       return result.toString();
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);

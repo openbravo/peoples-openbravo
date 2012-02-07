@@ -21,10 +21,6 @@
 // some cases it makes sense to directly set properties on top Smartclient
 // types. This is done in this file.
 
-// is placed here because the smartclient labels are loaded just after the smartclient
-// core
-isc.setAutoDraw(false);
-
 // We have dates/times in the database without timezone, we assume GMT therefore 
 // for all our date/times we use GMT on both the server and the client
 // NOTE: causes issue https://issues.openbravo.com/view.php?id=16014
@@ -728,9 +724,6 @@ isc.RPCManager.addClassProperties({
     }
   }
 });
-
-// Prevent errors in smartclient for screenreader, is quite new and unstable for now
-isc.screenReader = false;
 
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started

@@ -18,6 +18,11 @@
 */
 //jslint
 
+// do at the beginning
+isc.setAutoDraw(false);
+// Prevent errors in smartclient for screenreader, is quite new and unstable for now
+isc.screenReader = false;
+
 var OB = {
     Application : {
         testEnvironment: ${data.testEnvironment?string},
