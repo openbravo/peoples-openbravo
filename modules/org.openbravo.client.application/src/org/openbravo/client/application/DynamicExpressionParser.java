@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -155,6 +156,8 @@ public class DynamicExpressionParser {
    * defined map. Often used in dynamic expression comparisons
    * 
    * If the value is enclosed between brackets, it is extracted, translated and enclosed again
+   * 
+   * @see DynamicExpressionParserTest
    * 
    * @param value
    *          A string expression like <b>'Y'</b>
