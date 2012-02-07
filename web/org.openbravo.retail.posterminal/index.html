@@ -1,11 +1,156 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Openbravo Point of Sale</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+        <meta name="description" content="Openbravo Point of Sale window">
+        <meta name="author" content="Openbravo, S.L.U.">
+        
+        <!--  Apple application capable attributes -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="apple-touch-fullscreen" content="yes" />      
+        <link rel="apple-touch-startup-image" href="img/openbravopos.png"/>  
+    
+        <!-- Application icons -->
+        <link rel="apple-touch-icon" href="img/openbravopos57x57.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="img/openbravopos72x72.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="img/openbravopos114x114.png" />
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>    
+        
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
+
 </head>
-<body>
-<h1>Web POS window</h1>
-<div>Hello!!!</div>
+<body style="padding-top: 60px;">
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+             
+      <!-- Be sure to leave the brand out there if you want it shown -->
+      <a class="brand" href="#">Openbravo POS</a>
+ 
+      <!-- Everything you want hidden at 940px or less, place within here -->
+      <div class="nav-collapse">
+        <ul class="nav">
+				  <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">Link</a></li>
+          <li>
+            <div class="btn-group">
+              <button class="btn" id="btncategories"><i class="icon-refresh"></i> Load categories</button>
+              <button class="btn" id="btnproducts"><i class="icon-refresh"></i> Load products</button>
+              <button class="btn">Dummy</button>
+              <button class="btn">Dummy</button>
+            </div>
+          </li>
+        </ul>      
+        <form class="navbar-search pull-right">
+          <input type="text" class="search-query" placeholder="Search">
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container">
+
+
+<!-- Products section -->
+<section>
+<div class="row">
+  <div class="span4 offset4">
+  <h3>Categories</h3>
+  <table class="table" style="border:1px solid #ddd">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="yellow">Name</th>
+          </tr>
+        </thead>
+        <tbody id="categorybody">
+        </tbody>
+  </table>
+  </div>
+  <div class="span4">
+    <h3>Products</h3>
+    <table class="table" style="border:1px solid #ddd">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="yellow">Name</th>
+            <th class="blue">Category</th>
+            <th class="green">Price</th>
+          </tr>
+        </thead>
+        <tbody id="productbody">
+        </tbody>
+  </table>
+  </div>
+</div>
+</section>
+
+<!-- Sample section -->
+<section>
+<div class="row">
+  <div class="span4">
+  <table class="table" style="border:1px solid #ddd">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="yellow">First Name</th>
+            <th class="blue">Last Name</th>
+            <th class="green">Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>CSS</td>
+          </tr>
+          <tr style="background-color: #049cdb; color: #fff" >
+            <td>2</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>Javascript</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Stu</td>
+            <td>Dent</td>
+            <td>HTML</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Brosef</td>
+            <td>Stalin</td>
+            <td>HTML</td>
+          </tr>
+        </tbody>
+  </table>
+  </div>
+  <div class="span8">     
+      <p>Fancy larger or smaller buttons? Have at it!</p>
+      <p>   
+        <button class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Checkout</button>
+        <button class="btn btn-danger"><i class="icon-trash icon-white"></i> Danger</button>
+        </p>
+  </div>
+</div>
+</section>
+
+</div>
+
+<script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/application.js"></script>
+<script type="text/javascript" src="js/format.js"></script>
+<script type="text/javascript" src="js/pointofsale.js"></script>
+
 </body>
 </html>
