@@ -20,6 +20,7 @@ isc.ClassFactory.defineClass('OBToolbar', isc.ToolStrip);
 
 isc.OBToolbar.addClassProperties({
   TYPE_SAVE: 'save',
+  TYPE_SAVECLOSE: 'saveclose',
   TYPE_NEW_ROW: 'newRow',
   TYPE_NEW_DOC: 'newDoc',
   TYPE_DELETE: 'eliminate',

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,40 +27,56 @@ isc.OBViewDataSource.addProperties({
   additionalProps: null,
   
   showProgress: function(editedRecord){
-  
-    // don't show it, done to quickly
-    if (!editedRecord._showProgressAfterDelay) {
-      return;
-    }
-    
-    if (editedRecord && editedRecord.editColumnLayout) {
-      if (!this.view.isShowingForm) {
-        editedRecord.editColumnLayout.toggleProgressIcon(true);
+    var btn, btn2;
+    if (editedRecord){
+      // don't show it, done to quickly
+      if (!editedRecord._showProgressAfterDelay) {
+        return;
+      }
+
+      if (editedRecord && editedRecord.editColumnLayout) {
+        if (!this.view.isShowingForm) {
+          editedRecord.editColumnLayout.toggleProgressIcon(true);
+        }
       }
     }
-    
-    if (this.view.isShowingForm) {
-      var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-      btn.customState = 'Progress';
-      btn.resetBaseStyle();
-      btn.markForRedraw();
+
+    // Always show progress in save button and disable save and close one
+    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+    btn.setDisabled(true);
+    btn.customState = 'Progress';
+    btn.resetBaseStyle();
+    btn.markForRedraw();
+
+    btn2 = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVECLOSE);
+    if (btn2) {
+      btn2.setDisabled(true);
+      btn2.markForRedraw();
     }
   },
   
   hideProgress: function(editedRecord){
-    editedRecord._showProgressAfterDelay = false;
-    if (editedRecord && editedRecord.editColumnLayout) {
-      editedRecord.editColumnLayout.toggleProgressIcon(false);
+    var btn;
+    if (editedRecord){
+      editedRecord._showProgressAfterDelay = false;
+      if (editedRecord && editedRecord.editColumnLayout) {
+        editedRecord.editColumnLayout.toggleProgressIcon(false);
+      }
     }
-    
+
     // always remove the progress style here anyway
-    var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
     btn.customState = '';
     btn.resetBaseStyle();
     btn.markForRedraw();
   },
   
   performDSOperation: function(operationType, data, callback, requestProperties){
+    var currentRecord;
+
+    requestProperties = requestProperties || {};
+    requestProperties.clientContext = requestProperties.clientContext || {};
+
     // only update the values of the record itself but not of any referenced 
     // entity
     if (operationType === 'update' || operationType === 'add') {
@@ -71,21 +87,18 @@ isc.OBViewDataSource.addProperties({
         }
       }
       data = correctedData;
-    }
-    
-    // requestProperties.showPrompt = false;
-    // set the current selected record before the delay
-    var currentRecord = this.view.viewGrid.getSelectedRecord();
-    if (currentRecord) {
-      // only show progress after 200ms delay
-      currentRecord._showProgressAfterDelay = true;
-      // keep the edited record in the client context
-      requestProperties = requestProperties || {};
-      requestProperties.clientContext = requestProperties.clientContext || {};
-      requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
+      currentRecord = this.view.viewGrid.getSelectedRecord();
+      if (currentRecord) {
+        // only show progress after 200ms delay
+        // set the current selected record before the delay
+        // keep the edited record in the client context
+        currentRecord._showProgressAfterDelay = true;
+        requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
+      }
+
       this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
     }
-    
+
     // doing row editing
     if (this.view.viewGrid.getEditRow() ||
     this.view.viewGrid.getEditRow() === 0) {
@@ -144,8 +157,7 @@ isc.OBViewDataSource.addProperties({
   
   transformResponse: function(dsResponse, dsRequest, jsonData){
   
-    if (dsRequest.clientContext &&
-    dsRequest.clientContext.progressIndicatorSelectedRecord) {
+    if (dsRequest.clientContext) {
       this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
     }
     if (jsonData) {
