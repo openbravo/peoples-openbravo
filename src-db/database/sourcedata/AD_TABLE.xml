@@ -2585,7 +2585,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--329-->  <CLASSNAME><![CDATA[MaterialTransaction]]></CLASSNAME>
 <!--329-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--329-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--329-->  <AD_WINDOW_ID><![CDATA[130]]></AD_WINDOW_ID>
+<!--329-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--329-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--329-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--329-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
