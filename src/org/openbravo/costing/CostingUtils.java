@@ -66,8 +66,8 @@ public class CostingUtils {
       }
       log4j.error("No cost found for transaction " + transaction.getIdentifier() + " with id "
           + transaction.getId() + " on date " + Utility.formatDate(date));
-      throw new OBException("@NoCostFoundForTrxOnDate@ " + transaction.getIdentifier() + " @date@ "
-          + Utility.formatDate(date));
+      throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: "
+          + transaction.getIdentifier() + " @Date@ " + Utility.formatDate(date));
     }
     BigDecimal cost = BigDecimal.ZERO;
     for (TransactionCost trxCost : obcTrxCost.list()) {
@@ -107,14 +107,14 @@ public class CostingUtils {
       }
       if (obcCosting.list().get(0).getCost() == null) {
         throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
-            + ", @date@: " + Utility.formatDate(date));
+            + ", @Date@: " + Utility.formatDate(date));
       }
       return obcCosting.list().get(0).getCost();
     } else if (recheckWithoutDimensions) {
       return getStandardCost(product, date, getEmptyDimensions(), false);
     }
     // If no standard cost is found throw an exception.
-    throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @date@: "
+    throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @Date@: "
         + Utility.formatDate(date));
   }
 

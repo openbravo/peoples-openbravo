@@ -213,7 +213,8 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getOriginalInOutLineAmount() {
     if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
       log4j.error("No canceled line found for transaction: " + transaction.getId());
-      throw new OBException("@NoCanceledLineFoundForTrx@: " + transaction.getIdentifier());
+      throw new OBException("@NoCanceledLineFoundForTrx@ @Transaction@: "
+          + transaction.getIdentifier());
     }
     MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
         .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
@@ -248,7 +249,8 @@ public abstract class CostingAlgorithm {
           true);
     }
     // If no transaction is found throw an exception.
-    throw new OBException("@NoInternalMovementTransactionFound@");
+    throw new OBException("@NoInternalMovementTransactionFound@ @Transaction@: "
+        + transaction.getIdentifier());
   }
 
   /**
