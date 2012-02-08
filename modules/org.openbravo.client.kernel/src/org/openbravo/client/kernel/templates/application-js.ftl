@@ -18,7 +18,7 @@
 */
 //jslint
 
-if (isc) {
+if (window.isc) {
   // do at the beginning
   isc.setAutoDraw(false);
   // Prevent errors in smartclient for screenreader, is quite new and unstable for now
