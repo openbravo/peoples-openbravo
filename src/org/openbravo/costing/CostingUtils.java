@@ -44,10 +44,26 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 public class CostingUtils {
   protected static Logger log4j = Logger.getLogger(CostingUtils.class);
 
+  /**
+   * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean)} setting the calculateTrx
+   * flag to false.
+   */
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date) {
     return getTransactionCost(transaction, date, false);
   }
 
+  /**
+   * Calculates the total cost amount of a transaction including the cost adjustments done until the
+   * given date.
+   * 
+   * @param transaction
+   *          MaterialTransaction to get its cost.
+   * @param date
+   *          The Date it is desired to know the cost.
+   * @param calculateTrx
+   *          boolean flag to force the calculation of the transaction cost if it is not calculated.
+   * @return The total cost amount.
+   */
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
       boolean calculateTrx) {
     OBCriteria<TransactionCost> obcTrxCost = OBDal.getInstance().createCriteria(
@@ -76,11 +92,31 @@ public class CostingUtils {
     return cost;
   }
 
+  /**
+   * Calls {@link #getStandardCost(Product, Date, HashMap, boolean)} setting the
+   * recheckWithoutDimensions flag to true.
+   */
   public static BigDecimal getStandardCost(Product product, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) throws OBException {
     return getStandardCost(product, date, costDimensions, true);
   }
 
+  /**
+   * Calculates the standard cost of a product on the given date and cost dimensions.
+   * 
+   * @param product
+   *          The Product to get its Standard Cost
+   * @param date
+   *          The Date to get the Standard Cost
+   * @param costDimensions
+   *          The cost dimensions to get the Standard Cost if it is defined by some of them.
+   * @param recheckWithoutDimensions
+   *          boolean flag to force a recall the method to get the Standard Cost at client level if
+   *          no cost is found in the given cost dimensions.
+   * @return the Standard Cost.
+   * @throws OBException
+   *           when no standard cost is found.
+   */
   public static BigDecimal getStandardCost(Product product, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions)
       throws OBException {
@@ -118,6 +154,9 @@ public class CostingUtils {
         + Utility.formatDate(date));
   }
 
+  /**
+   * @return The costDimensions HashMap with null values for the dimensions.
+   */
   public static HashMap<CostDimension, BaseOBObject> getEmptyDimensions() {
     HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
     costDimensions.put(CostDimension.Warehouse, null);
@@ -125,6 +164,10 @@ public class CostingUtils {
     return costDimensions;
   }
 
+  /**
+   * Calculates the stock of the product on the given date and for the given cost dimensions. It
+   * only takes transactions that have its cost calculated.
+   */
   public static BigDecimal getCurrentStock(Product product, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) {
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
