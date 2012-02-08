@@ -26,6 +26,7 @@
   v_product_id     M_Transaction.M_Product_ID%TYPE;
   v_quantity       NUMBER;
   v_costamt        NUMBER;
+  v_costtype       M_Product.Costtype%TYPE;
   --TYPE RECORD IS REF CURSOR;
   --  Cur_Cost RECORD;
 BEGIN
@@ -37,12 +38,12 @@ BEGIN
     RETURN v_costamt;
   END IF;
 
-  SELECT m_product_id, movementqty
-    INTO v_product_id, v_quantity
-  FROM M_Transaction
+  SELECT m_transaction.m_product_id, movementqty, costtype
+    INTO v_product_id, v_quantity, v_costtype
+  FROM M_Transaction JOIN m_product ON m_transaction.m_product_id = m_product.m_product_id
   WHERE m_transaction_id = p_transaction_id;
 
-  RETURN m_get_product_cost(v_product_id, p_date, 'AV') * v_quantity;
+  RETURN m_get_product_cost(v_product_id, p_date, v_costtype) * v_quantity;
 END M_GET_TRANSACTION_COST
 ]]></body>
     </function>
