@@ -69,7 +69,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
     cost.setPrice(trxCost.divide(transaction.getMovementQuantity(), costCurrency
         .getCostingPrecision().intValue()));
-    cost.setCostType("AV");
+    cost.setCostType("AVA");
     cost.setManual(false);
     cost.setPermanent(false);
     cost.setProduction(false);
