@@ -19,14 +19,12 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
@@ -70,7 +68,7 @@ public abstract class CostingAlgorithm {
     if (costOrg == null) {
       // Cost calculated at client level. Records stored in asterisk organization.
       costOrg = OBDal.getInstance().get(Organization.class, "0");
-      costCurrency = OBContext.getOBContext().getCurrentClient().getCurrency();
+      costCurrency = transaction.getClient().getCurrency();
     } else {
       costCurrency = costOrg.getCurrency();
     }
@@ -150,6 +148,7 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getShipmentReturnAmount() {
     // Shipment return's cost is calculated as a regular receipt.
+    // TODO: Check if transaction amount if positive
     return getReceiptAmount();
   }
 
@@ -186,7 +185,7 @@ public abstract class CostingAlgorithm {
           Utility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
           costOrg.getId(), new DalConnectionProvider())));
     }
-    return trxCost.setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+    return trxCost;
   }
 
   /**
