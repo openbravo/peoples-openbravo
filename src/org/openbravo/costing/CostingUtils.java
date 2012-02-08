@@ -89,7 +89,7 @@ public class CostingUtils {
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
     obcCosting.add(Restrictions.le(Costing.PROPERTY_STARTINGDATE, date));
     obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
-    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "ST"));
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "STA"));
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
