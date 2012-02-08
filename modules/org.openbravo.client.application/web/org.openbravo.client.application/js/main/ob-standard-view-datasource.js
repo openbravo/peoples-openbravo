@@ -25,15 +25,17 @@ isc.ClassFactory.defineClass('OBViewDataSource', isc.OBRestDataSource);
 
 isc.OBViewDataSource.addProperties({
   additionalProps: null,
+  showProgressAfterDelay: false,
   
   showProgress: function(editedRecord){
     var btn, btn2;
-    if (editedRecord){
-      // don't show it, done to quickly
-      if (!editedRecord._showProgressAfterDelay) {
-        return;
-      }
 
+    if (!this.showProgressAfterDelay) {
+      // don't show it, done too quickly
+      return;
+    }
+
+    if (editedRecord){
       if (editedRecord && editedRecord.editColumnLayout) {
         if (!this.view.isShowingForm) {
           editedRecord.editColumnLayout.toggleProgressIcon(true);
@@ -57,11 +59,9 @@ isc.OBViewDataSource.addProperties({
   
   hideProgress: function(editedRecord){
     var btn;
-    if (editedRecord){
-      editedRecord._showProgressAfterDelay = false;
-      if (editedRecord && editedRecord.editColumnLayout) {
-        editedRecord.editColumnLayout.toggleProgressIcon(false);
-      }
+    this.showProgressAfterDelay = false;
+    if (editedRecord && editedRecord.editColumnLayout) {
+      editedRecord.editColumnLayout.toggleProgressIcon(false);
     }
 
     // always remove the progress style here anyway
@@ -87,12 +87,12 @@ isc.OBViewDataSource.addProperties({
         }
       }
       data = correctedData;
+      this.showProgressAfterDelay = true;
       currentRecord = this.view.viewGrid.getSelectedRecord();
       if (currentRecord) {
         // only show progress after 200ms delay
         // set the current selected record before the delay
         // keep the edited record in the client context
-        currentRecord._showProgressAfterDelay = true;
         requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
       }
 
