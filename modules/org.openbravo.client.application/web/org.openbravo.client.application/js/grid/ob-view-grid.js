@@ -466,6 +466,8 @@ isc.OBViewGrid.addProperties({
     
     // get rid of the selected state
     delete state.selected;
+   
+    this.deleteSelectedParentRecordFilter(state);
     
     if (returnObject) {
       return state;
@@ -474,8 +476,8 @@ isc.OBViewGrid.addProperties({
   },
   
   setViewState: function (state) {
-    var i, length, 
-      localState = this.evalViewState(state, 'viewState');
+	var localState;
+    localState = this.evalViewState(state, 'viewState');
     
     // strange case, sometimes need to call twice
     if (isc.isA.String(localState)) {
@@ -490,6 +492,9 @@ isc.OBViewGrid.addProperties({
       // old versions stored selected records in grid view, this can cause
       // problems if record is not selected yet
       delete localState.selected;
+
+      this.deleteSelectedParentRecordFilter(localState);    
+      
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState,false) + ')']);
     }
 
@@ -506,6 +511,23 @@ isc.OBViewGrid.addProperties({
         this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
       this.setCriteria(localState.filter);
     }
+  },
+  
+  //Deletes the implicit filter on the selected record of the parent
+  deleteSelectedParentRecordFilter: function(state) {
+	var i, filterLength, filterItem;
+	if (state.filter) {
+	  filterLength = state.filter.criteria.length;
+	  for (i = 0; i < filterLength; i++) {
+	    filterItem = state.filter.criteria[i];
+	    if (filterItem.fieldName === this.view.parentProperty) {
+	      //This way it is ensured that the sub tabs will not show the registers associated with
+	      // the register of its parent tab that was selected when the filter was created
+	      state.filter.criteria[i].value = '-1';
+	      break;
+	    }
+	  } 
+	}
   },
  
   setView: function(view){
