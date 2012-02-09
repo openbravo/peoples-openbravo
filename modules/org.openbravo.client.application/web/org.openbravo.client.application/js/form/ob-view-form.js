@@ -1689,6 +1689,7 @@ OB.ViewFormProperties = {
     // https://issues.openbravo.com/view.php?id=18739
     this.previousSelectOnFocus = this.selectOnFocus;
     this.selectOnFocus = false;
+    this.selectOnFocusStored = true;
     this.Super('showFieldErrors', [fieldName, true]);
   },
   
@@ -1696,8 +1697,11 @@ OB.ViewFormProperties = {
     this._isRedrawing = true;
     this.Super('redraw', arguments);
     delete this._isRedrawing;
-    this.selectOnFocus = this.previousSelectOnFocus;
-    delete this.previousSelectOnFocus;
+    if (this.selectOnFocusStored) {
+      this.selectOnFocus = this.previousSelectOnFocus;
+      delete this.previousSelectOnFocus;
+      delete this.selectOnFocusStored;
+    }
   },
   
   destroy: function () {
