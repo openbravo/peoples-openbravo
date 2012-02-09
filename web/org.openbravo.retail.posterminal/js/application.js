@@ -70,7 +70,7 @@
     }
     
     $.ajax({
-      url:'../../org.openbravo.service.retail.posterminal.jsonrest/hql',
+      url:'../../org.openbravo.service.retail.posterminal.jsonrest/hql/?auth=false',
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'POST',
@@ -91,10 +91,18 @@
         } 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        callback({ exception : { message : errorThrown}});
+        callback({ exception : { message : (errorThrown ? errorThrown : "Application server is not available.")}});
       }
     });       
   }  
+  
+  OBPOS.getParameterByName = function(name) {
+    var n = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + n + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.search);
+    return (results) ? decodeURIComponent(results[1].replace(/\+/g, " ")) : "";
+  }
   
   w.OBPOS = OBPOS;
   
