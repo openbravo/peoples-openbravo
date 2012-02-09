@@ -30,6 +30,7 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -147,9 +148,26 @@ public abstract class CostingAlgorithm {
    * receipt, based on the price of the related Return Sales Order.
    */
   protected BigDecimal getShipmentReturnAmount() {
-    // Shipment return's cost is calculated as a regular receipt.
-    // TODO: Check if transaction amount if positive
-    return getReceiptAmount();
+    // Shipment return's cost is calculated based on the related Return from Customer order's price.
+    ShipmentInOutLine shipmentline = transaction.getGoodsShipmentLine();
+    OrderLine salesOrderLine = shipmentline.getSalesOrderLine();
+    if (salesOrderLine == null) {
+      // Shipment without order. Returns cost based on price list.
+      // FIXME: return Price List price
+      return transaction.getMovementQuantity().multiply(
+          CostingUtils.getStandardCost(transaction.getProduct(), transaction.getCreationDate(),
+              costDimensions));
+    }
+
+    BigDecimal orderAmt = transaction.getMovementQuantity().multiply(salesOrderLine.getUnitPrice());
+    // TODO: Check if conversion is done correctly.
+
+    BigDecimal trxCost = new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(),
+        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(),
+        Utility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
+        costOrg.getId(), new DalConnectionProvider()));
+
+    return trxCost;
   }
 
   /**
@@ -301,7 +319,7 @@ public abstract class CostingAlgorithm {
         ShipmentInOut inout = transaction.getGoodsShipmentLine().getShipmentReceipt();
         if (inout.isSalesTransaction()) {
           // Shipment
-          if (inout.getDocumentType().isReversal()) {
+          if (inout.getDocumentType().isReturn()) {
             log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ShipmentReturn;
           } else if (inout.getDocumentStatus().equals("VO")
@@ -315,7 +333,7 @@ public abstract class CostingAlgorithm {
           }
         } else {
           // Receipt
-          if (inout.getDocumentType().isReversal()) {
+          if (inout.getDocumentType().isReturn()) {
             log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ReceiptReturn;
           } else if (inout.getDocumentStatus().equals("VO")
