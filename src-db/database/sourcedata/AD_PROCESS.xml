@@ -2472,9 +2472,14 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800036-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800036-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800036-->  <VALUE><![CDATA[CreateRegFactAcct]]></VALUE>
-<!--800036-->  <NAME><![CDATA[Create Reg Fact Acct]]></NAME>
-<!--800036-->  <DESCRIPTION><![CDATA[Create Reg Fact Acct]]></DESCRIPTION>
-<!--800036-->  <HELP><![CDATA[Create Reg Fact Acct]]></HELP>
+<!--800036-->  <NAME><![CDATA[Close Year]]></NAME>
+<!--800036-->  <DESCRIPTION><![CDATA[This proces creates the closing transactions and the corresponding opening transactions for the following year.]]></DESCRIPTION>
+<!--800036-->  <HELP><![CDATA[This proces creates the closing transactions and the corresponding opening transactions for the following year.
+The following year must already exist in the system and the first period must be open.
+The ledger accounting entries created by the Fiscal Year closing process are:
+     1. P&L Closing: Resets all revenue and costs accounts and posts P&L transaction. Currently posted into last day of last period of closing year.
+     2. Closing entry or Balance Sheet Closing: Creates closing transactions for asset and liabilities. Currently posted into last day of last period of closing year.
+     3. Opening entry: Posts opposite entry of closing entry. First day of first period of new year]]></HELP>
 <!--800036-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800036-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800036-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -2482,6 +2487,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800036-->  <CLASSNAME><![CDATA[ad_actionButton/CreateRegFactAcct.html]]></CLASSNAME>
 <!--800036-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800036-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800036-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800036-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800036-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800036-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
@@ -2493,9 +2499,9 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800038-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800038-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800038-->  <VALUE><![CDATA[DropRegFactAcct]]></VALUE>
-<!--800038-->  <NAME><![CDATA[Drop Reg Fact Acct]]></NAME>
-<!--800038-->  <DESCRIPTION><![CDATA[Drop Reg Fact Acct]]></DESCRIPTION>
-<!--800038-->  <HELP><![CDATA[Drop Reg Fact Acct]]></HELP>
+<!--800038-->  <NAME><![CDATA[Undo Close Year]]></NAME>
+<!--800038-->  <DESCRIPTION><![CDATA[This process undo all what was done by the closing year process; all the accounting entries which were generated are undo or reverted.]]></DESCRIPTION>
+<!--800038-->  <HELP><![CDATA[This process undo all what was done by the closing year process; all the accounting entries which were generated are undo or reverted.]]></HELP>
 <!--800038-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800038-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800038-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -2503,6 +2509,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800038-->  <CLASSNAME><![CDATA[ad_actionButton/DropRegFactAcct.html]]></CLASSNAME>
 <!--800038-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800038-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800038-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800038-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800038-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
