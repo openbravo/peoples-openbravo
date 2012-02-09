@@ -3402,8 +3402,8 @@
 <!--800214-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800214-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800214-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800214-->  <NAME><![CDATA[Sales Forecast]]></NAME>
-<!--800214-->  <DESCRIPTION><![CDATA[Create and edit sales forecasts over a specified time period in order to help plan necessary purchases.]]></DESCRIPTION>
+<!--800214-->  <NAME><![CDATA[MRP Forecast]]></NAME>
+<!--800214-->  <DESCRIPTION><![CDATA[Create and edit MRP forecasts over a specified time period in order to help plan necessary purchases.]]></DESCRIPTION>
 <!--800214-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800214-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800214-->  <AD_WINDOW_ID><![CDATA[800090]]></AD_WINDOW_ID>

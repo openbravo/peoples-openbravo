@@ -10421,8 +10421,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800246-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800246-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800246-->  <NAME><![CDATA[Header]]></NAME>
-<!--800246-->  <DESCRIPTION><![CDATA[Create a sales forecast.]]></DESCRIPTION>
-<!--800246-->  <HELP><![CDATA[Create a sales forecast.]]></HELP>
+<!--800246-->  <DESCRIPTION><![CDATA[Create a MRP forecast.]]></DESCRIPTION>
+<!--800246-->  <HELP><![CDATA[Create a MRP forecast.]]></HELP>
 <!--800246-->  <AD_TABLE_ID><![CDATA[800210]]></AD_TABLE_ID>
 <!--800246-->  <AD_WINDOW_ID><![CDATA[800090]]></AD_WINDOW_ID>
 <!--800246-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -10448,8 +10448,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800248-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800248-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800248-->  <NAME><![CDATA[Lines]]></NAME>
-<!--800248-->  <DESCRIPTION><![CDATA[Add products to be included in your sales forecast.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--800248-->  <HELP><![CDATA[Add products to be included in your sales forecast.  Each product is added by creating a line.]]></HELP>
+<!--800248-->  <DESCRIPTION><![CDATA[Add products to be included in your MRP forecast.  Each product is added by creating a line.]]></DESCRIPTION>
+<!--800248-->  <HELP><![CDATA[Add products to be included in your MRP forecast.  Each product is added by creating a line.]]></HELP>
 <!--800248-->  <AD_TABLE_ID><![CDATA[800211]]></AD_TABLE_ID>
 <!--800248-->  <AD_WINDOW_ID><![CDATA[800090]]></AD_WINDOW_ID>
 <!--800248-->  <SEQNO><![CDATA[20]]></SEQNO>
