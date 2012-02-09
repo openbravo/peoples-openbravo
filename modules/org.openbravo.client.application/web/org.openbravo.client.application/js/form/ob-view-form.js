@@ -1165,7 +1165,9 @@ OB.ViewFormProperties = {
   
   // note item can be null, is also called when the form is re-shown
   // to recompute combos
-  doChangeFICCall: function(item){
+  // if preserveGridEditing is set to true, the isEditingGrid flag will be marked when the FIC processing ends
+  // this is used in case the doChangeFICCall is triggered by an action which unwillingly ends the grid editing early
+  doChangeFICCall: function(item, preserveGridEditing){
     var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, true);
     if (this.view.parentProperty) {
       parentId = this.view.getParentId();
@@ -1206,6 +1208,10 @@ OB.ViewFormProperties = {
         if (me.getFocusItem()) {
           me.setFocusInForm();
         }
+      }
+      if(preserveGridEditing){
+        me.view.isEditingGrid=true;
+        this.view.toolBar.updateButtonState(true);
       }
     });
     this.view.toolBar.updateButtonState(true);

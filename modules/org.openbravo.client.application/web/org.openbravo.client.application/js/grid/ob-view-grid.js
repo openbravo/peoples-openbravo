@@ -2530,6 +2530,17 @@ isc.OBViewGrid.addProperties({
   
   isEditLinkColumn: function(colNum){
     return this.editLinkColNum === colNum;
+  },
+
+  // This method forces a FIC call in case the user has changed the visible fields,
+  // if there is a record being edited
+  // This is done to load all the potentially missing combos
+  fieldStateChanged: function(){
+    var undef;
+    if (this.getEditRow()!==undef && this.getEditRow()!==null){
+      this.getEditForm().doChangeFICCall(null, true);
+    }
+    this.Super('fieldStateChanged', arguments);
   }
   
 });
