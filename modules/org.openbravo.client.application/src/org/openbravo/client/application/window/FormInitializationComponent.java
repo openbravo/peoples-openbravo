@@ -497,9 +497,10 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            if (visibleProperties != null && !field.getColumn().isMandatory()
-                && field.getColumn().getDefaultValue() == null
-                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+            if (visibleProperties != null
+                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
+                && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
+                && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
               // If a column is mandatory then the combo needs to be computed, because the selected
