@@ -27,6 +27,11 @@
 // NOTE: disabled as now timezone is send from the client to the server
 // Time.setDefaultDisplayTimezone(0);
 
+
+// Call duplicated - we include SmartClient embedded in StaticResources for classic windows
+isc.setAutoDraw(false);
+isc.screenReader = false;
+
 isc.DataSource.serializeTimeAsDatetime=true;
 
 isc.Canvas.addProperties({
