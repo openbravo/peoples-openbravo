@@ -83,9 +83,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       doService(request, response);
     } else {
       // not logged in
-      if (!"false".equals(request.getParameter("auth"))) {
-        response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
-      }
+      response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }
