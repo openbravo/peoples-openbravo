@@ -171,6 +171,7 @@ isc.OBQuickLaunch.addProperties({
         // client filtering does not always work great...
         pickListProperties: {
           textMatchStyle: 'substring',
+          selectionType: 'single',
           bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
         },
         pickListHeaderHeight: 0,
@@ -182,7 +183,7 @@ isc.OBQuickLaunch.addProperties({
         getPickListFilterCriteria: function(){
           // only filter on identifier
           var criteria = {};
-          criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
+          criteria[OB.Constants.IDENTIFIER] = this.getValue();
           return criteria;
         },
         pickListFields: [{
