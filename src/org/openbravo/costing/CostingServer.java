@@ -101,6 +101,7 @@ public class CostingServer {
     String strAlgorithmId = "B069080A0AE149A79CF1FA0E24F16AB6";
     org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = OBDal.getInstance().get(
         org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class, strAlgorithmId);
+    transaction.setCostingAlgorithm(costAlgorithm);
 
     try {
       final Class<?> clz = OBClassLoader.getInstance().loadClass(costAlgorithm.getJavaClassName());
