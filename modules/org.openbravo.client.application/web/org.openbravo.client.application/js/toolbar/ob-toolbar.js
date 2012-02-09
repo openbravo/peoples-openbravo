@@ -611,12 +611,12 @@ isc.OBToolbar.addProperties({
       // determine if the buttons should be hidden or not      
       if (this.view.isEditingGrid || this.view.isShowingForm) {        
         if (form.hasErrors() || !form.allRequiredFieldsSet()) {
-          this.hideShowRightMembers(false);
+          this.hideShowRightMembers(false, noSetSession);
         } else {
-          this.hideShowRightMembers(true);
+          this.hideShowRightMembers(true, noSetSession);
         }
       } else {
-        this.hideShowRightMembers(true);
+        this.hideShowRightMembers(true, noSetSession);
       }
     }
   },
@@ -1156,7 +1156,7 @@ isc.OBToolbar.addProperties({
         hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
       }
       if (hideAllButtons) {
-        this.hideShowRightMembers(false);
+        this.hideShowRightMembers(false, noSetSession);
       }
       
       if (currentContext.viewGrid.getSelectedRecords()) {
@@ -1222,11 +1222,11 @@ isc.OBToolbar.addProperties({
     }
   },
   
-  hideShowRightMembers: function(show) {
+  hideShowRightMembers: function(show, noSetSession) {
     var i, button, context;
     // if showing make sure that they are not always shown
     if (show) {
-      this.refreshCustomButtons(false);
+      this.refreshCustomButtons(noSetSession);
     } else {
       for (i = 0; i < this.rightMembers.length; i++) {
         button = this.rightMembers[i];

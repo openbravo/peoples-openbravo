@@ -1133,7 +1133,7 @@ OB.ViewFormProperties = {
     delete this.contextInfo;
     
     if (item._hasChanged) {
-      this.itemChangeActions();
+      this.itemChangeActions(item);
 
       this.onFieldChanged(item.form, item, item.getValue());
       
@@ -1234,7 +1234,7 @@ OB.ViewFormProperties = {
   // these actions are done when the user types in a field
   // in contrast to other actions which are done at blur
   // see: handleItemChange
-  itemChangeActions: function(){
+  itemChangeActions: function(item){
     var i = 0;
     // special case, item change is called when the inline form is being hidden
     if (!this.view.isShowingForm && !this.view.isEditingGrid) {
