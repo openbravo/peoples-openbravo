@@ -67,6 +67,20 @@ isc.StaticTextItem.addProperties({
   canFocus: false
 });
 
+// we generate datasources with minimal field sets to 
+// minimize the javascript, therefore the standard
+// processValue implementation does not work for this
+// filter operator, it uses the datasource field definitions
+// therefore override it to only return the value
+// see DataSourceConstants.MINIMAL_PROPERTY_OUTPUT
+// https://issues.openbravo.com/view.php?id=18557
+if (!isc.DynamicForm.getOperatorIndex()) {
+  isc.DynamicForm.buildOperatorIndex();
+}
+isc.DynamicForm.getOperatorIndex()['=.'][0].processValue = function(value, ds) {
+  return value;
+};
+
 isc.Layout.addProperties({
   
   destroyAndRemoveMembers: function(toDestroy) {
