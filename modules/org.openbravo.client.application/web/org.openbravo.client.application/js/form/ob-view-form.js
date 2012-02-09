@@ -200,6 +200,15 @@ OB.ViewFormProperties = {
     
     delete this.validateAfterFicReturn;
     
+    // will be recomputed after the initial values
+    // FIC call, prevents firefox from incorrectly
+    // showing focused style in multiple fields
+    if (this.getFocusItem()) {
+      this.getFocusItem().hasFocus = false;
+      this.getFocusItem().elementBlur();
+    }
+    this.setFocusItem(null);
+    
     // sometimes if an error occured we stay disabled
     // prevent this
     this.setDisabled(false);
@@ -839,8 +848,9 @@ OB.ViewFormProperties = {
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
-          if (this.getFocusItem() && !this.initializing) {
-            this.getFocusItem().blurItem();
+          if (!this.initializing) {
+            this.getFocusItem().hasFocus = false;
+            this.getFocusItem().elementBlur();
           }
           this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
