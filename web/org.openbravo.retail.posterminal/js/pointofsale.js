@@ -90,12 +90,15 @@
   }
   
   function getThumbnail(base64, contentType) {
+    var url = (base64)
+      ? 'data:' + 
+        (contentType ? contentType : 'image/png') +
+        ';base64,' + base64
+      : 'img/box.png';
     return $('<div/>')
     .css('height', '48')
     .css('width', '48')
-    .css('background', 'url(data:' + 
-        (contentType ? contentType : 'image/png') +
-        ';base64,' + base64 + ') center center no-repeat')
+    .css('background', 'url(' + url + ') center center no-repeat')
     .css('background-size', 'contain');
 //    return $('<img/>')
 //          .attr('src', 'data:' + 
@@ -185,10 +188,10 @@
     
     this.render = function (l) {
       var tr = $('<tr/>');
-      tr.append($('<td/>').text(l.productname));
-      tr.append($('<td/>').css('text-align', 'right').text(l.qty));
-      tr.append($('<td/>').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price, {decimals: 2, decimal : ',', group:'.', currency: '# €'})));
-      tr.append($('<td/>').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price * l.qty, {decimals: 2, decimal : ',', group:'.', currency: '# €'})));
+      tr.append($('<td/>').css('width', '40%').text(l.productname));
+      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.qty));
+      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price, {decimals: 2, decimal : ',', group:'.', currency: '# €'})));
+      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price * l.qty, {decimals: 2, decimal : ',', group:'.', currency: '# €'})));
       return tr;
     };
   }
@@ -286,14 +289,6 @@
     // executed when all config data is loaded
     SalesWindow.catalog.reloadCategories();
   }
-    
-  // window example
-  SalesWindow.OrderTable.addLine({
-    productid: '234234234',
-    productname:'Red Wine',
-    qty: 2,
-    price: 2
-  });
   
   
   // Public Sales
