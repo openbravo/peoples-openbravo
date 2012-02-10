@@ -11,11 +11,11 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 isc.OBMyOpenbravo.addProperties({
   styleName: 'OBMyOpenbravo'
@@ -68,7 +68,8 @@ OB.Styles.OBMyOBAddWidgetDialog = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  pendingTextBoxStyle: null, //'OBFormFieldSelectInputPending',
+  pendingTextBoxStyle: null,
+  //'OBFormFieldSelectInputPending',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
   pickListTallBaseStyle: 'OBFormFieldPickListCell',
@@ -85,7 +86,8 @@ OB.Styles.OBMyOBAdminModeDialog = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  pendingTextBoxStyle: null, //'OBFormFieldSelectInputPending',
+  pendingTextBoxStyle: null,
+  //'OBFormFieldSelectInputPending',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
   pickListTallBaseStyle: 'OBFormFieldPickListCell',
@@ -103,5 +105,3 @@ OB.Styles.OBMyOBPublishChangesDialog = {
     styleName: 'OBMyOBPublishLegend'
   }
 };
-
-
