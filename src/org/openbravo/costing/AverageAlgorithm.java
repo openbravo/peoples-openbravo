@@ -30,8 +30,17 @@ public class AverageAlgorithm extends CostingAlgorithm {
 
   public BigDecimal getTransactionCost() {
     BigDecimal trxCost = super.getTransactionCost();
-    // If it is an incoming transaction update cost.
-    if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 1) {
+    // If it is a transaction whose cost has not been calculated based on current average cost
+    // calculate calculate new average cost.
+    switch (trxType) {
+    case Receipt:
+    case ReceiptVoid:
+    case ShipmentVoid:
+    case ShipmentReturn:
+    case ShipmentNegative:
+    case InventoryIncrease:
+    case IntMovementTo:
+    case BOMProduct:
       Costing currentCosting = getProductCost();
       BigDecimal newCost = null;
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(),
@@ -45,7 +54,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
             costCurrency.getCostingPrecision().intValue());
       }
       insertCost(currentCosting, newCost, currentStock, trxCost);
-
+    default:
+      break;
     }
     return trxCost;
   }
