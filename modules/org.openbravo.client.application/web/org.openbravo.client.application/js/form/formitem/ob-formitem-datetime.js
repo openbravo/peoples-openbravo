@@ -21,20 +21,19 @@
 // Contains the widget for editing Date Time, it works differently than the OBDateItem
 // in that it auto-completes while typing. A TODO: make this widget work the same as the 
 // OBDateItem, autocomplete when blurring.
-
 isc.ClassFactory.defineClass('OBDateTimeItem', isc.OBDateItem);
 
 isc.OBDateTimeItem.addClassProperties({
-  
+
   // ** {{{ autoCompleteData }}} **
   //
   // Autocomplets the date entered.
   // Parameters:
   // * {{{dateFormat}}}: the dateFormat in OB format
   // * {{{value}}}: the current entered value
-  autoCompleteDate: function(dateFormat, value, item){
+  autoCompleteDate: function (dateFormat, value, item) {
     var fmt;
-    
+
     // if (!isTabPressed) {
     if (value === null) {
       return value;
@@ -42,15 +41,14 @@ isc.OBDateTimeItem.addClassProperties({
     fmt = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
     try {
       if (item.getSelectionRange() && item.getSelectionRange()[0] !== value.length) {
-        return value; // If we are inserting in a position different from
-        // the
-        // last one, we don't autocomplete
+        // If we are inserting in a position different from  the last one, we don't autocomplete
+        return value;
       }
-    } catch (ignored) {
-    }
+    } catch (ignored) {}
     var strDate = value;
     var b = fmt.match(/%./g);
-    var i = 0, j = -1;
+    var i = 0,
+        j = -1;
     var text = '';
     var length = 0;
     var pos = fmt.indexOf(b[0]) + b[0].length;
@@ -61,9 +59,7 @@ isc.OBDateTimeItem.addClassProperties({
       separatorH = fmt.substring(pos + 2, pos + 3);
     }
     while (strDate.charAt(i)) {
-      if (strDate.charAt(i) === separator ||
-      strDate.charAt(i) === separatorH ||
-      strDate.charAt(i) === ' ') {
+      if (strDate.charAt(i) === separator || strDate.charAt(i) === separatorH || strDate.charAt(i) === ' ') {
         i++;
         continue;
       }
@@ -79,38 +75,38 @@ isc.OBDateTimeItem.addClassProperties({
           }
         }
         switch (b[j]) {
-          case '%d':
-          case '%e':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
-          case '%m':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
-          case '%Y':
-            text += strDate.charAt(i);
-            length = 4;
-            break;
-          case '%y':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
-          case '%H':
-          case '%I':
-          case '%k':
-          case '%l':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
-          case '%M':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
-          case '%S':
-            text += strDate.charAt(i);
-            length = 2;
-            break;
+        case '%d':
+        case '%e':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
+        case '%m':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
+        case '%Y':
+          text += strDate.charAt(i);
+          length = 4;
+          break;
+        case '%y':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
+        case '%H':
+        case '%I':
+        case '%k':
+        case '%l':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
+        case '%M':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
+        case '%S':
+          text += strDate.charAt(i);
+          length = 2;
+          break;
         }
       } else {
         text += strDate.charAt(i);
@@ -130,22 +126,21 @@ isc.OBDateTimeItem.addClassProperties({
 // == OBDateItem properties ==
 isc.OBDateTimeItem.addProperties({
   showTime: true,
-  
-  blurValue: function() {
+
+  blurValue: function () {
     var value = OB.Utilities.Date.OBToJS(this.dateTextField.getElementValue(), OB.Format.dateTime);
     this.setValue(value);
     return value;
   },
 
-  parseValue: function(){
+  parseValue: function () {
     return this.dateTextField.getElementValue();
   },
 
   // ** {{{ change }}} **
   // Called when changing a value.
-  change: function(form, item, value, oldValue){ /* transformInput */
-    var isADate = value !== null &&
-              Object.prototype.toString.call(value) === '[object Date]';
+  change: function (form, item, value, oldValue) { /* transformInput */
+    var isADate = value !== null && Object.prototype.toString.call(value) === '[object Date]';
     if (isADate) {
       return;
     }
@@ -156,4 +151,3 @@ isc.OBDateTimeItem.addProperties({
     }
   }
 });
-
