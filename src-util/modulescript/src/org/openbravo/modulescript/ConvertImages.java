@@ -90,7 +90,7 @@ public class ConvertImages extends ModuleScript {
         }
       }
     } catch (Exception e) {
-      log4j.info(e.getMessage());
+      log4j.info("There was an error when converting old images: "+ e.getMessage(),e);
       return;
     }
     return;
