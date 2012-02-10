@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import net.sourceforge.jnlp.util.PropertiesFile;
-
+import org.apache.log4j.Logger;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.database.ConnectionProvider;
 import java.io.FileInputStream;
@@ -40,12 +39,17 @@ import javax.imageio.ImageIO;
 
 public class ConvertImages extends ModuleScript {
 
+  private static final Logger log4j = Logger.getLogger(ModuleScript.class);
+  
   @Override
   public void execute() {
     try {  
       String catalinabase=System.getenv("CATALINA_BASE");
       if(catalinabase==null || catalinabase.equals("")){
-        return;
+        catalinabase=System.getenv("CATALINA_HOME");
+        if(catalinabase==null || catalinabase.equals("")){
+          return;
+        }
       }
       Properties properties = new Properties();
       properties.load(new FileInputStream(getPropertiesFile()));
@@ -66,7 +70,6 @@ public class ConvertImages extends ModuleScript {
           FileInputStream is = new FileInputStream(imageFile);
           long length = imageFile.length();
           byte[] bytes = new byte[(int)length];
-
           int offset = 0;
           int numRead = 0;
           while (offset < bytes.length
@@ -87,9 +90,8 @@ public class ConvertImages extends ModuleScript {
         }
       }
     } catch (Exception e) {
+      log4j.info(e.getMessage());
       return;
-      //This modulescript can fail in different ways.
-      //However, the build should continue without problems
     }
     return;
   }
