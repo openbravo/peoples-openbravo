@@ -506,12 +506,14 @@ isc.OBNumberFilterItem.addProperties({
   allowExpressions: true,
   validateOnExit: false,
   validateOnChange: false,
-  keyPressFilterNumeric: '[0-9.,-=<>!#orand ]',
+  keyPressFilterNumeric: null, // allow any key to support =.name for example
   doBlurLogic: false,
   operator: 'equals',
   validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual',
                    'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual',
-                   'between', 'betweenInclusive', 'isNull', 'isNotNull'
+                   'between', 'betweenInclusive', 'isNull', 'isNotNull',
+                   'equalsField', 'notEqualField', 'greaterThanField',
+                   'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'
                    ],
   
   // prevent handling of equal symbol in filteritem
