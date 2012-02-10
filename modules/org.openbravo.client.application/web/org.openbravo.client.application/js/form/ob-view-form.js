@@ -174,7 +174,8 @@ OB.ViewFormProperties = {
   },
   
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
-    
+    this.clearValues();
+
     var ret = this.Super('editRecord', arguments);
     
     // used when clicking on a cell in a grid
@@ -239,6 +240,7 @@ OB.ViewFormProperties = {
   },
   
   editNewRecord: function(preventFocus){
+    this.clearValues();
     var ret = this.Super('editNewRecord', arguments);
     this.doEditRecordActions(preventFocus, true);
     return ret;
