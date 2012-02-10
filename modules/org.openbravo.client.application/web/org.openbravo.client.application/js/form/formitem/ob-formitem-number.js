@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -520,8 +520,14 @@ isc.OBNumberFilterItem.addProperties({
     this.manageDecPoint(keyCode);
   },
 
-  parseValueExpressions: function() {
-    var ret = this.Super('parseValueExpressions', arguments);
+  parseValueExpressions: function (value, fieldName, operator) {
+    var ret;
+
+    if (isc.isA.String(value)) {
+      value = value.trim();
+    }
+
+    ret = this.Super('parseValueExpressions', [value, fieldName, operator]);
     if (ret && ret.start) {
       ret.start = this.convertToTypedValue(ret.start);
     } 
@@ -581,6 +587,9 @@ isc.OBNumberFilterItem.addProperties({
   },
   
   convertToTypedValue: function(value) {
+    if (isc.isA.String(value)) {
+      value = value.trim();
+    }
     if (isc.isA.String(value) && OB.Utilities.Number.IsValidValueString(this.typeInstance, value)) {
       return OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
     }
