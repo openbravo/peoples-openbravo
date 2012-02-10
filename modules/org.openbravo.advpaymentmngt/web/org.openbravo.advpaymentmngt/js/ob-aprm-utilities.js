@@ -11,15 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 OB.APRM = {};
-OB.APRM.bankTransitoryAccountCalloutResponse = function(me, confirmMessage, financialAccountId) {
-  isc.confirm(confirmMessage, function(value){
+OB.APRM.bankTransitoryAccountCalloutResponse = function (me, confirmMessage, financialAccountId) {
+  isc.confirm(confirmMessage, function (value) {
     var post;
     if (value) {
       var bankTransitoryAccount = me.getField('fINTransitoryAcct')._value,
@@ -29,9 +29,11 @@ OB.APRM.bankTransitoryAccountCalloutResponse = function(me, confirmMessage, fina
       me.getField('clearedPaymentAccount').setValue(bankTransitoryAccount);
       me.getField('clearedPaymentAccountOUT').valueMap[bankTransitoryAccount] = bankTransitoryAccountDesc;
       me.getField('clearedPaymentAccountOUT').setValue(bankTransitoryAccount);
-      
-      post = {'eventType': 'bankTransitoryCalloutResponse',
-              'financialAccountId': financialAccountId};
+
+      post = {
+        'eventType': 'bankTransitoryCalloutResponse',
+        'financialAccountId': financialAccountId
+      };
 
       OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.APRMActionHandler', post, {}, {});
 
