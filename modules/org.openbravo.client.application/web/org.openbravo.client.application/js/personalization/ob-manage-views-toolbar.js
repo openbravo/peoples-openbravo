@@ -39,7 +39,13 @@
         },
 
         itemClick: function(item, colNum) {
+          var standardWindow = this.button.view.standardWindow;
           if (item.viewDefinition) {
+            if (item.originalView) {
+              standardWindow.clearLastViewPersonalization();
+            }
+            delete standardWindow.lastViewApplied;
+            
             OB.Personalization.applyViewDefinition(item.personalizationId, item.viewDefinition, this.button.view.standardWindow);
           } else {
             item.doClick(this.button.view.standardWindow);
@@ -59,7 +65,7 @@
     // shows the menu with the available views and the save 
     // and delete option
     action: function() {
-      var data = [], icon, i, undef, view, formData,
+      var data = [], icon, i, item, undef, view, formData,
         standardWindow = this.view.standardWindow,
         adminLevel = false, length, viewSelected = false,
         personalization = standardWindow.getClass().personalization, 
@@ -77,7 +83,9 @@
       views.push(standardWindow.getClass().originalView);
       
       if (!standardWindow.selectedPersonalizationId) {
-        standardWindow.selectedPersonalizationId = standardWindow.getClass().originalView.personalizationId;
+        if (!standardWindow.lastViewApplied) {
+          standardWindow.selectedPersonalizationId = standardWindow.getClass().originalView.personalizationId;
+        }
       }
       
       // create the list of current views to show
@@ -92,7 +100,16 @@
           icon = null;
         }
         
-        data.push({title: view.viewDefinition.name, icon: icon, personalizationId: view.personalizationId, viewDefinition: view.viewDefinition});        
+        item = {title: view.viewDefinition.name, 
+            icon: icon, 
+            personalizationId: view.personalizationId, 
+            viewDefinition: view.viewDefinition};
+        
+        if (view.originalView) {
+          item.originalView = true;
+        }
+        
+        data.push(item);        
       }
       
       // compute the menu items, only if the user is allowed

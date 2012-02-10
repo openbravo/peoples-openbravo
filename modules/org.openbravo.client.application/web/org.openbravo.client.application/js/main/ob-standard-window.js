@@ -271,7 +271,7 @@ isc.OBStandardWindow.addProperties({
     
     // cache the original view so that it can be restored
     if (!this.getClass().originalView) {
-      this.getClass().originalView = {};
+      this.getClass().originalView = {originalView: true};
       this.getClass().originalView.personalizationId = 'dummyId';
       this.getClass().originalView.viewDefinition = OB.Personalization.getViewDefinition(this, '', false);
       this.getClass().originalView.viewDefinition.name = OB.I18N.getLabel('OBUIAPP_StandardView');
@@ -318,9 +318,11 @@ isc.OBStandardWindow.addProperties({
         length = this.views.length;
         for (i = 0; i < length; i++) {
           if (personalization.forms && personalization.forms[this.views[i].tabId]) {
+            this.lastViewApplied = true;
             OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
           }
           if (this.viewState && this.viewState[this.views[i].tabId]) {
+            this.lastViewApplied = true;
             this.views[i].viewGrid.setViewState(this.viewState[this.views[i].tabId]);
           }
         }
@@ -338,6 +340,30 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  clearLastViewPersonalization: function() {
+    var p, length, personalization = this.getClass().personalization;
+    delete this.lastViewApplied;
+    if (personalization.forms) {
+      for (p in personalization.forms){
+        if (personalization.forms.hasOwnProperty(p) && personalization.forms[p].personalizationId) {
+          OB.RemoteCallManager.call(
+              'org.openbravo.client.application.personalization.PersonalizationActionHandler', 
+              {}, { 
+                personalizationId: personalization.forms[p].personalizationId,
+                action: 'delete'
+              },
+              null
+           );
+        }
+      }
+      delete personalization.forms;    
+    }
+    delete this.viewState;
+    
+    // remove the grid properties
+    OB.PropertyStore.set('OBUIAPP_GridConfiguration', null, this.windowId);    
+  },
+  
   getDefaultGridViewState: function(tabId) {
     var views, length, i, personalization = this.getClass().personalization,    
       defaultView,
