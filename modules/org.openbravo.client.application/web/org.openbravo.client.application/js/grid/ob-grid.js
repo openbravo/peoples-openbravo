@@ -256,7 +256,12 @@ isc.OBGrid.addProperties({
             this.preventPerformFilterFiring();
             return;
           }
-          
+
+          if (val.startsWith('=')) {
+            this.preventPerformFilterFiring();
+            return;
+          }
+
           // now check if the item element value is only
           // an operator, if so, go away
           opDefs = isc.DataSource.getSearchOperators();
