@@ -100,12 +100,16 @@ public abstract class CostingAlgorithm {
       return getShipmentReturnAmount();
     case ShipmentVoid:
       return getShipmentVoidAmount();
+    case ShipmentNegative:
+      return getShipmentNegative();
     case Receipt:
       return getReceiptAmount();
     case ReceiptReturn:
       return getReceiptReturnAmount();
     case ReceiptVoid:
       return getReceiptVoidAmount();
+    case ReceiptNegative:
+      return getReceiptNegative();
     case InventoryDecrease:
       return getOutgoingTransactionCost();
     case InventoryIncrease:
@@ -121,7 +125,7 @@ public abstract class CostingAlgorithm {
     case BOMProduct:
       return getBOMProductionCost();
     case Manufacturing:
-      // Manufacturing transaction are not implemented.
+      // Manufacturing transactions are not implemented.
       return BigDecimal.ZERO;
     case Unknown:
       throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
@@ -149,6 +153,24 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getShipmentReturnAmount() {
     // Shipment return's cost is calculated based on the related Return from Customer order's price.
+    return getShipmentCost();
+  }
+
+  /**
+   * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
+   * cost of the original payment.
+   */
+  protected BigDecimal getShipmentVoidAmount() {
+    // Voided shipment gets cost from original shipment line.
+    return getOriginalInOutLineAmount();
+  }
+
+  protected BigDecimal getShipmentNegative() {
+    // Shipment with negative quantity. Get cost from related order price as it is an incoming trx.
+    return getShipmentCost();
+  }
+
+  protected BigDecimal getShipmentCost() {
     ShipmentInOutLine shipmentline = transaction.getGoodsShipmentLine();
     OrderLine salesOrderLine = shipmentline.getSalesOrderLine();
     if (salesOrderLine == null) {
@@ -168,15 +190,6 @@ public abstract class CostingAlgorithm {
         costOrg.getId(), new DalConnectionProvider()));
 
     return trxCost;
-  }
-
-  /**
-   * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
-   * cost of the original payment.
-   */
-  protected BigDecimal getShipmentVoidAmount() {
-    // Voided shipment gets cost from original shipment line.
-    return getOriginalInOutLineAmount();
   }
 
   /*
@@ -222,6 +235,11 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getReceiptVoidAmount() {
     // Voided receipt gets cost from original receipt line.
     return getOriginalInOutLineAmount();
+  }
+
+  private BigDecimal getReceiptNegative() {
+    // Receipt with negative quantity. Calculate cost as a regular outgoing transaction.
+    return getOutgoingTransactionCost();
   }
 
   /**
@@ -309,7 +327,7 @@ public abstract class CostingAlgorithm {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, Receipt, ReceiptReturn, ReceiptVoid, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -327,6 +345,10 @@ public abstract class CostingAlgorithm {
                   .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ShipmentVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentNegative;
           } else {
             log4j.debug("Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return Shipment;
@@ -341,6 +363,10 @@ public abstract class CostingAlgorithm {
                   .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ReceiptVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptNegative;
           } else {
             log4j.debug("Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return Receipt;
