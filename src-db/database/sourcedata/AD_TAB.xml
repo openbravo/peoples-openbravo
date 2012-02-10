@@ -590,7 +590,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--128-->  <NAME><![CDATA[Calendar]]></NAME>
 <!--128-->  <DESCRIPTION><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations.]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations.]]></HELP>
+<!--128-->  <HELP><![CDATA[Calendar window allows to create and maintain as many fiscal calendars as required.]]></HELP>
 <!--128-->  <AD_TABLE_ID><![CDATA[139]]></AD_TABLE_ID>
 <!--128-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--128-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -616,7 +616,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--129-->  <NAME><![CDATA[Year]]></NAME>
 <!--129-->  <DESCRIPTION><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods.]]></DESCRIPTION>
-<!--129-->  <HELP><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods.]]></HELP>
+<!--129-->  <HELP><![CDATA[Year tab allows to create as many fiscal years as required within a calendar. ]]></HELP>
 <!--129-->  <AD_TABLE_ID><![CDATA[177]]></AD_TABLE_ID>
 <!--129-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--129-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -642,7 +642,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--130-->  <NAME><![CDATA[Period]]></NAME>
 <!--130-->  <DESCRIPTION><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods.]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods.]]></HELP>
+<!--130-->  <HELP><![CDATA[The accounting periods belonging to a year can be created manually and/or automatically by running the process "Create Periods".]]></HELP>
 <!--130-->  <AD_TABLE_ID><![CDATA[145]]></AD_TABLE_ID>
 <!--130-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--130-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -668,7 +668,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--131-->  <NAME><![CDATA[Non Business Day]]></NAME>
 <!--131-->  <DESCRIPTION><![CDATA[Define non business days for a selected fiscal calendar.]]></DESCRIPTION>
-<!--131-->  <HELP><![CDATA[Define non business days for a selected fiscal calendar.]]></HELP>
+<!--131-->  <HELP><![CDATA[Non business days can be listed in this tab as a way of stating non working days for an organization and a calendar to be taken into account while calculating for instance payment dates.]]></HELP>
 <!--131-->  <AD_TABLE_ID><![CDATA[163]]></AD_TABLE_ID>
 <!--131-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--131-->  <SEQNO><![CDATA[50]]></SEQNO>
@@ -694,7 +694,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[Element Value]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Add and edit elements and edit elements tree structures.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[Add and edit elements and edit elements tree structures.]]></HELP>
+<!--132-->  <HELP><![CDATA[Element value tab is a list of the account tree elements of a given chart of accounts.]]></HELP>
 <!--132-->  <AD_TABLE_ID><![CDATA[188]]></AD_TABLE_ID>
 <!--132-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--132-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -880,7 +880,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--146-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--146-->  <NAME><![CDATA[Sequence]]></NAME>
 <!--146-->  <DESCRIPTION><![CDATA[Create an auto numbering system to uniquely identify document types.]]></DESCRIPTION>
-<!--146-->  <HELP><![CDATA[Create an auto numbering system to uniquely identify document types.]]></HELP>
+<!--146-->  <HELP><![CDATA[Document sequence window allows to define how document sequences are going to behave.]]></HELP>
 <!--146-->  <AD_TABLE_ID><![CDATA[115]]></AD_TABLE_ID>
 <!--146-->  <AD_WINDOW_ID><![CDATA[112]]></AD_WINDOW_ID>
 <!--146-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -932,7 +932,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Element]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create account elements structures to be used in the accounting  schema.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[Create account elements structures to be used in the accounting  schema.]]></HELP>
+<!--153-->  <HELP><![CDATA[Account Tree window allows to review and maintain imported chart of accounts and to create new ones if needed.]]></HELP>
 <!--153-->  <AD_TABLE_ID><![CDATA[142]]></AD_TABLE_ID>
 <!--153-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--153-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1142,7 +1142,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--167-->  <NAME><![CDATA[Document Definition]]></NAME>
 <!--167-->  <DESCRIPTION><![CDATA[Create and edit document types that can be created by the application.]]></DESCRIPTION>
-<!--167-->  <HELP><![CDATA[Create and edit document types that can be created by the application.]]></HELP>
+<!--167-->  <HELP><![CDATA[Document type window allows to configure how each document type is going to behave in terms of accounting and sequencing among others.]]></HELP>
 <!--167-->  <AD_TABLE_ID><![CDATA[217]]></AD_TABLE_ID>
 <!--167-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--167-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1275,7 +1275,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--174-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--174-->  <NAME><![CDATA[Tax]]></NAME>
 <!--174-->  <DESCRIPTION><![CDATA[Create and edit tax rates to be used in the application transactions.]]></DESCRIPTION>
-<!--174-->  <HELP><![CDATA[Create and edit tax rates to be used in the application transactions.]]></HELP>
+<!--174-->  <HELP><![CDATA[Tax rate window allows to create as many tax rates as required.]]></HELP>
 <!--174-->  <AD_TABLE_ID><![CDATA[261]]></AD_TABLE_ID>
 <!--174-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--174-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1301,7 +1301,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--176-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--176-->  <NAME><![CDATA[Tax Category]]></NAME>
 <!--176-->  <DESCRIPTION><![CDATA[Create tax categories to manage tax rates with similar characteristics or attributes.]]></DESCRIPTION>
-<!--176-->  <HELP><![CDATA[Create tax categories to manage tax rates with similar characteristics or attributes.]]></HELP>
+<!--176-->  <HELP><![CDATA[It is possible to create as many tax categories as required to be later on linked to the correponding tax rates and products.]]></HELP>
 <!--176-->  <AD_TABLE_ID><![CDATA[252]]></AD_TABLE_ID>
 <!--176-->  <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
 <!--176-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1726,7 +1726,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--199-->  <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--199-->  <DESCRIPTION><![CDATA[Create multiple accounting schemas.]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[Create multiple accounting schemas.]]></HELP>
+<!--199-->  <HELP><![CDATA[Accounting schema window allows to review and maintain imported accounting schemas and to create new ones if needed.]]></HELP>
 <!--199-->  <AD_TABLE_ID><![CDATA[265]]></AD_TABLE_ID>
 <!--199-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--199-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1753,7 +1753,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--200-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--200-->  <NAME><![CDATA[General Ledger]]></NAME>
 <!--200-->  <DESCRIPTION><![CDATA[Add and edit G/L accounts to be used by default in the application.]]></DESCRIPTION>
-<!--200-->  <HELP><![CDATA[Add and edit G/L accounts to be used by default in the application.]]></HELP>
+<!--200-->  <HELP><![CDATA[General ledger tab allows to define defult accounts to be used while posting certain type of transactions if applicable.]]></HELP>
 <!--200-->  <AD_TABLE_ID><![CDATA[266]]></AD_TABLE_ID>
 <!--200-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--200-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -1937,7 +1937,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--207-->  <NAME><![CDATA[Combination]]></NAME>
 <!--207-->  <DESCRIPTION><![CDATA[Create and edit customized accounts to be used for reporting purposes.]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[Create and edit customized accounts to be used for reporting purposes.]]></HELP>
+<!--207-->  <HELP><![CDATA[Openbravo allows to create as many account combinations as required for a given organization and accounting schema.]]></HELP>
 <!--207-->  <AD_TABLE_ID><![CDATA[176]]></AD_TABLE_ID>
 <!--207-->  <AD_WINDOW_ID><![CDATA[153]]></AD_WINDOW_ID>
 <!--207-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2147,7 +2147,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--217-->  <NAME><![CDATA[Account Schema Element]]></NAME>
 <!--217-->  <DESCRIPTION><![CDATA[Add and edit account elements to be used for a specified accounting schema.]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[Add and edit account elements to be used for a specified accounting schema.]]></HELP>
+<!--217-->  <HELP><![CDATA[Account Schema Element tab is a list of the mandatory accounting dimensions and the ones selected while running either the Initial Client Setup process or the Initial Organization Setup process. It is always possible to add additional accounting dimensions to the list.]]></HELP>
 <!--217-->  <AD_TABLE_ID><![CDATA[279]]></AD_TABLE_ID>
 <!--217-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--217-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -2414,7 +2414,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--230-->  <NAME><![CDATA[Translation]]></NAME>
 <!--230-->  <DESCRIPTION><![CDATA[Edit your document type translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--230-->  <HELP><![CDATA[Edit your document type translations for the predefined languages of your choice.]]></HELP>
+<!--230-->  <HELP><![CDATA[Document types can be translated to any language required.]]></HELP>
 <!--230-->  <AD_TABLE_ID><![CDATA[300]]></AD_TABLE_ID>
 <!--230-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--230-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -2440,7 +2440,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--232-->  <NAME><![CDATA[Translation]]></NAME>
 <!--232-->  <DESCRIPTION><![CDATA[Edit account element translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--232-->  <HELP><![CDATA[Edit account element translations for the predefined languages of your choice.]]></HELP>
+<!--232-->  <HELP><![CDATA[Account elements can be translated to any language required.]]></HELP>
 <!--232-->  <AD_TABLE_ID><![CDATA[302]]></AD_TABLE_ID>
 <!--232-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--232-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2781,7 +2781,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--252-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--252-->  <NAME><![CDATA[Defaults]]></NAME>
 <!--252-->  <DESCRIPTION><![CDATA[Add and edit detailed G/L accounts to be used by default in the application.]]></DESCRIPTION>
-<!--252-->  <HELP><![CDATA[Add and edit detailed G/L accounts to be used by default in the application.]]></HELP>
+<!--252-->  <HELP><![CDATA[Default tab allows to maintain or to add a complete set of default accounts to be used while posting certain transactions types.]]></HELP>
 <!--252-->  <AD_TABLE_ID><![CDATA[315]]></AD_TABLE_ID>
 <!--252-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--252-->  <SEQNO><![CDATA[40]]></SEQNO>
@@ -3157,7 +3157,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--284-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--284-->  <NAME><![CDATA[Translation]]></NAME>
 <!--284-->  <DESCRIPTION><![CDATA[Edit your tax category translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--284-->  <HELP><![CDATA[Edit your tax category translations for the predefined languages of your choice.]]></HELP>
+<!--284-->  <HELP><![CDATA[Tax categories can be translated to any language required.]]></HELP>
 <!--284-->  <AD_TABLE_ID><![CDATA[348]]></AD_TABLE_ID>
 <!--284-->  <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
 <!--284-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -3909,7 +3909,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--333-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--333-->  <DESCRIPTION><![CDATA[Create and edit G/L accounts to be used in transactions including a selected tax rate.]]></DESCRIPTION>
-<!--333-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected tax rate.]]></HELP>
+<!--333-->  <HELP><![CDATA[Accounting tab allows to configure the ledger account to be used while posting tax rate transactions for a given accounting schema.]]></HELP>
 <!--333-->  <AD_TABLE_ID><![CDATA[399]]></AD_TABLE_ID>
 <!--333-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--333-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -4273,8 +4273,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--384-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--384-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--384-->  <NAME><![CDATA[Goods Transaction]]></NAME>
-<!--384-->  <DESCRIPTION><![CDATA[View all the products related to a transaction performed in the application.]]></DESCRIPTION>
-<!--384-->  <HELP><![CDATA[View all the products related to a transaction performed in the application.]]></HELP>
 <!--384-->  <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--384-->  <AD_WINDOW_ID><![CDATA[223]]></AD_WINDOW_ID>
 <!--384-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -5022,7 +5020,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--458-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--458-->  <NAME><![CDATA[Translation]]></NAME>
 <!--458-->  <DESCRIPTION><![CDATA[Edit your tax category translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--458-->  <HELP><![CDATA[Edit your tax category translations for the predefined languages of your choice.]]></HELP>
+<!--458-->  <HELP><![CDATA[Tax rates can be translated to any language required.]]></HELP>
 <!--458-->  <AD_TABLE_ID><![CDATA[546]]></AD_TABLE_ID>
 <!--458-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--458-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -6402,7 +6400,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800019-->  <NAME><![CDATA[Customized Elements]]></NAME>
 <!--800019-->  <DESCRIPTION><![CDATA[Edit elements and add or subtract them according to your needs.]]></DESCRIPTION>
-<!--800019-->  <HELP><![CDATA[Edit elements and add or subtract them according to your needs.]]></HELP>
+<!--800019-->  <HELP><![CDATA[Customized elements tab allows to introduce basic operations between account tree elements.]]></HELP>
 <!--800019-->  <AD_TABLE_ID><![CDATA[800015]]></AD_TABLE_ID>
 <!--800019-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--800019-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -6629,7 +6627,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800033-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800033-->  <NAME><![CDATA[G/L Item]]></NAME>
 <!--800033-->  <DESCRIPTION><![CDATA[Create and edit accounting items to be used in manual settlements.]]></DESCRIPTION>
-<!--800033-->  <HELP><![CDATA[Create and edit accounting items to be used in manual settlements.]]></HELP>
+<!--800033-->  <HELP><![CDATA[G/L Item window allows to create as many account items as required for an organization and a given accounting schema. ]]></HELP>
 <!--800033-->  <AD_TABLE_ID><![CDATA[800022]]></AD_TABLE_ID>
 <!--800033-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800033-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -6656,7 +6654,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800034-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800034-->  <NAME><![CDATA[Accounting]]></NAME>
 <!--800034-->  <DESCRIPTION><![CDATA[Create an account number for the G/L item in order to manage the General Ledger Accounting.]]></DESCRIPTION>
-<!--800034-->  <HELP><![CDATA[Create an account number for the G/L item in order to manage the General Ledger Accounting.]]></HELP>
+<!--800034-->  <HELP><![CDATA[Account items are directly related to the debit and credit accounts to be used while posting.]]></HELP>
 <!--800034-->  <AD_TABLE_ID><![CDATA[800023]]></AD_TABLE_ID>
 <!--800034-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800034-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -6765,7 +6763,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800041-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800041-->  <NAME><![CDATA[Account Schema Tables]]></NAME>
 <!--800041-->  <DESCRIPTION><![CDATA[Add and edit DB tables to be included in accounting processes.]]></DESCRIPTION>
-<!--800041-->  <HELP><![CDATA[Add and edit DB tables to be included in accounting processes.]]></HELP>
+<!--800041-->  <HELP><![CDATA[Account schema tables allows to define which tables and therefore transactions generate accounting and which ones not. ]]></HELP>
 <!--800041-->  <AD_TABLE_ID><![CDATA[800027]]></AD_TABLE_ID>
 <!--800041-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--800041-->  <SEQNO><![CDATA[25]]></SEQNO>
@@ -8556,7 +8554,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800170-->  <NAME><![CDATA[Tax Zone]]></NAME>
 <!--800170-->  <DESCRIPTION><![CDATA[Create tax zones to which the selected tax zone will be applied.]]></DESCRIPTION>
-<!--800170-->  <HELP><![CDATA[Create tax zones to which the selected tax zone will be applied.]]></HELP>
+<!--800170-->  <HELP><![CDATA[Tax zone defines the origin country/region and destination country/region where a given tax rate applies.
+]]></HELP>
 <!--800170-->  <AD_TABLE_ID><![CDATA[800150]]></AD_TABLE_ID>
 <!--800170-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--800170-->  <SEQNO><![CDATA[15]]></SEQNO>
@@ -10040,7 +10039,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800231-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800231-->  <NAME><![CDATA[Business Partner Tax Category]]></NAME>
 <!--800231-->  <DESCRIPTION><![CDATA[Create tax categories to be applied to one or a group of business partners.]]></DESCRIPTION>
-<!--800231-->  <HELP><![CDATA[Create tax categories to be applied to one or a group of business partners.]]></HELP>
+<!--800231-->  <HELP><![CDATA[It is possible to create as many business partners categories as required to be later on linked to the corresponding tax rates and business partners, if applicable.]]></HELP>
 <!--800231-->  <AD_TABLE_ID><![CDATA[800193]]></AD_TABLE_ID>
 <!--800231-->  <AD_WINDOW_ID><![CDATA[800086]]></AD_WINDOW_ID>
 <!--800231-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -10944,7 +10943,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1000500001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500001-->  <NAME><![CDATA[Report Templates]]></NAME>
 <!--1000500001-->  <DESCRIPTION><![CDATA[Configure Report templates]]></DESCRIPTION>
-<!--1000500001-->  <HELP><![CDATA[Set up the Jasper JRXML templates for each document type. ]]></HELP>
+<!--1000500001-->  <HELP><![CDATA[Report template tab allows to configure a different look and feel for the document types by setting up Jasper JRXML templates for each document type. ]]></HELP>
 <!--1000500001-->  <AD_TABLE_ID><![CDATA[1000500001]]></AD_TABLE_ID>
 <!--1000500001-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--1000500001-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -10974,7 +10973,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1000500002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500002-->  <NAME><![CDATA[Email Definitions]]></NAME>
 <!--1000500002-->  <DESCRIPTION><![CDATA[Configure template for emails]]></DESCRIPTION>
-<!--1000500002-->  <HELP><![CDATA[Configure different templates in different lenguage. Using these template allow you not to write each email you send out.]]></HELP>
+<!--1000500002-->  <HELP><![CDATA[Emails definition tab supports the creation of as many email templates as required depending on the language to be used for sending the documents by email.]]></HELP>
 <!--1000500002-->  <AD_TABLE_ID><![CDATA[1000500004]]></AD_TABLE_ID>
 <!--1000500002-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--1000500002-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -11378,7 +11377,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1007400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1007400000-->  <NAME><![CDATA[Documents]]></NAME>
 <!--1007400000-->  <DESCRIPTION><![CDATA[Add documents to allow/avoid negative entries]]></DESCRIPTION>
-<!--1007400000-->  <HELP><![CDATA[Add documents to allow/avoid negative entries]]></HELP>
+<!--1007400000-->  <HELP><![CDATA[Documents tab allows to define which document types within a table type allow negative posting at document level and whether they use a different accounting process than the default one based on a given accounting template.]]></HELP>
 <!--1007400000-->  <AD_TABLE_ID><![CDATA[1007400000]]></AD_TABLE_ID>
 <!--1007400000-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--1007400000-->  <SEQNO><![CDATA[27]]></SEQNO>
@@ -12246,7 +12245,7 @@ The corresponding tables have then the following setting:
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <NAME><![CDATA[Process]]></NAME>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <DESCRIPTION><![CDATA[Process to be launched at posting time]]></DESCRIPTION>
-<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[Process to be launched at posting time]]></HELP>
+<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <HELP><![CDATA[It is possible to assign additional accounting process to be run after the standar one for a given accounting schema.]]></HELP>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_TABLE_ID><![CDATA[443DD9B88BF2443982C61C8EFB07C64D]]></AD_TABLE_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <SEQNO><![CDATA[28]]></SEQNO>

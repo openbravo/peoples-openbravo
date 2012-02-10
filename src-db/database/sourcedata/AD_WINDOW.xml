@@ -211,7 +211,7 @@
 <!--112-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--112-->  <NAME><![CDATA[Document Sequence]]></NAME>
 <!--112-->  <DESCRIPTION><![CDATA[Define an auto numbering system to uniquely identify document types.]]></DESCRIPTION>
-<!--112-->  <HELP><![CDATA[Define an auto numbering system to uniquely identify document types.]]></HELP>
+<!--112-->  <HELP><![CDATA[Every document in Openbravo can be numbered and therefore linked to a document sequence.]]></HELP>
 <!--112-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--112-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--112-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -262,7 +262,9 @@
 <!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--117-->  <NAME><![CDATA[Fiscal Calendar]]></NAME>
 <!--117-->  <DESCRIPTION><![CDATA[Create multiple fiscal calendars and periods for accounting purposes.]]></DESCRIPTION>
-<!--117-->  <HELP><![CDATA[Create multiple fiscal calendars and periods for accounting purposes.]]></HELP>
+<!--117-->  <HELP><![CDATA["Legal entities with accounting" organization types must have a fiscal calendar assigned while rest of organization types inherit it from it.<br>A  calendar contains years and the accounting periods of each year required to get an accurate organization accounting practice.
+
+]]></HELP>
 <!--117-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--117-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--117-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -279,7 +281,7 @@
 <!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--118-->  <NAME><![CDATA[Account Tree]]></NAME>
 <!--118-->  <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></DESCRIPTION>
-<!--118-->  <HELP><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></HELP>
+<!--118-->  <HELP><![CDATA[An account tree or chart of accounts is a list of the accounts available to post  entries which can be structured in a way to get meaningful financial reports such as Balance Sheet and P&L.]]></HELP>
 <!--118-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--118-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--118-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -364,7 +366,7 @@
 <!--125-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--125-->  <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--125-->  <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
-<!--125-->  <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></HELP>
+<!--125-->  <HELP><![CDATA[An accounting schema is set of accounting rules to be used while posting transactions in an organization.]]></HELP>
 <!--125-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--125-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -467,7 +469,7 @@
 <!--135-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--135-->  <NAME><![CDATA[Document Type]]></NAME>
 <!--135-->  <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions.]]></DESCRIPTION>
-<!--135-->  <HELP><![CDATA[Create and manage document types to be used for all application transactions.]]></HELP>
+<!--135-->  <HELP><![CDATA[Each document type in Openbravo refers to a business transactions. Business transactions such as purchase orders, shipments or sales invoices among others.]]></HELP>
 <!--135-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--135-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--135-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -484,7 +486,7 @@
 <!--137-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--137-->  <NAME><![CDATA[Tax Rate]]></NAME>
 <!--137-->  <DESCRIPTION><![CDATA[Create tax rates to be used in application transactions.]]></DESCRIPTION>
-<!--137-->  <HELP><![CDATA[Create tax rates to be used in application transactions.]]></HELP>
+<!--137-->  <HELP><![CDATA[Each tax rate in Openbravo is a combination of different variables such as the tax category, the rate and the business partner tax category among others.<br>If all those variables are properly setup the correct tax rate is automatically filled in every business transaction.]]></HELP>
 <!--137-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--137-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--137-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -501,7 +503,7 @@
 <!--138-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--138-->  <NAME><![CDATA[Tax Category]]></NAME>
 <!--138-->  <DESCRIPTION><![CDATA[Create tax categories to manage tax rates with similar characteristics or attributes.]]></DESCRIPTION>
-<!--138-->  <HELP><![CDATA[Create tax categories to manage tax rates with similar characteristics or attributes.]]></HELP>
+<!--138-->  <HELP><![CDATA[A tax category allows to group and manage similar product or services tax rates.]]></HELP>
 <!--138-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--138-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--138-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -723,7 +725,7 @@
 <!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--153-->  <NAME><![CDATA[Account Combination]]></NAME>
 <!--153-->  <DESCRIPTION><![CDATA[Create accounting combinations to be used in Openbravo's accounting process.]]></DESCRIPTION>
-<!--153-->  <HELP><![CDATA[Create accounting combinations to be used in Openbravo's accounting process.]]></HELP>
+<!--153-->  <HELP><![CDATA[An account combination gathers a set of accounting dimensions.]]></HELP>
 <!--153-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--153-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--153-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1095,8 +1097,8 @@
 <!--223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--223-->  <NAME><![CDATA[Goods Transaction]]></NAME>
-<!--223-->  <DESCRIPTION><![CDATA[View all goods transactions carried out  in the application.]]></DESCRIPTION>
-<!--223-->  <HELP><![CDATA[View all goods transactions carried out  in the application.]]></HELP>
+<!--223-->  <DESCRIPTION><![CDATA[Goods Transactions window provides a read only view with extensive filtering capabilities that shows all inventory transactions.]]></DESCRIPTION>
+<!--223-->  <HELP><![CDATA[Goods Transactions window provides a read only view with extensive filtering capabilities that shows all inventory transactions.]]></HELP>
 <!--223-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--223-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--223-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -1607,7 +1609,7 @@
 <!--800007-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800007-->  <NAME><![CDATA[G/L Item]]></NAME>
 <!--800007-->  <DESCRIPTION><![CDATA[Create and edit accounting items to be used in manual settlements.]]></DESCRIPTION>
-<!--800007-->  <HELP><![CDATA[Create and edit accounting items to be used in manual settlements.]]></HELP>
+<!--800007-->  <HELP><![CDATA[A G/L item is an account item to be used for direct account posting.]]></HELP>
 <!--800007-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800007-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800007-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2321,7 +2323,7 @@
 <!--800086-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800086-->  <NAME><![CDATA[Business Partner Tax Category]]></NAME>
 <!--800086-->  <DESCRIPTION><![CDATA[Create a tax category to be added to each business partner.]]></DESCRIPTION>
-<!--800086-->  <HELP><![CDATA[Create a tax category to be added to each business partner.]]></HELP>
+<!--800086-->  <HELP><![CDATA[A business partner tax category allows to group and manage similar business partners tax rates.]]></HELP>
 <!--800086-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800086-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800086-->  <PROCESSING><![CDATA[N]]></PROCESSING>
