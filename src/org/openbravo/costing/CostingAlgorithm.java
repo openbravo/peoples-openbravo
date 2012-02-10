@@ -120,6 +120,8 @@ public abstract class CostingAlgorithm {
       return getInternalMovementToCost();
     case InternalCons:
       return getOutgoingTransactionCost();
+    case InternalConsNegative:
+      return getInternalConsNegativeAmount();
     case BOMPart:
       return getOutgoingTransactionCost();
     case BOMProduct:
@@ -237,7 +239,7 @@ public abstract class CostingAlgorithm {
     return getOriginalInOutLineAmount();
   }
 
-  private BigDecimal getReceiptNegative() {
+  protected BigDecimal getReceiptNegative() {
     // Receipt with negative quantity. Calculate cost as a regular outgoing transaction.
     return getOutgoingTransactionCost();
   }
@@ -289,6 +291,16 @@ public abstract class CostingAlgorithm {
   }
 
   /**
+   * Calculates the cost of a negative internal consumption. It uses product's Standard Cost to
+   * calculate its price.
+   */
+  protected BigDecimal getInternalConsNegativeAmount() {
+    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
+        transaction.getCreationDate(), costDimensions);
+    return transaction.getMovementQuantity().multiply(standardCost);
+  }
+
+  /**
    * Calculates the cost of a produced BOM product. Its cost is the sum of the used products
    * transactions costs. If these has not been calculated yet they are calculated.
    */
@@ -305,7 +317,6 @@ public abstract class CostingAlgorithm {
       totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
           transaction.getCreationDate(), true));
     }
-
     return totalCost;
   }
 
@@ -327,7 +338,7 @@ public abstract class CostingAlgorithm {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, BOMPart, BOMProduct, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, BOMPart, BOMProduct, Manufacturing, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -393,9 +404,15 @@ public abstract class CostingAlgorithm {
           return IntMovementFrom;
         }
       } else if (transaction.getInternalConsumptionLine() != null) {
-        log4j.debug("Internal Consumption: "
-            + transaction.getInternalConsumptionLine().getIdentifier());
-        return InternalCons;
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Negative Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalConsNegative;
+        } else {
+          log4j.debug("Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalCons;
+        }
       } else if (transaction.getProductionLine() != null) {
         // Production Line
         if (transaction.getProductionLine().getProductionPlan().getProduction()
