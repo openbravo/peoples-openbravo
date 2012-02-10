@@ -73,27 +73,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       return;
     }
     var currentHeight = this.getHeight(),
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        //currentBodyHeight = this.body.getHeight(),
         edgeTop = this.edgeTop,
         edgeBottom = this.edgeBottom,
         newGridHeight = this.grid.headerHeight + (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) + this.grid.summaryRowHeight + 2;
