@@ -125,7 +125,7 @@
     },
 
     fetchView: function (viewId, callback, clientContext, params, useLoadingTab) {
-      var rpcMgr = ISC.RPCManagerm,
+      var rpcMgr = ISC.RPCManager,
           reqObj, request;
 
       if (useLoadingTab) {
