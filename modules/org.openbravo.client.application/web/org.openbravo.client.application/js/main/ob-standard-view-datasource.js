@@ -26,8 +26,8 @@ isc.ClassFactory.defineClass('OBViewDataSource', isc.OBRestDataSource);
 isc.OBViewDataSource.addProperties({
   additionalProps: null,
   showProgressAfterDelay: false,
-  
-  showProgress: function(editedRecord){
+
+  showProgress: function (editedRecord) {
     var btn, btn2;
 
     if (!this.showProgressAfterDelay) {
@@ -35,7 +35,7 @@ isc.OBViewDataSource.addProperties({
       return;
     }
 
-    if (editedRecord){
+    if (editedRecord) {
       if (editedRecord && editedRecord.editColumnLayout) {
         if (!this.view.isShowingForm) {
           editedRecord.editColumnLayout.toggleProgressIcon(true);
@@ -56,8 +56,8 @@ isc.OBViewDataSource.addProperties({
       btn2.markForRedraw();
     }
   },
-  
-  hideProgress: function(editedRecord){
+
+  hideProgress: function (editedRecord) {
     var btn;
     this.showProgressAfterDelay = false;
     if (editedRecord && editedRecord.editColumnLayout) {
@@ -70,8 +70,8 @@ isc.OBViewDataSource.addProperties({
     btn.resetBaseStyle();
     btn.markForRedraw();
   },
-  
-  performDSOperation: function(operationType, data, callback, requestProperties){
+
+  performDSOperation: function (operationType, data, callback, requestProperties) {
     var currentRecord;
 
     requestProperties = requestProperties || {};
@@ -80,7 +80,8 @@ isc.OBViewDataSource.addProperties({
     // only update the values of the record itself but not of any referenced 
     // entity
     if (operationType === 'update' || operationType === 'add') {
-      var correctedData = {}, prop;
+      var correctedData = {},
+          prop;
       for (prop in data) {
         if (data.hasOwnProperty(prop) && !prop.contains('.')) {
           correctedData[prop] = data[prop];
@@ -100,14 +101,13 @@ isc.OBViewDataSource.addProperties({
     }
 
     // doing row editing
-    if (this.view.viewGrid.getEditRow() ||
-    this.view.viewGrid.getEditRow() === 0) {
+    if (this.view.viewGrid.getEditRow() || this.view.viewGrid.getEditRow() === 0) {
       if (!requestProperties.clientContext) {
         requestProperties.clientContext = {};
       }
       requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow();
     }
-    
+
     var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
     // standard update is not sent with operationType
     var additionalPara = {
@@ -123,7 +123,7 @@ isc.OBViewDataSource.addProperties({
     this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
   },
 
-  getAdditionalProps: function() {
+  getAdditionalProps: function () {
     var prop, length, i, fld;
     if (this.additionalProps !== null) {
       return this.additionalProps;
@@ -145,7 +145,7 @@ isc.OBViewDataSource.addProperties({
   // do special id-handling so that we can replace the old if with the new
   // id
   // in the correct way, see the ob-view-grid.js editComplete method
-  validateJSONRecord: function(record){
+  validateJSONRecord: function (record) {
     record = this.Super('validateJSONRecord', arguments);
     if (record && record._originalId) {
       var newId = record.id;
@@ -154,20 +154,18 @@ isc.OBViewDataSource.addProperties({
     }
     return record;
   },
-  
-  transformResponse: function(dsResponse, dsRequest, jsonData){
-  
+
+  transformResponse: function (dsResponse, dsRequest, jsonData) {
+
     if (dsRequest.clientContext) {
       this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
     }
     if (jsonData) {
-      var errorStatus = !jsonData.response ||
-      jsonData.response.status === 'undefined' ||
-      jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
+      var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
       if (errorStatus) {
         var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
-        
-        if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) { 
+
+        if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) {
           OB.KernelUtilities.handleSystemException(jsonData.response.error.message);
         }
       } else {
@@ -179,7 +177,7 @@ isc.OBViewDataSource.addProperties({
     }
     return this.Super('transformResponse', arguments);
   },
-  
+
   // ** {{{ getTabInfoRequestProperties }}} **
   //
   // Adds tab and module information to the requestProperties.
@@ -190,13 +188,13 @@ isc.OBViewDataSource.addProperties({
   // Return:
   // * Original requestProperties including the new module and tab
   // properties.
-  getTabInfoRequestProperties: function(theView, requestProperties){
+  getTabInfoRequestProperties: function (theView, requestProperties) {
     if (theView && theView.tabId) {
       requestProperties.params = requestProperties.params || {};
       isc.addProperties(requestProperties.params, {
-          windowId: theView.standardWindow.windowId,
-          tabId: theView.tabId,
-          moduleId: theView.moduleId
+        windowId: theView.standardWindow.windowId,
+        tabId: theView.tabId,
+        moduleId: theView.moduleId
       });
     }
     return requestProperties;
