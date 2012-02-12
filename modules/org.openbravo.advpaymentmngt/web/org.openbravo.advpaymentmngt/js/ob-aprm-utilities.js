@@ -51,10 +51,10 @@ OB.APRM.validateModifyPaymentPlanAmounts = function (item, validator, value, rec
       totalExpected = new BigDecimal("0"),
       totalReceived = new BigDecimal("0"),
       totalOutstanding = new BigDecimal("0"),
-      isNumber = isc.isA.Number
+      isNumber = isc.isA.Number,
       invoiceOutstanding = new BigDecimal(String(item.grid.view.parentWindow.views[0].getParentRecord().outstandingAmount));
 
-  if (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) != 0 && (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) != invoiceOutstanding.compareTo(new BigDecimal("0")))) {
+  if (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) !== 0 && (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) !== invoiceOutstanding.compareTo(new BigDecimal("0")))) {
 	  if (!OB.APRM.validateMPPUserWarnedSign) {
 		  OB.APRM.validateMPPUserWarnedSign = true;
 		  isc.warn(OB.I18N.getLabel('APRM_DifferentSignError'));
