@@ -133,7 +133,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     if (this.viewProperties.allowAdd) {
       this.addNewButton = isc.OBLinkButtonItem.create({
-        title: '[ '+OB.I18N.getLabel('OBUIAPP_AddNew')+' ]',
+        title: '[ ' + OB.I18N.getLabel('OBUIAPP_AddNew') + ' ]',
         action: function () {
           var newValues;
           view.viewGrid.endEditing();
