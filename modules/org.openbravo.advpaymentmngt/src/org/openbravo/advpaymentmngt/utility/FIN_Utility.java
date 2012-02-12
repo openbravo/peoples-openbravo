@@ -569,10 +569,21 @@ public class FIN_Utility {
    */
   public static Long getDaysToDue(Date date) {
     final Date now = DateUtils.truncate(new Date(), Calendar.DATE);
+    return getDaysBetween(now, date);
+  }
+
+  /**
+   * Returns the amount of days between two given dates
+   * 
+   * @param endDate
+   * @param beginDate
+   * @return
+   */
+  public static Long getDaysBetween(Date beginDate, Date endDate) {
     final TimeZone tz = TimeZone.getDefault();
-    final long nowDstOffset = (tz.inDaylightTime(now)) ? tz.getDSTSavings() : 0L;
-    final long dateDstOffset = (tz.inDaylightTime(date)) ? tz.getDSTSavings() : 0L;
-    return (date.getTime() + dateDstOffset - now.getTime() - nowDstOffset)
+    final long nowDstOffset = (tz.inDaylightTime(beginDate)) ? tz.getDSTSavings() : 0L;
+    final long dateDstOffset = (tz.inDaylightTime(endDate)) ? tz.getDSTSavings() : 0L;
+    return (endDate.getTime() + dateDstOffset - beginDate.getTime() - nowDstOffset)
         / DateUtils.MILLIS_PER_DAY;
   }
 

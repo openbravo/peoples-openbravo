@@ -42,6 +42,8 @@ isc.OBPickAndExecuteView.addProperties({
 
   viewGrid: null,
 
+  addNewButton: null,
+
   gridFields: [],
 
   initWidget: function () {
@@ -70,7 +72,13 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.prepareGridFields(this.viewProperties.fields);
 
-    this._addIconField();
+    if (this.viewProperties.showSelect) {
+      this._addIconField();
+    }
+
+    if (this.viewProperties.allowDelete) {
+      this._addDeleteField();
+    }
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
@@ -85,7 +93,14 @@ isc.OBPickAndExecuteView.addProperties({
       height: '*',
       cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
       dataSource: this.dataSource,
-      gridProperties: this.viewProperties.gridProperties
+      gridProperties: this.viewProperties.gridProperties,
+      selectionAppearance: (this.viewProperties.showSelect ? 'checkbox' : 'rowStyle'),
+      selectionType: 'simple',
+      canRemoveRecords: (this.viewProperties.allowDelete ? true : false),
+      saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
+      autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
+      neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
+      showGridSummary: this.showGridSummary
     });
 
     buttonLayout.push(isc.LayoutSpacer.create({}));
@@ -116,7 +131,29 @@ isc.OBPickAndExecuteView.addProperties({
     buttonLayout.push(cancelButton);
     buttonLayout.push(isc.LayoutSpacer.create({}));
 
+    if (this.viewProperties.allowAdd) {
+      this.addNewButton = isc.OBLinkButtonItem.create({
+        title: '[ '+OB.I18N.getLabel('OBUIAPP_AddNew')+' ]',
+        action: function () {
+          var newValues;
+          view.viewGrid.endEditing();
+          if (view.viewProperties.newFn) {
+            newValues = view.viewProperties.newFn(view.viewGrid);
+          }
+          view.viewGrid.startEditingNew(newValues);
+        }
+      });
+    }
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.pickandexecute.button.addnew', this.addNewButton);
+
     this.items = [this.viewGrid, isc.HLayout.create({
+      height: 1,
+      overflow: 'visible',
+      align: 'left',
+      width: '100%',
+      visibility: (this.addNewButton ? 'visible' : 'hidden'),
+      members: (this.addNewButton ? [this.addNewButton] : [])
+    }), isc.HLayout.create({
       align: 'center',
       width: '100%',
       height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -131,15 +168,26 @@ isc.OBPickAndExecuteView.addProperties({
     })];
 
     this.Super('initWidget', arguments);
-    this.viewGrid.fetchData();
+
+    if (this.viewGrid.saveLocally) {
+      // Using "disconnected" data to avoid update/remove/add operations to the back-end
+      // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..DataSource.fetchData
+      this.dataSource.fetchData(this.viewGrid.getFetchRequestParams(), this.viewGrid.ID + ".setData(data)");
+    } else {
+      this.viewGrid.fetchData();
+    }
   },
 
-  closeClick: function (refresh) {
+  closeClick: function (refresh, message) {
     var window = this.parentWindow;
 
     window.processLayout.hide();
     window.toolBarLayout.show();
     window.view.show();
+
+    if (message) {
+      window.view.messageBar.setMessage(message.severity, message.text);
+    }
 
     if (refresh) {
       window.refresh();
@@ -159,6 +207,14 @@ isc.OBPickAndExecuteView.addProperties({
       } else {
         result[i].validateOnExit = true;
       }
+
+      if (result[i].showGridSummary) {
+        if (!this.showGridSummary) {
+          this.showGridSummary = true;
+        }
+      } else {
+        result[i].showGridSummary = false;
+      }
     }
 
     this.gridFields = result;
@@ -171,7 +227,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.gridFields.unshift({
       name: '_pin',
-      type: 'text',
+      type: 'boolean',
       title: '&nbsp;',
       canEdit: false,
       canFilter: false,
@@ -195,6 +251,31 @@ isc.OBPickAndExecuteView.addProperties({
     });
   },
 
+  _addDeleteField: function () {
+    if (!this.gridFields) {
+      return;
+    }
+    this.gridFields.unshift({
+      name: '_delete',
+      type: 'boolean',
+      title: '&nbsp;',
+      canEdit: false,
+      canFilter: false,
+      canSort: false,
+      width: 32,
+      overflow: 'visible',
+      align: 'center',
+      cellAlign: 'center',
+      isRemoveField: true,
+      formatCellValue: function (value, record, rowNum, colNum, grid) {
+        return '<img src="web/org.openbravo.client.application/images/iconDelete.png" />';
+      },
+      formatEditorValue: function (value, record, rowNum, colNum, grid) {
+        return this.formatCellValue(arguments);
+      }
+    });
+  },
+
   // dummy required by OBStandardView.prepareGridFields
   setFieldFormProperties: function () {},
 
@@ -211,7 +292,8 @@ isc.OBPickAndExecuteView.addProperties({
         activeView = view.parentWindow && view.parentWindow.activeView,
         allProperties = activeView.getContextInfo(false, true, false, true) || {},
         selection = grid.getSelectedRecords() || [],
-        len = selection.length;
+        len = selection.length,
+        allRows = grid.data.allRows || grid.data;
 
     allProperties._selection = [];
     allProperties._allRows = [];
@@ -222,18 +304,19 @@ isc.OBPickAndExecuteView.addProperties({
       allProperties._selection.push(tmp);
     }
 
-    len = (grid.data.allRows && grid.data.allRows.length) || 0;
+
+    len = (allRows && allRows.length) || 0;
 
     for (i = 0; i < len; i++) {
-      tmp = isc.addProperties({}, grid.data.allRows[i], grid.getEditedRecord(grid.data.allRows[i]));
+      tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(allRows[i]));
       allProperties._allRows.push(tmp);
     }
 
     OB.RemoteCallManager.call(this.actionHandler, allProperties, {
       processId: this.processId,
       windowId: this.windowId
-    }, function () {
-      view.closeClick(true);
+    }, function (rpcResponse, data, rpcRequest) {
+      view.closeClick(true, (data && data.message));
     });
   }
 });
