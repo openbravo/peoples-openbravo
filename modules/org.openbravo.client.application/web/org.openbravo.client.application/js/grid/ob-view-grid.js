@@ -383,7 +383,8 @@ isc.OBViewGrid.addProperties({
   },
 
   getCellAlign: function (record, rowNum, colNum) {
-    if (rowNum === this.getEditRow()) {
+    var fld = this.getFields()[colNum];
+    if (!fld.clientClass && rowNum === this.getEditRow()) {
       return 'center';
     }
     return this.Super('getCellAlign', arguments);
