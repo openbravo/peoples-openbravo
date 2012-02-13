@@ -1,7 +1,7 @@
 (function (OBPOS) {
-  
+
   var Format = {};
-  
+
   Format.formatNumber = function (num, options) {
     n = num.toFixed(options.decimals);
     x = n.split('.');
@@ -17,9 +17,9 @@
       return x1 + x2;
     }
   };
-  
 
-  
+
+
   OBPOS.Format = Format;
-  
+
 }(window.OBPOS));
