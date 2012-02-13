@@ -166,10 +166,24 @@ CREATE OR REPLACE FUNCTION to_number
 text
 )
 RETURNS NUMERIC AS '
+DECLARE
+  v_Pos INTEGER;
+  v_Mant NUMERIC;
+  v_Exp NUMERIC;
+  v_Res NUMERIC;
 BEGIN
-RETURN to_number($1, ''S99999999999999D9999999999'');
-EXCEPTION 
-  WHEN OTHERS THEN 
+  v_Pos := position(''E'' in upper($1));
+  IF v_Pos = 0 THEN
+    -- this is the old behaviour
+    RETURN to_number($1, ''S99999999999999D999999'');
+  ELSE
+    v_Mant := substring($1 from 1 for v_Pos - 1); -- Mantissa, implicit cast to data type NUMERIC
+    v_Exp := substring($1 from v_Pos + 1); -- Exponent, implicit cast to data type NUMERIC
+    v_Res := v_Mant * power(10, v_Exp);
+    RETURN v_Res;
+  END IF;
+EXCEPTION
+  WHEN OTHERS THEN
     RETURN NULL;
 END;
 ' LANGUAGE 'plpgsql' IMMUTABLE
