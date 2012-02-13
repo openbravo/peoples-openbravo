@@ -124,6 +124,12 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         if (windowDefinition.parentTabSetState && view.parentTabSet) {
           view.parentTabSet.setState(windowDefinition.parentTabSetState);
           view.parentTabSet.setHeight(windowDefinition.parentTabSetHeight);
+          // in this case the visibility of the top part of the parent view has to be set
+          // as it can be hidden previously
+          // https://issues.openbravo.com/view.php?id=18951
+          if (view.parentView && !view.parentView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.parentTabSetState) {
+            view.parentView.members[0].show();
+          }
         } else if (windowDefinition.childTabSetState && view.childTabSet) {
           // in this case the visibility of the top part of the parent view has to be set
           // as it can be hidden previously
