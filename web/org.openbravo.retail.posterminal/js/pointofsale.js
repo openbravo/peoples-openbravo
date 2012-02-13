@@ -6,12 +6,11 @@
     this.tbodyCat = tbodyCat;
     this.tbodyProd = tbodyProd;
     this.selectedCategory = null;
-    this.observers = [];
+    this.selectListeners = [];
 
-    // this.qCategories = new OBPOS.Query('from OBPOS_CategoriesImage where $readableCriteria and parentPOSCategory.id = :pOSCategory order by name');  
-    this.qRootCategories = new OBPOS.Query('from OBPOS_CategoriesImage where $readableCriteria and parentPOSCategory.id is null order by name');
+    this.qRootCategories = new OBPOS.Query('from OBPOS_CategoryView where $readableCriteria and isCatalog = true order by pOSLine, name');
 
-    this.qProducts = new OBPOS.Query('from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :priceListVersion and pOSCategory.id = :pOSCategory and isCatalog = true ' + 'order by pOSLine, name');
+    this.qProducts = new OBPOS.Query('from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :priceListVersion and productCategory.id = :productCategory and isCatalog = true order by pOSLine, name');
   };
 
   Sales.Catalog.prototype.reloadCategories = function () {
@@ -44,11 +43,11 @@
     });
   }
 
-  Sales.Catalog.prototype.reloadProducts = function (posCategory, posCategoryName) { // 
+  Sales.Catalog.prototype.reloadProducts = function (category, categoryName) { // 
     var me = this;
     this.qProducts.exec({
-      'priceListVersion': Sales.config.pricelistversion.id,
-      'pOSCategory': posCategory
+      'priceListVersion': SalesWindow.Terminal.pricelistversion.id,
+      'productCategory': category
     }, function (data) {
       if (data.exception) {
         alert(data.exception.message);
@@ -58,11 +57,11 @@
         if (me.selectedCategory) {
           $('#catrow-' + me.selectedCategory).css('background-color', '').css('color', '');
         }
-        me.selectedCategory = posCategory;
+        me.selectedCategory = category;
         // enable current category
         $('#catrow-' + me.selectedCategory).css('background-color', '#049cdb').css('color', '#fff');
 
-        $('#category').text(posCategoryName);
+        $('#category').text(categoryName);
         var table = $('#productbody').empty();
         for (var i in data) {
           var tr = $('<tr/>');
@@ -76,8 +75,9 @@
           })));
           tr.click((function (p) {
             return function () {
-              for (var i = 0, max = me.observers.length; i < max; i++) {
-                me.observers[i](me, p);
+              // Fire Select Listener event
+              for (var i = 0, max = me.selectListeners.length; i < max; i++) {
+                me.selectListeners[i](me, p);
               }
             };
           }(data[i])));
@@ -88,8 +88,8 @@
     });
   }
 
-  Sales.Catalog.prototype.addEventSelect = function (evt) {
-    this.observers.push(evt);
+  Sales.Catalog.prototype.addSelectListener = function (l) {
+    this.selectListeners.push(l);
   }
 
   function getThumbnail(base64, contentType) {
@@ -104,92 +104,106 @@
   }
 
 
-  Sales.Terminal = function (elem) {
-    this.elem = elem;
-    this.observers = [];
+  Sales.Terminal = function (elemt, elems) {
+    this.elemt = elemt;
+    this.elems = elems;
+    this.readyListeners = [];
+    this.terminal = null;
+    this.bplocation = null;
+    this.location = null;
+    this.pricelist = null;
+    this.pricelistversion = null;
   }
 
-  Sales.Terminal.prototype.addObserver = function (o) {
-    for (var i = 0, max = this.observers.length; i < max; i++) {
-      this.observers[i].init();
+  Sales.Terminal.prototype.addReadyListener = function (l) {
+    this.readyListeners.push(l);
+  }
+
+  Sales.Terminal.prototype.fireReadyEvent = function (o) {
+    for (var i = 0, max = this.readyListeners.length; i < max; i++) {
+      this.readyListeners[i](this);
     }
   }
-  Sales.Terminal.prototype.init = function () {}
+  Sales.Terminal.prototype.init = function (terminal) {
+    this.terminal = terminal;
+    this.printStatus();
+  }
 
-  Sales.Terminal.prototype.printStatus = function () {}
+  Sales.Terminal.prototype.printStatus = function () {
 
+    var me = this;
 
-  function printStatus() {
-
-    if (!Sales.config.bplocation) {
+    if (!this.bplocation) {
       new OBPOS.Query('from BusinessPartnerLocation where id = (select min(id) from BusinessPartnerLocation where businessPartner.id = :bp and $readableCriteria)').exec({
-        bp: Sales.terminal.businessPartner
+        bp: this.terminal.businessPartner
       }, function (data) {
         if (data[0]) {
-          Sales.config.bplocation = data[0];
-          printStatus();
+          me.bplocation = data[0];
+          me.printStatus();
         } else {
-          Sales.config.bplocation = {};
+          me.bplocation = {};
         }
       });
     }
 
-    if (!Sales.config.location) {
+    if (!this.location) {
       new OBPOS.Query('from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)').exec({
-        org: Sales.terminal.organization
+        org: this.terminal.organization
       }, function (data) {
         if (data[0]) {
-          Sales.config.location = data[0];
-          printStatus();
+          me.location = data[0];
+          me.printStatus();
         } else {
-          Sales.config.location = {};
+          me.location = {};
         }
       });
     }
 
-    if (!Sales.config.pricelist) {
+    if (!this.pricelist) {
       new OBPOS.Query('from PricingPriceList where id =:pricelist and $readableCriteria').exec({
-        pricelist: Sales.terminal.priceList
+        pricelist: this.terminal.priceList
       }, function (data) {
         if (data[0]) {
-          Sales.config.pricelist = data[0];
-          printStatus();
+          me.pricelist = data[0];
+          me.printStatus();
         } else {
-          Sales.config.pricelist = {};
+          me.pricelist = {};
         }
       });
     }
 
-    if (!Sales.config.pricelistversion) {
+    if (!this.pricelistversion) {
       new OBPOS.Query('select plv.id AS id from PricingPriceListVersion AS plv where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)').exec({
-        pricelist: Sales.terminal.priceList
+        pricelist: this.terminal.priceList
       }, function (data) {
         if (data[0]) {
-          Sales.config.pricelistversion = data[0];
-          printStatus();
-          readyData();
+          me.pricelistversion = data[0];
+          me.printStatus();
+          me.fireReadyEvent();
         } else {
-          Sales.config.pricelistversion = {};
+          me.pricelistversion = {};
         }
       });
     }
 
-    var line1 = Sales.terminal['client._identifier'] + " | " + Sales.terminal['organization._identifier'];
-    if (Sales.config.pricelist) {
-      line1 += Sales.config.pricelist._identifier + " | " + Sales.config.pricelist['currency._identifier'];
+    var line1 = this.terminal['client._identifier'] + " | " + this.terminal['organization._identifier'];
+    if (this.pricelist) {
+      line1 += this.pricelist._identifier + " | " + this.pricelist['currency._identifier'];
     }
 
     var line2 = "";
-    if (Sales.config.location) {
-      line2 += Sales.config.location._identifier;
+    if (this.location) {
+      line2 += this.location._identifier;
     }
-    $("#status").html(line1 + "<br/>" + line2);
+
+    this.elemt.text(this.terminal._identifier);
+    this.elems.html(line1 + "<br/>" + line2);
   }
 
 
   // Order list
   Sales.OrderTable = function (tbody) {
-    this.observers = [];
+    this.changeListeners = [];
     this.tbody = tbody;
 
     this.render = function (l) {
@@ -215,7 +229,7 @@
   Sales.OrderTable.prototype.clear = function () {
     this.lines = [];
     this.tbody.empty();
-    this.notify();
+    this.fireChangeEvent();
   }
 
   Sales.OrderTable.prototype.addProduct = function (p) {
@@ -230,16 +244,16 @@
   Sales.OrderTable.prototype.addLine = function (l) {
     this.lines.push(l);
     this.tbody.append(this.render(l));
-    this.notify();
+    this.fireChangeEvent();
   }
 
-  Sales.OrderTable.prototype.addObserver = function (o) {
-    this.observers.push(o);
+  Sales.OrderTable.prototype.addChangeListener = function (l) {
+    this.changeListeners.push(l);
   }
 
-  Sales.OrderTable.prototype.notify = function () {
-    for (var i = 0, max = this.observers.length; i < max; i++) {
-      this.observers[i].notify(this.lines);
+  Sales.OrderTable.prototype.fireChangeEvent = function () {
+    for (var i = 0, max = this.changeListeners.length; i < max; i++) {
+      this.changeListeners[i](this.lines);
     }
   }
 
@@ -260,27 +274,38 @@
     }
   }
 
-  Sales.OrderTotal.prototype.notify = function (lines) {
+  Sales.OrderTotal.prototype.calculate = function (lines) {
     this.render(lines);
   }
 
   // window definition
   var SalesWindow = {};
 
-  SalesWindow.catalog = new Sales.Catalog($('#categorybody'), $('#productbody'));
+  SalesWindow.Terminal = new Sales.Terminal($("#terminal"), $("#status")); // Global, used by other objects...
+  SalesWindow.Catalog = new Sales.Catalog($('#categorybody'), $('#productbody'));
   SalesWindow.OrderTable = new Sales.OrderTable($('#ordertable'));
   SalesWindow.OrderSummary = new Sales.OrderTotal($('#totalnet'));
 
-  SalesWindow.catalog.addEventSelect(new function (source, product) {
+  SalesWindow.Terminal.addReadyListener(function (t) {
+    // executed when all terminal data is loaded
+    newOrder();
+  });
+  SalesWindow.Catalog.addSelectListener(function (source, product) {
     SalesWindow.OrderTable.addProduct(product);
   });
-  SalesWindow.OrderTable.addObserver(SalesWindow.OrderSummary);
+  SalesWindow.OrderTable.addChangeListener(function (lines) {
+    SalesWindow.OrderSummary.calculate(lines);
+  });
   SalesWindow.OrderTable.clear();
 
   $('#btnnew').click(function () {
-    SalesWindow.OrderTable.clear();
-    SalesWindow.catalog.reloadCategories();
+    newOrder();
   });
+
+  function newOrder() {
+    SalesWindow.OrderTable.clear();
+    SalesWindow.Catalog.reloadCategories();
+  }
 
   $(document).ready(function () {
 
@@ -292,25 +317,13 @@
       if (data.exception) {
         location = '../org.openbravo.client.application.mobile/login.jsp';
       } else if (data[0]) {
-        Sales.terminal = data[0];
-        Sales.config = {};
-
-        $("#terminal").text(Sales.terminal._identifier);
-
-        printStatus();
+        SalesWindow.Terminal.init(data[0]);
       } else {
         alert("Terminal does not exists: " + t);
       }
     });
 
   });
-
-  function readyData() {
-    // executed when all config data is loaded
-    SalesWindow.OrderTable.clear();
-    SalesWindow.catalog.reloadCategories();
-  }
-
 
   // Public Sales
   OBPOS.Sales = Sales;
