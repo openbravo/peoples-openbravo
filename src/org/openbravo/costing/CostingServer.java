@@ -124,4 +124,109 @@ public class CostingServer {
   public BigDecimal getTransactionCost() {
     return trxCost;
   }
+
+  /**
+   * Transaction types implemented on the cost engine.
+   */
+  public enum TrxType {
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, BOMPart, BOMProduct, Manufacturing, Unknown;
+    /**
+     * Given a Material Management transaction returns its type.
+     */
+    static TrxType getTrxType(MaterialTransaction transaction) {
+      if (transaction.getGoodsShipmentLine() != null) {
+        // Receipt / Shipment
+        org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
+            .getGoodsShipmentLine().getShipmentReceipt();
+        if (inout.isSalesTransaction()) {
+          // Shipment
+          if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentNegative;
+          } else {
+            log4j.debug("Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Shipment;
+          }
+        } else {
+          // Receipt
+          if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptNegative;
+          } else {
+            log4j.debug("Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Receipt;
+          }
+        }
+      } else if (transaction.getPhysicalInventoryLine() != null) {
+        // Physical Inventory
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Physical inventory, increments stock: "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryIncrease;
+        } else {
+          log4j.debug("Physical inventory, decreases stock "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryDecrease;
+        }
+      } else if (transaction.getMovementLine() != null) {
+        // Internal movement
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Internal Movement to: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementTo;
+        } else {
+          log4j.debug("Internal Movement from: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementFrom;
+        }
+      } else if (transaction.getInternalConsumptionLine() != null) {
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Negative Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalConsNegative;
+        } else {
+          log4j.debug("Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalCons;
+        }
+      } else if (transaction.getProductionLine() != null) {
+        // Production Line
+        if (transaction.getProductionLine().getProductionPlan().getProduction()
+            .isSalesTransaction()) {
+          // BOM Production
+          if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+            log4j.debug("Produced BOM product: " + transaction.getProductionLine().getIdentifier());
+            return BOMProduct;
+          } else {
+            log4j.debug("Used BOM Part: " + transaction.getProductionLine().getIdentifier());
+            // Used parts
+            return BOMPart;
+          }
+        } else {
+          log4j.debug("Manufacturing Product");
+          // Work Effort
+          // TODO: Pending to implement manufacturing cost management.
+          return Manufacturing;
+        }
+      }
+      return Unknown;
+    }
+
+  }
 }
