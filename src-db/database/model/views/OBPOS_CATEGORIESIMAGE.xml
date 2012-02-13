@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW OBPOS_CATEGORIESIMAGE">
-    <view name="OBPOS_CATEGORIESIMAGE"><![CDATA[SELECT c.obpos_categories_id, c.ad_client_id, c.ad_org_id, c.isactive, c.created, c.createdby, c.updated, c.updatedby, c.name, c.parent_obpos_categories_id, img.binarydata
-FROM obpos_categories c
-LEFT JOIN ad_image img ON img.ad_image_id = c.ad_image_id]]></view>
-  </database>

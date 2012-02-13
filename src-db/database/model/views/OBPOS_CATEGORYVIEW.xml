@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="VIEW OBPOS_CATEGORYVIEW">
+    <view name="OBPOS_CATEGORYVIEW"><![CDATA[SELECT c.m_product_category_id, c.ad_client_id, c.ad_org_id, c.isactive, c.created, c.createdby, c.updated, c.updatedby, c.name, c.em_obpos_catalog, c.em_obpos_line, img.binarydata
+FROM m_product_category c
+LEFT JOIN ad_image img ON img.ad_image_id = c.em_obpos_image_id]]></view>
+  </database>

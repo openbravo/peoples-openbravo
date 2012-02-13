@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW OBPOS_PRODUCTVIEW">
-    <view name="OBPOS_PRODUCTVIEW"><![CDATA[SELECT p.m_product_id, p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, p.value, p.name, p.upc, p.c_uom_id, p.c_taxcategory_id, p.m_attributeset_id, p.em_obpos_categories_id, p.em_obpos_catalog, p.em_obpos_line, p.em_obpos_productaux_id, p.em_obpos_scale, p.em_obpos_attributes, pp.m_pricelist_version_id, pp.pricelist, img.binarydata
+    <view name="OBPOS_PRODUCTVIEW"><![CDATA[SELECT p.m_product_id, p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, p.value, p.name, p.upc, p.c_uom_id, p.c_taxcategory_id, p.m_attributeset_id, p.m_product_category_id, p.em_obpos_catalog, p.em_obpos_line, p.em_obpos_productaux_id, p.em_obpos_scale, p.em_obpos_attributes, pp.m_pricelist_version_id, pp.pricelist, img.binarydata
 FROM m_productprice pp, m_product p
 LEFT JOIN ad_image img ON img.ad_image_id = p.ad_image_id
 WHERE p.m_product_id = pp.m_product_id]]></view>
