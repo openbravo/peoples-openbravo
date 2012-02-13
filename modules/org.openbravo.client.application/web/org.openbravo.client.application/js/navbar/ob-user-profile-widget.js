@@ -311,7 +311,12 @@ isc.OBUserProfile.addProperties({
         // is handled as an exception is returned anyway
         if (data.result === OB.Constants.SUCCESS) {
           // reload the window to reflect the changed role etc.
-          window.location.href = OB.Utilities.getLocationUrlWithoutFragment();
+
+          // commented line causes this:
+          // https://issues.openbravo.com/view.php?id=19689
+          // https://issues.openbravo.com/view.php?id=19659
+          // window.location.href = OB.Utilities.getLocationUrlWithoutFragment();
+          window.location.replace(OB.Utilities.getLocationUrlWithoutFragment());
         }
       },
 
