@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
@@ -61,10 +62,13 @@ public abstract class CostingAlgorithm {
    *          Dimension values to calculate the cost based on them. A null value means that the
    *          dimension is not used.
    */
-  public void init(MaterialTransaction _transaction,
-      HashMap<CostDimension, BaseOBObject> _costDimensions) {
+  public void init(MaterialTransaction _transaction) {
     this.transaction = _transaction;
-    this.costDimensions = _costDimensions;
+    // FIXME: dimensions need to be assigned based on costDimensionRule.
+    costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
+        .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
+    costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+
     this.costOrg = (Organization) costDimensions.get(CostDimension.LegalEntity);
     if (costOrg == null) {
       // Cost calculated at client level. Records stored in asterisk organization.

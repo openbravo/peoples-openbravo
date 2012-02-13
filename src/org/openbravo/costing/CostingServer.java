@@ -20,14 +20,11 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.OBClassLoader;
-import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -39,7 +36,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
  */
 public class CostingServer {
   private MaterialTransaction transaction;
-  private HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
   private BigDecimal trxCost;
   protected static Logger log4j = Logger.getLogger(CostingServer.class);
 
@@ -52,10 +48,6 @@ public class CostingServer {
 
   private void init() {
     // costDimensionRule = getCostDimensionRule();
-    // FIXME: dimensions need to be assigned based on costDimensionRule.
-    costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
-        .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
-    costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     trxCost = transaction.getTransactionCost();
   }
 
@@ -72,7 +64,7 @@ public class CostingServer {
       OBContext.setAdminMode(false);
       // Get needed algorithm. And set it in the M_Transaction.
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-      costingAlgorithm.init(transaction, costDimensions);
+      costingAlgorithm.init(transaction);
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
