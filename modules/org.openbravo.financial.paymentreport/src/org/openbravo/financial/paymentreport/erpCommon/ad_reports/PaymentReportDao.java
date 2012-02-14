@@ -128,6 +128,11 @@ public class PaymentReportDao {
       hsqlScript.append(" is not null or invps is not null ");
       hsqlScript.append(") ");
 
+      hsqlScript.append(" and fpsd.");
+      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
+      hsqlScript.append(".id in ");
+      hsqlScript.append(concatOrganizations(OBContext.getOBContext().getReadableOrganizations()));
+
       // organization + include sub-organization
       if (!strOrg.isEmpty()) {
         if (!strInclSubOrg.equalsIgnoreCase("include")) {
@@ -1159,5 +1164,18 @@ public class PaymentReportDao {
       bp = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
     }
     return bp;
+  }
+
+  private String concatOrganizations(String[] orgs) {
+    String concatOrgs = "";
+    for (int i = 0; i < orgs.length; i++) {
+      concatOrgs = concatOrgs.concat("', '" + orgs[i]);
+    }
+    if (!concatOrgs.equalsIgnoreCase("")) {
+      concatOrgs = concatOrgs.substring(3);
+      concatOrgs = "(" + concatOrgs + "')";
+    }
+
+    return concatOrgs;
   }
 }
