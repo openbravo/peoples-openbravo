@@ -81,7 +81,7 @@ public class DateUtility {
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-    return (outputFormat.parse(strDate));
+    return outputFormat.parse(strDate);
   }
 
   /**
@@ -107,7 +107,7 @@ public class DateUtility {
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-    return (outputFormat.parse(dateTime));
+    return outputFormat.parse(dateTime);
   }
 
   /**
@@ -202,7 +202,7 @@ public class DateUtility {
     final int weekday = Day.get(Calendar.DAY_OF_WEEK);
     // Gets the number of the day of the week: 1-Sunday, 2-Monday, 3-Tuesday, 4-Wednesday,
     // 5-Thursday, 6-Friday, 7-Saturday
-    return (weekday == 1 || weekday == 7);
+    return weekday == 1 || weekday == 7;
   }
 
   /**
@@ -220,7 +220,7 @@ public class DateUtility {
       throws ParseException {
     final Date date1 = dateFormatter.parse(strDate1);
     final Date date2 = dateFormatter.parse(strDate2);
-    return (date1.after(date2));
+    return date1.after(date2);
   }
 
 }
