@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.DateUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -76,51 +77,26 @@ public class FIN_Utility {
   private static AdvPaymentMngtDao dao;
 
   /**
-   * Parses the string to a date using the dateFormat.java property.
-   * 
-   * @param strDate
-   *          String containing the date
-   * @return the date
+   * @see DateUtility#getDate(String)
    */
   public static Date getDate(String strDate) {
-    if (strDate.equals(""))
-      return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      return (outputFormat.parse(strDate));
+      return DateUtility.getDate(strDate);
     } catch (ParseException e) {
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error parsing date", e);
       return null;
     }
+
   }
 
   /**
-   * Parses the string to a date with time using the dateTimeFormat defined in Openbravo.properties.
-   * If the string parameter does not have time include it will add the current hours, minutes and
-   * seconds.
-   * 
-   * @param strDate
-   *          String date.
-   * @return the date with time.
+   * @see DateUtility#getDateTime(String)
    */
   public static Date getDateTime(String strDate) {
-    String dateTime = strDate;
-    Calendar cal = Calendar.getInstance();
-    if (!strDate.contains(":")) {
-      dateTime = strDate + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE)
-          + ":" + cal.get(Calendar.SECOND);
-    }
-    if (dateTime.equals(""))
-      return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateTimeFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      return (outputFormat.parse(dateTime));
+      return DateUtility.getDateTime(strDate);
     } catch (ParseException e) {
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error parsing date", e);
       return null;
     }
   }
