@@ -41,7 +41,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -68,7 +67,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -259,36 +257,10 @@ public class Utility {
   }
 
   /**
-   * Returns an String with the date in the <i>dateFormat.java</i> format defined in
-   * Openbravo.properties
-   * 
-   * @see #formatDate(Date, String)
-   * 
-   * @param date
-   *          Date to be formatted.
-   * @param pattern
-   *          Format expected for the output.
-   * @return String formatted.
-   */
-  public static String formatDate(Date date) {
-    final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
-    return dateFormatter.format(date);
-  }
-
-  /**
-   * Returns an String with the date in the specified format
-   * 
-   * @param date
-   *          Date to be formatted.
-   * @param pattern
-   *          Format expected for the output.
-   * @return String formatted.
+   * @see DateUtility#formatDate(Date, String)
    */
   public static String formatDate(Date date, String pattern) {
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
-    return dateFormatter.format(date);
+    return DateUtility.formatDate(date, pattern);
   }
 
   /**
@@ -1944,139 +1916,44 @@ public class Utility {
   }
 
   /**
-   * Determines the labor days between two dates
-   * 
-   * @param strDate1
-   *          Date 1.
-   * @param strDate2
-   *          Date 2.
-   * @param DateFormatter
-   *          Format of the dates.
-   * @return strLaborDays as the number of days between strDate1 and strDate2.
+   * @see DateUtility#calculateLaborDays(String, String, DateFormat)
    */
   public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    String strLaborDays = "";
-    if (strDate1 != null && !strDate1.equals("") && strDate2 != null && !strDate2.equals("")) {
-      Integer LaborDays = 0;
-      if (Utility.isBiggerDate(strDate1, strDate2, DateFormatter)) {
-        do {
-          strDate2 = Utility.addDaysToDate(strDate2, "1", DateFormatter); // Adds a day to the Date
-          // 2 until it
-          // reaches the Date 1
-          if (!Utility.isWeekendDay(strDate2, DateFormatter))
-            LaborDays++; // If it is not a weekend day, it adds a
-          // day to the labor days
-        } while (!strDate2.equals(strDate1));
-      } else {
-        do {
-          strDate1 = Utility.addDaysToDate(strDate1, "1", DateFormatter); // Adds a day to the Date
-          // 1 until it
-          // reaches the Date 2
-          if (!Utility.isWeekendDay(strDate1, DateFormatter))
-            LaborDays++; // If it is not a weekend day, it adds a
-          // day to the labor days
-        } while (!strDate1.equals(strDate2));
-      }
-      strLaborDays = LaborDays.toString();
-    }
-    return strLaborDays;
+    return DateUtility.calculateLaborDays(strDate1, strDate2, DateFormatter);
   }
 
   /**
-   * Adds an integer number of days to a given date
-   * 
-   * @param strDate
-   *          Start date.
-   * @param strDays
-   *          Number of days to add.
-   * @param DateFormatter
-   *          Format of the date.
-   * @return strFinalDate as the sum of strDate plus strDays.
+   * @see DateUtility#addDaysToDate(String, int, DateFormat)
    */
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter)
       throws ParseException {
-    String strFinalDate = "";
-    if (strDate != null && !strDate.equals("") && strDays != null && !strDays.equals("")) {
-      final Calendar FinalDate = Calendar.getInstance();
-      FinalDate.setTime(DateFormatter.parse(strDate)); // FinalDate equals
-      // to strDate
-      FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); // FinalDate
-      // equals
-      // to
-      // strDate
-      // plus one
-      // day
-      strFinalDate = DateFormatter.format(FinalDate.getTime());
+    if (strDays == null || "".equals(strDays)) {
+      return "";
     }
-    return strFinalDate;
+    return DateUtility.addDaysToDate(strDate, Integer.parseInt(strDays), DateFormatter);
   }
 
   /**
-   * Determines the format of the date
-   * 
-   * @param vars
-   *          Global variables.
-   * @return DateFormatter as the format of the date.
+   * @see DateUtility#getDateFormatter(VariablesSecureApp)
    */
   public static DateFormat getDateFormatter(VariablesSecureApp vars) {
-    String strFormat = vars.getSessionValue("#AD_SqlDateFormat").toString();
-    strFormat = strFormat.replace('Y', 'y'); // Java accepts 'yy' for the
-    // year
-    strFormat = strFormat.replace('D', 'd'); // Java accepts 'dd' for the
-    // day of the date
-    final DateFormat DateFormatter = new SimpleDateFormat(strFormat);
-    return DateFormatter;
+    return DateUtility.getDateFormatter(vars);
   }
 
   /**
-   * Determines if a day is a day of the weekend, i.e., Saturday or Sunday
-   * 
-   * @param strDay
-   *          Given Date.
-   * @param DateFormatter
-   *          Format of the date.
-   * @return true if the date is a Sunday or a Saturday.
+   * @see DateUtility#isWeekendDay(String, DateFormat)
    */
   public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException {
-    final Calendar Day = Calendar.getInstance();
-    Day.setTime(DateFormatter.parse(strDay));
-    final int weekday = Day.get(Calendar.DAY_OF_WEEK); // Gets the number of
-    // the day of the
-    // week: 1-Sunday,
-    // 2-Monday,
-    // 3-Tuesday,
-    // 4-Wednesday,
-    // 5-Thursday,
-    // 6-Friday,
-    // 7-Saturday
-    if (weekday == 1 || weekday == 7)
-      return true; // 1-Sunday, 7-Saturday
-    return false;
+    return DateUtility.isWeekendDay(strDay, DateFormatter);
   }
 
   /**
-   * Determines if a date 1 is bigger than a date 2
-   * 
-   * @param strDate1
-   *          Date 1.
-   * @param strDate2
-   *          Date 2.
-   * @param DateFormatter
-   *          Format of the dates.
-   * @return true if strDate1 is bigger than strDate2.
+   * @see DateUtility#isBiggerDate(String, String, DateFormat)
    */
   public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    final Calendar Date1 = Calendar.getInstance();
-    Date1.setTime(DateFormatter.parse(strDate1));
-    final long MillisDate1 = Date1.getTimeInMillis();
-    final Calendar Date2 = Calendar.getInstance();
-    Date2.setTime(DateFormatter.parse(strDate2));
-    final long MillisDate2 = Date2.getTimeInMillis();
-    if (MillisDate1 > MillisDate2)
-      return true; // Date 1 is bigger than Date 2
-    return false;
+    return DateUtility.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
