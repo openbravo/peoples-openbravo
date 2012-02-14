@@ -41,6 +41,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     case InventoryIncrease:
     case IntMovementTo:
     case InternalConsNegative:
+    case InternalConsVoid:
     case BOMProduct:
       Costing currentCosting = getProductCost();
       BigDecimal newCost = null;
