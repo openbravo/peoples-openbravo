@@ -501,6 +501,11 @@ isc.OBViewGrid.addProperties({
       this.deleteSelectedParentRecordFilter(localState);
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
+      
+      // Focus on the first filterable item
+      if (this.view.isActiveView()) {
+        this.focusInFirstFilterEditor();  
+      }      
     }
 
     if (localState.noFilterClause) {
