@@ -60,7 +60,6 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
     isc.OBSearchItem.openSearchItem = null;
   };
 }(this)); // window
-
 isc.OBSearchItem.addProperties({
   operator: 'iContains',
   showPickerIcon: true,

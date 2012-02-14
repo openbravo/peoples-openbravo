@@ -238,7 +238,7 @@ function compare(number1, operator, number2) {
 
 /**
  * Compares two Strings using the operator.
- * If both numbers are negative it compares using the absolute value. 
+ * If both numbers are negative it compares using the absolute value.
  */
 
 function compareWithSign(number1, operator, number2) {
@@ -597,7 +597,7 @@ function updateAll(drivenByGrid) {
 }
 
 /**
- * 
+ *
  * @param allowCreditGeneration true if it is allowed to not select any pending payment if actualPayment amount is not
  *        zero.
  * @return true if validations are fine.
