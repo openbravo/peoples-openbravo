@@ -97,6 +97,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="TRXPROCESSDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault><![CDATA[CREATED]]></onCreateDefault>
+      </column>
+      <column name="M_COSTING_ALGORITHM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
         <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
@@ -111,6 +119,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="M_TRANSACTION_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_COSTING_ALGORITHM" name="M_TRANSACTION_COSTINGALGORITHM">
+        <reference local="M_COSTING_ALGORITHM_ID" foreign="M_COSTING_ALGORITHM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_TRANSACTION_M_ATTRIBUTESETIN">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>

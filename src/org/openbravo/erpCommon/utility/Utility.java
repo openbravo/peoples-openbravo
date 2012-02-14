@@ -68,6 +68,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -84,6 +85,7 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
@@ -257,6 +259,25 @@ public class Utility {
   }
 
   /**
+   * Returns an String with the date in the <i>dateFormat.java</i> format defined in
+   * Openbravo.properties
+   * 
+   * @see #formatDate(Date, String)
+   * 
+   * @param date
+   *          Date to be formatted.
+   * @param pattern
+   *          Format expected for the output.
+   * @return String formatted.
+   */
+  public static String formatDate(Date date) {
+    final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
+    return dateFormatter.format(date);
+  }
+
+  /**
    * Returns an String with the date in the specified format
    * 
    * @param date
@@ -288,6 +309,25 @@ public class Utility {
       String strTab, String recordId) throws ServletException {
     return UtilityData.hasTabAttachments(conn, Utility.getContext(conn, vars, "#User_Client", ""),
         Utility.getContext(conn, vars, "#AccessibleOrgTree", ""), strTab, recordId);
+  }
+
+  /**
+   * Translate the given code into some message from the application dictionary. It searches first
+   * in AD_Message table and if there are not matchings then in AD_Element table.
+   * 
+   * It uses DalConnectionProvider to get the ConnectionProvider and the context's language to
+   * translate the message.
+   * 
+   * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
+   * 
+   * @param strCode
+   *          String with the search key to search.
+   * @return String with the translated message.
+   */
+  public static String messageBD(String strCode) {
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    return messageBD(conn, strCode, language);
   }
 
   /**
@@ -1012,6 +1052,22 @@ public class Utility {
       retValue = false;
 
     return retValue;
+  }
+
+  /**
+   * Parse the text searching @ parameters to translate.
+   * 
+   * @param text
+   *          String with the text to translate.
+   * @return String translated.
+   */
+  public static String parseTranslation(String text) {
+    // final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    final VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser()
+        .getId(), OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+        .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+    final String language = OBContext.getOBContext().getLanguage().getLanguage();
+    return parseTranslation(new DalConnectionProvider(false), vars, null, language, text);
   }
 
   /**

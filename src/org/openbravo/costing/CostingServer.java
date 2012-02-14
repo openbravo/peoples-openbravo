@@ -20,14 +20,11 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.OBClassLoader;
-import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -39,7 +36,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
  */
 public class CostingServer {
   private MaterialTransaction transaction;
-  private HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
   private BigDecimal trxCost;
   protected static Logger log4j = Logger.getLogger(CostingServer.class);
 
@@ -52,10 +48,6 @@ public class CostingServer {
 
   private void init() {
     // costDimensionRule = getCostDimensionRule();
-    // FIXME: dimensions need to be assigned based on costDimensionRule.
-    costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
-        .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
-    costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     trxCost = transaction.getTransactionCost();
   }
 
@@ -63,7 +55,7 @@ public class CostingServer {
    * Calculates and stores in the database the cost of the transaction.
    * 
    */
-  public void process() {
+  public void process() throws OBException {
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -72,17 +64,12 @@ public class CostingServer {
       OBContext.setAdminMode(false);
       // Get needed algorithm. And set it in the M_Transaction.
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-      costingAlgorithm.init(transaction, costDimensions);
+      costingAlgorithm.init(transaction);
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
       if (trxCost == null) {
-        trxCost = CostingUtils.getStandardCost(transaction.getProduct(),
-            transaction.getCreationDate(), costDimensions);
-      }
-      // FIXME: Check why is still null and throw an error message stopping the processes
-      if (trxCost == null) {
-        trxCost = BigDecimal.ZERO;
+        throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }
 
       trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision().intValue(),
@@ -101,14 +88,20 @@ public class CostingServer {
   }
 
   private CostingAlgorithm getCostingAlgorithm() {
-    try {
-      // Algorithm class is retrieved from costDimensionRule
-      String strAlgorithmClass = "org.openbravo.costing.DummyAlgorithm";
+    // Algorithm class is retrieved from costDimensionRule
+    // FIXME: temporarily hard code uuid of dummy algorithm
+    String strAlgorithmId = "B069080A0AE149A79CF1FA0E24F16AB6";
+    org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = OBDal.getInstance().get(
+        org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class, strAlgorithmId);
+    transaction.setCostingAlgorithm(costAlgorithm);
 
-      final Class<?> clz = OBClassLoader.getInstance().loadClass(strAlgorithmClass);
+    try {
+      final Class<?> clz = OBClassLoader.getInstance().loadClass(costAlgorithm.getJavaClassName());
       return (CostingAlgorithm) clz.newInstance();
     } catch (Exception e) {
-      throw new OBException(e);
+      log4j.error("Exception loading Algorithm class: " + costAlgorithm.getJavaClassName()
+          + " algorithm: " + costAlgorithm.getIdentifier());
+      throw new OBException("@AlgorithmClassNotLoaded@: " + costAlgorithm.getName(), e);
     }
   }
 
@@ -122,5 +115,112 @@ public class CostingServer {
 
   public BigDecimal getTransactionCost() {
     return trxCost;
+  }
+
+  /**
+   * Transaction types implemented on the cost engine.
+   */
+  public enum TrxType {
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, Manufacturing, Unknown;
+    /**
+     * Given a Material Management transaction returns its type.
+     */
+    static TrxType getTrxType(MaterialTransaction transaction) {
+      if (transaction.getGoodsShipmentLine() != null) {
+        // Receipt / Shipment
+        org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
+            .getGoodsShipmentLine().getShipmentReceipt();
+        if (inout.isSalesTransaction()) {
+          // Shipment
+          if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentNegative;
+          } else {
+            log4j.debug("Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Shipment;
+          }
+        } else {
+          // Receipt
+          if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptReturn;
+          } else if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getMovementQuantity()
+                  .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptVoid;
+          } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
+              .compareTo(BigDecimal.ZERO) < 0) {
+            log4j.debug("Negative Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptNegative;
+          } else {
+            log4j.debug("Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return Receipt;
+          }
+        }
+      } else if (transaction.getPhysicalInventoryLine() != null) {
+        // Physical Inventory
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Physical inventory, increments stock: "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryIncrease;
+        } else {
+          log4j.debug("Physical inventory, decreases stock "
+              + transaction.getPhysicalInventoryLine().getIdentifier());
+          return InventoryDecrease;
+        }
+      } else if (transaction.getMovementLine() != null) {
+        // Internal movement
+        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Internal Movement to: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementTo;
+        } else {
+          log4j.debug("Internal Movement from: " + transaction.getMovementLine().getIdentifier());
+          return IntMovementFrom;
+        }
+      } else if (transaction.getInternalConsumptionLine() != null) {
+        if (transaction.getInternalConsumptionLine().getVoidedInternalConsumptionLine() != null) {
+          return InternalConsVoid;
+        } else if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+          log4j.debug("Negative Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalConsNegative;
+        } else {
+          log4j.debug("Internal Consumption: "
+              + transaction.getInternalConsumptionLine().getIdentifier());
+          return InternalCons;
+        }
+      } else if (transaction.getProductionLine() != null) {
+        // Production Line
+        if (transaction.getProductionLine().getProductionPlan().getProduction()
+            .isSalesTransaction()) {
+          // BOM Production
+          if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+            log4j.debug("Produced BOM product: " + transaction.getProductionLine().getIdentifier());
+            return BOMProduct;
+          } else {
+            log4j.debug("Used BOM Part: " + transaction.getProductionLine().getIdentifier());
+            // Used parts
+            return BOMPart;
+          }
+        } else {
+          log4j.debug("Manufacturing Product");
+          // Work Effort
+          // TODO: Pending to implement manufacturing cost management.
+          return Manufacturing;
+        }
+      }
+      return Unknown;
+    }
+
   }
 }
