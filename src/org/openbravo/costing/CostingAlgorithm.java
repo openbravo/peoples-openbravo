@@ -126,6 +126,8 @@ public abstract class CostingAlgorithm {
       return getOutgoingTransactionCost();
     case InternalConsNegative:
       return getInternalConsNegativeAmount();
+    case InternalConsVoid:
+      return getInternalConsVoidCost();
     case BOMPart:
       return getOutgoingTransactionCost();
     case BOMProduct:
@@ -302,6 +304,15 @@ public abstract class CostingAlgorithm {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
         transaction.getCreationDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
+  }
+
+  /**
+   * Returns the cost of the original internal consumption.
+   */
+  protected BigDecimal getInternalConsVoidCost() {
+    return CostingUtils.getTransactionCost(transaction.getInternalConsumptionLine()
+        .getVoidedInternalConsumptionLine().getMaterialMgmtMaterialTransactionList().get(0),
+        transaction.getTransactionProcessDate(), true);
   }
 
   /**

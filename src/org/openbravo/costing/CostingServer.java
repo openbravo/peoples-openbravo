@@ -121,7 +121,7 @@ public class CostingServer {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, BOMPart, BOMProduct, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, Manufacturing, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -188,7 +188,9 @@ public class CostingServer {
           return IntMovementFrom;
         }
       } else if (transaction.getInternalConsumptionLine() != null) {
-        if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
+        if (transaction.getInternalConsumptionLine().getVoidedInternalConsumptionLine() != null) {
+          return InternalConsVoid;
+        } else if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
           log4j.debug("Negative Internal Consumption: "
               + transaction.getInternalConsumptionLine().getIdentifier());
           return InternalConsNegative;
