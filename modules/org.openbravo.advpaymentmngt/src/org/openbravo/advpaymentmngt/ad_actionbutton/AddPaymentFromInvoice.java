@@ -249,6 +249,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           }
         }
       } catch (Exception ex) {
+        OBDal.getInstance().rollbackAndClose();
         message = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         log4j.error(ex);
         bdErrorGeneralPopUp(request, response, "Error", message.getMessage());
