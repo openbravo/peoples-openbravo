@@ -1291,7 +1291,54 @@ public class Utility {
    */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
       PInstanceProcessData[] pinstanceData) throws ServletException {
-    return MessageUtility.getProcessInstanceMessage(conn, vars, pinstanceData);
+    OBError myMessage = new OBError();
+    if (pinstanceData == null || pinstanceData.length == 0) {
+      return myMessage;
+    }
+    String message = "";
+    String title = "Error";
+    String type = "Error";
+    if (!pinstanceData[0].errormsg.equals("")) {
+      message = pinstanceData[0].errormsg;
+    } else if (!pinstanceData[0].pMsg.equals("")) {
+      message = pinstanceData[0].pMsg;
+    }
+
+    if (pinstanceData[0].result.equals("1")) {
+      type = "Success";
+      title = messageBD(conn, "Success", vars.getLanguage());
+    } else if (pinstanceData[0].result.equals("0")) {
+      type = "Error";
+      title = messageBD(conn, "Error", vars.getLanguage());
+    } else {
+      type = "Warning";
+      title = messageBD(conn, "Warning", vars.getLanguage());
+    }
+
+    final int errorPos = message.indexOf("@ERROR=");
+    if (errorPos != -1) {
+      myMessage = translateError(conn, vars, vars.getLanguage(),
+          "@CODE=@" + message.substring(errorPos + 7));
+      log4j.debug("Error Message returned: " + myMessage.getMessage());
+      if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
+        myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
+            myMessage.getMessage()));
+      }
+      if (errorPos > 0) {
+        message = message.substring(0, errorPos);
+      } else {
+        message = "";
+      }
+    }
+    if (!message.equals("") && message.indexOf("@") != -1) {
+      message = parseTranslation(conn, vars, vars.getLanguage(), message);
+    }
+    myMessage.setType(type);
+    myMessage.setTitle(title);
+    myMessage.setMessage(message + ((!message.equals("") && errorPos != -1) ? " <br> " : "")
+        + myMessage.getMessage());
+
+    return myMessage;
   }
 
   /**
