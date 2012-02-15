@@ -105,8 +105,8 @@ function onloadFunctions() {
         return true;
     }
     function onLoadDo(){
-    	
-    	  var selectedGroupBy = null;
+      
+        var selectedGroupBy = null;
         var groupby = null;
         
         this.windowTables = new Array(
@@ -516,51 +516,6 @@ function onloadFunctions() {
                   </td>
                 </tr>               
                 <tr>
-                  <td class="TitleCell"><span class="LabelText">Amount From</span></td>
-                  <td class="TextBox_btn_ContentCell">
-                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <tr>
-                        <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramAmountTo" class="TextBox_btn_OneCell_width" type="text" name="inpAmountFrom" id="paramAmountFrom" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
-                        </td>
-                        <td class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountFrom', document.frmMain.inpAmountFrom.value);return false;">
-                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                              <tr>
-                                <td class="FieldButton_bg">
-                                  <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
-                                </td>
-                              </tr>
-                            </table>
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td class="ContentCell"></td>
-                  <td class="ContentCell"></td>
-                  <td class="TitleCell"><span class="LabelText">Amount To</span></td>
-                  <td class="TextBox_btn_ContentCell">
-                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <tr>
-                        <td class="TextBox_ContentCell">
-                          <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramAmountFrom" class="TextBox_btn_OneCell_width" type="text" name="inpAmountTo" id="paramAmountTo" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
-                        </td>
-                        <td class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountTo', document.frmMain.inpAmountTo.value);return false;">
-                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                              <tr>
-                                <td class="FieldButton_bg">
-                                  <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
-                                </td>
-                              </tr>
-                            </table>
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                <tr>
                   <td class="TitleCell"><span class="LabelText">Document Date From</span></td>
                   
                   <td class="TextBox_btn_ContentCell">
@@ -647,6 +602,52 @@ function onloadFunctions() {
                               </td>
                             </tr>
                           </table>
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Amount From</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramAmountTo" class="TextBox_btn_OneCell_width" type="text" name="inpAmountFrom" id="paramAmountFrom" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountFrom', document.frmMain.inpAmountFrom.value);return false;">
+                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                              <tr>
+                                <td class="FieldButton_bg">
+                                  <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                                </td>
+                              </tr>
+                            </table>
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="ContentCell"></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Amount To</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramAmountFrom" class="TextBox_btn_OneCell_width" type="text" name="inpAmountTo" id="paramAmountTo" maxlength="10" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpAmountTo', document.frmMain.inpAmountTo.value);return false;">
+                            <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calculator';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                              <tr>
+                                <td class="FieldButton_bg">
+                                  <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calc" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                                </td>
+                              </tr>
+                            </table>
                           </a>
                         </td>
                       </tr>
@@ -744,7 +745,7 @@ function onloadFunctions() {
                     </table>
                   </td>
                   <td><table>
-                   	<tr rowspan="2"><td class="TitleCell"><span class="LabelText">Business Partner Category</span></td></tr>
+                    <tr rowspan="2"><td class="TitleCell"><span class="LabelText">Business Partner Category</span></td></tr>
           <tr rowspan="3"><td class="TitleCell"><span class="LabelText">Empty Business Partner</span></td></tr>
           </table></td>
                   <td colspan="3"><table>
