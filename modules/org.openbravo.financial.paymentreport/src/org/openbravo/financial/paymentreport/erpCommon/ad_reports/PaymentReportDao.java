@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,12 +31,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -89,7 +92,7 @@ public class PaymentReportDao {
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
       String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit, String strPaymentDateFrom, String strPaymentDateTo) throws Exception {
+      String strOrdCrit, String strPaymentDateFrom, String strPaymentDateTo) throws OBException {
     return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
         strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
         strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
@@ -105,7 +108,7 @@ public class PaymentReportDao {
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
       String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
       String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
-      String strPaymentDateTo) throws Exception {
+      String strPaymentDateTo) throws OBException {
 
     final StringBuilder hsqlScript = new StringBuilder();
     final java.util.List<Object> parameters = new ArrayList<Object>();
@@ -383,7 +386,7 @@ public class PaymentReportDao {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" <  ?");
-        parameters.add(FIN_Utility.getDate(dateFormat.format(new Date())));
+        parameters.add(DateUtils.truncate(new Date(), Calendar.DATE));
       }
 
       hsqlScript.append(" order by ");
@@ -733,7 +736,7 @@ public class PaymentReportDao {
           } else {
             String message = transCurrency.getISOCode() + " -> " + baseCurrency.getISOCode() + " "
                 + strConversionDate;
-            throw new Exception(message);
+            throw new OBException(message);
           }
         } else {
           convRate = null;
@@ -899,7 +902,7 @@ public class PaymentReportDao {
               existsConvRate = insertIntoTotal(groupedData.get(lastElement), transactionsList,
                   totalData, strGroupCrit, strOrdCrit, transactionData, totalTransElements,
                   strConvertCurrency, strConversionDate);
-            } catch (Exception e) {
+            } catch (OBException e) {
               // If there is no conversion rate
               throw e;
             }
@@ -968,7 +971,7 @@ public class PaymentReportDao {
             existsConvRate = insertIntoTotal(groupedData.get(lastElement), transactionsList,
                 totalData, strGroupCrit, strOrdCrit, transactionData, totalTransElements,
                 strConvertCurrency, strConversionDate);
-          } catch (Exception e) {
+          } catch (OBException e) {
             // If there is no conversion rate
             throw e;
           }
@@ -984,7 +987,7 @@ public class PaymentReportDao {
               transactionsList.get(0),
               transactionData[totalTransElements - transactionsList.size()], strGroupCrit,
               strConvertCurrency, strConversionDate);
-        } catch (Exception e) {
+        } catch (OBException e) {
           // If there is no conversion rate
           throw e;
         }
@@ -1004,12 +1007,13 @@ public class PaymentReportDao {
    * @param fieldProvider
    * @param transactionsList
    * @param totalData
-   * @throws Exception
+   * @throws OBException
    */
   private boolean insertIntoTotal(FieldProvider data,
       java.util.List<FIN_FinaccTransaction> transactionsList, ArrayList<FieldProvider> totalData,
       String strGroupCrit, String strOrdCrit, FieldProvider[] transactionData,
-      int totalTransElements, String strConvertCurrency, String strConversionDate) throws Exception {
+      int totalTransElements, String strConvertCurrency, String strConversionDate)
+      throws OBException {
 
     while (transactionsList.size() > 0
         && transactionIsBefore(transactionsList.get(0), data, strGroupCrit, strOrdCrit)) {
@@ -1017,7 +1021,7 @@ public class PaymentReportDao {
         transactionData[totalTransElements - transactionsList.size()] = createFieldProviderForTransaction(
             transactionsList.get(0), transactionData[totalTransElements - transactionsList.size()],
             strGroupCrit, strConvertCurrency, strConversionDate);
-      } catch (Exception e) {
+      } catch (OBException e) {
         // If there is no conversion rate
         throw e;
       }
@@ -1032,11 +1036,11 @@ public class PaymentReportDao {
    * 
    * @param fin_FinaccTransaction
    * @return
-   * @throws Exception
+   * @throws OBException
    */
   private FieldProvider createFieldProviderForTransaction(FIN_FinaccTransaction transaction,
       FieldProvider transactionData, String strGroupCrit, String strConvertCurrency,
-      String strConversionDate) throws Exception {
+      String strConversionDate) throws OBException {
     String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
@@ -1135,7 +1139,7 @@ public class PaymentReportDao {
         String message = transaction.getCurrency().getISOCode() + " -> "
             + baseCurrency.getISOCode() + " " + strConversionDate;
 
-        throw new Exception(message);
+        throw new OBException(message);
       }
     } else {
       // convRate = null;
@@ -1193,39 +1197,36 @@ public class PaymentReportDao {
 
       // General boolean rule for comparation when A!=B -->[ (A<B || B="") && A!="" ]
       if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")) {
-        if (BPName.compareTo(data.getField("BPARTNER").toString()) == 0) {
+        if (BPName.compareTo(data.getField("BPARTNER")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((BPName.compareTo(data.getField("BPARTNER").toString()) < 0 || data
-            .getField("BPARTNER").toString().equals(""))
-            && !BPName.equals("")) {
+        } else if ((BPName.compareTo(data.getField("BPARTNER")) < 0 || data.getField("BPARTNER")
+            .equals("")) && !BPName.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("Project")) {
-        if (strProject.compareTo(data.getField("PROJECT").toString()) == 0) {
+        if (strProject.compareTo(data.getField("PROJECT")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((strProject.compareTo(data.getField("PROJECT").toString()) < 0 || data
-            .getField("PROJECT").toString().equals(""))
-            && !strProject.equals("")) {
+        } else if ((strProject.compareTo(data.getField("PROJECT")) < 0 || data.getField("PROJECT")
+            .equals("")) && !strProject.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")) {
-        if (BPCategory.compareTo(data.getField("BP_GROUP").toString()) == 0) {
+        if (BPCategory.compareTo(data.getField("BP_GROUP")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((BPCategory.toString().compareTo(data.getField("BP_GROUP").toString()) < 0 || data
-            .getField("BP_GROUP").toString().equals(""))
-            && !BPCategory.equals("")) {
+        } else if ((BPCategory.toString().compareTo(data.getField("BP_GROUP")) < 0 || data
+            .getField("BP_GROUP").equals("")) && !BPCategory.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
         if (transaction.getCurrency().getISOCode().toString()
-            .compareTo(data.getField("TRANS_CURRENCY").toString()) == 0) {
+            .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
         } else if (transaction.getCurrency().getISOCode().toString()
-            .compareTo(data.getField("TRANS_CURRENCY").toString()) < 0) {
+            .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
         }
       }
@@ -1249,14 +1250,13 @@ public class PaymentReportDao {
       String strOrdCrit, String BPName, String BPCategory, String strProject) {
     boolean isBefore = false;
 
-    if (transaction.getStatus().toString().equals(data.getField("STATUS_CODE").toString())) {
+    if (transaction.getStatus().toString().equals(data.getField("STATUS_CODE"))) {
       if (!strOrdCrit.isEmpty()) {
         String[] strOrdCritList = strOrdCrit.substring(2, strOrdCrit.length() - 2).split("', '");
         isBefore = isBeforeOrder(transaction, data, strOrdCritList, 0, BPName, BPCategory,
             strProject);
       }
-    } else if (isBeforeStatus(transaction.getStatus().toString(), data.getField("STATUS_CODE")
-        .toString())) {
+    } else if (isBeforeStatus(transaction.getStatus().toString(), data.getField("STATUS_CODE"))) {
       isBefore = true;
     }
     return isBefore;
@@ -1277,59 +1277,57 @@ public class PaymentReportDao {
     if (i == strOrdCritList.length - 1) {
       if (strOrdCritList[i].contains("Project")) {
         isBefore = isBefore
-            || (((strProject.compareTo(data.getField("PROJECT").toString()) < 0) || data
-                .getField("PROJECT").toString().equals("")) && !strProject.equals(""));
+            || (((strProject.compareTo(data.getField("PROJECT")) < 0) || data.getField("PROJECT")
+                .equals("")) && !strProject.equals(""));
       }
       if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
         isBefore = isBefore
-            || (((BPCategory.compareTo(data.getField("BP_GROUP").toString()) < 0) || data
-                .getField("BP_GROUP").toString().equals("")) && !BPCategory.equals(""));
+            || (((BPCategory.compareTo(data.getField("BP_GROUP")) < 0) || data.getField("BP_GROUP")
+                .equals("")) && !BPCategory.equals(""));
       }
       if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
         isBefore = isBefore
-            || (((BPName.compareTo(data.getField("BPARTNER").toString()) < 0) || data
-                .getField("BPARTNER").toString().equals("")) && !BPName.equals(""));
+            || (((BPName.compareTo(data.getField("BPARTNER")) < 0) || data.getField("BPARTNER")
+                .equals("")) && !BPName.equals(""));
       }
       if (strOrdCritList[i].contains("INS_CURRENCY")) {
         isBefore = isBefore
             || (transaction.getCurrency().getISOCode().toString()
-                .compareTo(data.getField("TRANS_CURRENCY").toString()) < 0);
+                .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
       return isBefore;
     } else {
       if (strOrdCritList[i].contains("Project")) {
-        if ((strProject.compareTo(data.getField("PROJECT").toString()) < 0 || data
-            .getField("PROJECT").toString().equals(""))
+        if ((strProject.compareTo(data.getField("PROJECT")) < 0 || data.getField("PROJECT").equals(
+            ""))
             && !strProject.equals("")) {
           isBefore = true;
-        } else if (strProject.compareTo(data.getField("PROJECT").toString()) == 0) {
+        } else if (strProject.compareTo(data.getField("PROJECT")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
       } else if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
-        if ((BPCategory.compareTo(data.getField("BP_GROUP").toString()) < 0 || data
-            .getField("BP_GROUP").toString().equals(""))
-            && !BPCategory.equals("")) {
+        if ((BPCategory.compareTo(data.getField("BP_GROUP")) < 0 || data.getField("BP_GROUP")
+            .equals("")) && !BPCategory.equals("")) {
           isBefore = true;
-        } else if (BPCategory.toString().compareTo(data.getField("BP_GROUP").toString()) == 0) {
+        } else if (BPCategory.toString().compareTo(data.getField("BP_GROUP")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
       } else if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
-        if ((BPName.compareTo(data.getField("BPARTNER").toString()) < 0 || data
-            .getField("BPARTNER").toString().equals(""))
-            && !BPName.equals("")) {
+        if ((BPName.compareTo(data.getField("BPARTNER")) < 0 || data.getField("BPARTNER")
+            .equals("")) && !BPName.equals("")) {
           isBefore = true;
-        } else if (BPName.compareTo(data.getField("BPARTNER").toString()) == 0) {
+        } else if (BPName.compareTo(data.getField("BPARTNER")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
       } else if (strOrdCritList[i].contains("INS_CURRENCY")) {
         if (transaction.getCurrency().getISOCode().toString()
-            .compareTo(data.getField("TRANS_CURRENCY").toString()) < 0) {
+            .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
         } else if (transaction.getCurrency().getISOCode().toString()
-            .compareTo(data.getField("TRANS_CURRENCY").toString()) == 0) {
+            .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
@@ -1337,7 +1335,7 @@ public class PaymentReportDao {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         try {
           Date transactionDate = sdf.parse(strOrdCritList[i].toString());
-          Date dataDate = sdf.parse(data.getField("DUE_DATE").toString());
+          Date dataDate = sdf.parse(data.getField("DUE_DATE"));
           if (transactionDate.before(dataDate)) {
             isBefore = true;
           } else if (transactionDate.equals(dataDate)) {

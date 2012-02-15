@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -318,7 +319,7 @@ public class PaymentReport extends HttpSecureAppServlet {
             strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
             strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
             strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
-      } catch (Exception e) {
+      } catch (OBException e) {
         discardAL.add("sectionGroupCrit");
         discardAL.add("sectionStatus");
         discardAL.add("sectionTotal");
@@ -726,7 +727,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
           strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
-    } catch (Exception e) {
+    } catch (OBException e) {
       advisePopUp(request, response, "WARNING",
           Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
           Utility.messageBD(this, "FINPR_NoConversionFound", vars.getLanguage()) + e.getMessage());
