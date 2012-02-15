@@ -28,7 +28,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class MessageUtility {
@@ -210,49 +210,33 @@ public class MessageUtility {
   /**
    * Gets the Message for the instance of the processes.
    * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param pinstanceData
-   *          Array with the instance information.
+   * @param pInstance
+   *          ProcessInstance object
    * @return Object with the message.
    * @throws ServletException
    */
-  public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
-      PInstanceProcessData[] pinstanceData) throws ServletException {
+  public static OBError getProcessInstanceMessage(ProcessInstance pInstance) {
     OBError myMessage = new OBError();
-    if (pinstanceData == null || pinstanceData.length == 0) {
-      return myMessage;
-    }
-    String message = "";
-    String title = "Error";
-    String type = "Error";
-    if (!pinstanceData[0].errormsg.equals("")) {
-      message = pinstanceData[0].errormsg;
-    } else if (!pinstanceData[0].pMsg.equals("")) {
-      message = pinstanceData[0].pMsg;
-    }
-
-    if (pinstanceData[0].result.equals("1")) {
+    String message = pInstance.getErrorMsg();
+    String title = "";
+    String type = "";
+    if (pInstance.getResult() == 1L) {
       type = "Success";
-      title = messageBD(conn, "Success", vars.getLanguage());
-    } else if (pinstanceData[0].result.equals("0")) {
+      title = messageBD("Success");
+    } else if (pInstance.getResult() == 0L) {
       type = "Error";
-      title = messageBD(conn, "Error", vars.getLanguage());
+      title = messageBD("Error");
     } else {
       type = "Warning";
-      title = messageBD(conn, "Warning", vars.getLanguage());
+      title = messageBD("Warning");
     }
 
     final int errorPos = message.indexOf("@ERROR=");
     if (errorPos != -1) {
-      myMessage = translateError(conn, vars, vars.getLanguage(),
-          "@CODE=@" + message.substring(errorPos + 7));
+      myMessage = translateError("@CODE=@" + message.substring(errorPos + 7));
       log4j.debug("Error Message returned: " + myMessage.getMessage());
       if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
-        myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
-            myMessage.getMessage()));
+        myMessage.setMessage(parseTranslation(myMessage.getMessage()));
       }
       if (errorPos > 0) {
         message = message.substring(0, errorPos);
@@ -261,7 +245,7 @@ public class MessageUtility {
       }
     }
     if (!message.equals("") && message.indexOf("@") != -1) {
-      message = parseTranslation(conn, vars, vars.getLanguage(), message);
+      message = parseTranslation(message);
     }
     myMessage.setType(type);
     myMessage.setTitle(title);
@@ -282,7 +266,7 @@ public class MessageUtility {
   public static OBError translateError(String message) {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     final String strLanguage = OBContext.getOBContext().getLanguage().getLanguage();
-    return translateError(new DalConnectionProvider(), vars, strLanguage, message);
+    return translateError(new DalConnectionProvider(false), vars, strLanguage, message);
   }
 
   /**
