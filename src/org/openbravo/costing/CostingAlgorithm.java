@@ -41,7 +41,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
-  protected HashMap<CostDimension, BaseOBObject> costDimensions;
+  protected HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
   protected Organization costOrg;
   protected Currency costCurrency;
   protected TrxType trxType;
@@ -64,6 +64,7 @@ public abstract class CostingAlgorithm {
    */
   public void init(MaterialTransaction _transaction) {
     this.transaction = _transaction;
+
     // FIXME: dimensions need to be assigned based on costDimensionRule.
     costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
         .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
@@ -195,7 +196,7 @@ public abstract class CostingAlgorithm {
     BigDecimal trxCost = new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(),
         salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(),
         DateUtility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
-        costOrg.getId(), new DalConnectionProvider()));
+        costOrg.getId(), new DalConnectionProvider(false)));
 
     return trxCost;
   }
@@ -221,8 +222,8 @@ public abstract class CostingAlgorithm {
       // TODO: Check if conversion is done correctly.
       trxCost = trxCost.add(new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(), matchPO
           .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(),
-          DateUtility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
-          costOrg.getId(), new DalConnectionProvider())));
+          DateUtility.formatDate(transaction.getCreationDate()), "", transaction.getClient()
+              .getId(), costOrg.getId(), new DalConnectionProvider(false))));
     }
     return trxCost;
   }
