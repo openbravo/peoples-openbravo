@@ -77,6 +77,9 @@ public class PaymentReportDao {
 
   private static final long milisecDayConv = (1000 * 60 * 60 * 24);
   static Logger log4j = Logger.getLogger(Utility.class);
+  private java.util.List<String> bpList;
+  private java.util.List<String> bpCategoryList;
+  private java.util.List<String> projectList;
 
   public PaymentReportDao() {
   }
@@ -1194,27 +1197,43 @@ public class PaymentReportDao {
 
       // General boolean rule for comparation when A!=B -->[ (A<B || B="") && A!="" ]
       if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")) {
-        if (BPName.compareTo(data.getField("BPARTNER")) == 0) {
+        if (bpList == null) {
+          createBPList();
+        }
+        int posData = bpList.indexOf(data.getField("BPARTNER"));
+        int pos = bpList.indexOf(BPName);
+
+        if (BPName.equals(data.getField("BPARTNER"))) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((BPName.compareTo(data.getField("BPARTNER")) < 0 || data.getField("BPARTNER")
-            .equals("")) && !BPName.equals("")) {
+        } else if ((pos < posData || data.getField("BPARTNER").equals("")) && !BPName.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("Project")) {
-        if (strProject.compareTo(data.getField("PROJECT")) == 0) {
+        if (projectList == null) {
+          createProjectList();
+        }
+        int posData = projectList.indexOf(data.getField("PROJECT"));
+        int pos = projectList.indexOf(strProject);
+
+        if (strProject.equals(data.getField("PROJECT"))) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((strProject.compareTo(data.getField("PROJECT")) < 0 || data.getField("PROJECT")
-            .equals("")) && !strProject.equals("")) {
+        } else if ((pos < posData || data.getField("PROJECT").equals("")) && !strProject.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")) {
-        if (BPCategory.compareTo(data.getField("BP_GROUP")) == 0) {
+        if (bpCategoryList == null) {
+          createBPCategoryList();
+        }
+        int posData = bpList.indexOf(data.getField("BP_GROUP"));
+        int pos = bpList.indexOf(BPCategory);
+
+        if (BPCategory.equals(data.getField("BP_GROUP"))) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, BPName, BPCategory,
               strProject);
-        } else if ((BPCategory.toString().compareTo(data.getField("BP_GROUP")) < 0 || data
-            .getField("BP_GROUP").equals("")) && !BPCategory.equals("")) {
+        } else if ((pos < posData || data.getField("BP_GROUP").equals(""))
+            && !BPCategory.equals("")) {
           isBefore = true;
         }
       } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
@@ -1273,49 +1292,91 @@ public class PaymentReportDao {
 
     if (i == strOrdCritList.length - 1) {
       if (strOrdCritList[i].contains("Project")) {
+        if (projectList == null) {
+          createProjectList();
+        }
+        int posData = projectList.indexOf(data.getField("PROJECT"));
+        int pos = projectList.indexOf(strProject);
+
         isBefore = isBefore
-            || (((strProject.compareTo(data.getField("PROJECT")) < 0) || data.getField("PROJECT")
-                .equals("")) && !strProject.equals(""));
+            || (((pos < posData) || data.getField("PROJECT").equals("")) && !strProject.equals(""));
       }
       if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
+        if (bpCategoryList == null) {
+          createBPCategoryList();
+        }
+        int posData = bpCategoryList.indexOf(data.getField("BP_GROUP"));
+        int pos = bpCategoryList.indexOf(BPCategory);
+
         isBefore = isBefore
-            || (((BPCategory.compareTo(data.getField("BP_GROUP")) < 0) || data.getField("BP_GROUP")
-                .equals("")) && !BPCategory.equals(""));
+            || (((pos < posData) || data.getField("BP_GROUP").equals("")) && !BPCategory.equals(""));
       }
       if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
+        if (bpList == null) {
+          createBPList();
+        }
+        int posData = bpList.indexOf(data.getField("BPARTNER"));
+        int pos = bpList.indexOf(BPName);
+
         isBefore = isBefore
-            || (((BPName.compareTo(data.getField("BPARTNER")) < 0) || data.getField("BPARTNER")
-                .equals("")) && !BPName.equals(""));
+            || (((pos < posData) || data.getField("BPARTNER").equals("")) && !BPName.equals(""));
       }
       if (strOrdCritList[i].contains("INS_CURRENCY")) {
         isBefore = isBefore
             || (transaction.getCurrency().getISOCode().toString()
                 .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
+      if (strOrdCritList[i].contains("Date")) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+          Date transactionDate = sdf.parse(strOrdCritList[i].toString());
+          Date dataDate = sdf.parse(data.getField("DUE_DATE"));
+          if (transactionDate.before(dataDate)) {
+            isBefore = true;
+          }
+        } catch (ParseException e) {
+          // Exception parsing date
+          log4j.error(e.getMessage(), e);
+        }
+      }
       return isBefore;
     } else {
       if (strOrdCritList[i].contains("Project")) {
-        if ((strProject.compareTo(data.getField("PROJECT")) < 0 || data.getField("PROJECT").equals(
-            ""))
-            && !strProject.equals("")) {
+        if (projectList == null) {
+          createProjectList();
+        }
+        int posData = projectList.indexOf(data.getField("PROJECT"));
+        int pos = projectList.indexOf(strProject);
+
+        if ((pos < posData || data.getField("PROJECT").equals("")) && !strProject.equals("")) {
           isBefore = true;
-        } else if (strProject.compareTo(data.getField("PROJECT")) == 0) {
+        } else if (strProject.equals(data.getField("PROJECT"))) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
       } else if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
-        if ((BPCategory.compareTo(data.getField("BP_GROUP")) < 0 || data.getField("BP_GROUP")
-            .equals("")) && !BPCategory.equals("")) {
+        if (bpCategoryList == null) {
+          createBPCategoryList();
+        }
+        int posData = bpCategoryList.indexOf(data.getField("BP_GROUP"));
+        int pos = bpCategoryList.indexOf(BPCategory);
+
+        if ((pos < posData || data.getField("BP_GROUP").equals("")) && !BPCategory.equals("")) {
           isBefore = true;
-        } else if (BPCategory.toString().compareTo(data.getField("BP_GROUP")) == 0) {
+        } else if (BPCategory.toString().equals(data.getField("BP_GROUP"))) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
       } else if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
-        if ((BPName.compareTo(data.getField("BPARTNER")) < 0 || data.getField("BPARTNER")
-            .equals("")) && !BPName.equals("")) {
+        if (bpList == null) {
+          createBPList();
+        }
+        int posData = bpList.indexOf(data.getField("BPARTNER"));
+        int pos = bpList.indexOf(BPName);
+
+        if ((pos < posData || data.getField("BPARTNER").equals("")) && !BPName.equals("")) {
           isBefore = true;
-        } else if (BPName.compareTo(data.getField("BPARTNER")) == 0) {
+        } else if (BPName.equals(data.getField("BPARTNER"))) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
               strProject);
         }
@@ -1894,6 +1955,34 @@ public class PaymentReportDao {
       i++;
     }
     return organizations;
+  }
+
+  private void createBPList() {
+    bpList = new ArrayList<String>();
+    OBCriteria<BusinessPartner> critBPartner = OBDal.getInstance().createCriteria(
+        BusinessPartner.class);
+    critBPartner.addOrderBy(BusinessPartner.PROPERTY_NAME, true);
+    for (BusinessPartner bp : critBPartner.list()) {
+      bpList.add(bp.getName());
+    }
+  }
+
+  private void createBPCategoryList() {
+    bpCategoryList = new ArrayList<String>();
+    OBCriteria<Category> critBPCategory = OBDal.getInstance().createCriteria(Category.class);
+    critBPCategory.addOrderBy(Category.PROPERTY_NAME, true);
+    for (Category bpc : critBPCategory.list()) {
+      bpCategoryList.add(bpc.getName());
+    }
+  }
+
+  private void createProjectList() {
+    projectList = new ArrayList<String>();
+    OBCriteria<Project> critProject = OBDal.getInstance().createCriteria(Project.class);
+    critProject.addOrderBy(Project.PROPERTY_NAME, true);
+    for (Project project : critProject.list()) {
+      projectList.add(project.getName());
+    }
   }
 
 }
