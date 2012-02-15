@@ -29,7 +29,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MessageUtility;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -80,8 +79,9 @@ public class CostingBackground extends DalBaseProcess {
         bundle.setResult(result);
         return;
       } catch (Exception e) {
-        result = Utility.translateError(bundle.getConnection(), bundle.getContext().toVars(),
-            OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+        result = MessageUtility.translateError(bundle.getConnection(),
+            bundle.getContext().toVars(), OBContext.getOBContext().getLanguage().getLanguage(),
+            e.getMessage());
         log4j.error(result.getMessage(), e);
         logger.logln(result.getMessage());
         bundle.setResult(result);
