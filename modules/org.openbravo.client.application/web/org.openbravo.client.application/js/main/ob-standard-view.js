@@ -637,6 +637,9 @@ isc.OBStandardView.addProperties({
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
       functionName = 'focus';
+    } else if (this.lastRecordSelected) {
+      object = this.viewGrid;
+      functionName = 'focus';
     } else if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
