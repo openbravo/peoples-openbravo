@@ -150,6 +150,11 @@ public class PaymentReportDao {
       hsqlScript.append(" is not null or invps is not null ");
       hsqlScript.append(") ");
 
+      hsqlScript.append(" and fpsd.");
+      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
+      hsqlScript.append(".id in ");
+      hsqlScript.append(concatOrganizations(OBContext.getOBContext().getReadableOrganizations()));
+
       // organization + include sub-organization
       if (!strOrg.isEmpty()) {
         if (!strInclSubOrg.equalsIgnoreCase("include")) {
@@ -669,7 +674,7 @@ public class PaymentReportDao {
             // payment plan yes / no
             FieldProviderFactory.setField(data[i], "NOT_PAYMENT_PLAN_Y_N", invoices.size() > 1 ? ""
                 : "Display:none");
-            // invoiceDatestrcProjectIdIN
+            // invoiceDate
             FieldProviderFactory.setField(data[i], "INVOICE_DATE", "");
             // dueDate.
             FieldProviderFactory.setField(data[i], "DUE_DATE", "");
@@ -706,7 +711,7 @@ public class PaymentReportDao {
 
         }
 
-        // Transactional and base amounts
+        // transactional and base amounts
         transAmount = FIN_PaymentScheduleDetail[i].getAmount();
 
         Currency baseCurrency = OBDal.getInstance().get(Currency.class, strConvertCurrency);
@@ -1940,6 +1945,19 @@ public class PaymentReportDao {
       bp = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
     }
     return bp;
+  }
+
+  private String concatOrganizations(String[] orgs) {
+    String concatOrgs = "";
+    for (int i = 0; i < orgs.length; i++) {
+      concatOrgs = concatOrgs.concat("', '" + orgs[i]);
+    }
+    if (!concatOrgs.equalsIgnoreCase("")) {
+      concatOrgs = concatOrgs.substring(3);
+      concatOrgs = "(" + concatOrgs + "')";
+    }
+
+    return concatOrgs;
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -291,11 +291,7 @@ public class AdvancedQueryBuilder {
     String fieldName = jsonCriteria.getString("fieldName");
     Object value = jsonCriteria.has("value") ? jsonCriteria.get("value") : null;
 
-    if (operator.equals(OPERATOR_ISNULL)) {
-      operator = OPERATOR_EQUALS;
-      value = null;
-    } else if (operator.equals(OPERATOR_NOTNULL)) {
-      operator = OPERATOR_NOTEQUAL;
+    if (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL)) {
       value = null;
     }
 
@@ -455,7 +451,12 @@ public class AdvancedQueryBuilder {
     // Within the if the leftWherePart is used because it contains the join aliases
     if (useFieldName.equals(JsonConstants.IDENTIFIER)
         || useFieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
-      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
+      if (useFieldName.endsWith("." + JsonConstants.IDENTIFIER)
+          && (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL))) {
+        clause = getMainAlias() + "." + useFieldName.replace("." + JsonConstants.IDENTIFIER, "");
+      } else {
+        clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
+      }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
     }
@@ -818,6 +819,10 @@ public class AdvancedQueryBuilder {
       return "like";
     } else if (operator.equals(OPERATOR_ENDSWITHFIELD)) {
       return "like";
+    } else if (operator.equals(OPERATOR_ISNULL)) {
+      return "is";
+    } else if (operator.equals(OPERATOR_NOTNULL)) {
+      return "is not";
     }
     // todo throw exception
     return null;

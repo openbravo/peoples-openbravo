@@ -113,17 +113,17 @@ public class FormInitializationComponent extends BaseActionHandler {
       // - EDIT: used when the user opens a record in form view
       // - CHANGE: used when the user changes a field which should fire callouts or comboreloads
       // - SETSESSION: used when the user calls a process
-      String mode = (String) parameters.get("MODE");
+      String mode = readParameter(parameters, "MODE");
       // ID of the parent record
-      String parentId = (String) parameters.get("PARENT_ID");
+      String parentId = readParameter(parameters, "PARENT_ID");
       // The ID of the tab
-      String tabId = (String) parameters.get("TAB_ID");
+      String tabId = readParameter(parameters, "TAB_ID");
       // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
-      String rowId = (String) parameters.get("ROW_ID");
+      String rowId = readParameter(parameters, "ROW_ID");
       // The IDs of the selected records in case more than one
       String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
       // The column changed by the user. Only relevant on CHANGE mode
-      String changedColumn = (String) parameters.get("CHANGED_COLUMN");
+      String changedColumn = readParameter(parameters, "CHANGED_COLUMN");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       BaseOBObject row = null;
       BaseOBObject parentRecord = null;
@@ -435,6 +435,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (!jsExcuteCode.isEmpty()) {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
       }
+
       log.debug(finalObject.toString(1));
       return finalObject;
     } catch (JSONException e) {
@@ -496,9 +497,10 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            if (visibleProperties != null && !field.getColumn().isMandatory()
-                && field.getColumn().getDefaultValue() == null
-                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+            if (visibleProperties != null
+                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
+                && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
+                && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
               // If a column is mandatory then the combo needs to be computed, because the selected
@@ -515,7 +517,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
           if (visibleProperties != null
-              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
+              && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
+              && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
             // If the column is not currently visible, and its not mandatory, we don't need to
             // compute the combo.
             // If a column is mandatory then the combo needs to be computed, because the selected
@@ -1555,4 +1559,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     return cachedStructures.getAuxiliarInputList(tabId);
   }
 
+  private String readParameter(Map<String, Object> parameters, String parameterName) {
+    String paramValue = (String) parameters.get(parameterName);
+    if (paramValue != null && paramValue.equalsIgnoreCase("null")) {
+      paramValue = null;
+    }
+    return paramValue;
+  }
 }

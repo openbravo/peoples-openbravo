@@ -102,7 +102,8 @@ OB.Styles.OBFormField.DefaultComboBox = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  pendingTextBoxStyle: null, //'OBFormFieldSelectInputPending',
+  pendingTextBoxStyle: null,
+  //'OBFormFieldSelectInputPending',
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconStyle: 'OBFormFieldSelectPickerIcon',
   pickListBaseStyle: 'OBFormFieldPickListCell',
@@ -112,12 +113,12 @@ OB.Styles.OBFormField.DefaultComboBox = {
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
-  pickerIconHeight: 21, 
-  
+  pickerIconHeight: 21,
+
   // note the menu-rollover.png which is the background for selected rows
   // is 20
   pickListCellHeight: 22,
-  
+
   quickRunWidth: 210,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
@@ -172,7 +173,7 @@ OB.Styles.OBFormField.DefaultSearch = {
     showHover: true,
     height: 15,
     width: 15,
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',    
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
   newTabIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
@@ -184,7 +185,8 @@ isc.OBSearchItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Defau
 isc.OBLinkItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
 
 isc.OBLinkButtonItem.addProperties({
-  width: 1, //To allow button be just text width
+  width: 1,
+  //To allow button be just text width
   align: 'left',
   baseStyle: 'OBLinkButtonItem',
   showDown: true,
@@ -204,7 +206,7 @@ isc.OBDateChooser.addProperties({
   baseWeekendStyle: 'OBDateChooserWeekend',
   baseBottomButtonStyle: 'OBDateChooserBottomButton',
   alternateWeekStyles: false,
-  firstDayOfWeek: 1,  
+  firstDayOfWeek: 1,
 
   showEdges: true,
 
@@ -293,11 +295,12 @@ isc.OBDateRangeDialog.addProperties({
   edgeOffsetTop: 2,
   edgeOffsetRight: 2,
   edgeOffsetBottom: 2,
-  showHeaderBackground: false, // part of edges
+  showHeaderBackground: false,
+  // part of edges
   showHeaderIcon: true,
-  isModal : true,
-  showModalMask : true,
-  dragAppearance : 'target',
+  isModal: true,
+  showModalMask: true,
+  dragAppearance: 'target',
 
   // clear backgroundColor and style since corners are rounded
   backgroundColor: null,
@@ -323,9 +326,9 @@ isc.OBDateRangeDialog.changeDefaults('headerDefaults', {
 });
 
 isc.OBDateRangeDialog.changeDefaults('headerLabelDefaults', {
-  wrap : false,
-  width : '100%',
-  inherentWidth : true,
+  wrap: false,
+  width: '100%',
+  inherentWidth: true,
   styleName: 'OBPopupHeaderText',
   align: isc.Canvas.CENTER
 });
@@ -436,7 +439,8 @@ isc.OBImageItem.addProperties({
 });
 
 isc.OBImageCanvas.addProperties({
-  height: '0px', // Hack to avoid second line be desplaced in Firefox and IE
+  height: '0px',
+  // Hack to avoid second line be desplaced in Firefox and IE
   zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
   zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
   imageNotAvailableSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/imageNotAvailable.png',
@@ -447,7 +451,7 @@ isc.OBImageCanvas.addProperties({
 isc.OBImageItemSmallImageContainer.addProperties({
   styleName: 'OBFormFieldImageInput',
   height: 66,
-  width:'100%',
+  width: '100%',
   align: 'center',
   defaultLayoutAlign: 'center'
 });
@@ -473,7 +477,7 @@ isc.OBImageItemButton.addProperties({
   height: 21,
   uploadIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/upload_icon.png',
   eraseIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/erase_icon.png',
-  initWidgetStyle: function() {
+  initWidgetStyle: function () {
     if (this.buttonType === 'upload') {
       this.setSrc(this.uploadIconSrc);
     } else if (this.buttonType === 'erase') {
@@ -505,7 +509,7 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   backgroundColor: 'transparent'
 });
 isc.OBSectionItemButton.addProperties({
-  focusChanged: function() { // "ImgSectionHeader" is not a StatefulCanvas so -Focused- status should be done programmatically
+  focusChanged: function () { // "ImgSectionHeader" is not a StatefulCanvas so -Focused- status should be done programmatically
     if (this.background) {
       if (this.containsFocus()) {
         this.background.setSrc(this.background.src.replace(/(\.)(png)$/, '_Focused.png'));
@@ -523,21 +527,21 @@ isc.OBSectionItemButton.addProperties({
  * Attachments Styles
  =======================================================================*/
 
- isc.OBAttachmentsSubmitPopup.addProperties({
+isc.OBAttachmentsSubmitPopup.addProperties({
   hlayoutTopMargin: 10,
   height: 30,
   width: 450,
   align: 'center'
 });
 
- /* =====================================================================
+/* =====================================================================
   * Image Popup Styles
   =======================================================================*/
 
-  isc.OBImageSelector.addProperties({
-   hlayoutTopMargin: 10,
-   hlayoutBottomMargin: 10,
-   height: 30,
-   width: 450,
-   align: 'center'
- });
+isc.OBImageSelector.addProperties({
+  hlayoutTopMargin: 10,
+  hlayoutBottomMargin: 10,
+  height: 30,
+  width: 450,
+  align: 'center'
+});

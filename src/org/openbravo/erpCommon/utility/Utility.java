@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -89,7 +87,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.utils.Replace;
 
 /**
  * @author Fernando Iriazabal
@@ -297,7 +294,7 @@ public class Utility {
    * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
-    return messageBD(conn, strCode, strLanguage, true);
+    return BasicUtility.messageBD(conn, strCode, strLanguage, true);
   }
 
   /**
@@ -315,32 +312,7 @@ public class Utility {
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage,
       boolean escape) {
-    String strMessage = "";
-    if (strLanguage == null || strLanguage.equals(""))
-      strLanguage = "en_US";
-
-    try {
-      log4j.debug("Utility.messageBD - Message Code: " + strCode);
-      strMessage = MessageBDData.message(conn, strLanguage, strCode);
-    } catch (final Exception ignore) {
-      log4j.error("Error getting message", ignore);
-    }
-    log4j.debug("Utility.messageBD - Message description: " + strMessage);
-    if (strMessage == null || strMessage.equals("")) {
-      try {
-        strMessage = MessageBDData.columnname(conn, strLanguage, strCode);
-      } catch (final Exception e) {
-        log4j.error("Error getting message", e);
-        strMessage = strCode;
-      }
-    }
-    if (strMessage == null || strMessage.equals("")) {
-      strMessage = strCode;
-    }
-    if (escape) {
-      strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
-    }
-    return strMessage;
+    return BasicUtility.messageBD(conn, strCode, strLanguage, escape);
   }
 
   /**
@@ -358,11 +330,7 @@ public class Utility {
    * @return html format message
    */
   public static String formatMessageBDToHtml(String message) {
-    return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace
-        .replace(Replace.replace(Replace.replace(Replace.replace(
-            Replace.replace(Replace.replace(message, "\\n", "\n"), "&quot", "\""), "&", "&amp;"),
-            "\"", "&quot;"), "<", "&lt;"), ">", "&gt;"), "\n", "<br/>"), "\r", " "), "®", "&reg;"),
-        "&lt;![CDATA[", "<![CDATA["), "]]&gt;", "]]>");
+    return BasicUtility.formatMessageBDToHtml(message);
   }
 
   /**
@@ -1709,29 +1677,7 @@ public class Utility {
    * @return file to a String
    */
   public static String fileToString(String strPath) throws FileNotFoundException {
-    StringBuffer strMyFile = new StringBuffer("");
-    try {
-      File f = new File(strPath);
-      FileInputStream fis = new FileInputStream(f);
-      InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-
-      final BufferedReader mybr = new BufferedReader(isr);
-
-      String strTemp = mybr.readLine();
-      strMyFile.append(strTemp);
-      while (strTemp != null) {
-        strTemp = mybr.readLine();
-        if (strTemp != null)
-          strMyFile.append("\n").append(strTemp);
-        else {
-          mybr.close();
-          fis.close();
-        }
-      }
-    } catch (final IOException e) {
-      e.printStackTrace();
-    }
-    return strMyFile.toString();
+    return BasicUtility.fileToString(strPath);
   }
 
   /**
@@ -1741,27 +1687,7 @@ public class Utility {
    * @return strTarget: wikified name
    */
   public static String wikifiedName(String strSource) throws FileNotFoundException {
-    if (strSource == null || strSource.equals(""))
-      return strSource;
-    strSource = strSource.trim();
-    if (strSource.equals(""))
-      return strSource;
-    final StringTokenizer source = new StringTokenizer(strSource, " ", false);
-    String strTarget = "";
-    String strTemp = "";
-    int i = 0;
-    while (source.hasMoreTokens()) {
-      strTemp = source.nextToken();
-      if (i != 0)
-        strTarget = strTarget + "_" + strTemp;
-      else {
-        final String strFirstChar = strTemp.substring(0, 1);
-        strTemp = strFirstChar.toUpperCase() + strTemp.substring(1, strTemp.length());
-        strTarget = strTarget + strTemp;
-      }
-      i++;
-    }
-    return strTarget;
+    return BasicUtility.wikifiedName(strSource);
   }
 
   public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars,

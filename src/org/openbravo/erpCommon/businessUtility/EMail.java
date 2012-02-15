@@ -43,6 +43,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 
 import com.sun.mail.smtp.SMTPMessage;
 
+/**
+ * @Deprecated since Openbravo 3.0MP9, related to @deprecated code in AlertProcess.java
+ */
 public class EMail {
   static Logger log4j = Logger.getLogger(EMail.class);
   private String g_from;

@@ -409,17 +409,38 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public boolean isAllowAdd() {
-    // if (tab.isObuiappCanAdd() != null) {
-    // return tab.isObuiappCanAdd();
-    // }
+    if (tab.isObuiappCanAdd() != null) {
+      return tab.isObuiappCanAdd();
+    }
     return false;
   }
 
   public boolean isAllowDelete() {
-    // if (tab.isObuiappCanDelete() != null) {
-    // return tab.isObuiappCanDelete();
-    // }
+    if (tab.isObuiappCanDelete() != null) {
+      return tab.isObuiappCanDelete();
+    }
     return false;
+  }
+
+  public boolean isShowSelect() {
+    if (tab.isObuiappShowSelect() != null) {
+      return tab.isObuiappShowSelect();
+    }
+    return true;
+  }
+
+  public String getNewFunction() {
+    if (tab.getOBUIAPPNewFn() != null) {
+      return tab.getOBUIAPPNewFn();
+    }
+    return "";
+  }
+
+  public String getRemoveFunction() {
+    if (tab.getObuiappRemovefn() != null) {
+      return tab.getObuiappRemovefn();
+    }
+    return "";
   }
 
   public class ButtonField {
