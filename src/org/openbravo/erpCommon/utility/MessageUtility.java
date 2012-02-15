@@ -23,13 +23,21 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.ui.Element;
+import org.openbravo.model.ad.ui.ElementTrl;
+import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.utils.Replace;
 
 public class MessageUtility {
   static Logger log4j = Logger.getLogger(MessageUtility.class);
@@ -38,19 +46,63 @@ public class MessageUtility {
    * Translate the given code into some message from the application dictionary. It searches first
    * in AD_Message table and if there are not matchings then in AD_Element table.
    * 
-   * It uses DalConnectionProvider to get the ConnectionProvider and the context's language to
-   * translate the message.
-   * 
-   * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
-   * 
    * @param strCode
    *          String with the search key to search.
    * @return String with the translated message.
    */
   public static String messageBD(String strCode) {
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    return BasicUtility.messageBD(conn, strCode, language);
+    String strMessage = "";
+    final String strLanguage = OBContext.getOBContext().getLanguage().getLanguage();
+
+    // Search strCode in AD_Message table.
+    try {
+      OBContext.setAdminMode(false);
+      log4j.debug("messageBD - Message Code: " + strCode);
+      OBCriteria<Message> obcMessage = OBDal.getInstance().createCriteria(Message.class);
+      obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode).ignoreCase());
+      if (obcMessage.count() > 0) {
+        Message msg = obcMessage.list().get(0);
+        strMessage = msg.getMessageText();
+        for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
+          if (msgTrl.getLanguage().getLanguage().equals(strLanguage)) {
+            strMessage = msgTrl.getMessageText();
+            break;
+          }
+        }
+      }
+    } catch (final Exception ignore) {
+      log4j.error("Error getting message", ignore);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    log4j.debug("messageBD - Message description: " + strMessage);
+    // if message is still empty search in AD_Element
+    if ("".equals(strMessage)) {
+      try {
+        OBContext.setAdminMode(false);
+        OBCriteria<Element> obcElement = OBDal.getInstance().createCriteria(Element.class);
+        obcElement.add(Restrictions.eq(Element.PROPERTY_DBCOLUMNNAME, strCode).ignoreCase());
+        if (obcElement.count() > 0) {
+          Element element = obcElement.list().get(0);
+          strMessage = element.getName();
+          for (ElementTrl elementTrl : element.getADElementTrlList()) {
+            if (elementTrl.getLanguage().getLanguage().equals(strLanguage)) {
+              strMessage = elementTrl.getName();
+            }
+          }
+        }
+      } catch (final Exception e) {
+        log4j.error("Error getting message", e);
+        strMessage = strCode;
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    if ("".equals(strMessage)) {
+      strMessage = strCode;
+    }
+    strMessage = Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+    return strMessage;
   }
 
   /**
