@@ -92,7 +92,7 @@
 <!-- Products section -->
 <section>
 <div class="row">
-  <div class="span6">
+  <div class="span4">
     <table  class="table table-bordered">
     <tbody>
           <tr>
@@ -137,45 +137,73 @@
   
   </div>
   
-  <div class="span3">
-  <table  class="table table-rounded">
-    <tbody>
-          <tr>
-            <td><h3>Categories</h3></td>
-          </tr>    
-    </tbody>
-  </table>
+
+  <div class="span8">
   
-  <div style="overflow: auto; height: 300px">  
-  <table class="table table-rounded">
-        <tbody id="categorybody">
-        </tbody>
-  </table>
+		<ul class="nav nav-tabs">
+      <li><a href="#catalog" data-toggle="tab" id="cataloglink">Catalog</a></li>		
+      <li><a href="#edition" data-toggle="tab" id="editionlink">Edition</a></li>
+		  <li><a href="#pay" data-toggle="tab">Pay</a></li>
+		</ul>
+		
+	<div class="tab-content">
+	  <div class="tab-pane active row" id="catalog">
+	  
+	    <!--  Selector of products -->
+
+	    <div class="span8">
+	    <div class="row">    
+	    
+	      <div class="span4">
+	      <table  class="table table-rounded">
+	        <tbody>
+	              <tr>
+	                <td><h3>Categories</h3></td>
+	              </tr>    
+	        </tbody>
+	      </table>
+	      
+	      <div style="overflow: auto; height: 300px">  
+	      <table class="table table-rounded">
+	            <tbody id="categorybody">
+	            </tbody>
+	      </table>
+	      </div>      
+	      </div>
+	      
+	      <div class="span4">       
+	      <table  class="table table-rounded">
+	      <tbody>
+	            <tr>
+	              <td><h3 id="category">&nbsp;</h3></td>
+	            </tr>    
+	      </tbody>
+	      </table>  
+	      
+	      <div style="overflow: auto; height: 300px">
+	      <table class="table table-rounded">
+	        <tbody id="productbody">
+	        </tbody>
+	      </table>
+	      </div>
+	      </div>
+	    
+	    </div>
+	    </div>      
+	    <!-- END Selector of products -->   	  
+	  
+	  
+	  </div>
+    <div class="tab-pane" id="edition"></div>      
+	  <div class="tab-pane" id="pay">Pay</div>
+	</div>		
+
   </div>
+
   
-  </div>
-  
-  
-  <div class="span3">
-    
-    <table  class="table table-rounded">
-    <tbody>
-          <tr>
-            <td><h3 id="category">&nbsp;</h3></td>
-          </tr>    
-    </tbody>
-  </table>  
-  
-  <div style="overflow: auto; height: 300px">
-  <table class="table table-rounded">
-	  <tbody id="productbody">
-	  </tbody>
-  </table>
-  </div>
-  
-  </div>
 </div>
 </section>
+
 
 <!-- Sample section
 <section>
@@ -234,9 +262,15 @@
 </div>
 
 <script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/bootstrap-tab.js"></script>
 <script type="text/javascript" src="js/application.js"></script>
 <script type="text/javascript" src="js/format.js"></script>
 <script type="text/javascript" src="js/pointofsale.js"></script>
+<script type="text/javascript" src="js/pointofsalewindow.js"></script>
+
+</script>
+
 
 </body>
 </html>

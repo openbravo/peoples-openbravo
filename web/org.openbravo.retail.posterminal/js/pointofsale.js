@@ -1,6 +1,12 @@
 (function (OBPOS) {
 
   var Sales = {};
+  
+  Sales.terminal = null;
+  Sales.bplocation = null;
+  Sales.location = null;
+  Sales.pricelist = null;
+  Sales.pricelistversion = null;  
 
   Sales.Catalog = function (tbodyCat, tbodyProd) {
     this.tbodyCat = tbodyCat;
@@ -46,7 +52,7 @@
   Sales.Catalog.prototype.reloadProducts = function (category, categoryName) { // 
     var me = this;
     this.qProducts.exec({
-      'priceListVersion': SalesWindow.Terminal.pricelistversion.id,
+      'priceListVersion': Sales.pricelistversion.id,
       'productCategory': category
     }, function (data) {
       if (data.exception) {
@@ -108,11 +114,6 @@
     this.elemt = elemt;
     this.elems = elems;
     this.readyListeners = [];
-    this.terminal = null;
-    this.bplocation = null;
-    this.location = null;
-    this.pricelist = null;
-    this.pricelistversion = null;
   }
 
   Sales.Terminal.prototype.addReadyListener = function (l) {
@@ -124,79 +125,89 @@
       this.readyListeners[i](this);
     }
   }
-  Sales.Terminal.prototype.init = function (terminal) {
-    this.terminal = terminal;
-    this.printStatus();
+  Sales.Terminal.prototype.init = function () {
+
+    var me = this;
+    var t = OBPOS.getParameterByName("terminal") || "POS-1";
+
+    new OBPOS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec({
+      terminal: t
+    }, function (data) {
+      if (data.exception) {
+        location = '../org.openbravo.client.application.mobile/login.jsp';
+      } else if (data[0]) {
+        Sales.terminal = data[0];
+        me.printStatus();
+      } else {
+        alert("Terminal does not exists: " + t);
+      }
+    });
   }
 
   Sales.Terminal.prototype.printStatus = function () {
 
     var me = this;
 
-    if (!this.bplocation) {
+    if (!Sales.bplocation) {
+      Sales.bplocation = {};
       new OBPOS.Query('from BusinessPartnerLocation where id = (select min(id) from BusinessPartnerLocation where businessPartner.id = :bp and $readableCriteria)').exec({
-        bp: this.terminal.businessPartner
+        bp: Sales.terminal.businessPartner
       }, function (data) {
         if (data[0]) {
-          me.bplocation = data[0];
+          Sales.bplocation = data[0];
           me.printStatus();
-        } else {
-          me.bplocation = {};
         }
       });
     }
 
-    if (!this.location) {
+    if (!Sales.location) {
+      Sales.location = {};
       new OBPOS.Query('from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)').exec({
-        org: this.terminal.organization
+        org: Sales.terminal.organization
       }, function (data) {
         if (data[0]) {
-          me.location = data[0];
+          Sales.location = data[0];
           me.printStatus();
-        } else {
-          me.location = {};
         }
       });
     }
 
-    if (!this.pricelist) {
+    if (!Sales.pricelist) {
+      Sales.pricelist = {};
       new OBPOS.Query('from PricingPriceList where id =:pricelist and $readableCriteria').exec({
-        pricelist: this.terminal.priceList
+        pricelist: Sales.terminal.priceList
       }, function (data) {
         if (data[0]) {
-          me.pricelist = data[0];
+          Sales.pricelist = data[0];
           me.printStatus();
-        } else {
-          me.pricelist = {};
         }
       });
     }
 
-    if (!this.pricelistversion) {
+    if (!Sales.pricelistversion) {
+      Sales.pricelistversion = {};
       new OBPOS.Query('select plv.id AS id from PricingPriceListVersion AS plv where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)').exec({
-        pricelist: this.terminal.priceList
+        pricelist: Sales.terminal.priceList
       }, function (data) {
         if (data[0]) {
-          me.pricelistversion = data[0];
+          Sales.pricelistversion = data[0];
           me.printStatus();
           me.fireReadyEvent();
-        } else {
-          me.pricelistversion = {};
         }
       });
     }
 
-    var line1 = this.terminal['client._identifier'] + " | " + this.terminal['organization._identifier'];
-    if (this.pricelist) {
-      line1 += this.pricelist._identifier + " | " + this.pricelist['currency._identifier'];
+    var line1 = OBPOS.Sales.terminal['client._identifier'] + " | " + OBPOS.Sales.terminal['organization._identifier'];
+    if (Sales.pricelist) {
+      line1 += Sales.pricelist._identifier + " | " + Sales.pricelist['currency._identifier'];
     }
 
     var line2 = "";
-    if (this.location) {
-      line2 += this.location._identifier;
+    if (Sales.location) {
+      line2 += Sales.location._identifier;
     }
 
-    this.elemt.text(this.terminal._identifier);
+    this.elemt.text(OBPOS.Sales.terminal._identifier);
     this.elems.html(line1 + "<br/>" + line2);
   }
 
@@ -206,8 +217,7 @@
     this.changeListeners = [];
     this.tbody = tbody;
 
-    this.render = function (l) {
-      var tr = $('<tr/>');
+    this.render = function (tr, l) {
       tr.append($('<td/>').css('width', '40%').text(l.productname));
       tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.qty));
       tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price, {
@@ -222,15 +232,40 @@
         group: '.',
         currency: '# €'
       })));
-      return tr;
     };
+  }
+  
+  Sales.OrderTable.prototype.createRow = function(l) {
+    var me = this;
+    var tr = $('<tr/>');
+    this.render(tr, l);
+    tr.click(function () {
+      me.setSelected((me.tbody.children().index(tr)));
+      
+    });
+    
+    
+    return tr;
   }
 
   Sales.OrderTable.prototype.clear = function () {
     this.lines = [];
+    this.lineselected = -1;
+    
     this.tbody.empty();
     this.fireChangeEvent();
   }
+  
+  Sales.OrderTable.prototype.setSelected = function (n) {
+    var children = this.tbody.children();
+    if (this.lineselected > -1) {
+        children.eq(this.lineselected).css('background-color', '').css('color', '');
+    }
+    this.lineselected = n;
+    if (this.lines[this.lineselected]) {
+      children.eq(this.lineselected).css('background-color', '#049cdb').css('color', '#fff');   
+    }    
+  }  
 
   Sales.OrderTable.prototype.addProduct = function (p) {
     var l = {
@@ -240,10 +275,48 @@
     };
     this.addLine(l);
   }
+  
+  Sales.OrderTable.prototype.addUnit = function () {
+    if (this.lineselected > -1) {
+      this.lines[this.lineselected].qty += 1;
+      var tr = this.tbody.children().eq(this.lineselected).empty();
+      this.render(tr, this.lines[this.lineselected]);
+      this.fireChangeEvent();
+    }
+  }
+  
+  Sales.OrderTable.prototype.removeUnit = function () {
+    if (this.lineselected > -1) {
+      this.lines[this.lineselected].qty -= 1;
+      if (this.lines[this.lineselected].qty <= 0) {
+        this.removeLine();
+      } else {
+        var tr = this.tbody.children().eq(this.lineselected).empty();
+        this.render(tr, this.lines[this.lineselected]);
+        this.fireChangeEvent();
+      }
+    }
+  }  
+  
+  Sales.OrderTable.prototype.removeLine = function () {
+    var l = arguments[0] ? arguments[0] : this.lineselected;  
+    if (l > -1) {
+      this.lines.splice(l, 1);
+      this.tbody.children().eq(l).remove();     
+      this.fireChangeEvent();
+      
+      if (l >= this.lines.length) {
+        this.setSelected(this.lines.length - 1);
+      } else {
+        this.setSelected(l);
+      }
+    }
+  }   
 
   Sales.OrderTable.prototype.addLine = function (l) {
     this.lines.push(l);
-    this.tbody.append(this.render(l));
+    this.tbody.append(this.createRow(l));
+    this.setSelected(this.lines.length -1);
     this.fireChangeEvent();
   }
 
@@ -277,54 +350,37 @@
   Sales.OrderTotal.prototype.calculate = function (lines) {
     this.render(lines);
   }
+  
+  // EditLine Object
+  
+  Sales.EditLine = function (container) {
+    var me = this;
+    this.container = container;
+    this.clickListeners = [];
 
-  // window definition
-  var SalesWindow = {};
-
-  SalesWindow.Terminal = new Sales.Terminal($("#terminal"), $("#status")); // Global, used by other objects...
-  SalesWindow.Catalog = new Sales.Catalog($('#categorybody'), $('#productbody'));
-  SalesWindow.OrderTable = new Sales.OrderTable($('#ordertable'));
-  SalesWindow.OrderSummary = new Sales.OrderTotal($('#totalnet'));
-
-  SalesWindow.Terminal.addReadyListener(function (t) {
-    // executed when all terminal data is loaded
-    newOrder();
-  });
-  SalesWindow.Catalog.addSelectListener(function (source, product) {
-    SalesWindow.OrderTable.addProduct(product);
-  });
-  SalesWindow.OrderTable.addChangeListener(function (lines) {
-    SalesWindow.OrderSummary.calculate(lines);
-  });
-  SalesWindow.OrderTable.clear();
-
-  $('#btnnew').click(function () {
-    newOrder();
-  });
-
-  function newOrder() {
-    SalesWindow.OrderTable.clear();
-    SalesWindow.Catalog.reloadCategories();
+    container.load('editline.html', function () {
+      $('#btnplus').click(function () {
+        me.fireClickEvent('+');
+      });
+      $('#btnminus').click(function () {
+        me.fireClickEvent('-');
+      });     
+      $('#btnremove').click(function () {
+        me.fireClickEvent('x');
+      });       
+    });
   }
 
-  $(document).ready(function () {
-
-    var t = OBPOS.getParameterByName("terminal") || "POS-1";
-
-    new OBPOS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec({
-      terminal: t
-    }, function (data) {
-      if (data.exception) {
-        location = '../org.openbravo.client.application.mobile/login.jsp';
-      } else if (data[0]) {
-        SalesWindow.Terminal.init(data[0]);
-      } else {
-        alert("Terminal does not exists: " + t);
-      }
-    });
-
-  });
-
+  Sales.EditLine.prototype.addClickListener = function (l) {
+    this.clickListeners.push(l);
+  }
+  
+  Sales.EditLine.prototype.fireClickEvent = function (key) {
+    for (var i = 0, max = this.clickListeners.length; i < max; i++) {
+      this.clickListeners[i](key);
+    }
+  }
+  
   // Public Sales
   OBPOS.Sales = Sales;
 
