@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2011 Openbravo SL 
+ * All portions are Copyright (C) 2009-2012 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,16 +88,15 @@ public class PaymentReportDao {
   public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
       String strInclSubOrg, String strDueDateFrom, String strDueDateTo, String strAmountFrom,
       String strAmountTo, String strDocumentDateFrom, String strDocumentDateTo,
-      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
-      String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
-      String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
-      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit, String strPaymentDateFrom, String strPaymentDateTo) throws OBException {
+      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
+      String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
+      String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
+      String strGroupCrit, String strOrdCrit) throws OBException {
     return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
         strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
-        strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+        strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-        strOverdue, strGroupCrit, strOrdCrit, "Y", strPaymentDateFrom, strPaymentDateTo);
+        strOverdue, strGroupCrit, strOrdCrit, "Y", "", "");
   }
 
   public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
