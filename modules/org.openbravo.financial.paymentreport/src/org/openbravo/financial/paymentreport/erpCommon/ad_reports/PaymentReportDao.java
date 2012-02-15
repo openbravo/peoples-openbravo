@@ -1454,7 +1454,7 @@ public class PaymentReportDao {
               + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, strcBPGroupIdIN));
         }
 
-        if (!bPartners.isEmpty() && strcBPGroupIdIN.equals("")) {
+        if (bPartners.isEmpty() && strcBPGroupIdIN.equals("")) {
           obCriteriaTrans.add(Restrictions
               .isNotNull(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER));
         }
