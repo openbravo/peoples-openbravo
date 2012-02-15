@@ -27,6 +27,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.MessageUtility;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -54,7 +55,7 @@ public class CostingBackground extends DalBaseProcess {
     logger = bundle.getLogger();
     OBError result = new OBError();
     result.setType("Success");
-    result.setTitle(Utility.messageBD("Success"));
+    result.setTitle(MessageUtility.messageBD("Success"));
 
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
@@ -74,8 +75,8 @@ public class CostingBackground extends DalBaseProcess {
         log4j.error(e.getMessage(), e);
         logger.logln(e.getMessage());
         result.setType("Error");
-        result.setTitle(Utility.messageBD("Error"));
-        result.setMessage(Utility.parseTranslation(e.getMessage()));
+        result.setTitle(MessageUtility.messageBD("Error"));
+        result.setMessage(MessageUtility.parseTranslation(e.getMessage()));
         bundle.setResult(result);
         return;
       } catch (Exception e) {
