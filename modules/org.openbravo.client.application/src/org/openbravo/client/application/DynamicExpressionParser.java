@@ -233,7 +233,7 @@ public class DynamicExpressionParser {
         UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
             field.getColumn().getId());
 
-        return new DisplayLogicElement("currentValues." + fieldName,
+        return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + fieldName + "')",
             uiDef instanceof YesNoUIDefinition);
       }
     }

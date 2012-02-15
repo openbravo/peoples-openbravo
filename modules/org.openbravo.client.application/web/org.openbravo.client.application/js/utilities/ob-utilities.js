@@ -897,3 +897,12 @@ OB.Utilities.getTimePassedInterval = function (timeInMiliseconds) {
   n = Math.floor((timeInMiliseconds) / (1000 * 60));
   return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_minutes_ago');
 };
+
+//** {{{ OB.Utilities.getValue }}} **
+//
+// Gets the value of a field using the square bracket notation
+// This prevents errors from happening when the name of the property
+// is a reserved javascript word
+OB.Utilities.getValue = function (object, property) {
+  return object[property];
+};
