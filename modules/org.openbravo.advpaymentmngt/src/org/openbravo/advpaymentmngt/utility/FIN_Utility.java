@@ -49,9 +49,9 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.MessageUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
@@ -68,7 +68,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class FIN_Utility {
@@ -584,17 +583,10 @@ public class FIN_Utility {
   }
 
   /**
-   * Translate the given code into some message from the application dictionary. It searches first
-   * in AD_Message table and if there are not matchings then in AD_Element table.
-   * 
-   * @param strCode
-   *          String with the search key to search.
-   * @return String with the translated message.
+   * @see MessageUtility#messageBD(String)
    */
   public static String messageBD(String strCode) {
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    return Utility.messageBD(conn, strCode, language);
+    return MessageUtility.messageBD(strCode);
   }
 
   /**
