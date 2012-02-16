@@ -94,12 +94,42 @@ public class PaymentReportDao {
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
       String strGroupCrit, String strOrdCrit) {
+
     try {
       return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
           strOverdue, strGroupCrit, strOrdCrit, "Y", "", "");
+    } catch (OBException e) {
+      FieldProvider[] fp = new FieldProvider[1];
+      HashMap<String, String> hm = new HashMap<String, String>();
+      hm.put("transCurrency", strcCurrency);
+      hm.put("baseCurrency", strConvertCurrency);
+      hm.put("conversionDate", strConversionDate);
+
+      fp[0] = new FieldProviderFactory(hm);
+      FieldProvider[] data = fp;
+
+      OBContext.restorePreviousMode();
+      return data;
+    }
+  }
+
+  public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
+      String strInclSubOrg, String strDueDateFrom, String strDueDateTo, String strAmountFrom,
+      String strAmountTo, String strDocumentDateFrom, String strDocumentDateTo,
+      String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
+      String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
+      String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit) {
+
+    try {
+      return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+          strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+          strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
+          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
     } catch (OBException e) {
       FieldProvider[] fp = new FieldProvider[1];
       HashMap<String, String> hm = new HashMap<String, String>();
