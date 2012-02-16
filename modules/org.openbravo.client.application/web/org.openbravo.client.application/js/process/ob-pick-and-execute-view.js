@@ -262,11 +262,16 @@ isc.OBPickAndExecuteView.addProperties({
       canEdit: false,
       canFilter: false,
       canSort: false,
-      width: 32,
-      overflow: 'visible',
+      canReorder: false,
+      canHide: false,
+      canFreeze: false,
+      canDragResize: false,
+      canGroupBy: false,
+      autoExpand: false,
       align: 'center',
       cellAlign: 'center',
       isRemoveField: true,
+      //width: 32, // No effect
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         return '<img src="' + OB.Styles.Process.PickAndExecute.iconDeleteSrc + '" />';
       },
