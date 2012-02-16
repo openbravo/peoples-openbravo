@@ -5758,7 +5758,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--515-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
 <!--515-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--515-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--515-->  <HASTREE><![CDATA[Y]]></HASTREE>
+<!--515-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--515-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--515-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--515-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -5786,7 +5786,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--516-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
 <!--516-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--516-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--516-->  <HASTREE><![CDATA[Y]]></HASTREE>
+<!--516-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--516-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--516-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--516-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
