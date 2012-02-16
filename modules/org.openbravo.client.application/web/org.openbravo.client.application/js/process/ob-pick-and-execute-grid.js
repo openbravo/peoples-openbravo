@@ -42,8 +42,6 @@ isc.OBPickAndExecuteGrid.addProperties({
   height: '100%',
   autoFitFieldsFillViewport: false,
   confirmDiscardEdits: false,
-
-  removeIcon: OB.Application.contextUrl + 'web/org.openbravo.client.application/images/iconDelete.png',
   animateRemoveRecord: false,
   removeFieldProperties: {
     width: 32

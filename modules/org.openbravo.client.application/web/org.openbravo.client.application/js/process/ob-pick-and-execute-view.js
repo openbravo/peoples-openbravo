@@ -268,7 +268,7 @@ isc.OBPickAndExecuteView.addProperties({
       cellAlign: 'center',
       isRemoveField: true,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
-        return '<img src="web/org.openbravo.client.application/images/iconDelete.png" />';
+        return '<img src="' + OB.Styles.Process.PickAndExecute.iconDeleteSrc + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);
