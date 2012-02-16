@@ -36,10 +36,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import javax.imageio.ImageIO;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeType;
 
 public class ConvertImages extends ModuleScript {
 
   private static final Logger log4j = Logger.getLogger(ModuleScript.class);
+  private Tika tika;
   
   @Override
   public void execute() {
@@ -60,7 +63,7 @@ public class ConvertImages extends ModuleScript {
 
       ConnectionProvider cp = getConnectionProvider();
       String sql="SELECT i.imageurl, i.ad_image_id from ad_image i, m_product p where ";
-      sql+=" i.ad_image_id=p.ad_image_id and binarydata is null order by i.ad_image_id ";
+      sql+=" i.ad_image_id=p.ad_image_id and binarydata is null and i.imageurl is not null order by i.ad_image_id ";
       ResultSet rs=cp.getPreparedStatement(sql).executeQuery();
       while(rs.next()){
         String imageurl=rs.getString(1);
@@ -79,12 +82,16 @@ public class ConvertImages extends ModuleScript {
           is.close();
           ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
           BufferedImage rImage = ImageIO.read(bis);
-          String qupdate="UPDATE ad_image set binarydata=?, width=?, height=? where ad_image_id=?";
+          String qupdate="UPDATE ad_image set binarydata=?, width=?, height=?, mimetype=? where ad_image_id=?";
           PreparedStatement ps=cp.getPreparedStatement(qupdate);
           ps.setObject(1, bytes);
           ps.setLong(2, rImage.getWidth());
           ps.setLong(3, rImage.getHeight());
-          ps.setString(4, imageid);
+          if (tika==null) {
+            tika=new Tika();
+          }
+          ps.setString(4, tika.detect(bytes));
+          ps.setString(5, imageid);
           ps.executeUpdate();
           cp.releasePreparedStatement(ps);
         }
