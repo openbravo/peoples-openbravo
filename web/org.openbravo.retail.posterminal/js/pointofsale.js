@@ -1,114 +1,59 @@
 (function (OBPOS) {
 
   var Sales = {};
-  
+
   Sales.terminal = null;
   Sales.bplocation = null;
   Sales.location = null;
   Sales.pricelist = null;
-  Sales.pricelistversion = null;  
+  Sales.pricelistversion = null;
 
-  Sales.Catalog = function (tbodyCat, tbodyProd) {
-    this.tbodyCat = tbodyCat;
-    this.tbodyProd = tbodyProd;
-    this.selectedCategory = null;
-    this.selectListeners = [];
+  function initDataSources() {
 
-    this.qRootCategories = new OBPOS.Query('from OBPOS_CategoryView where $readableCriteria and isCatalog = true order by pOSLine, name');
-
-    this.qProducts = new OBPOS.Query('from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :priceListVersion and productCategory.id = :productCategory and isCatalog = true order by pOSLine, name');
-  };
-
-  Sales.Catalog.prototype.reloadCategories = function () {
-    var me = this;
-    this.qRootCategories.exec({}, function (data) {
-      if (data.exception) {
-        alert(data.exception.message);
-      } else {
-        var table = me.tbodyCat.empty();
-        me.selectedCategory = null;
-        for (var i in data) {
-          var tr = $('<tr/>').attr("id", "catrow-" + data[i].id);
-          tr.append($('<td/>').append(getThumbnail(data[i].bindaryData)));
-          tr.append($('<td/>').text(data[i]._identifier));
-          tr.click((function (id, name) {
-            return function () {
-              me.reloadProducts(id, name);
-            };
-          }(data[i].id, data[i]._identifier)));
-          table.append(tr);
-        }
-
-        // reload first product
-        if (data.length > 0) {
-          me.reloadProducts(data[0].id, data[0]._identifier);
-        } else {
-          me.tbodyProd.empty();
-        }
-      }
+    // DataSources...
+    Sales.DSProduct = new OBPOS.DataSource(
+    new OBPOS.Query('from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :priceListVersion and isCatalog = true'), {
+      'priceListVersion': Sales.pricelistversion.id
     });
+
+    Sales.DSCategories = new OBPOS.DataSource(
+    new OBPOS.Query('from OBPOS_CategoryView where $readableCriteria and isCatalog = true order by pOSLine, name'));
   }
 
-  Sales.Catalog.prototype.reloadProducts = function (category, categoryName) { // 
-    var me = this;
-    this.qProducts.exec({
-      'priceListVersion': Sales.pricelistversion.id,
-      'productCategory': category
-    }, function (data) {
-      if (data.exception) {
-        alert(data.exception.message);
-      } else {
 
-        // disable previous category
-        if (me.selectedCategory) {
-          $('#catrow-' + me.selectedCategory).css('background-color', '').css('color', '');
-        }
-        me.selectedCategory = category;
-        // enable current category
-        $('#catrow-' + me.selectedCategory).css('background-color', '#049cdb').css('color', '#fff');
+  function isScrolledIntoView(container, elem) {
 
-        $('#category').text(categoryName);
-        var table = $('#productbody').empty();
-        for (var i in data) {
-          var tr = $('<tr/>');
-          tr.append($('<td/>').append(getThumbnail(data[i].binaryData)));
-          tr.append($('<td/>').text(data[i]._identifier));
-          tr.append($('<td/>').text(OBPOS.Format.formatNumber(data[i].netListPrice, {
-            decimals: 2,
-            decimal: ',',
-            group: '.',
-            currency: '# €'
-          })));
-          tr.click((function (p) {
-            return function () {
-              // Fire Select Listener event
-              for (var i = 0, max = me.selectListeners.length; i < max; i++) {
-                me.selectListeners[i](me, p);
-              }
-            };
-          }(data[i])));
-          table.append(tr);
-          table.append(tr);
-        }
-      }
-    });
+    var docViewTop = container.scrollTop();
+    var docViewBottom = docViewTop + container.height();
+
+    var elemTop = elem.offset().top;
+    var elemBottom = elemTop + elem.height();
+
+    return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) && (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
   }
 
-  Sales.Catalog.prototype.addSelectListener = function (l) {
-    this.selectListeners.push(l);
+  function makeElemVisible(container, elem) {
+
+    var docViewTop = container.offset().top;
+    var docViewBottom = docViewTop + container.height();
+
+    var elemTop = elem.offset().top;
+    var elemBottom = elemTop + elem.height();
+
+    var currentScroll = container.scrollTop();
+
+    if (elemTop < docViewTop) {
+      container.scrollTop(currentScroll - docViewTop + elemTop);
+    } else if (elemBottom > docViewBottom) {
+      container.scrollTop(currentScroll + elemBottom - docViewBottom);
+    }
   }
 
-  function getThumbnail(base64, contentType) {
+  // public
+  Sales.getThumbnail = function (base64, width, height, contentType) {
     var url = (base64) ? 'data:' + (contentType ? contentType : 'image/png') + ';base64,' + base64 : 'img/box.png';
-    return $('<div/>').css('height', '48').css('width', '48').css('background', 'url(' + url + ') center center no-repeat').css('background-size', 'contain');
-    //    return $('<img/>')
-    //          .attr('src', 'data:' + 
-    //          (contentType ? contentType : 'image/png') +
-    //          ';base64,' + base64)
-    //          .attr('height' , '48')
-    //          .attr('width', '48');
-  }
-
+    return $('<div/>').css('margin', 'auto').css('height', height ? height : '48').css('width', width ? width : '48').css('background', 'url(' + url + ') center center no-repeat').css('background-size', 'contain');
+  };
 
   Sales.Terminal = function (elemt, elems) {
     this.elemt = elemt;
@@ -192,6 +137,9 @@
         if (data[0]) {
           Sales.pricelistversion = data[0];
           me.printStatus();
+
+          initDataSources();
+
           me.fireReadyEvent();
         }
       });
@@ -215,6 +163,7 @@
   // Order list
   Sales.OrderTable = function (tbody) {
     this.changeListeners = [];
+    this.selectListeners = [];
     this.tbody = tbody;
 
     this.render = function (tr, l) {
@@ -222,69 +171,76 @@
       tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.qty));
       tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price, {
         decimals: 2,
-        decimal: ',',
-        group: '.',
-        currency: '# €'
+        decimal: '.',
+        group: ',',
+        currency: '$ #'
       })));
       tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(OBPOS.Format.formatNumber(l.price * l.qty, {
         decimals: 2,
-        decimal: ',',
-        group: '.',
-        currency: '# €'
+        decimal: '.',
+        group: ',',
+        currency: '$ #'
       })));
     };
   }
-  
-  Sales.OrderTable.prototype.createRow = function(l) {
+
+  Sales.OrderTable.prototype.createRow = function (l) {
     var me = this;
     var tr = $('<tr/>');
     this.render(tr, l);
     tr.click(function () {
       me.setSelected((me.tbody.children().index(tr)));
-      
     });
-    
-    
     return tr;
   }
 
   Sales.OrderTable.prototype.clear = function () {
     this.lines = [];
     this.lineselected = -1;
-    
+
     this.tbody.empty();
     this.fireChangeEvent();
+    this.fireSelectEvent(-1, null);
   }
-  
+
   Sales.OrderTable.prototype.setSelected = function (n) {
     var children = this.tbody.children();
     if (this.lineselected > -1) {
-        children.eq(this.lineselected).css('background-color', '').css('color', '');
+      children.eq(this.lineselected).css('background-color', '').css('color', '');
     }
     this.lineselected = n;
     if (this.lines[this.lineselected]) {
-      children.eq(this.lineselected).css('background-color', '#049cdb').css('color', '#fff');   
-    }    
-  }  
+      var elemselected = children.eq(this.lineselected);
+      elemselected.css('background-color', '#049cdb').css('color', '#fff');
+      makeElemVisible($('#orderscroll'), elemselected);
+      this.fireSelectEvent(this.lineselected, this.lines[this.lineselected]);
+    } else {
+      this.lineselected = -1;
+      this.fireSelectEvent(-1, null);
+    }
+  }
+
 
   Sales.OrderTable.prototype.addProduct = function (p) {
     var l = {
+      productid: p.id,
       productname: p._identifier,
       qty: 1,
       price: p.netListPrice
     };
     this.addLine(l);
   }
-  
+
   Sales.OrderTable.prototype.addUnit = function () {
     if (this.lineselected > -1) {
       this.lines[this.lineselected].qty += 1;
       var tr = this.tbody.children().eq(this.lineselected).empty();
       this.render(tr, this.lines[this.lineselected]);
       this.fireChangeEvent();
+      this.fireSelectEvent(this.lineselected, this.lines[this.lineselected]);
     }
   }
-  
+
   Sales.OrderTable.prototype.removeUnit = function () {
     if (this.lineselected > -1) {
       this.lines[this.lineselected].qty -= 1;
@@ -294,29 +250,30 @@
         var tr = this.tbody.children().eq(this.lineselected).empty();
         this.render(tr, this.lines[this.lineselected]);
         this.fireChangeEvent();
+        this.fireSelectEvent(this.lineselected, this.lines[this.lineselected]);
       }
     }
-  }  
-  
+  }
+
   Sales.OrderTable.prototype.removeLine = function () {
-    var l = arguments[0] ? arguments[0] : this.lineselected;  
+    var l = arguments[0] ? arguments[0] : this.lineselected;
     if (l > -1) {
       this.lines.splice(l, 1);
-      this.tbody.children().eq(l).remove();     
+      this.tbody.children().eq(l).remove();
       this.fireChangeEvent();
-      
+
       if (l >= this.lines.length) {
         this.setSelected(this.lines.length - 1);
       } else {
         this.setSelected(l);
       }
     }
-  }   
+  }
 
   Sales.OrderTable.prototype.addLine = function (l) {
     this.lines.push(l);
     this.tbody.append(this.createRow(l));
-    this.setSelected(this.lines.length -1);
+    this.setSelected(this.lines.length - 1);
     this.fireChangeEvent();
   }
 
@@ -330,19 +287,35 @@
     }
   }
 
+  Sales.OrderTable.prototype.addSelectListener = function (l) {
+    this.selectListeners.push(l);
+  }
+
+  Sales.OrderTable.prototype.fireSelectEvent = function (l, line) {
+    for (var i = 0, max = this.selectListeners.length; i < max; i++) {
+      this.selectListeners[i](l, line);
+    }
+  }
   // Total
   Sales.OrderTotal = function (elem) {
     this.elem = elem;
+
     this.render = function (lines) {
       var t = 0;
       for (var i = 0, max = lines.length; i < max; i++) {
         t += lines[i].price * lines[i].qty;
       }
-      this.elem.text(OBPOS.Format.formatNumber(t, {
+      $('#totalnet').text(OBPOS.Format.formatNumber(t, {
         decimals: 2,
-        decimal: ',',
-        group: '.',
-        currency: '# €'
+        decimal: '.',
+        group: ',',
+        currency: '$ #'
+      }));
+      $('#totalgross').text(OBPOS.Format.formatNumber(t, {
+        decimals: 2,
+        decimal: '.',
+        group: ',',
+        currency: '$ #'
       }));
     }
   }
@@ -350,9 +323,8 @@
   Sales.OrderTotal.prototype.calculate = function (lines) {
     this.render(lines);
   }
-  
+
   // EditLine Object
-  
   Sales.EditLine = function (container) {
     var me = this;
     this.container = container;
@@ -364,23 +336,60 @@
       });
       $('#btnminus').click(function () {
         me.fireClickEvent('-');
-      });     
+      });
       $('#btnremove').click(function () {
         me.fireClickEvent('x');
-      });       
+      });
     });
   }
 
-  Sales.EditLine.prototype.addClickListener = function (l) {
-    this.clickListeners.push(l);
+  Sales.EditLine.prototype.cleanLine = function () {
+    this.editLine(-1, null)
   }
   
+  Sales.EditLine.prototype.editLine = function (l, line) {
+
+    if (l >= 0) {
+      OBPOS.Sales.DSProduct.find({
+        id: line.productid
+      }, function (data) {
+        if (data) {
+          $('#editlineimage').empty().append(Sales.getThumbnail(data.binaryData, 128, 164));
+          $('#editlinename').text(data._identifier);
+          $('#editlineqty').text(line.qty);
+          $('#editlineprice').text(OBPOS.Format.formatNumber(line.price, {
+            decimals: 2,
+            decimal: '.',
+            group: ',',
+            currency: '$ #'
+          }));
+          $('#editlinenet').text(OBPOS.Format.formatNumber(line.qty * line.price, {
+            decimals: 2,
+            decimal: '.',
+            group: ',',
+            currency: '$ #'
+          }));
+        }
+      });
+    } else {
+      $('#editlineimage').empty();
+      $('#editlinename').empty();
+      $('#editlineqty').empty();
+      $('#editlineprice').empty();
+      $('#editlinenet').empty();
+    }
+  };
+
+  Sales.EditLine.prototype.addClickListener = function (l) {
+    this.clickListeners.push(l);
+  };
+
   Sales.EditLine.prototype.fireClickEvent = function (key) {
     for (var i = 0, max = this.clickListeners.length; i < max; i++) {
       this.clickListeners[i](key);
     }
-  }
-  
+  };
+
   // Public Sales
   OBPOS.Sales = Sales;
 

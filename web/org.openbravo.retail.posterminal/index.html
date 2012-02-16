@@ -67,8 +67,6 @@
       <button class="btn btn-large btn-primary""><i class="icon-trash icon-white"></i> Delete</button>
     </div>   
     <div class="btn-group">
-      <button class="btn btn-large btn-success"><i class="icon-th icon-white"></i> Keyboard</button>
-      <button class="btn btn-large btn-success"><i class="icon-barcode icon-white"></i> Scanner</button>
       <button class="btn btn-large btn-success""><i class="icon-print icon-white"></i> Print</button>
     </div>
 
@@ -89,51 +87,49 @@
 </div>
 </section>
 
-<!-- Products section -->
+<!-- Order section -->
 <section>
 <div class="row">
   <div class="span4">
+    
     <table  class="table table-bordered">
-    <tbody>
-          <tr>
-            <td>10:15 - 9332</td>
-            <td style="text-align: right;"><h3>XX,XX €</h3></td>
-          </tr>    
+	  <tbody>
+	    <tr>
+	      <td>10:15 - 9332</td>
+	      <td style="text-align: right;"><h3 id="totalgross"></h3></td>
+	    </tr>           
+	  </tbody>
+	  </table>    
+  
+	  <div id="orderscroll" style="overflow: auto; height: 300px; margin-bottom:30px;">
+	  <table class="table table-bordered">
+	  <thead>
+				    <tr>
+				      <th>Product</th>
+	            <th>Units</th>
+	            <th>Price</th>
+	            <th>Net</th>
+				    </tr>
+				  </thead>  
+	        <tbody id="ordertable">
+	        </tbody>
+	  </table>	  
+    </div>  
+	  
+	  <table  class="table table-bordered">
+    <tbody>   
+      <tr>
+        <td>Taxes</td>
+        <td style="text-align: right;"><strong></strong></td>
+      </tr> 
+      <tr>
+        <td>Net</td>
+        <td style="text-align: right;"><strong id="totalnet"></strong></td>
+      </tr>           
     </tbody>
-  </table>
-  
-  <div style="overflow: auto; height: 300px; margin-bottom:30px;">
-  <table class="table table-bordered">
-  <thead>
-			    <tr>
-			      <th>Product</th>
-            <th>Units</th>
-            <th>Price</th>
-            <th>Net</th>
-			    </tr>
-			  </thead>  
-        <tbody id="ordertable">
-        </tbody>
-  </table>
-  </div>
-  
-  <table  class="table table-bordered">
-  <tbody>
-	  <tr>
-	    <td>Total net</td>
-	    <td style="text-align: right;"><strong id="totalnet"></strong></td>
-	  </tr>    
-	  <tr>
-	    <td>Total taxes</td>
-	    <td style="text-align: right;"><strong>XX,XX €</strong></td>
-	  </tr> 
-	  <tr>
-	    <td>Total</td>
-	    <td style="text-align: right;"><strong>XX,XX €</strong></td>
-	  </tr>           
-  </tbody>
-  </table>
-  
+    </table> 
+
+ 
   
   </div>
   
@@ -148,53 +144,11 @@
 		
 	<div class="tab-content">
 	  <div class="tab-pane active row" id="catalog">
-	  
-	    <!--  Selector of products -->
-
-	    <div class="span8">
-	    <div class="row">    
-	    
-	      <div class="span4">
-	      <table  class="table table-rounded">
-	        <tbody>
-	              <tr>
-	                <td><h3>Categories</h3></td>
-	              </tr>    
-	        </tbody>
-	      </table>
-	      
-	      <div style="overflow: auto; height: 300px">  
-	      <table class="table table-rounded">
-	            <tbody id="categorybody">
-	            </tbody>
-	      </table>
-	      </div>      
-	      </div>
-	      
-	      <div class="span4">       
-	      <table  class="table table-rounded">
-	      <tbody>
-	            <tr>
-	              <td><h3 id="category">&nbsp;</h3></td>
-	            </tr>    
-	      </tbody>
-	      </table>  
-	      
-	      <div style="overflow: auto; height: 300px">
-	      <table class="table table-rounded">
-	        <tbody id="productbody">
-	        </tbody>
-	      </table>
-	      </div>
-	      </div>
-	    
-	    </div>
-	    </div>      
-	    <!-- END Selector of products -->   	  
-	  
-	  
+	  <!-- Here goes the catalog selector --> 
 	  </div>
-    <div class="tab-pane" id="edition"></div>      
+    <div class="tab-pane" id="edition">
+    <!-- Here goes the line editor --> 
+    </div>      
 	  <div class="tab-pane" id="pay">Pay</div>
 	</div>		
 
@@ -264,9 +218,13 @@
 <script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-tab.js"></script>
+<script type="text/javascript" src="js/generatedom.js"></script>
 <script type="text/javascript" src="js/application.js"></script>
 <script type="text/javascript" src="js/format.js"></script>
+
 <script type="text/javascript" src="js/pointofsale.js"></script>
+<script type="text/javascript" src="js/comp_catalog.js"></script>
+
 <script type="text/javascript" src="js/pointofsalewindow.js"></script>
 
 </script>

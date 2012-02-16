@@ -113,6 +113,94 @@
         });
       }
     });
+  };
+  
+  // DataSource object
+  // OFFLINE GOES HERE
+  OBPOS.DataSource = function (query, params) {
+    this.query = query;
+    this.params = params;
+    
+    this.cache = null; // 
+  };
+  
+  OBPOS.DataSource.prototype.find = function (filter, callback) {
+    // OFFLINE GOES HERE
+    
+    if (this.cache) { // Check cache validity
+      // Data cached...
+      findInData(this.cache, filter, callback);
+    } else {  
+      // Execute query...
+      var me = this;      
+      this.query.exec(this.params, function(data) {
+        if (data.exception) {
+          callback(data);
+        } else {
+          me.cache = data;
+          findInData(me.cache, filter, callback);
+        }
+      });  
+    }
+  }
+
+  OBPOS.DataSource.prototype.exec = function (filter, callback) {
+    // OFFLINE GOES HERE
+    
+    if (this.cache) { // Check cache validity
+      // Data cached...
+      execInData(this.cache, filter, callback);
+    } else {  
+      // Execute Query
+      var me = this;
+      this.query.exec(this.params, function(data) {
+        if (data.exception) {
+          callback(data);
+        } else {
+          me.cache = data;
+          execInData(me.cache, filter, callback);
+        }
+      });  
+    }
+  };
+  
+  function findInData(data, filter, callback) {
+    if ($.isEmptyObject(filter)) {
+      callback({
+        exception: 'filter not defined'
+      });
+    } else {
+      for (var i = 0, max = data.length; i < max; i++) {
+        if (check(data[i], filter)) {
+          callback(data[i]);
+          return;
+        }
+      }        
+      callback(null);
+    }    
+  }
+  
+  function execInData(data, filter, callback) {  
+    if ($.isEmptyObject(filter)) {
+      callback(data);
+    } else {
+      var newdata = [];
+      for (var i = 0, max = data.length; i < max; i++) {
+        if (check(data[i], filter)) {
+          newdata.push(data[i]);
+        }
+      }        
+      callback(newdata);
+    }    
+  }
+
+  function check(elem, filter) {
+    for (var p in filter) {
+      if (filter[p] !== elem[p]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   OBPOS.getParameterByName = function (name) {

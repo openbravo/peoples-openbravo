@@ -2,14 +2,15 @@
 
   // window definition
   var SalesWindow = {};
-
+  
   SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status")); // Global, used by other objects...
-  SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#categorybody'), $('#productbody'));
+  SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
   SalesWindow.OrderTable = new OBPOS.Sales.OrderTable($('#ordertable'));
-  SalesWindow.OrderSummary = new OBPOS.Sales.OrderTotal($('#totalnet'));
+  SalesWindow.OrderTable.clear();
+  SalesWindow.OrderSummary = new OBPOS.Sales.OrderTotal($('#totalcontainer'));
   SalesWindow.EditLine = new OBPOS.Sales.EditLine($('#edition'));
 
-  SalesWindow.Terminal.addReadyListener(function (t) {
+  SalesWindow.Terminal.addReadyListener(function (t) {   
     // executed when all terminal data is loaded
     newOrder();
   });
@@ -19,12 +20,13 @@
   SalesWindow.OrderTable.addChangeListener(function (lines) {
     SalesWindow.OrderSummary.calculate(lines);
   }); 
+  SalesWindow.OrderTable.addSelectListener(function (l, line) {
+    SalesWindow.EditLine.editLine(l, line);
+  });
   SalesWindow.EditLine.addClickListener(function (key) {
     keyPressed(key);
   });
-  
-  SalesWindow.OrderTable.clear();
-  
+   
   // $('#edition').load('editline.html');
 
   $('#btnnew').click(function () {
@@ -37,10 +39,10 @@
     $('#cataloglink').tab('show');
     SalesWindow.OrderTable.clear();
     SalesWindow.Catalog.reloadCategories();
+    SalesWindow.EditLine.cleanLine();
   }
   
   $(window).keypress(function(e) {
-    console.log('-->' + String.fromCharCode(e.which));
     keyPressed(e.which);
   });  
   
