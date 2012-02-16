@@ -20,7 +20,6 @@
 package org.openbravo.financial.paymentreport.erpCommon.ad_reports;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,12 +93,26 @@ public class PaymentReportDao {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
-      String strGroupCrit, String strOrdCrit) throws OBException {
-    return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
-        strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
-        strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
-        strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-        strOverdue, strGroupCrit, strOrdCrit, "Y", "", "");
+      String strGroupCrit, String strOrdCrit) {
+    try {
+      return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+          strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+          strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
+          strOverdue, strGroupCrit, strOrdCrit, "Y", "", "");
+    } catch (OBException e) {
+      FieldProvider[] fp = new FieldProvider[1];
+      HashMap<String, String> hm = new HashMap<String, String>();
+      hm.put("transCurrency", strcCurrency);
+      hm.put("baseCurrency", strConvertCurrency);
+      hm.put("conversionDate", strConversionDate);
+
+      fp[0] = new FieldProviderFactory(hm);
+      FieldProvider[] data = fp;
+
+      OBContext.restorePreviousMode();
+      return data;
+    }
   }
 
   public FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg,
@@ -1334,16 +1347,10 @@ public class PaymentReportDao {
                 .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
       if (strOrdCritList[i].contains("Date")) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        try {
-          Date transactionDate = sdf.parse(strOrdCritList[i].toString());
-          Date dataDate = sdf.parse(data.getField("DUE_DATE"));
-          if (transactionDate.before(dataDate)) {
-            isBefore = true;
-          }
-        } catch (ParseException e) {
-          // Exception parsing date
-          log4j.error(e.getMessage(), e);
+        Date transactionDate = FIN_Utility.getDate(strOrdCritList[i]);
+        Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
+        if (transactionDate.before(dataDate)) {
+          isBefore = true;
         }
       }
       return isBefore;
@@ -1397,19 +1404,13 @@ public class PaymentReportDao {
               strProject);
         }
       } else if (strOrdCritList[i].contains("Date")) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        try {
-          Date transactionDate = sdf.parse(strOrdCritList[i].toString());
-          Date dataDate = sdf.parse(data.getField("DUE_DATE"));
-          if (transactionDate.before(dataDate)) {
-            isBefore = true;
-          } else if (transactionDate.equals(dataDate)) {
-            isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
-                strProject);
-          }
-        } catch (ParseException e) {
-          // Exception parsing date
-          log4j.error(e.getMessage(), e);
+        Date transactionDate = FIN_Utility.getDate(strOrdCritList[i]);
+        Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
+        if (transactionDate.before(dataDate)) {
+          isBefore = true;
+        } else if (transactionDate.equals(dataDate)) {
+          isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
+              strProject);
         }
       } else {
         isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, BPName, BPCategory,
@@ -1539,22 +1540,21 @@ public class PaymentReportDao {
       }
 
       // Document Date & Payment Date
-      SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       if (!strDocumentDateFrom.equals("")) {
         obCriteriaTrans.add(Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DATEACCT,
-            sdf.parse(strDocumentDateFrom)));
+            FIN_Utility.getDate(strDocumentDateFrom)));
       }
       if (!strDocumentDateTo.equals("")) {
         obCriteriaTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_DATEACCT,
-            sdf.parse(strDocumentDateTo)));
+            FIN_Utility.getDate(strDocumentDateTo)));
       }
       if (!strPaymentDateFrom.equals("")) {
         obCriteriaTrans.add(Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DATEACCT,
-            sdf.parse(strPaymentDateFrom)));
+            FIN_Utility.getDate(strPaymentDateFrom)));
       }
       if (!strPaymentDateTo.equals("")) {
         obCriteriaTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_DATEACCT,
-            sdf.parse(strPaymentDateTo)));
+            FIN_Utility.getDate(strPaymentDateTo)));
       }
 
       // Amount
