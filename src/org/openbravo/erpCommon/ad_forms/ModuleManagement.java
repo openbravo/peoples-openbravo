@@ -342,17 +342,24 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
 
         // Check for updates
+        String message = "";
         total = ModuleManagementData.selectUpdate(this);
         if (!total.equals("0")) {
           if (!updatesRebuildHTML.isEmpty()) {
             updatesRebuildHTML += "&nbsp;/&nbsp;";
           }
+          if (total.equals("1")) {
+            message = Utility.messageBD(this, "UpdateAvailable", lang).toLowerCase();
+          } else {
+            message = Utility.messageBD(this, "UpdatesAvailable", lang);
+          }
           updatesRebuildHTML += total
               + "&nbsp;"
-              + Utility.messageBD(this, "UpdateAvailable", lang)
+              + message
               + "&nbsp;"
               + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
               + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
+
         }
       }
 
@@ -1156,12 +1163,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
                 message = new OBError();
                 message.setType("Warning");
                 message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
-                message.setMessage(module.getName()
-                    + " "
-                    + module.getVersionNo()
-                    + " "
-                    + Utility.messageBD(this, "OtherModuleVersionToinstall",
-                        vars.getLanguage()) + " " + installOrig[i].getVersionNo());
+                message.setMessage(module.getName() + " " + module.getVersionNo() + " "
+                    + Utility.messageBD(this, "OtherModuleVersionToinstall", vars.getLanguage())
+                    + " " + installOrig[i].getVersionNo());
               }
               if (found) {
                 module = installOrig[i];
