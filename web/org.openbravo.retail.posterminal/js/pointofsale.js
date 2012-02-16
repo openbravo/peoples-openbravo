@@ -220,17 +220,6 @@
     }
   }
 
-
-  Sales.OrderTable.prototype.addProduct = function (p) {
-    var l = {
-      productid: p.id,
-      productname: p._identifier,
-      qty: 1,
-      price: p.netListPrice
-    };
-    this.addLine(l);
-  }
-
   Sales.OrderTable.prototype.addUnit = function () {
     if (this.lineselected > -1) {
       this.lines[this.lineselected].qty += 1;
@@ -277,6 +266,23 @@
     this.fireChangeEvent();
   }
 
+  Sales.OrderTable.prototype.addProduct = function (p) {
+    if (this.lineselected > -1 &&
+        this.lines[this.lineselected].productid === p.id) {
+      // add 1 unit to the current line.
+      this.addUnit();
+    } else {
+      // a new line
+      var l = {
+        productid: p.id,
+        productname: p._identifier,
+        qty: 1,
+        price: p.netListPrice
+      };
+      this.addLine(l);
+    }
+  }
+  
   Sales.OrderTable.prototype.addChangeListener = function (l) {
     this.changeListeners.push(l);
   }
