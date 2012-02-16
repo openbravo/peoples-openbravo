@@ -93,7 +93,7 @@ public class AlertProcess implements Process {
    * @param conn
    * @throws Exception
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "deprecation" })
   private void processAlert(AlertProcessData alertRule, ConnectionProvider conn) throws Exception {
     logger.log("Processing rule " + alertRule.name + "\n");
 
