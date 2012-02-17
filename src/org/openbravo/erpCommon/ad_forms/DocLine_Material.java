@@ -70,9 +70,12 @@ public class DocLine_Material extends DocLine {
   }
 
   /**
-   * Get Total Product Costs
+   * Get Total Product Costs. If exists a transaction retrieves the cost from it, otherwise calls
+   * the
+   * {@link ProductInfo#getProductCosts(String, String, AcctSchema, ConnectionProvider, Connection)}
    * 
    * @param date
+   *          String with the accounting date used in case there is no material transaction.
    * @param as
    * @param conn
    * @param con
@@ -80,7 +83,7 @@ public class DocLine_Material extends DocLine {
    */
 
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
-    if (transaction != null) {
+    if (transaction != null && transaction.getTransactionCost() != null) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
       return transaction.getTransactionCost().multiply(sign).toString();
     }
