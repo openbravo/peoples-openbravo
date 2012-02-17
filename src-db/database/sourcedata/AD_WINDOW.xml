@@ -435,7 +435,7 @@
 <!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--132-->  <NAME><![CDATA[G/L Journal]]></NAME>
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[Create and edit manual G/L journal entries.]]></HELP>
+<!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post ledger entries including "opening" balance accounts ones.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -452,7 +452,9 @@
 <!--134-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--134-->  <NAME><![CDATA[ABC Activity]]></NAME>
 <!--134-->  <DESCRIPTION><![CDATA[Define activities for which you are interested in managing costs.]]></DESCRIPTION>
-<!--134-->  <HELP><![CDATA[Define activities for which you are interested in managing costs.]]></HELP>
+<!--134-->  <HELP><![CDATA[Activity based costing (ABC) is a special costing model that identifies activities in an organization for which managing cost is required.
+
+]]></HELP>
 <!--134-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--134-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--134-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -759,7 +761,7 @@
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <NAME><![CDATA[Accounting Transaction Details]]></NAME>
 <!--162-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--162-->  <HELP><![CDATA[View detailed general ledger entries for a specified time period.]]></HELP>
+<!--162-->  <HELP><![CDATA[Openbravo has an integrated accounting system that combines financial and analytical accounting. Each accounting type exploits a set of accounting dimensions.]]></HELP>
 <!--162-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--162-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--162-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2441,8 +2443,8 @@
 <!--800099-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800099-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800099-->  <NAME><![CDATA[Balance sheet and P&L structure Setup]]></NAME>
-<!--800099-->  <DESCRIPTION><![CDATA[Create a report showing profits and losses as well as the balance sheet.]]></DESCRIPTION>
-<!--800099-->  <HELP><![CDATA[Create a report showing profits and losses as well as the balance sheet.]]></HELP>
+<!--800099-->  <DESCRIPTION><![CDATA[Balance Sheet and P&L structure setup allows to configure the two main financial reports which are the Balance Sheet and the P&L.]]></DESCRIPTION>
+<!--800099-->  <HELP><![CDATA[Balance Sheet and P&L structure setup allows to configure the two main financial reports which are the Balance Sheet and the P&L.]]></HELP>
 <!--800099-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800099-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800099-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2946,7 +2948,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--D1D0C603DFC0423099D897A0DB388AC2-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--D1D0C603DFC0423099D897A0DB388AC2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D1D0C603DFC0423099D897A0DB388AC2-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--D1D0C603DFC0423099D897A0DB388AC2-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
+<!--D1D0C603DFC0423099D897A0DB388AC2-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
 <!--D1D0C603DFC0423099D897A0DB388AC2--></AD_WINDOW>
 
 <!--D549B07D9D774AB2A60FF09E1562C93A--><AD_WINDOW>
@@ -3007,7 +3009,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Only organizations where transactions are possible can open or close periods.]]></HELP>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Open/Close Period Control allows to open, close or permanently close accounting period/s of a year which belongs to a calendar linked to a "legal entity with accounting" organization type.<br>Legal entities with accounting are the organization types for which Period Control is enabled.]]></HELP>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <PROCESSING><![CDATA[N]]></PROCESSING>
