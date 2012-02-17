@@ -24,9 +24,11 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -83,6 +85,13 @@ public class DocMovement extends AcctServer {
         docLine.setQty(data[i].getField("MovementQty"), conn);
         docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
         docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
+        // Get related M_Transaction_ID
+        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
+        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          // Internal movement lines have 2 related transactions, both of them with the same cost
+          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
+
         //
         log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
         list.add(docLine);
