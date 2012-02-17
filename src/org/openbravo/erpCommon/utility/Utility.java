@@ -68,8 +68,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -79,6 +81,8 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -111,6 +115,57 @@ public class Utility {
     autosaveExcludedPackages.add("org.openbravo.erpCommon.info");
     autosaveExcludedPackages.add("org.openbravo.erpCommon.ad_callouts");
     autosaveExcludedClasses.add("org.openbravo.erpCommon.utility.PopupLoading");
+  }
+
+  /**
+   * Returns a message in the right language with parameter substitution. Each occurence of a %
+   * parameter (%0, %1 etc) is replaced with the corresponding parameter value. in the params array.
+   * 
+   * @param key
+   *          the key of the message
+   * @param params
+   *          the parameters to substitute in the message
+   * @return the translated message with the parameters substituted
+   */
+  public static String getI18NMessage(String key, String[] params) {
+    OBContext.setAdminMode();
+    try {
+
+      // first read the labels from the base table
+      final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
+          Message.PROPERTY_SEARCHKEY + "=:key");
+      messages.setNamedParameter("key", key);
+      if (messages.list().isEmpty()) {
+        return null;
+      }
+
+      if (messages.list().size() > 1) {
+        log4j.warn("More than one message found using key " + key);
+      }
+
+      // pick the first one
+      final Message message = messages.list().get(0);
+      String label = message.getMessageText();
+      final String languageId = OBContext.getOBContext().getLanguage().getId();
+      for (MessageTrl messageTrl : message.getADMessageTrlList()) {
+        if (DalUtil.getId(messageTrl.getLanguage()).equals(languageId)) {
+          label = messageTrl.getMessageText();
+          break;
+        }
+      }
+      // parameter substitution
+      if (params != null && params.length > 0) {
+        int cnt = 0;
+        for (String param : params) {
+          label = label.replace("%" + cnt++, param);
+        }
+      }
+      return label;
+    } catch (Exception e) {
+      throw new OBException("Exception when getting message for key: " + key, e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

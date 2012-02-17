@@ -384,7 +384,24 @@ public class AdvancedQueryBuilder {
       final List<Property> properties = JsonUtils
           .getPropertiesOnPath(getEntity(), value.toString());
       if (properties.isEmpty()) {
-        return null;
+        // invalid property, report it with a listing of allowed names
+        final StringBuilder sb = new StringBuilder();
+        for (Property prop : getEntity().getProperties()) {
+          if (prop.isId() || prop.isOneToMany() || prop.isBoolean() || prop.isDate()
+              || prop.isDatetime() || prop.getAllowedValues().size() > 0 || prop.isInactive()
+              || prop.isEncrypted() || prop.isOneToOne()) {
+            continue;
+          }
+          if (!prop.isPrimitive()) {
+            continue;
+          }
+          if (sb.length() > 0) {
+            sb.append(", ");
+          }
+          sb.append(prop.getName());
+        }
+        throw new OBException(Utility.getI18NMessage("OBJSON_InvalidProperty",
+            new String[] { value.toString(), sb.toString() }));
       }
       final Property fieldProperty = properties.get(properties.size() - 1);
       if (property == null) {
@@ -605,7 +622,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-              .equals(OPERATOR_GREATEROREQUALFIELD));
+            .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -613,7 +630,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-              .equals(OPERATOR_LESSOREQUALFIElD));
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
