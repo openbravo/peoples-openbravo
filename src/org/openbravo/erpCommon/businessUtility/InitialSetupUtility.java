@@ -1500,7 +1500,7 @@ public class InitialSetupUtility {
           && getClientModuleList(client, dataset.getModule()).size() == 0) {
         insertClientModule(client, dataset.getModule());
       } else if (getOrgModuleList(client, organization, dataset.getModule()).size() == 0) {
-        insertOrgModule(client, organization, dataset);
+        insertOrgModule(client, organization, dataset.getModule());
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -1708,43 +1708,7 @@ public class InitialSetupUtility {
       newADOrgModule.setOrganization(org);
       newADOrgModule.setModule(module);
       newADOrgModule.setVersion(module.getVersion());
-
-      OBDal.getInstance().save(newADOrgModule);
-      OBDal.getInstance().flush();
-      return newADOrgModule;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * 
-   * @param client
-   * @param orgProvided
-   *          optional parameter. If not provided, "*" organization used
-   * @param module
-   * @return ADClientModule object with the created element
-   * @throws Exception
-   */
-  public static ADOrgModule insertOrgModule(Client client, Organization orgProvided, DataSet dataset)
-      throws Exception {
-    Organization org;
-    if (orgProvided == null) {
-      if ((org = getZeroOrg()) == null) {
-        return null;
-      }
-    } else {
-      org = orgProvided;
-    }
-
-    OBContext.setAdminMode();
-    try {
-      final ADOrgModule newADOrgModule = OBProvider.getInstance().get(ADOrgModule.class);
-      newADOrgModule.setClient(client);
-      newADOrgModule.setOrganization(org);
-      newADOrgModule.setModule(dataset.getModule());
-      newADOrgModule.setVersion(dataset.getModule().getVersion());
-      newADOrgModule.setChecksum(getModuleDatasetsChechsum(dataset.getModule()));
+      newADOrgModule.setChecksum(getModuleDatasetsChechsum(module));
 
       OBDal.getInstance().save(newADOrgModule);
       OBDal.getInstance().flush();
