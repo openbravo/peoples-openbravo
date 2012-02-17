@@ -54,12 +54,21 @@ public class ApplyModule {
   private static ConnectionProvider pool;
   static Logger log4j = Logger.getLogger(ApplyModule.class);
   private String obDir;
+  private boolean forceRefData = false;
 
   public ApplyModule(ConnectionProvider cp, String dir) {
     pool = cp;
     obDir = dir;
     PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
     log4j = Logger.getLogger(ApplyModule.class);
+  }
+
+  public ApplyModule(ConnectionProvider cp, String dir, boolean forceRefData) {
+    pool = cp;
+    obDir = dir;
+    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
+    log4j = Logger.getLogger(ApplyModule.class);
+    this.forceRefData = forceRefData;
   }
 
   /**
@@ -84,7 +93,12 @@ public class ApplyModule {
       // **************** Translation modules ************************
       // Check whether modules to install are translations
       log4j.info("Looking for translation modules");
-      final ApplyModuleData[] data = ApplyModuleData.selectTranslationModules(pool);
+      final ApplyModuleData[] data;
+      if (!forceRefData) {
+        data = ApplyModuleData.selectTranslationModules(pool);
+      } else {
+        data = ApplyModuleData.selectAllTranslationModules(pool);
+      }
 
       if (data != null && data.length > 0) {
         log4j.info(data.length + " translation modules found");
@@ -123,7 +137,12 @@ public class ApplyModule {
 
       log4j.info("Looking for reference data modules");
 
-      final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
+      final ApplyModuleData[] ds;
+      if (!forceRefData) {
+        ds = ApplyModuleData.selectClientReferenceModules(pool);
+      } else {
+        ds = ApplyModuleData.selectAllClientReferenceModules(pool);
+      }
 
       if (ds != null && ds.length > 0) {
         ModuleUtility.orderModuleByDependency(ds);

@@ -127,7 +127,8 @@ isc.OBGrid.addProperties({
       length = items.length;
       for (i = 0; i < length; i++) {
         item = items[i];
-        if (item.getCanFocus() && !item.isDisabled()) {
+        // The first filterable item (editorType!=='StaticTextItem') should be focused
+        if (item.getCanFocus() && !item.isDisabled() && item.editorType !== 'StaticTextItem') {
           this.focusInFilterEditor(item);
           return true;
         }

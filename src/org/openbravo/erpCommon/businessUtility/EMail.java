@@ -44,7 +44,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import com.sun.mail.smtp.SMTPMessage;
 
 /**
- * Since Openbravo 3.0MP9, related to @deprecated code in PrintController.java
+ * Since Openbravo 3.0MP9, related to @deprecated code in AlertProcess.java
  */
 @Deprecated
 public class EMail {

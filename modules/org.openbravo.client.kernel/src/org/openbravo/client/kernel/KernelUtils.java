@@ -214,13 +214,30 @@ public class KernelUtils {
    *           if the module can not be found.
    */
   public Module getModule(String javaPackage) {
+    Module chosenModule = null;
+    String chosenPackage = null;
     for (Module module : getModulesOrderedByDependency()) {
       // do trim to handle small typing errors, consider to do lowercase also
-      if (module.getJavaPackage().trim().equalsIgnoreCase(javaPackage.trim())) {
-        return module;
+      if (javaPackage.trim().startsWith(module.getJavaPackage().trim())) {
+        // We pick a module if:
+        // - Its javapackage is a prefix of the javapackage of the class
+        // - We don't have a module yet, or the javapackage is longer than the previously picked
+        // module
+        // We do this length check, in order to prioritize javapackages which better fit the class.
+        // This is to avoid situations in which, for example, org.openbravo is chosen over
+        // org.openbravo.client.kernel
+        if (chosenModule == null
+            || module.getJavaPackage().trim().length() > chosenPackage.length()) {
+          chosenModule = module;
+          chosenPackage = module.getJavaPackage().trim();
+        }
       }
     }
-    throw new OBException("No module found for java package " + javaPackage);
+    if (chosenModule == null) {
+      throw new OBException("No module found for java package " + javaPackage);
+    } else {
+      return chosenModule;
+    }
   }
 
   /**

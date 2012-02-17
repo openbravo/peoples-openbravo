@@ -661,7 +661,8 @@
                 CreatedBy, Updated, UpdatedBy, M_Product_ID,
                 M_AttributeSetInstance_ID, C_UOM_ID, M_Locator_ID, MovementQty,
                 Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
-                QuantityOrder, M_Product_UOM_ID, IsDescription
+                QuantityOrder, M_Product_UOM_ID, IsDescription,
+                canceled_inoutline_id
               )
               VALUES
               (
@@ -670,7 +671,8 @@
                 v_User, now(), v_User, Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || COALESCE(TO_CHAR(Cur_InOutLine.Description), ''), Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
-                Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription
+                Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription,
+                Cur_InOutLine.M_InOutLine_ID
               )
               ;
             INSERT INTO M_MATCHINV

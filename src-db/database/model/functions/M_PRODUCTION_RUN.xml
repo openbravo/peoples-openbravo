@@ -230,6 +230,9 @@
               M_PRODUCTIONPLAN.M_Product_ID
             )
           LOOP
+            IF (CUR_PP.M_Locator_ID IS NULL) THEN
+		RAISE_APPLICATION_ERROR(-20000, '@ProductionPlanLocatorNeeded@');
+            END IF;
             -- Delete prior lines
             DELETE
             FROM M_PRODUCTIONLINE

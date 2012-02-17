@@ -637,6 +637,9 @@ isc.OBStandardView.addProperties({
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
       functionName = 'focus';
+    } else if (this.lastRecordSelected) {
+      object = this.viewGrid;
+      functionName = 'focus';
     } else if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
@@ -830,6 +833,23 @@ isc.OBStandardView.addProperties({
         // force a refresh, only the visible ones will really 
         // be refreshed
         tabViewPane.doRefreshContents(true);
+      }
+    }
+  },
+
+  refreshChildViewsWithEntity: function (entity) {
+    var i, length, tabViewPane;
+    if (entity && this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        // if the view belong to the input entity, it is refreshed
+        // See https://issues.openbravo.com/view.php?id=18951
+        if (tabViewPane && tabViewPane.entity === entity) {
+          tabViewPane.doRefreshContents(true);
+        }
+        // Refresh the child views of these tab
+        tabViewPane.refreshChildViewsWithEntity(entity);
       }
     }
   },

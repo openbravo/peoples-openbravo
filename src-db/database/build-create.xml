@@ -74,7 +74,6 @@ create.database: creates the database from scratch.
   </target>
 
   <target name="clean.database.POSTGRE">
-    <echo message="${bbdd.url}"/>
     <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">

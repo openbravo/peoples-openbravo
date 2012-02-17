@@ -262,13 +262,18 @@ isc.OBPickAndExecuteView.addProperties({
       canEdit: false,
       canFilter: false,
       canSort: false,
-      width: 32,
-      overflow: 'visible',
+      canReorder: false,
+      canHide: false,
+      canFreeze: false,
+      canDragResize: false,
+      canGroupBy: false,
+      autoExpand: false,
       align: 'center',
       cellAlign: 'center',
       isRemoveField: true,
+      //width: 32, // No effect
       formatCellValue: function (value, record, rowNum, colNum, grid) {
-        return '<img src="web/org.openbravo.client.application/images/iconDelete.png" />';
+        return '<img src="' + OB.Styles.Process.PickAndExecute.iconDeleteSrc + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);

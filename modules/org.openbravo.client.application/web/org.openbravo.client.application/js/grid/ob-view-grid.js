@@ -490,6 +490,10 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.getDataSource()) {
+      //If the new state does not have any selected records then all the records of the view are deselected
+      if (!localState.selected) {
+        this.deselectAllRecords();
+      }
       // old versions stored selected records in grid view, this can cause
       // problems if record is not selected yet
       delete localState.selected;
@@ -497,6 +501,11 @@ isc.OBViewGrid.addProperties({
       this.deleteSelectedParentRecordFilter(localState);
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
+
+      // Focus on the first filterable item
+      if (this.view.isActiveView()) {
+        this.focusInFirstFilterEditor();
+      }
     }
 
     if (localState.noFilterClause) {
