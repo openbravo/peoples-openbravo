@@ -29,6 +29,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
 public class DocInventory extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -87,6 +88,11 @@ public class DocInventory extends AcctServer {
         BigDecimal QtyCount = new BigDecimal(data[i].getField("qtycount"));
         docLine.setQty((QtyCount.subtract(QtyBook)).toString(), conn);
         docLine.m_M_Locator_ID = data[i].getField("mLocatorId");
+        // Get related M_Transaction_ID
+        InventoryCountLine invLine = OBDal.getInstance().get(InventoryCountLine.class, Line_ID);
+        if (invLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          docLine.setTransaction(invLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
         DocInventoryData[] data1 = null;
         try {
           data1 = DocInventoryData.selectWarehouse(conn, docLine.m_M_Locator_ID);
