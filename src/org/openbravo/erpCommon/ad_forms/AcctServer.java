@@ -71,7 +71,7 @@ public abstract class AcctServer {
 
   public String batchSize = "100";
 
-  public BigDecimal ZERO = new BigDecimal("0");
+  public BigDecimal ZERO = BigDecimal.ZERO;
 
   public String groupLines = "";
   public String Qty = null;
