@@ -16,10 +16,12 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLine_Material extends DocLine {
   static Logger log4jDocLine_Material = Logger.getLogger(DocLine_Material.class);
@@ -44,6 +46,7 @@ public class DocLine_Material extends DocLine {
   public String m_M_Warehouse_ID = "";
   /** Production */
   public String m_Productiontype = "";
+  public MaterialTransaction transaction = null;
 
   /**
    * Set Trasaction Quantity and Storage Qty
@@ -58,14 +61,29 @@ public class DocLine_Material extends DocLine {
     log4jDocLine_Material.debug(" setQty - productInfo.qty = " + p_productInfo.m_qty);
   } // setQty
 
+  private String getQty() {
+    return m_qty;
+  }
+
+  public void setTransaction(MaterialTransaction transaction) {
+    this.transaction = transaction;
+  }
+
   /**
    * Get Total Product Costs
    * 
+   * @param date
    * @param as
-   *          accounting schema
-   * @return costs
+   * @param conn
+   * @param con
+   * @return
    */
+
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
+    if (transaction != null) {
+      BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
+      return transaction.getTransactionCost().multiply(sign).toString();
+    }
     return p_productInfo.getProductCosts(date, "", as, conn, con);
   } // getProductCosts
 
