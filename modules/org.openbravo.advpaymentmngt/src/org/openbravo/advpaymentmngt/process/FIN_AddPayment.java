@@ -156,6 +156,7 @@ public class FIN_AddPayment {
     try {
       for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
         // Payment Schedule Detail already linked to a payment detail.
+        OBDal.getInstance().refresh(paymentScheduleDetail);
         if (paymentScheduleDetail.getPaymentDetails() != null) {
           throw new OBException(String.format(FIN_Utility.messageBD("APRM_PsdInSeveralPayments"),
               paymentScheduleDetail.getIdentifier()));
