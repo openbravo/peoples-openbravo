@@ -1104,7 +1104,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--159-->  <NAME><![CDATA[Batch]]></NAME>
 <!--159-->  <DESCRIPTION><![CDATA[Create G/L Journal batches in order to group journals of similar characteristics.. Each batch may have many journals.]]></DESCRIPTION>
-<!--159-->  <HELP><![CDATA[Create G/L Journal batches in order to group journals of similar characteristics.. Each batch may have many journals.]]></HELP>
+<!--159-->  <HELP><![CDATA[A General Ledger journal batch can group journals of similar characteristics which can all be processed at the same time.]]></HELP>
 <!--159-->  <AD_TABLE_ID><![CDATA[225]]></AD_TABLE_ID>
 <!--159-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--159-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -1131,7 +1131,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--160-->  <NAME><![CDATA[Header]]></NAME>
 <!--160-->  <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods.]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[Create G/L Journals for specified fiscal periods.]]></HELP>
+<!--160-->  <HELP><![CDATA[A General Ledger journal header can include several journals which can contain several journal lines.]]></HELP>
 <!--160-->  <AD_TABLE_ID><![CDATA[224]]></AD_TABLE_ID>
 <!--160-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--160-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -1158,7 +1158,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <NAME><![CDATA[Lines]]></NAME>
 <!--161-->  <DESCRIPTION><![CDATA[Add G/L Journal lines. Each line corresponds to one G/L Journal entry.]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[Add G/L Journal lines. Each line corresponds to one G/L Journal entry.]]></HELP>
+<!--161-->  <HELP><![CDATA[General Ledger journal lines tab allows to enter as many ledger entries as required for a given General Ledger journal.]]></HELP>
 <!--161-->  <AD_TABLE_ID><![CDATA[226]]></AD_TABLE_ID>
 <!--161-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--161-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -2698,7 +2698,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--242-->  <NAME><![CDATA[Header]]></NAME>
 <!--242-->  <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
-<!--242-->  <HELP><![CDATA[View detailed general ledger entries for a specified time period.]]></HELP>
+<!--242-->  <HELP><![CDATA[Accounting transaction details report is a view of every accounting transaction posted in Openbravo. This view shows the accounting dimension values of every accounting transaction.]]></HELP>
 <!--242-->  <AD_TABLE_ID><![CDATA[270]]></AD_TABLE_ID>
 <!--242-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--242-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -2859,7 +2859,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--249-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--249-->  <NAME><![CDATA[Activity]]></NAME>
-<!--249-->  <HELP><![CDATA[Activity for Activity Based Costing]]></HELP>
+<!--249-->  <HELP><![CDATA[ABC Activity window allows to create as many activities as require per each organization.]]></HELP>
 <!--249-->  <AD_TABLE_ID><![CDATA[316]]></AD_TABLE_ID>
 <!--249-->  <AD_WINDOW_ID><![CDATA[134]]></AD_WINDOW_ID>
 <!--249-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -8870,8 +8870,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800170-->  <NAME><![CDATA[Tax Zone]]></NAME>
 <!--800170-->  <DESCRIPTION><![CDATA[Create tax zones to which the selected tax zone will be applied.]]></DESCRIPTION>
-<!--800170-->  <HELP><![CDATA[Tax zone defines the origin country/region and destination country/region where a given tax rate applies.
-]]></HELP>
+<!--800170-->  <HELP><![CDATA[Tax zone defines the origin country/region and destination country/region where a given tax rate applies,<br>for those case where it is not enough to define only one "Origin" Country/Region and only one "Destination" Country/Region at header level ]]></HELP>
 <!--800170-->  <AD_TABLE_ID><![CDATA[800150]]></AD_TABLE_ID>
 <!--800170-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--800170-->  <SEQNO><![CDATA[15]]></SEQNO>
@@ -11087,7 +11086,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800261-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800261-->  <NAME><![CDATA[Setup]]></NAME>
 <!--800261-->  <DESCRIPTION><![CDATA[Create a new accounting report.]]></DESCRIPTION>
-<!--800261-->  <HELP><![CDATA[Create a new accounting report.]]></HELP>
+<!--800261-->  <HELP><![CDATA[Each new record in the Balance Sheet and P&L structure setup window is a report.]]></HELP>
 <!--800261-->  <AD_TABLE_ID><![CDATA[800223]]></AD_TABLE_ID>
 <!--800261-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
 <!--800261-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -11115,7 +11114,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800262-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800262-->  <NAME><![CDATA[Node]]></NAME>
 <!--800262-->  <DESCRIPTION><![CDATA[Create the node which determines the information that is shown in a report.]]></DESCRIPTION>
-<!--800262-->  <HELP><![CDATA[Create the node which determines the information that is shown in a report.]]></HELP>
+<!--800262-->  <HELP><![CDATA[A node defines the information which is going to be shown in the report.]]></HELP>
 <!--800262-->  <AD_TABLE_ID><![CDATA[800224]]></AD_TABLE_ID>
 <!--800262-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
 <!--800262-->  <SEQNO><![CDATA[30]]></SEQNO>
@@ -11145,7 +11144,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800263-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800263-->  <NAME><![CDATA[Grouping category]]></NAME>
 <!--800263-->  <DESCRIPTION><![CDATA[Define desired categories to group nodes.]]></DESCRIPTION>
-<!--800263-->  <HELP><![CDATA[Define desired categories to group nodes.]]></HELP>
+<!--800263-->  <HELP><![CDATA[Grouping category tab allows to define categories which groups report node/s. Each grouping category implies a page break in the report showing the defined report node/s.]]></HELP>
 <!--800263-->  <AD_TABLE_ID><![CDATA[800225]]></AD_TABLE_ID>
 <!--800263-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
 <!--800263-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -12780,7 +12779,7 @@ The corresponding tables have then the following setting:
 <!--4DE17FC05C3843C4959166BB67967486-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4DE17FC05C3843C4959166BB67967486-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
 <!--4DE17FC05C3843C4959166BB67967486-->  <DESCRIPTION><![CDATA[It allows to open or close periods for the allowed organizations]]></DESCRIPTION>
-<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[Only organizations where transactions are possible can open or close periods.]]></HELP>
+<!--4DE17FC05C3843C4959166BB67967486-->  <HELP><![CDATA[Accounting periods can be manually open or closed as required for a given document category or for all of them.]]></HELP>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_TABLE_ID><![CDATA[84B117B791D9407187EB929BB2B3DD19]]></AD_TABLE_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_WINDOW_ID><![CDATA[E56E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <SEQNO><![CDATA[10]]></SEQNO>

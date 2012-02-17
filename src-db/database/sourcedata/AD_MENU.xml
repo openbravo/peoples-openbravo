@@ -3468,7 +3468,7 @@
 <!--800224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800224-->  <NAME><![CDATA[Balance sheet and P&L structure Setup]]></NAME>
-<!--800224-->  <DESCRIPTION><![CDATA[Create a report showing profits and losses as well as the balance sheet.]]></DESCRIPTION>
+<!--800224-->  <DESCRIPTION><![CDATA[Balance Sheet and P&L structure setup allows to configure the two main financial reports which are the Balance Sheet and the P&L.]]></DESCRIPTION>
 <!--800224-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800224-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800224-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
