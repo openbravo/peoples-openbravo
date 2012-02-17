@@ -1439,6 +1439,9 @@ OB.ViewFormProperties = {
         form.setNewState(false);
 
         view.refreshParentRecord();
+        // Refreshes the child views that belong to the same entity
+        // as the view being saved
+        view.refreshChildViewsWithEntity(this.view.entity);
 
         // We fill attachments in case the record is new, so that components
         // of the attachments section are created

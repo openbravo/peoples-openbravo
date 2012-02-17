@@ -837,6 +837,23 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  refreshChildViewsWithEntity: function (entity) {
+    var i, length, tabViewPane;
+    if (entity && this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        // if the view belong to the input entity, it is refreshed
+        // See https://issues.openbravo.com/view.php?id=18951
+        if (tabViewPane && tabViewPane.entity === entity) {
+          tabViewPane.doRefreshContents(true);
+        }
+        // Refresh the child views of these tab
+        tabViewPane.refreshChildViewsWithEntity(entity);
+      }
+    }
+  },
+
   shouldOpenDefaultEditMode: function () {
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
