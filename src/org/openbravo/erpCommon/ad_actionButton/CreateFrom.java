@@ -450,6 +450,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     CreateFromInvoiceData[] data = null;
     XmlDocument xmlDocument;
     String strPO = vars.getStringParameter("inpPurchaseOrder");
+    String strPI = vars.getSessionValue(strWindowId + "|C_INVOICE_ID");
     String strShipment = vars.getStringParameter("inpShipmentReciept");
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     if (vars.commandIn("FIND_PO"))
@@ -472,7 +473,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           else
-            data = CreateFromInvoiceData.selectFromPO(this, vars.getLanguage(),
+            data = CreateFromInvoiceData.selectFromPO(this, vars.getLanguage(), strPI,
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
         } else {
@@ -481,7 +482,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           else
-            data = CreateFromInvoiceData.selectFromPOTrl(this, vars.getLanguage(),
+            data = CreateFromInvoiceData.selectFromPOTrl(this, vars.getLanguage(), strPI,
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
         }
@@ -1450,6 +1451,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId",
         IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+    String strPI = vars.getSessionValue(strWindowId + "|C_INVOICE_ID");
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
     CreateFromInvoiceData[] data = null;
     CreateFromInvoiceData[] dataAux = null;
@@ -1478,7 +1480,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (isSOTrx.equals("Y"))
             data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
           else
-            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, ids[k]);
+            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, strPI, ids[k]);
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
