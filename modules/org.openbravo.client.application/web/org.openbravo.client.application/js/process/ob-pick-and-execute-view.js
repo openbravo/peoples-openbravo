@@ -273,7 +273,13 @@ isc.OBPickAndExecuteView.addProperties({
       isRemoveField: true,
       //width: 32, // No effect
       formatCellValue: function (value, record, rowNum, colNum, grid) {
-        return '<img src="' + OB.Styles.Process.PickAndExecute.iconDeleteSrc + '" />';
+        var src = OB.Styles.Process.PickAndExecute.iconDeleteSrc,
+            srcWithoutExt = src.substring(0, src.lastIndexOf('.')),
+            srcExt = src.substring(src.lastIndexOf('.') + 1, src.length),
+            onmouseover = 'this.src=\'' + srcWithoutExt + '_Over.' + srcExt + '\'',
+            onmousedown = 'this.src=\'' + srcWithoutExt + '_Down.' + srcExt + '\'',
+            onmouseout = 'this.src=\'' + src + '\'';
+        return '<img style="cursor: pointer;" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);
