@@ -461,14 +461,14 @@ isc.OBSelectorItem.addProperties({
       this.updateValueMap();
     }
 
-    // only jump to the next field if the value has really been set
-    if (currentValue && this.form.focusInNextItem) {
-      this.form.focusInNextItem(this.name);
-    }
-
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
+    }
+
+    // only jump to the next field if the value has really been set
+    if (currentValue && this.form.focusInNextItem) {
+      this.form.focusInNextItem(this.name);
     }
   },
 

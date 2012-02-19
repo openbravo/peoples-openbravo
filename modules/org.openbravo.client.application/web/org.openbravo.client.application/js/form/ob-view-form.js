@@ -826,7 +826,7 @@ OB.ViewFormProperties = {
       }
     }
 
-    this.markForRedraw();
+    this.redraw();
 
     delete this.inFicCall;
     this.view.toolBar.updateButtonState(true);
@@ -1226,9 +1226,15 @@ OB.ViewFormProperties = {
 
       me.processFICReturn(response, data, request, editValues, editRow);
 
-      // don't set the focus in this case, this happens
-      // when moving to a new row in grid editing
-      if (!me.forceFocusedField) {
+      // compute the focus item after the fic has been done
+      // and fields have become visible
+      if (me.doFocusInNextItemAfterFic) {
+        me.focusInNextItem(me.doFocusInNextItemAfterFic);
+        delete me.doFocusInNextItemAfterFic;
+      } else if (!me.forceFocusedField) {
+        // don't set the focus in this case, this happens
+        // when moving to a new row in grid editing
+
         if (me.getFocusItem()) {
           me.setFocusInForm();
         }
@@ -1502,9 +1508,24 @@ OB.ViewFormProperties = {
 
   // called when someone picks something from a picklist, the focus should go to the next
   // item
-  focusInNextItem: function (currentItemName, delayed) {
-    if (!delayed) {
-      this.delayCall('focusInNextItem', [currentItemName, true], 100);
+  focusInNextItem: function (currentItemName) {
+    // if in the fic then let the fic call us again afterwards
+    if (this.inFicCall) {
+      this.doFocusInNextItemAfterFic = currentItemName;
+      // solve issue https://issues.openbravo.com/view.php?id=19236
+      // for firefox we need to recompute focus also during
+      // a fic call, for other browsers we only need to do it
+      // once, it really seems to be a firefox bug, as firefox
+      // does not display the selection of text in an input
+      // but in reality it is selected
+      if (!isc.Browser.isFirefox) {
+        return;
+      }
+    }
+    
+    // wait for the redraw to be finished before moving the focus 
+    if (this.isDirty()) {
+      this.delayCall('focusInNextItem', [currentItemName], 100);
       return;
     }
     this.computeFocusItem(this.getField(currentItemName));
