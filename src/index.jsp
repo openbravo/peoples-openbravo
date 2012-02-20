@@ -141,7 +141,12 @@ $LAB.setGlobalDefaults({AppendTo: 'body'});
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
 
 // starts the application is called as the last statement in the StaticResources part
-function OBStartApplication() {
+function OBStartApplication(delayed) {
+  // call delayed to take it out of the loading call stack of lab.js
+  if (!delayed) {
+    setTimeout('OBStartApplication(true)', 100);
+    return;
+  }
   OB.Layout.initialize();
   OB.Layout.draw();
   OB.Layout.ViewManager.createAddStartTab();
