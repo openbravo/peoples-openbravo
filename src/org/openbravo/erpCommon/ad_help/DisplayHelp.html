@@ -35,7 +35,16 @@
   <script language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</script>
 </head>
   <script language="JavaScript" type="text/javascript">
+    function styleChangeForMDIEnvironment() {
+      if (isWindowInMDITab) {
+        addStyleRule(".Popup_NavBar_bg_logo", "display: none;");  // Removes Popups Openbravo logo
+        addStyleRule(".Popup_NavBar_bg_logo_left", "display: none;");  // Removes Popups left Openbravo logo holder
+        addStyleRule(".Popup_NavBar_bg_logo_right", "display: none;");  // Removes Popups right Openbravo logo holder
+      }
+    }
+
     function onLoadDo() {
+      styleChangeForMDIEnvironment();
       if (document.getElementById('clientIndex').getElementsByTagName('a').length === 0) {
         this.windowTables = new Array(
           new windowTableId('client')
