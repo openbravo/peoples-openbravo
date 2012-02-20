@@ -29,6 +29,8 @@ p_IsReceipt CHAR(1);
 p_message VARCHAR(2000);
 p_result NUMBER;
 
+v_TaxPaymentName VARCHAR2(60);
+v_GLItemName VARCHAR2(60);
 v_ResultStr VARCHAR2(2000):='';
 v_FIN_PAYMENT_ID FIN_PAYMENT.FIN_PAYMENT_ID%TYPE;
 v_PaymentDocType_ID FIN_PAYMENT.C_DOCTYPE_ID%TYPE;
@@ -80,10 +82,14 @@ BEGIN
   -- Reading the TAX PAYMENT
   v_ResultStr:='ReadingTaxPayment';
 
-  select dateto, ad_client_id, ad_org_id, generatepayment, C_BPARTNER_ID, processed, FIN_PAYMENT_ID, C_Currency_ID
-  into v_date, v_client_id, v_org_id, v_ispayment, v_bpartner_id, v_processed, v_FIN_PAYMENT_ID, v_Currency_id
+  select dateto, ad_client_id, ad_org_id, generatepayment, C_BPARTNER_ID, processed, FIN_PAYMENT_ID, C_Currency_ID,name
+  into v_date, v_client_id, v_org_id, v_ispayment, v_bpartner_id, v_processed, v_FIN_PAYMENT_ID, v_Currency_id,v_TaxPaymentName
   from c_taxpayment
   where c_taxpayment_id=p_record_id;
+
+  SELECT NAME
+  INTO v_GLItemName 
+  FROM C_GLITEM WHERE C_GLITEM_ID=p_GLItem;
   
   IF (v_ispayment = 'Y' AND v_processed = 'N') THEN
     v_ResultStr:='Generating FIN_PAYMENT';
@@ -128,7 +134,7 @@ BEGIN
 	WHEN p_isreceipt = 'Y' THEN 'RPR'
 	ELSE 'PPM'
       END,
-      'N', 'N', 'N', 'GL Item.: ', 
+      'N', 'N', 'N', 'GL Item: '|| v_GLItemName || 'n' || 'Tax Payment: '|| v_TaxPaymentName, 
       v_Financial_Account_ID, v_PaymentDocType_ID, NULL, NULL, 
       NULL, NULL, NULL, 'N', 'N', 'N');
     v_FIN_PAYMENT_DETAIL_ID := GET_UUID();
@@ -171,7 +177,7 @@ BEGIN
 	now(), p_user, 'Y', v_currency_id, v_Financial_Account_ID, 
 	v_Line, v_FIN_PAYMENT_ID, v_date, NULL, CASE WHEN p_isreceipt='Y' THEN 'RDNC' ELSE 'PWNC' END, CASE WHEN p_isreceipt='N' THEN p_amount ELSE 0 END, 
 	CASE WHEN p_isreceipt='Y' THEN p_amount ELSE 0 END, 'Y', 'N', 'N', NULL, NULL, 
-	NULL, NULL, NULL, CASE WHEN p_isreceipt='N' THEN 'BPW' ELSE 'BPD' END, v_date, 'GL Item: ' , 
+	NULL, NULL, NULL, CASE WHEN p_isreceipt='N' THEN 'BPW' ELSE 'BPD' END, v_date, 'GL Item: '|| v_GLItemName || 'n' || 'Tax Payment: '|| v_TaxPaymentName, 
 	NULL);
       UPDATE FIN_PAYMENT SET STATUS = CASE WHEN p_isreceipt='Y' THEN 'RDNC' ELSE 'PWNC' END
 	WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
