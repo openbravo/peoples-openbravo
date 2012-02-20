@@ -524,9 +524,8 @@ public class AdvancedQueryBuilder {
     try {
       localValue = getTypeSafeValue(operator, property, localValue);
     } catch (IllegalArgumentException e) {
-      typedParameters.add(null);
-      // ignore errors in formatting etc to be robust
-      return null;
+      throw new OBException(Utility.getI18NMessage("OBJSON_InvalidFilterValue",
+          new String[] { value != null ? value.toString() : "" }));
     }
     typedParameters.add(localValue);
     return clause;
