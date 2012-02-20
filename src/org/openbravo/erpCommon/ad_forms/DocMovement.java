@@ -24,10 +24,13 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingServer;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 public class DocMovement extends AcctServer {
@@ -76,6 +79,7 @@ public class DocMovement extends AcctServer {
   public DocLine[] loadLines(ConnectionProvider conn) {
     ArrayList<Object> list = new ArrayList<Object>();
     DocLineMovementData[] data = null;
+    OBContext.setAdminMode(false);
     try {
       data = DocLineMovementData.select(conn, Record_ID);
       for (int i = 0; i < data.length; i++) {
@@ -98,6 +102,8 @@ public class DocMovement extends AcctServer {
       }
     } catch (ServletException e) {
       log4jDocMovement.warn(e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     // Return Array
     DocLine[] dl = new DocLine[list.size()];
@@ -156,6 +162,7 @@ public class DocMovement extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
+      Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal b_Costs = new BigDecimal(costs);
       if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
@@ -165,14 +172,14 @@ public class DocMovement extends AcctServer {
         setStatus(STATUS_NotPosted);// Default status. LoadDocument
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
+          costCurrency.getId(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn); // from
       // (-)
       // CR
       dr.setM_Locator_ID(line.m_M_Locator_ID);
       // InventoryTo DR CR
       cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
+          costCurrency.getId(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
       // (+)
       // DR
       cr.setM_Locator_ID(line.m_M_LocatorTo_ID);

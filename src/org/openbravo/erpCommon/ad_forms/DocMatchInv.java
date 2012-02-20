@@ -25,9 +25,15 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingServer;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 public class DocMatchInv extends AcctServer {
 
@@ -166,8 +172,10 @@ public class DocMatchInv extends AcctServer {
 
     boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
-    BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
-        data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+    MaterialTransaction transaction = getTransaction(Record_ID);
+    Currency costCurrency = new CostingServer(transaction).getCostCurrency();
+    BigDecimal bdCost = new CostingServer(transaction).getTransactionCost().divide(
+        transaction.getMovementQuantity());
     String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
     BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
     bdCost = bdCost.multiply(bdQty).setScale(new Integer(strScale), RoundingMode.HALF_UP);
@@ -178,7 +186,7 @@ public class DocMatchInv extends AcctServer {
     String strExpenses = invoiceData[0].linenetamt;
     String strInvoiceCurrency = invoiceData[0].cCurrencyId;
     String strDate = invoiceData[0].dateacct;
-    strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, as.getC_Currency_ID(), strDate,
+    strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, costCurrency.getId(), strDate,
         "", vars.getClient(), vars.getOrg(), conn);
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
@@ -194,7 +202,7 @@ public class DocMatchInv extends AcctServer {
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        as.getC_Currency_ID(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
 
     if (dr == null) {
@@ -208,8 +216,7 @@ public class DocMatchInv extends AcctServer {
       String strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
           new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
       cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          as.getC_Currency_ID(), "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+          C_Currency_ID, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (cr == null) {
         log4j.warn("createFact - unable to calculate line with "
             + " expenses to product expenses account.");
@@ -227,10 +234,10 @@ public class DocMatchInv extends AcctServer {
     }
 
     if (!bdCost.equals(bdExpenses)) {
-      diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn), as
-          .getC_Currency_ID(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
-          .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
-          .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
+          costCurrency.getId(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
+              .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
+              .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (diff == null) {
         log4j.warn("createFact - unable to calculate line with "
             + " difference to InvoicePriceVariant account.");
@@ -321,6 +328,18 @@ public class DocMatchInv extends AcctServer {
       log4jDocMatchInv.warn(e);
     }
   } // updateProductInfo
+
+  private MaterialTransaction getTransaction(String matchInvId) {
+    OBContext.setAdminMode(false);
+    MaterialTransaction transaction;
+    try {
+      transaction = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
+          .getGoodsShipmentLine().getMaterialMgmtMaterialTransactionList().get(0);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return transaction;
+  }
 
   public String getServletInfo() {
     return "Servlet for the accounting";

@@ -27,11 +27,15 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.costing.CostingServer;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public class DocInOut extends AcctServer {
@@ -97,7 +101,17 @@ public class DocInOut extends AcctServer {
       // Storage
       // Qty
       docLine.m_M_Locator_ID = data[i].getField("M_LOCATOR_ID");
-      //
+      OBContext.setAdminMode(false);
+      try {
+        // Get related M_Transaction_ID
+        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
+        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          // Internal movement lines have 2 related transactions, both of them with the same cost
+          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       if (docLine.m_M_Product_ID.equals(""))
         log4jDocInOut.debug(" - No Product - ignored");
       else
@@ -166,6 +180,7 @@ public class DocInOut extends AcctServer {
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
+        Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
         if (line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn) == null) {
           Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
           org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
@@ -201,8 +216,8 @@ public class DocInOut extends AcctServer {
         }
         // CoGS DR
         dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn),
-            as.getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            costCurrency.getId(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
         if (dr != null) {
           dr.setM_Locator_ID(line.m_M_Locator_ID);
           dr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
@@ -215,8 +230,8 @@ public class DocInOut extends AcctServer {
         log4jDocInOut.debug("(MatShipment) - CR costs: " + strCosts);
         // Inventory CR
         cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            costCurrency.getId(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
         if (cr != null) {
           cr.setM_Locator_ID(line.m_M_Locator_ID);
           cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
@@ -230,6 +245,7 @@ public class DocInOut extends AcctServer {
     else if (DocumentType.equals(AcctServer.DOCTYPE_MatReceipt)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
+        Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
         String costs = line.getProductCosts(DateAcct, as, conn, con);
         BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
             RoundingMode.HALF_UP);
@@ -269,7 +285,7 @@ public class DocInOut extends AcctServer {
           log4jDocInOut.debug("(matReceipt) - DR costs: " + strCosts);
           // Inventory DR
           dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-              as.getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              costCurrency.getId(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
           if (!getStatus().equals("i")) {
             if (dr != null) {
@@ -285,7 +301,7 @@ public class DocInOut extends AcctServer {
             // NotInvoicedReceipt CR
             cr = fact.createLine(line,
                 getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-                as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                costCurrency.getId(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                 DocumentType, conn);
             if (cr != null) {
               cr.setM_Locator_ID(line.m_M_Locator_ID);

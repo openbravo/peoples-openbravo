@@ -24,11 +24,15 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingServer;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
 public class DocInventory extends AcctServer {
@@ -76,6 +80,7 @@ public class DocInventory extends AcctServer {
   private DocLine[] loadLines(ConnectionProvider conn) {
     ArrayList<Object> list = new ArrayList<Object>();
     DocLineInventoryData[] data = null;
+    OBContext.setAdminMode(false);
     try {
       data = DocLineInventoryData.select(conn, Record_ID);
       for (int i = 0; i < data.length; i++) {
@@ -93,6 +98,12 @@ public class DocInventory extends AcctServer {
         if (invLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
           docLine.setTransaction(invLine.getMaterialMgmtMaterialTransactionList().get(0));
         }
+        // Get related M_Transaction_ID
+        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
+        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          // Internal movement lines have 2 related transactions, both of them with the same cost
+          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
         DocInventoryData[] data1 = null;
         try {
           data1 = DocInventoryData.selectWarehouse(conn, docLine.m_M_Locator_ID);
@@ -109,6 +120,8 @@ public class DocInventory extends AcctServer {
       }
     } catch (ServletException e) {
       log4jDocInventory.warn(e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     // Return Array
     DocLine[] dl = new DocLine[list.size()];
@@ -166,6 +179,7 @@ public class DocInventory extends AcctServer {
     log4jDocInventory.debug("CreateFact - before loop");
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
+      Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
       BigDecimal b_Costs = new BigDecimal(costs);
@@ -188,7 +202,7 @@ public class DocInventory extends AcctServer {
       }
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          costCurrency.getId(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       // may be zero difference - no line created.
       if (dr == null) {
         continue;
@@ -203,7 +217,7 @@ public class DocInventory extends AcctServer {
         invDiff = getAccount(AcctServer.ACCTTYPE_InvDifferences, as, conn);
       }
       log4jDocInventory.debug("CreateFact - after getAccount - invDiff; " + invDiff);
-      cr = fact.createLine(line, invDiff, as.getC_Currency_ID(), (b_Costs.negate()).toString(),
+      cr = fact.createLine(line, invDiff, costCurrency.getId(), (b_Costs.negate()).toString(),
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (cr == null) {
         continue;
