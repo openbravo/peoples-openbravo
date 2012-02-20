@@ -41,10 +41,6 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PRIORITY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default><![CDATA[1]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ORG_DIMENSION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>

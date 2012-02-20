@@ -134,14 +134,13 @@ public class CostingServer {
         transaction.getTransactionProcessDate()));
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCT, true);
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
-    obcCR.addOrderBy(CostingRule.PROPERTY_PRIORITY, true);
     if (obcCR.count() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
           + transaction.getProduct().getName() + ", @Date@: "
           + DateUtility.formatDate(transaction.getTransactionProcessDate()));
     }
     CostingRule returncr = obcCR.list().get(0);
-    if (returncr.getProduct() != null) {
+    if (returncr.getProduct() != null || obcCR.count() == 1) {
       return returncr;
     }
     boolean noProdCat = returncr.getProduct() == null;
