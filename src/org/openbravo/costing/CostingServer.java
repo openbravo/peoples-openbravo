@@ -123,12 +123,17 @@ public class CostingServer {
     // Product filter: CostingRule.product is null or trx.product
     obcCR.add(Restrictions.or(Restrictions.isNull(CostingRule.PROPERTY_PRODUCT),
         Restrictions.eq(CostingRule.PROPERTY_PRODUCT, transaction.getProduct())));
+    // Product category filter: CostingRule.prodCat is null or trx.product.prodCat
+    obcCR.add(Restrictions.or(Restrictions.isNull(CostingRule.PROPERTY_PRODUCTCATEGORY),
+        Restrictions.eq(CostingRule.PROPERTY_PRODUCTCATEGORY, transaction.getProduct()
+            .getProductCategory())));
     // Date filter: transaction process date in [dateFrom, dateTo)
     obcCR.add(Restrictions.ge(CostingRule.PROPERTY_STARTINGDATE,
         transaction.getTransactionProcessDate()));
     obcCR.add(Restrictions.lt(CostingRule.PROPERTY_ENDINGDATE,
         transaction.getTransactionProcessDate()));
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCT, true);
+    obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
     obcCR.addOrderBy(CostingRule.PROPERTY_PRIORITY, true);
     if (obcCR.count() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
@@ -139,10 +144,15 @@ public class CostingServer {
     if (returncr.getProduct() != null) {
       return returncr;
     }
+    boolean noProdCat = returncr.getProduct() == null;
     // If first rule does not have product check if there is a rule for the product
     for (CostingRule cr : obcCR.list()) {
       if (cr.getProduct() != null) {
         return cr;
+      }
+      if (noProdCat && cr.getProductCategory() != null) {
+        returncr = cr;
+        noProdCat = false;
       }
     }
     return returncr;

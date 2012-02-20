@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_COSTING_ALGORITHM" name="M_COSTING_RULE_ALGORITHM">
         <reference local="M_COSTING_ALGORITHM_ID" foreign="M_COSTING_ALGORITHM_ID"/>
       </foreign-key>
@@ -72,6 +76,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_COSTING_RULE_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_COSTING_RULE_PRODUCTCATEGORY">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <check name="M_COSTING_RULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_COSTING_RULE_ORGDIM_CHK"><![CDATA[ORG_DIMENSION IN ('Y', 'N')]]></check>
