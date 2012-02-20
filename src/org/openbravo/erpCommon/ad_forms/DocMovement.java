@@ -24,9 +24,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -144,6 +147,13 @@ public class DocMovement extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     log4jDocMovement.debug("DocMovement - Before the loop");
+    String costCurrencyId = as.getC_Currency_ID();
+    OBContext.setAdminMode(false);
+    try {
+      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
@@ -156,14 +166,14 @@ public class DocMovement extends AcctServer {
         setStatus(STATUS_NotPosted);// Default status. LoadDocument
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn); // from
+          costCurrencyId, (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn); // from
       // (-)
       // CR
       dr.setM_Locator_ID(line.m_M_Locator_ID);
       // InventoryTo DR CR
       cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
+          costCurrencyId, costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
       // (+)
       // DR
       cr.setM_Locator_ID(line.m_M_LocatorTo_ID);

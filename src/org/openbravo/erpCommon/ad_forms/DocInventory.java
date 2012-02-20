@@ -24,10 +24,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.plm.Product;
 
 public class DocInventory extends AcctServer {
@@ -158,6 +160,13 @@ public class DocInventory extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     log4jDocInventory.debug("CreateFact - before loop");
+    String costCurrencyId = as.getC_Currency_ID();
+    OBContext.setAdminMode(false);
+    try {
+      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       String costs = line.getProductCosts(DateAcct, as, conn, con);
@@ -180,7 +189,7 @@ public class DocInventory extends AcctServer {
         break;
       }
       // Inventory DR CR
-      dr = fact.createLine(line, assetAccount, as.getC_Currency_ID(), costs, Fact_Acct_Group_ID,
+      dr = fact.createLine(line, assetAccount, costCurrencyId, costs, Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
       // may be zero difference - no line created.
       if (dr == null) {
@@ -196,7 +205,7 @@ public class DocInventory extends AcctServer {
         invDiff = getAccount(AcctServer.ACCTTYPE_InvDifferences, as, conn);
       }
       log4jDocInventory.debug("CreateFact - after getAccount - invDiff; " + invDiff);
-      cr = fact.createLine(line, invDiff, as.getC_Currency_ID(), (b_Costs.negate()).toString(),
+      cr = fact.createLine(line, invDiff, costCurrencyId, (b_Costs.negate()).toString(),
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (cr == null) {
         continue;
