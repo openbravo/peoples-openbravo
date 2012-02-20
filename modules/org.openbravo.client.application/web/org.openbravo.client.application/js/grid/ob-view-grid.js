@@ -490,13 +490,10 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.getDataSource()) {
-      //If the new state does not have any selected records then all the records of the view are deselected
-      if (!localState.selected) {
-        this.deselectAllRecords();
-      }
       // old versions stored selected records in grid view, this can cause
       // problems if record is not selected yet
       delete localState.selected;
+      this.deselectAllRecords();
 
       this.deleteSelectedParentRecordFilter(localState);
 
