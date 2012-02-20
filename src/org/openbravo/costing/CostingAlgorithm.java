@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.utility.DateUtility;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -58,17 +59,22 @@ public abstract class CostingAlgorithm {
    * 
    * @param _transaction
    *          MaterialTransaction to calculate its cost.
+   * @param costingRule
    * @param _costDimensions
    *          Dimension values to calculate the cost based on them. A null value means that the
    *          dimension is not used.
    */
-  public void init(MaterialTransaction _transaction) {
+  public void init(MaterialTransaction _transaction, CostingRule costingRule) {
     this.transaction = _transaction;
 
-    // FIXME: dimensions need to be assigned based on costDimensionRule.
-    costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
-        .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
-    costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+    costDimensions = CostingUtils.getEmptyDimensions();
+    if (costingRule.isOrganizationDimension()) {
+      costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
+          .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
+    }
+    if (costingRule.isWarehouseDimension()) {
+      costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+    }
 
     this.costOrg = (Organization) costDimensions.get(CostDimension.LegalEntity);
     if (costOrg == null) {

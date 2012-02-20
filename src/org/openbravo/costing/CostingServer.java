@@ -26,7 +26,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
@@ -38,8 +41,7 @@ public class CostingServer {
   private MaterialTransaction transaction;
   private BigDecimal trxCost;
   protected static Logger log4j = Logger.getLogger(CostingServer.class);
-
-  // private String costDimensionRule;
+  private CostingRule costingRule;
 
   public CostingServer(MaterialTransaction transaction) {
     this.transaction = transaction;
@@ -47,7 +49,7 @@ public class CostingServer {
   }
 
   private void init() {
-    // costDimensionRule = getCostDimensionRule();
+    costingRule = getCostDimensionRule();
     trxCost = transaction.getTransactionCost();
   }
 
@@ -64,7 +66,7 @@ public class CostingServer {
       OBContext.setAdminMode(false);
       // Get needed algorithm. And set it in the M_Transaction.
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-      costingAlgorithm.init(transaction);
+      costingAlgorithm.init(transaction, costingRule);
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
@@ -89,10 +91,8 @@ public class CostingServer {
 
   private CostingAlgorithm getCostingAlgorithm() {
     // Algorithm class is retrieved from costDimensionRule
-    // FIXME: temporarily hard code uuid of dummy algorithm
-    String strAlgorithmId = "B069080A0AE149A79CF1FA0E24F16AB6";
-    org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = OBDal.getInstance().get(
-        org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class, strAlgorithmId);
+    org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = costingRule
+        .getCostingAlgorithm();
     transaction.setCostingAlgorithm(costAlgorithm);
 
     try {
@@ -115,6 +115,17 @@ public class CostingServer {
 
   public BigDecimal getTransactionCost() {
     return trxCost;
+  }
+
+  private CostingRule getCostDimensionRule() {
+    OBCriteria<CostingRule> obcCR = OBDal.getInstance().createCriteria(CostingRule.class);
+    obcCR.addOrderBy(CostingRule.PROPERTY_PRIORITY, true);
+    if (obcCR.count() == 0) {
+      throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
+          + transaction.getProduct().getName() + ", @Date@: "
+          + DateUtility.formatDate(transaction.getTransactionProcessDate()));
+    }
+    return obcCR.list().get(0);
   }
 
   /**
