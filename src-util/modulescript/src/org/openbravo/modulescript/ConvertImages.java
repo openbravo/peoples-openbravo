@@ -82,7 +82,7 @@ public class ConvertImages extends ModuleScript {
           is.close();
           ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
           BufferedImage rImage = ImageIO.read(bis);
-          String qupdate="UPDATE ad_image set binarydata=?, width=?, height=?, mimetype=? where ad_image_id=?";
+          String qupdate="UPDATE ad_image set name='Image', binarydata=?, width=?, height=?, mimetype=? where ad_image_id=?";
           PreparedStatement ps=cp.getPreparedStatement(qupdate);
           ps.setObject(1, bytes);
           ps.setLong(2, rImage.getWidth());
