@@ -96,6 +96,11 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.orderByClause = this.gridProperties.orderByClause;
 
+    this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
+      canFilter: true,
+      filterEditorType: 'StaticTextItem'
+    });
+
     this.Super('initWidget', arguments);
   },
 
