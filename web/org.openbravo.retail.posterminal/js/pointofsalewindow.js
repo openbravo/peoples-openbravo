@@ -22,6 +22,16 @@
   }); 
   SalesWindow.OrderTable.addSelectListener(function (l, line) {
     SalesWindow.EditLine.editLine(l, line);
+    
+    if ( l >= 0) {
+      OBPOS.Sales.hw.print('res/printline.xml', line);
+    } else {
+      OBPOS.Sales.hw.print('res/welcome.xml');
+    }
+    
+  });
+  SalesWindow.OrderTable.addClickListener(function (l, line) {
+    $('#editionlink').tab('show');
   });
   SalesWindow.EditLine.addClickListener(function (key) {
     keyPressed(key);
@@ -33,7 +43,9 @@
     newOrder();
   });
   
-
+  $('#btnprint').click(function () {
+    OBPOS.Sales.hw.print('res/printreceipt.xml', { order: { lines : SalesWindow.OrderTable.getLines()}});
+  });
 
   function newOrder() {
     $('#cataloglink').tab('show');
@@ -43,16 +55,20 @@
   }
   
   $(window).keypress(function(e) {
-    keyPressed(e.which);
+    keyPressed(String.fromCharCode(e.which));
   });  
   
   function keyPressed(key) {
     if (key === '-') {
-      SalesWindow.OrderTable.removeUnit();
+      SalesWindow.OrderTable.removeUnit(SalesWindow.EditLine.getNumber());
     } else if (key === '+') {
-      SalesWindow.OrderTable.addUnit();
+      SalesWindow.OrderTable.addUnit(SalesWindow.EditLine.getNumber());
+    } else if (key === '*') {
+      SalesWindow.OrderTable.setUnit(SalesWindow.EditLine.getNumber());
     } else if (key === 'x') {
       SalesWindow.OrderTable.removeLine();
+    } else {
+      SalesWindow.EditLine.typeKey(key)
     }
   }
 

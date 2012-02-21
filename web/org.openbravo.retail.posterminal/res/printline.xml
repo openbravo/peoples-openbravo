@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<output>
+    <display>
+        <line>
+            <text align="left" length="15"><%= productname %></text>
+            <text align="right" length="5">x<%= qty %></text>
+        </line>
+        <line>
+        <% if (qty === 1)  { %>     
+           <text align="right" length="20"><%= OBPOS.Format.formatNumber(price, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
+        <% } else { %>
+           <text align="right" length="10"><%= OBPOS.Format.formatNumber(price, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>        
+           <text align="right" length="10"><%= OBPOS.Format.formatNumber(price * qty, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>        
+        <% } %>
+        </line>
+    </display>
+</output>

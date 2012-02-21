@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<output>
+    <display>
+        <line>
+            <text align="center" length="20">Openbravo Retail</text>
+        </line>
+        <line>
+           <text align="center" length="20">Thank you.</text>
+        </line>
+    </display>
+</output>

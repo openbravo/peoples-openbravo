@@ -23,7 +23,7 @@
                   ])
                 ])      
               ]),
-              NODE('div', {id: 'categoryscroll', style: 'overflow: auto; height: 300px'}, [
+              NODE('div', {id: 'categoryscroll', style: 'overflow: auto; height: 450px'}, [
                 NODE('table', {'class': 'table table-rounded'}, [ this.tbodyCat ])      
               ])          
             ]),
@@ -35,7 +35,7 @@
                   ])
                 ])      
               ]),
-              NODE('div', {id: 'productscroll', style: 'overflow: auto; height: 300px'}, [
+              NODE('div', {id: 'productscroll', style: 'overflow: auto; height: 450px'}, [
                 NODE('table', {'class': 'table table-rounded'}, [ this.tbodyProd ])      
               ])          
             ])        

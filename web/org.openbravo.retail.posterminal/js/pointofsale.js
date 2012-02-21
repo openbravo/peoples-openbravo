@@ -82,6 +82,7 @@
         location = '../org.openbravo.client.application.mobile/login.jsp';
       } else if (data[0]) {
         Sales.terminal = data[0];
+        Sales.hw = new OBPOS.HWServer('http://127.0.0.1:8090/printer');
         me.printStatus();
       } else {
         alert("Terminal does not exists: " + t);
@@ -164,6 +165,7 @@
   Sales.OrderTable = function (tbody) {
     this.changeListeners = [];
     this.selectListeners = [];
+    this.clickListeners = [];
     this.tbody = tbody;
 
     this.render = function (tr, l) {
@@ -189,7 +191,7 @@
     var tr = $('<tr/>');
     this.render(tr, l);
     tr.click(function () {
-      me.setSelected((me.tbody.children().index(tr)));
+      me.setSelected((me.tbody.children().index(tr)), true);
     });
     return tr;
   }
@@ -203,7 +205,11 @@
     this.fireSelectEvent(-1, null);
   }
 
-  Sales.OrderTable.prototype.setSelected = function (n) {
+  Sales.OrderTable.prototype.getLines = function () {
+    return this.lines;
+  }
+  
+  Sales.OrderTable.prototype.setSelected = function (n, clicked) {
     var children = this.tbody.children();
     if (this.lineselected > -1) {
       children.eq(this.lineselected).css('background-color', '').css('color', '');
@@ -214,15 +220,21 @@
       elemselected.css('background-color', '#049cdb').css('color', '#fff');
       makeElemVisible($('#orderscroll'), elemselected);
       this.fireSelectEvent(this.lineselected, this.lines[this.lineselected]);
+      if (clicked) {
+        this.fireClickEvent(this.lineselected, this.lines[this.lineselected]);
+      }
     } else {
       this.lineselected = -1;
       this.fireSelectEvent(-1, null);
     }
   }
 
-  Sales.OrderTable.prototype.addUnit = function () {
+  Sales.OrderTable.prototype.addUnit = function (qty) {
     if (this.lineselected > -1) {
-      this.lines[this.lineselected].qty += 1;
+      
+      qty = isNaN(qty) ? 1 : qty;
+      
+      this.lines[this.lineselected].qty += qty;
       var tr = this.tbody.children().eq(this.lineselected).empty();
       this.render(tr, this.lines[this.lineselected]);
       this.fireChangeEvent();
@@ -230,9 +242,25 @@
     }
   }
 
-  Sales.OrderTable.prototype.removeUnit = function () {
+  Sales.OrderTable.prototype.setUnit = function (qty) {
     if (this.lineselected > -1) {
-      this.lines[this.lineselected].qty -= 1;
+      
+      qty = isNaN(qty) ? this.lines[this.lineselected].qty : qty;
+      
+      this.lines[this.lineselected].qty = qty;
+      var tr = this.tbody.children().eq(this.lineselected).empty();
+      this.render(tr, this.lines[this.lineselected]);
+      this.fireChangeEvent();
+      this.fireSelectEvent(this.lineselected, this.lines[this.lineselected]);
+    }
+  }
+  
+  Sales.OrderTable.prototype.removeUnit = function (qty) {
+    if (this.lineselected > -1) {
+      
+      qty = isNaN(qty) ? 1 : Math.abs(qty);
+      
+      this.lines[this.lineselected].qty -= qty;
       if (this.lines[this.lineselected].qty <= 0) {
         this.removeLine();
       } else {
@@ -302,6 +330,16 @@
       this.selectListeners[i](l, line);
     }
   }
+
+  Sales.OrderTable.prototype.addClickListener = function (l) {
+    this.clickListeners.push(l);
+  }
+
+  Sales.OrderTable.prototype.fireClickEvent = function (l, line) {
+    for (var i = 0, max = this.clickListeners.length; i < max; i++) {
+      this.clickListeners[i](l, line);
+    }
+  }  
   // Total
   Sales.OrderTotal = function (elem) {
     this.elem = elem;
@@ -330,71 +368,7 @@
     this.render(lines);
   }
 
-  // EditLine Object
-  Sales.EditLine = function (container) {
-    var me = this;
-    this.container = container;
-    this.clickListeners = [];
 
-    container.load('editline.html', function () {
-      $('#btnplus').click(function () {
-        me.fireClickEvent('+');
-      });
-      $('#btnminus').click(function () {
-        me.fireClickEvent('-');
-      });
-      $('#btnremove').click(function () {
-        me.fireClickEvent('x');
-      });
-    });
-  }
-
-  Sales.EditLine.prototype.cleanLine = function () {
-    this.editLine(-1, null)
-  }
-  
-  Sales.EditLine.prototype.editLine = function (l, line) {
-
-    if (l >= 0) {
-      OBPOS.Sales.DSProduct.find({
-        id: line.productid
-      }, function (data) {
-        if (data) {
-          $('#editlineimage').empty().append(Sales.getThumbnail(data.binaryData, 128, 164));
-          $('#editlinename').text(data._identifier);
-          $('#editlineqty').text(line.qty);
-          $('#editlineprice').text(OBPOS.Format.formatNumber(line.price, {
-            decimals: 2,
-            decimal: '.',
-            group: ',',
-            currency: '$ #'
-          }));
-          $('#editlinenet').text(OBPOS.Format.formatNumber(line.qty * line.price, {
-            decimals: 2,
-            decimal: '.',
-            group: ',',
-            currency: '$ #'
-          }));
-        }
-      });
-    } else {
-      $('#editlineimage').empty();
-      $('#editlinename').empty();
-      $('#editlineqty').empty();
-      $('#editlineprice').empty();
-      $('#editlinenet').empty();
-    }
-  };
-
-  Sales.EditLine.prototype.addClickListener = function (l) {
-    this.clickListeners.push(l);
-  };
-
-  Sales.EditLine.prototype.fireClickEvent = function (key) {
-    for (var i = 0, max = this.clickListeners.length; i < max; i++) {
-      this.clickListeners[i](key);
-    }
-  };
 
   // Public Sales
   OBPOS.Sales = Sales;
