@@ -85,7 +85,6 @@ isc.OBToolbarActionButton.addProperties({
 
     // obuiapp_process definition
     if (this.newDefinition) {
-      me.setDisabled(true); // To avoid button could be clicked twice
       callbackFunction = function () {
         standardWindow.openProcess({
           processId: me.processId,
@@ -94,10 +93,13 @@ isc.OBToolbarActionButton.addProperties({
           actionHandler: me.command,
           buttons: me.labelValue
         });
-        me.setDisabled(false); // Activate again the button
+        me.opening = false; // Activate again the button
       };
 
-      theView.setContextInfo(sessionProperties, callbackFunction, true);
+      if (!me.opening) {
+        me.opening = true; // To avoid button could be clicked twice
+        theView.setContextInfo(sessionProperties, callbackFunction, true);
+      }
       return;
     }
 
