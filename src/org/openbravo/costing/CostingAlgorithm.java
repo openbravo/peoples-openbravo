@@ -27,7 +27,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.DateUtility;
 import org.openbravo.model.common.currency.Currency;
@@ -60,13 +59,19 @@ public abstract class CostingAlgorithm {
    * @param _transaction
    *          MaterialTransaction to calculate its cost.
    * @param costingRule
+   * @param currency
+   * @param organization
    * @param _costDimensions
    *          Dimension values to calculate the cost based on them. A null value means that the
    *          dimension is not used.
    */
-  public void init(MaterialTransaction _transaction, CostingRule costingRule) {
-    this.transaction = _transaction;
+  public void init(CostingServer costingServer) {
+    transaction = costingServer.getTransaction();
+    costOrg = costingServer.getOrganization();
+    costCurrency = costingServer.getCostCurrency();
+    trxType = TrxType.getTrxType(this.transaction);
 
+    CostingRule costingRule = costingServer.getCostingRule();
     costDimensions = CostingUtils.getEmptyDimensions();
     if (costingRule.isOrganizationDimension()) {
       costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
@@ -76,18 +81,6 @@ public abstract class CostingAlgorithm {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     }
 
-    this.costOrg = (Organization) costDimensions.get(CostDimension.LegalEntity);
-    if (costOrg == null) {
-      // Cost calculated at client level. Records stored in asterisk organization.
-      costOrg = OBDal.getInstance().get(Organization.class, "0");
-      costCurrency = transaction.getClient().getCurrency();
-    } else {
-      costCurrency = costOrg.getCurrency();
-    }
-    if (costCurrency == null) {
-      costCurrency = transaction.getClient().getCurrency();
-    }
-    this.trxType = TrxType.getTrxType(this.transaction);
   }
 
   /**

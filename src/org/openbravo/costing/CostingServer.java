@@ -30,6 +30,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -43,6 +45,8 @@ public class CostingServer {
   private BigDecimal trxCost;
   protected static Logger log4j = Logger.getLogger(CostingServer.class);
   private CostingRule costingRule;
+  private Currency currency;
+  private Organization organization;
 
   public CostingServer(MaterialTransaction transaction) {
     this.transaction = transaction;
@@ -51,6 +55,8 @@ public class CostingServer {
 
   private void init() {
     costingRule = getCostDimensionRule();
+    organization = getOrganization();
+    currency = getCostCurrency();
     trxCost = transaction.getTransactionCost();
   }
 
@@ -67,7 +73,7 @@ public class CostingServer {
       OBContext.setAdminMode(false);
       // Get needed algorithm. And set it in the M_Transaction.
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
-      costingAlgorithm.init(transaction, costingRule);
+      costingAlgorithm.init(this);
       log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
@@ -155,6 +161,37 @@ public class CostingServer {
       }
     }
     return returncr;
+  }
+
+  public Currency getCostCurrency() {
+    if (currency != null) {
+      return currency;
+    }
+    if (organization != null) {
+      if (!organization.getId().equals("0") && organization.getCurrency() != null) {
+        return organization.getCurrency();
+      }
+      return OBContext.getOBContext().getCurrentClient().getCurrency();
+    } else {
+      init();
+      return getCostCurrency();
+    }
+  }
+
+  public Organization getOrganization() {
+    if (costingRule.isOrganizationDimension()) {
+      return OBContext.getOBContext().getOrganizationStructureProvider()
+          .getLegalEntity(transaction.getOrganization());
+    }
+    return OBDal.getInstance().get(Organization.class, "0");
+  }
+
+  public CostingRule getCostingRule() {
+    return costingRule;
+  }
+
+  public MaterialTransaction getTransaction() {
+    return transaction;
   }
 
   /**
