@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingServer;
 import org.openbravo.dal.core.OBContext;
@@ -162,7 +163,13 @@ public class DocMovement extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
-      Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      Currency costCurrency = OBContext.getOBContext().getCurrentClient().getCurrency();
+      try {
+        costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      } catch (OBException e) {
+        // CostingRule not found exception. Ignore it.
+        log4j.debug("CostingRule not found to retrieve organization's currency");
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal b_Costs = new BigDecimal(costs);
       if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
