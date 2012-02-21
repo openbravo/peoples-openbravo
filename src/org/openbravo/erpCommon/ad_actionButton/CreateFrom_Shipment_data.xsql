@@ -296,10 +296,10 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME, 
-        l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol,
+        l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol,
         l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID, 
         l.DESCRIPTION AS DESCRIPTION
-        FROM C_INVOICELINE l left join  M_MATCHINV mi  on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
+        FROM C_INVOICELINE l left join M_INOUTLINE mi on l.M_INOUTLINE_ID = mi.M_INOUTLINE_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
         AND i.AD_Client_ID IN ('1') 
@@ -309,7 +309,7 @@
         AND l.C_Invoice_ID = ?
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
-        HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 
+        HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -353,11 +353,11 @@
         WHERE i.AD_Client_ID IN ('1') 
         AND i.AD_Org_ID IN ('1')
         AND i.C_BPartner_ID = ?
-        AND EXISTS (SELECT 1 
-                     FROM C_INVOICELINE l left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID
-                      WHERE l.C_INVOICE_ID = i.C_INVOICE_ID 
-                      GROUP BY l.QtyInvoiced, l.C_InvoiceLine_ID 
-                      HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 ) 
+        AND EXISTS (SELECT 1                      
+                FROM C_INVOICELINE l LEFT JOIN M_INOUTLINE MI ON l.M_INOUTLINE_ID = MI.M_INOUTLINE_ID                        
+                WHERE l.C_INVOICE_ID = i.C_INVOICE_ID                
+                GROUP BY l.C_InvoiceLine_ID ,l.QtyInvoiced                
+                HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 ) 
         ORDER BY NAME
       ]]>
     </Sql>
@@ -435,13 +435,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS ID, l.C_UOM_ID,uom.UOMSymbol,
+      SELECT l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0)) AS ID, l.C_UOM_ID,uom.UOMSymbol,
       l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, l.QUANTITYORDER, l.M_Product_UOM_ID,
       l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
                            left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID 
-                           left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
+                           left join M_INOUTLINE mi on l.M_INOUTLINE_ID=mi.M_INOUTLINE_ID,
       C_UOM uom,  M_PRODUCT p, C_INVOICE i
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND i.c_invoice_id = l.c_invoice_id
@@ -450,7 +450,7 @@
       GROUP BY l.QtyInvoiced,
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
       uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
-      HAVING l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0
+      HAVING l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))<>0
       ORDER BY l.Line
       ]]>
     </Sql>
