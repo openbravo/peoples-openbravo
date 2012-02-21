@@ -514,7 +514,7 @@ BEGIN
      and activation_key is not null;
      
   if v_isObps = 0 then
-    RAISE EXCEPTION '%', '@OBPSNeededForAudit@' ; --OBTG:-20000--
+    RAISE EXCEPTION '%', '@OBPSNeededForAudit@' ;
   end if;  	
 	
   for cur_triggers in (select *
