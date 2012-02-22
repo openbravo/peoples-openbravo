@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 
@@ -156,12 +157,18 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Method to calculate cost of Returned Shipments. By default the cost is calculated as a regular
-   * receipt, based on the price of the related Return Sales Order.
+   * Method to calculate cost of Returned Shipments. Cost is calculated based on the proportional
+   * cost of the original receipt. If no original receipt is found the cost is calculated based on
+   * the standard cost.
    */
   protected BigDecimal getShipmentReturnAmount() {
-    // Shipment return's cost is calculated based on the related Return from Customer order's price.
-    return getShipmentCost();
+    // Shipment return's cost is calculated based on the proportional cost of the original shipment.
+    try {
+      return getReturnedInOutLineCost();
+    } catch (OBException e) {
+      // if no original trx is found use standard cost.
+      return getTransactionStandardCost();
+    }
   }
 
   /**
@@ -184,9 +191,7 @@ public abstract class CostingAlgorithm {
     if (salesOrderLine == null) {
       // Shipment without order. Returns cost based on price list.
       // FIXME: return Price List price
-      return transaction.getMovementQuantity().multiply(
-          CostingUtils.getStandardCost(transaction.getProduct(),
-              transaction.getTransactionProcessDate(), costDimensions));
+      return getTransactionStandardCost();
     }
 
     BigDecimal orderAmt = transaction.getMovementQuantity().multiply(salesOrderLine.getUnitPrice());
@@ -210,9 +215,7 @@ public abstract class CostingAlgorithm {
     if (receiptline.getSalesOrderLine() == null) {
       // Receipt without order. Returns cost based on price list.
       // FIXME: return Price List price
-      return transaction.getMovementQuantity().multiply(
-          CostingUtils.getStandardCost(transaction.getProduct(),
-              transaction.getTransactionProcessDate(), costDimensions));
+      return getTransactionStandardCost();
     }
     for (POInvoiceMatch matchPO : receiptline.getProcurementPOInvoiceMatchList()) {
       addQty = addQty.add(matchPO.getQuantity());
@@ -228,12 +231,18 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Method to calculate cost of Returned Receipts. By default the cost is calculated as a regular
-   * receipt, based on the price of the related Return Sales Order.
+   * Method to calculate cost of Returned Receipts. Cost is calculated based on the proportional
+   * cost of the original receipt. If no original receipt is found the cost is calculated as a
+   * regular outgoing transaction.
    */
-  protected BigDecimal getReceiptReturnAmount() {
-    // Return's cost is calculated as outgoing transactions.
-    return getOutgoingTransactionCost();
+  protected BigDecimal getReceiptReturnAmount() throws OBException {
+    // Receipt return's cost is calculated based on the proportional cost of the original shipment.
+    try {
+      return getReturnedInOutLineCost();
+    } catch (OBException e) {
+      // if no original trx is found use standard outgoing trx.
+      return getOutgoingTransactionCost();
+    }
   }
 
   /**
@@ -267,13 +276,34 @@ public abstract class CostingAlgorithm {
   }
 
   /**
+   * Gets the returned in out line and returns the proportional cost amount based on the original
+   * movement quantity and the returned movement qty.
+   * 
+   * @throws OBException
+   *           when no original in out line is found.
+   */
+  protected BigDecimal getReturnedInOutLineCost() throws OBException {
+    MaterialTransaction originalTrx = null;
+    try {
+      originalTrx = transaction.getGoodsShipmentLine().getSalesOrderLine().getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList().get(0);
+    } catch (Exception e) {
+      throw new OBException("@NoReturnedLineFoundForTrx@ @Transaction@: "
+          + transaction.getIdentifier());
+    }
+    BigDecimal originalCost = CostingUtils.getTransactionCost(originalTrx,
+        transaction.getTransactionProcessDate());
+    return originalCost.multiply(transaction.getMovementQuantity().abs()).divide(
+        originalTrx.getMovementQuantity().abs(), costCurrency.getStandardPrecision().intValue(),
+        RoundingMode.HALF_UP);
+  }
+
+  /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
    */
   protected BigDecimal getIncomingPhysicalInventoryCost() {
-    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
-        transaction.getTransactionProcessDate(), costDimensions);
-    return transaction.getMovementQuantity().multiply(standardCost);
+    return getTransactionStandardCost();
   }
 
   /**
@@ -302,9 +332,7 @@ public abstract class CostingAlgorithm {
    * calculate its price.
    */
   protected BigDecimal getInternalConsNegativeAmount() {
-    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
-        transaction.getTransactionProcessDate(), costDimensions);
-    return transaction.getMovementQuantity().multiply(standardCost);
+    return getTransactionStandardCost();
   }
 
   /**
@@ -334,6 +362,16 @@ public abstract class CostingAlgorithm {
           transaction.getTransactionProcessDate(), true));
     }
     return totalCost;
+  }
+
+  /**
+   * Calculates the transaction cost based on the Standard Cost of the product on the Transaction
+   * Process Date.
+   */
+  protected BigDecimal getTransactionStandardCost() {
+    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
+        transaction.getTransactionProcessDate(), costDimensions);
+    return transaction.getMovementQuantity().abs().multiply(standardCost);
   }
 
   /**
