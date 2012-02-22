@@ -42,6 +42,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     switch (trxType) {
     case Receipt:
     case ReceiptVoid:
+    case ReceiptReturn:
     case ShipmentVoid:
     case ShipmentReturn:
     case ShipmentNegative:
