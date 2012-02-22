@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingServer;
 import org.openbravo.dal.core.OBContext;
@@ -31,7 +32,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
@@ -98,6 +101,13 @@ public class DocMatchInv extends AcctServer {
     for (int i = 0; i < data.length; i++) {
       DocLine_Invoice docLine = new DocLine_Invoice(DocumentType, Record_ID, strCInvoiceLineId);
       docLine.loadAttributes(data[i], this);
+      OBContext.setAdminMode(false);
+      try {
+        Invoice invoice = OBDal.getInstance().get(Invoice.class, data[i].cInvoiceId);
+        docLine.m_C_Currency_ID = invoice.getCurrency().getId();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       String strQty = data[i].qtyinvoiced;
       docLine.setQty(strQty);
       String LineNetAmt = data[i].linenetamt;
@@ -173,12 +183,21 @@ public class DocMatchInv extends AcctServer {
     boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
     MaterialTransaction transaction = getTransaction(Record_ID);
-    Currency costCurrency = new CostingServer(transaction).getCostCurrency();
-    BigDecimal bdCost = new CostingServer(transaction).getTransactionCost().divide(
-        transaction.getMovementQuantity());
-    String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
+    Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+    try {
+      costCurrency = new CostingServer(transaction).getCostCurrency();
+    } catch (OBException e) {
+      // CostingRule not found exception. Ignore it.
+      log4j.debug("CostingRule not found to retrieve organization's currency");
+    }
+    BigDecimal trxCost = transaction.getTransactionCost();
+    // Cost is retrieved from the transaction and if it does not exist It calls the old way
+    BigDecimal bdCost = trxCost != null ? trxCost.divide(transaction.getMovementQuantity())
+        : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
+            data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+    Long scale = costCurrency.getStandardPrecision();
     BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
-    bdCost = bdCost.multiply(bdQty).setScale(new Integer(strScale), RoundingMode.HALF_UP);
+    bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
 
     DocMatchInvData[] invoiceData = DocMatchInvData.selectInvoiceData(conn, vars.getClient(),
         data[0].getField("C_InvoiceLine_Id"));
@@ -216,7 +235,8 @@ public class DocMatchInv extends AcctServer {
       String strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
           new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
       cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          C_Currency_ID, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          docLineInvoice.m_C_Currency_ID, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
       if (cr == null) {
         log4j.warn("createFact - unable to calculate line with "
             + " expenses to product expenses account.");

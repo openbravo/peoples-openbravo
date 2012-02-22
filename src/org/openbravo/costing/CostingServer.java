@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -140,18 +141,19 @@ public class CostingServer {
         transaction.getTransactionProcessDate()));
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCT, true);
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
-    if (obcCR.count() == 0) {
+    List<CostingRule> costRules = obcCR.list();
+    if (costRules.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
           + transaction.getProduct().getName() + ", @Date@: "
           + DateUtility.formatDate(transaction.getTransactionProcessDate()));
     }
-    CostingRule returncr = obcCR.list().get(0);
+    CostingRule returncr = costRules.get(0);
     if (returncr.getProduct() != null || obcCR.count() == 1) {
       return returncr;
     }
     boolean noProdCat = returncr.getProduct() == null;
     // If first rule does not have product check if there is a rule for the product
-    for (CostingRule cr : obcCR.list()) {
+    for (CostingRule cr : costRules) {
       if (cr.getProduct() != null) {
         return cr;
       }

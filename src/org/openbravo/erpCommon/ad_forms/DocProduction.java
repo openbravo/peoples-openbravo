@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingServer;
 import org.openbravo.dal.core.OBContext;
@@ -32,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
@@ -164,7 +166,13 @@ public class DocProduction extends AcctServer {
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      try {
+        costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      } catch (OBException e) {
+        // CostingRule not found exception. Ignore it.
+        log4j.debug("CostingRule not found to retrieve organization's currency");
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
       if (dCosts.compareTo(BigDecimal.ZERO) == 0) {

@@ -31,6 +31,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
@@ -163,7 +164,7 @@ public class DocMovement extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
-      Currency costCurrency = OBContext.getOBContext().getCurrentClient().getCurrency();
+      Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       try {
         costCurrency = new CostingServer(line.transaction).getCostCurrency();
       } catch (OBException e) {

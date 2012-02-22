@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.costing.CostingServer;
@@ -33,10 +34,11 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class DocInOut extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -104,10 +106,10 @@ public class DocInOut extends AcctServer {
       OBContext.setAdminMode(false);
       try {
         // Get related M_Transaction_ID
-        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
-        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+        ShipmentInOutLine inOut = OBDal.getInstance().get(ShipmentInOutLine.class, Line_ID);
+        if (inOut.getMaterialMgmtMaterialTransactionList().size() > 0) {
           // Internal movement lines have 2 related transactions, both of them with the same cost
-          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+          docLine.setTransaction(inOut.getMaterialMgmtMaterialTransactionList().get(0));
         }
       } finally {
         OBContext.restorePreviousMode();
@@ -167,7 +169,7 @@ public class DocInOut extends AcctServer {
         log4j.error("Error while creating new instance for DocInOutTemplate - " + e);
       }
     }
-    C_Currency_ID = as.getC_Currency_ID();
+    // C_Currency_ID = as.getC_Currency_ID();
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -180,7 +182,14 @@ public class DocInOut extends AcctServer {
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
-        Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
+        Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        try {
+          costCurrency = new CostingServer(line.transaction).getCostCurrency();
+        } catch (OBException e) {
+          // CostingRule not found exception. Ignore it.
+          log4j.debug("CostingRule not found to retrieve organization's currency");
+        }
+        C_Currency_ID = costCurrency.getId();
         if (line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn) == null) {
           Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
           org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
@@ -245,7 +254,14 @@ public class DocInOut extends AcctServer {
     else if (DocumentType.equals(AcctServer.DOCTYPE_MatReceipt)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
-        Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
+        Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        try {
+          costCurrency = new CostingServer(line.transaction).getCostCurrency();
+        } catch (OBException e) {
+          // CostingRule not found exception. Ignore it.
+          log4j.debug("CostingRule not found to retrieve organization's currency");
+        }
+        C_Currency_ID = costCurrency.getId();
         String costs = line.getProductCosts(DateAcct, as, conn, con);
         BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
             RoundingMode.HALF_UP);

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingServer;
 import org.openbravo.dal.core.OBContext;
@@ -30,9 +31,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
 public class DocInventory extends AcctServer {
@@ -97,12 +98,6 @@ public class DocInventory extends AcctServer {
         InventoryCountLine invLine = OBDal.getInstance().get(InventoryCountLine.class, Line_ID);
         if (invLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
           docLine.setTransaction(invLine.getMaterialMgmtMaterialTransactionList().get(0));
-        }
-        // Get related M_Transaction_ID
-        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
-        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
-          // Internal movement lines have 2 related transactions, both of them with the same cost
-          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
         }
         DocInventoryData[] data1 = null;
         try {
@@ -179,7 +174,13 @@ public class DocInventory extends AcctServer {
     log4jDocInventory.debug("CreateFact - before loop");
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      Currency costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      try {
+        costCurrency = new CostingServer(line.transaction).getCostCurrency();
+      } catch (OBException e) {
+        // CostingRule not found exception. Ignore it.
+        log4j.debug("CostingRule not found to retrieve organization's currency");
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
       BigDecimal b_Costs = new BigDecimal(costs);
