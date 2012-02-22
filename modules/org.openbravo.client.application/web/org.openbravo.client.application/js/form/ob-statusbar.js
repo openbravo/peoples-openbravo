@@ -75,17 +75,24 @@ isc.OBStatusBarIconButton.addProperties({
   },
 
   doAction: function () {
-    var rowNum, newRowNum, newRecord, theButtonBar, i, length;
+    var invalidFormState = this.view.viewForm.hasChanged && !this.view.viewForm.validateForm(),
+        rowNum, newRowNum, newRecord, theButtonBar, i, length;
     if (this.buttonType === 'previous') {
+      if (invalidFormState) {
+        return;
+      }
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
       this.view.maximize();
     } else if (this.buttonType === 'restore') {
       this.view.restore();
     } else if (this.buttonType === 'next') {
+      if (invalidFormState) {
+        return;
+      }
       this.view.editNextPreviousRecord(true);
     } else if (this.buttonType === 'close') {
-      if (this.view.viewForm.hasChanged && !this.view.viewForm.validateForm()) {
+      if (invalidFormState) {
         return;
       }
       this.view.viewForm.doClose();
