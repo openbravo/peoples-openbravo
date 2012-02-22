@@ -213,6 +213,7 @@ isc.OBNoteLayout.addProperties({
         showTitle: false,
         layout: this,
         width: '*',
+        length: 2000,
         change: function (form, item, value, oldValue) {
           if (value) {
             this.layout.saveNoteButton.setDisabled(false);
