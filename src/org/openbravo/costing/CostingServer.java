@@ -116,7 +116,7 @@ public class CostingServer {
     TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setCost(trxCost);
-    transactionCost.setCostDate(transaction.getCreationDate());
+    transactionCost.setCostDate(transaction.getTransactionProcessDate());
     OBDal.getInstance().save(transactionCost);
   }
 

@@ -28,7 +28,7 @@ public class StandardAlgorithm extends CostingAlgorithm {
 
   protected BigDecimal getOutgoingTransactionCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
-        transaction.getCreationDate(), costDimensions);
+        transaction.getTransactionProcessDate(), costDimensions);
     return standardCost.multiply(transaction.getMovementQuantity().abs());
   }
 }

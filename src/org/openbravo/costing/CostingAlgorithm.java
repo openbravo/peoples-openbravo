@@ -185,17 +185,17 @@ public abstract class CostingAlgorithm {
       // Shipment without order. Returns cost based on price list.
       // FIXME: return Price List price
       return transaction.getMovementQuantity().multiply(
-          CostingUtils.getStandardCost(transaction.getProduct(), transaction.getCreationDate(),
-              costDimensions));
+          CostingUtils.getStandardCost(transaction.getProduct(),
+              transaction.getTransactionProcessDate(), costDimensions));
     }
 
     BigDecimal orderAmt = transaction.getMovementQuantity().multiply(salesOrderLine.getUnitPrice());
     // TODO: Check if conversion is done correctly.
 
     BigDecimal trxCost = new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(),
-        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(),
-        DateUtility.formatDate(transaction.getCreationDate()), "", transaction.getClient().getId(),
-        costOrg.getId(), new DalConnectionProvider(false)));
+        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(), DateUtility
+            .formatDate(transaction.getTransactionProcessDate()), "", transaction.getClient()
+            .getId(), costOrg.getId(), new DalConnectionProvider(false)));
 
     return trxCost;
   }
@@ -211,8 +211,8 @@ public abstract class CostingAlgorithm {
       // Receipt without order. Returns cost based on price list.
       // FIXME: return Price List price
       return transaction.getMovementQuantity().multiply(
-          CostingUtils.getStandardCost(transaction.getProduct(), transaction.getCreationDate(),
-              costDimensions));
+          CostingUtils.getStandardCost(transaction.getProduct(),
+              transaction.getTransactionProcessDate(), costDimensions));
     }
     for (POInvoiceMatch matchPO : receiptline.getProcurementPOInvoiceMatchList()) {
       addQty = addQty.add(matchPO.getQuantity());
@@ -221,8 +221,8 @@ public abstract class CostingAlgorithm {
       // TODO: Check if conversion is done correctly.
       trxCost = trxCost.add(new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(), matchPO
           .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(),
-          DateUtility.formatDate(transaction.getCreationDate()), "", transaction.getClient()
-              .getId(), costOrg.getId(), new DalConnectionProvider(false))));
+          DateUtility.formatDate(transaction.getTransactionProcessDate()), "", transaction
+              .getClient().getId(), costOrg.getId(), new DalConnectionProvider(false))));
     }
     return trxCost;
   }
@@ -262,7 +262,8 @@ public abstract class CostingAlgorithm {
     MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
         .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
 
-    return CostingUtils.getTransactionCost(origInOutLineTrx, transaction.getCreationDate());
+    return CostingUtils.getTransactionCost(origInOutLineTrx,
+        transaction.getTransactionProcessDate());
   }
 
   /**
@@ -271,7 +272,7 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getIncomingPhysicalInventoryCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
-        transaction.getCreationDate(), costDimensions);
+        transaction.getTransactionProcessDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
   }
 
@@ -288,8 +289,8 @@ public abstract class CostingAlgorithm {
         continue;
       }
       // Calculate transaction cost if it is not calculated yet.
-      return CostingUtils.getTransactionCost(movementTransaction, transaction.getCreationDate(),
-          true);
+      return CostingUtils.getTransactionCost(movementTransaction,
+          transaction.getTransactionProcessDate(), true);
     }
     // If no transaction is found throw an exception.
     throw new OBException("@NoInternalMovementTransactionFound@ @Transaction@: "
@@ -302,7 +303,7 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getInternalConsNegativeAmount() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
-        transaction.getCreationDate(), costDimensions);
+        transaction.getTransactionProcessDate(), costDimensions);
     return transaction.getMovementQuantity().multiply(standardCost);
   }
 
@@ -330,7 +331,7 @@ public abstract class CostingAlgorithm {
           .get(0);
       // Calculate transaction cost if it is not calculated yet.
       totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
-          transaction.getCreationDate(), true));
+          transaction.getTransactionProcessDate(), true));
     }
     return totalCost;
   }
