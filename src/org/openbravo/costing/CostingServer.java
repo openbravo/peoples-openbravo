@@ -135,9 +135,9 @@ public class CostingServer {
         Restrictions.eq(CostingRule.PROPERTY_PRODUCTCATEGORY, transaction.getProduct()
             .getProductCategory())));
     // Date filter: transaction process date in [dateFrom, dateTo)
-    obcCR.add(Restrictions.ge(CostingRule.PROPERTY_STARTINGDATE,
+    obcCR.add(Restrictions.le(CostingRule.PROPERTY_STARTINGDATE,
         transaction.getTransactionProcessDate()));
-    obcCR.add(Restrictions.lt(CostingRule.PROPERTY_ENDINGDATE,
+    obcCR.add(Restrictions.gt(CostingRule.PROPERTY_ENDINGDATE,
         transaction.getTransactionProcessDate()));
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCT, true);
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
