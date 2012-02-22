@@ -17,17 +17,6 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 
 public class AverageAlgorithm extends CostingAlgorithm {
 
-  @Override
-  protected BigDecimal getOutgoingTransactionCost() {
-    Costing currentCosting = getProductCost();
-    if (currentCosting == null) {
-      throw new OBException("@NoAvgCostDefined@ @Product@: " + transaction.getProduct().getName()
-          + ", @Date@: " + DateUtility.formatDate(transaction.getTransactionProcessDate()));
-    }
-    BigDecimal cost = currentCosting.getCost();
-    return transaction.getMovementQuantity().abs().multiply(cost);
-  }
-
   public BigDecimal getTransactionCost() {
     BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
@@ -60,6 +49,30 @@ public class AverageAlgorithm extends CostingAlgorithm {
       break;
     }
     return trxCost;
+  }
+
+  @Override
+  protected BigDecimal getOutgoingTransactionCost() {
+    Costing currentCosting = getProductCost();
+    if (currentCosting == null) {
+      throw new OBException("@NoAvgCostDefined@ @Product@: " + transaction.getProduct().getName()
+          + ", @Date@: " + DateUtility.formatDate(transaction.getTransactionProcessDate()));
+    }
+    BigDecimal cost = currentCosting.getCost();
+    return transaction.getMovementQuantity().abs().multiply(cost);
+  }
+
+  /**
+   * Cost of incoming physical inventory is calculated based on current average cost. If there is no
+   * average cost it uses the default method..
+   */
+  @Override
+  protected BigDecimal getIncomingPhysicalInventoryCost() {
+    try {
+      return getOutgoingTransactionCost();
+    } catch (OBException e) {
+      return super.getIncomingPhysicalInventoryCost();
+    }
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
