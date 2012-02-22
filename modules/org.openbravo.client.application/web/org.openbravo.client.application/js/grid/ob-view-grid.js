@@ -299,6 +299,18 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
+  clearFilter: function() {
+    // hide the messagebar
+    this.view.messageBar.hide();
+    this.Super('clearFilter', arguments);
+  },
+  
+  filterEditorSubmit: function() {
+    // hide the messagebar
+    this.view.messageBar.hide();
+    this.Super('filterEditorSubmit', arguments);
+  },
+  
   // destroy the context menu also
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
