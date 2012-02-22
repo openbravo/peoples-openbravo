@@ -31,29 +31,27 @@
              <text>------------------------------------------</text>
         </line>
     <% 
-     var total = 0;
      for (var i = 0, max = order.lines.length; i < max; i++) { 
-       total += order.lines[i].price * order.lines[i].qty;
     %>
         
         <line>
 
-            <text align ="left" length="17"><%= order.lines[i].productname %></text>
+            <text align ="left" length="17"><%= order.lines[i].productidentifier %></text>
 
-            <text align ="right" length="10"><%= OBPOS.Format.formatNumber(order.lines[i].price, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
-            <text align ="right" length="5">x<%= OBPOS.Format.formatNumber(order.lines[i].qty, { decimals: 0, decimal: '.', group: ',' }) %></text>
-            <text align ="right" length="10"><%= OBPOS.Format.formatNumber(order.lines[i].price * order.lines[i].qty, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
+            <text align ="right" length="10"><%= order.lines[i].printPrice() %></text>
+            <text align ="right" length="5">x<%= order.lines[i].printQty() %></text>
+            <text align ="right" length="10"><%= order.lines[i].printNet() %></text>
         </line>  
     <%
      } 
-     %>
+    %>
         <line>
              <text>------------------------------------------</text>
         </line>
         <line></line>
         <line size="1">
             <text align ="left" length="16" bold="true">Total.</text>
-            <text align ="right" length="20" bold="true"><%= OBPOS.Format.formatNumber(total, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
+            <text align ="right" length="20" bold="true"><%= order.printNet() %></text>
         </line>    
         
         
@@ -62,7 +60,7 @@
     <display>
         <line>
             <text align="left" length="10">Total.</text>
-            <text align="right" length="10"><%= OBPOS.Format.formatNumber(total, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
+            <text align="right" length="10"><%= order.printNet() %></text>
         </line>
         <line>
            <text align="center" length="20">Thank you.</text>

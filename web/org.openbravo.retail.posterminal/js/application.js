@@ -1,24 +1,4 @@
-// INFO: Executing service: /org.openbravo.service.retail.posterminal.jsonrest, 
-//posting: {
-//    "query":"from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :parameter0 and id = :parameter1",
-//		"parameters":{
-//		  "parameter0":{"value":"8A64B71A2B0B2946012B0BD97329018B","type":"string"},
-//		  "parameter1":{"value":"8A64B71A2B0B2946012B0BC4386F011A","type":"string"}
-//		  }
-//}
-//INFO: Executing service: /org.openbravo.service.retail.posterminal.jsonrest, " +
-//		posting: {
-//		  "query":"from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :parameter0 and pOSCategory.id = :parameter1 and isCatalog = true order by pOSLine, name",
-//		  "parameters":{
-//		    "parameter0":{"value":"8A64B71A2B0B2946012B0BD97329018B","type":"string"},
-//		    "parameter1":{"value":"456FE871DA3C46A4B76D1EE9E905048A","type":"string"}
-//		    }
-//}
-//var q = new OBPOS.Query("from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :parameter0 and pOSCategory.id = :parameter1 and isCatalog = true order by pOSLine, name");
-//q.exec({
-//        "parameter0":"8A64B71A2B0B2946012B0BD97329018B",
-//        "parameter1":"456FE871DA3C46A4B76D1EE9E905048A"
-//});
+
 
 (function (w) {
 

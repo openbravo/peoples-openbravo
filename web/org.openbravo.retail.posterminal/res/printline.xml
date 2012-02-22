@@ -3,15 +3,15 @@
 <output>
     <display>
         <line>
-            <text align="left" length="15"><%= productname %></text>
-            <text align="right" length="5">x<%= qty %></text>
+            <text align="left" length="15"><%= line.productidentifier %></text>
+            <text align="right" length="5">x<%= line.printQty() %></text>
         </line>
         <line>
-        <% if (qty === 1)  { %>     
-           <text align="right" length="20"><%= OBPOS.Format.formatNumber(price, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>
+        <% if (line.qty === 1)  { %>     
+           <text align="right" length="20"><%= line.printPrice() %></text>
         <% } else { %>
-           <text align="right" length="10"><%= OBPOS.Format.formatNumber(price, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>        
-           <text align="right" length="10"><%= OBPOS.Format.formatNumber(price * qty, { decimals: 2, decimal: '.', group: ',', currency: '$ #' }) %></text>        
+           <text align="right" length="10"><%= line.printPrice() %></text>        
+           <text align="right" length="10"><%= line.printNet() %></text>        
         <% } %>
         </line>
     </display>

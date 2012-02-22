@@ -6,7 +6,7 @@
     this.clickListeners = [];
 
 
-    container.load('editline.html', function () {
+    container.load('comp_editline.html', function () {
       $('#btnplus').click(function () {
         me.fireClickEvent('+');
       });
@@ -76,19 +76,9 @@
         if (data) {
           $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.binaryData, 128, 164));
           $('#editlinename').text(data._identifier);
-          $('#editlineqty').text(line.qty);
-          $('#editlineprice').text(OBPOS.Format.formatNumber(line.price, {
-            decimals: 2,
-            decimal: '.',
-            group: ',',
-            currency: '$ #'
-          }));
-          $('#editlinenet').text(OBPOS.Format.formatNumber(line.qty * line.price, {
-            decimals: 2,
-            decimal: '.',
-            group: ',',
-            currency: '$ #'
-          }));
+          $('#editlineqty').text(line.printQty());
+          $('#editlineprice').text(line.printPrice());
+          $('#editlinenet').text(line.printNet());
         }
       });
     } else {
@@ -111,7 +101,18 @@
     return i;
   }
     
-
+  OBPOS.Sales.EditLine.prototype.getNumber = function () {
+    var i = parseInt(this.editbox.text());
+    this.editbox.empty();
+    return i;
+  }
+  
+  OBPOS.Sales.EditLine.prototype.getString = function () {
+    var s = this.editbox.text();
+    this.editbox.empty();
+    return s;
+  }  
+  
   OBPOS.Sales.EditLine.prototype.addClickListener = function (l) {
     this.clickListeners.push(l);
   };
