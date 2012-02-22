@@ -499,6 +499,7 @@ isc.ClassFactory.defineClass('OBSectionItemButton', isc.ImgSectionHeader);
 isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   showRollOver: true,
   showDown: false,
+  showDisabled: false,
   showDisabledIcon: false,
   showRollOverIcon: false,
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-bg.png',

@@ -30,7 +30,7 @@ isc.OBTextAreaItem.addProperties({
 
   isDisabled: function () {
     var ret = this.Super('isDisabled', arguments);
-    if (ret) {
+    if (ret && this.showDisabled) {
       this.readOnly = true;
       if (this.cellStyle.indexOf('Disabled') === -1 || (this.cellStyle.indexOf('Disabled') !== -1 && this.cellStyle.lastIndexOf('Disabled') !== this.cellStyle.length - 8)) {
         this.cellStyle = this.cellStyle + 'Disabled';
