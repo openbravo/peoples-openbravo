@@ -148,7 +148,7 @@ public class CostingServer {
           + DateUtility.formatDate(transaction.getTransactionProcessDate()));
     }
     CostingRule returncr = costRules.get(0);
-    if (returncr.getProduct() != null || obcCR.count() == 1) {
+    if (returncr.getProduct() != null || costRules.size() == 1) {
       return returncr;
     }
     boolean noProdCat = returncr.getProduct() == null;
