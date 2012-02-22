@@ -33,6 +33,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.exception.SQLGrammarException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -108,11 +109,16 @@ public class AlertActionHandler extends BaseActionHandler {
             .addEntity(Alert.ENTITY_NAME);
         sqlQuery.setParameter(0, alertRule.getId());
         final DataToJsonConverter converter = new DataToJsonConverter();
-        log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
-            + "' - Rows: " + sqlQuery.list().size());
-        for (Object alertObject : sqlQuery.list()) {
-          final Alert alert = (Alert) alertObject;
-          alertJsonObjects.add(converter.toJsonObject(alert, DataResolvingMode.FULL));
+        try {
+          log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
+              + "' - Rows: " + sqlQuery.list().size());
+          for (Object alertObject : sqlQuery.list()) {
+            final Alert alert = (Alert) alertObject;
+            alertJsonObjects.add(converter.toJsonObject(alert, DataResolvingMode.FULL));
+          }
+        } catch (SQLGrammarException e) {
+          log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(),
+              e);
         }
       }
       result.put("cnt", alertJsonObjects.size());
