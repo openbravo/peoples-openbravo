@@ -1222,7 +1222,8 @@ isc.OBToolbar.addProperties({
 
       var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
 
-      if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
+      if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons
+        && currentContext.ID===this.view.ID) {
         if (this.view.tabId === currentContext.tabId) {
           currentTabCalled = true;
         }
