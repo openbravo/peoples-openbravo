@@ -176,7 +176,10 @@ public class PaymentReportDao {
     try {
 
       hsqlScript
-          .append("select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a from FIN_Payment_ScheduleDetail as fpsd ");
+          .append("select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a,");
+      hsqlScript
+          .append(" (select trans.id from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id) as trans ");
+      hsqlScript.append(" from FIN_Payment_ScheduleDetail as fpsd ");
       hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment pay");
       hsqlScript.append(" left outer join pay.businessPartner paybp");
       hsqlScript.append(" left outer join paybp.businessPartnerCategory paybpc");
@@ -534,19 +537,26 @@ public class PaymentReportDao {
         }
       }
 
-      boolean firstMember = true;
+      HashMap<String, FIN_FinaccTransaction> hashMapTransactions = new HashMap<String, FIN_FinaccTransaction>();
+      int index = 0;
       java.util.List<FIN_PaymentScheduleDetail> obqPSDList = new ArrayList<FIN_PaymentScheduleDetail>();
       for (Object resultObject : query.list()) {
         if (resultObject.getClass().isArray()) {
           final Object[] values = (Object[]) resultObject;
+          String StringPSDId = "";
           for (Object value : values) {
-            if (firstMember) {
+            if (index == 0) {
               obqPSDList.add(OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
                   (String) value));
-              firstMember = false;
-            } else {
-              firstMember = true;
+              StringPSDId = (String) value;
+            } else if (index == 2) {
+              if (value != null) {
+                hashMapTransactions.put(StringPSDId,
+                    OBDal.getInstance().get(FIN_FinaccTransaction.class, value));
+              }
+              index = -1;// firstMember = true;
             }
+            index++;
           }
         }
       }
@@ -647,6 +657,14 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(data[i], "ISRECEIPT", "N");
             isReceipt = false;
           }
+          // deposit/withdraw date
+          if (hashMapTransactions.containsKey(FIN_PaymentScheduleDetail[i].getId().toString())) {
+            FieldProviderFactory.setField(data[i], "DEPOSIT_WITHDRAW_DATE", dateFormat
+                .format(hashMapTransactions.get(FIN_PaymentScheduleDetail[i].getId())
+                    .getTransactionDate()));
+          } else {
+            FieldProviderFactory.setField(data[i], "DEPOSIT_WITHDRAW_DATE", "");
+          }
         } else {
 
           // bp_group -- bp_category
@@ -687,6 +705,8 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(data[i], "ISRECEIPT", "N");
             isReceipt = false;
           }
+          // deposit/withdraw date
+          FieldProviderFactory.setField(data[i], "DEPOSIT_WITHDRAW_DATE", "");
         }
 
         /*
@@ -1150,6 +1170,9 @@ public class PaymentReportDao {
       FieldProviderFactory.setField(transactionData, "ISRECEIPT", "N");
       // isReceipt = false;
     }
+    // deposit/withdraw date
+    FieldProviderFactory.setField(transactionData, "DEPOSIT_WITHDRAW_DATE",
+        dateFormat.format(transaction.getDateAcct()));
     // project
     FieldProviderFactory.setField(transactionData, "PROJECT", "");
     // salesPerson

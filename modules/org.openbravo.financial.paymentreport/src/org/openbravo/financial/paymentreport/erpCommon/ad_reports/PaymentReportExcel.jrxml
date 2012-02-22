@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentReportExcel" pageWidth="1800" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="1740" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="1591"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -83,6 +83,7 @@ FROM DUAL]]>
 	<field name="PAYMENT_DESC" class="java.lang.String"/>
 	<field name="PAYMENT_DATE" class="java.util.Date"/>
 	<field name="PAYMENT_DOCNO" class="java.lang.String"/>
+	<field name="DEPOSIT_WITHDRAW_DATE" class="java.util.Date"/>
 	<variable name="SUMSUBTOTALSTATUS" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{BASE_AMOUNT}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -263,6 +264,14 @@ Amount]]></text>
 				</textElement>
 				<text><![CDATA[Payment Method]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText-14" style="Detail_Header" x="1497" y="25" width="77" height="25"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Deposit/Withdraw Date]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -415,6 +424,13 @@ Amount]]></text>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{PAYMENT_METHOD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-14" style="Report_Footer" x="1497" y="0" width="77" height="25"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{DEPOSIT_WITHDRAW_DATE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
