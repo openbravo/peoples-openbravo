@@ -332,12 +332,20 @@ public class PaymentReportDao {
         }
         // exclude empty business partner
         if (strcBPartnerIdIN.isEmpty() && strcBPGroupIdIN.isEmpty()) {
-          hsqlScript.append(" and (paybpc is not null or invbpc is not null) ");
+          hsqlScript.append(" and (pay.");
+          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
+          hsqlScript.append(" is not null or inv.");
+          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
+          hsqlScript.append(" is not null) ");
         }
 
         // Only Empty Business Partner
       } else {// if ((strcNoBusinessPartner.equals("only")))
-        hsqlScript.append(" and paybpc is null and invbpc is null ");
+        hsqlScript.append(" and pay.");
+        hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
+        hsqlScript.append(" is null and inv.");
+        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
+        hsqlScript.append(" is null ");
       }
 
       // project
