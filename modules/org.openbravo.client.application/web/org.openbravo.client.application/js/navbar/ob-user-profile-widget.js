@@ -320,7 +320,7 @@ isc.OBUserProfile.addProperties({
           // window.location.href = OB.Utilities.getLocationUrlWithoutFragment();
           // do this in a separate thread
           setTimeout(function() {
-            window.location.replace(OB.Utilities.getLocationUrlWithoutFragment() + '?t=' + new Date().getTime());  
+            window.location.replace(OB.Utilities.getLocationUrlWithoutFragment());  
           }, 100);          
         }
       },
