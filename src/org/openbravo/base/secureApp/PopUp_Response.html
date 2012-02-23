@@ -19,8 +19,19 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript">
 function submitThisPage(ref) {
-  var process, layoutMDI;
-  if (isWindowInMDIContext) { // 3.0 mode
+  var process, layoutMDI,
+      classicMode = false;
+
+  try {
+    if (top && top.opener && top.opener.submitCommandForm) {
+      classicMode = true;
+    }
+  } catch (e) {}
+
+  if (classicMode) {
+    // 2.50 popup process
+    top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
+  } else {
     layoutMDI = getFrame('LayoutMDI');
     if (layoutMDI) {
       process = layoutMDI.OB.ActionButton.executingProcess;
@@ -37,9 +48,6 @@ function submitThisPage(ref) {
       // 2.50 modal popup process
       layoutMDI.OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm("DEFAULT", false, null, ref, '_self');
     }
-  } else if (top && top.opener && top.opener.submitCommandForm) { // 2.50 classic mode
-    // 2.50 popup process
-    top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
   }
   closePage(true);
   return true;
