@@ -102,23 +102,23 @@ public abstract class CostingAlgorithm {
     case Shipment:
       return getOutgoingTransactionCost();
     case ShipmentReturn:
-      return getShipmentReturnAmount();
+      return getShipmentReturnCost();
     case ShipmentVoid:
-      return getShipmentVoidAmount();
+      return getShipmentVoidCost();
     case ShipmentNegative:
-      return getShipmentNegative();
+      return getShipmentNegativeCost();
     case Receipt:
-      return getReceiptAmount();
+      return getReceiptCost();
     case ReceiptReturn:
-      return getReceiptReturnAmount();
+      return getReceiptReturnCost();
     case ReceiptVoid:
-      return getReceiptVoidAmount();
+      return getReceiptVoidCost();
     case ReceiptNegative:
-      return getReceiptNegative();
+      return getReceiptNegativeCost();
     case InventoryDecrease:
       return getOutgoingTransactionCost();
     case InventoryIncrease:
-      return getIncomingPhysicalInventoryCost();
+      return getIncomingInventoryCost();
     case IntMovementFrom:
       return getOutgoingTransactionCost();
     case IntMovementTo:
@@ -126,7 +126,7 @@ public abstract class CostingAlgorithm {
     case InternalCons:
       return getOutgoingTransactionCost();
     case InternalConsNegative:
-      return getInternalConsNegativeAmount();
+      return getInternalConsNegativeCost();
     case InternalConsVoid:
       return getInternalConsVoidCost();
     case BOMPart:
@@ -161,7 +161,7 @@ public abstract class CostingAlgorithm {
    * cost of the original receipt. If no original receipt is found the cost is calculated based on
    * the standard cost.
    */
-  protected BigDecimal getShipmentReturnAmount() {
+  protected BigDecimal getShipmentReturnCost() {
     // Shipment return's cost is calculated based on the proportional cost of the original shipment.
     try {
       return getReturnedInOutLineCost();
@@ -175,12 +175,12 @@ public abstract class CostingAlgorithm {
    * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
    * cost of the original payment.
    */
-  protected BigDecimal getShipmentVoidAmount() {
+  protected BigDecimal getShipmentVoidCost() {
     // Voided shipment gets cost from original shipment line.
-    return getOriginalInOutLineAmount();
+    return getOriginalInOutLineCost();
   }
 
-  protected BigDecimal getShipmentNegative() {
+  protected BigDecimal getShipmentNegativeCost() {
     // Shipment with negative quantity. Get cost from related order price as it is an incoming trx.
     return getShipmentCost();
   }
@@ -208,7 +208,7 @@ public abstract class CostingAlgorithm {
   /*
    * Default method to get Receipts Transaction amount based on receipt's related order price.
    */
-  protected BigDecimal getReceiptAmount() {
+  protected BigDecimal getReceiptCost() {
     BigDecimal trxCost = BigDecimal.ZERO;
     BigDecimal addQty = BigDecimal.ZERO;
     ShipmentInOutLine receiptline = transaction.getGoodsShipmentLine();
@@ -235,7 +235,7 @@ public abstract class CostingAlgorithm {
    * cost of the original receipt. If no original receipt is found the cost is calculated as a
    * regular outgoing transaction.
    */
-  protected BigDecimal getReceiptReturnAmount() throws OBException {
+  protected BigDecimal getReceiptReturnCost() throws OBException {
     // Receipt return's cost is calculated based on the proportional cost of the original shipment.
     try {
       return getReturnedInOutLineCost();
@@ -249,12 +249,12 @@ public abstract class CostingAlgorithm {
    * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
    * cost of the original payment.
    */
-  protected BigDecimal getReceiptVoidAmount() {
+  protected BigDecimal getReceiptVoidCost() {
     // Voided receipt gets cost from original receipt line.
-    return getOriginalInOutLineAmount();
+    return getOriginalInOutLineCost();
   }
 
-  protected BigDecimal getReceiptNegative() {
+  protected BigDecimal getReceiptNegativeCost() {
     // Receipt with negative quantity. Calculate cost as a regular outgoing transaction.
     return getOutgoingTransactionCost();
   }
@@ -262,7 +262,7 @@ public abstract class CostingAlgorithm {
   /**
    * Returns the cost of the canceled Shipment/Receipt line on the date it is canceled.
    */
-  protected BigDecimal getOriginalInOutLineAmount() {
+  protected BigDecimal getOriginalInOutLineCost() {
     if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
       log4j.error("No canceled line found for transaction: " + transaction.getId());
       throw new OBException("@NoCanceledLineFoundForTrx@ @Transaction@: "
@@ -302,7 +302,7 @@ public abstract class CostingAlgorithm {
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
    */
-  protected BigDecimal getIncomingPhysicalInventoryCost() {
+  protected BigDecimal getIncomingInventoryCost() {
     return getTransactionStandardCost();
   }
 
@@ -331,7 +331,7 @@ public abstract class CostingAlgorithm {
    * Calculates the cost of a negative internal consumption. It uses product's Standard Cost to
    * calculate its price.
    */
-  protected BigDecimal getInternalConsNegativeAmount() {
+  protected BigDecimal getInternalConsNegativeCost() {
     return getTransactionStandardCost();
   }
 

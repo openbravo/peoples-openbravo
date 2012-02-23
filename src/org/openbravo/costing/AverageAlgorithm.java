@@ -86,11 +86,11 @@ public class AverageAlgorithm extends CostingAlgorithm {
    * average cost it uses the default method..
    */
   @Override
-  protected BigDecimal getIncomingPhysicalInventoryCost() {
+  protected BigDecimal getIncomingInventoryCost() {
     try {
       return getOutgoingTransactionCost();
     } catch (OBException e) {
-      return super.getIncomingPhysicalInventoryCost();
+      return super.getIncomingInventoryCost();
     }
   }
 
