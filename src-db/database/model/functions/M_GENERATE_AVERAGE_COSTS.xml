@@ -33,9 +33,11 @@
   v_Price NUMBER;
   v_DateOld DATE;
   v_MinDateCosting DATE;
+  v_MinFirstInOut DATE;
   v_FirstIteration BOOLEAN;
   v_CheckResultStr VARCHAR2(2000):='';
   v_CumQty NUMBER;
+  v_PermanentQty NUMBER;
   v_Processed VARCHAR2(60) ;
   v_count NUMBER;
   v_Deleted NUMBER;
@@ -100,11 +102,8 @@
     -- If a document has been posted, and in the entry the costing has been used to calculate any amount,
     -- process is not allowed to be launched.
 
-    IF (v_Incremental) THEN
-      -- In case of incremental computation, calculate since first m_inOut.MovementDate from the ones
-      -- not included yet in any costing
-      SELECT MIN(M_INOUT.MOVEMENTDATE)
-      INTO v_MinDateCosting
+    SELECT MIN(M_INOUT.MOVEMENTDATE)
+      INTO v_MinFirstInOut
       FROM M_INOUT, M_INOUTLINE, M_PRODUCT
       WHERE M_INOUT.M_INOUT_ID=M_INOUTLINE.M_INOUT_ID
         AND M_INOUTLINE.M_PRODUCT_ID=M_PRODUCT.M_PRODUCT_ID
@@ -116,6 +115,12 @@
         AND M_INOUT.AD_CLIENT_ID = v_Client
         AND NOT EXISTS
            (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID);
+
+
+    IF (v_Incremental) THEN
+      -- In case of incremental computation, calculate since first m_inOut.MovementDate from the ones
+      -- not included yet in any costing
+       v_MinDateCosting := v_MinFirstInOut;
        IF (v_MinDateCosting IS NOT NULL) THEN
          v_MinDateCosting := TRUNC(v_MinDateCosting);
        ELSE
@@ -132,6 +137,10 @@
         AND COSTTYPE='AV'
         AND ISPRODUCTION = 'N'
         AND AD_CLIENT_ID = v_Client;
+
+      IF (v_MinDateCosting IS NULL OR v_MinFirstInOut < v_MinDateCosting) THEN
+        v_MinDateCosting := v_MinFirstInOut;
+      END IF;
     END IF;
 
     v_CheckResultStr := '';
@@ -320,11 +329,27 @@
       )
     LOOP
       v_ResultStr:='new albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
+
+      SELECT SUM(QTY)
+      INTO v_PermanentQty
+      FROM M_COSTING
+      WHERE ISPERMANENT='Y'
+        AND COSTTYPE='AV'
+        AND ISPRODUCTION = 'N'
+        AND M_INOUTLINE_ID IS NOT NULL
+        AND AD_CLIENT_ID = v_Client
+        AND M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
+        AND DATEFROM = Cur_InOutLine.MOVEMENTDATE;
+
+      IF (v_PermanentQty IS NULL) THEN
+        v_PermanentQty:=0;
+      END IF;
+      
       IF(Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
         v_Date:=NULL;
-        v_CumQty:=0;
+        v_CumQty:=v_PermanentQty;
       ELSIF (Cur_InOutLine.MOVEMENTDATE<>v_DateOld) THEN
-        v_CumQty:=0;
+        v_CumQty:=v_PermanentQty;
       END IF;
       SELECT COUNT(*)
       INTO v_Count
