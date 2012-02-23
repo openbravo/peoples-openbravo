@@ -28,6 +28,13 @@ isc.OBTextAreaItem.addProperties({
 
   selectOnFocus: false,
 
+  init: function () {
+    if (this.initStyle) {
+      this.initStyle();
+    }
+    this.Super('init', arguments);
+  },
+
   isDisabled: function () {
     var ret = this.Super('isDisabled', arguments);
     if (ret && this.showDisabled) {

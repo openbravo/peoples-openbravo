@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,17 @@ isc.OBClientClassCanvasItem.addProperties(isc.addProperties({}, OB.Styles.OBForm
 
 isc.OBTextAreaItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 isc.OBTextAreaItem.addProperties({
-  height: 66
+  initStyle: function () {
+    //To adapt the height this code is used because height: '*' doesn't work properly (conflicts with OBSectionItem).
+    var rowSpan = 1;
+    var singleRowHeight = this.getHeight();
+    var multipleRowHeight = singleRowHeight + 24; // 24px = title height + form item padding defined in CSS
+    if (this.rowSpan) {
+      rowSpan = this.rowSpan;
+    }
+    var newHeight = singleRowHeight + (rowSpan - 1) * multipleRowHeight;
+    this.setHeight(newHeight);
+  }
 });
 
 isc.OBSpinnerItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
