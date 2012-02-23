@@ -46,7 +46,7 @@ public class StaticResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
 
   private static final String GEN_TARGET_LOCATION = "web/js/gen";
-  private static final String JS_INCLUDE_FUNCTION = "(function(){var a=document.createElement('script'),b=document.head||document.getElementsByTagName('head')[0];a.type='text/javascript';a.src='@src@';b.appendChild(a);}());";
+  private static final String JS_INCLUDE_FUNCTION = ";(function(){var a=document.createElement('script'),b=document.head||document.getElementsByTagName('head')[0];a.type='text/javascript';a.src='@src@';b.appendChild(a);}());";
 
   @Inject
   @Any
@@ -110,11 +110,12 @@ public class StaticResourceComponent extends BaseComponent {
         OBContext.getOBContext().setNewUI(true);
       }
 
-      StringBuilder result = new StringBuilder();
       final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION + "/"
           + getStaticResourceFileName() + ".js";
 
+      StringBuilder result = new StringBuilder();
       if (classicMode) {
+
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
             + getContextUrl()
             + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
@@ -122,8 +123,10 @@ public class StaticResourceComponent extends BaseComponent {
             + "'></link>\");\n");
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
+        result.append(JS_INCLUDE_FUNCTION.replace("@src@", scriptPath));
+      } else {
+        result.append("OBCreateScriptTag('" + scriptPath + "');");
       }
-      result.append(JS_INCLUDE_FUNCTION.replace("@src@", scriptPath));
       return result.toString();
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);
