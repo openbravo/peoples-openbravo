@@ -8,26 +8,28 @@
     this.selectListeners = [];
     this.clickListeners = [];
     
+    var me = this;
+    this.changeListeners.push(function () {
+      me.totalnet.text(me.receipt.printNet());
+      me.totalgross.text(me.receipt.printNet());
+    });
+    
     this.renderHeader = function () {
       return [
-        DOM(NODE('th', {'css': 'width:40%;'}, ['Product'])),                                                                                                                                  
-        DOM(NODE('th', {'css': 'width:20%;'}, ['Units'])),                                                                                                                                  
-        DOM(NODE('th', {'css': 'width:20%;'}, ['Price'])),                                                                                                                                  
-        DOM(NODE('th', {'css': 'width:20%;'}, ['Net']))    
+        DOM(NODE('th', {'style': 'width:40%;'}, ['Product'])),                                                                                                                                  
+        DOM(NODE('th', {'style': 'width:20%;text-align:right;'}, ['Units'])),                                                                                                                                  
+        DOM(NODE('th', {'style': 'width:20%;text-align:right;'}, ['Price'])),                                                                                                                                  
+        DOM(NODE('th', {'style': 'width:20%;text-align:right;'}, ['Net']))    
       ];
     };
 
     this.renderLine = function (l) {
       return [
-        DOM(NODE('td', {'css': 'width:40%;'}, [l.productidentifier])),                                                                                                                                  
-        DOM(NODE('td', {'css': 'width:20%;text-align:right;'}, [l.printQty()])),                                                                                                                                  
-        DOM(NODE('td', {'css': 'width:20%;text-align:right;'}, [l.printPrice()])),                                                                                                                                  
-        DOM(NODE('td', {'css': 'width:20%;text-align:right;'}, [l.printNet()]))    
+        DOM(NODE('td', {'style': 'width:40%;'}, [l.productidentifier])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printQty()])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printPrice()])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printNet()]))    
       ];      
-      tr.append($('<td/>').css('width', '40%').text(l.productidentifier));
-      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.printQty()));
-      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.printPrice()));
-      tr.append($('<td/>').css('width', '20%').css('text-align', 'right').text(l.printNet()));
     };
     
     this.totalgross = $(DOM(NODE('h3', {}, [])));
@@ -80,7 +82,7 @@
     )));    
   }
 
-  OBPOS.Sales.Order.prototype.createRow = function (l) {
+  OBPOS.Sales.Order.prototype.createRow = function (line) {
     var me = this;
     var tr = $('<tr/>');
     tr.append(this.renderLine(line));
@@ -142,7 +144,7 @@
   OBPOS.Sales.Order.prototype.setUnit = function (qty) {
     if (this.lineselected > -1) {
       
-      qty = isNaN(qty) ? this.lines[this.lineselected].qty : qty;
+      qty = isNaN(qty) ? this.receipt.lines[this.lineselected].qty : qty;
       
       var line = this.receipt.lines[this.lineselected];
       

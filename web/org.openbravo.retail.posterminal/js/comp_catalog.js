@@ -41,7 +41,32 @@
             ])        
           ])
         ])        
-    )));                
+    )));   
+    
+    this.renderCategory = function (cat) {
+      return [
+        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(cat.bindaryData)])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:80%;'}, [cat._identifier])),                                                                                                                                  
+      ];        
+    }
+    this.renderProduct = function (prod) {
+      return [
+        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(prod.binaryData)])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:80%;'}, [
+          NODE('div', {}, [prod._identifier]),                                             
+          NODE('div', {}, [
+            NODE('strong', {}, [
+              OBPOS.Format.formatNumber(prod.netListPrice, {
+                decimals: 2,
+                decimal: '.',
+                group: ',',
+                currency: '$#'
+              })
+            ])  
+          ])  
+        ])),                                                                                                                                  
+      ];        
+    }    
   };
 
   OBPOS.Sales.Catalog.prototype.reloadCategories = function () {
@@ -54,8 +79,7 @@
         me.selectedCategory = null;
         for (var i in data) {
           var tr = $('<tr/>').attr("id", "catrow-" + data[i].id);
-          tr.append($('<td/>').append(OBPOS.Sales.getThumbnail(data[i].bindaryData)));
-          tr.append($('<td/>').text(data[i]._identifier));
+          tr.append(me.renderCategory(data[i]));
           tr.click((function (id, name) {
             return function () {
               me.reloadProducts(id, name);
@@ -95,14 +119,7 @@
         var table = me.tbodyProd.empty();
         for (var i in data) {
           var tr = $('<tr/>');
-          tr.append($('<td/>').append(OBPOS.Sales.getThumbnail(data[i].binaryData)));
-          tr.append($('<td/>').text(data[i]._identifier));
-          tr.append($('<td/>').text(OBPOS.Format.formatNumber(data[i].netListPrice, {
-            decimals: 2,
-            decimal: '.',
-            group: ',',
-            currency: '$ #'
-          })));
+          tr.append(me.renderProduct(data[i]));
           tr.click((function (p) {
             return function () {
               // Fire Select Listener event

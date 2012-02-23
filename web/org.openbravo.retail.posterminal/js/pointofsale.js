@@ -82,7 +82,7 @@
         location = '../org.openbravo.client.application.mobile/login.jsp';
       } else if (data[0]) {
         Sales.terminal = data[0];
-        Sales.hw = new OBPOS.HWServer('http://127.0.0.1:8090/printer');
+        Sales.hw = new OBPOS.HWServer('http://192.168.0.8:8090/printer');
         me.printStatus();
       } else {
         alert("Terminal does not exists: " + t);
