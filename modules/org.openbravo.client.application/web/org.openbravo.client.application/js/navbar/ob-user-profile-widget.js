@@ -303,8 +303,6 @@ isc.OBUserProfile.addProperties({
         OB.RemoteCallManager.call(this.widgetInstance.formActionHandler, this.getValues(), {
           'command': 'save'
         }, this.doSaveCallback);
-        // hide ourselves
-        isc.OBQuickRun.hide();
       },
 
       // and reload
@@ -313,15 +311,7 @@ isc.OBUserProfile.addProperties({
         // is handled as an exception is returned anyway
         if (data.result === OB.Constants.SUCCESS) {
           // reload the window to reflect the changed role etc.
-
-          // commented line causes this:
-          // https://issues.openbravo.com/view.php?id=19689
-          // https://issues.openbravo.com/view.php?id=19659
-          // window.location.href = OB.Utilities.getLocationUrlWithoutFragment();
-          // do this in a separate thread
-          setTimeout(function() {
-            window.location.replace(OB.Utilities.getLocationUrlWithoutFragment());  
-          }, 100);          
+          window.location.href = OB.Utilities.getLocationUrlWithoutFragment();
         }
       },
 
@@ -446,8 +436,6 @@ isc.OBUserProfile.addProperties({
         OB.RemoteCallManager.call(passwordForm.formActionHandler, passwordForm.getValues(), {
           'command': 'changePwd'
         }, passwordForm.doSaveCallback);
-        // hide ourselves
-        isc.OBQuickRun.hide();
       },
 
       // the callback displays an info dialog and then hides the form
