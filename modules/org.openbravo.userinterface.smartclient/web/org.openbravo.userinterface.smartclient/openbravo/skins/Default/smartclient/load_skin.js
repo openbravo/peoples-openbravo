@@ -12,15 +12,14 @@ with (theWindow) {
 //----------------------------------------
 // Specify skin directory
 //----------------------------------------
-    // must be relative to your application file or isomorphicDir
+     // must be relative to your application file or isomorphicDir
  //   isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/")
   isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/Default/smartclient/");  
-
 
 //----------------------------------------
 // Load skin style sheet(s)
 //----------------------------------------
-    isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
+ //   isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
 
 
 
