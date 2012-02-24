@@ -24,8 +24,9 @@
     new OBPOS.Query(
         'select c as category, img.bindaryData as img ' + 
         'from ProductCategory as c left outer join c.obposImage img ' +
-        'where c.$readableCriteria and c.oBPOSIsCatalog = true' +
+        'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
         'order by c.oBPOSPOSLine, c.name'));
+  };
 
   function isScrolledIntoView(container, elem) {
 

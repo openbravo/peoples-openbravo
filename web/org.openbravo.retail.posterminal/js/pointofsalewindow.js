@@ -28,8 +28,6 @@
     
     if ( l >= 0) {
       OBPOS.Sales.hw.print('res/printline.xml', {line: line });
-    } else {
-      OBPOS.Sales.hw.print('res/welcome.xml');
     }
     
   });
@@ -93,6 +91,7 @@
   $(document).ready(function () {
 
     SalesWindow.Terminal.init();
+    OBPOS.Sales.hw.print('res/welcome.xml');    
 
   });
 

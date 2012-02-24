@@ -78,19 +78,19 @@
         var table = me.tbodyCat.empty();
         me.selectedCategory = null;
         for (var i in data) {
-          var tr = $('<tr/>').attr("id", "catrow-" + data[i].id);
+          var tr = $('<tr/>').attr("id", "catrow-" + data[i].category.id);
           tr.append(me.renderCategory(data[i]));
           tr.click((function (id, name) {
             return function () {
               me.reloadProducts(id, name);
             };
-          }(data[i].id, data[i]._identifier)));
+          }(data[i].category.id, data[i].category._identifier)));
           table.append(tr);
         }
 
         // reload first product
         if (data.length > 0) {
-          me.reloadProducts(data[0].id, data[0]._identifier);
+          me.reloadProducts(data[0].category.id, data[0].category._identifier);
         } else {
           me.tbodyProd.empty();
         }
