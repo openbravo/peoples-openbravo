@@ -165,15 +165,6 @@ function OBStartApplication(delayed) {
   }
 %>
 }
-
-function OBCreateScriptTag(src) {
-  var script = document.createElement("script"),
-    body = document.body || document.getElementsByTagName("body");
-
-  script.type = 'text/javascript';
-  script.src = src;
-  body.appendChild(script);
-}
 </script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
