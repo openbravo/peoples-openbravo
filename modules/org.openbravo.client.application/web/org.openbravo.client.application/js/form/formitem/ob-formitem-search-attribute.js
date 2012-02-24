@@ -51,13 +51,5 @@ isc.OBPAttributeSearchItem.addProperties({
     parameters[index++] = 'inpProduct';
     parameters[index++] = values.inpmProductId;
     this.openSearchWindow('/info/AttributeSetInstance.html', parameters, this.getValue());
-  },
-
-  isDisabled: function () {
-    if (this.form.values.ATTRIBUTESET && this.form.values.ATTRIBUTESET !== '') {
-      this.Super('isDisabled', arguments);
-    } else {
-      return true;
-    }
   }
 });
