@@ -168,58 +168,6 @@
   }
 
 
-
-
-  Sales.Receipt = function () {
-    this.lines = [];
-  }
-  
-  Sales.Receipt.prototype.getNet = function() {
-    var t = 0;
-    for (var i = 0, max = this.lines.length; i < max; i++) {
-      t += this.lines[i].price * this.lines[i].qty;
-    }
-    return t;
-  };
-  
-  Sales.Receipt.prototype.printNet = function() {
-    return OBPOS.Format.formatNumber(this.getNet(), {
-      decimals: 2,
-      decimal: '.',
-      group: ',',
-      currency: '$#'
-    });
-  };
-  
-  Sales.ReceiptLine = function (l) {
-    this.productid = l.productid;
-    this.productidentifier = l.productidentifier;
-    this.qty = l.qty;
-    this.price = l.price;
-  }
-  
-  Sales.ReceiptLine.prototype.printQty = function () {
-    return Number(this.qty).toString();    
-  }
-  
-  Sales.ReceiptLine.prototype.printPrice = function () {
-    return OBPOS.Format.formatNumber(this.price, {
-      decimals: 2,
-      decimal: '.',
-      group: ',',
-      currency: '$#'
-    });
-  }
-  
-  Sales.ReceiptLine.prototype.printNet = function () {
-    return OBPOS.Format.formatNumber(this.price * this.qty, {
-      decimals: 2,
-      decimal: '.',
-      group: ',',
-      currency: '$#'
-    });
-  }
-
   // Public Sales
   OBPOS.Sales = Sales;
 

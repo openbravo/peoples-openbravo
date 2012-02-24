@@ -3,16 +3,17 @@
 
   
   // Order list
-  OBPOS.Sales.Order = function (container) {
+  OBPOS.Sales.OrderView = function (container) {
     this.changeListeners = [];
     this.selectListeners = [];
     this.clickListeners = [];
     
     var me = this;
-    this.changeListeners.push(function () {
-      me.totalnet.text(me.receipt.printNet());
-      me.totalgross.text(me.receipt.printNet());
-    });
+    
+//    this.changeListeners.push(function () {
+//      me.totalnet.text(me.receipt.printNet());
+//      me.totalgross.text(me.receipt.printNet());
+//    });
     
     this.renderHeader = function () {
       return [
@@ -25,7 +26,7 @@
 
     this.renderLine = function (l) {
       return [
-        DOM(NODE('td', {'style': 'width:40%;'}, [l.productidentifier])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:40%;'}, [l.get('productidentifier')])),                                                                                                                                  
         DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printQty()])),                                                                                                                                  
         DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printPrice()])),                                                                                                                                  
         DOM(NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printNet()]))    
@@ -82,7 +83,7 @@
     )));    
   }
 
-  OBPOS.Sales.Order.prototype.createRow = function (line) {
+  OBPOS.Sales.OrderView.prototype.createRow = function (line) {
     var me = this;
     var tr = $('<tr/>');
     tr.append(this.renderLine(line));
@@ -92,9 +93,19 @@
     return tr;
   }
 
-  OBPOS.Sales.Order.prototype.clear = function () {
-    this.receipt = new OBPOS.Sales.Receipt();
+  OBPOS.Sales.OrderView.prototype.clear = function () {
     
+    // Init the receipt
+    this.receipt = new OBPOS.Model.Order();
+    
+    this.receipt.get('lines').on('reset change add remove', function() {
+      this.totalnet.text(this.receipt.printNet());
+      this.totalgross.text(this.receipt.printNet());      
+    }, this);
+
+    this.receipt.get('lines').reset();
+    
+    // Init the view
     this.lineselected = -1;
 
     this.tbody.empty();
@@ -102,23 +113,26 @@
     this.fireSelectEvent(-1, null);
   }
 
-  OBPOS.Sales.Order.prototype.getReceipt = function () {
+  OBPOS.Sales.OrderView.prototype.getReceipt = function () {
     return this.receipt;
   }
   
-  OBPOS.Sales.Order.prototype.setSelected = function (n, clicked) {
+  OBPOS.Sales.OrderView.prototype.setSelected = function (n, clicked) {
     var children = this.tbody.children();
     if (this.lineselected > -1) {
       children.eq(this.lineselected).css('background-color', '').css('color', '');
     }
     this.lineselected = n;
-    if (this.receipt.lines[this.lineselected]) {
+    
+    var line = this.receipt.get('lines').at(this.lineselected);
+    
+    if (line) {
       var elemselected = children.eq(this.lineselected);
       elemselected.css('background-color', '#049cdb').css('color', '#fff');
       OBPOS.Sales.makeElemVisible(this.divscroll, elemselected);
-      this.fireSelectEvent(this.lineselected, this.receipt.lines[this.lineselected]);
+      this.fireSelectEvent(this.lineselected, line);
       if (clicked) {
-        this.fireClickEvent(this.lineselected, this.receipt.lines[this.lineselected]);
+        this.fireClickEvent(this.lineselected, line);
       }
     } else {
       this.lineselected = -1;
@@ -126,14 +140,14 @@
     }
   }
 
-  OBPOS.Sales.Order.prototype.addUnit = function (qty) {
+  OBPOS.Sales.OrderView.prototype.addUnit = function (qty) {
     if (this.lineselected > -1) {
+  
+      var line = this.receipt.get('lines').at(this.lineselected);
       
       qty = isNaN(qty) ? 1 : qty;
       
-      var line = this.receipt.lines[this.lineselected];
-      
-      line.qty += qty;
+      line.set('qty', line.get('qty') + qty);
       var tr = this.tbody.children().eq(this.lineselected).empty();
       tr.append(this.renderLine(line));
       this.fireChangeEvent();
@@ -141,15 +155,15 @@
     }
   }
 
-  OBPOS.Sales.Order.prototype.setUnit = function (qty) {
+  OBPOS.Sales.OrderView.prototype.setUnit = function (qty) {
     if (this.lineselected > -1) {
       
-      qty = isNaN(qty) ? this.receipt.lines[this.lineselected].qty : qty;
+      var line = this.receipt.get('lines').at(this.lineselected);
       
-      var line = this.receipt.lines[this.lineselected];
+      qty = isNaN(qty) ? line.get('qty') : qty;
       
-      line.qty = qty;
-      if (line.qty <= 0) {
+      line.set('qty', qty);
+      if (line.get('qty') <= 0) {
         this.removeLine();
       } else {      
         var tr = this.tbody.children().eq(this.lineselected).empty();
@@ -160,15 +174,15 @@
     }
   }
   
-  OBPOS.Sales.Order.prototype.removeUnit = function (qty) {
+  OBPOS.Sales.OrderView.prototype.removeUnit = function (qty) {
     if (this.lineselected > -1) {
       
       qty = isNaN(qty) ? 1 : Math.abs(qty);
       
-      var line = this.receipt.lines[this.lineselected];
+      var line = this.receipt.get('lines').at(this.lineselected);
       
-      line.qty -= qty;
-      if (line.qty <= 0) {
+      line.set('qty', line.get('qty') - qty);
+      if (line.get('qty') <= 0) {
         this.removeLine();
       } else {
         var tr = this.tbody.children().eq(this.lineselected).empty();
@@ -179,36 +193,39 @@
     }
   }
 
-  OBPOS.Sales.Order.prototype.removeLine = function () {
+  OBPOS.Sales.OrderView.prototype.removeLine = function () {
     var l = arguments[0] ? arguments[0] : this.lineselected;
     if (l > -1) {
-      this.receipt.lines.splice(l, 1);
+      
+      var line = this.receipt.get('lines').at(this.lineselected);
+      
+      this.receipt.get('lines').remove(line);
       this.tbody.children().eq(l).remove();
       this.fireChangeEvent();
 
-      if (l >= this.receipt.lines.length) {
-        this.setSelected(this.receipt.lines.length - 1);
+      if (l >= this.receipt.get('lines').length) {
+        this.setSelected(this.receipt.get('lines').length - 1);
       } else {
         this.setSelected(l);
       }
     }
   }
 
-  OBPOS.Sales.Order.prototype.addLine = function (l) {
-    this.receipt.lines.push(l);
+  OBPOS.Sales.OrderView.prototype.addLine = function (l) {
+    this.receipt.get('lines').add(l);
     this.tbody.append(this.createRow(l));
-    this.setSelected(this.receipt.lines.length - 1);
+    this.setSelected(this.receipt.get('lines').length - 1);
     this.fireChangeEvent();
   }
 
-  OBPOS.Sales.Order.prototype.addProduct = function (p) {
+  OBPOS.Sales.OrderView.prototype.addProduct = function (p) {
     if (this.lineselected > -1 &&
-        this.receipt.lines[this.lineselected].productid === p.product.id) {
+        this.receipt.get('lines').at(this.lineselected).get('productid') === p.product.id) {
       // add 1 unit to the current line.
       this.addUnit();
     } else {
       // a new line
-      var l = new OBPOS.Sales.ReceiptLine({
+      var l = new OBPOS.Model.OrderLine({
         productid: p.product.id,
         productidentifier: p.product._identifier,
         qty: 1,
@@ -218,51 +235,35 @@
     }
   }
   
-  OBPOS.Sales.Order.prototype.addChangeListener = function (l) {
+  OBPOS.Sales.OrderView.prototype.addChangeListener = function (l) {
     this.changeListeners.push(l);
   }
 
-  OBPOS.Sales.Order.prototype.fireChangeEvent = function () {
+  OBPOS.Sales.OrderView.prototype.fireChangeEvent = function () {
     for (var i = 0, max = this.changeListeners.length; i < max; i++) {
       this.changeListeners[i](this.receipt);
     }
   }
 
-  OBPOS.Sales.Order.prototype.addSelectListener = function (l) {
+  OBPOS.Sales.OrderView.prototype.addSelectListener = function (l) {
     this.selectListeners.push(l);
   }
 
-  OBPOS.Sales.Order.prototype.fireSelectEvent = function (l, line) {
+  OBPOS.Sales.OrderView.prototype.fireSelectEvent = function (l, line) {
     for (var i = 0, max = this.selectListeners.length; i < max; i++) {
       this.selectListeners[i](l, line);
     }
   }
 
-  OBPOS.Sales.Order.prototype.addClickListener = function (l) {
+  OBPOS.Sales.OrderView.prototype.addClickListener = function (l) {
     this.clickListeners.push(l);
   }
 
-  OBPOS.Sales.Order.prototype.fireClickEvent = function (l, line) {
+  OBPOS.Sales.OrderView.prototype.fireClickEvent = function (l, line) {
     for (var i = 0, max = this.clickListeners.length; i < max; i++) {
       this.clickListeners[i](l, line);
     }
   }  
-  
-  
-  // Total
-  OBPOS.Sales.Total = function (elem) {
-    this.elem = elem;
-
-    this.render = function (receipt) {
-      var net = receipt.printNet();
-      $('#totalnet').text(net);
-      $('#totalgross').text(net);
-    }
-  }
-
-  OBPOS.Sales.Total.prototype.calculate = function (receipt) {
-    this.render(receipt);
-  }
-  
+ 
 
 }(window.OBPOS));    

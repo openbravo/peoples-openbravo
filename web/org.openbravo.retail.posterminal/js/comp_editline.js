@@ -71,7 +71,7 @@
     
     if (l >= 0) {
       OBPOS.Sales.DSProduct.find({
-        product: {id: line.productid}
+        product: {id: line.get('productid')}
       }, function (data) {
         if (data) {
           $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));

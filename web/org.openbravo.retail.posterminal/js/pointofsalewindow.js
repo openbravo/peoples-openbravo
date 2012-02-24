@@ -5,14 +5,16 @@
   
   SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status")); // Global, used by other objects...
   SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
-  SalesWindow.OrderTable = new OBPOS.Sales.Order($('#ordercontainer'));
+  SalesWindow.OrderTable = new OBPOS.Sales.OrderView($('#ordercontainer'));
   SalesWindow.OrderTable.clear();
   SalesWindow.EditLine = new OBPOS.Sales.EditLine($('#edition'));
   SalesWindow.Payment = new OBPOS.Sales.Payment($('#payment'));
 
   SalesWindow.Terminal.addReadyListener(function (t) {   
     // executed when all terminal data is loaded
+    OBPOS.Sales.hw.print('res/welcome.xml');    
     newOrder();
+
   });
   
   SalesWindow.Catalog.addSelectListener(function (source, product) {
@@ -91,8 +93,6 @@
   $(document).ready(function () {
 
     SalesWindow.Terminal.init();
-    OBPOS.Sales.hw.print('res/welcome.xml');    
-
   });
 
 
