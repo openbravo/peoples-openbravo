@@ -45,18 +45,18 @@
     
     this.renderCategory = function (cat) {
       return [
-        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(cat.bindaryData)])),                                                                                                                                  
-        DOM(NODE('td', {'style': 'width:80%;'}, [cat._identifier])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(cat.img)])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:80%;'}, [cat.category._identifier])),                                                                                                                                  
       ];        
     }
     this.renderProduct = function (prod) {
       return [
-        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(prod.binaryData)])),                                                                                                                                  
+        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(prod.img)])),                                                                                                                                  
         DOM(NODE('td', {'style': 'width:80%;'}, [
-          NODE('div', {}, [prod._identifier]),                                             
+          NODE('div', {}, [prod.product._identifier]),                                             
           NODE('div', {}, [
             NODE('strong', {}, [
-              OBPOS.Format.formatNumber(prod.netListPrice, {
+              OBPOS.Format.formatNumber(prod.price.listPrice, {
                 decimals: 2,
                 decimal: '.',
                 group: ',',
@@ -101,7 +101,7 @@
   OBPOS.Sales.Catalog.prototype.reloadProducts = function (category, categoryName) { // 
     var me = this;
     OBPOS.Sales.DSProduct.exec({
-      'productCategory': category
+      'product': { 'productCategory': category}
     }, function (data) {
       if (data.exception) {
         alert(data.exception.message);

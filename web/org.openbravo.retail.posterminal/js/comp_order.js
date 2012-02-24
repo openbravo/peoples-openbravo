@@ -203,16 +203,16 @@
 
   OBPOS.Sales.Order.prototype.addProduct = function (p) {
     if (this.lineselected > -1 &&
-        this.receipt.lines[this.lineselected].productid === p.id) {
+        this.receipt.lines[this.lineselected].productid === p.product.id) {
       // add 1 unit to the current line.
       this.addUnit();
     } else {
       // a new line
       var l = new OBPOS.Sales.ReceiptLine({
-        productid: p.id,
-        productidentifier: p._identifier,
+        productid: p.product.id,
+        productidentifier: p.product._identifier,
         qty: 1,
-        price: p.netListPrice
+        price: p.price.listPrice
       });
       this.addLine(l);
     }

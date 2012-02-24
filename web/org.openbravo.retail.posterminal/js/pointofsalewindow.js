@@ -77,7 +77,7 @@
       SalesWindow.OrderTable.removeLine();
     } else if (key === String.fromCharCode(13)) {
       OBPOS.Sales.DSProduct.find({
-        uPCEAN: SalesWindow.EditLine.getString()
+        product: {uPCEAN: SalesWindow.EditLine.getString()}
       }, function (data) {
         if (data) {      
           SalesWindow.OrderTable.addProduct(data);

@@ -71,11 +71,11 @@
     
     if (l >= 0) {
       OBPOS.Sales.DSProduct.find({
-        id: line.productid
+        product: {id: line.productid}
       }, function (data) {
         if (data) {
-          $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.binaryData, 128, 164));
-          $('#editlinename').text(data._identifier);
+          $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));
+          $('#editlinename').text(data.product._identifier);
           $('#editlineqty').text(line.printQty());
           $('#editlineprice').text(line.printPrice());
           $('#editlinenet').text(line.printNet());

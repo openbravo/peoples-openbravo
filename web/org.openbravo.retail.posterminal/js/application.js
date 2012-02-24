@@ -176,8 +176,12 @@
 
   function check(elem, filter) {
     for (var p in filter) {
-      if (filter[p] !== elem[p]) {
-        return false;
+      if (typeof(filter[p]) === 'object') {
+        return check(elem[p], filter[p]);
+      } else {
+        if (filter[p] !== elem[p]) {
+          return false;
+        }
       }
     }
     return true;

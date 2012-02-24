@@ -12,14 +12,20 @@
 
     // DataSources...
     Sales.DSProduct = new OBPOS.DataSource(
-    new OBPOS.Query('from OBPOS_ProductView where $readableCriteria and priceListVersion.id = :priceListVersion and isCatalog = true'), {
+    new OBPOS.Query(
+        'select p as product, pp as price, img.bindaryData as img ' +
+        'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
+        'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
+        'order by p.obposLine, p.name'), {
       'priceListVersion': Sales.pricelistversion.id
     });
 
     Sales.DSCategories = new OBPOS.DataSource(
-    new OBPOS.Query('from OBPOS_CategoryView where $readableCriteria and isCatalog = true order by pOSLine, name'));
-  }
-
+    new OBPOS.Query(
+        'select c as category, img.bindaryData as img ' + 
+        'from ProductCategory as c left outer join c.obposImage img ' +
+        'where c.$readableCriteria and c.oBPOSIsCatalog = true' +
+        'order by c.oBPOSPOSLine, c.name'));
 
   function isScrolledIntoView(container, elem) {
 
