@@ -21,7 +21,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  _____________________________________.
  ************************************************************************
  */
 
@@ -168,7 +168,7 @@ function OBStartApplication(delayed) {
 
 function OBCreateScriptTag(src) {
   var script = document.createElement("script"),
-    body = document.body || document.getElementsByTagName("body");
+    body = document.body || document.getElementsByTagName("body")[0];
 
   script.type = 'text/javascript';
   script.src = src;
