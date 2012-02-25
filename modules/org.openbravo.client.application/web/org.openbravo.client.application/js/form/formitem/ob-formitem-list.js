@@ -29,6 +29,11 @@ isc.OBListItem.addProperties({
   completeOnTab: true,
   validateOnExit: true,
 
+  // https://issues.openbravo.com/view.php?id=19876
+  selectOnFocus: false,
+  // still do select on focus initially
+  doInitialSelectOnFocus: true,
+
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 
