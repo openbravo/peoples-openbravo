@@ -1531,6 +1531,7 @@ OB.ViewFormProperties = {
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
+      this.selectFocusItemValue();
     }
   },
 
