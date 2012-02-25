@@ -112,6 +112,9 @@ isc.OBGrid.addProperties({
   filterFieldsKeyDown: function (item, form, keyName) {
     var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter');
     if (response !== false) {
+      if (isc.EventHandler.getKeyName() === 'Tab' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown()) {
+        return false; // To avoid strange double field jump while pressing Tab Key
+      }
       response = this.Super('filterFieldsKeyDown', arguments);
     }
     return response;
