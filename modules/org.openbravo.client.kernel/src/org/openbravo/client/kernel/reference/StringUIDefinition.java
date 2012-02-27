@@ -44,7 +44,10 @@ public class StringUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    Long length = field.getColumn().getLength();
+    Long length = field.getDisplayedLength();
+    if (length == null || length == 0) {
+      length = field.getColumn().getLength();
+    }
 
     // custom override
     if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
