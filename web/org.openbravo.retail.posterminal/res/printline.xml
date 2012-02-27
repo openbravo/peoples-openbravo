@@ -3,11 +3,11 @@
 <output>
     <display>
         <line>
-            <text align="left" length="15"><%= line.productidentifier %></text>
+            <text align="left" length="15"><%= line.get('productidentifier') %></text>
             <text align="right" length="5">x<%= line.printQty() %></text>
         </line>
         <line>
-        <% if (line.qty === 1)  { %>     
+        <% if (line.get('qty') === 1)  { %>     
            <text align="right" length="20"><%= line.printPrice() %></text>
         <% } else { %>
            <text align="right" length="10"><%= line.printPrice() %></text>        

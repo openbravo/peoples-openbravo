@@ -31,16 +31,17 @@
              <text>------------------------------------------</text>
         </line>
     <% 
-     for (var i = 0, max = order.lines.length; i < max; i++) { 
+     var lines = order.get('lines');
+     for (var i = 0; i < lines.length; i++) { 
     %>
         
         <line>
 
-            <text align ="left" length="17"><%= order.lines[i].productidentifier %></text>
+            <text align ="left" length="17"><%= lines.at(i).get('productidentifier') %></text>
 
-            <text align ="right" length="10"><%= order.lines[i].printPrice() %></text>
-            <text align ="right" length="5">x<%= order.lines[i].printQty() %></text>
-            <text align ="right" length="10"><%= order.lines[i].printNet() %></text>
+            <text align ="right" length="10"><%= lines.at(i).printPrice() %></text>
+            <text align ="right" length="5">x<%= lines.at(i).printQty() %></text>
+            <text align ="right" length="10"><%= lines.at(i).printNet() %></text>
         </line>  
     <%
      } 
