@@ -54,7 +54,7 @@
         <onCreateDefault/>
       </column>
       <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA['N'::character(1)]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
@@ -85,6 +85,7 @@
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <check name="S_TIMEEXPENSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="S_TIMEEXPENSE_PROCESSING_CHK"><![CDATA[PROCESSING IN 'Y', 'N']]></check>
+      <check name="S_TIMEEXPENSE_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>
