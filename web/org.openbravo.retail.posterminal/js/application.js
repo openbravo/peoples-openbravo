@@ -204,7 +204,7 @@
           contentType: 'application/json;charset=utf-8',
           dataType: 'jsonp',
           type: 'GET',
-          data: {content: params ? tmpl(templatedata, params) : templatedata},
+          data: {content: params ? _.template(templatedata, params) : templatedata},
           success: function (data, textStatus, jqXHR) {
             if (callback) {
               callback(data);
