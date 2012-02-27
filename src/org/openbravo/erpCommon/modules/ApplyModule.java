@@ -46,7 +46,8 @@ import org.openbravo.service.db.ImportResult;
 
 /**
  * ApplyModule processes all modules that are in status (I)Installed or (P)Pending but not
- * (A)Applied yet. This process is done by the execute method.
+ * (A)Applied yet (or all of them, if the property forceRefData is set to true). This process is
+ * done by the execute method.
  * 
  * 
  */
