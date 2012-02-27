@@ -85,7 +85,7 @@
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <check name="S_TIMEEXPENSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="S_TIMEEXPENSE_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
       <check name="S_TIMEEXPENSE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSE_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
     </table>
   </database>
