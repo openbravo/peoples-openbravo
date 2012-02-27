@@ -2108,12 +2108,12 @@ isc.OBStandardView.addProperties({
         return 0;
       }
       if (!t1) {
-        return -1;
-      }
-      if (!t2) {
         return 1;
       }
-      if (t1 < t2) {
+      if (!t2) {
+        return -1;
+      }
+      if (t1 > t2) {
         return -1;
       } else if (t1 === t2) {
         return 0;
