@@ -60,8 +60,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
             .getCostingPrecision().intValue());
       } else {
         BigDecimal newCostAmt = currentCosting.getCost().multiply(currentStock).add(trxCost);
-        newCost = newCostAmt.divide(currentStock.add(transaction.getMovementQuantity()),
-            costCurrency.getCostingPrecision().intValue());
+        BigDecimal newStock = currentStock.add(transaction.getMovementQuantity());
+        if (newStock.signum() == 0) {
+          newCost = BigDecimal.ZERO;
+        } else {
+          newCost = newCostAmt.divide(newStock, costCurrency.getCostingPrecision().intValue());
+        }
       }
       insertCost(currentCosting, newCost, currentStock, trxCost);
     default:
