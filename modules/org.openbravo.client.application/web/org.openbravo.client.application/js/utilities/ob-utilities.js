@@ -877,25 +877,25 @@ OB.Utilities.getTimePassedInterval = function (timeInMiliseconds) {
   var diffDays = Math.floor((timeInMiliseconds) / (1000 * 60 * 60 * 24));
   if (diffDays >= 30) {
     n = Math.floor(diffDays / 30);
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_months_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_months_ago_1');
   } else if (diffDays >= 7) {
     n = Math.floor(diffDays / 7);
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_weeks_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_weeks_ago_1');
   } else if (diffDays >= 1) {
     n = diffDays;
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_days_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_days_ago_1');
   }
 
   // time difference in hours
   var diffHours = Math.floor((timeInMiliseconds) / (1000 * 60 * 60));
   if (diffHours >= 1) {
     n = diffHours;
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_hours_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_hours_ago_1');
   }
 
   // time difference in minutes
   n = Math.floor((timeInMiliseconds) / (1000 * 60));
-  return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_minutes_ago');
+  return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_minutes_ago_1');
 };
 
 //** {{{ OB.Utilities.getValue }}} **
