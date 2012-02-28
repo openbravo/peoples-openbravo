@@ -1,98 +1,72 @@
 (function (OBPOS) {
 
   // window definition
-  var SalesWindow = {};
   
-  SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status")); // Global, used by other objects...
-  SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
-  SalesWindow.OrderTable = new OBPOS.Sales.OrderView($('#ordercontainer'));
-  SalesWindow.OrderTable.clear();
-  SalesWindow.EditLine = new OBPOS.Sales.EditLine($('#edition'));
-  SalesWindow.Payment = new OBPOS.Sales.Payment($('#payment'));
+  var SalesWindow = {};
+   
+  //// Model
+  
+  SalesWindow.modelterminal = new OBPOS.Model.Terminal();
+  
+  SalesWindow.modelorder = new OBPOS.Model.Order();
+  
+  SalesWindow.stackorder = new OBPOS.Model.Stack();
+  SalesWindow.stackorder.setModel(SalesWindow.modelorder);
+  
+  //// Views
+  
+  SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status"));
+  SalesWindow.Terminal.setModel(SalesWindow.modelterminal);
 
+  SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
+  SalesWindow.Catalog.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  
+  SalesWindow.OrderTable = new OBPOS.Sales.OrderView($('#ordercontainer'));
+  SalesWindow.OrderTable.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  
+  SalesWindow.EditLine = new OBPOS.Sales.EditLine($('#edition'));
+  SalesWindow.EditLine.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  
+  SalesWindow.Payment = new OBPOS.Sales.Payment($('#payment'));
+  SalesWindow.Payment.setModel(SalesWindow.modelorder);
+  
+  SalesWindow.HWView = new OBPOS.Sales.HWManager(new OBPOS.HWServer('http://192.168.0.8:8090/printer'));
+  SalesWindow.HWView.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  
+  //// Events
+/*
   SalesWindow.Terminal.addReadyListener(function (t) {   
     // executed when all terminal data is loaded
-    OBPOS.Sales.hw.print('res/welcome.xml');    
-    newOrder();
-
+    SalesWindow.modelorder.reset();
+    SalesWindow.HWView.hw.print('res/welcome.xml');
   });
+ */   
   
-  SalesWindow.Catalog.addSelectListener(function (source, product) {
-    SalesWindow.OrderTable.addProduct(product);
-  });
   
-  SalesWindow.OrderTable.addChangeListener(function (receipt) {
-    SalesWindow.Payment.calculate(receipt);
-  }); 
-  
-  SalesWindow.OrderTable.addSelectListener(function (l, line) {
-    SalesWindow.EditLine.editLine(l, line);
-    
-    if ( l >= 0) {
-      OBPOS.Sales.hw.print('res/printline.xml', {line: line });
-    }
-    
-  });
-  SalesWindow.OrderTable.addClickListener(function (l, line) {
-    $('#editionlink').tab('show');
-  });
-  SalesWindow.EditLine.addClickListener(function (key) {
-    keyPressed(key);
-  });
-  
-  SalesWindow.Payment.addCloseListener(function () {
-    OBPOS.Sales.hw.print('res/printreceipt.xml', { order: SalesWindow.OrderTable.getReceipt()} );
-    newOrder();
+  SalesWindow.modelorder.on('reset', function() {
+    $('#cataloglink').tab('show');
   });
    
-  // $('#edition').load('editline.html');
+  SalesWindow.stackorder.on('gotoedit', function () {
+    $('#editionlink').tab('show');
+  });
+  
 
   $('#btnnew').click(function () {
-    newOrder();
+    SalesWindow.modelorder.reset();
   });
   
   $('#btnprint').click(function () {
-    OBPOS.Sales.hw.print('res/printreceipt.xml', { order: SalesWindow.OrderTable.getReceipt()} );
+    SalesWindow.HWView.printOrder();
   });
-
-  function newOrder() {
-    $('#cataloglink').tab('show');
-    SalesWindow.OrderTable.clear();
-    SalesWindow.Catalog.reloadCategories();
-    SalesWindow.EditLine.cleanLine();
-  }
   
-  $(window).keypress(function(e) {
-    keyPressed(String.fromCharCode(e.which));
-  });  
-  
-  function keyPressed(key) {
-    if (key === '-') {
-      SalesWindow.OrderTable.removeUnit(SalesWindow.EditLine.getNumber());
-    } else if (key === '+') {
-      SalesWindow.OrderTable.addUnit(SalesWindow.EditLine.getNumber());
-    } else if (key === '*') {
-      SalesWindow.OrderTable.setUnit(SalesWindow.EditLine.getNumber());
-    } else if (key === 'x') {
-      SalesWindow.OrderTable.removeLine();
-    } else if (key === String.fromCharCode(13)) {
-      OBPOS.Sales.DSProduct.find({
-        product: {uPCEAN: SalesWindow.EditLine.getString()}
-      }, function (data) {
-        if (data) {      
-          SalesWindow.OrderTable.addProduct(data);
-        } else {
-          alert('UPC/EAN code not found');
-        }
-      });
-    } else {
-      SalesWindow.EditLine.typeKey(key)
-    }
-  }
 
   $(document).ready(function () {
-
-    SalesWindow.Terminal.init();
+    SalesWindow.modelterminal.load();
+    
+    SalesWindow.HWView.hw.print('res/welcome.xml');
+    SalesWindow.modelorder.reset();
+    // SalesWindow.Terminal.init();
   });
 
 

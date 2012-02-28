@@ -7,22 +7,19 @@
 
    container.load('comp_payment.html', function () {
      $('#btnclose').click(function () {
-       me.fireCloseEvent();
+       me.receipt.trigger('closed');
+    
+       me.receipt.reset();
      });
     });
   }  
   
-  OBPOS.Sales.Payment.prototype.calculate = function (receipt) {
-    $('#totalpay').text(receipt.printNet());
-  }
-  
-  OBPOS.Sales.Payment.prototype.addCloseListener = function (l) {
-    this.closeListeners.push(l);
-  }
+  OBPOS.Sales.Payment.prototype.setModel = function (receipt) {
+    this.receipt = receipt;
+    
+    this.receipt.get('lines').on('reset change add remove', function() {
+      $('#totalpay').text(this.receipt.printNet());
+    }, this);    
+  };
 
-  OBPOS.Sales.Payment.prototype.fireCloseEvent = function () {
-    for (var i = 0, max = this.closeListeners.length; i < max; i++) {
-      this.closeListeners[i]();
-    }
-  } 
 }(window.OBPOS));   

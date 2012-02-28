@@ -34,7 +34,22 @@
         group: ',',
         currency: '$#'
       });
-    }
+    },
+    
+    addUnit : function (qty) {   
+      qty = isNaN(qty) ? 1 : qty;        
+      this.set('qty', this.get('qty') + qty);
+    },
+    
+    removeUnit : function (qty) {   
+      qty = isNaN(qty) ? 1 : qty;        
+      this.set('qty', this.get('qty') - qty);
+    },
+    
+    setUnit : function (qty) {   
+      qty = isNaN(qty) ? this.get('qty') : qty;      
+      this.set('qty', qty);
+    }       
   });
   
   // Sales.OrderLineCol Model.  
@@ -61,7 +76,41 @@
         group: ',',
         currency: '$#'
       });      
-    }
+    },
+    
+    reset: function() {
+      this.get('lines').reset();      
+      this.trigger('reset');
+    },
+    
+    addProduct: function (index, p) {
+      var lines = this.get('lines');
+      if (index >= 0 && index < lines.length &&
+          lines.at(index).get('productid') === p.product.id) {
+        // add 1 unit to the current line.
+        lines.at(index).addUnit();
+      } else {
+        // a new line with 1 unit
+        lines.add(new OBPOS.Model.OrderLine({
+          productid: p.product.id,
+          productidentifier: p.product._identifier,
+          qty: 1,
+          price: p.price.listPrice
+        }));
+      }
+    }    
   });
   
+  // Sales.Order Model.
+  OBPOS.Model.Stack = Backbone.Model.extend({
+    initialize : function () {
+      this.set('selected', -1);
+    },
+    
+    setModel: function (order) {
+      order.get('lines').on('reset', function () {
+        this.set('selected', -1);
+      }, this);      
+    }
+  });
 

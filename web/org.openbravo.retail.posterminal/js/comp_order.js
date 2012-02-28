@@ -1,19 +1,9 @@
 (function (OBPOS) {
 
-
-  
   // Order list
   OBPOS.Sales.OrderView = function (container) {
-    this.changeListeners = [];
-    this.selectListeners = [];
-    this.clickListeners = [];
-    
+  
     var me = this;
-    
-//    this.changeListeners.push(function () {
-//      me.totalnet.text(me.receipt.printNet());
-//      me.totalgross.text(me.receipt.printNet());
-//    });
     
     this.renderHeader = function () {
       return [
@@ -83,187 +73,71 @@
     )));    
   }
 
-  OBPOS.Sales.OrderView.prototype.createRow = function (line) {
-    var me = this;
-    var tr = $('<tr/>');
-    tr.append(this.renderLine(line));
-    tr.click(function () {
-      me.setSelected((me.tbody.children().index(tr)), true);
-    });
-    return tr;
-  }
-
-  OBPOS.Sales.OrderView.prototype.clear = function () {
+  OBPOS.Sales.OrderView.prototype.setModel = function (receipt, stack) {
+    this.receipt = receipt;
+    var lines = this.receipt.get('lines');
+    this.stack = stack;
+    this.selected = -1;   
     
-    // Init the receipt
-    this.receipt = new OBPOS.Model.Order();
-    
-    this.receipt.get('lines').on('reset change add remove', function() {
+    lines.on('reset change add remove', function() {
       this.totalnet.text(this.receipt.printNet());
       this.totalgross.text(this.receipt.printNet());      
     }, this);
-
-    this.receipt.get('lines').reset();
     
-    // Init the view
-    this.lineselected = -1;
-
-    this.tbody.empty();
-    this.fireChangeEvent();
-    this.fireSelectEvent(-1, null);
-  }
-
-  OBPOS.Sales.OrderView.prototype.getReceipt = function () {
-    return this.receipt;
-  }
-  
-  OBPOS.Sales.OrderView.prototype.setSelected = function (n, clicked) {
-    var children = this.tbody.children();
-    if (this.lineselected > -1) {
-      children.eq(this.lineselected).css('background-color', '').css('color', '');
-    }
-    this.lineselected = n;
+    lines.on('change', function(model, prop) {          
+      var index = lines.indexOf(model);
+      this.tbody.children().eq(index)
+        .empty()
+        .append(this.renderLine(model));      
+    }, this);
     
-    var line = this.receipt.get('lines').at(this.lineselected);
-    
-    if (line) {
-      var elemselected = children.eq(this.lineselected);
-      elemselected.css('background-color', '#049cdb').css('color', '#fff');
-      OBPOS.Sales.makeElemVisible(this.divscroll, elemselected);
-      this.fireSelectEvent(this.lineselected, line);
-      if (clicked) {
-        this.fireClickEvent(this.lineselected, line);
-      }
-    } else {
-      this.lineselected = -1;
-      this.fireSelectEvent(-1, null);
-    }
-  }
-
-  OBPOS.Sales.OrderView.prototype.addUnit = function (qty) {
-    if (this.lineselected > -1) {
-  
-      var line = this.receipt.get('lines').at(this.lineselected);
-      
-      qty = isNaN(qty) ? 1 : qty;
-      
-      line.set('qty', line.get('qty') + qty);
-      var tr = this.tbody.children().eq(this.lineselected).empty();
-      tr.append(this.renderLine(line));
-      this.fireChangeEvent();
-      this.fireSelectEvent(this.lineselected, line);
-    }
-  }
-
-  OBPOS.Sales.OrderView.prototype.setUnit = function (qty) {
-    if (this.lineselected > -1) {
-      
-      var line = this.receipt.get('lines').at(this.lineselected);
-      
-      qty = isNaN(qty) ? line.get('qty') : qty;
-      
-      line.set('qty', qty);
-      if (line.get('qty') <= 0) {
-        this.removeLine();
-      } else {      
-        var tr = this.tbody.children().eq(this.lineselected).empty();
-        tr.append(this.renderLine(line));
-        this.fireChangeEvent();
-        this.fireSelectEvent(this.lineselected, line);
-      }
-    }
-  }
-  
-  OBPOS.Sales.OrderView.prototype.removeUnit = function (qty) {
-    if (this.lineselected > -1) {
-      
-      qty = isNaN(qty) ? 1 : Math.abs(qty);
-      
-      var line = this.receipt.get('lines').at(this.lineselected);
-      
-      line.set('qty', line.get('qty') - qty);
-      if (line.get('qty') <= 0) {
-        this.removeLine();
-      } else {
-        var tr = this.tbody.children().eq(this.lineselected).empty();
-        tr.append(this.renderLine(line));
-        this.fireChangeEvent();
-        this.fireSelectEvent(this.lineselected, line);
-      }
-    }
-  }
-
-  OBPOS.Sales.OrderView.prototype.removeLine = function () {
-    var l = arguments[0] ? arguments[0] : this.lineselected;
-    if (l > -1) {
-      
-      var line = this.receipt.get('lines').at(this.lineselected);
-      
-      this.receipt.get('lines').remove(line);
-      this.tbody.children().eq(l).remove();
-      this.fireChangeEvent();
-
-      if (l >= this.receipt.get('lines').length) {
-        this.setSelected(this.receipt.get('lines').length - 1);
-      } else {
-        this.setSelected(l);
-      }
-    }
-  }
-
-  OBPOS.Sales.OrderView.prototype.addLine = function (l) {
-    this.receipt.get('lines').add(l);
-    this.tbody.append(this.createRow(l));
-    this.setSelected(this.receipt.get('lines').length - 1);
-    this.fireChangeEvent();
-  }
-
-  OBPOS.Sales.OrderView.prototype.addProduct = function (p) {
-    if (this.lineselected > -1 &&
-        this.receipt.get('lines').at(this.lineselected).get('productid') === p.product.id) {
-      // add 1 unit to the current line.
-      this.addUnit();
-    } else {
-      // a new line
-      var l = new OBPOS.Model.OrderLine({
-        productid: p.product.id,
-        productidentifier: p.product._identifier,
-        qty: 1,
-        price: p.price.listPrice
+    lines.on('add', function(model, prop, options) {     
+      var index = options.index;
+      var me = this;
+      var tr = $('<tr/>');
+      tr.append(this.renderLine(model));
+      tr.click(function () {
+        me.stack.set('selected', me.receipt.get('lines').indexOf(model));
+        me.stack.trigger('gotoedit');
       });
-      this.addLine(l);
-    }
-  }
-  
-  OBPOS.Sales.OrderView.prototype.addChangeListener = function (l) {
-    this.changeListeners.push(l);
-  }
+      if (index === lines.length - 1) {
+        this.tbody.append(tr);
+      } else {
+        this.tbody.children().eq(index).before(tr);
+      }
+      
+      this.stack.set('selected', index);     
+    }, this);
+    
+    lines.on('remove', function (model, prop, options) {        
+      var index = options.index;
+      this.tbody.children().eq(index).remove();
 
-  OBPOS.Sales.OrderView.prototype.fireChangeEvent = function () {
-    for (var i = 0, max = this.changeListeners.length; i < max; i++) {
-      this.changeListeners[i](this.receipt);
-    }
+      if (index >= lines.length) {
+        this.stack.set('selected', lines.length - 1);
+      } else {
+        this.stack.trigger('change:selected'); // we need to force the change event.
+        // this.stack.set('selected', index);
+      }            
+    }, this);
+    
+    lines.on('reset', function() {
+      this.tbody.empty();  
+      this.stack.set('selected', -1);
+    }, this);    
+        
+    this.stack.on('change:selected', function () {
+      var children = this.tbody.children();
+      if (this.selected > -1) {
+        children.eq(this.selected).css('background-color', '').css('color', '');
+      }         
+      this.selected = this.stack.get('selected');
+      if (this.selected > -1) {
+        var elemselected = children.eq(this.selected);      
+        elemselected.css('background-color', '#049cdb').css('color', '#fff');
+        OBPOS.Sales.makeElemVisible(this.divscroll, elemselected);
+      }      
+    }, this);
   }
-
-  OBPOS.Sales.OrderView.prototype.addSelectListener = function (l) {
-    this.selectListeners.push(l);
-  }
-
-  OBPOS.Sales.OrderView.prototype.fireSelectEvent = function (l, line) {
-    for (var i = 0, max = this.selectListeners.length; i < max; i++) {
-      this.selectListeners[i](l, line);
-    }
-  }
-
-  OBPOS.Sales.OrderView.prototype.addClickListener = function (l) {
-    this.clickListeners.push(l);
-  }
-
-  OBPOS.Sales.OrderView.prototype.fireClickEvent = function (l, line) {
-    for (var i = 0, max = this.clickListeners.length; i < max; i++) {
-      this.clickListeners[i](l, line);
-    }
-  }  
- 
 
 }(window.OBPOS));    

@@ -3,7 +3,6 @@
   OBPOS.Sales.Catalog = function (container) {
 
     this.selectedCategory = null;
-    this.selectListeners = [];
     
     this.tbodyCat = $(DOM(NODE('tbody', {}, [])));
     
@@ -68,7 +67,16 @@
       ];        
     }    
   };
-
+  
+  OBPOS.Sales.Catalog.prototype.setModel = function (receipt, stack) {
+    this.receipt = receipt;
+    this.stack = stack;
+    
+    this.receipt.on('reset', function() {      
+      this.reloadCategories();    
+    }, this);          
+  };
+  
   OBPOS.Sales.Catalog.prototype.reloadCategories = function () {
     var me = this;
     OBPOS.Sales.DSCategories.exec({}, function (data) {
@@ -121,11 +129,8 @@
           var tr = $('<tr/>');
           tr.append(me.renderProduct(data[i]));
           tr.click((function (p) {
-            return function () {
-              // Fire Select Listener event
-              for (var i = 0, max = me.selectListeners.length; i < max; i++) {
-                me.selectListeners[i](me, p);
-              }
+            return function () {              
+              me.receipt.addProduct(me.stack.get('selected'), p);
             };
           }(data[i])));
           table.append(tr);
@@ -134,10 +139,6 @@
         $('#productscroll').scrollTop(0);
       }
     });
-  }
-
-  OBPOS.Sales.Catalog.prototype.addSelectListener = function (l) {
-    this.selectListeners.push(l);
   }
   
 }(window.OBPOS));  

@@ -3,54 +3,52 @@
   OBPOS.Sales.EditLine = function (container) {
     var me = this;
     this.container = container;
-    this.clickListeners = [];
-
 
     container.load('comp_editline.html', function () {
       $('#btnplus').click(function () {
-        me.fireClickEvent('+');
+        me.keyPressed('+');
       });
       $('#btnminus').click(function () {
-        me.fireClickEvent('-');
+        me.keyPressed('-');
       });
       $('#btnmultiply').click(function () {
-        me.fireClickEvent('*');
+        me.keyPressed('*');
       });
       $('#btnremove').click(function () {
-        me.fireClickEvent('x');
+        me.keyPressed('x');
       });
       $('#btn0').click(function () {
-        me.fireClickEvent('0');
+        me.keyPressed('0');
       });      
       $('#btn1').click(function () {
-        me.fireClickEvent('1');
+        me.keyPressed('1');
       });    
       $('#btn2').click(function () {
-        me.fireClickEvent('2');
+        me.keyPressed('2');
       }); 
       $('#btn3').click(function () {
-        me.fireClickEvent('3');
+        me.keyPressed('3');
       }); 
       $('#btn4').click(function () {
-        me.fireClickEvent('4');
+        me.keyPressed('4');
       }); 
       $('#btn5').click(function () {
-        me.fireClickEvent('5');
+        me.keyPressed('5');
       }); 
       $('#btn6').click(function () {
-        me.fireClickEvent('6');
+        me.keyPressed('6');
       }); 
       $('#btn7').click(function () {
-        me.fireClickEvent('7');
+        me.keyPressed('7');
       }); 
       $('#btn8').click(function () {
-        me.fireClickEvent('8');
+        me.keyPressed('8');
       }); 
       $('#btn9').click(function () {
-        me.fireClickEvent('9');
+        me.keyPressed('9');
       }); 
       $('#btndot').click(function () {
-        me.fireClickEvent('.');
+        me.keyPressed('.');
       }); 
       
       $('#btnce').click(function () {
@@ -58,27 +56,47 @@
       });       
       
       me.editbox = $('#editbox');
+      
+      // register keys
+      $(window).keypress(function(e) {
+        me.keyPressed(String.fromCharCode(e.which));
+      });        
     });
   }
-
-  OBPOS.Sales.EditLine.prototype.cleanLine = function () {
-    this.editLine(-1, null)
-  }
   
-  OBPOS.Sales.EditLine.prototype.editLine = function (l, line) {
+  OBPOS.Sales.EditLine.prototype.setModel = function (receipt, stack) {
+    this.receipt = receipt;
+    this.stack = stack;
+    this.line = null;
+    this.index = -1;
+        
+    this.stack.on('change:selected', function () {
+      
+      var index = this.stack.get('selected');
+      var lines = this.receipt.get('lines');
+      if (index >= 0 && index < lines.length) {  
+        this.editLine(index, lines.at(index));     
+      } else {
+        this.editLine(-1, null);
+      }
+    }, this);    
+  };
+  
+  OBPOS.Sales.EditLine.prototype.renderLine = function () {
 
     this.editbox.empty();
     
-    if (l >= 0) {
+    if (this.line) {
+      var me = this;
       OBPOS.Sales.DSProduct.find({
-        product: {id: line.get('productid')}
+        product: {id: this.line.get('productid')}
       }, function (data) {
         if (data) {
           $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));
           $('#editlinename').text(data.product._identifier);
-          $('#editlineqty').text(line.printQty());
-          $('#editlineprice').text(line.printPrice());
-          $('#editlinenet').text(line.printNet());
+          $('#editlineqty').text(me.line.printQty());
+          $('#editlineprice').text(me.line.printPrice());
+          $('#editlinenet').text(me.line.printNet());
         }
       });
     } else {
@@ -87,20 +105,69 @@
       $('#editlineqty').empty();
       $('#editlineprice').empty();
       $('#editlinenet').empty();
+    }    
+  }  
+  
+  OBPOS.Sales.EditLine.prototype.editLine = function (index, line) {
+    
+    if (this.line) {
+      this.line.off('change', this.renderLine);
     }
+    
+    this.line = line;
+    this.index = index;
+    
+    if (this.line) {
+      this.line.on('change', this.renderLine, this);     
+    }
+    
+    this.renderLine();
   };
   
-  OBPOS.Sales.EditLine.prototype.typeKey = function (key) {
-    var t = this.editbox.text();
-    this.editbox.text(t + key);
-  }
+  OBPOS.Sales.EditLine.prototype.keyPressed = function (key) {
+
+    if (key === '-') {
+      if (this.line) {
+        this.line.removeUnit(this.getNumber());
+        if (this.line.get('qty') <= 0) {
+          this.receipt.get('lines').remove(this.line);
+        }
+      }
+    } else if (key === '+') {
+      if (this.line) {
+        this.line.addUnit(this.getNumber());
+        if (this.line.get('qty') <= 0) {
+          this.receipt.get('lines').remove(this.line);
+        }        
+      }
+    } else if (key === '*') {
+      if (this.line) {
+        this.line.setUnit(this.getNumber());
+        if (this.line.get('qty') <= 0) {
+          this.receipt.get('lines').remove(this.line);
+        }            
+      }
+    } else if (key === 'x') {
+      if (this.line) {
+        this.receipt.get('lines').remove(this.line);
+      }
+    } else if (key === String.fromCharCode(13)) {
+      OBPOS.Sales.DSProduct.find({
+        product: {uPCEAN: this.getString()}
+      }, function (data) {
+        if (data) {      
+          this.receipt.addProduct(data);
+        } else {
+          alert('UPC/EAN code not found');
+        }
+      });
+    } else {
+      var t = this.editbox.text();
+      this.editbox.text(t + key);
+    }
+
+  }  
   
-  OBPOS.Sales.EditLine.prototype.getNumber = function () {
-    var i = parseInt(this.editbox.text());
-    this.editbox.empty();
-    return i;
-  }
-    
   OBPOS.Sales.EditLine.prototype.getNumber = function () {
     var i = parseInt(this.editbox.text());
     this.editbox.empty();
@@ -112,15 +179,5 @@
     this.editbox.empty();
     return s;
   }  
-  
-  OBPOS.Sales.EditLine.prototype.addClickListener = function (l) {
-    this.clickListeners.push(l);
-  };
-
-  OBPOS.Sales.EditLine.prototype.fireClickEvent = function (key) {
-    for (var i = 0, max = this.clickListeners.length; i < max; i++) {
-      this.clickListeners[i](key);
-    }
-  };    
 
 }(window.OBPOS));    
