@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1801,15 +1801,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         icon = (icon == null ? "M" : icon).equals("M") ? "Module" : icon.equals("T") ? "Template"
             : "Pack";
 
-        // If there is no url, we need to hide the 'Visit Site' link and separator.
-        String url = mod.getUrl();
-        url = (url == null || url.equals("") ? "HIDDEN" : url);
-
         moduleBox.put("name", mod.getName());
         moduleBox.put("description", mod.getDescription());
         moduleBox.put("type", icon);
         moduleBox.put("help", mod.getHelp());
-        moduleBox.put("url", getLink(url));
+        // If there is no url, we need to hide the 'Visit Site' link and separator.
+        if (mod.getUrl() == null || mod.getUrl().equals("")) {
+          moduleBox.put("urlStyle", "none");
+        } else {
+          moduleBox.put("url", getLink(mod.getUrl()));
+          moduleBox.put("urlStyle", "true");
+        }
         moduleBox.put("moduleVersionID", mod.getModuleVersionID());
         moduleBox.put("commercialStyle", (mod.isIsCommercial() ? "true" : "none"));
 
