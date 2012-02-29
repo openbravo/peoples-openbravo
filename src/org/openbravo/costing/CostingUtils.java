@@ -30,10 +30,12 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
+import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -201,5 +203,22 @@ public class CostingUtils {
     }
 
     return BigDecimal.ZERO;
+  }
+
+  public static BusinessPartner getTrxBusinessPartner(MaterialTransaction transaction,
+      TrxType trxType) {
+    switch (trxType) {
+    case Receipt:
+    case ReceiptNegative:
+    case ReceiptReturn:
+    case ReceiptVoid:
+    case Shipment:
+    case ShipmentNegative:
+    case ShipmentReturn:
+    case ShipmentVoid:
+      return transaction.getGoodsShipmentLine().getShipmentReceipt().getBusinessPartner();
+    default:
+      return null;
+    }
   }
 }
