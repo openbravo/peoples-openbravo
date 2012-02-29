@@ -469,7 +469,7 @@ public class OBMessageUtils {
   public static String getI18NMessage(String key, String[] params) {
     OBContext.setAdminMode();
     try {
-  
+
       // first read the labels from the base table
       final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
           Message.PROPERTY_SEARCHKEY + "=:key");
@@ -477,11 +477,11 @@ public class OBMessageUtils {
       if (messages.list().isEmpty()) {
         return null;
       }
-  
+
       if (messages.list().size() > 1) {
-        Utility.log4j.warn("More than one message found using key " + key);
+        log4j.warn("More than one message found using key " + key);
       }
-  
+
       // pick the first one
       final Message message = messages.list().get(0);
       String label = message.getMessageText();
