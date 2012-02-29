@@ -28,28 +28,29 @@ test('Test user info data read', function () {
 
   expect(16);
 
-  var callback = function (rpcResponse, data, rpcRequest) {
-      ok(data.language, 'Language present');
-      ok(data.language.value, 'Language value present');
-      ok(data.language.valueMap, 'Language valueMap present');
-      ok(data.language.value, 'Language value present');
+  var callback;
+  callback = function (rpcResponse, data, rpcRequest) {
+    ok(data.language, 'Language present');
+    ok(data.language.value, 'Language value present');
+    ok(data.language.valueMap, 'Language valueMap present');
+    ok(data.language.value, 'Language value present');
 
-      ok(data.initialValues.role, 'Initial role value set');
-      ok(data.initialValues.client, 'Initial client value set');
-      ok(data.initialValues.organization, 'Initial organization value set');
-      ok(data.initialValues.language, 'Initial language value set');
+    ok(data.initialValues.role, 'Initial role value set');
+    ok(data.initialValues.client, 'Initial client value set');
+    ok(data.initialValues.organization, 'Initial organization value set');
+    ok(data.initialValues.language, 'Initial language value set');
 
-      ok(data.role, 'Role set');
-      ok(data.role.value, 'Role value set');
-      ok(data.role.valueMap, 'Role valueMap set');
-      ok(data.role.roles, 'Role info set');
-      ok(data.role.roles.length > 0, 'More than one role present');
-      ok(data.role.roles[0].id, 'Role id set');
-      ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
-      ok(data.role.roles[0].warehouseValueMap, 'Role wh value map set');
+    ok(data.role, 'Role set');
+    ok(data.role.value, 'Role value set');
+    ok(data.role.valueMap, 'Role valueMap set');
+    ok(data.role.roles, 'Role info set');
+    ok(data.role.roles.length > 0, 'More than one role present');
+    ok(data.role.roles[0].id, 'Role id set');
+    ok(data.role.roles[0].organizationValueMap, 'Role org value map set');
+    ok(data.role.roles[0].warehouseValueMap, 'Role wh value map set');
 
-      start();
-      };
+    start();
+  };
   var action = 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler';
   OB.RemoteCallManager.call(action, {}, {
     'command': 'data'

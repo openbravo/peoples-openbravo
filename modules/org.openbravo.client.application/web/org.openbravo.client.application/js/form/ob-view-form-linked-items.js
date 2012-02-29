@@ -135,21 +135,22 @@ isc.OBLinkedItemLayout.addProperties({
 
     var that = this;
 
-    var callback = function (response, data, request) {
-        var msg = data.msg;
-        var usedByLinkData = data.usedByLinkData;
-        if (msg !== null) {
-          that.messageLabel.setContents(msg);
-        }
+    var callback;
+    callback = function (response, data, request) {
+      var msg = data.msg;
+      var usedByLinkData = data.usedByLinkData;
+      if (msg !== null) {
+        that.messageLabel.setContents(msg);
+      }
 
-        if (usedByLinkData === null) {
-          usedByLinkData = [];
-        }
+      if (usedByLinkData === null) {
+        usedByLinkData = [];
+      }
 
-        that.linkedItemCategoryDS.setCacheData(usedByLinkData, true);
-        that.linkedItemCategoryListGrid.invalidateCache();
-        that.linkedItemCategoryListGrid.filterData();
-        };
+      that.linkedItemCategoryDS.setCacheData(usedByLinkData, true);
+      that.linkedItemCategoryListGrid.invalidateCache();
+      that.linkedItemCategoryListGrid.filterData();
+    };
 
     var reqObj = {
       params: {
@@ -179,20 +180,21 @@ isc.OBLinkedItemLayout.addProperties({
     var selCatItems = this.linkedItemCategoryListGrid.getSelectedRecord();
 
     var that = this; /* loads linked items to the child grid */
-    var callback = function (response, data, request) {
-        var msg = data.msg;
-        var usedByLinkData = data.usedByLinkData;
-        if (msg !== null) {
-          that.messageLabel.setContents(msg);
-        }
+    var callback;
+    callback = function (response, data, request) {
+      var msg = data.msg;
+      var usedByLinkData = data.usedByLinkData;
+      if (msg !== null) {
+        that.messageLabel.setContents(msg);
+      }
 
-        if (usedByLinkData === null) {
-          usedByLinkData = [];
-        }
-        that.linkedItemListGrid.invalidateCache();
-        that.linkedItemDS.setCacheData(usedByLinkData, true);
-        that.linkedItemListGrid.filterData();
-        };
+      if (usedByLinkData === null) {
+        usedByLinkData = [];
+      }
+      that.linkedItemListGrid.invalidateCache();
+      that.linkedItemDS.setCacheData(usedByLinkData, true);
+      that.linkedItemListGrid.filterData();
+    };
 
     if (!selCatItems) {
       this.linkedItemCategoryListGrid.filterEditorSubmit();

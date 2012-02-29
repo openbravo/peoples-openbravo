@@ -52,28 +52,29 @@
     // * {{{recordId}}} the record to show
     //
     openLinkedItem: function (tabId, recordId) {
-      var doOpenClassicWindow = function (response, data, request) {
+      var doOpenClassicWindow;
+      doOpenClassicWindow = function (response, data, request) {
 
-          if (!data.recordId || data.recordId.length === 0) {
-            L.ViewManager.openView('OBClassicWindow', {
-              tabTitle: data.tabTitle,
-              windowId: data.windowId,
-              tabId: data.tabId,
-              mappingName: data.mappingName,
-              command: 'DEFAULT'
-            });
-          } else {
-            L.ViewManager.openView('OBClassicWindow', {
-              tabTitle: data.tabTitle,
-              windowId: data.windowId,
-              tabId: data.tabId,
-              mappingName: data.mappingName,
-              keyParameter: data.keyParameter,
-              recordId: data.recordId,
-              command: 'DIRECT'
-            });
-          }
-          };
+        if (!data.recordId || data.recordId.length === 0) {
+          L.ViewManager.openView('OBClassicWindow', {
+            tabTitle: data.tabTitle,
+            windowId: data.windowId,
+            tabId: data.tabId,
+            mappingName: data.mappingName,
+            command: 'DEFAULT'
+          });
+        } else {
+          L.ViewManager.openView('OBClassicWindow', {
+            tabTitle: data.tabTitle,
+            windowId: data.windowId,
+            tabId: data.tabId,
+            mappingName: data.mappingName,
+            keyParameter: data.keyParameter,
+            recordId: data.recordId,
+            command: 'DIRECT'
+          });
+        }
+      };
 
       OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
         'tabId': tabId,

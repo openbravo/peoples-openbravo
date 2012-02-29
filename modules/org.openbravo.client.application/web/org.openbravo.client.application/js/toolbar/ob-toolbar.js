@@ -1222,8 +1222,7 @@ isc.OBToolbar.addProperties({
 
       var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
 
-      if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons
-        && currentContext.ID===this.view.ID) {
+      if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons && currentContext.ID === this.view.ID) {
         if (this.view.tabId === currentContext.tabId) {
           currentTabCalled = true;
         }
@@ -1484,13 +1483,14 @@ isc.OBToolbarIconButton.addProperties({
   keyboardShortcutId: null,
   enableShortcut: function () {
     if (this.keyboardShortcutId) {
-      var me = this;
-      var ksAction = function () {
-          if (!me.disabled) {
-            me.action();
-          }
-          return false; //To avoid keyboard shortcut propagation
-          };
+      var me = this,
+          ksAction;
+      ksAction = function () {
+        if (!me.disabled) {
+          me.action();
+        }
+        return false; //To avoid keyboard shortcut propagation
+      };
       OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     }
   },
