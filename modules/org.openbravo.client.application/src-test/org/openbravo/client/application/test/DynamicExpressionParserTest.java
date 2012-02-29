@@ -27,7 +27,7 @@ import org.openbravo.test.base.BaseTest;
 public class DynamicExpressionParserTest extends BaseTest {
 
   @Test
-  public void testRegularExpression() throws Exception {
+  public void testRegularExpression() {
     setSystemAdministratorContext();
     String displayLogic = "((@Financial_Invoice_Line@='N'))";
     String expectedResult = "((OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false))";
