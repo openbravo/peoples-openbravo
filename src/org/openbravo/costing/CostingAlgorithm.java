@@ -343,6 +343,8 @@ public abstract class CostingAlgorithm {
    * not been yet.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
+   * @throws OBException
+   *           when no related internal movement is found.
    */
   protected BigDecimal getIntMovementToCost() {
     // Get transaction of From movement to retrieve it's cost.
