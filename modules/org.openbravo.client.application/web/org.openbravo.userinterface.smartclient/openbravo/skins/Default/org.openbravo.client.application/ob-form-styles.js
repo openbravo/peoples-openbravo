@@ -180,7 +180,7 @@ OB.Styles.OBFormField.DefaultSearch = {
   pickerIconHspace: 0,
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
-    showHover: true,
+    showRollOver: true,
     showDown: true,
     height: 21,
     width: 21,
