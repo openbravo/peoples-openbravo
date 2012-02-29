@@ -19627,10 +19627,10 @@ References will be replaced by values:
 <!--1002100024-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1002100024-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100024-->  <COLUMNNAME><![CDATA[Deducpercent]]></COLUMNNAME>
-<!--1002100024-->  <NAME><![CDATA[Deductable Rate]]></NAME>
-<!--1002100024-->  <PRINTNAME><![CDATA[Deductable Rate]]></PRINTNAME>
-<!--1002100024-->  <DESCRIPTION><![CDATA[Deductable Rate]]></DESCRIPTION>
-<!--1002100024-->  <HELP><![CDATA[It is the deductable percentage]]></HELP>
+<!--1002100024-->  <NAME><![CDATA[Deductible Rate]]></NAME>
+<!--1002100024-->  <PRINTNAME><![CDATA[Deductible Rate]]></PRINTNAME>
+<!--1002100024-->  <DESCRIPTION><![CDATA[Deductible Rate]]></DESCRIPTION>
+<!--1002100024-->  <HELP><![CDATA[It is the deductible percentage]]></HELP>
 <!--1002100024-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100024-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1002100024--></AD_ELEMENT>
