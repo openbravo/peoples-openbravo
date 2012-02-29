@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -52,7 +53,7 @@ public class OBMessageUtils {
    */
   public static String messageBD(String strCode) {
     String strMessage = "";
-    final String strLanguage = OBContext.getOBContext().getLanguage().getLanguage();
+    final String strLanguageId = OBContext.getOBContext().getLanguage().getId();
 
     // Search strCode in AD_Message table.
     try {
@@ -64,7 +65,7 @@ public class OBMessageUtils {
         Message msg = obcMessage.list().get(0);
         strMessage = msg.getMessageText();
         for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
-          if (msgTrl.getLanguage().getLanguage().equals(strLanguage)) {
+          if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
             strMessage = msgTrl.getMessageText();
             break;
           }
@@ -86,7 +87,7 @@ public class OBMessageUtils {
           Element element = obcElement.list().get(0);
           strMessage = element.getName();
           for (ElementTrl elementTrl : element.getADElementTrlList()) {
-            if (elementTrl.getLanguage().getLanguage().equals(strLanguage)) {
+            if (DalUtil.getId(elementTrl.getLanguage()).equals(strLanguageId)) {
               strMessage = elementTrl.getName();
             }
           }
