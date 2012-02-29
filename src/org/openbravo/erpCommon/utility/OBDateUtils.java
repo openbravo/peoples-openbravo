@@ -29,15 +29,15 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
- * Date utilities to manage dates.
+ * Utilities to manage dates.
  */
-public class DateUtility {
+public class OBDateUtils {
 
   /**
    * Returns an String with the date in the <i>dateFormat.java</i> format defined in
    * Openbravo.properties
    * 
-   * @see DateUtility#formatDate(Date, String)
+   * @see OBDateUtils#formatDate(Date, String)
    * 
    * @param date
    *          Date to be formatted.

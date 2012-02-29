@@ -39,8 +39,8 @@ import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
-public class MessageUtility {
-  static Logger log4j = Logger.getLogger(MessageUtility.class);
+public class OBMessageUtils {
+  static Logger log4j = Logger.getLogger(OBMessageUtils.class);
 
   /**
    * Translate the given code into some message from the application dictionary. It searches first
@@ -106,7 +106,7 @@ public class MessageUtility {
   }
 
   /**
-   * @see MessageUtility#messageBD(ConnectionProvider, String, String, boolean)
+   * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
     return BasicUtility.messageBD(conn, strCode, strLanguage, true);
