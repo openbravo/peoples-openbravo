@@ -43,6 +43,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
@@ -400,7 +401,7 @@ public class AdvancedQueryBuilder {
           }
           sb.append(prop.getName());
         }
-        throw new OBException(Utility.getI18NMessage("OBJSON_InvalidProperty",
+        throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidProperty",
             new String[] { value.toString(), sb.toString() }));
       }
       final Property fieldProperty = properties.get(properties.size() - 1);
@@ -524,7 +525,7 @@ public class AdvancedQueryBuilder {
     try {
       localValue = getTypeSafeValue(operator, property, localValue);
     } catch (IllegalArgumentException e) {
-      throw new OBException(Utility.getI18NMessage("OBJSON_InvalidFilterValue",
+      throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidFilterValue",
           new String[] { value != null ? value.toString() : "" }));
     }
     typedParameters.add(localValue);

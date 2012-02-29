@@ -37,7 +37,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
@@ -74,10 +74,10 @@ public class KernelUtils {
   private List<Module> sortedModules = null;
 
   /**
-   * @see Utility#getI18NMessage(String, String[])
+   * @see OBMessageUtils#getI18NMessage(String, String[])
    */
   public String getI18N(String key, String[] params) {
-    return Utility.getI18NMessage(key, params);
+    return OBMessageUtils.getI18NMessage(key, params);
   }
 
   public Property getPropertyFromColumn(Column column) {
