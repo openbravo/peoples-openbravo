@@ -236,11 +236,9 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptReturnCost() {
-    // Receipt return's cost is calculated based on the proportional cost of the original shipment.
     try {
       return getReturnedInOutLineCost();
     } catch (OBException e) {
-      // if no original trx is found use standard outgoing trx.
       return getOutgoingTransactionCost();
     }
   }
@@ -252,7 +250,6 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
-    // Voided receipt gets cost from original receipt line.
     return getOriginalInOutLineCost();
   }
 
@@ -263,7 +260,6 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptNegativeCost() {
-    // Receipt with negative quantity. Calculate cost as a regular outgoing transaction.
     return getOutgoingTransactionCost();
   }
 
