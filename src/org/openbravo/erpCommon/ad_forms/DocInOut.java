@@ -206,9 +206,6 @@ public class DocInOut extends AcctServer {
           log4j.error("No Account Asset for product: " + product.getName()
               + " in accounting schema: " + schema.getName());
         }
-        OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
-        OBDal.getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-            as.m_C_AcctSchema_ID);
         String costs = line.getProductCosts(DateAcct, as, conn, con);
         log4jDocInOut.debug("(MatShipment) - DR account: "
             + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
