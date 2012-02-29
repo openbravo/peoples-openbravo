@@ -228,6 +228,18 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   /**
+   * Returns the parent organization of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization is determined.
+   * @return the parent organization.
+   */
+  public Organization getParentOrg(Organization org) {
+    initialize();
+    return OBDal.getInstance().get(Organization.class, parentByOrganizationID.get(org.getId()));
+  }
+
+  /**
    * Returns the child organization tree of an organization.
    * 
    * @param orgId
@@ -382,4 +394,5 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
     return null;
   }
+
 }
