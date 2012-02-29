@@ -49,9 +49,9 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.DateUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.erpCommon.utility.MessageUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
@@ -76,11 +76,11 @@ public class FIN_Utility {
   private static AdvPaymentMngtDao dao;
 
   /**
-   * @see DateUtility#getDate(String)
+   * @see OBDateUtils#getDate(String)
    */
   public static Date getDate(String strDate) {
     try {
-      return DateUtility.getDate(strDate);
+      return OBDateUtils.getDate(strDate);
     } catch (ParseException e) {
       log4j.error("Error parsing date", e);
       return null;
@@ -89,11 +89,11 @@ public class FIN_Utility {
   }
 
   /**
-   * @see DateUtility#getDateTime(String)
+   * @see OBDateUtils#getDateTime(String)
    */
   public static Date getDateTime(String strDate) {
     try {
-      return DateUtility.getDateTime(strDate);
+      return OBDateUtils.getDateTime(strDate);
     } catch (ParseException e) {
       log4j.error("Error parsing date", e);
       return null;
@@ -572,10 +572,10 @@ public class FIN_Utility {
   }
 
   /**
-   * @see MessageUtility#messageBD(String)
+   * @see OBMessageUtils#messageBD(String)
    */
   public static String messageBD(String strCode) {
-    return MessageUtility.messageBD(strCode);
+    return OBMessageUtils.messageBD(strCode);
   }
 
   /**
