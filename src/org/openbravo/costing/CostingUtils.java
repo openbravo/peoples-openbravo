@@ -33,7 +33,7 @@ import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -81,9 +81,9 @@ public class CostingUtils {
         return transactionCost.getTransactionCost();
       }
       log4j.error("No cost found for transaction " + transaction.getIdentifier() + " with id "
-          + transaction.getId() + " on date " + DateUtility.formatDate(date));
+          + transaction.getId() + " on date " + OBDateUtils.formatDate(date));
       throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: "
-          + transaction.getIdentifier() + " @Date@ " + DateUtility.formatDate(date));
+          + transaction.getIdentifier() + " @Date@ " + OBDateUtils.formatDate(date));
     }
     BigDecimal cost = BigDecimal.ZERO;
     for (TransactionCost trxCost : obcTrxCost.list()) {
@@ -138,12 +138,12 @@ public class CostingUtils {
     }
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
-        log4j.warn("More than one cost found for same date: " + DateUtility.formatDate(date)
+        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
             + " for product: " + product.getName() + " (" + product.getId() + ")");
       }
       if (obcCosting.list().get(0).getCost() == null) {
         throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
-            + ", @Date@: " + DateUtility.formatDate(date));
+            + ", @Date@: " + OBDateUtils.formatDate(date));
       }
       return obcCosting.list().get(0).getCost();
     } else if (recheckWithoutDimensions) {
@@ -151,7 +151,7 @@ public class CostingUtils {
     }
     // If no standard cost is found throw an exception.
     throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @Date@: "
-        + DateUtility.formatDate(date));
+        + OBDateUtils.formatDate(date));
   }
 
   /**

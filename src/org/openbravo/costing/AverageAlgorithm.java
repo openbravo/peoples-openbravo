@@ -28,7 +28,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
@@ -79,7 +79,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     Costing currentCosting = getProductCost();
     if (currentCosting == null) {
       throw new OBException("@NoAvgCostDefined@ @Product@: " + transaction.getProduct().getName()
-          + ", @Date@: " + DateUtility.formatDate(transaction.getTransactionProcessDate()));
+          + ", @Date@: " + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     BigDecimal cost = currentCosting.getCost();
     return transaction.getMovementQuantity().abs().multiply(cost);
@@ -145,7 +145,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
-        log4j.warn("More than one cost found for same date: " + DateUtility.formatDate(date)
+        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
             + " for product: " + product.getName() + " (" + product.getId() + ")");
       }
       return obcCosting.list().get(0);

@@ -30,7 +30,7 @@ import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -205,7 +205,7 @@ public abstract class CostingAlgorithm {
     // TODO: Check if conversion is done correctly.
 
     BigDecimal trxCost = new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(),
-        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(), DateUtility
+        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(), OBDateUtils
             .formatDate(transaction.getTransactionProcessDate()), "", transaction.getClient()
             .getId(), costOrg.getId(), new DalConnectionProvider(false)));
 
@@ -231,7 +231,7 @@ public abstract class CostingAlgorithm {
       // TODO: Check if conversion is done correctly.
       trxCost = trxCost.add(new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(), matchPO
           .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(),
-          DateUtility.formatDate(transaction.getTransactionProcessDate()), "", transaction
+          OBDateUtils.formatDate(transaction.getTransactionProcessDate()), "", transaction
               .getClient().getId(), costOrg.getId(), new DalConnectionProvider(false))));
     }
     return trxCost;

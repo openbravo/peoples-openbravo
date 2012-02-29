@@ -29,7 +29,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -75,7 +75,7 @@ public class FinancialUtils {
     if (ppList.isEmpty()) {
       // No product price found.
       throw new OBException("@PriceListVersionNotFound@. @Product@: " + product.getIdentifier()
-          + " @Date@: " + DateUtility.formatDate(date));
+          + " @Date@: " + OBDateUtils.formatDate(date));
     }
     return ppList.get(0);
   }

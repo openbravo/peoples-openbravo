@@ -30,7 +30,7 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -145,7 +145,7 @@ public class CostingServer {
     if (costRules.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
           + transaction.getProduct().getName() + ", @Date@: "
-          + DateUtility.formatDate(transaction.getTransactionProcessDate()));
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     CostingRule returncr = costRules.get(0);
     if (returncr.getProduct() != null || costRules.size() == 1) {
