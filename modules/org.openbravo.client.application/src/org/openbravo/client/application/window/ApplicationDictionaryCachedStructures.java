@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +138,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return auxInputMap.get(tabId);
     }
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    List<AuxiliaryInput> auxInputs = tab.getADAuxiliaryInputList();
+    Hibernate.initialize(tab.getADAuxiliaryInputList());
+    List<AuxiliaryInput> auxInputs = new ArrayList<AuxiliaryInput>(tab.getADAuxiliaryInputList());
+    for (AuxiliaryInput auxIn : auxInputs) {
+      Hibernate.initialize(auxIn);
+    }
     auxInputMap.put(tabId, auxInputs);
     return auxInputs;
   }
