@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
@@ -104,7 +103,7 @@ public abstract class CostingAlgorithm {
     }
     switch (trxType) {
     case Shipment:
-      return getOutgoingTransactionCost();
+      return getShipmentCost();
     case ShipmentReturn:
       return getShipmentReturnCost();
     case ShipmentVoid:
@@ -120,23 +119,23 @@ public abstract class CostingAlgorithm {
     case ReceiptNegative:
       return getReceiptNegativeCost();
     case InventoryDecrease:
-      return getOutgoingTransactionCost();
+      return getInventoryDecreaseCost();
     case InventoryIncrease:
-      return getIncomingInventoryCost();
+      return getInventoryIncreaseCost();
     case IntMovementFrom:
-      return getOutgoingTransactionCost();
+      return getIntMovementFromCost();
     case IntMovementTo:
-      return getInternalMovementToCost();
+      return getIntMovementToCost();
     case InternalCons:
-      return getOutgoingTransactionCost();
+      return getInternalConsCost();
     case InternalConsNegative:
       return getInternalConsNegativeCost();
     case InternalConsVoid:
       return getInternalConsVoidCost();
     case BOMPart:
-      return getOutgoingTransactionCost();
+      return getBOMPartCost();
     case BOMProduct:
-      return getBOMProductionCost();
+      return getBOMProductCost();
     case Manufacturing:
       // Manufacturing transactions are not implemented.
       return BigDecimal.ZERO;
@@ -158,6 +157,16 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getZeroMovementQtyCost() {
     return BigDecimal.ZERO;
+  }
+
+  /**
+   * Calculates the cost of a Shipment line using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getShipmentCost() {
+    return getOutgoingTransactionCost();
   }
 
   /**
@@ -191,26 +200,6 @@ public abstract class CostingAlgorithm {
       return getPriceListCost();
     }
     return getTransactionStandardCost();
-  }
-
-  protected BigDecimal getShipmentCost() {
-    ShipmentInOutLine shipmentline = transaction.getGoodsShipmentLine();
-    OrderLine salesOrderLine = shipmentline.getSalesOrderLine();
-    if (salesOrderLine == null) {
-      // Shipment without order. Returns cost based on price list.
-      // FIXME: return Price List price
-      return getTransactionStandardCost();
-    }
-
-    BigDecimal orderAmt = transaction.getMovementQuantity().multiply(salesOrderLine.getUnitPrice());
-    // TODO: Check if conversion is done correctly.
-
-    BigDecimal trxCost = new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(),
-        salesOrderLine.getSalesOrder().getCurrency().getId(), costCurrency.getId(), OBDateUtils
-            .formatDate(transaction.getTransactionProcessDate()), "", transaction.getClient()
-            .getId(), costOrg.getId(), new DalConnectionProvider(false)));
-
-    return trxCost;
   }
 
   /*
@@ -262,6 +251,12 @@ public abstract class CostingAlgorithm {
     return getOriginalInOutLineCost();
   }
 
+  /**
+   * Calculates the cost of a Negative Receipt line using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
   protected BigDecimal getReceiptNegativeCost() {
     // Receipt with negative quantity. Calculate cost as a regular outgoing transaction.
     return getOutgoingTransactionCost();
@@ -307,11 +302,31 @@ public abstract class CostingAlgorithm {
   }
 
   /**
+   * Calculates the cost of a Inventory line that decrease the stock using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInventoryDecreaseCost() {
+    return getOutgoingTransactionCost();
+  }
+
+  /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
    */
-  protected BigDecimal getIncomingInventoryCost() {
+  protected BigDecimal getInventoryIncreaseCost() {
     return getTransactionStandardCost();
+  }
+
+  /**
+   * Calculates the cost of the From transaction of an Internal Movement line using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getIntMovementFromCost() {
+    return getOutgoingTransactionCost();
   }
 
   /**
@@ -319,7 +334,7 @@ public abstract class CostingAlgorithm {
    * than the related outgoing transaction. The outgoing transaction cost is calculated if it has
    * not been yet.
    */
-  protected BigDecimal getInternalMovementToCost() {
+  protected BigDecimal getIntMovementToCost() {
     // Get transaction of From movement to retrieve it's cost.
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
@@ -333,6 +348,16 @@ public abstract class CostingAlgorithm {
     // If no transaction is found throw an exception.
     throw new OBException("@NoInternalMovementTransactionFound@ @Transaction@: "
         + transaction.getIdentifier());
+  }
+
+  /**
+   * Calculates the cost of an Internal Consumption line using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInternalConsCost() {
+    return getOutgoingTransactionCost();
   }
 
   /**
@@ -353,10 +378,20 @@ public abstract class CostingAlgorithm {
   }
 
   /**
+   * Calculates the cost of a BOM Production used part using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getBOMPartCost() {
+    return getOutgoingTransactionCost();
+  }
+
+  /**
    * Calculates the cost of a produced BOM product. Its cost is the sum of the used products
    * transactions costs. If these has not been calculated yet they are calculated.
    */
-  protected BigDecimal getBOMProductionCost() {
+  protected BigDecimal getBOMProductCost() {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
