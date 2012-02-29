@@ -45,9 +45,41 @@ public class FinancialUtils {
   public static final String PRECISION_COSTING = "C";
   public static final String PRECISION_PRICE = "P";
 
-  public static BigDecimal getProductStdPrice(Product product, boolean useSalesPriceList,
-      Date date, Currency currency, Organization organization) {
-    ProductPrice pp = getProductPrice(product, useSalesPriceList, date);
+  /**
+   * @see #getProductStdPrice(Product, Date, boolean, PriceList, Currency, Organization)
+   */
+  public static BigDecimal getProductStdPrice(Product product, Date date,
+      boolean useSalesPriceList, Currency currency, Organization organization) throws OBException {
+    return getProductStdPrice(product, date, useSalesPriceList, null, currency, organization);
+  }
+
+  /**
+   * Calculates the Standard Price of the given Product. It uses the
+   * {@link #getProductPrice(Product, Date, boolean, PriceList) getProductPrice()} method to get the
+   * ProductPrice to be used. In case a conversion is needed it uses the
+   * {@link #getConvertedAmount(BigDecimal, Currency, Currency, Date, Organization, String)
+   * getConvertedAmount()} method.
+   * 
+   * @param product
+   *          Product to get its ProductPrice.
+   * @param date
+   *          Date when Product Price is needed.
+   * @param useSalesPriceList
+   *          boolean to set if the price list should be a sales or purchase price list.
+   * @param priceList
+   *          PriceList to get its ProductPrice
+   * @param currency
+   *          Currency to convert to the returned price.
+   * @param organization
+   *          Organization where price needs to be used to retrieve the proper conversion rate.
+   * @return a BigDecimal with the Standard Price of the Product for the given parameters.
+   * @throws OBException
+   *           when no valid ProductPrice is found.
+   */
+  public static BigDecimal getProductStdPrice(Product product, Date date,
+      boolean useSalesPriceList, PriceList pricelist, Currency currency, Organization organization)
+      throws OBException {
+    ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = pp.getStandardPrice();
     if (!DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
         currency.getId())) {
@@ -59,13 +91,42 @@ public class FinancialUtils {
     return price;
   }
 
-  public static ProductPrice getProductPrice(Product product, boolean useSalesPriceList, Date date)
+  /**
+   * @see #getProductPrice(Product, Date, boolean, PriceList)
+   */
+  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList)
       throws OBException {
+    return getProductPrice(product, date, useSalesPriceList, null);
+  }
+
+  /**
+   * Method to get a valid ProductPrice for the given Product. It only considers PriceList versions
+   * valid on the given date. If a PriceList is given it searches on that one. If PriceList null is
+   * passed it search on any Sales or Purchase PriceList based on the useSalesPriceList.
+   * 
+   * @param product
+   *          Product to get its ProductPrice.
+   * @param date
+   *          Date when Product Price is needed.
+   * @param useSalesPriceList
+   *          boolean to set if the price list should be a sales or purchase price list.
+   * @param priceList
+   *          PriceList to get its ProductPrice
+   * @return a valid ProductPrice for the given parameters.
+   * @throws OBException
+   *           when no valid ProductPrice is found.
+   */
+  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
+      PriceList priceList) throws OBException {
     OBCriteria<ProductPrice> ppc = OBDal.getInstance().createCriteria(ProductPrice.class);
     ppc.createAlias(ProductPrice.PROPERTY_PRICELISTVERSION, "plv");
     ppc.createAlias("plv." + PriceListVersion.PROPERTY_PRICELIST, "pl");
     ppc.add(Restrictions.eq(ProductPrice.PROPERTY_PRODUCT, product));
-    ppc.add(Restrictions.eq("pl." + PriceList.PROPERTY_SALESPRICELIST, useSalesPriceList));
+    if (priceList != null) {
+      ppc.add(Restrictions.eq("pl", priceList));
+    } else {
+      ppc.add(Restrictions.eq("pl." + PriceList.PROPERTY_SALESPRICELIST, useSalesPriceList));
+    }
     ppc.add(Restrictions.le("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, date));
     ppc.addOrderBy("pl." + PriceList.PROPERTY_DEFAULT, false);
     ppc.addOrderBy("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, false);
@@ -83,7 +144,7 @@ public class FinancialUtils {
   /**
    * Method to get the conversion rate defined at system level. If there is not a conversion rate
    * defined on the given Organization it is searched recursively on its parent organization until
-   * one is found. If no conversion rate is found on the parent organization tree null is returned.
+   * one is found. If no conversion rate is found null is returned.
    * 
    * @param date
    *          Date conversion is being performed.
