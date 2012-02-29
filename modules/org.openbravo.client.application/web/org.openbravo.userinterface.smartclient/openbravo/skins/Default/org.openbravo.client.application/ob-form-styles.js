@@ -181,9 +181,11 @@ OB.Styles.OBFormField.DefaultSearch = {
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,
-    height: 15,
-    width: 15,
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',
+    showDown: true,
+    height: 21,
+    width: 21,
+    hspace: 0,
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png',
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
   newTabIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
