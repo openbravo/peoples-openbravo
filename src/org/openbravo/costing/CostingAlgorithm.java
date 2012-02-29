@@ -29,8 +29,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -41,7 +39,6 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.procurement.POInvoiceMatch;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -217,22 +214,16 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getReceiptCost() {
     BigDecimal trxCost = BigDecimal.ZERO;
-    BigDecimal addQty = BigDecimal.ZERO;
     ShipmentInOutLine receiptline = transaction.getGoodsShipmentLine();
     if (receiptline.getSalesOrderLine() == null) {
-      // Receipt without order. Returns cost based on price list.
-      // FIXME: return Price List price
-      return getTransactionStandardCost();
+      return getPriceListCost();
     }
     for (POInvoiceMatch matchPO : receiptline.getProcurementPOInvoiceMatchList()) {
-      addQty = addQty.add(matchPO.getQuantity());
       BigDecimal orderAmt = matchPO.getQuantity().multiply(
           matchPO.getSalesOrderLine().getUnitPrice());
-      // TODO: Check if conversion is done correctly.
-      trxCost = trxCost.add(new BigDecimal(AcctServer.getConvertedAmt(orderAmt.toString(), matchPO
-          .getSalesOrderLine().getSalesOrder().getCurrency().getId(), costCurrency.getId(),
-          OBDateUtils.formatDate(transaction.getTransactionProcessDate()), "", transaction
-              .getClient().getId(), costOrg.getId(), new DalConnectionProvider(false))));
+      trxCost = trxCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO.getSalesOrderLine()
+          .getSalesOrder().getCurrency(), costCurrency, transaction.getTransactionProcessDate(),
+          costOrg, FinancialUtils.PRECISION_STANDARD));
     }
     return trxCost;
   }
