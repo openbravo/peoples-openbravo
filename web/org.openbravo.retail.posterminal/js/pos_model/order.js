@@ -86,16 +86,16 @@
     addProduct: function (index, p) {
       var lines = this.get('lines');
       if (index >= 0 && index < lines.length &&
-          lines.at(index).get('productid') === p.product.id) {
+          lines.at(index).get('productid') === p.get('product').id) {
         // add 1 unit to the current line.
         lines.at(index).addUnit();
       } else {
         // a new line with 1 unit
         lines.add(new OBPOS.Model.OrderLine({
-          productid: p.product.id,
-          productidentifier: p.product._identifier,
+          productid: p.get('product').id,
+          productidentifier: p.get('product')._identifier,
           qty: 1,
-          price: p.price.listPrice
+          price: p.get('price').listPrice
         }));
       }
     }    
@@ -107,8 +107,8 @@
       this.set('selected', -1);
     },
     
-    setModel: function (order) {
-      order.get('lines').on('reset', function () {
+    setModel: function (collection) {
+      collection.on('reset', function () {
         this.set('selected', -1);
       }, this);      
     }

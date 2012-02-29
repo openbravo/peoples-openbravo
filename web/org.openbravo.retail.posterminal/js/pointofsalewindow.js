@@ -2,24 +2,36 @@
 
   // window definition
   
-  var SalesWindow = {};
+  var SalesWindow = {}; /// vars
    
   //// Model
   
-  SalesWindow.modelterminal = new OBPOS.Model.Terminal();
+  var modelterminal = new OBPOS.Model.Terminal();
+  
+  var modelcategories = new OBPOS.Model.CategoryCol();
+  var modelproducts = new OBPOS.Model.ProductCol();
+  
+  modelterminal.on('ready', function() {
+    // Load of master data
+    modelproducts.ds.load({'priceListVersion': modelterminal.get('pricelistversion').id });
+    // modelproducts.load();
+    
+    modelcategories.load();
+  });
+  
+  
   
   SalesWindow.modelorder = new OBPOS.Model.Order();
-  
   SalesWindow.stackorder = new OBPOS.Model.Stack();
-  SalesWindow.stackorder.setModel(SalesWindow.modelorder);
+  SalesWindow.stackorder.setModel(SalesWindow.modelorder.get('lines'));
   
   //// Views
   
   SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status"));
-  SalesWindow.Terminal.setModel(SalesWindow.modelterminal);
+  SalesWindow.Terminal.setModel(modelterminal);
 
   SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
-  SalesWindow.Catalog.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  SalesWindow.Catalog.setModel(modelcategories, modelproducts, SalesWindow.modelorder, SalesWindow.stackorder);
   
   SalesWindow.OrderTable = new OBPOS.Sales.OrderView($('#ordercontainer'));
   SalesWindow.OrderTable.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
@@ -62,8 +74,8 @@
   
 
   $(document).ready(function () {
-    SalesWindow.modelterminal.load();
-    
+    modelterminal.load();
+   
     SalesWindow.HWView.hw.print('res/welcome.xml');
     SalesWindow.modelorder.reset();
     // SalesWindow.Terminal.init();

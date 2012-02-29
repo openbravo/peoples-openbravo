@@ -2,9 +2,43 @@
   
   OBPOS.Sales.Catalog = function (container) {
 
-    this.selectedCategory = null;
     
-    this.tbodyCat = $(DOM(NODE('tbody', {}, [])));
+    this.categoriesview = new OBPOS.Sales.TableView({
+//      renderHeader: function (model) {
+//        return [
+//                DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(model.get('img'))])),                                                                                                                                  
+//                DOM(NODE('td', {'style': 'width:80%;'}, [model.get('category')._identifier])),                                                                                                                                  
+//              ];          
+//      }, 
+      style: 'list',
+      renderLine: function (model) {
+        return [
+                DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(model.get('img'))])),                                                                                                                                  
+                DOM(NODE('td', {'style': 'width:80%;'}, [model.get('category')._identifier])),                                                                                                                                  
+              ];          
+      }      
+    });
+    
+    this.productsview = new OBPOS.Sales.TableView({ 
+      renderLine: function (model) {
+        return [
+              DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(model.get('img'))])),                                                                                                                                  
+              DOM(NODE('td', {'style': 'width:80%;'}, [
+                NODE('div', {}, [model.get('product')._identifier]),                                             
+                NODE('div', {}, [
+                  NODE('strong', {}, [
+                    OBPOS.Format.formatNumber(model.get('price').listPrice, {
+                      decimals: 2,
+                      decimal: '.',
+                      group: ',',
+                      currency: '$#'
+                    })
+                  ])  
+                ])  
+              ])),                                                                                                                                  
+            ];          
+      }      
+    });   
     
     this.titleProd = $(DOM(NODE('h3', {id: 'category'}, [' '])));
     this.tbodyProd = $(DOM(NODE('tbody', {}, [])));
@@ -13,6 +47,8 @@
         NODE('div', {'class': 'span8'}, [
           NODE('div', {'class': 'row'}, [
             NODE('div', {'class': 'span4'}, [
+               
+                                             
               NODE('table', {'class': 'table table-rounded'}, [
                 NODE('tbody', {}, [
                   NODE('tr', {}, [
@@ -22,9 +58,7 @@
                   ])
                 ])      
               ]),
-              NODE('div', {id: 'categoryscroll', style: 'overflow: auto; height: 450px'}, [
-                NODE('table', {'class': 'table table-rounded'}, [ this.tbodyCat ])      
-              ])          
+              this.categoriesview.div      
             ]),
             NODE('div', {'class': 'span4'}, [
               NODE('table', {'class': 'table table-rounded'}, [
@@ -34,47 +68,35 @@
                   ])
                 ])      
               ]),
-              NODE('div', {id: 'productscroll', style: 'overflow: auto; height: 450px'}, [
-                NODE('table', {'class': 'table table-rounded'}, [ this.tbodyProd ])      
-              ])          
+              this.productsview.div          
             ])        
           ])
         ])        
-    )));   
-    
-    this.renderCategory = function (cat) {
-      return [
-        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(cat.img)])),                                                                                                                                  
-        DOM(NODE('td', {'style': 'width:80%;'}, [cat.category._identifier])),                                                                                                                                  
-      ];        
-    }
-    this.renderProduct = function (prod) {
-      return [
-        DOM(NODE('td', {'style': 'width:20%;'}, [OBPOS.Sales.getThumbnail(prod.img)])),                                                                                                                                  
-        DOM(NODE('td', {'style': 'width:80%;'}, [
-          NODE('div', {}, [prod.product._identifier]),                                             
-          NODE('div', {}, [
-            NODE('strong', {}, [
-              OBPOS.Format.formatNumber(prod.price.listPrice, {
-                decimals: 2,
-                decimal: '.',
-                group: ',',
-                currency: '$#'
-              })
-            ])  
-          ])  
-        ])),                                                                                                                                  
-      ];        
-    }    
+    )));     
   };
   
-  OBPOS.Sales.Catalog.prototype.setModel = function (receipt, stack) {
-    this.receipt = receipt;
-    this.stack = stack;
+  OBPOS.Sales.Catalog.prototype.setModel = function (categories, products, receipt, stack) {
+    this.categories = categories;
+    this.categoriesview.setModel(this.categories);    
     
-    this.receipt.on('reset', function() {      
-      this.reloadCategories();    
-    }, this);          
+    this.products = products;
+    this.productsview.setModel(this.products);
+    
+    this.receipt = receipt;
+    this.stack = stack;   
+    
+    this.categoriesview.stack.on('change:selected', function () {
+      var selected = this.categoriesview.stack.get('selected')
+      if (selected >= 0) {
+        this.products.load({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
+        this.titleProd.text(this.categories.at(selected).get('category')._identifier);
+      }
+    }, this);
+    
+    this.productsview.stack.on('click', function (model,index) {
+      this.receipt.addProduct(this.stack.get('selected'), model);
+    }, this);
+    
   };
   
   OBPOS.Sales.Catalog.prototype.reloadCategories = function () {

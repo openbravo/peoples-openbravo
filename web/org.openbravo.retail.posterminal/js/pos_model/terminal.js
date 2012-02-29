@@ -1,16 +1,47 @@
 
 
+OBPOS.Collection = Backbone.Collection.extend({
+  load : function (filter) {
+    var me = this;
+    this.ds.exec(filter, function (data) {   
+      me.reset();
+      if (data.exception) {
+        alert(data.exception.message);
+      } else {
+        for (var i in data) {
+          me.add(data[i]);
+        }
+      }
+    });
+  }  
+});
+
 OBPOS.Model.Category = Backbone.Model.extend({});
 
-OBPOS.Model.CategoryCol = Backbone.Collection.extend({
-  model: OBPOS.Model.Category
+OBPOS.Model.CategoryCol = OBPOS.Collection.extend({
+  model: OBPOS.Model.Category,
+  initialize: function () {
+    this.ds = new OBPOS.DataSource(new OBPOS.Query(
+      'select c as category, img.bindaryData as img ' + 
+      'from ProductCategory as c left outer join c.obposImage img ' +
+      'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
+      'order by c.oBPOSPOSLine, c.name'));
+  }
+  
 });
 
 
 OBPOS.Model.Product = Backbone.Model.extend({});
 
-OBPOS.Model.ProductCol = Backbone.Collection.extend({
-  model: OBPOS.Model.Product
+OBPOS.Model.ProductCol = OBPOS.Collection.extend({
+  model: OBPOS.Model.Product,
+  initialize: function () {
+    this.ds = new OBPOS.DataSource( new OBPOS.Query(
+            'select p as product, pp as price, img.bindaryData as img ' +
+            'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
+            'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
+            'order by p.obposLine, p.name'));
+  }  
 });
 
 OBPOS.Model.Terminal = Backbone.Model.extend({
@@ -86,47 +117,8 @@ OBPOS.Model.Terminal = Backbone.Model.extend({
     }, function (data) {
       if (data[0]) {
         me.set('pricelistversion', data[0]);
-        me.initDS();
+        me.trigger('ready');
       }
     });    
-  },
-  
-  initDS : function () {
-    
-/*    
-    // DataSources...
-    this.dsproduct = new OBPOS.DataSource(
-    new OBPOS.Query(
-        'select p as product, pp as price, img.bindaryData as img ' +
-        'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
-        'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
-        'order by p.obposLine, p.name'), {
-      'priceListVersion': this.get('pricelistversion').id });
-
-    this.dscategories = new OBPOS.DataSource(
-    new OBPOS.Query(
-        'select c as category, img.bindaryData as img ' + 
-        'from ProductCategory as c left outer join c.obposImage img ' +
-        'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
-        'order by c.oBPOSPOSLine, c.name'));
-*/    
-    
-    
-    // DataSources...
-    OBPOS.Sales.DSProduct = new OBPOS.DataSource(
-    new OBPOS.Query(
-        'select p as product, pp as price, img.bindaryData as img ' +
-        'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
-        'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
-        'order by p.obposLine, p.name'), {
-      'priceListVersion': this.get('pricelistversion').id 
-    });
-
-    OBPOS.Sales.DSCategories = new OBPOS.DataSource(
-    new OBPOS.Query(
-        'select c as category, img.bindaryData as img ' + 
-        'from ProductCategory as c left outer join c.obposImage img ' +
-        'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
-        'order by c.oBPOSPOSLine, c.name'));    
-  }  
+  }
 });

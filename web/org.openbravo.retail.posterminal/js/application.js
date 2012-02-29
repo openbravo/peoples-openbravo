@@ -97,12 +97,16 @@
   
   // DataSource object
   // OFFLINE GOES HERE
-  OBPOS.DataSource = function (query, params) {
+  OBPOS.DataSource = function (query) {
     this.query = query;
-    this.params = params;
-    
-    this.cache = null; // 
+    this.params = null;
+    this.cache = null; 
   };
+  
+  OBPOS.DataSource.prototype.load = function (params) {
+    this.params = params;
+    this.cache = null;
+  }
   
   OBPOS.DataSource.prototype.find = function (filter, callback) {
     // OFFLINE GOES HERE
