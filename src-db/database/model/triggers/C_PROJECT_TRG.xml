@@ -31,7 +31,6 @@
     ************************************************************************/
     v_Tree_ID VARCHAR2(32);
   v_Parent_ID VARCHAR2(32);
-    v_count NUMBER;
   --
   TYPE RECORD IS REF CURSOR;
     Cur_Defaults RECORD;
@@ -111,19 +110,8 @@ BEGIN
       )
       ;
     ELSIF (UPDATING) THEN
-
-      IF(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0')) THEN 
-        SELECT COUNT(*) INTO V_COUNT FROM C_PROJECTLINE WHERE C_PROJECT_ID = :NEW.C_PROJECT_ID;
-        IF(V_COUNT > 0) THEN
-          SELECT COUNT(*) INTO V_COUNT FROM C_PROJECTLINE WHERE C_PROJECT_ID = :NEW.C_PROJECT_ID AND AD_ISORGINCLUDED(:NEW.AD_ORG_ID,AD_ORG_ID,:NEW.AD_CLIENT_ID) <> -1;
-          IF(V_COUNT = 0) THEN
-            RAISE_APPLICATION_ERROR(-20000, '@orgnizationHeaderCheck@') ;
-          END IF;
-        END IF;
-      END IF;
-    
-      UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
-      WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+     UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+     WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
     END IF;
     -- Summary Nodes first
 EXCEPTION
