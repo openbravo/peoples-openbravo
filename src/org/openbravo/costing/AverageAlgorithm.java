@@ -56,13 +56,19 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(),
           transaction.getTransactionProcessDate(), costDimensions);
       if (currentCosting == null) {
-        newCost = trxCost.divide(transaction.getMovementQuantity(), costCurrency
-            .getCostingPrecision().intValue());
+        if (transaction.getMovementQuantity().signum() == 0) {
+          newCost = BigDecimal.ZERO;
+        } else {
+          newCost = trxCost.divide(transaction.getMovementQuantity(), costCurrency
+              .getCostingPrecision().intValue());
+        }
       } else {
         BigDecimal newCostAmt = currentCosting.getCost().multiply(currentStock).add(trxCost);
         BigDecimal newStock = currentStock.add(transaction.getMovementQuantity());
         if (newStock.signum() == 0) {
-          newCost = BigDecimal.ZERO;
+          // If stock is zero keep current cost.
+          // FIXME: Cost adjustment is needed if newCostAmt is not zero.
+          newCost = currentCosting.getCost();
         } else {
           newCost = newCostAmt.divide(newStock, costCurrency.getCostingPrecision().intValue());
         }
