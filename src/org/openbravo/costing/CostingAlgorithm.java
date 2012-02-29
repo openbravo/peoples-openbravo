@@ -39,6 +39,7 @@ import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.procurement.POInvoiceMatch;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -390,9 +391,14 @@ public abstract class CostingAlgorithm {
    *           when no PriceList is found for the product.
    */
   protected BigDecimal getPriceListCost() {
-    // FIXME: If trx has business partner it should search first on his purchase pricelist.
-    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(), false,
-        transaction.getTransactionProcessDate());
+    org.openbravo.model.common.businesspartner.BusinessPartner bp = CostingUtils
+        .getTrxBusinessPartner(transaction, trxType);
+    PriceList pricelist = null;
+    if (bp != null) {
+      pricelist = bp.getPurchasePricelist();
+    }
+    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
+        transaction.getTransactionProcessDate(), false, pricelist);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
     if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
         costCurrency.getId())) {
