@@ -173,13 +173,13 @@ public abstract class CostingAlgorithm {
    * Method to calculate cost of Returned Shipments. Cost is calculated based on the proportional
    * cost of the original receipt. If no original receipt is found the cost is calculated based on
    * the standard cost.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentReturnCost() {
-    // Shipment return's cost is calculated based on the proportional cost of the original shipment.
     try {
       return getReturnedInOutLineCost();
     } catch (OBException e) {
-      // if no original trx is found use standard cost.
       return getTransactionStandardCost();
     }
   }
@@ -187,12 +187,19 @@ public abstract class CostingAlgorithm {
   /**
    * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
    * cost of the original payment.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentVoidCost() {
-    // Voided shipment gets cost from original shipment line.
     return getOriginalInOutLineCost();
   }
 
+  /**
+   * Calculates the cost of a negative Shipment line. By default if the product is purchased the
+   * cost is based on its purchase price. If it is not purchased its Standard Cost is used.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
   protected BigDecimal getShipmentNegativeCost() {
     // Shipment with negative quantity. If the product is purchased get cost from its purchase price
     // list. If no price list is found or it is not purchased Standard Cost is used.
@@ -203,7 +210,10 @@ public abstract class CostingAlgorithm {
   }
 
   /*
-   * Default method to get Receipts Transaction amount based on receipt's related order price.
+   * Calculates the cost of a Receipt line based on its related order price. When no related order
+   * is found its Purchase PriceList price is used.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptCost() {
     BigDecimal trxCost = BigDecimal.ZERO;
@@ -228,11 +238,13 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Method to calculate cost of Returned Receipts. Cost is calculated based on the proportional
-   * cost of the original receipt. If no original receipt is found the cost is calculated as a
-   * regular outgoing transaction.
+   * Calculates the cost of a Returned Receipt line based on the proportional cost of the original
+   * receipt. If no original receipt is found the cost is calculated as a regular outgoing
+   * transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
-  protected BigDecimal getReceiptReturnCost() throws OBException {
+  protected BigDecimal getReceiptReturnCost() {
     // Receipt return's cost is calculated based on the proportional cost of the original shipment.
     try {
       return getReturnedInOutLineCost();
@@ -245,6 +257,8 @@ public abstract class CostingAlgorithm {
   /**
    * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
    * cost of the original payment.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
     // Voided receipt gets cost from original receipt line.
@@ -264,8 +278,12 @@ public abstract class CostingAlgorithm {
 
   /**
    * Returns the cost of the canceled Shipment/Receipt line on the date it is canceled.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   * @throws OBException
+   *           when no original in out line is found.
    */
-  protected BigDecimal getOriginalInOutLineCost() {
+  protected BigDecimal getOriginalInOutLineCost() throws OBException {
     if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
       log4j.error("No canceled line found for transaction: " + transaction.getId());
       throw new OBException("@NoCanceledLineFoundForTrx@ @Transaction@: "
@@ -280,8 +298,9 @@ public abstract class CostingAlgorithm {
 
   /**
    * Gets the returned in out line and returns the proportional cost amount based on the original
-   * movement quantity and the returned movement qty.
+   * movement quantity and the returned movement quantity.
    * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    * @throws OBException
    *           when no original in out line is found.
    */
@@ -314,6 +333,8 @@ public abstract class CostingAlgorithm {
   /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
    * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInventoryIncreaseCost() {
     return getTransactionStandardCost();
@@ -333,6 +354,8 @@ public abstract class CostingAlgorithm {
    * Calculates the total cost amount of an incoming internal movement. The cost amount is the same
    * than the related outgoing transaction. The outgoing transaction cost is calculated if it has
    * not been yet.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getIntMovementToCost() {
     // Get transaction of From movement to retrieve it's cost.
@@ -363,6 +386,8 @@ public abstract class CostingAlgorithm {
   /**
    * Calculates the cost of a negative internal consumption. It uses product's Standard Cost to
    * calculate its price.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInternalConsNegativeCost() {
     return getTransactionStandardCost();
@@ -370,6 +395,8 @@ public abstract class CostingAlgorithm {
 
   /**
    * Returns the cost of the original internal consumption.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInternalConsVoidCost() {
     return CostingUtils.getTransactionCost(transaction.getInternalConsumptionLine()
@@ -390,6 +417,8 @@ public abstract class CostingAlgorithm {
   /**
    * Calculates the cost of a produced BOM product. Its cost is the sum of the used products
    * transactions costs. If these has not been calculated yet they are calculated.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getBOMProductCost() {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
@@ -410,6 +439,8 @@ public abstract class CostingAlgorithm {
   /**
    * Calculates the transaction cost based on the Standard Cost of the product on the Transaction
    * Process Date.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getTransactionStandardCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
