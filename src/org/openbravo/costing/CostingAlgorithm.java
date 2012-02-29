@@ -27,9 +27,11 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.DateUtility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
@@ -37,6 +39,7 @@ import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.procurement.POInvoiceMatch;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -181,8 +184,12 @@ public abstract class CostingAlgorithm {
   }
 
   protected BigDecimal getShipmentNegativeCost() {
-    // Shipment with negative quantity. Get cost from related order price as it is an incoming trx.
-    return getShipmentCost();
+    // Shipment with negative quantity. If the product is purchased get cost from its purchase price
+    // list. If no price list is found or it is not purchased Standard Cost is used.
+    if (transaction.getProduct().isPurchase()) {
+      return getPriceListCost();
+    }
+    return getTransactionStandardCost();
   }
 
   protected BigDecimal getShipmentCost() {
@@ -372,6 +379,29 @@ public abstract class CostingAlgorithm {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
         transaction.getTransactionProcessDate(), costDimensions);
     return transaction.getMovementQuantity().abs().multiply(standardCost);
+  }
+
+  /**
+   * Calculates the transaction cost based on the purchase price list of the product. It searches
+   * first for a default price list and if none exists takes one.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   * @throws OBException
+   *           when no PriceList is found for the product.
+   */
+  protected BigDecimal getPriceListCost() {
+    // FIXME: If trx has business partner it should search first on his purchase pricelist.
+    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(), false,
+        transaction.getTransactionProcessDate());
+    BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
+    if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
+        costCurrency.getId())) {
+      // no conversion needed
+      return cost;
+    }
+    return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
+        .getCurrency(), costCurrency, transaction.getTransactionProcessDate(), costOrg,
+        FinancialUtils.PRECISION_STANDARD);
   }
 
   /**
