@@ -311,10 +311,10 @@ public class Utility {
   }
 
   /**
-   * @see DateUtility#formatDate(Date, String)
+   * @see OBDateUtils#formatDate(Date, String)
    */
   public static String formatDate(Date date, String pattern) {
-    return DateUtility.formatDate(date, pattern);
+    return OBDateUtils.formatDate(date, pattern);
   }
 
   /**
@@ -338,14 +338,14 @@ public class Utility {
   }
 
   /**
-   * @see MessageUtility#messageBD(ConnectionProvider, String, String, boolean)
+   * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
     return BasicUtility.messageBD(conn, strCode, strLanguage, true);
   }
 
   /**
-   * @see MessageUtility#messageBD(ConnectionProvider, String, String, boolean)
+   * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage,
       boolean escape) {
@@ -353,7 +353,7 @@ public class Utility {
   }
 
   /**
-   * @see MessageUtility#formatMessageBDToHtml(String)
+   * @see OBMessageUtils#formatMessageBDToHtml(String)
    */
   public static String formatMessageBDToHtml(String message) {
     return BasicUtility.formatMessageBDToHtml(message);
@@ -1041,28 +1041,28 @@ public class Utility {
   }
 
   /**
-   * @see MessageUtility#parseTranslation(ConnectionProvider, VariablesSecureApp, String, String)
+   * @see OBMessageUtils#parseTranslation(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
       String language, String text) {
-    return MessageUtility.parseTranslation(conn, vars, language, text);
+    return OBMessageUtils.parseTranslation(conn, vars, language, text);
   }
 
   /**
-   * @see MessageUtility#parseTranslation(ConnectionProvider, VariablesSecureApp, Map, String,
+   * @see OBMessageUtils#parseTranslation(ConnectionProvider, VariablesSecureApp, Map, String,
    *      String)
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
       Map<String, String> replaceMap, String language, String text) {
-    return MessageUtility.parseTranslation(conn, vars, replaceMap, language, text);
+    return OBMessageUtils.parseTranslation(conn, vars, replaceMap, language, text);
   }
 
   /**
-   * @see MessageUtility#translate(ConnectionProvider, VariablesSecureApp, String, String)
+   * @see OBMessageUtils#translate(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static String translate(ConnectionProvider conn, VariablesSecureApp vars, String token,
       String language) {
-    return MessageUtility.translate(conn, vars, token, language);
+    return OBMessageUtils.translate(conn, vars, token, language);
   }
 
   /**
@@ -1286,7 +1286,7 @@ public class Utility {
   }
 
   /**
-   * @see MessageUtility#getProcessInstanceMessage(ConnectionProvider, VariablesSecureApp,
+   * @see OBMessageUtils#getProcessInstanceMessage(ConnectionProvider, VariablesSecureApp,
    *      PInstanceProcessData[])
    */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
@@ -1342,19 +1342,19 @@ public class Utility {
   }
 
   /**
-   * @see MessageUtility#translateError(ConnectionProvider, VariablesSecureApp, String, String)
+   * @see OBMessageUtils#translateError(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static OBError translateError(ConnectionProvider conn, VariablesSecureApp vars,
       String strLanguage, String message) {
-    return MessageUtility.translateError(conn, vars, strLanguage, message);
+    return OBMessageUtils.translateError(conn, vars, strLanguage, message);
   }
 
   /**
-   * @see MessageUtility#locateMessage(ConnectionProvider, String, String)
+   * @see OBMessageUtils#locateMessage(ConnectionProvider, String, String)
    */
   public static FieldProvider locateMessage(ConnectionProvider conn, String strCode,
       String strLanguage) {
-    return MessageUtility.locateMessage(conn, strCode, strLanguage);
+    return OBMessageUtils.locateMessage(conn, strCode, strLanguage);
   }
 
   public String getServletInfo() {
@@ -1724,44 +1724,44 @@ public class Utility {
   }
 
   /**
-   * @see DateUtility#calculateLaborDays(String, String, DateFormat)
+   * @see OBDateUtils#calculateLaborDays(String, String, DateFormat)
    */
   public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    return DateUtility.calculateLaborDays(strDate1, strDate2, DateFormatter);
+    return OBDateUtils.calculateLaborDays(strDate1, strDate2, DateFormatter);
   }
 
   /**
-   * @see DateUtility#addDaysToDate(String, int, DateFormat)
+   * @see OBDateUtils#addDaysToDate(String, int, DateFormat)
    */
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter)
       throws ParseException {
     if (strDays == null || "".equals(strDays)) {
       return "";
     }
-    return DateUtility.addDaysToDate(strDate, Integer.parseInt(strDays), DateFormatter);
+    return OBDateUtils.addDaysToDate(strDate, Integer.parseInt(strDays), DateFormatter);
   }
 
   /**
-   * @see DateUtility#getDateFormatter(VariablesSecureApp)
+   * @see OBDateUtils#getDateFormatter(VariablesSecureApp)
    */
   public static DateFormat getDateFormatter(VariablesSecureApp vars) {
-    return DateUtility.getDateFormatter(vars);
+    return OBDateUtils.getDateFormatter(vars);
   }
 
   /**
-   * @see DateUtility#isWeekendDay(String, DateFormat)
+   * @see OBDateUtils#isWeekendDay(String, DateFormat)
    */
   public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException {
-    return DateUtility.isWeekendDay(strDay, DateFormatter);
+    return OBDateUtils.isWeekendDay(strDay, DateFormatter);
   }
 
   /**
-   * @see DateUtility#isBiggerDate(String, String, DateFormat)
+   * @see OBDateUtils#isBiggerDate(String, String, DateFormat)
    */
   public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    return DateUtility.isBiggerDate(strDate1, strDate2, DateFormatter);
+    return OBDateUtils.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
