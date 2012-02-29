@@ -32,13 +32,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.model.pricing.pricelist.ProductPrice;
-import org.openbravo.model.procurement.POInvoiceMatch;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -72,7 +67,7 @@ public abstract class CostingAlgorithm {
     costCurrency = costingServer.getCostCurrency();
     trxType = TrxType.getTrxType(this.transaction);
 
-    CostingRule costingRule = costingServer.getCostingRule();
+    org.openbravo.model.materialmgmt.cost.CostingRule costingRule = costingServer.getCostingRule();
     costDimensions = CostingUtils.getEmptyDimensions();
     if (costingRule.isOrganizationDimension()) {
       costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
@@ -214,11 +209,13 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getReceiptCost() {
     BigDecimal trxCost = BigDecimal.ZERO;
-    ShipmentInOutLine receiptline = transaction.getGoodsShipmentLine();
+    org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine receiptline = transaction
+        .getGoodsShipmentLine();
     if (receiptline.getSalesOrderLine() == null) {
       return getPriceListCost();
     }
-    for (POInvoiceMatch matchPO : receiptline.getProcurementPOInvoiceMatchList()) {
+    for (org.openbravo.model.procurement.POInvoiceMatch matchPO : receiptline
+        .getProcurementPOInvoiceMatchList()) {
       BigDecimal orderAmt = matchPO.getQuantity().multiply(
           matchPO.getSalesOrderLine().getUnitPrice());
       trxCost = trxCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO.getSalesOrderLine()
@@ -448,12 +445,12 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getPriceListCost() {
     org.openbravo.model.common.businesspartner.BusinessPartner bp = CostingUtils
         .getTrxBusinessPartner(transaction, trxType);
-    PriceList pricelist = null;
+    org.openbravo.model.pricing.pricelist.PriceList pricelist = null;
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getTransactionProcessDate(), false, pricelist);
+    org.openbravo.model.pricing.pricelist.ProductPrice pp = FinancialUtils.getProductPrice(
+        transaction.getProduct(), transaction.getTransactionProcessDate(), false, pricelist);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
     if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
         costCurrency.getId())) {
