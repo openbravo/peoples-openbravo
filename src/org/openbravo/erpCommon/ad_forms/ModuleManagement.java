@@ -1725,7 +1725,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (message != null) {
         xmlDocument.setParameter("messageType", message.getType());
         xmlDocument.setParameter("messageTitle", message.getTitle());
-        xmlDocument.setParameter("messageMessage", message.getMessage());
+        xmlDocument.setParameter(
+            "messageMessage",
+            message.getMessage() + "<br/>"
+                + Utility.messageBD(this, "CheckUpdateTips", vars.getLanguage(), false));
       }
     }
 
