@@ -1234,7 +1234,6 @@ OB.ViewFormProperties = {
       } else if (!me.forceFocusedField) {
         // don't set the focus in this case, this happens
         // when moving to a new row in grid editing
-
         if (me.getFocusItem()) {
           me.setFocusInForm();
         }
@@ -1522,7 +1521,7 @@ OB.ViewFormProperties = {
         return;
       }
     }
-    
+
     // wait for the redraw to be finished before moving the focus 
     if (this.isDirty()) {
       this.delayCall('focusInNextItem', [currentItemName], 100);

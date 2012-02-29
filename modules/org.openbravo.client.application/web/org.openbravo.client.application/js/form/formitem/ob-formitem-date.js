@@ -174,7 +174,7 @@ OB.DateItemProperties = {
   isSeparator: function (str, position) {
     return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/';
   },
-  
+
   pickerDataChanged: function (picker) {
     this.Super('pickerDataChanged', arguments);
     if (this.form.focusInNextItem) {

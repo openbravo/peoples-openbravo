@@ -35,7 +35,6 @@
       ISC = isc,
       keyboardMgr; // Local reference to UrlManager instance
 
-
   function KeyboardManager() {}
 
   KeyboardManager.prototype = {

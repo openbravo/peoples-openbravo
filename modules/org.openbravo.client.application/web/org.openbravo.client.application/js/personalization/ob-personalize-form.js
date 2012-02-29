@@ -796,7 +796,10 @@ isc.OBPersonalizeFormLayout.addProperties({
       // even if the status bar field does not have a value (which it
       // does not have in the form preview)
       getStatusBarFields: function () {
-        var statusBarFields = [[], []],
+        var statusBarFields = [
+          [],
+          []
+        ],
             i, item, value, tmpValue, length = this.statusBarFields.length;
 
         for (i = 0; i < length; i++) {
