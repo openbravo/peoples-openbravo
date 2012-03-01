@@ -94,7 +94,7 @@
           product: {id: this.line.get('productid')}
         }, function (data) {
           if (data) {
-            $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));
+            $('#editlineimage').empty().append(OB.UTIL.getThumbnail(data.img, 128, 164));
             $('#editlinename').text(data.product._identifier);
             $('#editlineqty').text(me.line.printQty());
             $('#editlineprice').text(me.line.printPrice());

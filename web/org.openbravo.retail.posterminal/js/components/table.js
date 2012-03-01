@@ -17,16 +17,16 @@
                                                                      
     var intable = [];
     if (this.renderHeader) {
-      var trheader = $(DOM(NODE('tr', {}, [])));
+      var trheader = $(OB.UTIL.DOM(OB.UTIL.NODE('tr', {}, [])));
       trheader.append(this.renderHeader());  
-      intable.push(NODE('thead', {}, [trheader]));
+      intable.push(OB.UTIL.NODE('thead', {}, [trheader]));
     }
-    this.tbody = $(DOM(NODE('tbody', {}, [])));
+    this.tbody = $(OB.UTIL.DOM(OB.UTIL.NODE('tbody', {}, [])));
     intable.push(this.tbody);
     
-    this.div = $(DOM(
-      NODE('div', {'style': 'overflow:auto; height: 300px; margin-bottom:30px;'}, [
-        NODE('table', {'class': 'table table-rounded'}, intable)
+    this.div = $(OB.UTIL.DOM(
+      OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px; margin-bottom:30px;'}, [
+        OB.UTIL.NODE('table', {'class': 'table table-rounded'}, intable)
       ])
     ));    
   }
@@ -95,7 +95,7 @@
         if (this.selected > -1) {
           var elemselected = children.eq(this.selected);      
           elemselected.css('background-color', '#049cdb').css('color', '#fff');
-          OBPOS.Sales.makeElemVisible(this.div, elemselected);
+          OB.UTIL.makeElemVisible(this.div, elemselected);
         }      
       }, this);
     }

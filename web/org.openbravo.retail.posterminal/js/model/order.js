@@ -1,8 +1,12 @@
 
-  OBPOS.Model = {};
+
+(function () {
+  
+  OB = window.OB || {};
+  OB.MODEL = window.OB.MODEL || {};
 
   // Sales.OrderLine Model
-  OBPOS.Model.OrderLine = Backbone.Model.extend({
+  OB.MODEL.OrderLine = Backbone.Model.extend({
     defaults : {
       productid: null,
       productidentifier: null,
@@ -15,7 +19,7 @@
     },
     
     printPrice: function () {
-      return OBPOS.Format.formatNumber(this.get('price'), {
+      return OB.UTIL.formatNumber(this.get('price'), {
         decimals: 2,
         decimal: '.',
         group: ',',
@@ -28,7 +32,7 @@
     },
     
     printNet: function () {
-      return OBPOS.Format.formatNumber(this.getNet(), {
+      return OB.UTIL.formatNumber(this.getNet(), {
         decimals: 2,
         decimal: '.',
         group: ',',
@@ -53,14 +57,14 @@
   });
   
   // Sales.OrderLineCol Model.  
-  OBPOS.Model.OrderLineCol = Backbone.Collection.extend({
-    model: OBPOS.Model.OrderLine
+  OB.MODEL.OrderLineCol = Backbone.Collection.extend({
+    model: OB.MODEL.OrderLine
   });
 
   // Sales.Order Model.
-  OBPOS.Model.Order = Backbone.Model.extend({
+  OB.MODEL.Order = Backbone.Model.extend({
     initialize : function () {
-      this.set('lines', new OBPOS.Model.OrderLineCol());
+      this.set('lines', new OB.MODEL.OrderLineCol());
     },
     
     getNet: function () {
@@ -70,7 +74,7 @@
     },
     
     printNet: function () {
-      return OBPOS.Format.formatNumber(this.getNet(), {
+      return OB.UTIL.formatNumber(this.getNet(), {
         decimals: 2,
         decimal: '.',
         group: ',',
@@ -91,7 +95,7 @@
         lines.at(index).addUnit();
       } else {
         // a new line with 1 unit
-        lines.add(new OBPOS.Model.OrderLine({
+        lines.add(new OB.MODEL.OrderLine({
           productid: p.get('product').id,
           productidentifier: p.get('product')._identifier,
           qty: 1,
@@ -100,4 +104,5 @@
       }
     }    
   });
-
+  
+}());

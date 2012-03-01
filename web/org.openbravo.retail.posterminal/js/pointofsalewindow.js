@@ -1,11 +1,14 @@
-(function (OBPOS) {
+
+
+
+define([], function () {
   
   //// Model
   
-  var modelterminal = new OBPOS.Model.Terminal();
+  var modelterminal = new OB.MODEL.Terminal();
   
-  var modelcategories = new OBPOS.Model.CategoryCol();
-  var modelproducts = new OBPOS.Model.ProductCol();
+  var modelcategories = new OB.MODEL.CategoryCol();
+  var modelproducts = new OB.MODEL.ProductCol();
   
   modelterminal.on('ready', function() {
     // Load of master data
@@ -15,7 +18,7 @@
     modelcategories.load();
   });
   
-  var modelorder = new OBPOS.Model.Order();
+  var modelorder = new OB.MODEL.Order();
   
   //// Views
   
@@ -36,7 +39,7 @@
   var payment = new OBPOS.Sales.Payment($('#payment'));
   payment.setModel(modelorder);
   
-  var hwview = new OBPOS.Sales.HWManager(new OBPOS.HWServer('http://192.168.0.8:8090/printer'));
+  var hwview = new OBPOS.Sales.HWManager(new OB.DS.HWServer('http://192.168.0.8:8090/printer'));
   hwview.setModel(modelorder, ordereditor.orderview.stack);
   
   //// Events
@@ -51,6 +54,7 @@
   
   modelorder.on('reset', function() {
     $('#cataloglink').tab('show');
+    
   });
    
   ordereditor.orderview.stack.on('click', function () {
@@ -76,4 +80,4 @@
   });
 
 
-}(window.OBPOS));
+});

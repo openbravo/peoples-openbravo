@@ -1,16 +1,16 @@
 
 
-(function (w) {
+(function () {
 
-  var OBPOS = {};
-
+  OB = window.OB || {};
+  OB.DS = window.OB.DS || {};
 
   // Query object
-  OBPOS.Query = function (query) {
+  OB.DS.Query = function (query) {
     this.query = query;
   }
 
-  OBPOS.Query.prototype.exec = function (params, callback) {
+  OB.DS.Query.prototype.exec = function (params, callback) {
 
     var data = {
       query: this.query
@@ -90,18 +90,18 @@
   
   // DataSource object
   // OFFLINE GOES HERE
-  OBPOS.DataSource = function (query) {
+  OB.DS.DataSource = function (query) {
     this.query = query;
     this.params = null;
     this.cache = null; 
   };
   
-  OBPOS.DataSource.prototype.load = function (params) {
+  OB.DS.DataSource.prototype.load = function (params) {
     this.params = params;
     this.cache = null;
   }
   
-  OBPOS.DataSource.prototype.find = function (filter, callback) {
+  OB.DS.DataSource.prototype.find = function (filter, callback) {
     // OFFLINE GOES HERE
     
     if (this.cache) { // Check cache validity
@@ -121,7 +121,7 @@
     }
   }
 
-  OBPOS.DataSource.prototype.exec = function (filter, callback) {
+  OB.DS.DataSource.prototype.exec = function (filter, callback) {
     // OFFLINE GOES HERE
     
     if (this.cache) { // Check cache validity
@@ -184,11 +184,11 @@
     return true;
   }
 
-  OBPOS.HWServer = function (url) {
+  OB.DS.HWServer = function (url) {
     this.url = url;
   };
   
-  OBPOS.HWServer.prototype.print = function (template, params, callback) {
+  OB.DS.HWServer.prototype.print = function (template, params, callback) {
     var me = this;
     $.ajax({
       url: template,
@@ -229,6 +229,5 @@
     });  
   };
   
-  w.OBPOS = OBPOS;
 
-}(window));
+}());
