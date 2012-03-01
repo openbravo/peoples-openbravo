@@ -100,17 +100,4 @@
       }
     }    
   });
-  
-  // Sales.Order Model.
-  OBPOS.Model.Stack = Backbone.Model.extend({
-    initialize : function () {
-      this.set('selected', -1);
-    },
-    
-    setModel: function (collection) {
-      collection.on('reset', function () {
-        this.set('selected', -1);
-      }, this);      
-    }
-  });
 

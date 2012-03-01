@@ -1,13 +1,6 @@
 (function (OBPOS) {
 
   var Sales = {};
-
-  Sales.terminal = null;
-  Sales.bplocation = null;
-  Sales.location = null;
-  Sales.pricelist = null;
-  Sales.pricelistversion = null;
-
   
   function isScrolledIntoView(container, elem) {
 
@@ -42,7 +35,15 @@
     var url = (base64) ? 'data:' + (contentType ? contentType : 'image/png') + ';base64,' + base64 : 'img/box.png';
     return $('<div/>').css('margin', 'auto').css('height', height ? height : '48').css('width', width ? width : '48').css('background', 'url(' + url + ') center center no-repeat').css('background-size', 'contain');
   };
-
+  
+  
+  OBPOS.getParameterByName = function (name) {
+    var n = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + n + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.search);
+    return (results) ? decodeURIComponent(results[1].replace(/\+/g, " ")) : "";
+  }
 
   // Public Sales
   OBPOS.Sales = Sales;

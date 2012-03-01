@@ -4,13 +4,6 @@
 
   var OBPOS = {};
 
-  // Configuration
-  var config = {
-
-  };
-
-  OBPOS.config = config;
-
 
   // Query object
   OBPOS.Query = function (query) {
@@ -236,14 +229,6 @@
     });  
   };
   
-  OBPOS.getParameterByName = function (name) {
-    var n = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + n + "=([^&#]*)";
-    var regex = new RegExp(regexS);
-    var results = regex.exec(window.location.search);
-    return (results) ? decodeURIComponent(results[1].replace(/\+/g, " ")) : "";
-  }
-
   w.OBPOS = OBPOS;
 
 }(window));

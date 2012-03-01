@@ -64,7 +64,8 @@
     });
   }
   
-  OBPOS.Sales.EditLine.prototype.setModel = function (receipt, stack) {
+  OBPOS.Sales.EditLine.prototype.setModel = function (products, receipt, stack) {
+    this.products = products;
     this.receipt = receipt;
     this.stack = stack;
     this.line = null;
@@ -83,29 +84,31 @@
   };
   
   OBPOS.Sales.EditLine.prototype.renderLine = function () {
-
-    this.editbox.empty();
     
-    if (this.line) {
-      var me = this;
-      OBPOS.Sales.DSProduct.find({
-        product: {id: this.line.get('productid')}
-      }, function (data) {
-        if (data) {
-          $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));
-          $('#editlinename').text(data.product._identifier);
-          $('#editlineqty').text(me.line.printQty());
-          $('#editlineprice').text(me.line.printPrice());
-          $('#editlinenet').text(me.line.printNet());
-        }
-      });
-    } else {
-      $('#editlineimage').empty();
-      $('#editlinename').empty();
-      $('#editlineqty').empty();
-      $('#editlineprice').empty();
-      $('#editlinenet').empty();
-    }    
+    if (this.editbox) { // if it is already loaded the window...
+      this.editbox.empty();
+      
+      if (this.line) {
+        var me = this;
+        this.products.ds.find({
+          product: {id: this.line.get('productid')}
+        }, function (data) {
+          if (data) {
+            $('#editlineimage').empty().append(OBPOS.Sales.getThumbnail(data.img, 128, 164));
+            $('#editlinename').text(data.product._identifier);
+            $('#editlineqty').text(me.line.printQty());
+            $('#editlineprice').text(me.line.printPrice());
+            $('#editlinenet').text(me.line.printNet());
+          }
+        });
+      } else {
+        $('#editlineimage').empty();
+        $('#editlinename').empty();
+        $('#editlineqty').empty();
+        $('#editlineprice').empty();
+        $('#editlinenet').empty();
+      }    
+    }
   }  
   
   OBPOS.Sales.EditLine.prototype.editLine = function (index, line) {

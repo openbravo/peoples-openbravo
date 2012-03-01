@@ -1,9 +1,5 @@
 (function (OBPOS) {
-
-  // window definition
   
-  var SalesWindow = {}; /// vars
-   
   //// Model
   
   var modelterminal = new OBPOS.Model.Terminal();
@@ -19,31 +15,29 @@
     modelcategories.load();
   });
   
-  
-  
-  SalesWindow.modelorder = new OBPOS.Model.Order();
-  SalesWindow.stackorder = new OBPOS.Model.Stack();
-  SalesWindow.stackorder.setModel(SalesWindow.modelorder.get('lines'));
+  var modelorder = new OBPOS.Model.Order();
   
   //// Views
   
-  SalesWindow.Terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status"));
-  SalesWindow.Terminal.setModel(modelterminal);
+  var terminal = new OBPOS.Sales.Terminal($("#terminal"), $("#status"));
+  terminal.setModel(modelterminal);
+  
+  var ordereditor = new OBPOS.Sales.OrderView($('#ordercontainer'));
+  ordereditor.setModel(modelorder);  
 
-  SalesWindow.Catalog = new OBPOS.Sales.Catalog($('#catalog'));
-  SalesWindow.Catalog.setModel(modelcategories, modelproducts, SalesWindow.modelorder, SalesWindow.stackorder);
+  var catalog = new OBPOS.Sales.Catalog($('#catalog'));
+  catalog.setModel(modelcategories, modelproducts, modelorder, ordereditor.orderview.stack);
   
-  SalesWindow.OrderTable = new OBPOS.Sales.OrderView($('#ordercontainer'));
-  SalesWindow.OrderTable.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+
   
-  SalesWindow.EditLine = new OBPOS.Sales.EditLine($('#edition'));
-  SalesWindow.EditLine.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  var lineeditor = new OBPOS.Sales.EditLine($('#edition'));
+  lineeditor.setModel(modelproducts, modelorder, ordereditor.orderview.stack);
   
-  SalesWindow.Payment = new OBPOS.Sales.Payment($('#payment'));
-  SalesWindow.Payment.setModel(SalesWindow.modelorder);
+  var payment = new OBPOS.Sales.Payment($('#payment'));
+  payment.setModel(modelorder);
   
-  SalesWindow.HWView = new OBPOS.Sales.HWManager(new OBPOS.HWServer('http://192.168.0.8:8090/printer'));
-  SalesWindow.HWView.setModel(SalesWindow.modelorder, SalesWindow.stackorder);
+  var hwview = new OBPOS.Sales.HWManager(new OBPOS.HWServer('http://192.168.0.8:8090/printer'));
+  hwview.setModel(modelorder, ordereditor.orderview.stack);
   
   //// Events
 /*
@@ -55,30 +49,30 @@
  */   
   
   
-  SalesWindow.modelorder.on('reset', function() {
+  modelorder.on('reset', function() {
     $('#cataloglink').tab('show');
   });
    
-  SalesWindow.stackorder.on('gotoedit', function () {
+  ordereditor.orderview.stack.on('click', function () {
     $('#editionlink').tab('show');
   });
   
 
   $('#btnnew').click(function () {
-    SalesWindow.modelorder.reset();
+    modelorder.reset();
   });
   
   $('#btnprint').click(function () {
-    SalesWindow.HWView.printOrder();
+    hwview.printOrder();
   });
   
 
   $(document).ready(function () {
     modelterminal.load();
    
-    SalesWindow.HWView.hw.print('res/welcome.xml');
-    SalesWindow.modelorder.reset();
-    // SalesWindow.Terminal.init();
+    hwview.hw.print('res/welcome.xml');
+    modelorder.reset();
+
   });
 
 
