@@ -145,7 +145,7 @@ public abstract class CostingAlgorithm {
 
   /**
    * Auxiliary method for transactions with 0 Movement quantity. It can be overwritten by Costing
-   * Algorithms if further actions are needed.
+   * Algorithms to return null if further actions are needed.
    */
   protected BigDecimal getZeroMovementQtyCost() {
     return BigDecimal.ZERO;
@@ -316,12 +316,17 @@ public abstract class CostingAlgorithm {
 
   /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
-   * Default behavior is to calculate the cost based on the Standard Cost defined for the product.
+   * Default behavior is to calculate the cost based on the product Purchase Pricelist and if this
+   * is not defined the Standard Cost defined for the product.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInventoryIncreaseCost() {
-    return getTransactionStandardCost();
+    try {
+      return getPriceListCost();
+    } catch (OBException e) {
+      return getTransactionStandardCost();
+    }
   }
 
   /**
