@@ -25617,7 +25617,7 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <COLUMNNAME><![CDATA[AD_Sequence_Bp_ID]]></COLUMNNAME>
-<!--8111EDCA505211DEA4E0001CC0B8EF99-->  <NAME><![CDATA[Sequance for Business Partner]]></NAME>
+<!--8111EDCA505211DEA4E0001CC0B8EF99-->  <NAME><![CDATA[Sequence for Business Partner]]></NAME>
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <PRINTNAME><![CDATA[Sequance for Business Partner]]></PRINTNAME>
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <DESCRIPTION><![CDATA[The sequence will be used to generate number for creating the sub-account for Business Partner.]]></DESCRIPTION>
 <!--8111EDCA505211DEA4E0001CC0B8EF99-->  <HELP><![CDATA[The sequence will be used to generate number for creating the sub-account for Business Partner.]]></HELP>
@@ -25631,7 +25631,7 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--8112CD30505211DE8286001CC0B8EF99-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8112CD30505211DE8286001CC0B8EF99-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8112CD30505211DE8286001CC0B8EF99-->  <COLUMNNAME><![CDATA[IsBpNewAccount]]></COLUMNNAME>
-<!--8112CD30505211DE8286001CC0B8EF99-->  <NAME><![CDATA[Create New Account for Business Parnter]]></NAME>
+<!--8112CD30505211DE8286001CC0B8EF99-->  <NAME><![CDATA[Create New Account for Business Partner]]></NAME>
 <!--8112CD30505211DE8286001CC0B8EF99-->  <PRINTNAME><![CDATA[Create New Account for Business Parnter]]></PRINTNAME>
 <!--8112CD30505211DE8286001CC0B8EF99-->  <DESCRIPTION><![CDATA[Create the new account for Business Partner]]></DESCRIPTION>
 <!--8112CD30505211DE8286001CC0B8EF99-->  <HELP><![CDATA[This flag is used to intimating the system for create the new sub-account for Business Partner.]]></HELP>
