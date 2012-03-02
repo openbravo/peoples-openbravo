@@ -19,6 +19,7 @@
 package org.openbravo.financial;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -223,6 +224,7 @@ public class FinancialUtils {
     } else if (PRECISION_PRICE.equals(strPrecision)) {
       precision = curTo.getPricePrecision();
     }
-    return amount.multiply(cr.getMultipleRateBy()).setScale(precision.intValue());
+    return amount.multiply(cr.getMultipleRateBy()).setScale(precision.intValue(),
+        RoundingMode.HALF_UP);
   }
 }
