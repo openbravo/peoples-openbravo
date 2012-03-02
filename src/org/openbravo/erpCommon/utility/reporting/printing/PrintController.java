@@ -156,271 +156,280 @@ public class PrintController extends HttpSecureAppServlet {
   void post(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars,
       DocumentType documentType, String sessionValuePrefix, String strDocumentId)
       throws IOException, ServletException {
+    try {
 
-    Map<String, Report> reports;
+      Map<String, Report> reports;
 
-    // Checks are maintained in this way for mulithread safety
-    HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
-    checks.put("moreThanOneCustomer", Boolean.FALSE);
-    checks.put("moreThanOnesalesRep", Boolean.FALSE);
+      // Checks are maintained in this way for mulithread safety
+      HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
+      checks.put("moreThanOneCustomer", Boolean.FALSE);
+      checks.put("moreThanOnesalesRep", Boolean.FALSE);
 
-    String documentIds[] = null;
-    if (log4j.isDebugEnabled())
-      log4j.debug("strDocumentId: " + strDocumentId);
-    // normalize the string of ids to a comma separated list
-    strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
-    if (strDocumentId.length() == 0)
-      throw new ServletException(Utility.messageBD(this, "NoDocument", vars.getLanguage()));
+      String documentIds[] = null;
+      if (log4j.isDebugEnabled())
+        log4j.debug("strDocumentId: " + strDocumentId);
+      // normalize the string of ids to a comma separated list
+      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
+      if (strDocumentId.length() == 0)
+        throw new ServletException(Utility.messageBD(this, "NoDocument", vars.getLanguage()));
 
-    documentIds = strDocumentId.split(",");
+      documentIds = strDocumentId.split(",");
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("Number of documents selected: " + documentIds.length);
+      if (log4j.isDebugEnabled())
+        log4j.debug("Number of documents selected: " + documentIds.length);
 
-    multiReports = (documentIds.length > 1);
+      multiReports = (documentIds.length > 1);
 
-    reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
-    final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
-        strReplaceWithFull, globalParameters.strBaseDesignPath,
-        globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
+      reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
+      final ReportManager reportManager = new ReportManager(this, globalParameters.strFTPDirectory,
+          strReplaceWithFull, globalParameters.strBaseDesignPath,
+          globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
 
-    if (vars.commandIn("PRINT")) {
-      archivedReports = false;
-      // Order documents by Document No.
-      if (multiReports)
-        documentIds = orderByDocumentNo(documentType, documentIds);
+      if (vars.commandIn("PRINT")) {
+        archivedReports = false;
+        // Order documents by Document No.
+        if (multiReports)
+          documentIds = orderByDocumentNo(documentType, documentIds);
 
-      /*
-       * PRINT option will print directly to the UI for a single report. For multiple reports the
-       * documents will each be saved individually and the concatenated in the same manner as the
-       * saved reports. After concatenating the reports they will be deleted.
-       */
-      Report report = null;
-      JasperPrint jasperPrint = null;
-      Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
-      final Collection<Report> savedReports = new ArrayList<Report>();
-      for (int i = 0; i < documentIds.length; i++) {
-        String documentId = documentIds[i];
-        report = buildReport(response, vars, documentId, reportManager, documentType,
-            Report.OutputTypeEnum.PRINT);
-        try {
-          jasperPrint = reportManager.processReport(report, vars);
-          jrPrintReports.add(jasperPrint);
-        } catch (final ReportingException e) {
-          advisePopUp(request, response, "Report processing failed",
-              "Unable to process report selection");
-          log4j.error(e.getMessage());
-          e.getStackTrace();
-        }
-        savedReports.add(report);
-        if (multiReports) {
-          reportManager.saveTempReport(report, vars);
-        }
-      }
-      printReports(response, jrPrintReports, savedReports);
-    } else if (vars.commandIn("ARCHIVE")) {
-      // Order documents by Document No.
-      if (multiReports)
-        documentIds = orderByDocumentNo(documentType, documentIds);
-
-      /*
-       * ARCHIVE will save each report individually and then print the reports in a single printable
-       * (concatenated) format.
-       */
-      archivedReports = true;
-      Report report = null;
-      final Collection<Report> savedReports = new ArrayList<Report>();
-      for (int index = 0; index < documentIds.length; index++) {
-        String documentId = documentIds[index];
-        report = buildReport(response, vars, documentId, reportManager, documentType,
-            OutputTypeEnum.ARCHIVE);
-        buildReport(response, vars, documentId, reports, reportManager);
-        try {
-          reportManager.processReport(report, vars);
-        } catch (final ReportingException e) {
-          log4j.error(e);
-        }
-        reportManager.saveTempReport(report, vars);
-        savedReports.add(report);
-      }
-      printReports(response, null, savedReports);
-    } else {
-      if (vars.commandIn("DEFAULT")) {
-
-        reports = new HashMap<String, Report>();
-        for (int index = 0; index < documentIds.length; index++) {
-          final String documentId = documentIds[index];
-          if (log4j.isDebugEnabled())
-            log4j.debug("Processing document with id: " + documentId);
-
+        /*
+         * PRINT option will print directly to the UI for a single report. For multiple reports the
+         * documents will each be saved individually and the concatenated in the same manner as the
+         * saved reports. After concatenating the reports they will be deleted.
+         */
+        Report report = null;
+        JasperPrint jasperPrint = null;
+        Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
+        final Collection<Report> savedReports = new ArrayList<Report>();
+        for (int i = 0; i < documentIds.length; i++) {
+          String documentId = documentIds[i];
+          report = buildReport(response, vars, documentId, reportManager, documentType,
+              Report.OutputTypeEnum.PRINT);
           try {
-            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
-                "default", multiReports, OutputTypeEnum.DEFAULT);
-            reports.put(documentId, report);
-
-            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
-                report.getOrgId());
-            boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
-
-            if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
-              if ("".equals(senderAddress) || senderAddress == null) {
-                final OBError on = new OBError();
-                on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
-                    + "configuration to complete the email configuration", vars.getLanguage()));
-                on.setTitle(Utility.messageBD(this, "Email Configuration Error", vars.getLanguage()));
-                on.setType("Error");
-                final String tabId = vars.getSessionValue("inpTabId");
-                vars.getStringParameter("tab");
-                vars.setMessage(tabId, on);
-                vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-                printPageClosePopUpAndRefreshParent(response, vars);
-                throw new ServletException("Configuration Error no sender defined");
-              }
-            }
-
-            // check the different doc typeId's if all the selected
-            // doc's
-            // has the same doc typeId the template selector should
-            // appear
-            if (!differentDocTypes.containsKey(report.getDocTypeId())) {
-              differentDocTypes.put(report.getDocTypeId(), report.getTemplate());
-            }
-          } catch (final ReportingException exception) {
-            throw new ServletException(exception);
+            jasperPrint = reportManager.processReport(report, vars);
+            jrPrintReports.add(jasperPrint);
+          } catch (final ReportingException e) {
+            advisePopUp(request, response, "Report processing failed",
+                "Unable to process report selection");
+            log4j.error(e.getMessage());
+            e.getStackTrace();
           }
-
-        }
-
-        vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
-
-        if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
-          createPrintOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports);
-        else
-          createEmailOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports, checks);
-
-      } else if (vars.commandIn("ADD")) {
-        if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
-          createPrintOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports);
-        else {
-          final boolean showList = true;
-          createEmailOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports, checks);
-        }
-
-      } else if (vars.commandIn("DEL")) {
-        final String documentToDelete = vars.getStringParameter("idToDelete");
-        final Vector<Object> vector = (Vector<Object>) request.getSession().getAttribute("files");
-        request.getSession().setAttribute("files", vector);
-
-        seekAndDestroy(vector, documentToDelete);
-        createEmailOptionsPage(request, response, vars, documentType,
-            getComaSeparatedString(documentIds), reports, checks);
-
-      } else if (vars.commandIn("EMAIL")) {
-        int nrOfEmailsSend = 0;
-        for (final PocData documentData : pocData) {
-          getEnvironentInformation(pocData, checks);
-          final String documentId = documentData.documentId;
-          if (log4j.isDebugEnabled())
-            log4j.debug("Processing document with id: " + documentId);
-
-          String templateInUse = "default";
-          if (differentDocTypes.size() == 1) {
-            templateInUse = vars.getRequestGlobalVariable("templates", "templates");
+          savedReports.add(report);
+          if (multiReports) {
+            reportManager.saveTempReport(report, vars);
           }
+        }
+        printReports(response, jrPrintReports, savedReports);
+      } else if (vars.commandIn("ARCHIVE")) {
+        // Order documents by Document No.
+        if (multiReports)
+          documentIds = orderByDocumentNo(documentType, documentIds);
 
-          final Report report = buildReport(response, vars, documentId, reportManager,
-              documentType, OutputTypeEnum.EMAIL, templateInUse);
+        /*
+         * ARCHIVE will save each report individually and then print the reports in a single
+         * printable (concatenated) format.
+         */
+        archivedReports = true;
+        Report report = null;
+        final Collection<Report> savedReports = new ArrayList<Report>();
+        for (int index = 0; index < documentIds.length; index++) {
+          String documentId = documentIds[index];
+          report = buildReport(response, vars, documentId, reportManager, documentType,
+              OutputTypeEnum.ARCHIVE);
+          buildReport(response, vars, documentId, reports, reportManager);
+          try {
+            reportManager.processReport(report, vars);
+          } catch (final ReportingException e) {
+            log4j.error(e);
+          }
+          reportManager.saveTempReport(report, vars);
+          savedReports.add(report);
+        }
+        printReports(response, null, savedReports);
+      } else {
+        if (vars.commandIn("DEFAULT")) {
 
-          // if there is only one document type id the user should be
-          // able to choose between different templates
-          if (differentDocTypes.size() == 1) {
-            final String templateId = vars.getRequestGlobalVariable("templates", "templates");
+          reports = new HashMap<String, Report>();
+          for (int index = 0; index < documentIds.length; index++) {
+            final String documentId = documentIds[index];
+            if (log4j.isDebugEnabled())
+              log4j.debug("Processing document with id: " + documentId);
+
             try {
-              final TemplateInfo usedTemplateInfo = new TemplateInfo(this, report.getDocTypeId(),
-                  report.getOrgId(), vars.getLanguage(), templateId);
-              report.setTemplateInfo(usedTemplateInfo);
-            } catch (final ReportingException e) {
-              throw new ServletException("Error trying to get template information", e);
-            }
-          }
+              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+                  "default", multiReports, OutputTypeEnum.DEFAULT);
+              reports.put(documentId, report);
 
-          if (report == null)
-            throw new ServletException(Utility.messageBD(this, "NoDataReport", vars.getLanguage())
-                + documentId);
-          // Check if the document is not in status 'draft'
-          if (!report.isDraft()) {
-            // Check if the report is already attached
-            if (!report.isAttached()) {
-              // get the Id of the entities table, this is used to
-              // store the file as an OB attachment
-              final String tableId = ToolsData.getTableId(this, report.getDocumentType()
-                  .getTableName());
+              final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
+                  report.getOrgId());
+              boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
-              // If the user wants to archive the document
-              if (vars.getStringParameter("inpArchive").equals("Y")) {
-                // Save the report as a attachment because it is
-                // being transferred to the user
-                try {
-                  reportManager.createAttachmentForReport(this, report, tableId, vars);
-                } catch (final ReportingException exception) {
-                  throw new ServletException(exception);
+              if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
+                if ("".equals(senderAddress) || senderAddress == null) {
+                  final OBError on = new OBError();
+                  on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
+                      + "configuration to complete the email configuration", vars.getLanguage()));
+                  on.setTitle(Utility.messageBD(this, "Email Configuration Error",
+                      vars.getLanguage()));
+                  on.setType("Error");
+                  final String tabId = vars.getSessionValue("inpTabId");
+                  vars.getStringParameter("tab");
+                  vars.setMessage(tabId, on);
+                  vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+                  printPageClosePopUpAndRefreshParent(response, vars);
+                  throw new ServletException("Configuration Error no sender defined");
                 }
-              } else {
-                reportManager.saveTempReport(report, vars);
               }
-            } else {
-              if (log4j.isDebugEnabled())
-                log4j.debug("Document is not attached.");
+
+              // check the different doc typeId's if all the selected
+              // doc's
+              // has the same doc typeId the template selector should
+              // appear
+              if (!differentDocTypes.containsKey(report.getDocTypeId())) {
+                differentDocTypes.put(report.getDocTypeId(), report.getTemplate());
+              }
+            } catch (final ReportingException exception) {
+              throw new ServletException(exception);
             }
-            final String senderAddress = vars.getStringParameter("fromEmail");
-            sendDocumentEmail(report, vars,
-                (Vector<Object>) request.getSession().getAttribute("files"), documentData,
-                senderAddress, checks);
-            nrOfEmailsSend++;
+
           }
-        }
-        request.getSession().removeAttribute("files");
-        createPrintStatusPage(response, vars, nrOfEmailsSend);
-      } else if (vars.commandIn("UPDATE_TEMPLATE")) {
-        JSONObject o = new JSONObject();
-        try {
-          final String templateId = vars.getRequestGlobalVariable("templates", "templates");
-          final String documentId = pocData[0].documentId;
-          for (final PocData documentData : pocData) {
-            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
-                templateId, multiReports, OutputTypeEnum.DEFAULT);
-            o.put("templateId", templateId);
-            o.put("subject", report.getEmailDefinition().getSubject());
-            o.put("body", report.getEmailDefinition().getBody());
-            if (!multiReports) {
-              o.put("filename", report.getFilename());
-            }
-            reports = new HashMap<String, Report>();
-            reports.put(documentId, report);
-          }
+
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
-        } catch (Exception e) {
-          log4j.error("Error in change template ajax", e);
-          o = new JSONObject();
-          try {
-            o.put("error", true);
-          } catch (JSONException e1) {
-            log4j.error("Error in change template ajax", e1);
+          if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
+            createPrintOptionsPage(request, response, vars, documentType,
+                getComaSeparatedString(documentIds), reports);
+          else
+            createEmailOptionsPage(request, response, vars, documentType,
+                getComaSeparatedString(documentIds), reports, checks);
+
+        } else if (vars.commandIn("ADD")) {
+          if (request.getServletPath().toLowerCase().indexOf("print.html") != -1)
+            createPrintOptionsPage(request, response, vars, documentType,
+                getComaSeparatedString(documentIds), reports);
+          else {
+            final boolean showList = true;
+            createEmailOptionsPage(request, response, vars, documentType,
+                getComaSeparatedString(documentIds), reports, checks);
           }
+
+        } else if (vars.commandIn("DEL")) {
+          final String documentToDelete = vars.getStringParameter("idToDelete");
+          final Vector<Object> vector = (Vector<Object>) request.getSession().getAttribute("files");
+          request.getSession().setAttribute("files", vector);
+
+          seekAndDestroy(vector, documentToDelete);
+          createEmailOptionsPage(request, response, vars, documentType,
+              getComaSeparatedString(documentIds), reports, checks);
+
+        } else if (vars.commandIn("EMAIL")) {
+          int nrOfEmailsSend = 0;
+          for (final PocData documentData : pocData) {
+            getEnvironentInformation(pocData, checks);
+            final String documentId = documentData.documentId;
+            if (log4j.isDebugEnabled())
+              log4j.debug("Processing document with id: " + documentId);
+
+            String templateInUse = "default";
+            if (differentDocTypes.size() == 1) {
+              templateInUse = vars.getRequestGlobalVariable("templates", "templates");
+            }
+
+            final Report report = buildReport(response, vars, documentId, reportManager,
+                documentType, OutputTypeEnum.EMAIL, templateInUse);
+
+            // if there is only one document type id the user should be
+            // able to choose between different templates
+            if (differentDocTypes.size() == 1) {
+              final String templateId = vars.getRequestGlobalVariable("templates", "templates");
+              try {
+                final TemplateInfo usedTemplateInfo = new TemplateInfo(this, report.getDocTypeId(),
+                    report.getOrgId(), vars.getLanguage(), templateId);
+                report.setTemplateInfo(usedTemplateInfo);
+              } catch (final ReportingException e) {
+                throw new ServletException("Error trying to get template information", e);
+              }
+            }
+
+            if (report == null)
+              throw new ServletException(
+                  Utility.messageBD(this, "NoDataReport", vars.getLanguage()) + documentId);
+            // Check if the document is not in status 'draft'
+            if (!report.isDraft()) {
+              // Check if the report is already attached
+              if (!report.isAttached()) {
+                // get the Id of the entities table, this is used to
+                // store the file as an OB attachment
+                final String tableId = ToolsData.getTableId(this, report.getDocumentType()
+                    .getTableName());
+
+                // If the user wants to archive the document
+                if (vars.getStringParameter("inpArchive").equals("Y")) {
+                  // Save the report as a attachment because it is
+                  // being transferred to the user
+                  try {
+                    reportManager.createAttachmentForReport(this, report, tableId, vars);
+                  } catch (final ReportingException exception) {
+                    throw new ServletException(exception);
+                  }
+                } else {
+                  reportManager.saveTempReport(report, vars);
+                }
+              } else {
+                if (log4j.isDebugEnabled())
+                  log4j.debug("Document is not attached.");
+              }
+              final String senderAddress = vars.getStringParameter("fromEmail");
+              sendDocumentEmail(report, vars,
+                  (Vector<Object>) request.getSession().getAttribute("files"), documentData,
+                  senderAddress, checks);
+              nrOfEmailsSend++;
+            }
+          }
+          request.getSession().removeAttribute("files");
+          createPrintStatusPage(response, vars, nrOfEmailsSend);
+        } else if (vars.commandIn("UPDATE_TEMPLATE")) {
+          JSONObject o = new JSONObject();
+          try {
+            final String templateId = vars.getRequestGlobalVariable("templates", "templates");
+            final String documentId = pocData[0].documentId;
+            for (final PocData documentData : pocData) {
+              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+                  templateId, multiReports, OutputTypeEnum.DEFAULT);
+              o.put("templateId", templateId);
+              o.put("subject", report.getEmailDefinition().getSubject());
+              o.put("body", report.getEmailDefinition().getBody());
+              if (!multiReports) {
+                o.put("filename", report.getFilename());
+              }
+              reports = new HashMap<String, Report>();
+              reports.put(documentId, report);
+            }
+            vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
+
+          } catch (Exception e) {
+            log4j.error("Error in change template ajax", e);
+            o = new JSONObject();
+            try {
+              o.put("error", true);
+            } catch (JSONException e1) {
+              log4j.error("Error in change template ajax", e1);
+            }
+          }
+
+          response.setContentType("application/json");
+          final PrintWriter out = response.getWriter();
+          out.println(o.toString());
+          out.close();
         }
 
-        response.setContentType("application/json");
-        final PrintWriter out = response.getWriter();
-        out.println(o.toString());
-        out.close();
+        pageError(response);
       }
-
-      pageError(response);
+    } catch (Exception e) {
+      // Catching the exception here instead of throwing it to HSAS because this is used in multi
+      // part request making the mechanism to detect popup not to work.
+      log4j.error("Error captured: ", e);
+      bdErrorGeneralPopUp(request, response, "Error",
+          Utility.translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
     }
   }
 
