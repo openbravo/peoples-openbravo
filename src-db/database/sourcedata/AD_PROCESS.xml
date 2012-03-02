@@ -2046,7 +2046,7 @@
 <!--800000-->  <VALUE><![CDATA[RV_GeneralLedgerJournal]]></VALUE>
 <!--800000-->  <NAME><![CDATA[General Ledger Journal]]></NAME>
 <!--800000-->  <DESCRIPTION><![CDATA[General ledger journal]]></DESCRIPTION>
-<!--800000-->  <HELP><![CDATA[The General Ledger Journal report lists every ledger entry of an accounting schema within a given period of time.]]></HELP>
+<!--800000-->  <HELP><![CDATA[The General Ledger Journal report lists every accounting entry of an accounting schema within a given period of time.]]></HELP>
 <!--800000-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800000-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800000-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
