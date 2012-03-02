@@ -1,6 +1,6 @@
 
 
-(function () {
+define([], function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
@@ -230,4 +230,4 @@
   };
   
 
-}());
+});

@@ -1,6 +1,9 @@
-(function (OBPOS) {
+define(['utilities', 'model/order', 'model/terminal'], function () {
+  
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
 
-  OBPOS.Sales.EditLine = function (container) {
+  OB.COMP.EditLine = function (container) {
     var me = this;
     this.container = container;
 
@@ -64,7 +67,7 @@
     });
   }
   
-  OBPOS.Sales.EditLine.prototype.setModel = function (products, receipt, stack) {
+  OB.COMP.EditLine.prototype.setModel = function (products, receipt, stack) {
     this.products = products;
     this.receipt = receipt;
     this.stack = stack;
@@ -83,7 +86,7 @@
     }, this);    
   };
   
-  OBPOS.Sales.EditLine.prototype.renderLine = function () {
+  OB.COMP.EditLine.prototype.renderLine = function () {
     
     if (this.editbox) { // if it is already loaded the window...
       this.editbox.empty();
@@ -111,7 +114,7 @@
     }
   }  
   
-  OBPOS.Sales.EditLine.prototype.editLine = function (index, line) {
+  OB.COMP.EditLine.prototype.editLine = function (index, line) {
     
     if (this.line) {
       this.line.off('change', this.renderLine);
@@ -127,7 +130,7 @@
     this.renderLine();
   };
   
-  OBPOS.Sales.EditLine.prototype.keyPressed = function (key) {
+  OB.COMP.EditLine.prototype.keyPressed = function (key) {
 
     if (key === '-') {
       if (this.line) {
@@ -155,7 +158,7 @@
         this.receipt.get('lines').remove(this.line);
       }
     } else if (key === String.fromCharCode(13)) {
-      OBPOS.Sales.DSProduct.find({
+      OB.COMP.DSProduct.find({
         product: {uPCEAN: this.getString()}
       }, function (data) {
         if (data) {      
@@ -171,16 +174,16 @@
 
   }  
   
-  OBPOS.Sales.EditLine.prototype.getNumber = function () {
+  OB.COMP.EditLine.prototype.getNumber = function () {
     var i = parseInt(this.editbox.text());
     this.editbox.empty();
     return i;
   }
   
-  OBPOS.Sales.EditLine.prototype.getString = function () {
+  OB.COMP.EditLine.prototype.getString = function () {
     var s = this.editbox.text();
     this.editbox.empty();
     return s;
   }  
 
-}(window.OBPOS));    
+}); 

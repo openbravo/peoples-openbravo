@@ -28,8 +28,7 @@
 <input id="hiddentext" type="text" style="border:none; color:white;width:1px;height:1px; position:fixed; top:0px; right: 0px;"/>
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
-    <div class="container">
-             
+    <div class="container">             
       <!-- Be sure to leave the brand out there if you want it shown -->
       <span class="brand" id="terminal"></span>
         <ul class="nav">
@@ -41,8 +40,6 @@
         </ul>  
       <!-- Everything you want hidden at 940px or less, place within here -->
       <div class="nav-collapse">
-     
-
         <ul class="nav pull-right">
           <li class="divider-vertical"></li>
           <li><img src="../../utility/GetOpenbravoLogo.png" alt="Openbravo" style="margin-top: 5px;"/></li>
@@ -52,10 +49,17 @@
   </div>
 </div>
 
-
-
 <div class="container">
 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
 <!-- Order section -->
 <section>
@@ -76,68 +80,61 @@
       <ul class="dropdown-menu">
       </ul>
     </div>
-    </div>
-          
-    <div id="ordercontainer">  
-      <!-- Here goes the order editor -->   
-    </div>
-    
+    </div>           
   </div>
   
-
-  <div class="span8">
-  
+  <div class="span8"> 
 		<ul class="nav nav-tabs">
 		  <li><a href="#catalog" data-toggle="tab" id="cataloglink">Catalog</a></li>		
 		  <li><a href="#edition" data-toggle="tab" id="editionlink">Edition</a></li>
 		  <li><a href="#payment" data-toggle="tab" id="paylink">Pay</a></li>
 		</ul>
-			
-		<div class="tab-content">
-		  <div class="tab-pane active row" id="catalog">
-		    <!-- Here goes the catalog selector --> 
-		  </div>
-		   <div class="tab-pane" id="edition">
-		     <!-- Here goes the line editor --> 
-		   </div>      
-		  <div class="tab-pane" id="payment">
-		     <!-- Here goes the payment editor --> 	  
-		  </div>
-		</div>		
-
   </div>
- 
-</div>
-</section>
 </div>
 
+<div class="row">
+  <div class="span4">  
+    <div id="ordercontainer">  
+      <!-- Here goes the order editor -->   
+    </div>   
+  </div>
+  
+  <div class="span8">
+    <div class="tab-content">
+      <div class="tab-pane active row" id="catalog">
+        <!-- Here goes the catalog selector --> 
+      </div>
+       <div class="tab-pane" id="edition">
+         <!-- Here goes the line editor --> 
+       </div>      
+      <div class="tab-pane" id="payment">
+         <!-- Here goes the payment editor -->    
+      </div>
+    </div>    
+  </div>
+</div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
 
 <script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/libs/underscore-1.3.1.min.js"></script>
 <script type="text/javascript" src="js/libs/backbone-0.9.1.min.js"></script>
 <script type="text/javascript" src="js/libs/bootstrap.js"></script>
 <script type="text/javascript" src="js/libs/bootstrap-tab.js"></script>
-
-
-<script type="text/javascript">OBPOS = {}; OBPOS.Sales = {}</script>
-
-<script type="text/javascript" src="js/datasource.js"></script>
-<script type="text/javascript" src="js/utilities.js"></script>
-
-<script type="text/javascript" src="js/model/order.js"></script>
-<script type="text/javascript" src="js/model/terminal.js"></script>
-
-<script type="text/javascript" src="js/components/table.js"></script>
-<script type="text/javascript" src="js/components/terminal.js"></script>
-<script type="text/javascript" src="js/components/catalog.js"></script>
-<script type="text/javascript" src="js/components/editline.js"></script>
-<script type="text/javascript" src="js/components/payment.js"></script>
-<script type="text/javascript" src="js/components/hwmanager.js"></script>
-<script type="text/javascript" src="js/components/order.js"></script>
-
-<!--
-<script type="text/javascript" src="js/pointofsalewindow.js"></script>
--->
 
 <script type="text/javascript" data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 

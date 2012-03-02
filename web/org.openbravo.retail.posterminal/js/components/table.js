@@ -1,7 +1,10 @@
-(function (OBPOS) {
+define(['utilities'], function () {
+  
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
 
   // Order list
-  OBPOS.Sales.TableView = function (defaults) {
+  OB.COMP.TableView = function (defaults) {
   
     var me = this;
     
@@ -31,7 +34,7 @@
     ));    
   }
 
-  OBPOS.Sales.TableView.prototype.setModel = function (collection) {
+  OB.COMP.TableView.prototype.setModel = function (collection) {
     this.collection = collection;
     this.selected = -1;   
     
@@ -101,4 +104,4 @@
     }
   }
 
-}(window.OBPOS));    
+}); 

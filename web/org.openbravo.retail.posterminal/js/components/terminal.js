@@ -1,11 +1,14 @@
-(function (OBPOS) {
+define(['utilities', 'model/order', 'model/terminal'], function () {
+  
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
 
-  OBPOS.Sales.Terminal = function (elemt, elems) {
+  OB.COMP.Terminal = function (elemt, elems) {
     this.elemt = elemt;
     this.elems = elems;
   };
   
-  OBPOS.Sales.Terminal.prototype.setModel = function (terminal) {
+  OB.COMP.Terminal.prototype.setModel = function (terminal) {
     this.terminal = terminal;
     
     this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {
@@ -31,4 +34,4 @@
         
   }
 
-}(window.OBPOS));   
+});  

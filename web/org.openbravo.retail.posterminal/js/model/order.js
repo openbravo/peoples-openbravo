@@ -1,6 +1,6 @@
 
 
-(function () {
+define(['utilities'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -105,4 +105,4 @@
     }    
   });
   
-}());
+});

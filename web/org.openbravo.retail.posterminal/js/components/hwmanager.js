@@ -1,10 +1,13 @@
-(function (OBPOS) {
+define(['utilities', 'model/order', 'model/terminal'], function () {
   
-  OBPOS.Sales.HWManager = function (hw) {
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
+  
+  OB.COMP.HWManager = function (hw) {
     this.hw = hw;
   };
   
-  OBPOS.Sales.HWManager.prototype.setModel = function (receipt, stack) {
+  OB.COMP.HWManager.prototype.setModel = function (receipt, stack) {
     this.receipt = receipt;
     this.stack = stack;
     this.line = null;
@@ -22,7 +25,7 @@
     this.receipt.on('closed', this.printOrder, this);        
   };
   
-  OBPOS.Sales.HWManager.prototype.editLine = function (line) {
+  OB.COMP.HWManager.prototype.editLine = function (line) {
     if (this.line) {
       this.line.off('change', this.printLine);
     }
@@ -36,15 +39,15 @@
     this.printLine();    
   };  
   
-  OBPOS.Sales.HWManager.prototype.printLine = function () {
+  OB.COMP.HWManager.prototype.printLine = function () {
     if (this.line) {
       this.hw.print('res/printline.xml', {line: this.line});
     }   
   };
   
-  OBPOS.Sales.HWManager.prototype.printOrder = function () {
+  OB.COMP.HWManager.prototype.printOrder = function () {
     
     this.hw.print('res/printreceipt.xml', { order: this.receipt});    
   }
   
-}(window.OBPOS)); 
+});

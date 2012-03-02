@@ -1,6 +1,6 @@
 
 
-(function () {
+define(['datasource', 'utilities'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -126,4 +126,4 @@
     }
   });
   
-}());
+});

@@ -1,9 +1,14 @@
-(function (OBPOS) {
+
+
+define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
   
-  OBPOS.Sales.Catalog = function (container) {
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
+  
+  OB.COMP.Catalog = function (container) {
 
     
-    this.categoriesview = new OBPOS.Sales.TableView({
+    this.categoriesview = new OB.COMP.TableView({
       style: 'list',
       renderLine: function (model) {
         return [
@@ -13,7 +18,7 @@
       }      
     });
     
-    this.productsview = new OBPOS.Sales.TableView({ 
+    this.productsview = new OB.COMP.TableView({ 
       renderLine: function (model) {
         return [
               OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;'}, [OB.UTIL.getThumbnail(model.get('img'))])),                                                                                                                                  
@@ -69,7 +74,7 @@
     )));     
   };
   
-  OBPOS.Sales.Catalog.prototype.setModel = function (categories, products, receipt, stack) {
+  OB.COMP.Catalog.prototype.setModel = function (categories, products, receipt, stack) {
     this.categories = categories;
     this.categoriesview.setModel(this.categories);    
     
@@ -99,4 +104,4 @@
     
   };
   
-}(window.OBPOS));  
+});

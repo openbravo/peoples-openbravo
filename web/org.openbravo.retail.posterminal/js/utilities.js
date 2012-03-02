@@ -1,4 +1,4 @@
-(function () {
+define([], function () {
   
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
@@ -102,4 +102,4 @@
     };
   }
 
-}());
+});

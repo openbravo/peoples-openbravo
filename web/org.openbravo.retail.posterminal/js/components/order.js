@@ -1,10 +1,13 @@
-(function (OBPOS) {
+define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
+  
+  OB = window.OB || {};
+  OB.COMP = window.OB.COMP || {};
 
   // Order list
-  OBPOS.Sales.OrderView = function (container) {
+  OB.COMP.OrderView = function (container) {
   
     var me = this;
-    this.orderview = new OBPOS.Sales.TableView({
+    this.orderview = new OB.COMP.TableView({
     style: 'edit',
     renderHeader: function () {
       return [
@@ -25,40 +28,8 @@
       }      
     });
     
-//    this.renderHeader = function () {
-//      return [
-//        OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:40%;'}, ['Product'])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Units'])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Price'])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Net']))    
-//      ];
-//    };
-//
-//    this.renderLine = function (l) {
-//      return [
-//        OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:40%;'}, [l.get('productidentifier')])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printQty()])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printPrice()])),                                                                                                                                  
-//        OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [l.printNet()]))    
-//      ];      
-//    };
-    
     this.totalgross = $(OB.UTIL.DOM(OB.UTIL.NODE('h3', {}, [])));
     this.totalnet = $(OB.UTIL.DOM(OB.UTIL.NODE('strong', {}, [])));                                                                  
-//    this.tbody = $(OB.UTIL.DOM(OB.UTIL.NODE('tbody', {}, [])));
-//    this.trheader = $(OB.UTIL.DOM(OB.UTIL.NODE('tr', {}, [])));
-//    this.trheader.append(this.renderHeader());
-    
-//    this.divscroll = $(OB.UTIL.DOM(
-//      OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px; margin-bottom:30px;'}, [
-//        OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-//          OB.UTIL.NODE('thead', {}, [
-//            this.trheader                                                                      
-//          ]),                                                               
-//          this.tbody
-//        ])
-//      ])
-//    ));
     
     container.append($(OB.UTIL.DOM(
       OB.UTIL.NODE('div', {}, [
@@ -93,7 +64,7 @@
     )));    
   }
 
-  OBPOS.Sales.OrderView.prototype.setModel = function (receipt) {
+  OB.COMP.OrderView.prototype.setModel = function (receipt) {
     this.receipt = receipt;
     var lines = this.receipt.get('lines');
     
@@ -105,4 +76,4 @@
     }, this);
   }
 
-}(window.OBPOS));    
+});    
