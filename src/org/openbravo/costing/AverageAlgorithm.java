@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,6 +53,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     case InternalConsVoid:
     case BOMProduct:
       Costing currentCosting = getProductCost();
+      BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
+          .negate() : trxCost;
       BigDecimal newCost = null;
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(),
           transaction.getTransactionProcessDate(), costDimensions);
@@ -59,11 +62,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
         } else {
-          newCost = trxCost.divide(transaction.getMovementQuantity(), costCurrency
-              .getCostingPrecision().intValue());
+          newCost = trxCostWithSign.divide(transaction.getMovementQuantity(), costCurrency
+              .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
         }
       } else {
-        BigDecimal newCostAmt = currentCosting.getCost().multiply(currentStock).add(trxCost);
+        BigDecimal newCostAmt = currentCosting.getCost().multiply(currentStock)
+            .add(trxCostWithSign);
         BigDecimal newStock = currentStock.add(transaction.getMovementQuantity());
         if (newStock.signum() == 0) {
           // If stock is zero keep current cost.
@@ -73,7 +77,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
           newCost = newCostAmt.divide(newStock, costCurrency.getCostingPrecision().intValue());
         }
       }
-      insertCost(currentCosting, newCost, currentStock, trxCost);
+      insertCost(currentCosting, newCost, currentStock, trxCostWithSign);
     default:
       break;
     }
