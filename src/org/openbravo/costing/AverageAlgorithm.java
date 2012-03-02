@@ -74,7 +74,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
           // FIXME: Cost adjustment is needed if newCostAmt is not zero.
           newCost = currentCosting.getCost();
         } else {
-          newCost = newCostAmt.divide(newStock, costCurrency.getCostingPrecision().intValue());
+          newCost = newCostAmt.divide(newStock, costCurrency.getCostingPrecision().intValue(),
+              RoundingMode.HALF_UP);
         }
       }
       insertCost(currentCosting, newCost, currentStock, trxCostWithSign);
