@@ -142,7 +142,6 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
     xmlDocument.setParameter("cProjectId", strcProjectId);
     xmlDocument.setParameter("projectName", OrderEditionData.selectProject(this, strcProjectId));
-    xmlDocument.setParameter("cProjectKind", "");
     xmlDocument.setParameter("cRegionId", "");
     xmlDocument.setParameter("mProductCatId", "");
     try {
