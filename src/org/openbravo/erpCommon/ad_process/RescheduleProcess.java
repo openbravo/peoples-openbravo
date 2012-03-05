@@ -55,10 +55,12 @@ public class RescheduleProcess extends HttpSecureAppServlet {
 
     } catch (final Exception e) {
       message = Utility.messageBD(this, "RESCHED_ERROR", vars.getLanguage());
-      advisePopUp(request, response, "ERROR", "Process Request", message + " " + e.getMessage());
+      String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
+      advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
 
     }
     message = Utility.messageBD(this, "RESCHED_SUCCESS", vars.getLanguage());
-    advisePopUpRefresh(request, response, "SUCCESS", "Process Request", message);
+    String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
+    advisePopUpRefresh(request, response, "SUCCESS", processTitle, message);
   }
 }
