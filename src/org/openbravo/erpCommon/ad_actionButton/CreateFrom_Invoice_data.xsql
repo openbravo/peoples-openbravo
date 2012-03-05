@@ -50,10 +50,11 @@
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
         AND NOT EXISTS (SELECT 1
-                       FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID
-                       WHERE CO.C_ORDERLINE_ID = l.c_orderline_id AND CI.C_INVOICE_ID=?
+                       FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID left join M_MATCHPO m on  CO.C_OrderLine_ID=m.C_OrderLine_ID
+                                                 AND m.C_InvoiceLine_ID IS NOT NULL
+                       WHERE CO.C_ORDERLINE_ID = l.c_orderline_id AND CI.C_INVOICE_ID=? 
                        GROUP BY CI.C_orderline_id , CO.QtyORDERED
-                       HAVING (SUM(COALESCE(CI.QtyINVOICED, 0))-COALESCE(CO.QtyORDERED,0)) = 0 )   
+                       HAVING (SUM(COALESCE(CI.QtyINVOICED, 0))-(COALESCE(CO.QtyORDERED,0)-SUM(COALESCE(m.Qty,0)))) >= 0 )   
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.C_UOM_ID,
         uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.taxbaseamt,l.CancelPriceAD
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
@@ -167,10 +168,11 @@
         AND l.M_Product_ID=p.M_Product_ID  
         AND l.C_Order_ID = ? 
         AND NOT EXISTS (SELECT 1
-                       FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID
-                       WHERE CO.C_ORDERLINE_ID = l.c_orderline_id AND CI.C_INVOICE_ID=?
+                       FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID left join M_MATCHPO m on  CO.C_OrderLine_ID=m.C_OrderLine_ID
+                                                 AND m.C_InvoiceLine_ID IS NOT NULL
+                       WHERE CO.C_ORDERLINE_ID = l.c_orderline_id AND CI.C_INVOICE_ID=? 
                        GROUP BY CI.C_orderline_id , CO.QtyORDERED
-                       HAVING (SUM(COALESCE(CI.QtyINVOICED, 0))-COALESCE(CO.QtyORDERED,0)) = 0 )  
+                       HAVING (SUM(COALESCE(CI.QtyINVOICED, 0))-(COALESCE(CO.QtyORDERED,0)-SUM(COALESCE(m.Qty,0)))) >= 0 )  
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.C_UOM_ID,
         uom.UOMSymbol, uomt.UOMSYMBOL,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID,
         l.taxbaseamt 
