@@ -654,7 +654,15 @@ OB.ViewFormProperties = {
     // also remember the valuemaps
     for (i = 0; i < length; i++) {
       if (flds[i].valueMap) {
-        flds[i]._rememberedValueMap = flds[i].valueMap;
+        //This ensures that the valueMap of the createdBy and updatedBy fields will be properly initialized when adding a new record in form view
+        //See issue #19843
+        if (isc.isA.emptyObject(flds[i].valueMap) && (flds[i].name === 'createdBy' || flds[i].name === 'updatedBy') && flds[i].form.getValue(flds[i].displayField)) {
+          flds[i].valueMap = {};
+          flds[i].valueMap[flds[i].form.getValue(flds[i].name)] = flds[i].form.getValue(flds[i].displayField);
+          flds[i]._rememberedValueMap = flds[i].valueMap;
+        } else {
+          flds[i]._rememberedValueMap = flds[i].valueMap;
+        }
       }
     }
   },
