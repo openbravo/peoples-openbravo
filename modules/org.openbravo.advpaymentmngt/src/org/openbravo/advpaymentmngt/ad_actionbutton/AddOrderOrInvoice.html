@@ -939,19 +939,19 @@ function closeProcessPayment() {
             <!-- Line 3 -->
             <tr id="multiCurrencyRow">
               <td class="TitleCell"><span class="LabelText" id="lblActualConverted">Actual Converted</span></td>
-              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" onchange="updateConvertedAmounts(true);" ></input>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" readonly=true></input>
               </td>
               <td class="TextBox_ContentCell">
                 <input type="hidden" id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" value=""/>
                 <input type="hidden" id="paramFinancialAccountCurrencyPrecision" name="inpFinancialAccountCurrencyPrecision" value="2"/>
-                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramFinancialAccountCurrencyName" name="paramFinancialAccountCurrencyName" value=""></input>
+                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramFinancialAccountCurrencyName" name="paramFinancialAccountCurrencyName" value="" readonly=true></input>
               </td>
               <td class="TitleCell"><span class="LabelText" id="lblExchangeRate">Exchange Rate</span></td>
-              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" onchange="updateConvertedAmounts();" ></input>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" readonly=true></input>
               </td>
               <td class="TextBox_ContentCell">
                 <input type="hidden" id="paramCurrencyId" name="inpCurrencyId" value=""/>
-                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramCurrencyName" name="paramCurrencyName" value=""></input>
+                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramCurrencyName" name="paramCurrencyName" value="" readonly=true></input>
               </td>
             </tr>
 
