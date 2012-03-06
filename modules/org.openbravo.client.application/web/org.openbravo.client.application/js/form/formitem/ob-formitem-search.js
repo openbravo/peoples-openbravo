@@ -55,6 +55,8 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
       targetFld.form.handleItemChange(targetFld);
       // fire with a delay otherwise results in strange errors
       targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
+
+      targetFld.form.focusInNextItem(targetFld.name);
     }
     isc.OBSearchItem.openedWindow.close();
     isc.OBSearchItem.openSearchItem = null;
