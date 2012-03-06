@@ -226,28 +226,22 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Calculates the cost of a Returned Receipt line based on the proportional cost of the original
-   * receipt. If no original receipt is found the cost is calculated as a regular outgoing
-   * transaction.
+   * Calculates the cost of a Returned Receipt line as a regular outgoing transaction.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptReturnCost() {
-    try {
-      return getReturnedInOutLineCost();
-    } catch (OBException e) {
-      return getOutgoingTransactionCost();
-    }
+    return getOutgoingTransactionCost();
   }
 
   /**
-   * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
-   * cost of the original payment.
+   * Method to calculate the cost of Voided Receipts. By default the cost is calculated as a regular
+   * outgoing transaction.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
-    return getOriginalInOutLineCost();
+    return getOutgoingTransactionCost();
   }
 
   /**
