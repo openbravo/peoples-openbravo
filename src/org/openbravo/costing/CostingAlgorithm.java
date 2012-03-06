@@ -235,13 +235,13 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Method to calculate the cost of Voided Receipts. By default the cost is calculated as a regular
-   * outgoing transaction.
+   * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
+   * cost of the original payment.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
-    return getOutgoingTransactionCost();
+    return getOriginalInOutLineCost();
   }
 
   /**
