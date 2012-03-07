@@ -246,9 +246,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strExistsInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+        strFinancialOrgFamily);
     String strYearInitialDate = strDateFrom;
-    if (strExistsInitialDate.equals("")) strYearInitialDate = strExistsInitialDate;
+    if (strExistsInitialDate.equals(""))
+      strYearInitialDate = strExistsInitialDate;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
@@ -343,16 +345,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
           } else {
             if ("".equals(data[i].groupbyid)) {
+              // The argument " " is used to simulate one value and put the optional parameter-->
+              // AND FACT_ACCT.C_PROJECT_ID IS NULL for example
               subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
-                  toDatePlusOne, null, null, null, strcAcctSchemaId, data[i].id,
+                  toDatePlusOne, null, (strGroupBy.equals("BPartner") ? " " : null), null,
+                  (strGroupBy.equals("Product") ? " " : null), null,
+                  (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id,
                   strYearInitialDate, strDateFrom, strOrgFamily, strHide);
             } else {
               subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
                   toDatePlusOne, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')"
-                      : strcBpartnerId), (strGroupBy.equals("Product") ? "('" + data[i].groupbyid
-                      + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
-                      + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
-                  strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+                      : strcBpartnerId), null, (strGroupBy.equals("Product") ? "('"
+                      + data[i].groupbyid + "')" : strmProductId), null, (strGroupBy
+                      .equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId), null,
+                  strcAcctSchemaId, data[i].id, strYearInitialDate, strDateFrom, strOrgFamily,
+                  strHide);
             }
           }
           data[i].totalacctdr = subreportElement[0].totalacctdr;
@@ -372,16 +379,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         if (!strTotal.equals(data[i].groupbyid + data[i].id)) {
           subreportElement = new ReportGeneralLedgerData[1];
           if ("".equals(data[i].groupbyid)) {
+            // The argument " " is used to simulate one value and put the optional parameter--> AND
+            // FACT_ACCT.C_PROJECT_ID IS NULL for example
             subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
-                toDatePlusOne, null, null, null, strcAcctSchemaId, data[i].id, strYearInitialDate,
-                toDatePlusOne, strOrgFamily, strHide);
+                toDatePlusOne, null, (strGroupBy.equals("BPartner") ? " " : null), null,
+                (strGroupBy.equals("Product") ? " " : null), null,
+                (strGroupBy.equals("Project") ? " " : null), strcAcctSchemaId, data[i].id,
+                strYearInitialDate, toDatePlusOne, strOrgFamily, strHide);
           } else {
             subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
                 toDatePlusOne, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')"
-                    : strcBpartnerId), (strGroupBy.equals("Product") ? "('" + data[i].groupbyid
-                    + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
-                    + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
-                strYearInitialDate, toDatePlusOne, strOrgFamily, strHide);
+                    : strcBpartnerId), null, (strGroupBy.equals("Product") ? "('"
+                    + data[i].groupbyid + "')" : strmProductId), null, (strGroupBy
+                    .equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId), null,
+                strcAcctSchemaId, data[i].id, strYearInitialDate, toDatePlusOne, strOrgFamily,
+                strHide);
           }
           g++;
         }
@@ -490,9 +502,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (strExistsInitialDate.equals("") && vars.commandIn("FIND")) {
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
-           Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
         xmlDocument.setParameter("messageMessage",
-           Utility.messageBD(this, "InitialDateNotFoundCalendar", vars.getLanguage()));
+            Utility.messageBD(this, "InitialDateNotFoundCalendar", vars.getLanguage()));
       }
       if (strGroupBy.equals(""))
         xmlDocument.setData("structure1", data);
@@ -538,8 +550,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
-    if (strYearInitialDate.equals("")) strYearInitialDate = strDateFrom;
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+        strFinancialOrgFamily);
+    if (strYearInitialDate.equals(""))
+      strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
@@ -579,16 +593,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strOld.equals(data[i].groupbyid + data[i].id)) {
           if ("".equals(data[i].groupbyid)) {
-            subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), null, null, null, strcAcctSchemaId,
-                data[i].id, strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+            // The argument " " is used to simulate one value and put the optional parameter--> AND
+            // FACT_ACCT.C_PROJECT_ID IS NULL for example
+            subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom, DateTimeData
+                .nDaysAfter(this, strDateTo, "1"), null, (strGroupBy.equals("BPartner") ? " "
+                : null), null, (strGroupBy.equals("Product") ? " " : null), null, (strGroupBy
+                .equals("Project") ? " " : null), strcAcctSchemaId, data[i].id, strYearInitialDate,
+                strDateFrom, strOrgFamily, strHide);
           } else {
             subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom, DateTimeData
                 .nDaysAfter(this, strDateTo, "1"), (strGroupBy.equals("BPartner") ? "('"
-                + data[i].groupbyid + "')" : strcBpartnerId), (strGroupBy.equals("Product") ? "('"
-                + data[i].groupbyid + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
-                + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
-                strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+                + data[i].groupbyid + "')" : strcBpartnerId), null,
+                (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
+                null, (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')"
+                    : strcProjectId), null, strcAcctSchemaId, data[i].id, strYearInitialDate,
+                strDateFrom, strOrgFamily, strHide);
           }
           totalDebit = BigDecimal.ZERO;
           totalCredit = BigDecimal.ZERO;
@@ -646,8 +665,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
-    if (strYearInitialDate.equals("")) strYearInitialDate = strDateFrom;
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+        strFinancialOrgFamily);
+    if (strYearInitialDate.equals(""))
+      strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strAllaccounts = "Y";
@@ -700,8 +721,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   private String getFinancialFamily(String strTree, String strChild, String strClientId)
       throws IOException, ServletException {
     log4j.debug("Tree.getFinancialMembers");
-    ReportGeneralLedgerData[] data = ReportGeneralLedgerData
-        .getFinancialOrgs(this, strTree, strChild, strClientId);
+    ReportGeneralLedgerData[] data = ReportGeneralLedgerData.getFinancialOrgs(this, strTree,
+        strChild, strClientId);
 
     boolean bolFirstLine = true;
     String strText = "";
