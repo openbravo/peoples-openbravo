@@ -312,7 +312,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       // of previous screen, so same sql -but from the beginning of the fiscal year- is executed
 
       ReportGeneralLedgerData[] dataTotal = null;
-      if (data != null && data.length > 1) {
+      if (data != null && data.length >= 1) {
         dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
             vars.getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
             strcelementvalueto,
@@ -341,13 +341,20 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             subreportElement[0].totalacctdr = previousDebit.toPlainString();
             subreportElement[0].totalacctcr = previousCredit.toPlainString();
             subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
-          } else
-            subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
-                toDatePlusOne, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')"
-                    : strcBpartnerId), (strGroupBy.equals("Product") ? "('" + data[i].groupbyid
-                    + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
-                    + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
-                strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+          } else {
+            if ("".equals(data[i].groupbyid)) {
+              subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
+                  toDatePlusOne, null, null, null, strcAcctSchemaId, data[i].id,
+                  strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+            } else {
+              subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
+                  toDatePlusOne, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')"
+                      : strcBpartnerId), (strGroupBy.equals("Product") ? "('" + data[i].groupbyid
+                      + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
+                      + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
+                  strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+            }
+          }
           data[i].totalacctdr = subreportElement[0].totalacctdr;
           data[i].totalacctcr = subreportElement[0].totalacctcr;
           data[i].totalacctsub = subreportElement[0].total;
@@ -364,12 +371,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strTotal.equals(data[i].groupbyid + data[i].id)) {
           subreportElement = new ReportGeneralLedgerData[1];
-          subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom, toDatePlusOne,
-              (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
-              (strGroupBy.equals("Product") ? "('" + data[i].groupbyid + "')" : strmProductId),
-              (strGroupBy.equals("Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
-              strcAcctSchemaId, data[i].id, strYearInitialDate, toDatePlusOne, strOrgFamily,
-              strHide);
+          if ("".equals(data[i].groupbyid)) {
+            subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
+                toDatePlusOne, null, null, null, strcAcctSchemaId, data[i].id, strYearInitialDate,
+                toDatePlusOne, strOrgFamily, strHide);
+          } else {
+            subreportElement = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
+                toDatePlusOne, (strGroupBy.equals("BPartner") ? "('" + data[i].groupbyid + "')"
+                    : strcBpartnerId), (strGroupBy.equals("Product") ? "('" + data[i].groupbyid
+                    + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
+                    + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
+                strYearInitialDate, toDatePlusOne, strOrgFamily, strHide);
+          }
           g++;
         }
         data[i].finaldebit = subreportElement[0].totalacctdr;
@@ -565,12 +578,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       subreport = new ReportGeneralLedgerData[data.length];
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strOld.equals(data[i].groupbyid + data[i].id)) {
-          subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom, DateTimeData
-              .nDaysAfter(this, strDateTo, "1"), (strGroupBy.equals("BPartner") ? "('"
-              + data[i].groupbyid + "')" : strcBpartnerId), (strGroupBy.equals("Product") ? "('"
-              + data[i].groupbyid + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
-              + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
-              strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+          if ("".equals(data[i].groupbyid)) {
+            subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom,
+                DateTimeData.nDaysAfter(this, strDateTo, "1"), null, null, null, strcAcctSchemaId,
+                data[i].id, strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+          } else {
+            subreport = ReportGeneralLedgerData.selectTotal(this, strDateFrom, DateTimeData
+                .nDaysAfter(this, strDateTo, "1"), (strGroupBy.equals("BPartner") ? "('"
+                + data[i].groupbyid + "')" : strcBpartnerId), (strGroupBy.equals("Product") ? "('"
+                + data[i].groupbyid + "')" : strmProductId), (strGroupBy.equals("Project") ? "('"
+                + data[i].groupbyid + "')" : strcProjectId), strcAcctSchemaId, data[i].id,
+                strYearInitialDate, strDateFrom, strOrgFamily, strHide);
+          }
           totalDebit = BigDecimal.ZERO;
           totalCredit = BigDecimal.ZERO;
           subTotal = BigDecimal.ZERO;
