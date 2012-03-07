@@ -363,12 +363,12 @@
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID
         AND ic.term = 'N')
-        AND EXISTS (SELECT 1
+        AND NOT EXISTS (SELECT 1
         FROM C_ORDER o , C_ORDERLINE ol
         WHERE o.C_ORDER_ID = s.C_ORDER_ID
         AND o.C_ORDER_ID = ol.C_ORDER_ID
         GROUP BY o.INVOICERULE
-        HAVING o.INVOICERULE <> 'O' OR (SUM(ol.qtyordered) = SUM(ol.qtydelivered)))
+        HAVING (o.INVOICERULE = 'O' AND SUM(ol.qtyordered) <> SUM(ol.qtydelivered)))
         ORDER BY NAME
       ]]>
     </Sql>
