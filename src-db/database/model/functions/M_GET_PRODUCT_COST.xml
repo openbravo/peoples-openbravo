@@ -49,6 +49,7 @@
     FROM M_COSTING
     WHERE p_MovementDate BETWEEN DATEFROM AND DATETO
       AND M_PRODUCT_ID = p_Product_ID
+      AND costtype NOT IN ('AVA' , 'STA')
       AND(v_CostType IS NULL
       OR v_CostType = COSTTYPE) ;
     IF(v_Count = 0) THEN
