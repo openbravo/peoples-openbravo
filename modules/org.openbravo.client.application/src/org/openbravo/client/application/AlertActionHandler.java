@@ -11,16 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -42,11 +40,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.model.ad.access.Session;
-import org.openbravo.model.ad.alert.Alert;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
-import org.openbravo.service.json.DataResolvingMode;
-import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -70,6 +65,7 @@ public class AlertActionHandler extends BaseActionHandler {
    */
   @Override
   public void execute() {
+    final long t = System.currentTimeMillis();
     OBContext.setAdminMode();
     try {
       final HttpServletRequest request = RequestContext.get().getRequest();
@@ -95,39 +91,39 @@ public class AlertActionHandler extends BaseActionHandler {
       final Query qry = OBDal.getInstance().getSession().createQuery(hql);
       qry.setParameter(0, OBContext.getOBContext().getUser().getId());
       qry.setParameter(1, OBContext.getOBContext().getRole().getId());
-      final JSONObject result = new JSONObject();
-      final List<JSONObject> alertJsonObjects = new ArrayList<JSONObject>();
+
+      BigInteger total = BigInteger.ZERO;
       for (Object o : qry.list()) {
         final AlertRule alertRule = (AlertRule) o;
         final String whereClause = new UsedByLink().getWhereClause(vars, "",
             alertRule.getFilterClause() == null ? "" : alertRule.getFilterClause());
-        final String sql = "select * from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
-            + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
-            + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
+        final String sql = "select count(*) from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
+            + " AND AD_CLIENT_ID "
+            + OBDal.getInstance().getReadableClientsInClause()
+            + " AND AD_ORG_ID "
+            + OBDal.getInstance().getReadableOrganizationsInClause()
             + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
-        final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql)
-            .addEntity(Alert.ENTITY_NAME);
+        final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
         sqlQuery.setParameter(0, alertRule.getId());
-        final DataToJsonConverter converter = new DataToJsonConverter();
         try {
+          BigInteger rows = (BigInteger) sqlQuery.list().get(0);
+          total = total.add(rows);
           log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
-              + "' - Rows: " + sqlQuery.list().size());
-          for (Object alertObject : sqlQuery.list()) {
-            final Alert alert = (Alert) alertObject;
-            alertJsonObjects.add(converter.toJsonObject(alert, DataResolvingMode.FULL));
-          }
+              + "' - Rows: " + rows);
         } catch (SQLGrammarException e) {
           log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(),
               e);
         }
       }
-      result.put("cnt", alertJsonObjects.size());
-      result.put("data", new JSONArray(alertJsonObjects));
+
+      final JSONObject result = new JSONObject();
+      result.put("cnt", total);
       result.put("result", "success");
 
       response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
       response.setHeader("Content-Type", JsonConstants.JSON_CONTENT_TYPE);
       response.getWriter().write(result.toString());
+      log4j.debug("Time spent: " + (System.currentTimeMillis() - t));
     } catch (Exception e) {
       throw new IllegalStateException(e);
     } finally {
