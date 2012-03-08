@@ -199,8 +199,11 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
   
   // update the value in update value as this is called from cellEditEnd in the
-  // grid
+  // grid, or after losing the focus on the form
   updateValue: function() {
+    if (this.grid && this.grid._preventDateParsing) {
+      return;
+    }
     this.expandValue();
     this.Super('updateValue', arguments);
   },

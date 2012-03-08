@@ -2281,8 +2281,10 @@ isc.OBViewGrid.addProperties({
   // https://issues.openbravo.com/view.php?id=16611
   storeUpdatedEditorValue : function (suppressChange, editCol) {
     this._storingUpdatedEditorValue = true;
+    this._preventDateParsing = true;
     this.Super('storeUpdatedEditorValue', arguments);
     delete this._storingUpdatedEditorValue;
+    delete this._preventDateParsing;
   },
 
   // the form gets recreated many times, maintain the already read valuemap
