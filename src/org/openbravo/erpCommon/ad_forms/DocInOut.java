@@ -108,7 +108,6 @@ public class DocInOut extends AcctServer {
         // Get related M_Transaction_ID
         ShipmentInOutLine inOut = OBDal.getInstance().get(ShipmentInOutLine.class, Line_ID);
         if (inOut.getMaterialMgmtMaterialTransactionList().size() > 0) {
-          // Internal movement lines have 2 related transactions, both of them with the same cost
           docLine.setTransaction(inOut.getMaterialMgmtMaterialTransactionList().get(0));
         }
       } finally {
@@ -389,11 +388,31 @@ public class DocInOut extends AcctServer {
       String strDateAcct = outputFormat.format(inOut.getAccountingDate());
       int validLines = 0;
       for (int i = 0; i < data.length; i++) {
-        if (DocInOutData.existsCost(conn, strDateAcct, data[i].getField("mProductId")).equals("0")) {
+        boolean existsOldCost = DocInOutData.existsCost(conn, strDateAcct,
+            data[i].getField("mProductId")).equals("0");
+        BigDecimal trxCost = null;
+        if (existsOldCost) {
+          trxCost = new BigDecimal(ProductInfoData.selectProductAverageCost(conn,
+              data[i].getField("mProductId"), strDateAcct));
+        } else {
+          OBContext.setAdminMode(false);
+          try {
+            // Get related M_Transaction_ID
+            ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+                data[i].mInoutlineId);
+            if (inOutLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+              trxCost = inOutLine.getMaterialMgmtMaterialTransactionList().get(0)
+                  .getTransactionCost();
+            }
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        }
+
+        if (!existsOldCost && trxCost == null) {
           setStatus(STATUS_InvalidCost);
           return false;
-        } else if (!ProductInfoData.selectProductAverageCost(conn, data[i].getField("mProductId"),
-            strDateAcct).equals("0")) {
+        } else if (trxCost != null && trxCost.signum() != 0) {
           validLines++;
         }
       }

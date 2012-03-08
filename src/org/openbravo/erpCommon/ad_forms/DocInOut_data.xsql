@@ -62,6 +62,7 @@
         SELECT COUNT(M_COSTING_ID)
         FROM M_COSTING
         WHERE TO_DATE(?) BETWEEN DATEFROM AND DATETO
+          AND COSTTYPE NOT IN ('STA', 'AVA')
           AND M_PRODUCT_ID = ?
      ]]>
      </Sql>
