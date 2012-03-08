@@ -176,7 +176,7 @@ BEGIN --BODY
       ) VALUES (
           v_voidintconsumption_id, v_client_id, v_org_id, 'Y',
           now(), v_user, now(), v_user,
-          'VO: '|| v_name, now()
+          'VO: '|| v_name, v_MoveDate
       );
       
       INSERT INTO m_internal_consumptionline (
