@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
@@ -129,9 +130,10 @@ public class FinancialUtils {
       ppc.add(Restrictions.eq("pl." + PriceList.PROPERTY_SALESPRICELIST, useSalesPriceList));
     }
     ppc.add(Restrictions.le("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, date));
-    ppc.addOrderBy("pl." + PriceList.PROPERTY_DEFAULT, false);
-    ppc.addOrderBy("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, false);
-    ppc.setMaxResults(1);
+    ppc.addOrder(Order.desc("pl." + PriceList.PROPERTY_DEFAULT));
+    ppc.addOrder(Order.desc("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE));
+    // ppc.addOrderBy("pl." + PriceList.PROPERTY_DEFAULT, false);
+    // ppc.addOrderBy("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, false);
 
     List<ProductPrice> ppList = ppc.list();
     if (ppList.isEmpty()) {
