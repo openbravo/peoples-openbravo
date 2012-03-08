@@ -58,7 +58,7 @@ public class CostingRuleProcess implements Process {
       } else if (rule.getProductCategory() != null) {
         productList = rule.getProductCategory().getProductList();
       } else {
-        productList = getProductList(rule, productIds);
+        productList = getProductList(productIds);
       }
 
       while (!productList.isEmpty()) {
@@ -78,7 +78,7 @@ public class CostingRuleProcess implements Process {
         if (rule.getProduct() != null || rule.getProductCategory() != null) {
           break;
         }
-        productList = getProductList(rule, productIds);
+        productList = getProductList(productIds);
       }
 
       // Step 2. Process closing physical inventories.
@@ -161,12 +161,11 @@ public class CostingRuleProcess implements Process {
 
   }
 
-  private List<Product> getProductList(CostingRule rule, List<String> productIds) {
+  private List<Product> getProductList(List<String> productIds) {
     OBCriteria<Product> productCrit = OBDal.getInstance().createCriteria(Product.class);
     productCrit.setFilterOnReadableOrganization(false);
     productCrit.add(Restrictions.not(Restrictions.in("id", productIds)));
-    // FIXME: filter by flag to set product's cost is calculated
-    // productCrit.add(Restrictions.eq("new_flag", true));
+    productCrit.add(Restrictions.eq(Product.PROPERTY_CALCULATECOST, true));
     productCrit.setMaxResults(1000);
 
     return productCrit.list();
