@@ -27,8 +27,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -58,7 +59,9 @@ public class CostingBackground extends DalBaseProcess {
 
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
+    obcTrx.createAlias(MaterialTransaction.PROPERTY_PRODUCT, "pr");
     obcTrx.add(Restrictions.isNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
+    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_CALCULATECOST, true));
     obcTrx.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     List<MaterialTransaction> trxs = obcTrx.list();
     int counter = 0, total = trxs.size();
