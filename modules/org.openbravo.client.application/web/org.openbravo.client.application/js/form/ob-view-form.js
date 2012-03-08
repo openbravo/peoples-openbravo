@@ -1714,11 +1714,18 @@ OB.ViewFormProperties = {
   // has only been edited half, only do this if we are in change
   // handling (to enable buttons etc.)
   updateFocusItemValue: function () {
-    var focusItem = this.getFocusSubItem();
+    var ret, focusItem = this.getFocusSubItem();
     if (this.inChangeHandling && focusItem && !focusItem.changeOnKeypress) {
       return;
     }
-    return this.Super('updateFocusItemValue', arguments);
+    if (this.grid) {
+      this.grid._preventDateParsing = true;
+      ret = this.Super('updateFocusItemValue', arguments);
+      delete this.grid._preventDateParsing;
+    } else {
+      ret = this.Super('updateFocusItemValue', arguments);
+    }
+    return ret;
   },
 
   enableShortcuts: function () {
