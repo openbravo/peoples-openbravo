@@ -19,9 +19,16 @@
         <link rel="apple-touch-icon" sizes="114x114" href="img/openbravopos114x114.png" />
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>    
         
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-        <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
-        <link rel="stylesheet" type="text/css" href="css/pointofsale.css" />
+        <link rel="stylesheet/less" href="js/libs/bootstrap/less/bootstrap.less">
+        <link rel="stylesheet/less" href="js/libs/bootstrap/less/responsive.less">
+        <script src="js/libs/less/less-1.2.2.min.js"></script>    
+        
+        
+<style type="text/css">
+
+
+</style>        
+
 
 </head>
 <body style="padding-top: 60px;">
@@ -31,20 +38,24 @@
     <div class="container">             
       <!-- Be sure to leave the brand out there if you want it shown -->
       <span class="brand" id="terminal"></span>
-        <ul class="nav">
-          <li class="divider-vertical"></li>
-          <li><img src="../../utility/ShowImageLogo?logo=yourcompanymenu" alt="Your company" style="margin-top: 5px;"/></li>        
-          <li class="divider-vertical"></li>
-          <li style="color: #ddd;"><p id="status"></p></li>
-          <li class="divider-vertical"></li>
-        </ul>  
-      <!-- Everything you want hidden at 940px or less, place within here -->
-      <div class="nav-collapse">
-        <ul class="nav pull-right">
-          <li class="divider-vertical"></li>
-          <li><img src="../../utility/GetOpenbravoLogo.png" alt="Openbravo" style="margin-top: 5px;"/></li>
-        </ul>          
-      </div>
+      <ul class="nav">
+        <li class="divider-vertical"></li>
+      </ul>  
+      <ul class="nav pull-right">
+
+        <li class="divider-vertical"></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-top: 3px;padding-bottom: 0px;">
+          <img src="../../utility/ShowImageLogo?logo=yourcompanymenu" alt="Your company"/>
+          </a>
+          <div id="status" class="dropdown-menu" style="width:400px;padding:5px;">
+          wefwefwef<br/>afasfs
+          </div>             
+         
+        </li>
+        <li class="divider-vertical"></li>
+        <li><img src="../../utility/GetOpenbravoLogo.png" alt="Openbravo" style="padding-top: 3px;padding-bottom: 0px;"/></li>          
+      </ul>          
     </div>
   </div>
 </div>
@@ -63,34 +74,44 @@
  
 <!-- Order section -->
 <section>
-<div class="row">
 
-  <div class="span4">
-    <div class="btn-toolbar">
-    <div class="btn-group">
-      <button class="btn btn-large btn-primary" id="btnnew"><i class="icon-asterisk icon-white"></i> New</button>
-      <!-- <button class="btn btn-large btn-primary""><i class="icon-trash icon-white"></i> Delete</button> -->
-    </div>   
-    <div class="btn-group">
-      <button id="btnprint" class="btn btn-large btn-success""><i class="icon-print icon-white"></i> Print</button>
+<div class="row">
+<div class="navbar"> <!--  style="margin-bottom: 0px; -->
+  <div class="navbar-inner">
+    <div class="container">
+      <ul class="nav">
+        <li class="divider-vertical"></li>
+        <li>
+        <a id="btnnew" href="#" style="text-shadow:none;"><i class="icon-asterisk"></i> New</a>
+        </li>    
+        <li class="divider-vertical"></li>
+        <li>
+        <a id="btnprint" href="#" style="text-shadow:none;"><i class="icon-print"></i> Print</a>
+        </li>          
+        
+ 
+        <li class="divider-vertical"></li>
+      </ul> 
+      
+      
+    <ul class="nav nav-pills">
+      <li><a href="#payment" data-toggle="tab" id="paylink" style="text-shadow:none;">Pay</a></li>
+      <li><a href="#catalog" data-toggle="tab" id="cataloglink" style="text-shadow:none;">Browse</a></li>    
+      <li><a href="#search" data-toggle="tab" id="searchlink" style="text-shadow:none;">Search</a></li>    
+      <li><a href="#scan" data-toggle="tab" id="scanlink" style="text-shadow:none;">Scan</a></li>    
+      <li><a href="#edition" data-toggle="tab" id="editionlink" style="text-shadow:none;">Edit</a></li>
+
+      <li class="divider-vertical"></li>
+    </ul>   
+      
+      
     </div>
-    <div class="btn-group">
-      <button class="btn btn-large btn-warning">More</button>
-      <button class="btn btn-large btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-      <ul class="dropdown-menu">
-      </ul>
-    </div>
-    </div>           
-  </div>
-  
-  <div class="span8"> 
-		<ul class="nav nav-tabs">
-		  <li><a href="#catalog" data-toggle="tab" id="cataloglink">Catalog</a></li>		
-		  <li><a href="#edition" data-toggle="tab" id="editionlink">Edition</a></li>
-		  <li><a href="#payment" data-toggle="tab" id="paylink">Pay</a></li>
-		</ul>
   </div>
 </div>
+</div>
+
+
+
 
 <div class="row">
   <div class="span4">  
@@ -110,20 +131,18 @@
       <div class="tab-pane" id="payment">
          <!-- Here goes the payment editor -->    
       </div>
-    </div>    
+    </div>   
+    
+    <div id="keyboard">
+    </div>
+    
+    
+    
+     
   </div>
 </div>
 
 </section>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -133,8 +152,14 @@
 <script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/libs/underscore-1.3.1.min.js"></script>
 <script type="text/javascript" src="js/libs/backbone-0.9.1.min.js"></script>
+<script type="text/javascript" src="js/libs/bootstrap/js/bootstrap-tab.js"></script>
+<script type="text/javascript" src="js/libs/bootstrap/js/bootstrap-dropdown.js"></script>
+
+<!-- 
 <script type="text/javascript" src="js/libs/bootstrap.js"></script>
 <script type="text/javascript" src="js/libs/bootstrap-tab.js"></script>
+<script type="text/javascript" src="js/libs/bootstrap-dropdown.js"></script>
+ -->
 
 <script type="text/javascript" data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 

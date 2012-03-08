@@ -29,7 +29,7 @@ define(['utilities'], function () {
     
     this.div = $(OB.UTIL.DOM(
       OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px; margin-bottom:30px;'}, [
-        OB.UTIL.NODE('table', {'class': 'table table-rounded'}, intable)
+        OB.UTIL.NODE('table', {'class': 'table table-bordered'}, intable)
       ])
     ));    
   }

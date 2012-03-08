@@ -1,0 +1,121 @@
+// Variables.less
+// Variables to customize the look and feel of Bootstrap
+// -----------------------------------------------------
+
+
+
+// GLOBAL VALUES
+// --------------------------------------------------
+
+// Links
+@linkColor:             #08c;
+@linkColorHover:        darken(@linkColor, 15%);
+
+// Grays
+@black:                 #000;
+@grayDarker:            #222;
+@grayDark:              #333;
+@gray:                  #555;
+@grayLight:             #999;
+@grayLighter:           #eee;
+@white:                 #fff;
+
+// Accent colors
+@blue:                  #049cdb;
+@blueDark:              #0064cd;
+@green:                 #46a546;
+@red:                   #9d261d;
+@yellow:                #ffc40d;
+@orange:                #f89406;
+@pink:                  #c3325f;
+@purple:                #7a43b6;
+
+// Typography
+@baseFontSize:          14px;
+@baseFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif;
+@baseLineHeight:        18px;
+@textColor:             @grayDark;
+
+// Buttons
+@primaryButtonBackground:    @linkColor;
+
+
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+// Z-index master list
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+@zindexDropdown:          1000;
+@zindexPopover:           1010;
+@zindexTooltip:           1020;
+@zindexFixedNavbar:       1030;
+@zindexModalBackdrop:     1040;
+@zindexModal:             1050;
+
+// Sprite icons path
+@iconSpritePath:          "../img/glyphicons-halflings.png";
+@iconWhiteSpritePath:     "../img/glyphicons-halflings-white.png";
+
+// Input placeholder text color
+@placeholderText:         @grayLight;
+
+// Hr border color
+@hrBorder:                @grayLighter;
+
+// Navbar
+@navbarHeight:                    40px;
+@navbarBackground:                #d6d6d6; //@grayDarker;
+@navbarBackgroundHighlight:       #e6e6e6; // @grayDark;
+@navbarLinkBackgroundHover:       transparent;
+
+@navbarText:                      @grayDark; // @grayLight;
+@navbarLinkColor:                 @grayDark; // @grayLight;
+@navbarLinkColorHover:            @grayDarker; //@white;
+
+// Form states and alerts
+@warningText:             #c09853;
+@warningBackground:       #fcf8e3;
+@warningBorder:           darken(spin(@warningBackground, -10), 3%);
+
+@errorText:               #b94a48;
+@errorBackground:         #f2dede;
+@errorBorder:             darken(spin(@errorBackground, -10), 3%);
+
+@successText:             #468847;
+@successBackground:       #dff0d8;
+@successBorder:           darken(spin(@successBackground, -10), 5%);
+
+@infoText:                #3a87ad;
+@infoBackground:          #d9edf7;
+@infoBorder:              darken(spin(@infoBackground, -10), 7%);
+
+
+
+// GRID
+// --------------------------------------------------
+
+// Default 940px grid
+@gridColumns:             12;
+@gridColumnWidth:         80px;
+@gridGutterWidth:         0px;
+@gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+
+// Fluid grid
+@fluidGridColumnWidth:    8.333333333%; // 6.382978723%;
+@fluidGridGutterWidth:    0%; // 2.127659574%;
+
+// Tablets
+// --------------------------------------------------
+@tabletGridColumnWidth:         62px;
+@tabletGridGutterWidth:         0px;
+@fluidTabletGridColumnWidth:    8.333333333%; // 5.801104972%;
+@fluidTabletGridGutterWidth:    0%; // 2.762430939%;
+
+// Large Desktop
+// --------------------------------------------------
+@largeGridColumnWidth:         100px;
+@largeGridGutterWidth:         0px;
+@fluidLargeGridColumnWidth:    8.333333333%; // 5.982905983%;
+@fluidLargeGridGutterWidth:    0%; // 2.564102564%;

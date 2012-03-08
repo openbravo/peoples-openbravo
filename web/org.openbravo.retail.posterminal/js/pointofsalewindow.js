@@ -4,10 +4,13 @@
 define([
         'model/terminal', 'model/order', 
         'components/hwmanager', 
-        'components/catalog', 'components/editline', 'components/order', 'components/payment'], function () {
+        'components/catalog', 'components/editline', 'components/order', 'components/payment', 'components/keyboard'], function () {
   
 
   return function (modelterminal, hwserver) {
+    
+    
+    var kb = new OB.COMP.Keyboard($('#keyboard'));
     
     //// Model
     var modelcategories = new OB.MODEL.CategoryCol();
