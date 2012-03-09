@@ -101,9 +101,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
    */
   @Override
   protected BigDecimal getInventoryIncreaseCost() {
-    try {
+    if (getProductCost() != null) {
       return getOutgoingTransactionCost();
-    } catch (OBException e) {
+    } else {
       return super.getInventoryIncreaseCost();
     }
   }
