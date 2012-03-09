@@ -18,7 +18,8 @@
  */
 package org.openbravo.client.application;
 
-import java.math.BigInteger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,8 +31,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.exception.SQLGrammarException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -42,6 +41,7 @@ import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -92,7 +92,7 @@ public class AlertActionHandler extends BaseActionHandler {
       qry.setParameter(0, OBContext.getOBContext().getUser().getId());
       qry.setParameter(1, OBContext.getOBContext().getRole().getId());
 
-      BigInteger total = BigInteger.ZERO;
+      Long total = 0L;
       for (Object o : qry.list()) {
         final AlertRule alertRule = (AlertRule) o;
         final String whereClause = new UsedByLink().getWhereClause(vars, "",
@@ -103,14 +103,20 @@ public class AlertActionHandler extends BaseActionHandler {
             + " AND AD_ORG_ID "
             + OBDal.getInstance().getReadableOrganizationsInClause()
             + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
-        final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
-        sqlQuery.setParameter(0, alertRule.getId());
+
         try {
-          BigInteger rows = (BigInteger) sqlQuery.list().get(0);
-          total = total.add(rows);
-          log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
-              + "' - Rows: " + rows);
-        } catch (SQLGrammarException e) {
+          final PreparedStatement sqlQuery = new DalConnectionProvider(false)
+              .getPreparedStatement(sql);
+          sqlQuery.setString(1, alertRule.getId());
+          sqlQuery.execute();
+          ResultSet rs = sqlQuery.getResultSet();
+          if (rs.next()) {
+            long rows = rs.getLong(1);
+            total += rs.getLong(1);
+            log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'"
+                + sql + "' - Rows: " + rows);
+          }
+        } catch (Exception e) {
           log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(),
               e);
         }
