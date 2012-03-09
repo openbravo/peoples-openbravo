@@ -388,7 +388,7 @@ public class DocInOut extends AcctServer {
       String strDateAcct = outputFormat.format(inOut.getAccountingDate());
       int validLines = 0;
       for (int i = 0; i < data.length; i++) {
-        boolean existsOldCost = DocInOutData.existsCost(conn, strDateAcct,
+        boolean existsOldCost = !DocInOutData.existsCost(conn, strDateAcct,
             data[i].getField("mProductId")).equals("0");
         BigDecimal trxCost = null;
         if (existsOldCost) {
