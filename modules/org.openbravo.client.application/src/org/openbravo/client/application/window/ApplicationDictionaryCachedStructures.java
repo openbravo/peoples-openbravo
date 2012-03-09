@@ -54,6 +54,8 @@ import org.openbravo.userinterface.selector.SelectorField;
 public class ApplicationDictionaryCachedStructures implements Serializable {
   private static final long serialVersionUID = 1L;
 
+  private Map<String, Tab> tabMap = new HashMap<String, Tab>();
+  private Map<String, Table> tableMap = new HashMap<String, Table>();
   private Map<String, List<Field>> fieldMap = new HashMap<String, List<Field>>();
   private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
   private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
@@ -68,11 +70,35 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     useCache = indevelMods.list().size() == 0;
   }
 
+  public Tab getTab(String tabId) {
+    if (useCache() && tabMap.containsKey(tabId)) {
+      return tabMap.get(tabId);
+    }
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Hibernate.initialize(tab);
+    Hibernate.initialize(tab.getADAuxiliaryInputList());
+    Hibernate.initialize(tab.getADFieldList());
+    Hibernate.initialize(tab.getTable());
+    Hibernate.initialize(tab.getTable().getADColumnList());
+    tabMap.put(tabId, tab);
+    return tab;
+  }
+
+  public Table getTable(String tableId) {
+    if (useCache() && tableMap.containsKey(tableId)) {
+      return tableMap.get(tableId);
+    }
+    Table table = OBDal.getInstance().get(Table.class, tableId);
+    Hibernate.initialize(table);
+    tableMap.put(tableId, table);
+    return table;
+  }
+
   public List<Field> getFieldsOfTab(String tabId) {
     if (useCache() && fieldMap.containsKey(tabId)) {
       return fieldMap.get(tabId);
     }
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = getTab(tabId);
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
       if (f.getColumn() == null) {
@@ -89,7 +115,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (useCache() && columnMap.get(tableId) != null) {
       return columnMap.get(tableId);
     }
-    Table table = OBDal.getInstance().get(Table.class, tableId);
+    Table table = getTable(tableId);
     List<Column> columns = table.getADColumnList();
     for (Column c : columns) {
       initializeColumn(c);
@@ -137,7 +163,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (useCache() && auxInputMap.get(tabId) != null) {
       return auxInputMap.get(tabId);
     }
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = getTab(tabId);
     Hibernate.initialize(tab.getADAuxiliaryInputList());
     List<AuxiliaryInput> auxInputs = new ArrayList<AuxiliaryInput>(tab.getADAuxiliaryInputList());
     for (AuxiliaryInput auxIn : auxInputs) {

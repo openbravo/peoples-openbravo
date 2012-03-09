@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
@@ -64,6 +65,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -73,7 +75,6 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -124,7 +125,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
       // The column changed by the user. Only relevant on CHANGE mode
       String changedColumn = readParameter(parameters, "CHANGED_COLUMN");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Tab tab = getTab(tabId);
       BaseOBObject row = null;
       BaseOBObject parentRecord = null;
       Map<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
@@ -277,10 +278,11 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private int computeNoteCount(Tab tab, String rowId) {
-    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class,
-        Restrictions.eq("table.id", (String) DalUtil.getId(tab.getTable())),
-        Restrictions.eq("record", rowId));
-    return criteria.count();
+    OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
+        " table.id=:tableId and record=:recordId");
+    obq.setNamedParameter("tableId", (String) DalUtil.getId(tab.getTable()));
+    obq.setNamedParameter("recordId", rowId);
+    return obq.count();
   }
 
   private List<String> convertJSONArray(JSONArray jsonArray) {
@@ -298,22 +300,27 @@ public class FormInitializationComponent extends BaseActionHandler {
   private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
     String tableId = (String) DalUtil.getId(tab.getTable());
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
-    OBCriteria<Attachment> attachments;
+    Query q;
     if (multipleRowIds == null) {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.eq("record", rowId));
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
+      q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("tableId", tableId);
+      q.setParameter("recordId", rowId);
     } else {
-      attachments = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
+
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
+      q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("tableId", tableId);
+      q.setParameterList("recordId", multipleRowIds);
     }
-    attachments.addOrderBy("creationDate", false);
-    for (Attachment attachment : attachments.list()) {
+    for (Object qobj : q.list()) {
+      Object[] array = (Object[]) qobj;
       JSONObject obj = new JSONObject();
       try {
-        obj.put("name", attachment.getName());
-        obj.put("id", attachment.getId());
-        obj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
-        obj.put("updatedby", attachment.getUpdatedBy().getName());
+        obj.put("name", (String) array[0]);
+        obj.put("id", (String) array[1]);
+        obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
+        obj.put("updatedby", (String) array[3]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
@@ -381,7 +388,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           // This session attributes could be a preference
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
-                field.getDisplayLogic(), tab);
+                field.getDisplayLogic(), tab, cachedStructures);
             setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
                 .getId());
           }
@@ -389,7 +396,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getColumn().getReadOnlyLogic() != null && field.isDisplayed()
               && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(field.getColumn()
-                .getReadOnlyLogic(), tab);
+                .getReadOnlyLogic(), tab, cachedStructures);
             setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
                 .getId());
           }
@@ -1545,6 +1552,10 @@ public class FormInitializationComponent extends BaseActionHandler {
           + " from tab: " + auxIn.getTab().getName(), e);
     }
     return null;
+  }
+
+  private Tab getTab(String tabId) {
+    return cachedStructures.getTab(tabId);
   }
 
   private List<Field> getADFieldList(String tabId) {

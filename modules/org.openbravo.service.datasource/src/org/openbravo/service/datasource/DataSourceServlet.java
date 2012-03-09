@@ -559,7 +559,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
+    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+    UsageAudit.auditActionNoDal(this, vars, this.getClass().getName());
 
     try {
       if (!hasAccess(request, parameters.get("tabId"))) {
