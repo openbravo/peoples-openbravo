@@ -205,8 +205,7 @@ public class DocMatchInv extends AcctServer {
     String strExpenses = invoiceData[0].linenetamt;
     String strInvoiceCurrency = invoiceData[0].cCurrencyId;
     String strDate = invoiceData[0].dateacct;
-    strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, costCurrency.getId(), strDate,
-        "", vars.getClient(), vars.getOrg(), conn);
+    String strReceiptDate = data[0].getField("ORDERDATEACCT");
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
         data[0].getField("MOVEMENTQTY"))).signum())
@@ -215,14 +214,18 @@ public class DocMatchInv extends AcctServer {
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }
 
-    BigDecimal bdDifference = bdExpenses.subtract(bdCost);
-
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
         costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
+    // Calculate Difference amount in schema currency
+    bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
+        as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
+    bdExpenses = new BigDecimal(getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency,
+        as.m_C_Currency_ID, strDate, "", vars.getClient(), vars.getOrg(), conn));
+    BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
     if (dr == null) {
       log4j.warn("createFact - unable to calculate line with "
@@ -255,7 +258,7 @@ public class DocMatchInv extends AcctServer {
 
     if (!bdCost.equals(bdExpenses)) {
       diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-          costCurrency.getId(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
+          as.m_C_Currency_ID, (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
               .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
               .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (diff == null) {
