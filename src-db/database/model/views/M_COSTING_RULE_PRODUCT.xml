@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="VIEW M_COSTING_RULE_PRODUCT">
+    <view name="M_COSTING_RULE_PRODUCT"><![CDATA[SELECT cr.m_costing_rule_id || pr.m_product_id AS m_costing_rule_product_id, cr.ad_client_id, cr.ad_org_id, cr.isactive, cr.created, cr.createdby, cr.updated, cr.updatedby, cr.m_costing_rule_id, pr.m_product_id AS apply_product_id, cr.m_costing_algorithm_id, cr.m_product_id, cr.m_product_category_id, cr.datefrom, cr.dateto, cr.org_dimension, cr.warehouse_dimension, cr.isvalidated
+FROM m_costing_rule cr
+LEFT JOIN m_product pr  ON (cr.m_product_id IS NULL AND cr.m_product_category_id IS NULL AND pr.ad_client_id = cr.ad_client_id) OR cr.m_product_category_id = pr.m_product_category_id OR cr.m_product_id = pr.m_product_id]]></view>
+  </database>
