@@ -3,22 +3,19 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.Payment = function (container) {
+  OB.COMP.Payment = function (B) {
     var me = this;
-    this.container = container;
-    this.closeListeners = [];
 
-   container.load('comp_payment.html', function () {
+    this.$ = $("<div/>").load('comp_payment.html', function () {
      $('#btnclose').click(function () {
        me.receipt.trigger('closed');
     
        me.receipt.reset();
      });
     });
-  }  
-  
-  OB.COMP.Payment.prototype.setModel = function (receipt) {
-    this.receipt = receipt;
+    
+    // Set Model 
+    this.receipt = B.get('modelorder');
     
     this.receipt.get('lines').on('reset change add remove', function() {
       $('#totalpay').text(this.receipt.printNet());

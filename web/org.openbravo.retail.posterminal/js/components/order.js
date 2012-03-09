@@ -43,23 +43,25 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
             ])                                                                      
           ])                                                                                                   
         ]),
-        this.orderview.div,
-        OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-          OB.UTIL.NODE('tbody', {}, [
-            OB.UTIL.NODE('tr', {}, [
-              OB.UTIL.NODE('td', {}, ['Taxes']),                                                                  
-              OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
-                OB.UTIL.NODE('strong', {}, [])                                                                  
-              ])                                                                 
-            ]),     
-            OB.UTIL.NODE('tr', {}, [
-              OB.UTIL.NODE('td', {}, ['Net']),                                                                  
-              OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
-                this.totalnet
-              ])                                                                 
-            ])               
-          ])                                                                                                   
-        ])             
+        OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px'}, [
+          this.orderview.div,
+          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
+            OB.UTIL.NODE('tbody', {}, [
+              OB.UTIL.NODE('tr', {}, [
+                OB.UTIL.NODE('td', {}, ['Taxes']),                                                                  
+                OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
+                  OB.UTIL.NODE('strong', {}, [])                                                                  
+                ])                                                                 
+              ]),     
+              OB.UTIL.NODE('tr', {}, [
+                OB.UTIL.NODE('td', {}, ['Net']),                                                                  
+                OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
+                  this.totalnet
+                ])                                                                 
+              ])               
+            ])                                                                                                   
+          ])     
+        ])
       ])
     )));    
   }

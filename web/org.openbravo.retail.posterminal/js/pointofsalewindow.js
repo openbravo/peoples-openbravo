@@ -1,16 +1,14 @@
 
 
 
-define([
+define(['builder',
         'model/terminal', 'model/order', 
         'components/hwmanager', 
-        'components/catalog', 'components/editline', 'components/order', 'components/payment', 'components/keyboard'], function () {
+        'components/catalog', 'components/editline', 'components/order', 'components/payment', 'components/keyboard'
+        ], function (B) {
   
 
   return function (modelterminal, hwserver) {
-    
-    
-    var kb = new OB.COMP.Keyboard($('#keyboard'));
     
     //// Model
     var modelcategories = new OB.MODEL.CategoryCol();
@@ -22,16 +20,22 @@ define([
     var ordereditor = new OB.COMP.OrderView($('#ordercontainer'));
     ordereditor.setModel(modelorder);  
   
+    
+    B.set('modelproducts', modelproducts);
+    B.set('modelorder', modelorder);
+    B.set('orderviewstack', ordereditor.orderview.stack);
+    
     var catalog = new OB.COMP.Catalog($('#catalog'));
     catalog.setModel(modelcategories, modelproducts, modelorder, ordereditor.orderview.stack);
     
-  
+    var lineeditor = B({kind: OB.COMP.EditLine });
+    $('#edition').append(lineeditor.$);
+    var payment = B({kind: OB.COMP.Payment });   
+    $('#payment').append(payment.$);
     
-    var lineeditor = new OB.COMP.EditLine($('#edition'));
-    lineeditor.setModel(modelproducts, modelorder, ordereditor.orderview.stack);
     
-    var payment = new OB.COMP.Payment($('#payment'));
-    payment.setModel(modelorder);
+    
+    
     
     var hwview = new OB.COMP.HWManager(hwserver);
     hwview.setModel(modelorder, ordereditor.orderview.stack);

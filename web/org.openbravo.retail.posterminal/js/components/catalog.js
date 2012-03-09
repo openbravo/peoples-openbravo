@@ -57,7 +57,9 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
                   ])
                 ])      
               ]),
-              this.categoriesview.div      
+              OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [                
+                this.categoriesview.div  
+              ])
             ]),
             OB.UTIL.NODE('div', {'class': 'span4'}, [
               OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
@@ -67,7 +69,9 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
                   ])
                 ])      
               ]),
-              this.productsview.div          
+              OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [
+                this.productsview.div      
+              ])
             ])        
           ])
         ])        
