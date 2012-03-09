@@ -1,4 +1,4 @@
-define(['utilities'], function () {
+define(['utilities', 'model/stack'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -12,11 +12,9 @@ define(['utilities'], function () {
     this.renderLine = defaults.renderLine;
     this.style = defaults.style; // none, "edit", "list"
     
-    this.stack = new Backbone.Model({
-      initialize : function () {
-        this.set('selected', -1);
-      }
-    });
+    this.stack = defaults.stack
+    ? defaults.stack
+    : new OB.MODEL.Stack();
                                                                      
     var intable = [];
     if (this.renderHeader) {

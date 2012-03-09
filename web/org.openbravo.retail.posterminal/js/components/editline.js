@@ -3,7 +3,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.EditLine = function (B) {
+  OB.COMP.EditLine = function (context) {
     var me = this;
     
     this.$ = $("<div/>").load('comp_editline.html', function () {
@@ -52,9 +52,9 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
 
     // Set Model
     
-    this.products = B.get('modelproducts');
-    this.receipt = B.get('modelorder');
-    this.stack = B.get('orderviewstack');
+    this.products = context.get('modelproducts');
+    this.receipt = context.get('modelorder');
+    this.stack = context.get('stackorder');
     this.line = null;
     this.index = -1;
         

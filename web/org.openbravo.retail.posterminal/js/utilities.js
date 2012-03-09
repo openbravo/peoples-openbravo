@@ -62,6 +62,15 @@ define([], function () {
     }
   };  
   
+  OB.UTIL.recontext = function (model, defaultid) {
+    return function (context, id) {
+      var obj = new model();
+      obj.context = context;
+      context.set(id || defaultid, obj);
+      return obj;
+    };
+  }
+  
   OB.UTIL.DOM = function (dom) {
     if (typeof (dom) === "string") { // Is an String
       return document.createTextNode(dom);

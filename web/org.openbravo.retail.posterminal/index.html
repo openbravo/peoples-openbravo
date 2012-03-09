@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Openbravo Point of Sale</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
-        <meta name="description" content="Openbravo Point of Sale window">
-        <meta name="author" content="Openbravo, S.L.U.">
-        
-        <!--  Apple application capable attributes -->
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-        <meta name="apple-touch-fullscreen" content="yes" />      
-        <link rel="apple-touch-startup-image" href="img/openbravopos.png"/>  
-    
-        <!-- Application icons -->
-        <link rel="apple-touch-icon" href="img/openbravopos57x57.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="img/openbravopos72x72.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="img/openbravopos114x114.png" />
-        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>    
-        
-        <link rel="stylesheet/less" href="js/libs/bootstrap/less/bootstrap.less">
-        <link rel="stylesheet/less" href="js/libs/bootstrap/less/responsive.less">
-        <script src="js/libs/less/less-1.2.2.min.js"></script>    
-        
-        
-<style type="text/css">
-
-
-</style>        
-
-
+ <head>
+     <title>Openbravo Point of Sale</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+     <meta name="description" content="Openbravo Point of Sale window">
+     <meta name="author" content="Openbravo, S.L.U.">
+     
+     <!--  Apple application capable attributes -->
+     <meta name="apple-mobile-web-app-capable" content="yes" />
+     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+     <meta name="apple-touch-fullscreen" content="yes" />      
+     <link rel="apple-touch-startup-image" href="img/openbravopos.png"/>  
+ 
+     <!-- Application icons -->
+     <link rel="apple-touch-icon" href="img/openbravopos57x57.png" />
+     <link rel="apple-touch-icon" sizes="72x72" href="img/openbravopos72x72.png" />
+     <link rel="apple-touch-icon" sizes="114x114" href="img/openbravopos114x114.png" />
+     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>    
+     
+     <link rel="stylesheet/less" href="js/libs/bootstrap/less/bootstrap.less">
+     <link rel="stylesheet/less" href="js/libs/bootstrap/less/responsive.less">
+     <script src="js/libs/less/less-1.2.2.min.js"></script>    
+            
+	<style type="text/css">
+	</style>        
 </head>
+
 <body style="padding-top: 60px;">
+
 <input id="hiddentext" type="text" style="border:none; color:white;width:1px;height:1px; position:fixed; top:0px; right: 0px;"/>
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
@@ -42,16 +39,13 @@
         <li class="divider-vertical"></li>
       </ul>  
       <ul class="nav pull-right">
-
         <li class="divider-vertical"></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-top: 3px;padding-bottom: 0px;">
           <img src="../../utility/ShowImageLogo?logo=yourcompanymenu" alt="Your company"/>
           </a>
           <div id="status" class="dropdown-menu" style="width:400px;padding:5px;">
-          wefwefwef<br/>afasfs
-          </div>             
-         
+          </div>                      
         </li>
         <li class="divider-vertical"></li>
         <li><img src="../../utility/GetOpenbravoLogo.png" alt="Openbravo" style="padding-top: 3px;padding-bottom: 0px;"/></li>          
@@ -60,102 +54,15 @@
   </div>
 </div>
 
-<div class="container">
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-<!-- Order section -->
-<section>
-
-<div class="row">
-<div class="navbar"> <!--  style="margin-bottom: 0px; -->
-  <div class="navbar-inner">
-    <div class="container">
-      <ul class="nav">
-        <li class="divider-vertical"></li>
-        <li>
-        <a id="btnnew" href="#" style="text-shadow:none;"><i class="icon-asterisk"></i> New</a>
-        </li>    
-        <li class="divider-vertical"></li>
-        <li>
-        <a id="btnprint" href="#" style="text-shadow:none;"><i class="icon-print"></i> Print</a>
-        </li>          
-        
- 
-        <li class="divider-vertical"></li>
-      </ul> 
-      
-      
-    <ul class="nav nav-pills">
-      <li><a href="#payment" data-toggle="tab" id="paylink" style="text-shadow:none;">Pay</a></li>
-      <li><a href="#catalog" data-toggle="tab" id="cataloglink" style="text-shadow:none;">Browse</a></li>    
-      <li><a href="#search" data-toggle="tab" id="searchlink" style="text-shadow:none;">Search</a></li>    
-      <li><a href="#scan" data-toggle="tab" id="scanlink" style="text-shadow:none;">Scan</a></li>    
-      <li><a href="#edition" data-toggle="tab" id="editionlink" style="text-shadow:none;">Edit</a></li>
-
-      <li class="divider-vertical"></li>
-    </ul>   
-      
-      
-    </div>
-  </div>
-</div>
-</div>
-
-
-
-
-<div class="row">
-  <div class="span4">  
-    <div id="ordercontainer">  
-      <!-- Here goes the order editor -->   
-    </div>   
-  </div>
-  
-  <div class="span8">
-    <div class="tab-content">
-      <div class="tab-pane active row" id="catalog">
-        <!-- Here goes the catalog selector --> 
-      </div>
-       <div class="tab-pane" id="edition">
-         <!-- Here goes the line editor --> 
-       </div>      
-      <div class="tab-pane" id="payment">
-         <!-- Here goes the payment editor -->    
-      </div>
-    </div>    
-    
-    
-     
-  </div>
-</div>
-
-</section>
-
-
-
-
+<div id="container" class="container">
+<!-- Here it goes the POS window... -->
 </div>
 
 <script type="text/javascript" src="../org.openbravo.client.application.mobile/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="js/libs/underscore-1.3.1.min.js"></script>
-<script type="text/javascript" src="js/libs/backbone-0.9.1.min.js"></script>
+<script type="text/javascript" src="js/libs/underscore-1.3.1.js"></script>
+<script type="text/javascript" src="js/libs/backbone-0.9.1.js"></script>
 <script type="text/javascript" src="js/libs/bootstrap/js/bootstrap-tab.js"></script>
 <script type="text/javascript" src="js/libs/bootstrap/js/bootstrap-dropdown.js"></script>
-
-<!-- 
-<script type="text/javascript" src="js/libs/bootstrap.js"></script>
-<script type="text/javascript" src="js/libs/bootstrap-tab.js"></script>
-<script type="text/javascript" src="js/libs/bootstrap-dropdown.js"></script>
- -->
 
 <script type="text/javascript" data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 

@@ -5,7 +5,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.Catalog = function (container) {
+  OB.COMP.Catalog = function (context) {
 
     
     this.categoriesview = new OB.COMP.TableView({
@@ -42,56 +42,51 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.titleProd = $(OB.UTIL.DOM(OB.UTIL.NODE('h3', {id: 'category'}, [' '])));
     this.tbodyProd = $(OB.UTIL.DOM(OB.UTIL.NODE('tbody', {}, [])));
     
-    container.append($(OB.UTIL.DOM(
-        OB.UTIL.NODE('div', {'class': 'span8'}, [
-          OB.UTIL.NODE('div', {'class': 'row'}, [
-            OB.UTIL.NODE('div', {'class': 'span4'}, [
-               
-                                             
-              OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-                OB.UTIL.NODE('tbody', {}, [
-                  OB.UTIL.NODE('tr', {}, [
-                    OB.UTIL.NODE('td', {}, [
-                      OB.UTIL.NODE('h3', {}, ['Categories'])            
-                    ])          
-                  ])
-                ])      
-              ]),
-              OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [                
-                this.categoriesview.div  
+    this.$ = $(OB.UTIL.DOM(
+      OB.UTIL.NODE('div', {'class': 'row-fluid'}, [
+        OB.UTIL.NODE('div', {'class': 'span6'}, [
+          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
+            OB.UTIL.NODE('tbody', {}, [
+              OB.UTIL.NODE('tr', {}, [
+                OB.UTIL.NODE('td', {}, [ this.titleProd ])          
               ])
-            ]),
-            OB.UTIL.NODE('div', {'class': 'span4'}, [
-              OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-                OB.UTIL.NODE('tbody', {}, [
-                  OB.UTIL.NODE('tr', {}, [
-                    OB.UTIL.NODE('td', {}, [ this.titleProd ])          
-                  ])
-                ])      
-              ]),
-              OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [
-                this.productsview.div      
-              ])
-            ])        
+            ])      
+          ]),
+          OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [
+            this.productsview.div      
           ])
-        ])        
-    )));     
-  };
-  
-  OB.COMP.Catalog.prototype.setModel = function (categories, products, receipt, stack) {
-    this.categories = categories;
+        ]),                                                     
+        OB.UTIL.NODE('div', {'class': 'span6'}, [
+          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
+            OB.UTIL.NODE('tbody', {}, [
+              OB.UTIL.NODE('tr', {}, [
+                OB.UTIL.NODE('td', {}, [
+                  OB.UTIL.NODE('h3', {}, ['Categories'])            
+                ])          
+              ])
+            ])      
+          ]),
+          OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [                
+            this.categoriesview.div  
+          ])
+        ])    
+      ])        
+    ));     
+    
+    // Set Model
+    this.categories = context.get('modelcategories');;
     this.categoriesview.setModel(this.categories);    
     
-    this.products = products;
+    this.products = context.get('modelproducts');
     this.productsview.setModel(this.products);
     
-    this.receipt = receipt;
-    this.stack = stack;   
+    this.receipt = context.get('modelorder');
+    this.stack = context.get('stackorder');   
     
     this.categoriesview.stack.on('change:selected', function () {
       var selected = this.categoriesview.stack.get('selected')
       if (selected >= 0) {
-        this.products.load({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
+        this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
         this.titleProd.text(this.categories.at(selected).get('category')._identifier);
       }
     }, this);
@@ -106,6 +101,12 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       }
     }, this);    
     
+    // Exec
+    this.categories.exec();
   };
   
+  OB.COMP.Catalog.prototype.attr = function (attr, value) {
+  };
+  OB.COMP.Catalog.prototype.append = function append(child) {
+  };   
 });

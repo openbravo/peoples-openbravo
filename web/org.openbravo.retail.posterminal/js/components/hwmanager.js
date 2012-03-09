@@ -3,13 +3,10 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.HWManager = function (hw) {
-    this.hw = hw;
-  };
-  
-  OB.COMP.HWManager.prototype.setModel = function (receipt, stack) {
-    this.receipt = receipt;
-    this.stack = stack;
+  OB.COMP.HWManager = function (context) {
+    this.hw = context.get('hwserver');
+    this.receipt = context.get('modelorder');
+    this.stack = context.get('stackorder');
     this.line = null;
     
     this.stack.on('change:selected', function() {
@@ -22,7 +19,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
       }
     }, this);
     
-    this.receipt.on('closed', this.printOrder, this);        
+    this.receipt.on('closed print', this.printOrder, this);        
   };
   
   OB.COMP.HWManager.prototype.editLine = function (line) {
@@ -41,13 +38,17 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   
   OB.COMP.HWManager.prototype.printLine = function () {
     if (this.line) {
-      this.hw.print('res/printline.xml', {line: this.line});
+      this.hw.print(this.templateline, {line: this.line});
     }   
   };
   
   OB.COMP.HWManager.prototype.printOrder = function () {
     
-    this.hw.print('res/printreceipt.xml', { order: this.receipt});    
+    this.hw.print(this.templatereceipt, { order: this.receipt});    
   }
   
+  OB.COMP.HWManager.prototype.attrs = function (attrs) {    
+    this.templateline = attrs.templateline;
+    this.templatereceipt = attrs.templatereceipt;
+  };
 });

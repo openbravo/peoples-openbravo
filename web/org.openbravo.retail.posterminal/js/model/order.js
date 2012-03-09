@@ -1,9 +1,12 @@
 
 
-define(['utilities'], function () {
+define(['utilities', 'model/stack'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
+  
+  
+  OB.MODEL.StackOrder = OB.UTIL.recontext(OB.MODEL.Stack, 'stackorder');
 
   // Sales.OrderLine Model
   OB.MODEL.OrderLine = Backbone.Model.extend({
@@ -62,7 +65,7 @@ define(['utilities'], function () {
   });
 
   // Sales.Order Model.
-  OB.MODEL.Order = Backbone.Model.extend({
+  OB.MODEL._Order = Backbone.Model.extend({
     initialize : function () {
       this.set('lines', new OB.MODEL.OrderLineCol());
     },
@@ -103,6 +106,7 @@ define(['utilities'], function () {
         }));
       }
     }    
-  });
-  
+  }); 
+
+  OB.MODEL.Order =  OB.UTIL.recontext(OB.MODEL._Order, 'modelorder');
 });

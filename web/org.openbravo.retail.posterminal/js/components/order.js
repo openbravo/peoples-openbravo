@@ -4,10 +4,11 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   OB.COMP = window.OB.COMP || {};
 
   // Order list
-  OB.COMP.OrderView = function (container) {
+  OB.COMP.OrderView = function (context) {
   
     var me = this;
     this.orderview = new OB.COMP.TableView({
+    stack: context.get('stackorder'),
     style: 'edit',
     renderHeader: function () {
       return [
@@ -31,7 +32,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.totalgross = $(OB.UTIL.DOM(OB.UTIL.NODE('h3', {}, [])));
     this.totalnet = $(OB.UTIL.DOM(OB.UTIL.NODE('strong', {}, [])));                                                                  
     
-    container.append($(OB.UTIL.DOM(
+    this.$ = $(OB.UTIL.DOM(
       OB.UTIL.NODE('div', {}, [
         OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
           OB.UTIL.NODE('tbody', {}, [
@@ -63,11 +64,10 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
           ])     
         ])
       ])
-    )));    
-  }
-
-  OB.COMP.OrderView.prototype.setModel = function (receipt) {
-    this.receipt = receipt;
+    )); 
+    
+    // Set Model
+    this.receipt =  context.get('modelorder');
     var lines = this.receipt.get('lines');
     
     this.orderview.setModel(lines); 
@@ -77,5 +77,10 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       this.totalgross.text(this.receipt.printNet());      
     }, this);
   }
-
+  
+  OB.COMP.OrderView.prototype.attr = function (attr, value) {
+  };
+  OB.COMP.OrderView.prototype.append = function append(child) {
+  }; 
+  
 });    

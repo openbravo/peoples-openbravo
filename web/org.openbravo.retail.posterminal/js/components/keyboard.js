@@ -7,7 +7,6 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   OB.COMP.Keyboard = function () {
     
     me = this;
-    _.extend(this, Backbone.Events);
     
     var createbtn = function (command, label) {
       return  $(OB.UTIL.DOM(
@@ -126,6 +125,8 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
         ])        
     ));           
   };
+  
+  _.extend(OB.COMP.Keyboard.prototype, Backbone.Events);
   
   OB.COMP.Keyboard.prototype.attr = function (attr, value) {
   };

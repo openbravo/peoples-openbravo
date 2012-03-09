@@ -6,7 +6,14 @@ define(['datasource', 'utilities'], function () {
   OB.MODEL = window.OB.MODEL || {};
 
   OB.MODEL.Collection = Backbone.Collection.extend({
-    load : function (filter) {
+    inithandler : function (init) { 
+       if (init) {
+         init.call(this);
+       }
+       // load datasource
+       this.ds.load(this.loadparams);
+    },
+    exec : function (filter) {
       var me = this;
       this.ds.exec(filter, function (data) {   
         me.reset();
@@ -21,9 +28,11 @@ define(['datasource', 'utilities'], function () {
     }  
   });
   
+  // Category Model
+  
   OB.MODEL.Category = Backbone.Model.extend({});
   
-  OB.MODEL.CategoryCol = OB.MODEL.Collection.extend({
+  OB.MODEL._CategoryCol = OB.MODEL.Collection.extend({
     model: OB.MODEL.Category,
     initialize: function () {
       this.ds = new OB.DS.DataSource(new OB.DS.Query(
@@ -35,10 +44,13 @@ define(['datasource', 'utilities'], function () {
     
   });
   
+  OB.MODEL.CategoryCol = OB.UTIL.recontext(OB.MODEL._CategoryCol, 'modelcategories');
+  
+  // Product model
   
   OB.MODEL.Product = Backbone.Model.extend({});
   
-  OB.MODEL.ProductCol = OB.MODEL.Collection.extend({
+  OB.MODEL._ProductCol = OB.MODEL.Collection.extend({
     model: OB.MODEL.Product,
     initialize: function () {
       this.ds = new OB.DS.DataSource( new OB.DS.Query(
@@ -48,6 +60,10 @@ define(['datasource', 'utilities'], function () {
               'order by p.obposLine, p.name'));
     }  
   });
+  
+  OB.MODEL.ProductCol = OB.UTIL.recontext(OB.MODEL._ProductCol, 'modelproducts');
+
+  // Terminal model.
   
   OB.MODEL.Terminal = Backbone.Model.extend({
     
