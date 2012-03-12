@@ -437,7 +437,8 @@ isc.OBSelectorItem.addProperties({
 
   setValueFromRecord: function (record, fromPopup) {
     var currentValue = this.getValue(),
-        identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
+        identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER,
+        i;
     if (!record) {
       this.storeValue(null);
       this.form.setValue(this.name + '.' + this.displayField, null);
@@ -457,6 +458,17 @@ isc.OBSelectorItem.addProperties({
       if (!this.valueMap) {
         this.valueMap = {};
       }
+
+      //  In case current display text is already in the map, remove it as it could have a different value
+      for (i in this.valueMap) {
+        if (this.valueMap.hasOwnProperty(i)) {
+          if (this.valueMap[i] === record[this.displayField]) {
+            delete this.valueMap[i];
+            break;
+          }
+        }
+      }
+
       this.valueMap[record[this.valueField]] = record[this.displayField];
       this.updateValueMap();
     }
