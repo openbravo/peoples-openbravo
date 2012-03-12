@@ -1123,9 +1123,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRTL(boolean isRTL) {
-    // Forced to false until RTL project be completed
-    // this.isRTL = isRTL;
-    this.isRTL = false;
+    this.isRTL = isRTL;
   }
 
   private boolean isTranslationInstalled() {
