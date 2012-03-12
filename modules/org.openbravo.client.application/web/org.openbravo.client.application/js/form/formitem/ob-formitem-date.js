@@ -201,13 +201,13 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   // update the value in update value as this is called from cellEditEnd in the
   // grid, or after losing the focus on the form
   updateValue: function() {
-    if (this.grid && this.grid._preventDateParsing) {
-      return;
+    if (!this.grid || !this.grid._preventDateParsing) {
+      this.expandValue();
     }
-    this.expandValue();
     this.Super('updateValue', arguments);
   },
   
+
   blurValue: function() {
     return this.dateTextField.getElementValue();
   },
