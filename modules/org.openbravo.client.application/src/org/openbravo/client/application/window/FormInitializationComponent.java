@@ -257,6 +257,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+      analyzeResponse(columnValues);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -275,6 +276,35 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private void analyzeResponse(Map<String, JSONObject> columnValues) {
+    int maxEntries = 1000;
+    int i = 0;
+    String heavyCols = "";
+    for (String col : columnValues.keySet()) {
+      if (columnValues.get(col).has("entries")) {
+        try {
+          JSONArray array = columnValues.get(col).getJSONArray("entries");
+          if (array.length() > maxEntries) {
+            if (i > 0) {
+              heavyCols += ",";
+            }
+            heavyCols += col;
+            i++;
+          }
+        } catch (JSONException e) {
+          log.error("There was an error while analyzing the response for field: " + col);
+        }
+      }
+    }
+    if (!"".equals(heavyCols)) {
+      log.warn("Warning: the combo fields "
+          + heavyCols
+          + " contain more than "
+          + maxEntries
+          + " entries, and this could cause bad performance in the application. Possible fixes include changing these columns from a combo into a Selector, or adding a validation to reduce the number of entries in the combo.");
+    }
   }
 
   private int computeNoteCount(Tab tab, String rowId) {
