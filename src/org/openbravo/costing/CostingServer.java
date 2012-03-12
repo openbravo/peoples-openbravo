@@ -86,6 +86,7 @@ public class CostingServer {
       log4j.debug("Transaction cost: " + trxCost.toString());
       // Save calculated cost on M_Transaction.
       transaction.setTransactionCost(trxCost);
+      transaction.setCostCalculated(true);
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
