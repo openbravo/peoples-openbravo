@@ -69,6 +69,7 @@ public class CostingRuleProcess implements Process {
             checkPreviousTrx(product);
             createPhysicalInventories(product);
           } else {
+            // if no previous rule is found check if cost was calculated using legacy engine.
             if (product.getCostType() != null) {
               setOldEngineTrxCost(product);
             }
