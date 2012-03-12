@@ -350,6 +350,7 @@ with (theWindow) {
 			edgeOffsetTop:2,
 			edgeOffsetRight:5,
 			edgeOffsetBottom:5,
+			minimizeHeight:29,
             showHeaderBackground:false, // part of edges
             showHeaderIcon:true,
 
@@ -664,7 +665,9 @@ with (theWindow) {
 			headerMenuButtonConstructor:"HeaderImgButton",
             headerMenuButtonWidth:17,
             headerMenuButtonSrc:"[SKIN]/ListGrid/header_menu.png",
-            headerMenuButtonIcon:null,
+            headerMenuButtonIcon:"[SKINIMG]/ListGrid/sort_descending.png",
+            headerMenuButtonIconWidth: 9,
+            headerMenuButtonIconHeight: 6,
 
             groupLeadingIndent : 1,
             groupIconPadding : 3,            
@@ -970,7 +973,6 @@ with (theWindow) {
 // -------------------------------------------
     if(isc.ToolStrip) {
         isc.ToolStrip.addProperties({
-            width: 450,
             height:30,
             defaultLayoutAlign:"center",
 			verticalStyleName:"toolStripVertical"
