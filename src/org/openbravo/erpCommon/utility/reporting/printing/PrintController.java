@@ -744,7 +744,7 @@ public class PrintController extends HttpSecureAppServlet {
       final Vector<Object> vector = (Vector<Object>) object;
       for (int i = 0; i < vector.size(); i++) {
         final AttachContent objContent = (AttachContent) vector.get(i);
-        final File file = prepareFile(objContent);
+        final File file = prepareFile(objContent, ourReference);
         attachments.add(file);
       }
     }
@@ -846,9 +846,10 @@ public class PrintController extends HttpSecureAppServlet {
     if (vars.getMultiFile("inpFile") != null && !vars.getMultiFile("inpFile").getName().equals("")) {
       final AttachContent content = new AttachContent();
       final FileItem file1 = vars.getMultiFile("inpFile");
-      content.setFileName(file1.getName());
+      content.setFileName(pocData[0].ourreference.replace('/', '_') + '-'
+          + Utility.formatDate(new Date(), "yyyyMMdd-HHmmss") + '.' + file1.getName());
       content.setFileItem(file1);
-      content.setId(file1.getName());
+      content.setId(Utility.formatDate(new Date(), "yyyyMMdd-HHmmss") + '.' + file1.getName());
       content.visible = "hidden";
       if (vars.getStringParameter("inpArchive") == "Y") {
         content.setSelected("true");
@@ -1300,10 +1301,11 @@ public class PrintController extends HttpSecureAppServlet {
    * @return
    * @throws ServletException
    */
-  private File prepareFile(AttachContent content) throws ServletException {
+  private File prepareFile(AttachContent content, String documentId) throws ServletException {
     try {
       final String attachPath = new OBPropertiesProvider().getOpenbravoProperties().getProperty(
-          "attach.path");
+          "attach.path")
+          + "/tmp";
       final File f = new File(attachPath, content.getFileName());
       final InputStream inputStream = content.getFileItem().getInputStream();
       final OutputStream out = new FileOutputStream(f);
