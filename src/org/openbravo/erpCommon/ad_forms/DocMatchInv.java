@@ -216,13 +216,13 @@ public class DocMatchInv extends AcctServer {
 
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
-
-    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
     // Calculate Difference amount in schema currency
     bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
         as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
+
+    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+        as.m_C_Currency_ID, bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        conn);
     bdExpenses = new BigDecimal(getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency,
         as.m_C_Currency_ID, strDate, "", vars.getClient(), vars.getOrg(), conn));
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
