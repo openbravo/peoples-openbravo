@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -332,7 +332,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         previousCredit = previousCredit.add(new BigDecimal(dataTotal[i].amtacctcr));
       }
       String strOld = "";
-      int j = 0;
       ReportGeneralLedgerData[] subreportElement = new ReportGeneralLedgerData[1];
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strOld.equals(data[i].groupbyid + data[i].id)) {
@@ -364,9 +363,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           }
           data[i].totalacctdr = subreportElement[0].totalacctdr;
           data[i].totalacctcr = subreportElement[0].totalacctcr;
-          data[i].totalacctsub = subreportElement[0].total;
-          j++;
         }
+        data[i].totalacctsub = subreportElement[0].total;
+
         data[i].previousdebit = subreportElement[0].totalacctdr;
         data[i].previouscredit = subreportElement[0].totalacctcr;
         data[i].previoustotal = subreportElement[0].total;
