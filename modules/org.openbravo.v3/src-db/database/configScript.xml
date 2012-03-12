@@ -21,6 +21,10 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
+    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800281">
+      <oldValue><![CDATA[Y]]></oldValue>
+      <newValue><![CDATA[N]]></newValue>
+    </columnDataChange>
     <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="17FDE34256AC11DE8CD0DFCC30CA23CC">
       <oldValue><![CDATA[""]]></oldValue>
       <newValue><![CDATA[" "]]></newValue>
