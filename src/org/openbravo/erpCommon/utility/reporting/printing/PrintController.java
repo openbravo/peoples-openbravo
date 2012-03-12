@@ -46,6 +46,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -842,7 +843,6 @@ public class PrintController extends HttpSecureAppServlet {
       isTheFirstEntry = new Boolean(true);
     }
 
-    final AttachContent file = new AttachContent();
     if (vars.getMultiFile("inpFile") != null && !vars.getMultiFile("inpFile").getName().equals("")) {
       final AttachContent content = new AttachContent();
       final FileItem file1 = vars.getMultiFile("inpFile");
@@ -900,6 +900,7 @@ public class PrintController extends HttpSecureAppServlet {
     try {
       OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
           EmailServerConfiguration.class);
+      mailConfigCriteria.addOrderBy("client.id", false);
       final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
 
       if (mailConfigList.size() == 0) {
@@ -1301,7 +1302,9 @@ public class PrintController extends HttpSecureAppServlet {
    */
   private File prepareFile(AttachContent content) throws ServletException {
     try {
-      final File f = new File(content.getFileName());
+      final String attachPath = new OBPropertiesProvider().getOpenbravoProperties().getProperty(
+          "attach.path");
+      final File f = new File(attachPath, content.getFileName());
       final InputStream inputStream = content.getFileItem().getInputStream();
       final OutputStream out = new FileOutputStream(f);
       final byte buf[] = new byte[1024];
