@@ -126,8 +126,7 @@ public class CostingServer {
   }
 
   private CostingRule getCostDimensionRule() {
-    List<CostingRuleProduct> crps = transaction.getProduct()
-        .getCostingRuleProductApplyProductList();
+    List<CostingRuleProduct> crps = transaction.getProduct().getCostingRuleProductList();
     if (crps.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
           + transaction.getProduct().getName() + ", @Date@: "
@@ -137,17 +136,18 @@ public class CostingServer {
     boolean noProdCat = true;
     for (CostingRuleProduct crp : crps) {
       // Date range check if not correct continue with next CostingRuleProduct
-      if (crp.getStartingDate().after(transaction.getTransactionProcessDate())
-          || (crp.getEndingDate() != null && !transaction.getTransactionProcessDate().before(
-              crp.getEndingDate()))) {
+      CostingRule cr = crp.getCostingRule();
+      if (cr.getStartingDate().after(transaction.getTransactionProcessDate())
+          || (cr.getEndingDate() != null && !transaction.getTransactionProcessDate().before(
+              cr.getEndingDate()))) {
         continue;
       }
-      if (crp.getProduct() != null) {
-        return crp.getCostingRule();
+      if (cr.getProduct() != null) {
+        return cr;
       }
       if (noProdCat) {
-        returncr = crp.getCostingRule();
-        if (crp.getProductCategory() != null) {
+        returncr = cr;
+        if (cr.getProductCategory() != null) {
           noProdCat = false;
         }
       }
