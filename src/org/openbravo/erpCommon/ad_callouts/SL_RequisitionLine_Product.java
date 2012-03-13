@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -87,6 +88,15 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
 
     resultado.append("var calloutName='SL_Requisition_Product';\n\n");
     resultado.append("var respuesta = new Array(\n");
+
+    OBContext.setAdminMode(true);
+    try {
+      PriceList pList = OBDal.getInstance().get(PriceList.class, strPriceListId);
+      resultado.append("new Array(\"inpcCurrencyId\", \"" + pList.getCurrency().getId() + "\"),\n");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     if (!strMProductID.equals("")) {
       String strDueDate = vars.getStringParameter("inpneedbydate", DateTimeData.today(this));
       if (strPriceListId.equals(""))
