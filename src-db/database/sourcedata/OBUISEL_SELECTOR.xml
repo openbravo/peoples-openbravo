@@ -41,7 +41,7 @@ FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc
                         left join loc.region region
                         left join bp.aDUserList usercontact with usercontact.partnerAddress.id is null
 where @additional_filters@
-  and bp.summaryLevel = false]]></HQL>
+  and bp.summaryLevel = false and bp.active=true]]></HQL>
 <!--4028E61131FB4B1B0131FB5307F1000C-->  <ENTITY_ALIAS><![CDATA[bp]]></ENTITY_ALIAS>
 <!--4028E61131FB4B1B0131FB5307F1000C-->  <CUSTOM_QUERY><![CDATA[Y]]></CUSTOM_QUERY>
 <!--4028E61131FB4B1B0131FB5307F1000C--></OBUISEL_SELECTOR>
@@ -88,7 +88,7 @@ FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc with bplo
                         left join loc.region region
                         left join bp.aDUserList usercontact with usercontact.partnerAddress.id is null and usercontact.active=true
 where @additional_filters@
-  and bp.summaryLevel = false]]></HQL>
+  and bp.summaryLevel = false and bp.active=true]]></HQL>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <ENTITY_ALIAS><![CDATA[bp]]></ENTITY_ALIAS>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <CUSTOM_QUERY><![CDATA[Y]]></CUSTOM_QUERY>
 <!--862F54CB1B074513BD791C6789F4AA42--></OBUISEL_SELECTOR>
