@@ -2025,8 +2025,8 @@ isc.OBStandardView.addProperties({
         fld.hoverHTML = hoverFunction;
       }
 
-      if (fld.gridProps.length) {
-        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.length);
+      if (fld.gridProps.displaylength) {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.displaylength);
       }
 
       // move the showif defined on form level
@@ -2102,8 +2102,8 @@ isc.OBStandardView.addProperties({
 
     // sort according to length, for the autoexpandfieldnames
     result.sort(function (v1, v2) {
-      var t1 = v1.length,
-          t2 = v2.length;
+      var t1 = v1.displaylength,
+          t2 = v2.displaylength;
       if (!t1 && !t2) {
         return 0;
       }
@@ -2128,7 +2128,6 @@ isc.OBStandardView.addProperties({
         this.autoExpandFieldNames.push(result[i].name);
       }
     }
-
     // sort according to the sortnum
     // that's how they are displayed
     result.sort(function (v1, v2) {

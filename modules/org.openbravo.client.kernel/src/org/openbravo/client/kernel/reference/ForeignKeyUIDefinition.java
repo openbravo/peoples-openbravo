@@ -48,9 +48,11 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   public String getGridFieldProperties(Field field) {
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
 
-    Long length = field.getDisplayedLength();
-    if (length == null || length == 0) {
-      length = field.getColumn().getLength();
+    Long length = field.getColumn().getLength();
+
+    Long displaylength = field.getDisplayedLength();
+    if (displaylength == null || displaylength == 0) {
+      displaylength = length;
     }
     String lengthProperty = length != null ? ", length:" + length : "";
 
@@ -59,8 +61,8 @@ public class ForeignKeyUIDefinition extends UIDefinition {
     if (getDisplayFieldName(field, prop) != null) {
       displayField = ", displayField: '" + getDisplayFieldName(field, prop) + "'";
     }
-    return displayField + lengthProperty + ",fkField: true" + super.getGridFieldProperties(field)
-        + getShowHoverGridFieldSettings(field);
+    return displayField + lengthProperty + ", displaylength:" + displaylength + ",fkField: true"
+        + super.getGridFieldProperties(field) + getShowHoverGridFieldSettings(field);
   }
 
   /**
