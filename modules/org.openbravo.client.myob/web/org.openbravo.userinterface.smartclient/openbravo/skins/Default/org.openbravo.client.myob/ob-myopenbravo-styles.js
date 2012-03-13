@@ -60,7 +60,11 @@ OB.Styles.OBMyOpenbravo = {
     styleName: 'OBMyOBLeftColumn'
   },
   portalLayout: {
-    styleName: 'OBMyOBPortal'
+    styleName: 'OBMyOBPortal',
+    membersMargin: 22,
+    columnProperties: {
+      membersMargin: 18
+    }
   }
 };
 

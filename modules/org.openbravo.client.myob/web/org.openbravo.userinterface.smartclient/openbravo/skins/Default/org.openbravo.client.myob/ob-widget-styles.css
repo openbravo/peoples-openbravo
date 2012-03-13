@@ -184,7 +184,10 @@
 /* Portal part*/
 
 .OBMyOBPortal {
-  padding-top: 12px;
+  padding-top: 15px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 10px;
 }
 
 /* Left Column*/
