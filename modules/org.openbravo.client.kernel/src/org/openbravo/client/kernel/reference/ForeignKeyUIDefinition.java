@@ -48,12 +48,11 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   public String getGridFieldProperties(Field field) {
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
 
-    Long length = field.getColumn().getLength();
-
     Long displaylength = field.getDisplayedLength();
     if (displaylength == null || displaylength == 0) {
-      displaylength = length;
+      displaylength = field.getColumn().getLength();
     }
+    Long length = displaylength;
     String lengthProperty = length != null ? ", length:" + length : "";
 
     // only output when really needed
