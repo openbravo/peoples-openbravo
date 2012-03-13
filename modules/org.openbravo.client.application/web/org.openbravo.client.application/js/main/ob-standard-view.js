@@ -2027,6 +2027,8 @@ isc.OBStandardView.addProperties({
 
       if (fld.gridProps.displaylength) {
         fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.displaylength);
+      } else {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(30);
       }
 
       // move the showif defined on form level
@@ -2037,10 +2039,6 @@ isc.OBStandardView.addProperties({
       }
 
       isc.addProperties(fld, fld.gridProps);
-
-      if (!fld.width) {
-        fld.width = isc.OBGrid.getDefaultColumnWidth(30);
-      }
 
       // correct some stuff coming from the form fields
       if (fld.displayed === false) {
