@@ -3641,7 +3641,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--305-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--305-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--305-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--305-->  <NAME><![CDATA[Process Access]]></NAME>
+<!--305-->  <NAME><![CDATA[Report and Process Access]]></NAME>
 <!--305-->  <DESCRIPTION><![CDATA[Edit the selected role's access to the specified application processes.]]></DESCRIPTION>
 <!--305-->  <HELP><![CDATA[This tab lists and/or allows to add the processes to which a role will have access to.]]></HELP>
 <!--305-->  <AD_TABLE_ID><![CDATA[197]]></AD_TABLE_ID>
