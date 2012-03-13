@@ -502,7 +502,7 @@ isc.OBGrid.addProperties({
       this.filterImage.hide();
     }
 
-    if (this.filterClause && !this.view.isShowingForm && !this.view.messageBar.isVisible()) {
+    if (this.filterClause && !this.view.isShowingForm && (this.view.messageBar && !this.view.messageBar.isVisible())) {
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {
