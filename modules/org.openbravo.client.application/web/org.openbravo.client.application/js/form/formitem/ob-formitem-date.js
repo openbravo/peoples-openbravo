@@ -201,10 +201,18 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   // update the value in update value as this is called from cellEditEnd in the
   // grid, or after losing the focus on the form
   updateValue: function() {
-    if (!this.grid || !this.grid._preventDateParsing) {
-      this.expandValue();
+    if (this.grid && this.grid._preventDateParsing) {
+      return;
     }
+    this.expandValue();
     this.Super('updateValue', arguments);
+    //  when the date field has a callout and all the mandatory fields have been entered, 
+    //  the grid does not save the value before making the FIC call, so the value has to 
+    //  be saved explicitly
+    //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
+    if (this.grid) {
+      this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();	
+    }
   },
   
 
