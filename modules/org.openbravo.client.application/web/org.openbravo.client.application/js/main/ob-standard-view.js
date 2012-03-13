@@ -2098,10 +2098,14 @@ isc.OBStandardView.addProperties({
       result.push(fld);
     }
 
-    // sort according to length, for the autoexpandfieldnames
+    // sort according to displaylength, for the autoexpandfieldnames
     result.sort(function (v1, v2) {
       var t1 = v1.displaylength,
-          t2 = v2.displaylength;
+          t2 = v2.displaylength,
+          l1 = v1.length,
+          l2 = v2.length,
+          n1 = v1.name,
+          n2 = v2.name;
       if (!t1 && !t2) {
         return 0;
       }
@@ -2114,7 +2118,25 @@ isc.OBStandardView.addProperties({
       if (t1 > t2) {
         return -1;
       } else if (t1 === t2) {
-        return 0;
+        if (!l1 && !l2) {
+          return 0;
+        }
+        if (!l1) {
+          return 1;
+        }
+        if (!l2) {
+          return -1;
+        }
+        if (l1 > l2) {
+          return -1;
+        } else if (l1 === l2) {
+          if (v1.name > v2.name) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+        return 1;
       }
       return 1;
     });
