@@ -165,7 +165,7 @@ public class FIN_AddPayment {
             .get(paymentScheduleDetail.getId());
         // If detail to be added is zero amount, skip it
         if (paymentDetailAmount.signum() == 0
-            && paymentScheduleDetail.getWriteoffAmount().signum() == 0 && paymentScheduleDetail.getWriteoffAmount().signum()==0) {
+            && paymentScheduleDetail.getWriteoffAmount().signum() == 0) {
           continue;
         }
         BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
