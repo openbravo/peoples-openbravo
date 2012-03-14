@@ -52,15 +52,13 @@ public class ForeignKeyUIDefinition extends UIDefinition {
     if (displaylength == null || displaylength == 0) {
       displaylength = field.getColumn().getLength();
     }
-    Long length = displaylength;
-    String lengthProperty = length != null ? ", length:" + length : "";
 
     // only output when really needed
     String displayField = "";
     if (getDisplayFieldName(field, prop) != null) {
       displayField = ", displayField: '" + getDisplayFieldName(field, prop) + "'";
     }
-    return displayField + lengthProperty + ", displaylength:" + displaylength + ",fkField: true"
+    return displayField + ", displaylength:" + displaylength + ",fkField: true"
         + super.getGridFieldProperties(field) + getShowHoverGridFieldSettings(field);
   }
 
