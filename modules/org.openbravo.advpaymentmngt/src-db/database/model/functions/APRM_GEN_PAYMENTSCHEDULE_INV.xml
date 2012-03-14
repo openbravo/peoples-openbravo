@@ -202,6 +202,7 @@ BEGIN
         AND c_orderline.c_order_id = fin_payment_schedule.c_order_id
         AND fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_order
         AND fin_payment_scheduledetail.fin_payment_schedule_invoice is null
+        AND fin_payment_scheduledetail.ISCANCELED <> 'Y'
         AND c_invoiceline.c_invoice_id = invoice_id
       ORDER BY CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 0 ELSE 1 END, c_orderline.c_order_id;
       order_schdet cur_order_schdet%ROWTYPE;
@@ -380,6 +381,7 @@ BEGIN
               WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                 AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
                 AND ps_inv.c_invoice_id = p_record_id
+                AND psd.ISCANCELED <> 'Y'
                 AND ps_ord.c_order_id = order_schdet.order_id;
 
               -- substract previously assigned amount
