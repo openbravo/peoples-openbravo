@@ -70,9 +70,9 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Requisition_BPartner';\n\n");
-    resultado.append("var respuesta = new Array(");
+    StringBuffer strResult = new StringBuffer();
+    strResult.append("var calloutName='SL_Requisition_BPartner';\n\n");
+    strResult.append("var respuesta = new Array(");
 
     if (strChanged.equals("inpcBpartnerId")) {
       if (strBPartner.equals("")) {
@@ -81,9 +81,9 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
         OBContext.setAdminMode(true);
         try {
           BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
-          resultado.append("new Array(\"inpmPricelistId\", \""
+          strResult.append("new Array(\"inpmPricelistId\", \""
               + bPartner.getPurchasePricelist().getId() + "\"),");
-          resultado.append("new Array(\"inpcCurrencyId\", \""
+          strResult.append("new Array(\"inpcCurrencyId\", \""
               + bPartner.getPurchasePricelist().getCurrency().getId() + "\")");
         } finally {
           OBContext.restorePreviousMode();
@@ -96,7 +96,7 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
         OBContext.setAdminMode(true);
         try {
           PriceList priceList = OBDal.getInstance().get(PriceList.class, strPriceList);
-          resultado.append("new Array(\"inpcCurrencyId\", \"" + priceList.getCurrency().getId()
+          strResult.append("new Array(\"inpcCurrencyId\", \"" + priceList.getCurrency().getId()
               + "\")");
         } finally {
           OBContext.restorePreviousMode();
@@ -104,8 +104,8 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
       }
     }
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
+    strResult.append(");");
+    xmlDocument.setParameter("array", strResult.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
