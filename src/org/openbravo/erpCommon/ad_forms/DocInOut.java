@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -201,8 +202,10 @@ public class DocInOut extends AcctServer {
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-          setStatus(STATUS_InvalidCost);
-          break;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         }
         // CoGS DR
         dr = fact.createLine(line, cogsAccount, costCurrencyId, strCosts, "", Fact_Acct_Group_ID,
@@ -239,8 +242,10 @@ public class DocInOut extends AcctServer {
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-          setStatus(STATUS_InvalidCost);
-          break;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         }
         Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
             as, conn);
@@ -366,8 +371,11 @@ public class DocInOut extends AcctServer {
       int validLines = 0;
       for (int i = 0; i < data.length; i++) {
         if (DocInOutData.existsCost(conn, strDateAcct, data[i].getField("mProductId")).equals("0")) {
-          setStatus(STATUS_InvalidCost);
-          return false;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, data[i].getField("mProductId"))
+                  .getIdentifier(), strDateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         } else if (!ProductInfoData.selectProductAverageCost(conn, data[i].getField("mProductId"),
             strDateAcct).equals("0")) {
           validLines++;

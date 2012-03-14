@@ -1894,9 +1894,17 @@ public abstract class AcctServer {
     else if (strStatus.equals(STATUS_DocumentLocked)) {
       strTitle = "@OtherPostingProcessActive@";
       messageResult.setType("Warning");
-    } else if (strStatus.equals(STATUS_InvalidCost))
+    } else if (strStatus.equals(STATUS_InvalidCost)) {
       strTitle = "@InvalidCost@";
-    else if (strStatus.equals(STATUS_DocumentDisabled)) {
+      if (parameters.isEmpty()) {
+        strTitle = "@InvalidCost@";
+      } else {
+        strTitle = "@InvalidCostWhichProduct@";
+        // Transalate account name from messages
+        parameters.put("Account",
+            Utility.parseTranslation(conn, vars, vars.getLanguage(), parameters.get("Account")));
+      }
+    } else if (strStatus.equals(STATUS_DocumentDisabled)) {
       strTitle = "@DocumentDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_BackgroundDisabled)) {
@@ -1941,6 +1949,13 @@ public abstract class AcctServer {
     parameters.put("Account", strAccount);
     parameters.put("Entity", strEntity);
     parameters.put("AccountingSchema", strAccountingSchema);
+    return parameters;
+  }
+
+  public Map<String, String> getInvalidCostParameters(String strProduct, String strDate) {
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("Product", strProduct);
+    parameters.put("Date", strDate);
     return parameters;
   }
 

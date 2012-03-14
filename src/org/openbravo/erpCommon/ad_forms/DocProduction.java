@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -32,6 +33,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.plm.Product;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -160,11 +162,13 @@ public class DocProduction extends AcctServer {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
-      if (dCosts.compareTo(BigDecimal.ZERO) == 0) {
-        setStatus(STATUS_InvalidCost);
-        continue;
-      } else
-        setStatus(STATUS_NotPosted);// Default status. LoadDocument
+      if (BigDecimal.ZERO.compareTo(dCosts) == 0
+          && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
+        Map<String, String> parameters = getInvalidCostParameters(
+            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {

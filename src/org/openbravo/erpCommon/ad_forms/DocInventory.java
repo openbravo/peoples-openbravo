@@ -19,6 +19,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -183,10 +184,10 @@ public class DocInventory extends AcctServer {
       }
       if (b_Costs.compareTo(BigDecimal.ZERO) == 0
           && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-        Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
-        log4j.error("No Cost Associated to product: " + product.getName());
-        setStatus(STATUS_InvalidCost);
-        break;
+        Map<String, String> parameters = getInvalidCostParameters(
+            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+        throw new IllegalStateException();
       }
       // Inventory DR CR
       dr = fact.createLine(line, assetAccount, costCurrencyId, costs, Fact_Acct_Group_ID,
