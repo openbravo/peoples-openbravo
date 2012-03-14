@@ -460,10 +460,12 @@ public class PrintController extends HttpSecureAppServlet {
       log4j.error(e.getMessage());
     } catch (JRException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       try {
+        os.flush();
         os.close();
-        response.flushBuffer();
       } catch (IOException e) {
         log4j.error(e.getMessage(), e);
       }
