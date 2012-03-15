@@ -67,6 +67,7 @@ static Logger log4j = Logger.getLogger(LinkCreditPaymentsData.class);
       "        AND P.GENERATED_CREDIT = 0 AND P.USED_CREDIT > 0" +
       "        AND P.ISRECEIPT = ?" +
       "        AND P.C_BPARTNER_ID = ?" +
+      "        AND P.STATUS <> 'RPAE'" +
       "        ORDER BY P.PAYMENTDATE, P.DOCUMENTNO";
 
     ResultSet result;
@@ -135,6 +136,7 @@ static Logger log4j = Logger.getLogger(LinkCreditPaymentsData.class);
       "        WHERE GENERATED_CREDIT > 0 AND USED_CREDIT > 0" +
       "        AND ISRECEIPT = ?" +
       "        AND C_BPARTNER_ID = ?" +
+      "        AND P.STATUS <> 'RPAE'" +
       "        ORDER BY PAYMENTDATE, DOCUMENTNO";
 
     ResultSet result;
