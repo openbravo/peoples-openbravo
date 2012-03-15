@@ -70,6 +70,9 @@ public class SequenceProductCreate implements Process {
       newProduct.setSearchKey(value);
       newProduct.setName(name);
 
+      // Delete the ProcessPlan for new product
+      newProduct.setProcessPlan(null);
+
       // Empty values copied and filled by m_product_trg
       newProduct.setProductAccountsList(null);
       newProduct.setProductTrlList(null);
