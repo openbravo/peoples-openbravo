@@ -225,6 +225,21 @@ isc.OBQuickLaunch.addProperties({
 
         command: this.command,
 
+        getValueFieldName: function () {
+          // To fix the issue: https://issues.openbravo.com/view.php?id=20043
+          var fieldName, ods = this.getOptionDataSource();
+          if (ods) {
+            // Use the DataSource's titleField
+            fieldName = ods.getTitleField();
+          }
+          if (!fieldName) {
+            // If not success finding the fieldName in the DataSource
+            // then use the SmartClient defined way to calculate it
+            fieldName = this.Super('getValueFieldName', arguments);
+          }
+          return fieldName;
+        },
+
         pickValue: function (theValue) {
           // HACK: set this temporary value to prevent a temporary 
           // display of the db id
