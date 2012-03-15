@@ -2382,7 +2382,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--225-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--225-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--225-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--225-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--225-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--225-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--225-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
