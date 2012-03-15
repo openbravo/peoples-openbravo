@@ -85,6 +85,8 @@ public class AlertProcess implements Process {
       }
     } catch (Exception e) {
       throw new JobExecutionException(e.getMessage(), e);
+    } finally {
+      OBDal.getInstance().commitAndClose();
     }
   }
 
