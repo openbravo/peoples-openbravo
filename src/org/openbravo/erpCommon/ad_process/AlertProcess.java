@@ -165,9 +165,7 @@ public class AlertProcess implements Process {
                 .getInstance().get(Client.class, adClientId)));
             final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
 
-            if (mailConfigList.size() == 0) {
-              log4j.error("No Poc configuration found for this client.");
-            } else {
+            if (mailConfigList.size() > 0) {
               // TODO: There should be a mechanism to select the desired Email server configuration
               // for alerts, until then, first search for the current organization (and use the
               // first returned one), then for organization '0' (and use the first returned one) and
