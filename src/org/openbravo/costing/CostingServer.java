@@ -32,7 +32,7 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
-import org.openbravo.model.materialmgmt.cost.CostingRuleProduct;
+import org.openbravo.model.materialmgmt.cost.CostingRuleProductV;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
@@ -126,7 +126,8 @@ public class CostingServer {
   }
 
   private CostingRule getCostDimensionRule() {
-    List<CostingRuleProduct> crps = transaction.getProduct().getCostingRuleProductList();
+    List<CostingRuleProductV> crps = transaction.getProduct()
+        .getCostingRuleProductVApplyProductList();
     if (crps.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
           + transaction.getProduct().getName() + ", @Date@: "
@@ -134,7 +135,7 @@ public class CostingServer {
     }
     CostingRule returncr = null;
     boolean noProdCat = true;
-    for (CostingRuleProduct crp : crps) {
+    for (CostingRuleProductV crp : crps) {
       // Date range check if not correct continue with next CostingRuleProduct
       CostingRule cr = crp.getCostingRule();
       if (cr.getStartingDate().after(transaction.getTransactionProcessDate())
