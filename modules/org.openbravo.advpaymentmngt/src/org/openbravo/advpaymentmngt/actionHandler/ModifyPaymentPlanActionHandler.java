@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.advpaymentmngt.process.FIN_PaymentMonitorProcess;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
@@ -128,7 +129,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
         OBDal.getInstance().rollbackAndClose();
         return addMessage(jsonRequest, "@APRM_AmountMismatch@", "error");
       }
-
+      // As a final step, Payment Monitor information for this invoice is updated.
+      FIN_PaymentMonitorProcess.updateInvoice(invoice);
       return addMessage(jsonRequest, "@Success@", "success");
     } catch (ConstraintViolationException e) {
       OBDal.getInstance().rollbackAndClose();
