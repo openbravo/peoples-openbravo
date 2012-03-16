@@ -46,6 +46,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    Cur_Org_Lines RECORD;
     -- Parameter Variables
     -- Other Variables
     v_DocStatus GL_Journal.DocStatus%TYPE;
@@ -207,6 +208,22 @@
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
       END IF;   
+
+      FOR Cur_Org_Lines IN
+        (SELECT gll.ad_org_id,
+             gll.ad_client_id
+        FROM gl_journalline gll
+        WHERE gll.gl_journal_id = v_Record_id
+        )
+      LOOP
+        SELECT AD_ISORGINCLUDED(Cur_Org_Lines.ad_org_id, v_AD_Org_ID, Cur_Org_Lines.ad_client_id)
+        INTO v_is_included
+        FROM DUAL;
+
+        IF (v_is_included=-1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ForcedOrgNotMatchDocument@');
+        END IF;
+      END LOOP;
 
       SELECT ad_org_id
       INTO v_BatchOrg_ID
