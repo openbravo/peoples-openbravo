@@ -227,13 +227,6 @@ isc.OBQuickLaunch.addProperties({
         command: this.command,
 
         pickValue: function (theValue) {
-          // HACK: set this temporary value to prevent a temporary 
-          // display of the db id
-          if (!this.getValueMap()) {
-            this.setValueMap({});
-          }
-          this.getValueMap()[theValue] = '';
-
           this.Super('pickValue', arguments);
 
           if (this.getSelectedRecord()) {
