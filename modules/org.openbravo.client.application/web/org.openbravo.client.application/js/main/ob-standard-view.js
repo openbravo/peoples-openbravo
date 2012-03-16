@@ -837,19 +837,31 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  refreshChildViewsWithEntity: function (entity) {
-    var i, length, tabViewPane;
-    if (entity && this.childTabSet) {
+  refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
+    var i, length, tabViewPane, excludeTab = false;
+    if (entity && excludedTabIds && this.childTabSet) {
+      //Check is the tab has to be refreshed
+      for (i = 0; i < excludedTabIds.length; i++) {
+        if (excludedTabIds[i].match(this.tabId)) {
+          excludeTab = true;
+          // removes the tabId from the list of excluded, so it does
+          // not have to be checked by the child tabs
+          excludedTabIds.splice(i, 1);
+          break;
+        }
+      }
+      // If it the tab is not in the exclude list, refresh 
+      // it if it belongs to the entered entity
+      if (!excludeTab) {
+        if (this.entity === entity) {
+          this.doRefreshContents(true);
+        }
+      }
+      // Refresh the child views of this tab
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        // if the view belong to the input entity, it is refreshed
-        // See https://issues.openbravo.com/view.php?id=18951
-        if (tabViewPane && tabViewPane.entity === entity) {
-          tabViewPane.doRefreshContents(true);
-        }
-        // Refresh the child views of these tab
-        tabViewPane.refreshChildViewsWithEntity(entity);
+        tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
       }
     }
   },
