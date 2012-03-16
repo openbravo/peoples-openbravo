@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,9 +50,8 @@ public class HelpWindow {
       if (strType.equals("X")) {
         strCommand = "FORM";
         strKeyId = vars.getRequiredStringParameter("inpwindowName");
-        DisplayHelpData[] dataForm = (vars.getLanguage().equals("en_US") ? DisplayHelpData
-            .selectForm(conn, strKeyId) : DisplayHelpData.selectFormTrl(conn, vars.getLanguage(),
-            strKeyId));
+        DisplayHelpData[] dataForm = DisplayHelpData.selectFormTrl(conn, vars.getLanguage(),
+            strKeyId);
         if (dataForm != null && dataForm.length > 0) {
           strWindowName = dataForm[0].name;
           strWindowHelp = dataForm[0].help;
@@ -62,9 +61,8 @@ public class HelpWindow {
       } else if (strType.equals("P") || strType.equals("R")) {
         strCommand = "PROCESS";
         strKeyId = vars.getRequiredStringParameter("inpwindowName");
-        DisplayHelpData[] dataProcess = (vars.getLanguage().equals("en_US") ? DisplayHelpData
-            .selectProcess(conn, strKeyId) : DisplayHelpData.selectProcessTrl(conn,
-            vars.getLanguage(), strKeyId));
+        DisplayHelpData[] dataProcess = DisplayHelpData.selectProcessTrl(conn, vars.getLanguage(),
+            strKeyId);
         if (dataProcess != null && dataProcess.length > 0) {
           strWindowName = dataProcess[0].name;
           strWindowHelp = dataProcess[0].help;
@@ -81,12 +79,9 @@ public class HelpWindow {
 
     DisplayHelpData[] data = DisplayHelpData.set();
     if (window) {
-      data = (vars.getLanguage().equals("en_US") ? DisplayHelpData.select(conn, strKeyId)
-          : DisplayHelpData.selectTrl(conn, vars.getLanguage(), strKeyId));
-      strWindowName = vars.getLanguage().equals("en_US") ? DisplayHelpData.windowName(conn,
-          strKeyId) : DisplayHelpData.windowNameTrl(conn, vars.getLanguage(), strKeyId);
-      strWindowHelp = vars.getLanguage().equals("en_US") ? DisplayHelpData.windowHelp(conn,
-          strKeyId) : DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), strKeyId);
+      data = DisplayHelpData.selectTrl(conn, vars.getLanguage(), strKeyId);
+      strWindowName = DisplayHelpData.windowNameTrl(conn, vars.getLanguage(), strKeyId);
+      strWindowHelp = DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), strKeyId);
       strCommand = "WINDOW";
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -100,6 +95,7 @@ public class HelpWindow {
     xmlDocument.setData("structure1", data);
     xmlDocument.setData("structure2", data);
     xmlDocument.setData("structure3", data);
+
     return (xmlDocument.print());
   }
 }
