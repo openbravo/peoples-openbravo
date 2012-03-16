@@ -220,7 +220,7 @@ isc.OBQuickLaunch.addProperties({
         fetchDelay: 50,
 
         optionDataSource: OB.Datasource.get(this.dataSourceId),
-        valueField: OB.Constants.IDENTIFIER,
+        valueField: OB.Constants.ID,
 
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
