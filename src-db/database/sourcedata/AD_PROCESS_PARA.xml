@@ -3910,9 +3910,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--1004400003-->  <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
 <!--1004400003-->  <HELP><![CDATA[An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.]]></HELP>
 <!--1004400003-->  <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
-<!--1004400003-->  <SEQNO><![CDATA[40]]></SEQNO>
+<!--1004400003-->  <SEQNO><![CDATA[11]]></SEQNO>
 <!--1004400003-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--1004400003-->  <AD_VAL_RULE_ID><![CDATA[130]]></AD_VAL_RULE_ID>
+<!--1004400003-->  <AD_VAL_RULE_ID><![CDATA[FDC45D1AE2404B8384D14DB6DED90DCF]]></AD_VAL_RULE_ID>
 <!--1004400003-->  <COLUMNNAME><![CDATA[AD_Org_ID]]></COLUMNNAME>
 <!--1004400003-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--1004400003-->  <FIELDLENGTH><![CDATA[20]]></FIELDLENGTH>
@@ -3931,7 +3931,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--1004400004-->  <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--1004400004-->  <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--1004400004-->  <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
-<!--1004400004-->  <SEQNO><![CDATA[50]]></SEQNO>
+<!--1004400004-->  <SEQNO><![CDATA[12]]></SEQNO>
 <!--1004400004-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
 <!--1004400004-->  <COLUMNNAME><![CDATA[M_Warehouse_ID]]></COLUMNNAME>
 <!--1004400004-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
