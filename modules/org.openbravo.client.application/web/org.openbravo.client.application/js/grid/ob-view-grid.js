@@ -355,6 +355,14 @@ isc.OBViewGrid.addProperties({
     this.setFields(this.completeFields.duplicate());
   },
 
+  setReadOnlyMode: function () {
+    this.uiPattern = 'RO';
+    this.canEdit = false;
+    this.contextMenu.destroy();
+    this.contextMenu = null;
+    this.refreshContents();
+  },
+
   draw: function () {
     var drawnBefore = this.isDrawn(),
         i, form, item, items, length;
