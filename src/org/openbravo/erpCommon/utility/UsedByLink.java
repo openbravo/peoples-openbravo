@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -283,17 +283,12 @@ public class UsedByLink extends HttpSecureAppServlet {
           windowId + "|" + columnName);
 
       final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, adTabId);
-      if (data == null || data.length == 0) {
-        // // in order to preserve old behavior we use bdError method to report errors
-        // bdError(request, response, "RecordError", vars.getLanguage());
-        // return;
+      if (data != null && data.length > 0) {
+        final SearchResult searchResult = getLinkedItems(vars, data, windowId, columnName, keyId,
+            adTabId, tableName, inpcolumnName, tableId);
+        // jsonObject
+        jsonObject = buildJsonObject(jsonObject, searchResult);
       }
-
-      final SearchResult searchResult = getLinkedItems(vars, data, windowId, columnName, keyId,
-          adTabId, tableName, inpcolumnName, tableId);
-
-      jsonObject = buildJsonObject(jsonObject, searchResult);
-      // jsonObject
 
     } catch (Exception e) {
       try {
