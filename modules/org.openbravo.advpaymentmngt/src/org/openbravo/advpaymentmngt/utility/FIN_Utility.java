@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -229,20 +229,14 @@ public class FIN_Utility {
 
   /**
    * Creates a comma separated string with the Id's of the Set of Strings.
-   * 
+   * This method is deprecated as it has been added to Utility (core)
    * @param set
    *          Set of Strings
    * @return Comma separated string of Id's
    */
+  @Deprecated 
   public static String getInStrSet(Set<String> set) {
-    StringBuilder strInList = new StringBuilder();
-    for (String string : set) {
-      if (strInList.length() == 0)
-        strInList.append("'" + string + "'");
-      else
-        strInList.append(", '" + string + "'");
-    }
-    return strInList.toString();
+    return Utility.getInStrSet(set);
   }
 
   /**
