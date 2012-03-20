@@ -315,7 +315,10 @@ isc.OBSelectorItem.addProperties({
 
   autoFetchData: false,
   showPickerIcon: true,
-  validateOnChange: true,
+  //  selectors should not be validated on change, only after its content has been deleted
+  //  and after an option of the combo has been selected
+  //  see issue 19956 (https://issues.openbravo.com/view.php?id=19956)
+  validateOnChange: false,
   completeOnTab: true,
   // note validateonexit does not work when completeOnTab is true
   // setting it anyway, the this.validate() is called in the blur

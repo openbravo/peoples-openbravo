@@ -217,6 +217,7 @@
       FROM m_inoutline iol JOIN c_orderline ol ON iol.c_orderline_id = ol.c_orderline_id
       WHERE iol.m_inout_id = v_record_id
         AND iol.movementqty > 0
+        AND canceled_inoutline_id IS NULL
         AND ol.c_order_discount_id IS NULL;
       IF (v_Count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@ReturnInOutNegativeQty@');

@@ -1346,7 +1346,7 @@ OB.ViewFormProperties = {
   saveRow: function () {
     var savingNewRecord = this.isNew,
         i, length, flds, form = this,
-        ficCallDone, record, recordIndex, callback;
+        ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
 
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
@@ -1452,9 +1452,19 @@ OB.ViewFormProperties = {
         form.setNewState(false);
 
         view.refreshParentRecord();
-        // Refreshes the child views that belong to the same entity
+
+        // Refreshes the selected record of the views that belong to the same entity
         // as the view being saved
-        view.refreshChildViewsWithEntity(this.view.entity);
+        if (view.standardWindow) {
+          viewsNotToRefresh = [];
+          // there is no need to refresh the current view...
+          viewsNotToRefresh[0] = view.tabId;
+          if (view.parentView) {
+            //  ... nor the parent view, if any (it would have been refreshed just a few lines ago)
+            viewsNotToRefresh[1] = view.parentView.tabId;
+          }
+          view.standardWindow.refreshViewsWithEntity(this.view.entity, viewsNotToRefresh);
+        }
 
         // We fill attachments in case the record is new, so that components
         // of the attachments section are created

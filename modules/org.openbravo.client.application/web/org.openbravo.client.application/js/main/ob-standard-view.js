@@ -837,19 +837,31 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  refreshChildViewsWithEntity: function (entity) {
-    var i, length, tabViewPane;
-    if (entity && this.childTabSet) {
+  refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
+    var i, length, tabViewPane, excludeTab = false;
+    if (entity && excludedTabIds && this.childTabSet) {
+      //Check is the tab has to be refreshed
+      for (i = 0; i < excludedTabIds.length; i++) {
+        if (excludedTabIds[i].match(this.tabId)) {
+          excludeTab = true;
+          // removes the tabId from the list of excluded, so it does
+          // not have to be checked by the child tabs
+          excludedTabIds.splice(i, 1);
+          break;
+        }
+      }
+      // If it the tab is not in the exclude list, refresh 
+      // it if it belongs to the entered entity
+      if (!excludeTab) {
+        if (this.entity === entity) {
+          this.doRefreshContents(true);
+        }
+      }
+      // Refresh the child views of this tab
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        // if the view belong to the input entity, it is refreshed
-        // See https://issues.openbravo.com/view.php?id=18951
-        if (tabViewPane && tabViewPane.entity === entity) {
-          tabViewPane.doRefreshContents(true);
-        }
-        // Refresh the child views of these tab
-        tabViewPane.refreshChildViewsWithEntity(entity);
+        tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
       }
     }
   },
@@ -2025,8 +2037,10 @@ isc.OBStandardView.addProperties({
         fld.hoverHTML = hoverFunction;
       }
 
-      if (fld.gridProps.length) {
-        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.length);
+      if (fld.gridProps.displaylength) {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.displaylength);
+      } else {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(30);
       }
 
       // move the showif defined on form level
@@ -2037,10 +2051,6 @@ isc.OBStandardView.addProperties({
       }
 
       isc.addProperties(fld, fld.gridProps);
-
-      if (!fld.width) {
-        fld.width = isc.OBGrid.getDefaultColumnWidth(30);
-      }
 
       // correct some stuff coming from the form fields
       if (fld.displayed === false) {
@@ -2100,10 +2110,14 @@ isc.OBStandardView.addProperties({
       result.push(fld);
     }
 
-    // sort according to length, for the autoexpandfieldnames
+    // sort according to displaylength, for the autoexpandfieldnames
     result.sort(function (v1, v2) {
-      var t1 = v1.length,
-          t2 = v2.length;
+      var t1 = v1.displaylength,
+          t2 = v2.displaylength,
+          l1 = v1.length,
+          l2 = v2.length,
+          n1 = v1.name,
+          n2 = v2.name;
       if (!t1 && !t2) {
         return 0;
       }
@@ -2116,7 +2130,25 @@ isc.OBStandardView.addProperties({
       if (t1 > t2) {
         return -1;
       } else if (t1 === t2) {
-        return 0;
+        if (!l1 && !l2) {
+          return 0;
+        }
+        if (!l1) {
+          return 1;
+        }
+        if (!l2) {
+          return -1;
+        }
+        if (l1 > l2) {
+          return -1;
+        } else if (l1 === l2) {
+          if (v1.name > v2.name) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+        return 1;
       }
       return 1;
     });
@@ -2128,7 +2160,6 @@ isc.OBStandardView.addProperties({
         this.autoExpandFieldNames.push(result[i].name);
       }
     }
-
     // sort according to the sortnum
     // that's how they are displayed
     result.sort(function (v1, v2) {

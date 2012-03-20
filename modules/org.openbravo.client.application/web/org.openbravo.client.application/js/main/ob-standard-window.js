@@ -179,6 +179,15 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  //  Refreshes the selected records of all the window views, provided:
+  //  - They belong to the entity specified in the 'entity' parameter
+  //  - They are not included in the 'excludedTabIds' list
+  refreshViewsWithEntity: function (entity, excludedTabIds) {
+    if (this.view) {
+      this.view.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+    }
+  },
+
   readWindowSettings: function () {
     var standardWindow = this;
 
