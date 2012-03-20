@@ -6,49 +6,131 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB.COMP.EditLine = function (context) {
     var me = this;
     
-    this.$ = $("<div/>").load('comp_editline.html', function () {
-      
-      
-      me.keyboard = new OB.COMP.Keyboard();
-      $('#keyboardcontainer').append(me.keyboard.$);
-      
-      
-      me.keyboard.on('command', function(cmd) {
-        if (cmd === '-') {
-          if (this.line) {
-            this.line.removeUnit(this.keyboard.getNumber());
-            if (this.line.get('qty') <= 0) {
-              this.receipt.get('lines').remove(this.line);
-            }
-          }
-        } else if (cmd === '+') {
-          if (this.line) {
-            this.line.addUnit(this.keyboard.getNumber());
-            if (this.line.get('qty') <= 0) {
-              this.receipt.get('lines').remove(this.line);
-            }        
-          }
-        } else if (cmd === 'qty') {
-          if (this.line) {
-            this.line.setUnit(this.keyboard.getNumber());
-            if (this.line.get('qty') <= 0) {
-              this.receipt.get('lines').remove(this.line);
-            }            
-          }
-        } else if (cmd === String.fromCharCode(13)) {
-          this.products.ds.find({
-            product: {uPCEAN: this.keyboard.getString()}
-          }, function (data) {
-            if (data) {      
-              this.receipt.addProduct(data);
-            } else {
-              alert('UPC/EAN code not found');
-            }
-          });
-        }         
-      }, me);
-      
-    });
+//    // keyboard
+//    this.keyboard = new OB.COMP.Keyboard();    
+//    this.keyboard.on('command', function(cmd) {
+//      if (cmd === '-') {
+//        if (this.line) {
+//          this.line.removeUnit(this.keyboard.getNumber());
+//          if (this.line.get('qty') <= 0) {
+//            this.receipt.get('lines').remove(this.line);
+//          }
+//        }
+//      } else if (cmd === '+') {
+//        if (this.line) {
+//          this.line.addUnit(this.keyboard.getNumber());
+//          if (this.line.get('qty') <= 0) {
+//            this.receipt.get('lines').remove(this.line);
+//          }        
+//        }
+//      } else if (cmd === 'qty') {
+//        if (this.line) {
+//          this.line.setUnit(this.keyboard.getNumber());
+//          if (this.line.get('qty') <= 0) {
+//            this.receipt.get('lines').remove(this.line);
+//          }            
+//        }
+//      } else if (cmd === String.fromCharCode(13)) {
+//        this.products.ds.find({
+//          product: {uPCEAN: this.keyboard.getString()}
+//        }, function (data) {
+//          if (data) {      
+//            this.receipt.addProduct(data);
+//          } else {
+//            alert('UPC/EAN code not found');
+//          }
+//        });
+//      }         
+//    }, this);    
+    
+    this.editlineimage = OB.UTIL.EL(
+      {tag: 'div', attr: {'class': 'span4'}}
+    );
+    this.editlinename = OB.UTIL.EL(
+      {tag: 'strong'}
+    );
+    this.editlineqty = OB.UTIL.EL(
+      {tag: 'strong'}
+    );
+    this.editlineprice = OB.UTIL.EL(
+      {tag: 'strong'}
+    );
+    this.editlinenet = OB.UTIL.EL(
+      {tag: 'strong'}
+    );
+
+    this.$ = OB.UTIL.EL(
+      {tag: 'div', content: [
+        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 250px; margin: 5px; padding: 5px'}, content: [                             
+          {tag: 'div', attr: {'class': 'btn-toolbar', 'style': 'margin: 10px'}, content: [
+            {tag: 'button', attr: {'class': 'btn'}, content: [
+              'Delete'                       
+            ], init: function () {
+              this.click(function() {
+                if (me.line) {
+                  me.receipt.get('lines').remove(me.line);        
+                }              
+              });
+            }}                               
+          ]},
+          {tag: 'div', attr: {'class': 'row-fluid', 'style': 'margin: 10px'}, content: [
+            {tag: 'div', attr: {'class': 'span8'}, content: [
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Description'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  this.editlinename                
+                ]}                
+              ]},      
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Quantity'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  this.editlineqty 
+                ]}                
+              ]},                                                             
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Price'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  this.editlineprice
+                ]}                
+              ]},                                                             
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Line value'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  {tag: 'strong', content: [                                
+                  ]}                
+                ]}                
+              ]},                                                             
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Discount'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  {tag: 'strong', content: [                                
+                  ]}                
+                ]}                
+              ]},                                                             
+              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+                {tag: 'div', attr: {'class': 'span4'}, content: [
+                  'Total'                                                                         
+                ]},  
+                {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                  this.editlinenet           
+                ]}                
+              ]}                                                                    
+            ]},                             
+            this.editlineimage                                                       
+          ]} 
+        ]}          
+      ]}
+    );
 
     // Set Model
     
@@ -72,29 +154,25 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   
   OB.COMP.EditLine.prototype.renderLine = function () {
     
-    if (this.keyboard) {
-      this.keyboard.reset();
-    }
-      
-    if (this.line) {
-      var me = this;
+    var me = this;  
+    if (this.line) {      
       this.products.ds.find({
         product: {id: this.line.get('productid')}
       }, function (data) {
         if (data) {
-          $('#editlineimage').empty().append(OB.UTIL.getThumbnail(data.img, 128, 164));
-          $('#editlinename').text(data.product._identifier);
-          $('#editlineqty').text(me.line.printQty());
-          $('#editlineprice').text(me.line.printPrice());
-          $('#editlinenet').text(me.line.printNet());
+          me.editlineimage.empty().append(OB.UTIL.getThumbnail(data.img, 128, 164));
+          me.editlinename.text(data.product._identifier);
+          me.editlineqty.text(me.line.printQty());
+          me.editlineprice.text(me.line.printPrice());
+          me.editlinenet.text(me.line.printNet());
         }
       });
     } else {
-      $('#editlineimage').empty();
-      $('#editlinename').empty();
-      $('#editlineqty').empty();
-      $('#editlineprice').empty();
-      $('#editlinenet').empty();
+      me.editlineimage.empty();
+      me.editlinename.empty();
+      me.editlineqty.empty();
+      me.editlineprice.empty();
+      me.editlinenet.empty();
     }    
   }  
   

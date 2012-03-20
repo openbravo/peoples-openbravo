@@ -25,7 +25,7 @@ define(['datasource', 'utilities'], function () {
           }
         }
       });
-    }  
+    }
   });
   
   // Category Model

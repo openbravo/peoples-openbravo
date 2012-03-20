@@ -8,6 +8,7 @@ define(['utilities', 'model/stack'], function () {
   
   OB.MODEL.StackOrder = OB.UTIL.recontext(OB.MODEL.Stack, 'stackorder');
 
+  
   // Sales.OrderLine Model
   OB.MODEL.OrderLine = Backbone.Model.extend({
     defaults : {
@@ -86,24 +87,50 @@ define(['utilities', 'model/stack'], function () {
     },
     
     reset: function() {
+      this.set('undo', null);
       this.get('lines').reset();      
       this.trigger('reset');
     },
     
     addProduct: function (index, p) {
+      var me = this;
       var lines = this.get('lines');
       if (index >= 0 && index < lines.length &&
           lines.at(index).get('productid') === p.get('product').id) {
+        var modline = lines.at(index);
         // add 1 unit to the current line.
-        lines.at(index).addUnit();
+        modline.addUnit();
+        // set the undo action
+        this.set('undo', {
+          action: 'qty',
+          line: modline,
+          undo: function() {
+            modline.removeUnit();
+            if (modline.get('qty') <= 0) {
+              me.get('lines').remove(modline);
+            }
+            me.set('undo', null);
+          }
+        });        
       } else {
         // a new line with 1 unit
-        lines.add(new OB.MODEL.OrderLine({
+        var newline = new OB.MODEL.OrderLine({
           productid: p.get('product').id,
           productidentifier: p.get('product')._identifier,
           qty: 1,
           price: p.get('price').listPrice
-        }));
+        });
+        // add the created line
+        lines.add(newline);
+        // set the undo action
+        this.set('undo', {
+          action: 'add',
+          line: newline,
+          undo: function() {
+            me.get('lines').remove(newline);
+            me.set('undo', null);
+          }
+        });
       }
     }    
   }); 
