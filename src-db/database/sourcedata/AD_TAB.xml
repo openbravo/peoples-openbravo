@@ -6424,7 +6424,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800009-->  <HQLWHERECLAUSE><![CDATA[e.BusinessPartner.id = @BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--800009-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id = @businessPartner.id@]]></HQLWHERECLAUSE>
 <!--800009-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800009-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--800009-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>
