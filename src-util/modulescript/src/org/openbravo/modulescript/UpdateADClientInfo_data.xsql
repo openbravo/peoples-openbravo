@@ -41,7 +41,9 @@
   <SqlMethod name="selectClientsID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT AD_CLIENT_ID FROM AD_CLIENT 
+      SELECT AD_CLIENT_ID 
+      FROM AD_CLIENTINFO CI
+      WHERE CI.AD_TREE_CAMPAIGN_ID IS NULL AND CI.AD_CLIENT_ID <> '0'
       ]]>
     </Sql>
   </SqlMethod>
