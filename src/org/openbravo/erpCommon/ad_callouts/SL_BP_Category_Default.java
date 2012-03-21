@@ -19,6 +19,8 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.hibernate.criterion.Restrictions;
@@ -37,23 +39,44 @@ public class SL_BP_Category_Default extends SimpleCallout {
     final String strOrgId = info.vars.getStringParameter("inpadOrgId");
     if (strOrgId != null && !"".equals(strOrgId)) {
       try {
-        info.addSelect("inpcBpGroupId");
-
         OBContext.setAdminMode();
+        info.addSelect("inpcBpGroupId");
         OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(Category.class, Restrictions.in(
             Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
             new OrganizationStructureProvider().getNaturalTree(strOrgId)));
         bpCatCrit.addOrderBy(Category.PROPERTY_NAME, true);
-
+        String defaultCategoryId = getDefaultCategory(strOrgId);
         for (final Category bpCategory : bpCatCrit.list()) {
-          info.addSelectResult(bpCategory.getId(), bpCategory.getIdentifier(), bpCategory
-              .isDefault().booleanValue() && strOrgId.equals(bpCategory.getOrganization().getId()));
+          info.addSelectResult(bpCategory.getId(), bpCategory.getIdentifier(),
+              defaultCategoryId.equals(bpCategory.getId()));
         }
-
         info.endSelect();
       } finally {
         OBContext.restorePreviousMode();
       }
     }
   }
+
+  private String getDefaultCategory(String strOrgId) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(Category.class, Restrictions.eq(
+          Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, strOrgId), Restrictions
+          .eq(Category.PROPERTY_DEFAULT, true));
+      List<Category> categories = bpCatCrit.list();
+      if (categories.size() > 0) {
+        return categories.get(0).getId();
+      } else {
+        String parentOrg = OBContext.getOBContext().getOrganizationStructureProvider()
+            .getParentOrg(strOrgId);
+        if (parentOrg != null && !"".equals(parentOrg)) {
+          return getDefaultCategory(parentOrg);
+        }
+      }
+      return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
 }
