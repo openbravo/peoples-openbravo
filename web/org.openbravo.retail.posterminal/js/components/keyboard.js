@@ -8,7 +8,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     
     context.set(id || 'keyboard', this);
     
-    me = this;
+    var me = this;
     
     var createbtn = function (command, label) {
       
@@ -208,15 +208,18 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       var me = this;      
       if (cmd === '-') {
         if (this.line) {
-          this.receipt.removeUnit(this.line, this.getNumber());      
+          this.receipt.removeUnit(this.line, this.getNumber());     
+          this.stack.trigger('scan');
         }
       } else if (cmd === '+') {
         if (this.line) {
-          this.receipt.addUnit(this.line, this.getNumber());      
+          this.receipt.addUnit(this.line, this.getNumber());    
+          this.stack.trigger('scan');
         }
       } else if (cmd === 'qty') {
         if (this.line) {
-          this.receipt.setUnit(this.line, this.getNumber());           
+          this.receipt.setUnit(this.line, this.getNumber()); 
+          this.stack.trigger('scan');
         }
       } else if (cmd === String.fromCharCode(13)) {
 
@@ -225,6 +228,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
         }, function (data) {
           if (data) {      
             me.receipt.addProduct(me.index, new OB.MODEL.Product(data));
+            me.stack.trigger('scan');
           } else {
             alert('UPC/EAN code not found');
           }
@@ -232,7 +236,9 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       }         
     }, this);       
     
-    
+    $(window).keypress(function(e) {
+      me.keyPressed(String.fromCharCode(e.which));
+    });     
   };
   
   _.extend(OB.COMP.Keyboard.prototype, Backbone.Events);

@@ -7,7 +7,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     var me = this;
     
     var msgwelcome = OB.UTIL.EL(
-        {tag: 'div', attr: {'style': 'margin: 10px; display: none;'}, content: [
+        {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
           {tag: 'div', attr: {'style': 'float:right;'}, content: [
             'Welcome to Openbravo.'                 
           ]}
@@ -21,7 +21,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     );
     
     var msgaction = OB.UTIL.EL(
-        {tag: 'div', attr: {'style': 'margin: 10px; display: none;'}, content: [
+        {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
           txtaction,
           {tag: 'button', attr: {'style': 'float:right;'}, content: [
             'Undo'                       

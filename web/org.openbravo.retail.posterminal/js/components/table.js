@@ -15,19 +15,14 @@ define(['utilities', 'model/stack'], function () {
     this.stack = defaults.stack
     ? defaults.stack
     : new OB.MODEL.Stack();
-                                                                     
-    var intable = [];
-    if (this.renderHeader) {
-      var trheader = $(OB.UTIL.DOM(OB.UTIL.NODE('tr', {}, [])));
-      trheader.append(this.renderHeader());  
-      intable.push(OB.UTIL.NODE('thead', {}, [trheader]));
+       
+    this.theader = OB.UTIL.EL({tag: 'div'});                                                             
+    if (this.renderHeader) {      
+      this.theader.append(this.renderHeader());  
     }
-    this.tbody = $(OB.UTIL.DOM(OB.UTIL.NODE('tbody', {}, [])));
-    intable.push(this.tbody);
+    this.tbody = OB.UTIL.EL({tag: 'ul', attr: {'class': 'unstyled'}});
     
-    this.div = $(OB.UTIL.DOM(
-      OB.UTIL.NODE('table', {'class': 'table table-bordered', 'style': 'margin-bottom: 0px;'}, intable)
-    ));    
+    this.div = OB.UTIL.EL({tag: 'div', content: [this.theader, this.tbody]});
   }
 
   OB.COMP.TableView.prototype.setModel = function (collection) {
@@ -44,7 +39,7 @@ define(['utilities', 'model/stack'], function () {
     this.collection.on('add', function(model, prop, options) {     
       var index = options.index;
       var me = this;
-      var tr = $('<tr/>');
+      var tr = OB.UTIL.EL({tag: 'li', attr: {'class': 'activable'}});
       tr.append(this.renderLine(model));
       tr.click(function () {
         var index = me.collection.indexOf(model)

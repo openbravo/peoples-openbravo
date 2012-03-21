@@ -6,20 +6,28 @@
   OB.COMP.Payment = function (context) {
     var me = this;
 
-    this.$ = $("<div/>").load('comp_payment.html', function () {
-     $('#btnclose').click(function () {
-       me.receipt.trigger('closed');
     
-       me.receipt.reset();
-     });
-    });
-    
+    this.$ = OB.UTIL.EL(
+      {tag: 'div', content: [
+        {tag: 'div', attr: {'style': 'background-color: #363636; color: white; height: 250px; margin: 5px; padding: 5px'}, content: [
+          {tag: 'div', attr: {'style': 'padding: 10px;'}, content: [
+            'Remaining',
+            {tag: 'button', attr: {'style': 'float:right;'}, content: [
+              'OK'                       
+            ], init: function () {
+                 this.click(function () {
+                   me.receipt.trigger('closed');    
+                   me.receipt.reset();
+                 });
+              }
+            }            
+          ]}                    
+        ]}        
+      ]}
+    );
+       
     // Set Model 
     this.receipt = context.get('modelorder');
-    
-    this.receipt.get('lines').on('reset change add remove', function() {
-      $('#totalpay').text(this.receipt.printNet());
-    }, this);    
   };
   
   OB.COMP.Payment.prototype.attr = function (attr, value) {

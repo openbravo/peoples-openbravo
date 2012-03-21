@@ -10,61 +10,88 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.orderview = new OB.COMP.TableView({
       stack: context.get('stackorder'),
       style: 'edit',
-      renderHeader: function () {
-        return [
-                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:40%;'}, ['Product'])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Units'])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Price'])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Net']))                                                                                                                                      
-              ];          
-      }, 
+//      renderHeader: function () {
+//        return OB.UTIL.EL(
+//            {tag: 'div', attr: {style: 'position: relative; padding: 5px;'}, content: [ 
+//              {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
+//                'Product'                                                                
+//              ]},                                                                                      
+//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+//                'Units'                                                                                                                                                                
+//              ]},                                                                                      
+//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+//                'Price'                                                                
+//              ]},                                                                                      
+//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+//                'Net'                                                                
+//              ]},
+//              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+//          ]}
+//        );        
+//      }, 
   
       renderLine: function (model) {
-        return [
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:40%;'}, [model.get('productidentifier')])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printQty()])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printPrice()])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printNet()]))                                                                                                                                  
-              ];          
+        return OB.UTIL.EL(
+          {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+              {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
+                model.get('productidentifier')                                                                
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                model.printQty()                                                                                                                                                          
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                model.printPrice()                                                             
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                model.printNet()
+              ]},
+              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          ]}
+        );         
       }      
     });
+
+    this.totalnet = OB.UTIL.EL({tag:'strong'});      
     
-    this.totalgross = $(OB.UTIL.DOM(OB.UTIL.NODE('h3', {}, [])));
-    this.totalnet = $(OB.UTIL.DOM(OB.UTIL.NODE('strong', {}, [])));                                                                  
-    
-    this.$ = $(OB.UTIL.DOM(
-      OB.UTIL.NODE('div', {}, [
-        OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-          OB.UTIL.NODE('tbody', {}, [
-            OB.UTIL.NODE('tr', {}, [
-              OB.UTIL.NODE('td', {}, ['10:15 - <9332>']),                                                                  
-              OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [ 
-                this.totalgross
-              ]),                                                                  
-            ])                                                                      
-          ])                                                                                                   
-        ]),
-        OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px'}, [
-          this.orderview.div,
-          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-            OB.UTIL.NODE('tbody', {}, [
-              OB.UTIL.NODE('tr', {}, [
-                OB.UTIL.NODE('td', {}, ['Taxes']),                                                                  
-                OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
-                  OB.UTIL.NODE('strong', {}, [])                                                                  
-                ])                                                                 
-              ]),     
-              OB.UTIL.NODE('tr', {}, [
-                OB.UTIL.NODE('td', {}, ['Net']),                                                                  
-                OB.UTIL.NODE('td', {'style': 'text-align:right;'}, [
-                  this.totalnet
-                ])                                                                 
-              ])               
-            ])                                                                                                   
-          ])     
-        ])
-      ])
-    )); 
+    this.$ = OB.UTIL.EL(
+      {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [ 
+        {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [ 
+          {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [                                                                                        
+            {tag: 'strong', attr: {'style': 'color: green;'}, content: [                                                                                        
+              '10:15 - <9332>'
+            ]}        
+          ]},           
+          {tag: 'div', content: [              
+            this.orderview.div,          
+            
+            {tag: 'ul', attr: {'class': 'unstyled'}, content: [                                                                                        
+              {tag: 'li', content: [                                                                                        
+                {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                  {tag: 'div', attr: {style: 'float: left; width: 80%; color:  #888888'}, content: [ 
+                    'Taxes'                                                                
+                  ]},                                                                                                                                                                           
+                  {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                    ''
+                  ]},
+                  {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+                ]}
+              ]},
+              {tag: 'li', content: [                                                                                        
+                {tag: 'div', attr: {style: 'position: relative; padding: 10px;'}, content: [
+                  {tag: 'div', attr: {style: 'float: left; width: 80%'}, content: [ 
+                    'TOTAL'                                                                
+                  ]},                                                                                                                                                                           
+                  {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                    this.totalnet
+                  ]},
+                  {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+                ]}
+              ]}               
+            ]} 
+          ]}                                                          
+        ]}                                                              
+      ]}         
+    );
     
     // Set Model
     this.receipt =  context.get('modelorder');
@@ -73,8 +100,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.orderview.setModel(lines); 
     
     lines.on('reset change add remove', function() {
-      this.totalnet.text(this.receipt.printNet());
-      this.totalgross.text(this.receipt.printNet());      
+      this.totalnet.text(this.receipt.printNet());   
     }, this);
   }
   

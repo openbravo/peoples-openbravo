@@ -11,67 +11,75 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.categoriesview = new OB.COMP.TableView({
       style: 'list',
       renderLine: function (model) {
-        return [
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;'}, [OB.UTIL.getThumbnail(model.get('img'))])),                                                                                                                                  
-                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:80%;'}, [model.get('category')._identifier])),                                                                                                                                  
-              ];          
+        return OB.UTIL.EL(
+          {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+              {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
+                OB.UTIL.getThumbnail(model.get('img'))                                                       
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 80%;'}, content: [ 
+                model.get('category')._identifier                                                                                                                                               
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          ]}
+        );                  
       }      
     });
     
     this.productsview = new OB.COMP.TableView({ 
       renderLine: function (model) {
-        return [
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;'}, [OB.UTIL.getThumbnail(model.get('img'))])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:80%;'}, [
-                OB.UTIL.NODE('div', {}, [model.get('product')._identifier]),                                             
-                OB.UTIL.NODE('div', {}, [
-                  OB.UTIL.NODE('strong', {}, [
-                    OB.UTIL.formatNumber(model.get('price').listPrice, {
-                      decimals: 2,
-                      decimal: '.',
-                      group: ',',
-                      currency: '$#'
-                    })
-                  ])  
-                ])  
-              ])),                                                                                                                                  
-            ];          
+        return OB.UTIL.EL(
+          {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+              {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
+                OB.UTIL.getThumbnail(model.get('img'))
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
+                model.get('product')._identifier
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                {tag: 'strong', content: [ 
+                  OB.UTIL.formatNumber(model.get('price').listPrice, {
+                    decimals: 2,
+                    decimal: '.',
+                    group: ',',
+                    currency: '$#'
+                  })                                                                                                                                            
+                ]}                                                                                                                                                                                                                                 
+              ]},                                                                                      
+              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          ]}
+        );                    
       }      
     });   
     
-    this.titleProd = $(OB.UTIL.DOM(OB.UTIL.NODE('h3', {id: 'category'}, [' '])));
-    this.tbodyProd = $(OB.UTIL.DOM(OB.UTIL.NODE('tbody', {}, [])));
+    this.titleProd = OB.UTIL.EL({tag: 'h3'});
     
-    this.$ = $(OB.UTIL.DOM(
-      OB.UTIL.NODE('div', {'class': 'row-fluid'}, [
-        OB.UTIL.NODE('div', {'class': 'span6'}, [
-          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-            OB.UTIL.NODE('tbody', {}, [
-              OB.UTIL.NODE('tr', {}, [
-                OB.UTIL.NODE('td', {}, [ this.titleProd ])          
-              ])
-            ])      
-          ]),
-          OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [
-            this.productsview.div      
-          ])
-        ]),                                                     
-        OB.UTIL.NODE('div', {'class': 'span6'}, [
-          OB.UTIL.NODE('table', {'class': 'table table-bordered'}, [
-            OB.UTIL.NODE('tbody', {}, [
-              OB.UTIL.NODE('tr', {}, [
-                OB.UTIL.NODE('td', {}, [
-                  OB.UTIL.NODE('h3', {}, ['Categories'])            
-                ])          
-              ])
-            ])      
-          ]),
-          OB.UTIL.NODE('div', {'style': 'overflow:auto; height: 300px;'}, [                
-            this.categoriesview.div  
-          ])
-        ])    
-      ])        
-    ));     
+    this.$ = OB.UTIL.EL(
+      {tag: 'div', attr: {'class': 'row-fluid'}, content: [                                                              
+        {tag: 'div', attr: {'class': 'span6'}, content: [   
+          {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [ 
+            {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
+              {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                this.titleProd
+              ]},
+              this.productsview.div
+            ]}                   
+          ]}                  
+        ]},         
+        {tag: 'div', attr: {'class': 'span6'}, content: [    
+          {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [ 
+            {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [ 
+              {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                {tag: 'h3', content: [
+                  'Categories'
+                ]}
+              ]},
+              this.categoriesview.div
+            ]}         
+          ]}                   
+        ]}         
+      ]}         
+    );
+
     
     // Set Model
     this.categories = context.get('modelcategories');;

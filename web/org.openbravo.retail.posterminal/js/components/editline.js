@@ -25,8 +25,8 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
     this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
         {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 250px; margin: 5px; padding: 5px'}, content: [                             
-          {tag: 'div', attr: {'class': 'btn-toolbar', 'style': 'margin: 10px'}, content: [
-            {tag: 'button', attr: {'class': 'btn'}, content: [
+          {tag: 'div', attr: {'style': 'padding: 10px'}, content: [
+            {tag: 'button', attr: {'style': 'margin: 5px;' }, content: [
               'Delete'                       
             ], init: function () {
               this.click(function() {
@@ -36,7 +36,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
               });
             }}                               
           ]},
-          {tag: 'div', attr: {'class': 'row-fluid', 'style': 'margin: 10px'}, content: [
+          {tag: 'div', attr: {'class': 'row-fluid', 'style': 'padding: 10px'}, content: [
             {tag: 'div', attr: {'class': 'span8'}, content: [
               {tag: 'div', attr: {'class': 'row-fluid'}, content: [
                 {tag: 'div', attr: {'class': 'span4'}, content: [
