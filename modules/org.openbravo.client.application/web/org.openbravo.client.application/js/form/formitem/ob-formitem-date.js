@@ -211,7 +211,17 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     //  be saved explicitly
     //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
     if (this.grid) {
-      this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();	
+      this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();
+    }
+  },
+
+  blur: function () {
+    this.Super('blur', arguments);
+    // this extra call has to be done in order to ensure that the value 
+    // is updated before the autosave is done
+    // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
+    if (this.form && this.form.view && this.form.view.isShowingForm) {
+      this.updateValue();
     }
   },
   
