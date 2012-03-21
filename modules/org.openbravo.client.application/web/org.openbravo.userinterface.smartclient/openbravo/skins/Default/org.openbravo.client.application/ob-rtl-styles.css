@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,12 +34,11 @@
 .OBApplicationMenuTreeItemCellIconFieldSelectedOver,
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
   padding: 0px 5px 0px 4px;
-  border-left: 1px #CDD7BB solid;
-  border-right: 0px #CDD7BB solid;
+  border-width: 0px 0px 0px 1px;
 }
 
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
-  border: 0px;
+  border-width: 0px;
   padding: 0px 25px 0px 0px;
   background-position: right center;
   background-image: url(./images/application-menu/menuSeparator-RTL.png);
@@ -90,20 +89,18 @@
 }
 
 .OBNavBarComponent:hover {
-  border-left: 0px solid #72ab10;
-  margin-left: 0px;
+  border-width: 1px 1px 1px 0px;
 
-  border-right: 1px solid #72ab10;
+  margin-left: 0px;
   margin-right: -1px;
 
   background-position: left;
 }
 
 .OBNavBarComponentSelected {
-  border-left: 0px solid #72ab10;
-  margin-left: 0px;
+  border-width: 1px 1px 0px 0px;
 
-  border-right: 1px solid #72ab10;
+  margin-left: 0px;
   margin-right: -1px;
 
   background-position: left;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,13 +93,11 @@
 }
 
 .OBNavBarComponent:hover {
-  border-top: 1px solid #72ab10;
-  border-bottom: 1px solid #72ab10;
+  border-width: 1px 0px 1px 1px;
+  border-style: solid;
+  border-color: #72ab10;
 
-  border-left: 1px solid #72ab10;
   margin-left: -1px;
-
-  border-right: 0px solid #72ab10;
   margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);
@@ -114,12 +112,11 @@
 }
 
 .OBNavBarComponentSelected {
-  border-top: 1px solid #72ab10;
+  border-width: 1px 0px 0px 1px;
+  border-style: solid;
+  border-color: #72ab10;
 
-  border-left: 1px solid #72ab10;
   margin-left: -1px;
-
-  border-right: 0px solid #72ab10;
   margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);

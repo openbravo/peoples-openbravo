@@ -80,8 +80,9 @@
 .OBApplicationMenuTreeItemCellIconFieldSelectedOver,
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
   padding: 0px 4px 0px 5px;
-  border-left: 0px #CDD7BB solid;
-  border-right: 1px #CDD7BB solid;
+  border-width: 0px 1px 0px 0px;
+  border-style: solid;
+  border-color: #CDD7BB;
 }
 
 .OBApplicationMenuTreeItemCellIconFieldOver,
