@@ -42,22 +42,7 @@ define(['utilities', 'model/stack'], function () {
         group: ',',
         currency: '$#'
       });
-    },
-    
-    addUnit : function (qty) {   
-      qty = isNaN(qty) ? 1 : qty;        
-      this.set('qty', this.get('qty') + qty);
-    },
-    
-    removeUnit : function (qty) {   
-      qty = isNaN(qty) ? 1 : qty;        
-      this.set('qty', this.get('qty') - qty);
-    },
-    
-    setUnit : function (qty) {   
-      qty = isNaN(qty) ? this.get('qty') : qty;      
-      this.set('qty', qty);
-    }       
+    }     
   });
   
   // Sales.OrderLineCol Model.  
@@ -92,26 +77,65 @@ define(['utilities', 'model/stack'], function () {
       this.trigger('reset');
     },
     
+    removeUnit: function (line, qty) {
+      if (typeof(qty) !== 'number' || isNaN(qty)) {
+        qty = 1;
+      }
+      this.setUnit(line, line.get('qty') - qty, 'rem');
+    },
+    
+    addUnit: function (line, qty) {
+      if (typeof(qty) !== 'number' || isNaN(qty)) {
+        qty = 1;
+      }
+      this.setUnit(line, line.get('qty') + qty, 'add');
+    },
+    
+    setUnit: function (line, qty, action) {
+      
+      if (typeof(qty) === 'number' && !isNaN(qty)) {     
+        var oldqty = line.get('qty');      
+        if (qty > 0) {
+          var me = this;
+          // sets the new quantity
+          line.set('qty', qty);
+          // sets the undo action
+          this.set('undo', {
+            action: action ? action : 'set',
+            oldqty: oldqty,
+            line: line,
+            undo: function () {
+              line.set('qty', oldqty);
+              me.set('undo', null);
+            }
+          });        
+        } else {
+          this.deleteLine(line);     
+        }     
+      }
+    },
+    
+    deleteLine:function (line) {
+      var me = this;
+      // remove the line
+      this.get('lines').remove(line);
+      // set the undo action
+      this.set('undo', {
+        action: 'deleteline',
+        line: line,
+        undo: function() {
+          me.get('lines').add(line);
+          me.set('undo', null);
+        }
+      });         
+    },
+    
     addProduct: function (index, p) {
       var me = this;
       var lines = this.get('lines');
       if (index >= 0 && index < lines.length &&
           lines.at(index).get('productid') === p.get('product').id) {
-        var modline = lines.at(index);
-        // add 1 unit to the current line.
-        modline.addUnit();
-        // set the undo action
-        this.set('undo', {
-          action: 'qty',
-          line: modline,
-          undo: function() {
-            modline.removeUnit();
-            if (modline.get('qty') <= 0) {
-              me.get('lines').remove(modline);
-            }
-            me.set('undo', null);
-          }
-        });        
+        this.addUnit(lines.at(index));
       } else {
         // a new line with 1 unit
         var newline = new OB.MODEL.OrderLine({
@@ -124,7 +148,7 @@ define(['utilities', 'model/stack'], function () {
         lines.add(newline);
         // set the undo action
         this.set('undo', {
-          action: 'add',
+          action: 'addline',
           line: newline,
           undo: function() {
             me.get('lines').remove(newline);

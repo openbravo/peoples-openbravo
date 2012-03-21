@@ -1,4 +1,4 @@
-define(['utilities', 'model/order', 'model/terminal'], function () {
+define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -53,9 +53,18 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
       if (undoaction) {
         msgwelcome.hide();
         msgaction.show();
-        txtaction.text('Added ' + undoaction.line.get('qty') + ' x ' +  undoaction.line.get('productidentifier'));
-        undoclick = undoaction.undo;
-        
+        if (undoaction.action === 'deleteline') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_DeleteLine', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+        } else if (undoaction.action === 'addline') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_AddLine', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+        } else if (undoaction.action === 'add') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_AddUnits', [undoaction.line.get('qty') - undoaction.oldqty, undoaction.line.get('productidentifier')]));
+        } else if (undoaction.action === 'rem') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_RemoveUnits', [undoaction.oldqty - undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+        } else if (undoaction.action === 'set') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_SetUnits', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+        }
+        undoclick = undoaction.undo;        
       } else {
         msgaction.hide();
         msgwelcome.show();

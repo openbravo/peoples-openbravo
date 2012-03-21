@@ -8,24 +8,24 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   
     var me = this;
     this.orderview = new OB.COMP.TableView({
-    stack: context.get('stackorder'),
-    style: 'edit',
-    renderHeader: function () {
-      return [
-              OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:40%;'}, ['Product'])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Units'])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Price'])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Net']))                                                                                                                                      
-            ];          
-    }, 
-
-    renderLine: function (model) {
-      return [
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:40%;'}, [model.get('productidentifier')])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printQty()])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printPrice()])),                                                                                                                                  
-              OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printNet()]))                                                                                                                                  
-            ];          
+      stack: context.get('stackorder'),
+      style: 'edit',
+      renderHeader: function () {
+        return [
+                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:40%;'}, ['Product'])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Units'])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Price'])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('th', {'style': 'width:20%;text-align:right;'}, ['Net']))                                                                                                                                      
+              ];          
+      }, 
+  
+      renderLine: function (model) {
+        return [
+                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:40%;'}, [model.get('productidentifier')])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printQty()])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printPrice()])),                                                                                                                                  
+                OB.UTIL.DOM(OB.UTIL.NODE('td', {'style': 'width:20%;text-align:right;'}, [model.printNet()]))                                                                                                                                  
+              ];          
       }      
     });
     

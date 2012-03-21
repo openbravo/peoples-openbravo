@@ -4,44 +4,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.EditLine = function (context) {
-    var me = this;
-    
-//    // keyboard
-//    this.keyboard = new OB.COMP.Keyboard();    
-//    this.keyboard.on('command', function(cmd) {
-//      if (cmd === '-') {
-//        if (this.line) {
-//          this.line.removeUnit(this.keyboard.getNumber());
-//          if (this.line.get('qty') <= 0) {
-//            this.receipt.get('lines').remove(this.line);
-//          }
-//        }
-//      } else if (cmd === '+') {
-//        if (this.line) {
-//          this.line.addUnit(this.keyboard.getNumber());
-//          if (this.line.get('qty') <= 0) {
-//            this.receipt.get('lines').remove(this.line);
-//          }        
-//        }
-//      } else if (cmd === 'qty') {
-//        if (this.line) {
-//          this.line.setUnit(this.keyboard.getNumber());
-//          if (this.line.get('qty') <= 0) {
-//            this.receipt.get('lines').remove(this.line);
-//          }            
-//        }
-//      } else if (cmd === String.fromCharCode(13)) {
-//        this.products.ds.find({
-//          product: {uPCEAN: this.keyboard.getString()}
-//        }, function (data) {
-//          if (data) {      
-//            this.receipt.addProduct(data);
-//          } else {
-//            alert('UPC/EAN code not found');
-//          }
-//        });
-//      }         
-//    }, this);    
+    var me = this;   
     
     this.editlineimage = OB.UTIL.EL(
       {tag: 'div', attr: {'class': 'span4'}}
@@ -68,7 +31,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ], init: function () {
               this.click(function() {
                 if (me.line) {
-                  me.receipt.get('lines').remove(me.line);        
+                  me.receipt.deleteLine(me.line);        
                 }              
               });
             }}                               

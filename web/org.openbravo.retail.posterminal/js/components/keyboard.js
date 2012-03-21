@@ -208,24 +208,15 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       var me = this;      
       if (cmd === '-') {
         if (this.line) {
-          this.line.removeUnit(this.getNumber());
-          if (this.line.get('qty') <= 0) {
-            this.receipt.get('lines').remove(this.line);
-          }
+          this.receipt.removeUnit(this.line, this.getNumber());      
         }
       } else if (cmd === '+') {
         if (this.line) {
-          this.line.addUnit(this.getNumber());
-          if (this.line.get('qty') <= 0) {
-            this.receipt.get('lines').remove(this.line);
-          }        
+          this.receipt.addUnit(this.line, this.getNumber());      
         }
       } else if (cmd === 'qty') {
         if (this.line) {
-          this.line.setUnit(this.getNumber());
-          if (this.line.get('qty') <= 0) {
-            this.receipt.get('lines').remove(this.line);
-          }            
+          this.receipt.setUnit(this.line, this.getNumber());           
         }
       } else if (cmd === String.fromCharCode(13)) {
 
