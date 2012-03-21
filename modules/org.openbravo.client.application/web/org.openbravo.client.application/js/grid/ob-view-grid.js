@@ -356,11 +356,15 @@ isc.OBViewGrid.addProperties({
   },
 
   setReadOnlyMode: function () {
-    this.uiPattern = 'RO';
-    this.canEdit = false;
-    this.contextMenu.destroy();
-    this.contextMenu = null;
-    this.refreshContents();
+    if (this.uiPattern !== 'RO') {
+      this.uiPattern = 'RO';
+      this.canEdit = false;
+      if (this.contextMenu) {
+        this.contextMenu.destroy();
+        this.contextMenu = null;
+      }
+      this.refreshContents();
+    }
   },
 
   draw: function () {

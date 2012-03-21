@@ -616,6 +616,9 @@ isc.OBStandardView.addProperties({
   setReadOnly: function (readOnly) {
     this.readOnly = readOnly;
     this.viewForm.readOnly = readOnly;
+    if (this.viewGrid && readOnly) {
+      this.viewGrid.setReadOnlyMode();
+    }
   },
 
   setSingleRecord: function (singleRecord) {
