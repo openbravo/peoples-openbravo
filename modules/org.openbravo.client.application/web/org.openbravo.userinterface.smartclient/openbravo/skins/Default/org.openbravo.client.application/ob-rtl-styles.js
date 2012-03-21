@@ -17,6 +17,17 @@
  ************************************************************************
  */
 
+/* ob-application-menu-styles.css */
+
+isc.OBApplicationMenuTree.changeDefaults('submenuImage', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu-RTL.png'
+});
+
+isc.OBApplicationMenuTree.changeDefaults('submenuDisabledImage', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu-RTL_Disabled.png'
+});
+
+
 /* ob-form-styles.js */
 
 isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
@@ -24,10 +35,25 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
 });
 
 
+/* ob-navigation-bar-styles.js */
+
+isc.OBQuickLaunch.addProperties({
+  createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconCreateNew-RTL.png',
+  quickLaunch_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconQuickLaunch-RTL.png'
+});
+
+isc.OBLogout.addProperties({
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconClose-RTL.png'
+});
+
+OB.Styles.TopLayout.LogosContainer.align = 'left';
+
+
 /* ob-personalization-styles.js */
 
 OB.Styles.Personalization.Icons.fieldGroup = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder-RTL.png';
 OB.Styles.Personalization.TabSet.tabBarAlign = 'right';
+
 
 /* ob-statusbar-styles.js */
 

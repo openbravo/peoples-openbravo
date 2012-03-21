@@ -17,6 +17,50 @@
  ************************************************************************
 */
 
+/* ob-application-menu-styles.css */
+
+.OBApplicationMenuTreeItemCellTitleField,
+.OBApplicationMenuTreeItemCellTitleFieldSelected,
+.OBApplicationMenuTreeItemCellTitleFieldOver,
+.OBApplicationMenuTreeItemCellTitleFieldSelectedOver,
+.OBApplicationMenuTreeItemCellTitleFieldDisabled {
+  padding: 0px 6px 0px 20px;
+}
+
+.OBApplicationMenuTreeItemCellIcon,
+.OBApplicationMenuTreeItemCellIconField,
+.OBApplicationMenuTreeItemCellIconFieldSelected,
+.OBApplicationMenuTreeItemCellIconFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldSelectedOver,
+.OBApplicationMenuTreeItemCellIconFieldDisabled {
+  padding: 0px 5px 0px 4px;
+  border-left: 1px #CDD7BB solid;
+  border-right: 0px #CDD7BB solid;
+}
+
+.OBApplicationMenuTreeItemCellIconFieldDisabled {
+  border: 0px;
+  padding: 0px 25px 0px 0px;
+  background-position: right center;
+  background-image: url(./images/application-menu/menuSeparator-RTL.png);
+}
+
+.OBApplicationMenuTreeItemCellKeysField,
+.OBApplicationMenuTreeItemCellKeysFieldSelected,
+.OBApplicationMenuTreeItemCellKeysFieldOver,
+.OBApplicationMenuTreeItemCellKeysFieldSelectedOver,
+.OBApplicationMenuTreeItemCellKeysFieldDisabled,
+.OBApplicationMenuTreeItemCellSubmenuField,
+.OBApplicationMenuTreeItemCellSubmenuFieldSelected,
+.OBApplicationMenuTreeItemCellSubmenuFieldOver,
+.OBApplicationMenuTreeItemCellSubmenuFieldSelectedOver,
+.OBApplicationMenuTreeItemCellSubmenuFieldDisabled {
+  padding-left: 6px;
+  padding-right: 0px;
+  text-align: left;
+}
+
+
 /* ob-form-styles.css */
 
 .OBFormFieldSelectInputRequired,
@@ -31,6 +75,38 @@
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputDisabled {
   border-width: 1px 1px 1px 0px;
+}
+
+
+/* ob-navigation-bar-styles.js */
+
+.OBNavBarToolStrip {
+  margin-left: 0px;
+  margin-right: 4px;
+}
+
+.OBNavBarComponent {
+  background-position: left;
+}
+
+.OBNavBarComponent:hover {
+  border-left: 0px solid #72ab10;
+  margin-left: 0px;
+
+  border-right: 1px solid #72ab10;
+  margin-right: -1px;
+
+  background-position: left;
+}
+
+.OBNavBarComponentSelected {
+  border-left: 0px solid #72ab10;
+  margin-left: 0px;
+
+  border-right: 1px solid #72ab10;
+  margin-right: -1px;
+
+  background-position: left;
 }
 
 

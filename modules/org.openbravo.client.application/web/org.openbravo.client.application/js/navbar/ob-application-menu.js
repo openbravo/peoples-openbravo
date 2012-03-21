@@ -33,6 +33,9 @@ isc.OBApplicationMenuTree.addProperties({
   // move the menu a few pixels down and a bit to the left
   placeNear: function (left, top) {
     var parentLeft = this.menuButton.parentElement.getPageLeft();
+    if (isc.Page.isRTL()) {
+      parentLeft = parentLeft - this.getVisibleWidth() + this.menuButton.getVisibleWidth() + 1;
+    }
     return this.Super('placeNear', [parentLeft, top - 1]);
   },
 

@@ -80,6 +80,7 @@
 .OBApplicationMenuTreeItemCellIconFieldSelectedOver,
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
   padding: 0px 4px 0px 5px;
+  border-left: 0px #CDD7BB solid;
   border-right: 1px #CDD7BB solid;
 }
 
@@ -138,6 +139,7 @@
 .OBApplicationMenuTreeItemCellSubmenuFieldOver,
 .OBApplicationMenuTreeItemCellSubmenuFieldSelectedOver,
 .OBApplicationMenuTreeItemCellSubmenuFieldDisabled {
+  padding-left: 0px;
   padding-right: 6px;
   text-align: right;
 }

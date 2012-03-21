@@ -22,6 +22,7 @@
 ============================================================*/
 .OBNavBarToolStrip {
   margin-left: 4px;
+  margin-right: 0px;
   height: 26px;
   background-color: #FFFFFF;
 }
@@ -94,9 +95,12 @@
 .OBNavBarComponent:hover {
   border-top: 1px solid #72ab10;
   border-bottom: 1px solid #72ab10;
-  border-left: 1px solid #72ab10;
 
+  border-left: 1px solid #72ab10;
   margin-left: -1px;
+
+  border-right: 0px solid #72ab10;
+  margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;
@@ -111,9 +115,12 @@
 
 .OBNavBarComponentSelected {
   border-top: 1px solid #72ab10;
-  border-left: 1px solid #72ab10;
 
+  border-left: 1px solid #72ab10;
   margin-left: -1px;
+
+  border-right: 0px solid #72ab10;
+  margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;
