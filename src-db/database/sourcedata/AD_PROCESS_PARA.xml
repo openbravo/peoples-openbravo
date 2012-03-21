@@ -3854,6 +3854,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1004400000-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--1004400000-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--1004400000-->  <ISRANGE><![CDATA[N]]></ISRANGE>
+<!--1004400000-->  <DEFAULTVALUE><![CDATA[@#Date@]]></DEFAULTVALUE>
 <!--1004400000-->  <AD_ELEMENT_ID><![CDATA[268]]></AD_ELEMENT_ID>
 <!--1004400000--></AD_PROCESS_PARA>
 
@@ -3874,6 +3875,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1004400001-->  <FIELDLENGTH><![CDATA[30]]></FIELDLENGTH>
 <!--1004400001-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--1004400001-->  <ISRANGE><![CDATA[N]]></ISRANGE>
+<!--1004400001-->  <DEFAULTVALUE><![CDATA[@SQL=SELECT M_Requisition.C_Bpartner_Id FROM M_Requisition, (SELECT count(*) as SameBP FROM M_Requisition inner join M_requisitionLine ON M_Requisition.M_Requisition_id = M_requisitionLine.M_Requisition_id WHERE M_Requisition.c_bpartner_id = M_requisitionLine.c_bpartner_id AND M_Requisition.M_Requisition_id = @M_Requisition_ID@) SameBP,  (SELECT count(*) QtyLines FROM M_RequisitionLine WHERE M_RequisitionLine.M_Requisition_id=@M_Requisition_ID@) QtyLines  WHERE SameBP.SameBP = QtyLines.QtyLines AND M_Requisition.M_Requisition_id =@M_Requisition_ID@]]></DEFAULTVALUE>
 <!--1004400001-->  <AD_ELEMENT_ID><![CDATA[187]]></AD_ELEMENT_ID>
 <!--1004400001--></AD_PROCESS_PARA>
 
@@ -3895,6 +3897,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--1004400002-->  <FIELDLENGTH><![CDATA[20]]></FIELDLENGTH>
 <!--1004400002-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--1004400002-->  <ISRANGE><![CDATA[N]]></ISRANGE>
+<!--1004400002-->  <DEFAULTVALUE><![CDATA[@SQL=SELECT M_Requisition.m_pricelist_id  FROM M_Requisition,       (SELECT count(*) as SamePL        FROM M_Requisition inner join M_requisitionLine ON M_Requisition.M_Requisition_id = M_requisitionLine.M_Requisition_id       WHERE M_Requisition.m_pricelist_id = M_requisitionLine.m_pricelist_id AND M_Requisition.M_Requisition_id = @M_Requisition_ID@) SamePL,        (SELECT count(*) QtyLines       FROM M_RequisitionLine       WHERE M_RequisitionLine.M_Requisition_id=@M_Requisition_ID@) QtyLines   WHERE SamePL.SamePL = QtyLines.QtyLines AND M_Requisition.M_Requisition_id =@M_Requisition_ID@]]></DEFAULTVALUE>
 <!--1004400002-->  <AD_ELEMENT_ID><![CDATA[449]]></AD_ELEMENT_ID>
 <!--1004400002--></AD_PROCESS_PARA>
 
@@ -3915,6 +3918,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--1004400003-->  <FIELDLENGTH><![CDATA[20]]></FIELDLENGTH>
 <!--1004400003-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--1004400003-->  <ISRANGE><![CDATA[N]]></ISRANGE>
+<!--1004400003-->  <DEFAULTVALUE><![CDATA[@AD_Org_ID@]]></DEFAULTVALUE>
 <!--1004400003-->  <AD_ELEMENT_ID><![CDATA[113]]></AD_ELEMENT_ID>
 <!--1004400003--></AD_PROCESS_PARA>
 
