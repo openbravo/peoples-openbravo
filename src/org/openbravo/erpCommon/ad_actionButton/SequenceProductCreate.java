@@ -69,6 +69,7 @@ public class SequenceProductCreate implements Process {
       // Modifies values
       newProduct.setSearchKey(value);
       newProduct.setName(name);
+      newProduct.setUPCEAN(null);
 
       // Delete the ProcessPlan for new product
       newProduct.setProcessPlan(null);
@@ -76,6 +77,9 @@ public class SequenceProductCreate implements Process {
       // Empty values copied and filled by m_product_trg
       newProduct.setProductAccountsList(null);
       newProduct.setProductTrlList(null);
+
+      // Delete Purchasing Tab
+      newProduct.setApprovedVendorList(null);
 
       // Product Category
       ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
