@@ -39,7 +39,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   public BigDecimal getTransactionCost() {
     BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
-    // calculate calculate new average cost.
+    // calculate new average cost.
     switch (trxType) {
     case Receipt:
     case ReceiptVoid:
@@ -96,16 +96,14 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   /**
-   * Cost of incoming physical inventory is calculated based on current average cost. If there is no
-   * average cost it uses the default method..
+   * In case the Default Cost is used it prioritizes the existence of an average cost.
    */
   @Override
-  protected BigDecimal getInventoryIncreaseCost() {
+  protected BigDecimal getDefaultCost() {
     if (getProductCost() != null) {
       return getOutgoingTransactionCost();
-    } else {
-      return super.getInventoryIncreaseCost();
     }
+    return super.getDefaultCost();
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
