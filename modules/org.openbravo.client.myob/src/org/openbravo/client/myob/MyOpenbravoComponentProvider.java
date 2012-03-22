@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.OBContext;
 
 /**
  * 
@@ -95,6 +96,19 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.myob/ob-myopenbravo-styles.css", false));
+
+    // RTL files should be added at the end. Don't add more files after them
+    if (OBContext.getOBContext().isRTL()) {
+      globalResources.add(createStyleSheetResource(
+          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+              + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-rtl-styles.css",
+          false));
+
+      globalResources.add(createStaticResource(
+          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+              + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-rtl-styles.js",
+          false));
+    }
 
     return globalResources;
   }

@@ -86,8 +86,11 @@ isc.OBWidget.changeDefaults('headerDefaults', {
 });
 
 isc.OBWidget.changeDefaults('headerLabelDefaults', {
+  wrap: false,
+  width: '100%',
+  inherentWidth: true,
   styleName: 'OBWidgetHeaderText',
-  align: isc.Canvas.CENTER
+  align: isc.Canvas.LEFT
 });
 
 isc.OBWidget.changeDefaults('restoreButtonDefaults', {

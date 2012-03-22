@@ -26,8 +26,7 @@
   font-size: 14px;
   font-family: 'lucida sans', sans-serif;
   font-weight: bold;
-  padding-left: 5px;
-  padding-top: 4px;
+  padding: 4px 0px 0px 5px;
   vertical-align: top;
 }
 
@@ -37,7 +36,7 @@
 .OBWidgetIconMinimizeOver,
 .OBWidgetIconMinimizeDown,
 .OBWidgetIconMinimizeDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -45,7 +44,7 @@
 .OBWidgetIconMaximizeOver,
 .OBWidgetIconMaximizeDown,
 .OBWidgetIconMaximizeDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -53,7 +52,7 @@
 .OBWidgetIconRestoreOver,
 .OBWidgetIconRestoreDown,
 .OBWidgetIconRestoreDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -61,7 +60,7 @@
 .OBWidgetIconCloseOver,
 .OBWidgetIconCloseDown,
 .OBWidgetIconCloseDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #FA962F;
 }
 
@@ -108,7 +107,7 @@
   font-family: 'lucida sans', sans-serif; 
   font-size: 12px;
   color: #fff;
-  padding-left: 4px;
+  padding: 0px 0px 0px 4px;
 }
 
 .OBWidgetMenuCellTitleFieldOver {
