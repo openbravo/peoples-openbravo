@@ -31,6 +31,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
@@ -158,26 +159,29 @@ public abstract class CostingAlgorithm {
 
   /**
    * Method to calculate cost of Returned Shipments. Cost is calculated based on the proportional
-   * cost of the original receipt. If no original receipt is found the cost is calculated based on
-   * the standard cost.
+   * cost of the original receipt. If no original receipt is found the default cost is returned.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentReturnCost() {
-    try {
+    if (transaction.getGoodsShipmentLine().getSalesOrderLine() != null
+        && transaction.getGoodsShipmentLine().getSalesOrderLine().getGoodsShipmentLine() != null) {
       return getReturnedInOutLineCost();
-    } catch (OBException e) {
-      return getTransactionStandardCost();
+    } else {
+      return getDefaultCost();
     }
   }
 
   /**
    * Method to calculate the cost of Voided Shipments. By default the cost is calculated getting the
-   * cost of the original payment.
+   * cost of the original shipment. If no original shipment is found the Default Cost is returned.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentVoidCost() {
+    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
+      return getDefaultCost();
+    }
     return getOriginalInOutLineCost();
   }
 
@@ -188,17 +192,14 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getShipmentNegativeCost() {
-    // Shipment with negative quantity. If the product is purchased get cost from its purchase price
-    // list. If no price list is found or it is not purchased Standard Cost is used.
-    if (transaction.getProduct().isPurchase()) {
-      return getPriceListCost();
-    }
-    return getTransactionStandardCost();
+    return getDefaultCost();
   }
 
   /*
    * Calculates the cost of a Receipt line based on its related order price. When no related order
-   * is found its Purchase PriceList price is used.
+   * is found its returned the cost based on the newer of the following three values: 1. Last
+   * purchase order price of the receipt's vendor for the product, 2. Purchase pricelist of the
+   * product and 3. Default Cost of the product.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
@@ -207,7 +208,8 @@ public abstract class CostingAlgorithm {
     org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine receiptline = transaction
         .getGoodsShipmentLine();
     if (receiptline.getSalesOrderLine() == null) {
-      return getPriceListCost();
+      // FIXME: Try also searching a recent purchase order of the vendor for the same product
+      return getDefaultCost();
     }
     for (org.openbravo.model.procurement.POInvoiceMatch matchPO : receiptline
         .getProcurementPOInvoiceMatchList()) {
@@ -231,11 +233,15 @@ public abstract class CostingAlgorithm {
 
   /**
    * Method to calculate the cost of Voided Receipts. By default the cost is calculated getting the
-   * cost of the original payment.
+   * cost of the original payment. If no original Receipt is found cost is calculated as a regular
+   * outgoing transaction.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getReceiptVoidCost() {
+    if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
+      return getOutgoingTransactionCost();
+    }
     return getOriginalInOutLineCost();
   }
 
@@ -305,17 +311,12 @@ public abstract class CostingAlgorithm {
 
   /**
    * Calculates the total cost amount of a physical inventory that results on an increment of stock.
-   * Default behavior is to calculate the cost based on the product Purchase Pricelist and if this
-   * is not defined the Standard Cost defined for the product.
+   * Default Cost is used.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInventoryIncreaseCost() {
-    try {
-      return getPriceListCost();
-    } catch (OBException e) {
-      return getTransactionStandardCost();
-    }
+    return getDefaultCost();
   }
 
   /**
@@ -364,13 +365,12 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Calculates the cost of a negative internal consumption. It uses product's Standard Cost to
-   * calculate its price.
+   * Calculates the cost of a negative internal consumption using the Default Cost.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInternalConsNegativeCost() {
-    return getTransactionStandardCost();
+    return getDefaultCost();
   }
 
   /**
@@ -414,6 +414,31 @@ public abstract class CostingAlgorithm {
           transaction.getTransactionProcessDate(), true));
     }
     return totalCost;
+  }
+
+  protected BigDecimal getDefaultCost() {
+    Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
+        transaction.getTransactionProcessDate(), costDimensions);
+    org.openbravo.model.common.businesspartner.BusinessPartner bp = CostingUtils
+        .getTrxBusinessPartner(transaction, trxType);
+    org.openbravo.model.pricing.pricelist.PriceList pricelist = null;
+    if (bp != null) {
+      pricelist = bp.getPurchasePricelist();
+    }
+    org.openbravo.model.pricing.pricelist.ProductPrice pp = FinancialUtils.getProductPrice(
+        transaction.getProduct(), transaction.getMovementDate(), false, pricelist);
+    if (stdCost == null && pp == null) {
+      throw new OBException("@NoPriceListOrStandardCostForProduct@");
+    } else if (stdCost != null && pp == null) {
+      return getTransactionStandardCost();
+    } else if (stdCost == null && pp != null) {
+      return getPriceListCost();
+    } else if (stdCost != null && pp != null
+        && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
+      return getPriceListCost();
+    } else {
+      return getTransactionStandardCost();
+    }
   }
 
   /**
