@@ -62,7 +62,6 @@ public class CostingBackground extends DalBaseProcess {
     obcTrx.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     List<MaterialTransaction> trxs = obcTrx.list();
     int counter = 0, total = trxs.size();
-
     for (MaterialTransaction transaction : trxs) {
       counter++;
       try {
@@ -88,9 +87,11 @@ public class CostingBackground extends DalBaseProcess {
         bundle.setResult(result);
         return;
       }
+
       // If cost has been calculated successfully do a commit.
       SessionHandler.getInstance().commitAndStart();
     }
+    logger.logln(OBMessageUtils.messageBD("Success"));
     bundle.setResult(result);
   }
 }
