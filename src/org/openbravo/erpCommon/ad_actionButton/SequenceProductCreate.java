@@ -189,8 +189,8 @@ public class SequenceProductCreate implements Process {
         + SequenceId + "'";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
     try {
-      String result = (String) q.uniqueResult();
-      return result == null ? 0L : new Long(result);
+      Long result = (Long) q.uniqueResult();
+      return result == null ? 0L : result;
     } catch (Exception e) {
       // Unique result throws exception if more than one line is returned.
       return 0L;
