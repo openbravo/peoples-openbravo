@@ -80,6 +80,24 @@ OB.DateItemProperties = {
 
     this.Super('init', arguments);
     
+    if (this.textField) {
+      this.textField.changed = function () {
+        // when the textfield of the date is updated, the date
+        // field should be flagged as changed
+        // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
+        this._textChanged = true;
+        this.parentItem._hasChanged = true;
+        // There is a mechanism to prevent infinite looping in number fields 
+        // (see issue https://issues.openbravo.com/view.php?id=17290) that
+        // interferes with the correct behaviour of the date fields 
+        // The infinite looping described in the issue does not apply to date fields, 
+        // so it is safe to delete the saveFocusItemChanged flag when a date is modified
+        if (this.parentItem.form && this.parentItem.form.view && this.parentItem.form.view.viewForm) {
+          delete this.parentItem.form.view.viewForm.saveFocusItemChanged;
+        }
+      };
+    }
+
     if (this.showDisabled === false) {
       this.textField.showDisabled = false;
     }
@@ -92,11 +110,11 @@ OB.DateItemProperties = {
   
   parseValue: function() {
     var i, str = this.blurValue(), 
-      length = str.length, 
-      parts = [ '', '', '' ], partIndex = 0, result;
+      length, parts = [ '', '', '' ], partIndex = 0, result;
     if (!str || isc.isA.Date(str) || str.replace(/0/g, '') === '') {
       return str;
     }
+    length = str.length;
     for (i = 0; i < length; i++) {
       if (this.isNumber(str, i)) {
         if (this.reachedLength(parts[partIndex], partIndex)) {
@@ -176,6 +194,9 @@ OB.DateItemProperties = {
   
   pickerDataChanged: function(picker) {
     this.Super('pickerDataChanged', arguments);
+    // update the date field after picking a new date 
+    this.textField._textChanged = true;
+    this.updateValue();
     if (this.form.focusInNextItem) {
       this.form.focusInNextItem(this.name);
     }
@@ -199,30 +220,32 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
   
   // update the value in update value as this is called from cellEditEnd in the
-  // grid, or after losing the focus on the form
+  // grid, after losing the focus on the form and when autosaving
   updateValue: function() {
-    if (this.grid && this.grid._preventDateParsing) {
+    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving) {
       return;
     }
-    this.expandValue();
-    this.Super('updateValue', arguments);
-    //  when the date field has a callout and all the mandatory fields have been entered, 
-    //  the grid does not save the value before making the FIC call, so the value has to 
-    //  be saved explicitly
-    //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
-    if (this.grid) {
-      this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();
+    if (this.textField._textChanged) {
+      this.expandValue();
+      this.Super('updateValue', arguments);
+      //  when the date field has a callout and all the mandatory fields have been entered, 
+      //  the grid does not save the value before making the FIC call, so the value has to 
+      //  be saved explicitly
+      //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
+      if (this.grid && this.grid.getEditRow()) {
+        this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();
+      }
+      this.textField._textChanged = false;
     }
   },
 
   blur: function () {
+    // force the update of the date when its field loses the focus
+    // it has to be done before the call to the super because the
+    // date should be updated before calling handleItemChange, 
+    // which is called in the super blur  
+    this.updateValue();
     this.Super('blur', arguments);
-    // this extra call has to be done in order to ensure that the value 
-    // is updated before the autosave is done
-    // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
-    if (this.form && this.form.view && this.form.view.isShowingForm) {
-      this.updateValue();
-    }
   },
   
 
