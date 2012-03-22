@@ -2176,7 +2176,11 @@ isc.OBViewGrid.addProperties({
   },
 
   autoSave: function () {
+    // flag to force the parsing of date fields when autosaving
+    // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
+    this._autoSaving = true;
     this.storeUpdatedEditorValue();
+    delete this._autoSaving;
     this.endEditing();
   },
 
