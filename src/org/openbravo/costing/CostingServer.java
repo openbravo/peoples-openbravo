@@ -55,8 +55,8 @@ public class CostingServer {
   }
 
   private void init() {
-    costingRule = getCostDimensionRule();
     organization = getOrganization();
+    costingRule = getCostDimensionRule();
     currency = getCostCurrency();
     trxCost = transaction.getTransactionCost();
   }
@@ -127,6 +127,7 @@ public class CostingServer {
 
   private CostingRule getCostDimensionRule() {
     OBCriteria<CostingRule> obcCR = OBDal.getInstance().createCriteria(CostingRule.class);
+    obcCR.add(Restrictions.eq(CostingRule.PROPERTY_ORGANIZATION, organization));
     // Product filter: CostingRule.product is null or trx.product
     obcCR.add(Restrictions.or(Restrictions.isNull(CostingRule.PROPERTY_PRODUCT),
         Restrictions.eq(CostingRule.PROPERTY_PRODUCT, transaction.getProduct())));
@@ -143,8 +144,8 @@ public class CostingServer {
     obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
     List<CostingRule> costRules = obcCR.list();
     if (costRules.size() == 0) {
-      throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
-          + transaction.getProduct().getName() + ", @Date@: "
+      throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
+          + organization.getName() + ", @Date@: "
           + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     CostingRule returncr = costRules.get(0);
@@ -170,7 +171,7 @@ public class CostingServer {
       return currency;
     }
     if (organization != null) {
-      if (!organization.getId().equals("0") && organization.getCurrency() != null) {
+      if (organization.getCurrency() != null) {
         return organization.getCurrency();
       }
       return OBContext.getOBContext().getCurrentClient().getCurrency();
@@ -181,11 +182,11 @@ public class CostingServer {
   }
 
   public Organization getOrganization() {
-    if (costingRule.isOrganizationDimension()) {
-      return OBContext.getOBContext().getOrganizationStructureProvider()
-          .getLegalEntity(transaction.getOrganization());
+    if (organization != null) {
+      return organization;
     }
-    return OBDal.getInstance().get(Organization.class, "0");
+    return OBContext.getOBContext().getOrganizationStructureProvider()
+        .getLegalEntity(transaction.getOrganization());
   }
 
   public CostingRule getCostingRule() {

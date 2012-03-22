@@ -28,7 +28,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -69,10 +68,6 @@ public abstract class CostingAlgorithm {
 
     org.openbravo.model.materialmgmt.cost.CostingRule costingRule = costingServer.getCostingRule();
     costDimensions = CostingUtils.getEmptyDimensions();
-    if (costingRule.isOrganizationDimension()) {
-      costDimensions.put(CostDimension.LegalEntity, OBContext.getOBContext()
-          .getOrganizationStructureProvider().getLegalEntity(transaction.getOrganization()));
-    }
     if (costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     }
@@ -428,7 +423,7 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getTransactionStandardCost() {
-    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(),
+    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(), costOrg,
         transaction.getTransactionProcessDate(), costDimensions);
     return transaction.getMovementQuantity().abs().multiply(standardCost);
   }
@@ -472,7 +467,7 @@ public abstract class CostingAlgorithm {
    * Dimensions available to manage the cost on an entity.
    */
   public enum CostDimension {
-    Warehouse, LegalEntity
+    Warehouse
   }
 
 }

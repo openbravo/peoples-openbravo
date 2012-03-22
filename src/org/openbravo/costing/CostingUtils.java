@@ -98,9 +98,9 @@ public class CostingUtils {
    * Calls {@link #getStandardCost(Product, Date, HashMap, boolean)} setting the
    * recheckWithoutDimensions flag to true.
    */
-  public static BigDecimal getStandardCost(Product product, Date date,
+  public static BigDecimal getStandardCost(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) throws OBException {
-    return getStandardCost(product, date, costDimensions, true);
+    return getStandardCost(product, org, date, costDimensions, true);
   }
 
   /**
@@ -119,7 +119,7 @@ public class CostingUtils {
    * @throws OBException
    *           when no standard cost is found.
    */
-  public static BigDecimal getStandardCost(Product product, Date date,
+  public static BigDecimal getStandardCost(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions)
       throws OBException {
     // Get cost from M_Costing for given date.
@@ -132,12 +132,8 @@ public class CostingUtils {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
     }
-    if (costDimensions.get(CostDimension.LegalEntity) != null) {
-      obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION,
-          costDimensions.get(CostDimension.LegalEntity)));
-    } else {
-      obcCosting.setFilterOnReadableOrganization(false);
-    }
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, org));
+    obcCosting.setFilterOnReadableOrganization(false);
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
@@ -149,7 +145,7 @@ public class CostingUtils {
       }
       return obcCosting.list().get(0).getCost();
     } else if (recheckWithoutDimensions) {
-      return getStandardCost(product, date, getEmptyDimensions(), false);
+      return getStandardCost(product, org, date, getEmptyDimensions(), false);
     }
     // If no standard cost is found throw an exception.
     throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @Date@: "
@@ -162,7 +158,6 @@ public class CostingUtils {
   public static HashMap<CostDimension, BaseOBObject> getEmptyDimensions() {
     HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
     costDimensions.put(CostDimension.Warehouse, null);
-    costDimensions.put(CostDimension.LegalEntity, null);
     return costDimensions;
   }
 
@@ -170,7 +165,7 @@ public class CostingUtils {
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
    */
-  public static BigDecimal getCurrentStock(Product product, Date date,
+  public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) {
     OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
@@ -184,15 +179,10 @@ public class CostingUtils {
       obcTrx.add(Restrictions.eq("locator." + Locator.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
     }
-    if (costDimensions.get(CostDimension.LegalEntity) != null) {
-      // Get child tree of organizations.
-      Set<String> orgs = OBContext
-          .getOBContext()
-          .getOrganizationStructureProvider()
-          .getChildTree(((Organization) costDimensions.get(CostDimension.LegalEntity)).getId(),
-              true);
-      obcTrx.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
-    }
+    // Get child tree of organizations.
+    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getChildTree(org.getId(), true);
+    obcTrx.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
     obcTrx.setProjection(Projections.sum(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY));
 
     if (obcTrx.list() != null && obcTrx.list().size() > 0) {

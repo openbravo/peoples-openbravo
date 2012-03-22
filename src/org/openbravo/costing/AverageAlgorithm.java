@@ -55,7 +55,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
-      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(),
+      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
           transaction.getTransactionProcessDate(), costDimensions);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
@@ -151,12 +151,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
     }
-    if (costDimensions.get(CostDimension.LegalEntity) != null) {
-      obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION,
-          costDimensions.get(CostDimension.LegalEntity)));
-    } else {
-      obcCosting.setFilterOnReadableOrganization(false);
-    }
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, costOrg));
+    obcCosting.setFilterOnReadableOrganization(false);
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
