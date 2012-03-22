@@ -27,8 +27,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -71,11 +71,12 @@ public class CostingBackground extends DalBaseProcess {
         transactionCost.process();
         log4j.debug("Transaction processed: " + counter + "/" + total);
       } catch (OBException e) {
+        String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
         log4j.error(e.getMessage(), e);
-        logger.logln(e.getMessage());
+        logger.logln(resultMsg);
         result.setType("Error");
         result.setTitle(OBMessageUtils.messageBD("Error"));
-        result.setMessage(OBMessageUtils.parseTranslation(e.getMessage()));
+        result.setMessage(resultMsg);
         bundle.setResult(result);
         return;
       } catch (Exception e) {
@@ -90,5 +91,6 @@ public class CostingBackground extends DalBaseProcess {
       // If cost has been calculated successfully do a commit.
       SessionHandler.getInstance().commitAndStart();
     }
+    bundle.setResult(result);
   }
 }
