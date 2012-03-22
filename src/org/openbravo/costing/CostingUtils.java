@@ -122,6 +122,41 @@ public class CostingUtils {
   public static BigDecimal getStandardCost(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions)
       throws OBException {
+    Costing stdCost = getStandardCostDefinition(product, org, date, costDimensions,
+        recheckWithoutDimensions);
+    if (stdCost == null) {
+      // If no standard cost is found throw an exception.
+      throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
+          + ", @Date@: " + OBDateUtils.formatDate(date));
+    }
+    return stdCost.getCost();
+  }
+
+  /**
+   * Calls {@link #getStandardCostDefinition(Product, Date, HashMap, boolean)} setting the
+   * recheckWithoutDimensions flag to true.
+   */
+  public static Costing getStandardCostDefinition(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    return getStandardCostDefinition(product, org, date, costDimensions, true);
+  }
+
+  /**
+   * Calculates the standard cost definition of a product on the given date and cost dimensions.
+   * 
+   * @param product
+   *          The Product to get its Standard Cost
+   * @param date
+   *          The Date to get the Standard Cost
+   * @param costDimensions
+   *          The cost dimensions to get the Standard Cost if it is defined by some of them.
+   * @param recheckWithoutDimensions
+   *          boolean flag to force a recall the method to get the Standard Cost at client level if
+   *          no cost is found in the given cost dimensions.
+   * @return the Standard Cost. Null when no definition is found.
+   */
+  public static Costing getStandardCostDefinition(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions) {
     // Get cost from M_Costing for given date.
     OBCriteria<Costing> obcCosting = OBDal.getInstance().createCriteria(Costing.class);
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
@@ -143,13 +178,11 @@ public class CostingUtils {
         throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
             + ", @Date@: " + OBDateUtils.formatDate(date));
       }
-      return obcCosting.list().get(0).getCost();
+      return obcCosting.list().get(0);
     } else if (recheckWithoutDimensions) {
-      return getStandardCost(product, org, date, getEmptyDimensions(), false);
+      return getStandardCostDefinition(product, org, date, getEmptyDimensions(), false);
     }
-    // If no standard cost is found throw an exception.
-    throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName() + ", @Date@: "
-        + OBDateUtils.formatDate(date));
+    return null;
   }
 
   /**
