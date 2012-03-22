@@ -4,14 +4,16 @@ define(['datasource', 'utilities'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
-
+  
   OB.MODEL.Collection = Backbone.Collection.extend({
+    constructor: function (data) {
+      this.ds = data.ds;
+      Backbone.Collection.prototype.constructor.call(this);
+    },
     inithandler : function (init) { 
        if (init) {
          init.call(this);
        }
-       // load datasource
-       this.ds.load(this.loadparams);
     },
     exec : function (filter) {
       var me = this;
@@ -26,42 +28,8 @@ define(['datasource', 'utilities'], function () {
         }
       });
     }
-  });
+  });  
   
-  // Category Model
-  
-  OB.MODEL.Category = Backbone.Model.extend({});
-  
-  OB.MODEL._CategoryCol = OB.MODEL.Collection.extend({
-    model: OB.MODEL.Category,
-    initialize: function () {
-      this.ds = new OB.DS.DataSource(new OB.DS.Query(
-        'select c as category, img.bindaryData as img ' + 
-        'from ProductCategory as c left outer join c.obposImage img ' +
-        'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
-        'order by c.oBPOSPOSLine, c.name'));
-    }
-    
-  });
-  
-  OB.MODEL.CategoryCol = OB.UTIL.recontext(OB.MODEL._CategoryCol, 'modelcategories');
-  
-  // Product model
-  
-  OB.MODEL.Product = Backbone.Model.extend({});
-  
-  OB.MODEL._ProductCol = OB.MODEL.Collection.extend({
-    model: OB.MODEL.Product,
-    initialize: function () {
-      this.ds = new OB.DS.DataSource( new OB.DS.Query(
-              'select p as product, pp as price, img.bindaryData as img ' +
-              'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
-              'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
-              'order by p.obposLine, p.name'));
-    }  
-  });
-  
-  OB.MODEL.ProductCol = OB.UTIL.recontext(OB.MODEL._ProductCol, 'modelproducts');
 
   // Terminal model.
   

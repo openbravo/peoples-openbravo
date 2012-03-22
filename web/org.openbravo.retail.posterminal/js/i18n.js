@@ -6,6 +6,9 @@ define([], function () {
   OB.I18N = window.OB.I18N || {};
   
   OB.I18N.labels = {
+         
+    'OBPOS_WelcomeMessage': 'Welcome to Openbravo POS',
+    'OBPOS_NoLineSelected': 'There is no line selected',
     'OBPOS_DeleteLine': 'Deleted line %0 x %1',
     'OBPOS_AddLine': 'Added line %0 x %1',
     'OBPOS_AddUnits': 'Added %0 x %1',

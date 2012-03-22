@@ -181,7 +181,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     ));       
     
     
-    this.products = context.get('modelproducts');
+    this.products = context.get('DataProduct')
     this.receipt = context.get('modelorder');
     this.stack = context.get('stackorder');
     this.line = null;
@@ -227,7 +227,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
           product: {uPCEAN: this.getString()}
         }, function (data) {
           if (data) {      
-            me.receipt.addProduct(me.index, new OB.MODEL.Product(data));
+            me.receipt.addProduct(me.index, new Backbone.Model(data));
             me.stack.trigger('scan');
           } else {
             alert('UPC/EAN code not found');

@@ -9,7 +9,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     var msgwelcome = OB.UTIL.EL(
         {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
           {tag: 'div', attr: {'style': 'float:right;'}, content: [
-            'Welcome to Openbravo.'                 
+            OB.I18N.getLabel('OBPOS_WelcomeMessage')
           ]}
         ]}
     );    
@@ -37,7 +37,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     
     this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
-        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 250px; margin: 5px; padding: 5px'}, content: [
+        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
           {tag: 'div', content: [
             msgwelcome,
             msgaction

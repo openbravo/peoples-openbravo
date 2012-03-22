@@ -54,8 +54,8 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.totalnet = OB.UTIL.EL({tag:'strong'});      
     
     this.$ = OB.UTIL.EL(
-      {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [ 
-        {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [ 
+      {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
+        {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [         
           {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [                                                                                        
             {tag: 'strong', attr: {'style': 'color: green;'}, content: [                                                                                        
               '10:15 - <9332>'

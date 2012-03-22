@@ -2,8 +2,57 @@ define(['utilities', 'model/stack'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-
+  
   // Order list
+  OB.COMP.ListView = function (defaults) {
+   
+    this.renderLine = defaults.renderLine;
+    this.renderHeader = defaults.renderHeader;
+    this.header = this.renderHeader ? 1 : 0;
+    this.$ = defaults.$ || OB.UTIL.EL({tag: 'div'});
+  };
+  
+  OB.COMP.ListView.prototype.setModel = function (collection) {
+    this.collection = collection;
+    
+    this.collection.on('change', function(model, prop) {          
+      var index = this.collection.indexOf(model);
+      this.$.children().eq(index + this.header)
+        .replaceWidth(this.renderLine(model));      
+    }, this);
+    
+    this.collection.on('add', function(model, prop, options) {     
+      var index = options.index;
+      var me = this;
+      var tr = this.renderLine(model);
+      if (index === this.collection.length - 1) {
+        this.$.append(tr);
+      } else {
+        this.$.children().eq(index + this.header).before(tr);
+      }
+    }, this);
+    
+    this.collection.on('remove', function (model, prop, options) {        
+      var index = options.index;
+      this.$.children().eq(index + this.header).remove();         
+    }, this);
+    
+    this.collection.on('reset', function() {
+      this.$.empty();
+      if (this.renderHeader) {
+        this.$.append(this.renderHeader());
+      }
+    }, this);   
+    
+    // Init clear...
+    this.$.empty();
+    if (this.renderHeader) {
+      this.$.append(this.renderHeader());
+    }    
+  }; 
+  
+
+  // Order table
   OB.COMP.TableView = function (defaults) {
   
     var me = this;
@@ -23,7 +72,7 @@ define(['utilities', 'model/stack'], function () {
     this.tbody = OB.UTIL.EL({tag: 'ul', attr: {'class': 'unstyled'}});
     
     this.div = OB.UTIL.EL({tag: 'div', content: [this.theader, this.tbody]});
-  }
+  };
 
   OB.COMP.TableView.prototype.setModel = function (collection) {
     this.collection = collection;
@@ -41,7 +90,8 @@ define(['utilities', 'model/stack'], function () {
       var me = this;
       var tr = OB.UTIL.EL({tag: 'li', attr: {'class': 'activable'}});
       tr.append(this.renderLine(model));
-      tr.click(function () {
+      tr.click(function (e) {
+        e.preventDefault();
         var index = me.collection.indexOf(model)
         me.stack.set('selected', index);
         me.stack.trigger('click', model, index);

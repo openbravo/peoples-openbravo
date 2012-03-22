@@ -62,6 +62,10 @@ define([], function () {
     }
   };  
   
+  OB.UTIL.escapeRegExp = function (text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+  
   OB.UTIL.recontext = function (model, defaultid) {
     return function (context, id) {
       var obj = new model();

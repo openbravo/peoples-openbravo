@@ -176,7 +176,15 @@ define([], function () {
       if (typeof(filter[p]) === 'object') {
         return check(elem[p], filter[p]);
       } else {
-        if (filter[p] !== elem[p]) {
+        if (filter[p].substring(0, 2) === '%i') {
+          if (!new RegExp(filter[p].substring(2), 'i').test(elem[p])) {
+            return false;
+          }
+        } else if (filter[p].substring(0, 2) === '%%') {
+          if (!new RegExp(filter[p].substring(2)).test(elem[p])) {
+            return false;
+          }
+        } else if (filter[p] !== elem[p]) {
           return false;
         }
       }

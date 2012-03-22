@@ -2,9 +2,10 @@
 
 
 define(['builder',
+        'data/product',
         'model/terminal', 'model/order', 'model/stack',
         'components/hwmanager', 
-        'components/catalog', 'components/scan', 'components/editline', 'components/order', 'components/total', 'components/payment', 'components/keyboard'
+        'components/catalog', 'components/search', 'components/scan', 'components/editline', 'components/order', 'components/total', 'components/payment', 'components/keyboard'
         ], function (B) {
   
 
@@ -12,12 +13,12 @@ define(['builder',
     return ( 
         
       {kind: B.KindJQuery('section'), content: [
-        {kind: OB.MODEL.CategoryCol, id: 'modelcategories'},                                      
-        {kind: OB.MODEL.ProductCol, id: 'modelproducts', init: function () {
-          this.loadparams = {'priceListVersion': this.context.get('modelterminal').get('pricelistversion').id };
-        }},                                      
+        {kind: OB.DATA.Product},
+        {kind: OB.DATA.Category},      
+        
         {kind: OB.MODEL.Order, id: 'modelorder'},                                      
-        {kind: OB.MODEL.StackOrder, id: 'stackorder'},                                      
+        {kind: OB.MODEL.StackOrder, id: 'stackorder'},        
+        
         {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},           
         
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
@@ -129,6 +130,9 @@ define(['builder',
               ]}, 
               {kind: B.KindJQuery('div'), attr: {'id': 'catalog', 'class': 'tab-pane'}, content: [
                 {kind: OB.COMP.Catalog }                                                                      
+              ]},  
+              {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
+                {kind: OB.COMP.SearchProduct }                                                                      
               ]},  
               {kind: B.KindJQuery('div'), attr: {'id': 'edition', 'class': 'tab-pane'}, content: [
                 {kind: OB.COMP.EditLine }                                                                      

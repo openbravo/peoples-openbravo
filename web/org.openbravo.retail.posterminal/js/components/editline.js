@@ -21,83 +21,101 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
     this.editlinenet = OB.UTIL.EL(
       {tag: 'strong'}
     );
+    
+    this.msgedit = OB.UTIL.EL(
+      {tag: 'div', attr: {'class': 'row-fluid', 'style': 'display: none;'}, content: [
+        {tag: 'div', attr: {'class': 'span8'}, content: [
+          {tag: 'div', attr: {style: 'padding: 10px;'}, content: [
+            {tag: 'div', content: [
+              {tag: 'button', attr: {'style': 'margin: 5px 5px 5px 0px;' }, content: [
+                'Delete'                       
+              ], init: function () {
+                this.click(function() {
+                  if (me.line) {
+                    me.receipt.deleteLine(me.line);    
+                    me.stack.trigger('scan');
+                  }              
+                });
+              }}             
+            ]}, 
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Description'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                this.editlinename                
+              ]}                
+            ]},      
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Quantity'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                this.editlineqty 
+              ]}                
+            ]},                                                             
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Price'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                this.editlineprice
+              ]}                
+            ]},                                                             
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Line value'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                {tag: 'strong', content: [                                
+                ]}                
+              ]}                
+            ]},                                                             
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Discount'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                {tag: 'strong', content: [                                
+                ]}                
+              ]}                
+            ]},                                                             
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span4'}, content: [
+                'Total'                                                                         
+              ]},  
+              {tag: 'div', attr: {'class': 'span8'}, content: [                                
+                this.editlinenet           
+              ]}                
+            ]}                                                                                                                                      
+          ]}                                                                                                                                      
+        ]},                             
+        this.editlineimage                                                       
+      ]}                              
+    );
+    
+    this.txtaction = OB.UTIL.EL(
+      {tag: 'div', attr: {'style': 'float:left;'}}       
+    );    
+    
+    this.msgaction = OB.UTIL.EL(
+      {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
+        this.txtaction                
+      ]}          
+    );
 
     this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
-        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 250px; margin: 5px; padding: 5px'}, content: [                             
-          {tag: 'div', attr: {'style': 'padding: 10px'}, content: [
-            {tag: 'button', attr: {'style': 'margin: 5px;' }, content: [
-              'Delete'                       
-            ], init: function () {
-              this.click(function() {
-                if (me.line) {
-                  me.receipt.deleteLine(me.line);        
-                }              
-              });
-            }}                               
-          ]},
-          {tag: 'div', attr: {'class': 'row-fluid', 'style': 'padding: 10px'}, content: [
-            {tag: 'div', attr: {'class': 'span8'}, content: [
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Description'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  this.editlinename                
-                ]}                
-              ]},      
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Quantity'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  this.editlineqty 
-                ]}                
-              ]},                                                             
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Price'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  this.editlineprice
-                ]}                
-              ]},                                                             
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Line value'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  {tag: 'strong', content: [                                
-                  ]}                
-                ]}                
-              ]},                                                             
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Discount'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  {tag: 'strong', content: [                                
-                  ]}                
-                ]}                
-              ]},                                                             
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span4'}, content: [
-                  'Total'                                                                         
-                ]},  
-                {tag: 'div', attr: {'class': 'span8'}, content: [                                
-                  this.editlinenet           
-                ]}                
-              ]}                                                                    
-            ]},                             
-            this.editlineimage                                                       
-          ]} 
+        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [                             
+          this.msgedit,
+          this.msgaction
         ]}          
       ]}
     );
 
     // Set Model
     
-    this.products = context.get('modelproducts');
+    this.products = context.get('DataProduct');
     this.receipt = context.get('modelorder');
     this.stack = context.get('stackorder');
     this.line = null;
@@ -113,6 +131,8 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
         this.editLine(-1, null);
       }
     }, this);    
+    
+    this.renderLine();
   };
   
   OB.COMP.EditLine.prototype.renderLine = function () {
@@ -123,6 +143,8 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
         product: {id: this.line.get('productid')}
       }, function (data) {
         if (data) {
+          me.msgaction.hide();
+          me.msgedit.show();
           me.editlineimage.empty().append(OB.UTIL.getThumbnail(data.img, 128, 164));
           me.editlinename.text(data.product._identifier);
           me.editlineqty.text(me.line.printQty());
@@ -131,6 +153,9 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
         }
       });
     } else {
+      me.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
+      me.msgedit.hide();
+      me.msgaction.show();
       me.editlineimage.empty();
       me.editlinename.empty();
       me.editlineqty.empty();
