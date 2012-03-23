@@ -361,6 +361,26 @@ isc.OBSelectorItem.addProperties({
     this.Super('updateValue', arguments);
   },
 
+  setValue: function (val) {
+    var i, displayedVal;
+
+    if (val && this.valueMap) {
+      displayedVal = this.valueMap[val];
+      for (i in this.valueMap) {
+        if (this.valueMap.hasOwnProperty(i)) {
+          if (this.valueMap[i] === displayedVal && i !== val) {
+            // cleaning up valueMap: there are 2 values that display the same info, keep just the one for
+            // the current value
+            delete this.valueMap[i];
+            break;
+          }
+        }
+      }
+    }
+
+    this.Super('setValue', arguments);
+  },
+
   // changed handles the case that the user removes the value using the keyboard
   // this should do the same things as setting the value through the pickvalue
   changed: function (form, item, newValue) {
@@ -460,16 +480,6 @@ isc.OBSelectorItem.addProperties({
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
       if (!this.valueMap) {
         this.valueMap = {};
-      }
-
-      //  In case current display text is already in the map, remove it as it could have a different value
-      for (i in this.valueMap) {
-        if (this.valueMap.hasOwnProperty(i)) {
-          if (this.valueMap[i] === record[this.displayField]) {
-            delete this.valueMap[i];
-            break;
-          }
-        }
       }
 
       this.valueMap[record[this.valueField]] = record[this.displayField];
