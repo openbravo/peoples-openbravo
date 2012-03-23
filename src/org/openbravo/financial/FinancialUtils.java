@@ -24,13 +24,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
@@ -94,11 +94,19 @@ public class FinancialUtils {
   }
 
   /**
-   * @see #getProductPrice(Product, Date, boolean, PriceList)
+   * @see #getProductPrice(Product, Date, boolean, PriceList, boolean)
    */
   public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList)
       throws OBException {
-    return getProductPrice(product, date, useSalesPriceList, null);
+    return getProductPrice(product, date, useSalesPriceList, null, true);
+  }
+
+  /**
+   * @see #getProductPrice(Product, Date, boolean, PriceList, boolean)
+   */
+  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
+      PriceList priceList) throws OBException {
+    return getProductPrice(product, date, useSalesPriceList, priceList, true);
   }
 
   /**
@@ -114,32 +122,47 @@ public class FinancialUtils {
    *          boolean to set if the price list should be a sales or purchase price list.
    * @param priceList
    *          PriceList to get its ProductPrice
-   * @return a valid ProductPrice for the given parameters.
+   * @param throwException
+   *          boolean to determine if an exception has to be thrown when no pricelist is found.
+   * @return a valid ProductPrice for the given parameters. Null is no exception is to be thrown.
    * @throws OBException
-   *           when no valid ProductPrice is found.
+   *           when no valid ProductPrice is found and throwException is true.
    */
   public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList) throws OBException {
-    OBCriteria<ProductPrice> ppc = OBDal.getInstance().createCriteria(ProductPrice.class);
-    ppc.createAlias(ProductPrice.PROPERTY_PRICELISTVERSION, "plv");
-    ppc.createAlias("plv." + PriceListVersion.PROPERTY_PRICELIST, "pl");
-    ppc.add(Restrictions.eq(ProductPrice.PROPERTY_PRODUCT, product));
+      PriceList priceList, boolean throwException) throws OBException {
+    StringBuffer where = new StringBuffer();
+    where.append(" as pp");
+    where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
+    where.append("   join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
+    where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + " = :product");
+    where.append("   and plv." + PriceListVersion.PROPERTY_VALIDFROMDATE + " <= :date");
     if (priceList != null) {
-      ppc.add(Restrictions.eq("pl", priceList));
+      where.append("   and pl = :pricelist");
     } else {
-      ppc.add(Restrictions.eq("pl." + PriceList.PROPERTY_SALESPRICELIST, useSalesPriceList));
+      where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
     }
-    ppc.add(Restrictions.le("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, date));
-    ppc.addOrder(Order.desc("pl." + PriceList.PROPERTY_DEFAULT));
-    ppc.addOrder(Order.desc("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE));
-    // ppc.addOrderBy("pl." + PriceList.PROPERTY_DEFAULT, false);
-    // ppc.addOrderBy("plv." + PriceListVersion.PROPERTY_VALIDFROMDATE, false);
+    where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
+        + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
-    List<ProductPrice> ppList = ppc.list();
+    OBQuery<ProductPrice> ppQry = OBDal.getInstance().createQuery(ProductPrice.class,
+        where.toString());
+    ppQry.setNamedParameter("product", product);
+    ppQry.setNamedParameter("date", date);
+    if (priceList != null) {
+      ppQry.setNamedParameter("pricelist", priceList);
+    } else {
+      ppQry.setNamedParameter("salespricelist", useSalesPriceList);
+    }
+
+    List<ProductPrice> ppList = ppQry.list();
     if (ppList.isEmpty()) {
       // No product price found.
-      throw new OBException("@PriceListVersionNotFound@. @Product@: " + product.getIdentifier()
-          + " @Date@: " + OBDateUtils.formatDate(date));
+      if (throwException) {
+        throw new OBException("@PriceListVersionNotFound@. @Product@: " + product.getIdentifier()
+            + " @Date@: " + OBDateUtils.formatDate(date));
+      } else {
+        return null;
+      }
     }
     return ppList.get(0);
   }
