@@ -32,12 +32,17 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -243,5 +248,30 @@ public class CostingUtils {
     default:
       return null;
     }
+  }
+
+  public static OrderLine getOrderLine(Product product, BusinessPartner bp, Organization org) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider();
+
+    StringBuffer where = new StringBuffer();
+    where.append(" as ol");
+    where.append("   join ol." + OrderLine.PROPERTY_SALESORDER + " as o");
+    where.append("   join o." + Order.PROPERTY_DOCUMENTTYPE + " as dt");
+    where.append(" where o." + Order.PROPERTY_BUSINESSPARTNER + " = :bp");
+    where.append("   and ol." + OrderLine.PROPERTY_PRODUCT + " = :product");
+    where.append("   and o." + Order.PROPERTY_ORGANIZATION + ".id in :org");
+    where.append("   and o." + Order.PROPERTY_DOCUMENTSTATUS + " in ('CO', 'CL')");
+    where.append("   and o." + Order.PROPERTY_SALESTRANSACTION + " = false");
+    where.append("   and dt." + DocumentType.PROPERTY_RETURN + " = false");
+    where.append(" order by o." + Order.PROPERTY_ORDERDATE + " desc");
+    OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
+    olQry.setNamedParameter("bp", bp);
+    olQry.setNamedParameter("product", product);
+    olQry.setNamedParameter("org", osp.getChildTree(org.getId(), true));
+    if (!olQry.list().isEmpty()) {
+      olQry.setMaxResult(1);
+      return olQry.list().get(0);
+    }
+    return null;
   }
 }
