@@ -23,13 +23,12 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -126,44 +125,24 @@ public class CostingServer {
   }
 
   private CostingRule getCostDimensionRule() {
-    OBCriteria<CostingRule> obcCR = OBDal.getInstance().createCriteria(CostingRule.class);
-    obcCR.add(Restrictions.eq(CostingRule.PROPERTY_ORGANIZATION, organization));
-    // Product filter: CostingRule.product is null or trx.product
-    obcCR.add(Restrictions.or(Restrictions.isNull(CostingRule.PROPERTY_PRODUCT),
-        Restrictions.eq(CostingRule.PROPERTY_PRODUCT, transaction.getProduct())));
-    // Product category filter: CostingRule.prodCat is null or trx.product.prodCat
-    obcCR.add(Restrictions.or(Restrictions.isNull(CostingRule.PROPERTY_PRODUCTCATEGORY),
-        Restrictions.eq(CostingRule.PROPERTY_PRODUCTCATEGORY, transaction.getProduct()
-            .getProductCategory())));
-    // Date filter: transaction process date in [dateFrom, dateTo)
-    obcCR.add(Restrictions.le(CostingRule.PROPERTY_STARTINGDATE,
-        transaction.getTransactionProcessDate()));
-    obcCR.add(Restrictions.gt(CostingRule.PROPERTY_ENDINGDATE,
-        transaction.getTransactionProcessDate()));
-    obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCT, true);
-    obcCR.addOrderBy(CostingRule.PROPERTY_PRODUCTCATEGORY, true);
-    List<CostingRule> costRules = obcCR.list();
+    StringBuffer where = new StringBuffer();
+    where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
+    where.append(" and " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate");
+    where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " < :enddate )");
+    where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
+        where.toString());
+    crQry.setNamedParameter("organization", organization);
+    crQry.setNamedParameter("startdate", transaction.getTransactionProcessDate());
+    crQry.setNamedParameter("enddate", transaction.getTransactionProcessDate());
+    List<CostingRule> costRules = crQry.list();
     if (costRules.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
           + organization.getName() + ", @Date@: "
           + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
-    CostingRule returncr = costRules.get(0);
-    if (returncr.getProduct() != null || costRules.size() == 1) {
-      return returncr;
-    }
-    boolean noProdCat = returncr.getProduct() == null;
-    // If first rule does not have product check if there is a rule for the product
-    for (CostingRule cr : costRules) {
-      if (cr.getProduct() != null) {
-        return cr;
-      }
-      if (noProdCat && cr.getProductCategory() != null) {
-        returncr = cr;
-        noProdCat = false;
-      }
-    }
-    return returncr;
+    return costRules.get(0);
   }
 
   public Currency getCostCurrency() {
