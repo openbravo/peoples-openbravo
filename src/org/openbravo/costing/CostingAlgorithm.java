@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,11 +30,15 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -209,7 +214,7 @@ public abstract class CostingAlgorithm {
         .getGoodsShipmentLine();
     if (receiptline.getSalesOrderLine() == null) {
       // FIXME: Try also searching a recent purchase order of the vendor for the same product
-      return getDefaultCost();
+      return getReceiptDefaultCost();
     }
     for (org.openbravo.model.procurement.POInvoiceMatch matchPO : receiptline
         .getProcurementPOInvoiceMatchList()) {
@@ -253,6 +258,51 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getReceiptNegativeCost() {
     return getOutgoingTransactionCost();
+  }
+
+  protected BigDecimal getReceiptDefaultCost() {
+    Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
+        transaction.getTransactionProcessDate(), costDimensions);
+    BusinessPartner bp = transaction.getGoodsShipmentLine().getShipmentReceipt()
+        .getBusinessPartner();
+
+    PriceList pricelist = bp.getPurchasePricelist();
+    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
+        transaction.getMovementDate(), false, pricelist, false);
+    OrderLine orderLine = CostingUtils.getOrderLine(transaction.getProduct(), bp, costOrg);
+
+    if (stdCost == null && pp == null && orderLine == null) {
+      throw new OBException("@NoPriceListOrStandardCostForProduct@");
+    }
+    Date stdCostDate = new Date(0L);
+    if (stdCost != null) {
+      stdCostDate = stdCost.getStartingDate();
+    }
+    Date ppDate = new Date(0L);
+    if (pp != null) {
+      ppDate = pp.getPriceListVersion().getValidFromDate();
+    }
+    Date olDate = new Date(0L);
+    if (orderLine != null) {
+      olDate = orderLine.getSalesOrder().getOrderDate();
+    }
+
+    if (ppDate.before(olDate) && stdCostDate.before(olDate)) {
+      // purchase order
+      @SuppressWarnings("null")
+      BigDecimal cost = transaction.getMovementQuantity().abs().multiply(orderLine.getUnitPrice());
+      if (costCurrency.getId().equals(orderLine.getSalesOrder().getCurrency().getId())) {
+        return cost;
+      } else {
+        return FinancialUtils
+            .getConvertedAmount(cost, orderLine.getSalesOrder().getCurrency(), costCurrency,
+                transaction.getMovementDate(), costOrg, FinancialUtils.PRECISION_STANDARD);
+      }
+    } else if (stdCostDate.before(ppDate)) {
+      return getPriceListCost();
+    } else {
+      return getTransactionStandardCost();
+    }
   }
 
   /**
@@ -419,14 +469,13 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getDefaultCost() {
     Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
         transaction.getTransactionProcessDate(), costDimensions);
-    org.openbravo.model.common.businesspartner.BusinessPartner bp = CostingUtils
-        .getTrxBusinessPartner(transaction, trxType);
-    org.openbravo.model.pricing.pricelist.PriceList pricelist = null;
+    BusinessPartner bp = CostingUtils.getTrxBusinessPartner(transaction, trxType);
+    PriceList pricelist = null;
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    org.openbravo.model.pricing.pricelist.ProductPrice pp = FinancialUtils.getProductPrice(
-        transaction.getProduct(), transaction.getMovementDate(), false, pricelist);
+    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
+        transaction.getMovementDate(), false, pricelist, false);
     if (stdCost == null && pp == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@");
     } else if (stdCost != null && pp == null) {
@@ -494,5 +543,4 @@ public abstract class CostingAlgorithm {
   public enum CostDimension {
     Warehouse
   }
-
 }
