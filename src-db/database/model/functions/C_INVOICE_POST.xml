@@ -304,7 +304,12 @@ BEGIN --BODY
       FROM c_invoiceline
       WHERE c_invoice_discount_id IS NULL
         AND qtyinvoiced > 0
-        AND c_invoice_id = v_Record_ID;
+        AND c_invoice_id = v_Record_ID
+        AND NOT EXISTS (SELECT 1 FROM c_invoiceline L
+			LEFT JOIN M_PRODUCT P ON L.M_PRODUCT_ID = P.M_PRODUCT_ID
+			LEFT JOIN C_DISCOUNT CD ON CD.M_PRODUCT_ID=P.M_PRODUCT_ID
+			WHERE P.M_PRODUCT_ID=C_INVOICELINE.M_PRODUCT_ID);
+
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@ReturnInvoiceNegativeQty@');
       END IF;
