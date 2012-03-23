@@ -298,10 +298,8 @@ public abstract class CostingAlgorithm {
             .getConvertedAmount(cost, orderLine.getSalesOrder().getCurrency(), costCurrency,
                 transaction.getMovementDate(), costOrg, FinancialUtils.PRECISION_STANDARD);
       }
-    } else if (stdCostDate.before(ppDate)) {
-      return getPriceListCost();
     } else {
-      return getTransactionStandardCost();
+      return getDefaultCost();
     }
   }
 
