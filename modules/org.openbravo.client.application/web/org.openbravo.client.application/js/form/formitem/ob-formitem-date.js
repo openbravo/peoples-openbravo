@@ -95,6 +95,21 @@ OB.DateItemProperties = {
           delete this.parentItem.form.view.viewForm.saveFocusItemChanged;
         }
       };
+      // This is needed for the unit tests to be able to enter the dates using the setValue method
+      this.dateTextField.setValue = function (newValue) {
+        var oldValue = this.getValue();
+        this.Super('setValue', newValue);
+        // only flag the date as changed if it had a value, and it
+        // has been actually changed
+        if (!newValue || !oldValue || (oldValue === newValue)) {
+          return;
+        }
+        this.parentItem.textField._textChanged = true;
+        this.parentItem._hasChanged = true;
+        if (this.parentItem.form && this.parentItem.form.view && this.parentItem.form.view.viewForm) {
+          delete this.parentItem.form.view.viewForm.saveFocusItemChanged;
+        }
+      };
     }
 
     if (this.showDisabled === false) {

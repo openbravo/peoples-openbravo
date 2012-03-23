@@ -1301,7 +1301,7 @@
 <!--278-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--278-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--278-->  <NAME><![CDATA[Financial Management]]></NAME>
-<!--278-->  <DESCRIPTION><![CDATA[Financial Management supports daily accounting activities such as payable and receivable accounts management and assets amortization as well as the life-cycle of an accounting period.]]></DESCRIPTION>
+<!--278-->  <DESCRIPTION><![CDATA[Financial Management supports daily accounting activities such as payable and receivable accounts management, assets amortization as well as the opening and closing of periods.]]></DESCRIPTION>
 <!--278-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--278--></AD_MENU>
