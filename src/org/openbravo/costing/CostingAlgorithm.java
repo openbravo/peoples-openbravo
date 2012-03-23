@@ -29,6 +29,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -272,7 +273,9 @@ public abstract class CostingAlgorithm {
     OrderLine orderLine = CostingUtils.getOrderLine(transaction.getProduct(), bp, costOrg);
 
     if (stdCost == null && pp == null && orderLine == null) {
-      throw new OBException("@NoPriceListOrStandardCostForProduct@");
+      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
+          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     Date stdCostDate = new Date(0L);
     if (stdCost != null) {
@@ -475,7 +478,9 @@ public abstract class CostingAlgorithm {
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
         transaction.getMovementDate(), false, pricelist, false);
     if (stdCost == null && pp == null) {
-      throw new OBException("@NoPriceListOrStandardCostForProduct@");
+      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
+          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     } else if (stdCost != null && pp == null) {
       return getTransactionStandardCost();
     } else if (stdCost == null && pp != null) {

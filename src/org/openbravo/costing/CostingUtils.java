@@ -131,8 +131,8 @@ public class CostingUtils {
         recheckWithoutDimensions);
     if (stdCost == null) {
       // If no standard cost is found throw an exception.
-      throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
-          + ", @Date@: " + OBDateUtils.formatDate(date));
+      throw new OBException("@NoStandardCostDefined@ @Organization@:" + org.getName()
+          + ", @Product@: " + product.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
     return stdCost.getCost();
   }
@@ -168,6 +168,7 @@ public class CostingUtils {
     obcCosting.add(Restrictions.le(Costing.PROPERTY_STARTINGDATE, date));
     obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "STA"));
+    obcCosting.add(Restrictions.isNotNull(Costing.PROPERTY_COST));
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
@@ -178,10 +179,6 @@ public class CostingUtils {
       if (obcCosting.count() > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
             + " for product: " + product.getName() + " (" + product.getId() + ")");
-      }
-      if (obcCosting.list().get(0).getCost() == null) {
-        throw new OBException("@NoStandardCostDefined@ @Product@: " + product.getName()
-            + ", @Date@: " + OBDateUtils.formatDate(date));
       }
       return obcCosting.list().get(0);
     } else if (recheckWithoutDimensions) {
