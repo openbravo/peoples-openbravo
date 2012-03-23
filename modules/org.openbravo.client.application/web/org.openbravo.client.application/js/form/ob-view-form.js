@@ -1685,7 +1685,9 @@ OB.ViewFormProperties = {
 
       return '<span class="OBFormFieldLinkButton">' + titleHTML + '</span>&nbsp;' + imgHTML;
     }
-
+    //is not a link therefore this property is not needed.
+    //if this property is null the click event won't open a new tab
+    item.linkButtonClick = null;
     return titleHTML;
   },
 

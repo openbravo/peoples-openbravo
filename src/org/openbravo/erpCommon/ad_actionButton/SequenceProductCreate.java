@@ -69,6 +69,7 @@ public class SequenceProductCreate implements Process {
       // Modifies values
       newProduct.setSearchKey(value);
       newProduct.setName(name);
+      newProduct.setUPCEAN(null);
 
       // Delete the ProcessPlan for new product
       newProduct.setProcessPlan(null);
@@ -76,6 +77,9 @@ public class SequenceProductCreate implements Process {
       // Empty values copied and filled by m_product_trg
       newProduct.setProductAccountsList(null);
       newProduct.setProductTrlList(null);
+
+      // Delete Purchasing Tab
+      newProduct.setApprovedVendorList(null);
 
       // Product Category
       ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
@@ -189,8 +193,8 @@ public class SequenceProductCreate implements Process {
         + SequenceId + "'";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
     try {
-      String result = (String) q.uniqueResult();
-      return result == null ? 0L : new Long(result);
+      Long result = (Long) q.uniqueResult();
+      return result == null ? 0L : result;
     } catch (Exception e) {
       // Unique result throws exception if more than one line is returned.
       return 0L;

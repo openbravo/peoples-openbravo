@@ -81,10 +81,12 @@ public class SL_Requisition_BPartner_PriceList extends HttpSecureAppServlet {
         OBContext.setAdminMode(true);
         try {
           BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
-          strResult.append("new Array(\"inpmPricelistId\", \""
-              + bPartner.getPurchasePricelist().getId() + "\"),");
-          strResult.append("new Array(\"inpcCurrencyId\", \""
-              + bPartner.getPurchasePricelist().getCurrency().getId() + "\")");
+          if (bPartner.getPurchasePricelist() != null) {
+            strResult.append("new Array(\"inpmPricelistId\", \""
+                + bPartner.getPurchasePricelist().getId() + "\"),");
+            strResult.append("new Array(\"inpcCurrencyId\", \""
+                + bPartner.getPurchasePricelist().getCurrency().getId() + "\")");
+          }
         } finally {
           OBContext.restorePreviousMode();
         }

@@ -356,11 +356,15 @@ isc.OBViewGrid.addProperties({
   },
 
   setReadOnlyMode: function () {
-    this.uiPattern = 'RO';
-    this.canEdit = false;
-    this.contextMenu.destroy();
-    this.contextMenu = null;
-    this.refreshContents();
+    if (this.uiPattern !== 'RO') {
+      this.uiPattern = 'RO';
+      this.canEdit = false;
+      if (this.contextMenu) {
+        this.contextMenu.destroy();
+        this.contextMenu = null;
+      }
+      this.refreshContents();
+    }
   },
 
   draw: function () {
@@ -2172,7 +2176,11 @@ isc.OBViewGrid.addProperties({
   },
 
   autoSave: function () {
+    // flag to force the parsing of date fields when autosaving
+    // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
+    this._autoSaving = true;
     this.storeUpdatedEditorValue();
+    delete this._autoSaving;
     this.endEditing();
   },
 

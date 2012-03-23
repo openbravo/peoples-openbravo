@@ -399,7 +399,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function () {
-    var me = this;
+    var me = this,
+        completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
         canFocus: true,
@@ -428,7 +429,12 @@ isc.OBStandardView.addProperties({
         }
       });
 
-      this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
+      // the grid should not show the image fields
+      // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+      completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
+      fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
+
+      this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
 
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
@@ -504,6 +510,31 @@ isc.OBStandardView.addProperties({
       // children
       this.statusBar.maximizeButton.disable();
     }
+  },
+
+  // returns a copy of fields after deleting the image fields
+  // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+  removeImageFields: function (fields) {
+    var indexesToDelete, i, length, fieldsWithoutImages;
+    indexesToDelete = [];
+    if (fields) {
+      fieldsWithoutImages = fields.duplicate();
+      length = fieldsWithoutImages.length;
+      // gets the index of the image fields
+      for (i = 0; i < length; i++) {
+        if (fieldsWithoutImages[i].targetEntity === 'ADImage') {
+          indexesToDelete.push(i);
+        }
+      }
+      // removes the image fields
+      length = indexesToDelete.length;
+      for (i = 0; i < length; i++) {
+        fieldsWithoutImages.splice(indexesToDelete[i] - i, 1);
+      }
+    } else {
+      fieldsWithoutImages = fields;
+    }
+    return fieldsWithoutImages;
   },
 
   getDirectLinkUrl: function () {
@@ -616,6 +647,9 @@ isc.OBStandardView.addProperties({
   setReadOnly: function (readOnly) {
     this.readOnly = readOnly;
     this.viewForm.readOnly = readOnly;
+    if (this.viewGrid && readOnly) {
+      this.viewGrid.setReadOnlyMode();
+    }
   },
 
   setSingleRecord: function (singleRecord) {

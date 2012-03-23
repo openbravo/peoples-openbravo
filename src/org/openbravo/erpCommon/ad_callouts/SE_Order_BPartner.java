@@ -46,6 +46,7 @@ public class SE_Order_BPartner extends SimpleCallout {
     String strDeliveryViaRule = "";
     String strPaymentterm = "";
     String strDeliveryRule = "";
+    String strDocTypeTarget = info.vars.getStringParameter("inpcDoctypetargetId");
 
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
@@ -54,8 +55,14 @@ public class SE_Order_BPartner extends SimpleCallout {
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
       strUserRep = strUserRep.equals("") ? info.vars.getStringParameter("inpsalesrepId")
           : strUserRep;
-      strInvoiceRule = data[0].invoicerule.equals("") ? info.vars
-          .getStringParameter("inpinvoicerule") : data[0].invoicerule;
+      String docSubTypeSO = "";
+      SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
+      if (docTypeData != null && docTypeData.length > 0) {
+        docSubTypeSO = docTypeData[0].docsubtypeso;
+      }
+      strInvoiceRule = (docSubTypeSO.equals("PR") || docSubTypeSO.equals("WI")
+          || data[0].invoicerule.equals("") ? info.vars.getStringParameter("inpinvoicerule")
+          : data[0].invoicerule);
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentrule = strPaymentrule.equals("") ? info.vars.getStringParameter("inppaymentrule")
           : strPaymentrule;
