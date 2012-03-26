@@ -32,7 +32,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.EMail;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
@@ -317,8 +316,9 @@ public class AlertProcess implements Process {
           if (mail != null) {
             for (int i = 0; i < mail.length; i++) {
               String head = Utility.messageBD(conn, "AlertMailHead", mail[i].adLanguage) + "\n";
-              EMail email = new EMail(null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto,
-                  "[OB Alert] " + alertRule.name, head + msg);
+              org.openbravo.erpCommon.businessUtility.EMail email = new org.openbravo.erpCommon.businessUtility.EMail(
+                  null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto, "[OB Alert] "
+                      + alertRule.name, head + msg);
               String pwd = "";
               try {
                 pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);
