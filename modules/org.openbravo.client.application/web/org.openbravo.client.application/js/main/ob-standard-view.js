@@ -873,7 +873,7 @@ isc.OBStandardView.addProperties({
 
   refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
     var i, length, tabViewPane, excludeTab = false;
-    if (entity && excludedTabIds && this.childTabSet) {
+    if (entity && excludedTabIds) {
       //Check is the tab has to be refreshed
       for (i = 0; i < excludedTabIds.length; i++) {
         if (excludedTabIds[i].match(this.tabId)) {
