@@ -279,6 +279,57 @@ public class OBViewTab extends BaseTemplateComponent {
     return childTabs;
   }
 
+  public boolean hasAlwaysVisibleChildTab() {
+    boolean hasVisibleChildTab = false;
+    for (OBViewTab childTab : this.getChildTabs()) {
+      if (!childTab.getAcctTab() && !childTab.getTrlTab()) {
+        hasVisibleChildTab = true;
+        break;
+      }
+    }
+    return hasVisibleChildTab;
+  }
+
+  public boolean hasAccountingChildTab() {
+    boolean hasAccountingChildTab = false;
+    for (OBViewTab childTab : this.getChildTabs()) {
+      if (childTab.getAcctTab()) {
+        hasAccountingChildTab = true;
+        break;
+      }
+    }
+    return hasAccountingChildTab;
+  }
+
+  public boolean hasTranslationChildTab() {
+    boolean hasTranslationChildTab = false;
+    for (OBViewTab childTab : this.getChildTabs()) {
+      if (childTab.getTrlTab()) {
+        hasTranslationChildTab = true;
+        break;
+      }
+    }
+    return hasTranslationChildTab;
+  }
+
+  public String getHasChildTabsProperty() {
+    String hasChildTabs = null;
+    if (this.hasAlwaysVisibleChildTab()) {
+      hasChildTabs = "true";
+    } else {
+      boolean hasAcctChildTab = this.hasAccountingChildTab();
+      boolean hasTrlChildTab = this.hasTranslationChildTab();
+      if (hasAcctChildTab && hasTrlChildTab) {
+        hasChildTabs = "(OB.PropertyStore.get('ShowTrl', this.windowId) === 'Y') || (OB.PropertyStore.get('ShowAcct', this.windowId) === 'Y')";
+      } else if (hasAcctChildTab) {
+        hasChildTabs = "(OB.PropertyStore.get('ShowAcct', this.windowId) === 'Y')";
+      } else { // hasTrlChildTab == true
+        hasChildTabs = "(OB.PropertyStore.get('ShowTrl', this.windowId) === 'Y')";
+      }
+    }
+    return hasChildTabs;
+  }
+
   public Tab getTab() {
     return tab;
   }
