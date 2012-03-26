@@ -2373,7 +2373,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--225-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--225-->  <SEQNO><![CDATA[60]]></SEQNO>
 <!--225-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--225-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
+<!--225-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
 <!--225-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
 <!--225-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--225-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
