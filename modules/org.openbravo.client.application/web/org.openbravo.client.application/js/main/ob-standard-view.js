@@ -892,10 +892,12 @@ isc.OBStandardView.addProperties({
         }
       }
       // Refresh the child views of this tab
-      length = this.childTabSet.tabs.length;
-      for (i = 0; i < length; i++) {
-        tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+      if (this.childTabSet) {
+        length = this.childTabSet.tabs.length;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+        }
       }
     }
   },
