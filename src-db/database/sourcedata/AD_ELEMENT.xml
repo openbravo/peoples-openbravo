@@ -5225,10 +5225,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--916-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--916-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--916-->  <COLUMNNAME><![CDATA[IsBillTo]]></COLUMNNAME>
-<!--916-->  <NAME><![CDATA[Invoice to Address]]></NAME>
-<!--916-->  <PRINTNAME><![CDATA[Invoice-To Address]]></PRINTNAME>
-<!--916-->  <DESCRIPTION><![CDATA[Indicates that this address is the Invoice to Address]]></DESCRIPTION>
-<!--916-->  <HELP><![CDATA[The Invoice to Address checkbox indicates if this location is the Invoice to Address for this Business Partner]]></HELP>
+<!--916-->  <NAME><![CDATA[Invoicing Address]]></NAME>
+<!--916-->  <PRINTNAME><![CDATA[Invoicing Address]]></PRINTNAME>
+<!--916-->  <DESCRIPTION><![CDATA[Indicates that this address is the Invoicing Address]]></DESCRIPTION>
+<!--916-->  <HELP><![CDATA[The Invoicing Address checkbox indicates if this location is the Invoicing Address for this Business Partner]]></HELP>
 <!--916-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--916-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--916--></AD_ELEMENT>
@@ -5377,10 +5377,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--929-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--929-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--929-->  <COLUMNNAME><![CDATA[IsShipTo]]></COLUMNNAME>
-<!--929-->  <NAME><![CDATA[Ship to Address]]></NAME>
-<!--929-->  <PRINTNAME><![CDATA[Ship-to address]]></PRINTNAME>
+<!--929-->  <NAME><![CDATA[Shipping Address]]></NAME>
+<!--929-->  <PRINTNAME><![CDATA[Shipping address]]></PRINTNAME>
 <!--929-->  <DESCRIPTION><![CDATA[Business Partner address to ship goods to]]></DESCRIPTION>
-<!--929-->  <HELP><![CDATA[The Ship to Address checkbox indicates if this location is the address to use when shipping orders to this Business Partner.]]></HELP>
+<!--929-->  <HELP><![CDATA[The Shipping Address checkbox indicates if this location is the address to use when shipping orders to this Business Partner.]]></HELP>
 <!--929-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--929-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--929--></AD_ELEMENT>
