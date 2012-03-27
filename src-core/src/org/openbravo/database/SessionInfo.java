@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ public class SessionInfo {
   private static ThreadLocal<String> userId = new ThreadLocal<String>();
   private static ThreadLocal<String> processType = new ThreadLocal<String>();
   private static ThreadLocal<String> processId = new ThreadLocal<String>();
+  private static ThreadLocal<String> command = new ThreadLocal<String>();
 
   /*
    * To optimize updating of the AD_CONTEXT_INFO information, getConnection() is changed to return
@@ -274,6 +275,14 @@ public class SessionInfo {
       sessionId.set(session);
       changedInfo.set(true);
     }
+  }
+
+  public static String getCommand() {
+    return command.get();
+  }
+
+  public static void setCommand(String comm) {
+    command.set(comm);
   }
 
   public static String getSessionId() {

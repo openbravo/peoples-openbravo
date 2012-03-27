@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,14 +125,13 @@ public class UsageAudit {
    */
   public static void auditActionNoDal(ConnectionProvider conn, VariablesSecureApp vars,
       String javaClassName) {
-    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(),
+    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), SessionInfo.getCommand(),
         SessionInfo.getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(),
         javaClassName);
   }
 
   private static void auditActionNoDal(ConnectionProvider conn, String sessionId, String action,
       String objectType, String moduleId, String objectId, String javaClassName) {
-
     final boolean auditAction = sessionId != null && !sessionId.isEmpty() && objectType != null
         && !objectType.isEmpty() && moduleId != null && !moduleId.isEmpty();
     if (!auditAction) {

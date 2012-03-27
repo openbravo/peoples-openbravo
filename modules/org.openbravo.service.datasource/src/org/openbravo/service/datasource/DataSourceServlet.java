@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,8 +116,12 @@ public class DataSourceServlet extends BaseKernelServlet {
       throws ServletException, IOException {
 
     try {
-      super.service(request, response);
+      SessionInfo.setModuleId(request.getParameter("moduleId"));
+      SessionInfo.setCommand(request.getParameter(DataSourceConstants.OPERATION_TYPE_PARAM));
+      SessionInfo.setProcessId(request.getParameter("tabId"));
+      SessionInfo.setProcessType("W");
 
+      super.service(request, response);
     } catch (final InvalidRequestException e) {
       if (SessionHandler.isSessionHandlerPresent()) {
         SessionHandler.getInstance().setDoRollback(true);
@@ -161,7 +165,6 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
     doFetch(request, response, parameters);
   }
 
@@ -559,8 +562,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-    UsageAudit.auditActionNoDal(this, vars, this.getClass().getName());
+
+    setSessionInfo();
 
     try {
       if (!hasAccess(request, parameters.get("tabId"))) {
@@ -588,7 +591,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     UsageAudit.auditAction(request, parameters);
-    setSessionInfo(request, parameters);
+    setSessionInfo();
     try {
       // checks and set parameters, if not valid then go away
       if (!checkSetParameters(request, response, parameters)) {
@@ -630,8 +633,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    setSessionInfo(request, parameters);
-    UsageAudit.auditAction(request, parameters);
+    setSessionInfo();
     try {
       if (!hasAccess(request, parameters.get("tabId"))) {
         throw new OBUserException("AccessTableNoView");
@@ -648,15 +650,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
   }
 
-  private void setSessionInfo(HttpServletRequest request, Map<String, String> parameters) {
-    SessionInfo.setModuleId(parameters.get("moduleId"));
-    SessionInfo.setProcessType("W");
-    SessionInfo.setProcessId(parameters.get("tabId"));
-    // Session ID and user needn't be set as they were done in the service method.
-
-    // SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
-    // SessionInfo.setSessionId((String) request.getAttribute("#AD_SESSION_ID"));
-
+  private void setSessionInfo() {
     // FIXME: Because of issue #15331 connection is initialized with temporary audit table before
     // setting session info
     // Reset Session Info in DB manually as it was set in the service but actual information is not
