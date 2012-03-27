@@ -39,7 +39,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   public BigDecimal getTransactionCost() {
     BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
-    // calculate calculate new average cost.
+    // calculate new average cost.
     switch (trxType) {
     case Receipt:
     case ReceiptVoid:
@@ -55,7 +55,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
-      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(),
+      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
           transaction.getTransactionProcessDate(), costDimensions);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
@@ -88,24 +88,23 @@ public class AverageAlgorithm extends CostingAlgorithm {
   protected BigDecimal getOutgoingTransactionCost() {
     Costing currentCosting = getProductCost();
     if (currentCosting == null) {
-      throw new OBException("@NoAvgCostDefined@ @Product@: " + transaction.getProduct().getName()
-          + ", @Date@: " + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
+      throw new OBException("@NoAvgCostDefined@ @Organization@: " + costOrg.getName()
+          + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     BigDecimal cost = currentCosting.getCost();
     return transaction.getMovementQuantity().abs().multiply(cost);
   }
 
   /**
-   * Cost of incoming physical inventory is calculated based on current average cost. If there is no
-   * average cost it uses the default method..
+   * In case the Default Cost is used it prioritizes the existence of an average cost.
    */
   @Override
-  protected BigDecimal getInventoryIncreaseCost() {
+  protected BigDecimal getDefaultCost() {
     if (getProductCost() != null) {
       return getOutgoingTransactionCost();
-    } else {
-      return super.getInventoryIncreaseCost();
     }
+    return super.getDefaultCost();
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
@@ -151,12 +150,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
           costDimensions.get(CostDimension.Warehouse)));
     }
-    if (costDimensions.get(CostDimension.LegalEntity) != null) {
-      obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION,
-          costDimensions.get(CostDimension.LegalEntity)));
-    } else {
-      obcCosting.setFilterOnReadableOrganization(false);
-    }
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, costOrg));
+    obcCosting.setFilterOnReadableOrganization(false);
     if (obcCosting.count() > 0) {
       if (obcCosting.count() > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)

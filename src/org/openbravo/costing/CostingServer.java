@@ -28,11 +28,11 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
-import org.openbravo.model.materialmgmt.cost.CostingRuleProductV;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
@@ -54,8 +54,8 @@ public class CostingServer {
   }
 
   private void init() {
-    costingRule = getCostDimensionRule();
     organization = getOrganization();
+    costingRule = getCostDimensionRule();
     currency = getCostCurrency();
     trxCost = transaction.getTransactionCost();
   }
@@ -126,39 +126,24 @@ public class CostingServer {
   }
 
   private CostingRule getCostDimensionRule() {
-    List<CostingRuleProductV> crps = transaction.getProduct()
-        .getCostingRuleProductVApplyProductList();
-    if (crps.size() == 0) {
-      throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
-          + transaction.getProduct().getName() + ", @Date@: "
+    StringBuffer where = new StringBuffer();
+    where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
+    where.append(" and " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate");
+    where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " < :enddate )");
+    where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
+        where.toString());
+    crQry.setNamedParameter("organization", organization);
+    crQry.setNamedParameter("startdate", transaction.getTransactionProcessDate());
+    crQry.setNamedParameter("enddate", transaction.getTransactionProcessDate());
+    List<CostingRule> costRules = crQry.list();
+    if (costRules.size() == 0) {
+      throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
+          + organization.getName() + ", @Date@: "
           + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
-    CostingRule returncr = null;
-    boolean noProdCat = true;
-    for (CostingRuleProductV crp : crps) {
-      // Date range check if not correct continue with next CostingRuleProduct
-      CostingRule cr = crp.getCostingRule();
-      if (cr.getStartingDate().after(transaction.getTransactionProcessDate())
-          || (cr.getEndingDate() != null && !transaction.getTransactionProcessDate().before(
-              cr.getEndingDate()))) {
-        continue;
-      }
-      if (cr.getProduct() != null) {
-        return cr;
-      }
-      if (noProdCat) {
-        returncr = cr;
-        if (cr.getProductCategory() != null) {
-          noProdCat = false;
-        }
-      }
-    }
-    if (returncr == null) {
-      throw new OBException("@NoCostingRuleFoundForProductAndDate@ @Product@: "
-          + transaction.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
-    }
-    return returncr;
+    return costRules.get(0);
   }
 
   public Currency getCostCurrency() {
@@ -166,7 +151,7 @@ public class CostingServer {
       return currency;
     }
     if (organization != null) {
-      if (!organization.getId().equals("0") && organization.getCurrency() != null) {
+      if (organization.getCurrency() != null) {
         return organization.getCurrency();
       }
       return OBContext.getOBContext().getCurrentClient().getCurrency();
@@ -177,11 +162,11 @@ public class CostingServer {
   }
 
   public Organization getOrganization() {
-    if (costingRule.isOrganizationDimension()) {
-      return OBContext.getOBContext().getOrganizationStructureProvider()
-          .getLegalEntity(transaction.getOrganization());
+    if (organization != null) {
+      return organization;
     }
-    return OBDal.getInstance().get(Organization.class, "0");
+    return OBContext.getOBContext().getOrganizationStructureProvider()
+        .getLegalEntity(transaction.getOrganization());
   }
 
   public CostingRule getCostingRule() {

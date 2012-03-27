@@ -37,8 +37,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATEFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
+      <column name="DATEFROM" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
       <column name="ORG_DIMENSION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DATETO" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="DATETO" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
