@@ -1408,7 +1408,7 @@ public class PaymentReportDao {
                 .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
       if (strOrdCritList[i].contains("Date")) {
-        Date transactionDate = FIN_Utility.getDate(strOrdCritList[i]);
+        Date transactionDate = transaction.getDateAcct();
         Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
         if (transactionDate.before(dataDate)) {
           isBefore = true;
@@ -1465,7 +1465,7 @@ public class PaymentReportDao {
               strProject);
         }
       } else if (strOrdCritList[i].contains("Date")) {
-        Date transactionDate = FIN_Utility.getDate(strOrdCritList[i]);
+        Date transactionDate = transaction.getDateAcct();
         Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
         if (transactionDate.before(dataDate)) {
           isBefore = true;
