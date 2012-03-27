@@ -395,4 +395,42 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return null;
   }
 
+  /**
+   * Returns the legal entity or Business Unit of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity or business unit
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntityOrBusinessUnit(final Organization org) {
+    for (final String orgId : getParentList(org.getId(), true)) {
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.getOrganizationType().isLegalEntity()
+          || parentOrg.getOrganizationType().isBusinessUnit()) {
+        return parentOrg;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the organization that is period control allowed for the org Organization. If no
+   * organization is found, it returns NULL.
+   * 
+   * @param org
+   *          Organization to get its period control allowed organization.
+   * @return
+   */
+  public Organization getPeriodControlAllowedOrganization(final Organization org) {
+    if (org.isAllowPeriodControl()) {
+      return org;
+    }
+    for (final String orgId : getParentList(org.getId(), false)) {
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.isAllowPeriodControl()) {
+        return parentOrg;
+      }
+    }
+    return null;
+  }
 }
