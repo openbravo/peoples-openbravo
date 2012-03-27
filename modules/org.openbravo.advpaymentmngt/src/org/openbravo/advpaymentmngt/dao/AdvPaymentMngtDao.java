@@ -209,7 +209,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" and psd.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
       whereClause.append(".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(OBContext.getOBContext()
+      whereClause.append(Utility.getInStrSet(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       whereClause.append(")");
 
