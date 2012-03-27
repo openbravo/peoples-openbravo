@@ -37,6 +37,7 @@ public class SessionInfo {
    * updated on context start and via SL_AuditTable. used to switch on/off the audit trail system
    */
   private static boolean isAuditActive = false;
+  private static boolean usageAuditActive = false;
 
   /*
    * The following variables track per thread the information about the current 'user' of the thread
@@ -303,5 +304,13 @@ public class SessionInfo {
 
   public static void setModuleId(String moduleId) {
     SessionInfo.moduleId.set(moduleId);
+  }
+
+  public static boolean isUsageAuditActive() {
+    return usageAuditActive;
+  }
+
+  public static void setUsageAuditActive(boolean usageAuditActive) {
+    SessionInfo.usageAuditActive = usageAuditActive;
   }
 }

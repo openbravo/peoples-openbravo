@@ -132,18 +132,14 @@ public class UsageAudit {
 
   private static void auditActionNoDal(ConnectionProvider conn, String sessionId, String action,
       String objectType, String moduleId, String objectId, String javaClassName) {
-    final boolean auditAction = sessionId != null && !sessionId.isEmpty() && objectType != null
-        && !objectType.isEmpty() && moduleId != null && !moduleId.isEmpty();
+    final boolean auditAction = SessionInfo.isUsageAuditActive() && sessionId != null
+        && !sessionId.isEmpty() && objectType != null && !objectType.isEmpty() && moduleId != null
+        && !moduleId.isEmpty() && action != null && !action.isEmpty();
     if (!auditAction) {
       return;
     }
 
     try {
-      final boolean usageAuditEnabled = SessionLoginData.isUsageAuditEnabled(conn);
-      if (!usageAuditEnabled) {
-        return;
-      }
-
       log4j.debug("Auditing sessionId: " + sessionId + " -  action:" + action + " - objectType:"
           + objectType + " - moduleId:" + moduleId + " - objectId:" + objectId
           + " - javaClassName:" + javaClassName);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,6 +125,14 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
           .isAudited((ConnectionProvider) SessionListener.context.getAttribute("openbravoPool")));
     } catch (Exception e) {
       log.error("Error activating audit trail", e);
+    }
+
+    try {
+      SessionInfo.setUsageAuditActive(SessionLoginData
+          .isUsageAuditEnabled((ConnectionProvider) SessionListener.context
+              .getAttribute("openbravoPool")));
+    } catch (Exception e) {
+      log.error("Error activating usage audit", e);
     }
   }
 
