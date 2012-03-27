@@ -74,7 +74,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
             .deactivate((ConnectionProvider) event.getServletContext()
                 .getAttribute("openbravoPool"), sessionId);
         this.context = null;
-        log.info("Deactivated session:" + sessionId);
+        log.info("Deactivated session: " + sessionId);
       } catch (ServletException e1) {
         log.error(e1.getMessage(), e1);
       }
@@ -166,9 +166,9 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         return false;
       }
     } catch (SocketTimeoutException e) {
-      log.error("Timeout connecting to " + serverUrl + " to check session " + sessionId);
+      log.debug("Timeout connecting to " + serverUrl + " to check session " + sessionId);
     } catch (Exception e) {
-      log.error("Error checking remote session " + sessionId + " in context " + serverUrl, e);
+      log.debug("Error checking remote session " + sessionId + " in context " + serverUrl, e);
     }
     return false;
   }
