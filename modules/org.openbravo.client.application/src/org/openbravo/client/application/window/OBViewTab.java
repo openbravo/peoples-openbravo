@@ -283,7 +283,7 @@ public class OBViewTab extends BaseTemplateComponent {
     return childTabs;
   }
 
-  public boolean hasAlwaysVisibleChildTab() {
+  private boolean hasAlwaysVisibleChildTab() {
     boolean hasVisibleChildTab = false;
     for (OBViewTab childTab : this.getChildTabs()) {
       if (!childTab.getAcctTab() && !childTab.getTrlTab()) {
@@ -294,7 +294,7 @@ public class OBViewTab extends BaseTemplateComponent {
     return hasVisibleChildTab;
   }
 
-  public boolean hasAccountingChildTab() {
+  private boolean hasAccountingChildTab() {
     boolean hasAccountingChildTab = false;
     for (OBViewTab childTab : this.getChildTabs()) {
       if (childTab.getAcctTab()) {
@@ -305,7 +305,7 @@ public class OBViewTab extends BaseTemplateComponent {
     return hasAccountingChildTab;
   }
 
-  public boolean hasTranslationChildTab() {
+  private boolean hasTranslationChildTab() {
     boolean hasTranslationChildTab = false;
     for (OBViewTab childTab : this.getChildTabs()) {
       if (childTab.getTrlTab()) {
