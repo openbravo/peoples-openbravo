@@ -134,8 +134,7 @@ FROM DUAL]]>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Invoice
-Number]]></text>
+				<text><![CDATA[Invoice Number]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-7" style="Detail_Header" x="468" y="25" width="55" height="25"/>
@@ -158,16 +157,14 @@ Number]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Planned
-DSO]]></text>
+				<text><![CDATA[PlannedDSO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-10" style="Detail_Header" x="1162" y="25" width="33" height="25"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Current
-DSO]]></text>
+				<text><![CDATA[CurrentDSO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-11" style="Detail_Header" x="1195" y="25" width="36" height="25"/>
@@ -182,8 +179,7 @@ DSO]]></text>
 				<textElement textAlignment="Right">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Base
-Amount]]></text>
+				<text><![CDATA[Base Amount]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-14" style="Detail_Header" x="1451" y="25" width="46" height="25"/>
@@ -191,8 +187,7 @@ Amount]]></text>
 				<textElement textAlignment="Center">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Base
-Currency]]></text>
+				<text><![CDATA[Base Currency]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-15" style="Detail_Header" x="1231" y="25" width="80" height="25"/>
@@ -200,8 +195,7 @@ Currency]]></text>
 				<textElement textAlignment="Right">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Transactional
-Amount]]></text>
+				<text><![CDATA[Transactional Amount]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-16" style="Detail_Header" x="1311" y="25" width="60" height="25"/>
