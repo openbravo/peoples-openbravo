@@ -590,6 +590,12 @@ build.war: build a war file in the lib directory.
         <not>
           <istrue value="${smart.mode}"/>
         </not>
+        <not>
+          <available file="${base.context}/web/skins/rtl" type="dir"/>
+        </not>
+        <not>
+          <available file="${base.context}/web/skins/ltr" type="dir"/>
+        </not>
       </or>
     </condition>
     
