@@ -1646,6 +1646,7 @@ public class InitialSetupUtility {
       final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
       obcDataSets.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
       obcDataSets.add(Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
+      obcDataSets.addOrder(Order.asc(DataSet.PROPERTY_NAME));
       if (obcDataSets.list().size() > 0) {
         return obcDataSets.list();
       } else {
