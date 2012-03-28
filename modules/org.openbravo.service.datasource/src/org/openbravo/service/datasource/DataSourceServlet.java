@@ -65,7 +65,6 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -590,7 +589,6 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
     setSessionInfo();
     try {
       // checks and set parameters, if not valid then go away

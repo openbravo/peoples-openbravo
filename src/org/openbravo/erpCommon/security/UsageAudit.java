@@ -127,11 +127,18 @@ public class UsageAudit {
       String javaClassName) {
     auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), SessionInfo.getCommand(),
         SessionInfo.getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(),
-        javaClassName);
+        javaClassName, null);
+  }
+
+  public static void auditActionNoDal(ConnectionProvider conn, VariablesSecureApp vars,
+      String javaClassName, long time) {
+    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), SessionInfo.getCommand(),
+        SessionInfo.getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(),
+        javaClassName, Long.toString(time));
   }
 
   private static void auditActionNoDal(ConnectionProvider conn, String sessionId, String action,
-      String objectType, String moduleId, String objectId, String javaClassName) {
+      String objectType, String moduleId, String objectId, String javaClassName, String time) {
     final boolean auditAction = SessionInfo.isUsageAuditActive() && sessionId != null
         && !sessionId.isEmpty() && objectType != null && !objectType.isEmpty() && moduleId != null
         && !moduleId.isEmpty() && action != null && !action.isEmpty();
@@ -145,7 +152,7 @@ public class UsageAudit {
           + " - javaClassName:" + javaClassName);
       Connection con = conn.getTransactionConnection();
       SessionLoginData.insertUsageAudit(con, conn, SessionInfo.getUserId(), sessionId, objectId,
-          moduleId, action, javaClassName, objectType);
+          moduleId, action, javaClassName, objectType, time);
       conn.releaseCommitConnection(con);
     } catch (ServletException se) {
       log4j.error("Error inserting usage audit", se);
