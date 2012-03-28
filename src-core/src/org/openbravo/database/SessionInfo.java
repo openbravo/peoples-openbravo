@@ -76,6 +76,7 @@ public class SessionInfo {
     processId.set(null);
     changedInfo.set(null);
     moduleId.set(null);
+    command.set(null);
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {

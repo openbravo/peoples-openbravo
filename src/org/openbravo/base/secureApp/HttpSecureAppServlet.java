@@ -366,6 +366,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
+        if (SessionInfo.getCommand() == null) {
+          // Set command based on vars if it has not explicitly set
+          SessionInfo.setCommand(vars1.getCommand());
+        }
+
         UsageAudit.auditActionNoDal(this, vars1, this.getClass().getName());
 
         // Autosave logic
