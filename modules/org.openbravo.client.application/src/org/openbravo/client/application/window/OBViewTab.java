@@ -243,6 +243,10 @@ public class OBViewTab extends BaseTemplateComponent {
     return parentProperty;
   }
 
+  public boolean getDeleteableTable() {
+    return tab.getTable().isDeletableRecords();
+  }
+
   public String getViewForm() {
     // force a load all the columns of the table
     getTab().getTable().getADColumnList().size();

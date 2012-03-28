@@ -1417,7 +1417,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
+    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),

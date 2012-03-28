@@ -25,7 +25,7 @@
         
     tabTitle: '${tabComponent.tabTitle?js_string}',
     entity:  '${tabComponent.entityName}',
-    
+    isDeleteableTable: ${tabComponent.deleteableTable?string},
     <#if tabComponent.parentProperty != ''>
         parentProperty: '${tabComponent.parentProperty?js_string}',
     </#if>
