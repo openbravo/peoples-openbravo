@@ -2033,7 +2033,8 @@ isc.OBViewGrid.addProperties({
     // sometimes rowNum and colnum are not set, then don't compute the next cell
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
-    if (this.view.standardWindow.isAutoSaveEnabled() && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
+    var enterKey = editCompletionEvent === 'enter';
+    if (this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,
         method: this.cellEditEnd,
