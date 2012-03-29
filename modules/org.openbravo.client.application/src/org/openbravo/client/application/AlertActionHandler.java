@@ -104,12 +104,13 @@ public class AlertActionHandler extends BaseActionHandler {
             + OBDal.getInstance().getReadableOrganizationsInClause()
             + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
 
+        PreparedStatement sqlQuery = null;
+        ResultSet rs = null;
         try {
-          final PreparedStatement sqlQuery = new DalConnectionProvider(false)
-              .getPreparedStatement(sql);
+          sqlQuery = new DalConnectionProvider(false).getPreparedStatement(sql);
           sqlQuery.setString(1, alertRule.getId());
           sqlQuery.execute();
-          ResultSet rs = sqlQuery.getResultSet();
+          rs = sqlQuery.getResultSet();
           if (rs.next()) {
             long rows = rs.getLong(1);
             total += rs.getLong(1);
@@ -119,6 +120,18 @@ public class AlertActionHandler extends BaseActionHandler {
         } catch (Exception e) {
           log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(),
               e);
+        } finally {
+          try {
+            if (sqlQuery != null) {
+              sqlQuery.close();
+            }
+            if (rs != null) {
+              rs.close();
+            }
+          } catch (Exception e) {
+            log4j.error(
+                "An error has ocurred when trying to close the statement: " + e.getMessage(), e);
+          }
         }
       }
 
