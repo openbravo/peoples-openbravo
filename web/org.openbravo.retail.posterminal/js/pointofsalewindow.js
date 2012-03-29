@@ -1,9 +1,9 @@
 
 
 
-define(['builder',
+define(['builder', 'i18n',
         'data/product',
-        'model/terminal', 'model/order', 'model/stack',
+        'model/terminal', 'model/order', 'model/stack', 'model/productprice',
         'components/hwmanager', 
         'components/catalog', 'components/search', 'components/scan', 'components/editline', 'components/order', 'components/total', 'components/payment', 'components/keyboard'
         ], function (B) {
@@ -14,6 +14,7 @@ define(['builder',
         
       {kind: B.KindJQuery('section'), content: [
         {kind: OB.DATA.Product},
+        {kind: OB.DATA.ProductPrice},
         {kind: OB.DATA.Category},      
         
         {kind: OB.MODEL.Order, id: 'modelorder'},                                      
@@ -24,36 +25,44 @@ define(['builder',
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                                                                            
-            {kind: B.KindJQuery('div'), attr: {'style': 'margin:5px; float:left;' }, content: [
-              {kind: B.KindJQuery('a'), attr: {'class': 'btn', 'href': '#'}, content: [
-                {kind: B.KindJQuery('i'), attr: {'class': 'icon-asterisk'}}, ' New'
-              ], init: function () {
-                  var me = this;
-                  me.$.click(function (e) {
-                    e.preventDefault();
-                    me.context.get('modelorder').reset();
-                  });
-              }}   
-            ]},
-            {kind: B.KindJQuery('div'), attr: {'style': 'margin:5px; float:left;' }, content: [
-              {kind: B.KindJQuery('a'), attr: {'class': 'btn', 'href': '#'}, content: [
-                {kind: B.KindJQuery('i'), attr: {'class': 'icon-print'}}, ' Print'
-              ], init: function () {
-                  var me = this;
-                  me.$.click(function (e) {
-                    e.preventDefault();
-                    me.context.get('modelorder').trigger('print');
-                  });  
-              }}   
-            ]},
+
+            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
+              {kind: B.KindJQuery('i'), attr: {'class': 'icon-asterisk  icon-white'}}, OB.I18N.getLabel('OBPOS_LblNew')
+            ], init: function () {
+                var me = this;
+                me.$.click(function (e) {
+                  e.preventDefault();
+                  me.context.get('modelorder').reset();
+                });
+            }},
+            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
+              {kind: B.KindJQuery('i'), attr: {'class': 'icon-trash  icon-white'}}, OB.I18N.getLabel('OBPOS_LblDelete')
+            ], init: function () {
+                var me = this;
+                me.$.click(function (e) {
+                  e.preventDefault();
+                });
+            }},            
+            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
+              {kind: B.KindJQuery('i'), attr: {'class': 'icon-print  icon-white'}}, OB.I18N.getLabel('OBPOS_LblPrint')
+            ], init: function () {
+                var me = this;
+                me.$.click(function (e) {
+                  e.preventDefault();
+                  me.context.get('modelorder').trigger('print');
+                });  
+            }},                                                                           
+                
             
-            {kind: B.KindJQuery('ul'), attr: {'class': 'nav nav-pills'}, content: [     
+            {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'data-toggle': 'tab', 'href': '#payment', 'style': 'text-shadow:none;'}, content: [
-                  {kind: B.KindJQuery('div'), content: [
-                    {kind: OB.COMP.Total},
+                {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#payment'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width:100px;'}, content: [
+                    {kind: B.KindJQuery('span'), attr: {'style': 'font-weight: bold'}, content: [
+                      {kind: OB.COMP.Total}
+                    ]},                    
                     {kind: B.KindJQuery('span'), content: [
-                      ' pay' 
+                      OB.I18N.getLabel('OBPOS_LblPay')
                     ]}
                   ]}
                 ], init: function () {   
@@ -64,18 +73,18 @@ define(['builder',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'data-toggle': 'tab', 'href': '#catalog', 'style': 'text-shadow:none;'}, content: [
-                  'Browse'      
+                {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
+                  OB.I18N.getLabel('OBPOS_LblBrowse')
                 ], init: function () {  
                   var context = this.context;
                   this.$.on('shown', function () {
                     context.get('keyboard').hide();
-                  });                                            
+                  });                            
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'data-toggle': 'tab', 'href': '#search', 'style': 'text-shadow:none;'}, content: [
-                  'Search'      
+                {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#search'}, content: [
+                  OB.I18N.getLabel('OBPOS_LblSearch')
                 ], init: function () {  
                   var context = this.context;                      
                   this.$.on('shown', function () {
@@ -84,8 +93,8 @@ define(['builder',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'data-toggle': 'tab', 'href': '#scan', 'style': 'text-shadow:none;'}, content: [
-                  'Scan'      
+                {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#scan'}, content: [
+                  OB.I18N.getLabel('OBPOS_LblScan')
                 ], init: function () { 
                   var context = this.context;                      
                   this.$.on('shown', function () {
@@ -93,15 +102,15 @@ define(['builder',
                   });
                   context.get('modelorder').on('reset', function() {
                     this.$.tab('show');                         
-                  }, this);    
+                  }, this);   
                   context.get('stackorder').on('scan', function () {
                     this.$.tab('show');
                   }, this);
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
-                  'Edit'      
+                {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
+                  OB.I18N.getLabel('OBPOS_LblEdit')
                 ], init: function () {   
                   var context = this.context;                      
                   this.$.on('shown', function () {
@@ -112,12 +121,13 @@ define(['builder',
                     this.$.tab('show');
                   }, this);                        
                 }},        
-              ]},
-              {kind: B.KindJQuery('li'), attr: {'class': 'divider-vertical'}}
-            ]}            
+              ]}
+            ]}                                                                              
+
+            
             
           ]}
-        ]},  
+        ]},
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span5'}, content: [

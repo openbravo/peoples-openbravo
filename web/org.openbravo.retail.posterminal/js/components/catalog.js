@@ -1,6 +1,6 @@
 
 
-define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
+define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/terminal', 'components/table'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -15,14 +15,14 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       style: 'list',
       renderLine: function (model) {
         return OB.UTIL.EL(
-          {tag: 'a', attr: {href: '#', style: 'display:block; position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-              {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
-                OB.UTIL.getThumbnail(model.get('img'))                                                       
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 80%;'}, content: [ 
-                model.get('category')._identifier                                                                                                                                               
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
+            {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
+              OB.UTIL.getThumbnail(model.get('img'))                                                       
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 80%;'}, content: [ 
+              model.get('category')._identifier                                                                                                                                               
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
           ]}
         );                  
       }      
@@ -36,28 +36,25 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       }
     }, this);
         
-    this.products = new OB.MODEL.Collection(context.get('DataProduct'));    
+    
+    // this.products = new OB.MODEL.Collection(context.get('DataProduct'));
+    this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
     this.productsview = new OB.COMP.TableView({ 
       renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'a', attr: {href: '#', style: 'display:block; position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-              {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
-                OB.UTIL.getThumbnail(model.get('img'))
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
-                model.get('product')._identifier
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                {tag: 'strong', content: [ 
-                  OB.UTIL.formatNumber(model.get('price').listPrice, {
-                    decimals: 2,
-                    decimal: '.',
-                    group: ',',
-                    currency: '$#'
-                  })                                                                                                                                            
-                ]}                                                                                                                                                                                                                                 
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+        return OB.UTIL.EL(         
+          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
+            {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
+              OB.UTIL.getThumbnail(model.get('img'))
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
+              model.get('product')._identifier
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+              {tag: 'strong', content: [ 
+                OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                         
+              ]}                                                                                                                                                                                                                                 
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
           ]}
         );                    
       }      

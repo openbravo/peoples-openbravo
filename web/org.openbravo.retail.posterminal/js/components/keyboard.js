@@ -1,5 +1,5 @@
 
-define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
+define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -14,20 +14,30 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       
       return OB.UTIL.EL(
         {tag: 'div', attr: {'style': 'margin:5px' }, content: [
-          {tag: 'button', attr: {'style': 'width: 100%; height: 40px;' }, content: [
+          {tag: 'a', attr: { 'href': '#', 'class': 'btnkeyboard'}, content: [
             label
           ], init: function () {
-            this.click(function () {
+            this.click(function(e) {
+              e.preventDefault();
               me.keyPressed(command);  
+          
             });
-          }}   
-        ]}           
+          }} 
+        ]}
+//          
+//        {tag: 'div', attr: {'style': 'margin:5px' }, content: [
+//          {tag: 'button', attr: {'style': 'width: 100%; height: 40px;' }, content: [
+//            label
+//          ], init: function () {
+//            this.click(function () {
+//              me.keyPressed(command);  
+//            });
+//          }}   
+//        ]} 
+        
+        
       );
-//      return  $(OB.UTIL.DOM(
-//        OB.UTIL.NODE('button', { 'style': 'width:100%;'}, [ label ])                 
-//      )).click(function () {
-//        me.keyPressed(command);
-//      });
+
     }
     
     var btndel = createbtn('del', OB.UTIL.NODE('i', {'class': 'icon-chevron-left'}, []));
@@ -38,9 +48,9 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     var btnminus = createbtn('-', '-');    
     var btnplus = createbtn('+', '+');
     
-    var btnqty = createbtn('qty', 'Quantity');
-    var btnprice = createbtn('price', 'Price');
-    var btndto = createbtn('dto', 'Discount');
+    var btnqty = createbtn('qty', OB.I18N.getLabel('OBPOS_KbQuantity'));
+    var btnprice = createbtn('price', OB.I18N.getLabel('OBPOS_KbPrice'));
+    var btndto = createbtn('dto', OB.I18N.getLabel('OBPOS_KbDiscount'));
     var btnreturn = createbtn(String.fromCharCode(13), OB.UTIL.NODE('i', {'class': 'icon-ok'}, []));
 
     var btn0 = createbtn('0', '0');
@@ -150,8 +160,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
               OB.UTIL.NODE('div', {'class': 'span2'}, [ btnpercentage ]),                                                           
               OB.UTIL.NODE('div', {'class': 'span2'}, [ btnminus ]),                                                           
               OB.UTIL.NODE('div', {'class': 'span2'}, [ btnplus ]),                                                           
-              OB.UTIL.NODE('div', {'class': 'span2'}, [
-              ])                                                          
+              OB.UTIL.NODE('div', {'class': 'span2'}, [ createbtn('---', '---') ])                                                          
             ]),    
             OB.UTIL.NODE('div', {'class': 'row-fluid'}, [  
               OB.UTIL.NODE('div', {'class': 'span2'}, [ btn7 ]),                                                           

@@ -1,6 +1,6 @@
 
 
-define(['utilities', 'model/stack'], function () {
+define(['utilities', 'i18n', 'model/stack'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -23,12 +23,7 @@ define(['utilities', 'model/stack'], function () {
     },
     
     printPrice: function () {
-      return OB.UTIL.formatNumber(this.get('price'), {
-        decimals: 2,
-        decimal: '.',
-        group: ',',
-        currency: '$#'
-      });
+      return OB.I18N.formatCurrency(this.get('price'));
     },
     
     getNet: function () {
@@ -36,12 +31,7 @@ define(['utilities', 'model/stack'], function () {
     },
     
     printNet: function () {
-      return OB.UTIL.formatNumber(this.getNet(), {
-        decimals: 2,
-        decimal: '.',
-        group: ',',
-        currency: '$#'
-      });
+      return OB.I18N.formatCurrency(this.getNet());
     }     
   });
   
@@ -63,12 +53,7 @@ define(['utilities', 'model/stack'], function () {
     },
     
     printNet: function () {
-      return OB.UTIL.formatNumber(this.getNet(), {
-        decimals: 2,
-        decimal: '.',
-        group: ',',
-        currency: '$#'
-      });      
+      return OB.I18N.formatCurrency(this.getNet());      
     },
     
     reset: function() {
@@ -117,6 +102,7 @@ define(['utilities', 'model/stack'], function () {
     
     deleteLine:function (line) {
       var me = this;
+      var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
       // set the undo action
@@ -124,7 +110,7 @@ define(['utilities', 'model/stack'], function () {
         action: 'deleteline',
         line: line,
         undo: function() {
-          me.get('lines').add(line);
+          me.get('lines').add(line, {at: index});
           me.set('undo', null);
         }
       });         

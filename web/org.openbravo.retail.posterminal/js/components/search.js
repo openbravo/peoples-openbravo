@@ -19,26 +19,30 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     
     this.products = new OB.MODEL.Collection(context.get('DataProduct'));    
     this.productsview = new OB.COMP.TableView({ 
+      renderEmpty: function () {
+        return function () {
+          return OB.UTIL.EL(
+            {tag: 'div', attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+              OB.I18N.getLabel('OBPOS_SearchNoResults')
+            ]}
+          );
+        };            
+      },      
       renderLine: function (model) {
         return OB.UTIL.EL(
-          {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-              {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
-                OB.UTIL.getThumbnail(model.get('img'))
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
-                model.get('product')._identifier
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                {tag: 'strong', content: [ 
-                  OB.UTIL.formatNumber(model.get('price').listPrice, {
-                    decimals: 2,
-                    decimal: '.',
-                    group: ',',
-                    currency: '$#'
-                  })                                                                                                                                            
-                ]}                                                                                                                                                                                                                                 
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
+            {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
+              OB.UTIL.getThumbnail(model.get('img'))
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
+              model.get('product')._identifier
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+              {tag: 'strong', content: [ 
+                OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                            
+              ]}                                                                                                                                                                                                                                 
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
           ]}
         );                    
       }      
@@ -54,7 +58,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       renderHeader: function (model) {
         return OB.UTIL.EL(
           {tag: 'option', attr: {value: ''}, content: [
-             '(All categories)'                                                                                
+             OB.I18N.getLabel('OBPOS_SearchAllCategories')                                                                  
           ]}
         );                  
       },      
@@ -76,10 +80,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       {tag: 'div', content: [
         {tag: 'div', attr: {'style': 'background-color: white; color: black; height: 500px; margin: 5px; padding: 5px'}, content: [
           {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-            {tag: 'div', attr: {'class': 'span2'}, content: [   
-               '_'
-            ]},                                  
-            {tag: 'div', attr: {'class': 'span10', 'style': 'height: 500px; overflow: auto;'}, content: [    
+//            {tag: 'div', attr: {'class': 'span2'}, content: [   
+//            ]},                                  
+//            {tag: 'div', attr: {'class': 'span10', 'style': 'height: 500px; overflow: auto;'}, content: [    
+            {tag: 'div', attr: {'class': 'span12', 'style': 'height: 500px; overflow: auto;'}, content: [    
               {tag: 'div', attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
                 {tag: 'div', attr: {'class': 'span9'}, content: [    
                   {tag: 'div', attr: {'style': 'padding: 10px'},  content: [    
@@ -94,7 +98,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                 {tag: 'div', attr: {'class': 'span3'}, content: [ 
                   {tag: 'div', attr: {'style': 'padding: 10px'}, content: [    
                     {tag: 'button', attr: {'style': 'width: 100%'}, content: [
-                      {tag:'i', attr: {'class': 'icon-search'}}, ' Search'                       
+                      {tag:'i', attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
                     ], init: function () {
                       this.click(function () {
                         var filter = {};

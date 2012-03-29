@@ -5,7 +5,13 @@ define([], function () {
   OB = window.OB || {};
   OB.I18N = window.OB.I18N || {};
   
+  // Hardcoded US labels.
   OB.I18N.labels = {
+    'OBPOS_CompanyClient': 'Client: ',
+    'OBPOS_CompanyOrg': 'Organization: ',
+    'OBPOS_CompanyPriceList': 'Price list: ',
+    'OBPOS_CompanyCurrency': 'Currency: ',
+    'OBPOS_CompanyLocation': 'Location: ',
          
     'OBPOS_WelcomeMessage': 'Welcome to Openbravo POS',
     'OBPOS_NoLineSelected': 'There is no line selected',
@@ -13,13 +19,49 @@ define([], function () {
     'OBPOS_AddLine': 'Added line %0 x %1',
     'OBPOS_AddUnits': 'Added %0 x %1',
     'OBPOS_RemoveUnits': 'Removed %0 x %1',
-    'OBPOS_SetUnits': 'Set %0 x %1'    
+    'OBPOS_SetUnits': 'Set %0 x %1',
+    
+    'OBPOS_ButtonDelete': 'Delete',
+    'OBPOS_LineDescription': 'Description',
+    'OBPOS_LineQuantity': 'Quantity',
+    'OBPOS_LinePrice': 'Price',
+    'OBPOS_LineValue': 'LineValue',
+    'OBPOS_LineDiscount': 'Discount',
+    'OBPOS_LineTotal': 'Total',
+    
+    'OBPOS_KbQuantity': 'Quantity',
+    'OBPOS_KbPrice': 'Price',
+    'OBPOS_KbDiscount': 'Discount',
+
+    'OBPOS_ReceiptNew': 'New Receipt',
+    'OBPOS_ReceiptTaxes': 'Taxes',
+    'OBPOS_ReceiptTotal': 'TOTAL',
+
+    'OBPOS_SearchNoResults': 'No results',
+    'OBPOS_SearchAllCategories': '(All categories)',
+    'OBPOS_SearchButtonSearch': ' Search',
+    
+    'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',
+    'OBPOS_MsgHardwareServerNotAvailable': 'Hardware server is not available.',
+    'OBPOS_MsgTemplateNotAvailable': 'Template is not available.',
+    'OBPOS_MsgHardwareServerNotDefined': 'Hardware server URL is not defined.',
+    
+    
+    // Point of sale window
+    'OBPOS_LblNew': ' New',
+    'OBPOS_LblDelete': ' Delete',
+    'OBPOS_LblPrint': ' Print',
+    'OBPOS_LblPay': ' pay',
+    'OBPOS_LblBrowse': 'BROWSE',
+    'OBPOS_LblSearch': 'SEARCH',
+    'OBPOS_LblScan': 'SCAN',
+    'OBPOS_LblEdit': 'EDIT'
   };
   
   
   OB.I18N.getLabel = function(key, params, object, property) {
     if (!OB.I18N.labels[key]) {
-      return 'UNDEFINED ' + key;      
+      return '** ' + key + ' **';      
     }
     var label = OB.I18N.labels[key], i;
     if (params && params.length && params.length > 0) {
@@ -29,5 +71,31 @@ define([], function () {
     }
     return label;
   };
+  
+  OB.I18N.formatCurrency = function (num) {
+    // Hardcoded to US Locale.
+    return OB.I18N.formatGeneralNumber(num, {
+      decimals: 2,
+      decimal: '.',
+      group: ',',
+      currency: '$#'
+    })     
+  };
+  
+  OB.I18N.formatGeneralNumber = function (num, options) {
+    n = num.toFixed(options.decimals);
+    x = n.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? options.decimal + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+      x1 = x1.replace(rgx, '$1' + options.group + '$2');
+    }
+    if (options.currency) {
+      return options.currency.replace("#", x1 + x2);
+    } else {
+      return x1 + x2;
+    }
+  };  
 
 });

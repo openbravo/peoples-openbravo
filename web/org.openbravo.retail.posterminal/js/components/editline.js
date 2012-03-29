@@ -1,4 +1,4 @@
-define(['utilities', 'model/order', 'model/terminal'], function () {
+define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -25,22 +25,27 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
     this.msgedit = OB.UTIL.EL(
       {tag: 'div', attr: {'class': 'row-fluid', 'style': 'display: none;'}, content: [
         {tag: 'div', attr: {'class': 'span8'}, content: [
-          {tag: 'div', attr: {style: 'padding: 10px;'}, content: [
-            {tag: 'div', content: [
-              {tag: 'button', attr: {'style': 'margin: 5px 5px 5px 0px;' }, content: [
-                'Delete'                       
-              ], init: function () {
-                this.click(function() {
-                  if (me.line) {
-                    me.receipt.deleteLine(me.line);    
-                    me.stack.trigger('scan');
-                  }              
-                });
-              }}             
+          {tag: 'div', attr: {style: 'padding: 10px; width:100%'}, content: [
+                                                                             
+            {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+              {tag: 'div', attr: {'class': 'span12'}, content: [                                                                             
+                {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small' }, content: [
+                  OB.I18N.getLabel('OBPOS_ButtonDelete')
+                ], init: function () {
+                  this.click(function(e) {
+                    e.preventDefault();
+                    if (me.line) {
+                      me.receipt.deleteLine(me.line);    
+                      me.stack.trigger('scan');
+                    }              
+                  });
+                }} 
+              ]}
             ]}, 
+            
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Description'                                                                         
+                OB.I18N.getLabel('OBPOS_LineDescription')
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 this.editlinename                
@@ -48,7 +53,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ]},      
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Quantity'                                                                         
+                OB.I18N.getLabel('OBPOS_LineQuantity')
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 this.editlineqty 
@@ -56,7 +61,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ]},                                                             
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Price'                                                                         
+                OB.I18N.getLabel('OBPOS_LinePrice')                                                                       
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 this.editlineprice
@@ -64,7 +69,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ]},                                                             
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Line value'                                                                         
+                OB.I18N.getLabel('OBPOS_LineValue')
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 {tag: 'strong', content: [                                
@@ -73,7 +78,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ]},                                                             
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Discount'                                                                         
+                OB.I18N.getLabel('OBPOS_LineDiscount')
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 {tag: 'strong', content: [                                
@@ -82,7 +87,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
             ]},                                                             
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span4'}, content: [
-                'Total'                                                                         
+                OB.I18N.getLabel('OBPOS_LineTotal')
               ]},  
               {tag: 'div', attr: {'class': 'span8'}, content: [                                
                 this.editlinenet           

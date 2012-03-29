@@ -45,23 +45,7 @@ define([], function () {
     var results = regex.exec(window.location.search);
     return (results) ? decodeURIComponent(results[1].replace(/\+/g, " ")) : "";
   }
-  
-  OB.UTIL.formatNumber = function (num, options) {
-    n = num.toFixed(options.decimals);
-    x = n.split('.');
-    x1 = x[0];
-    x2 = x.length > 1 ? options.decimal + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + options.group + '$2');
-    }
-    if (options.currency) {
-      return options.currency.replace("#", x1 + x2);
-    } else {
-      return x1 + x2;
-    }
-  };  
-  
+    
   OB.UTIL.escapeRegExp = function (text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   };

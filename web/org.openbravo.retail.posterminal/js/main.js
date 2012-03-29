@@ -11,10 +11,10 @@ require.config({
 
 require(['builder', 'pointofsalewindow', 'datasource', 'model/terminal', 'components/terminal'], function(B, pos) {
   
-  var hwserver = new OB.DS.HWServer('http://192.168.0.8:8090/printer');  
+  var hwserver = new OB.DS.HWServer();  // 'http://192.168.0.8:8090/printer'
   var modelterminal = new OB.MODEL.Terminal();
   
-  var terminal = new OB.COMP.Terminal($("#terminal"), $("#status"));
+  var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
   terminal.setModel(modelterminal); 
   
   var context = new B.Context();  

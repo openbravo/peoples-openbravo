@@ -23,14 +23,35 @@ define(['utilities', 'datasource'], function () {
     }   
   };
   
+  OB.DATA.PriceList = function (context, id) {
+    this.init(context, id, 'DataPriceList');
+    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+      'select ppl as pricelist, plv as pricelistversion ' +
+      'from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
+      'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
+      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id)'));
+    this.loadparams = {'org': this.context.get('modelterminal').get('terminal').organization };     
+  };
+  _.extend(OB.DATA.PriceList.prototype, OB.DATA.Base);
+  
+  OB.DATA.ProductPrice = function (context, id) {
+    this.init(context, id, 'DataProductPrice');
+    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+      'from PricingProductPrice where priceListVersion in ' + 
+      '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
+      'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
+      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))'));
+    this.loadparams = {'org': this.context.get('modelterminal').get('terminal').organization };     
+  };
+  _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
+  
   OB.DATA.Product = function (context, id) {
     this.init(context, id, 'DataProduct');
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
-      'select p as product, pp as price, img.bindaryData as img ' +
-      'from PricingProductPrice as pp inner join pp.product p left outer join p.image img ' + 
-      'where p.$readableCriteria and p.obposCatalog = true and pp.priceListVersion.id = :priceListVersion ' + 
-      'order by p.obposLine, p.name'));
-    this.loadparams = {'priceListVersion': this.context.get('modelterminal').get('pricelistversion').id }; 
+      'select p as product, img.bindaryData as img ' + 
+      'from Product p left outer join p.image img ' + 
+      'where p.$readableCriteria and p.obposCatalog = true order by p.obposLine, p.name'));
+    this.loadparams = {}; 
   };
   _.extend(OB.DATA.Product.prototype, OB.DATA.Base);
   

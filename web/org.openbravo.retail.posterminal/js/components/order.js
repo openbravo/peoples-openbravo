@@ -10,42 +10,33 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     this.orderview = new OB.COMP.TableView({
       stack: context.get('stackorder'),
       style: 'edit',
-//      renderHeader: function () {
-//        return OB.UTIL.EL(
-//            {tag: 'div', attr: {style: 'position: relative; padding: 5px;'}, content: [ 
-//              {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
-//                'Product'                                                                
-//              ]},                                                                                      
-//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-//                'Units'                                                                                                                                                                
-//              ]},                                                                                      
-//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-//                'Price'                                                                
-//              ]},                                                                                      
-//              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-//                'Net'                                                                
-//              ]},
-//              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
-//          ]}
-//        );        
-//      }, 
+
+      renderEmpty: function () {
+        return function () {
+          return OB.UTIL.EL(
+            {tag: 'div', attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+               OB.I18N.getLabel('OBPOS_ReceiptNew')
+            ]}
+          );
+        };            
+      },
   
       renderLine: function (model) {
         return OB.UTIL.EL(
-          {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-              {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
-                model.get('productidentifier')                                                                
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                model.printQty()                                                                                                                                                          
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                model.printPrice()                                                             
-              ]},                                                                                      
-              {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                model.printNet()
-              ]},
-              {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
+          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
+            {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
+              model.get('productidentifier')                                                                
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+              model.printQty()                                                                                                                                                          
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+              model.printPrice()                                                             
+            ]},                                                                                      
+            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+              model.printNet()
+            ]},
+            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
           ]}
         );         
       }      
@@ -58,7 +49,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
         {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [         
           {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [                                                                                        
             {tag: 'strong', attr: {'style': 'color: green;'}, content: [                                                                                        
-              '10:15 - <9332>'
+              '10:15 - <9332> Federal Lounge'
             ]}        
           ]},           
           {tag: 'div', content: [              
@@ -68,7 +59,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
               {tag: 'li', content: [                                                                                        
                 {tag: 'div', attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
                   {tag: 'div', attr: {style: 'float: left; width: 80%; color:  #888888'}, content: [ 
-                    'Taxes'                                                                
+                    OB.I18N.getLabel('OBPOS_ReceiptTaxes')
                   ]},                                                                                                                                                                           
                   {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
                     ''
@@ -79,7 +70,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
               {tag: 'li', content: [                                                                                        
                 {tag: 'div', attr: {style: 'position: relative; padding: 10px;'}, content: [
                   {tag: 'div', attr: {style: 'float: left; width: 80%'}, content: [ 
-                    'TOTAL'                                                                
+                    OB.I18N.getLabel('OBPOS_ReceiptTotal')
                   ]},                                                                                                                                                                           
                   {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
                     this.totalnet

@@ -1,6 +1,6 @@
 
 
-define([], function () {
+define(['i18n'], function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
@@ -81,7 +81,7 @@ define([], function () {
       error: function (jqXHR, textStatus, errorThrown) {
         callback({
           exception: {
-            message: (errorThrown ? errorThrown : "Application server is not available.")
+            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable'))
           }
         });
       }
@@ -197,44 +197,56 @@ define([], function () {
   };
   
   OB.DS.HWServer.prototype.print = function (template, params, callback) {
-    var me = this;
-    $.ajax({
-      url: template,
-      dataType: 'text',
-      type: 'GET',
-      success: function (templatedata, textStatus, jqXHR) {      
-        
-        $.ajax({
-          url: me.url,
-          contentType: 'application/json;charset=utf-8',
-          dataType: 'jsonp',
-          type: 'GET',
-          data: {content: params ? _.template(templatedata, params) : templatedata},
-          success: function (data, textStatus, jqXHR) {
-            if (callback) {
-              callback(data);
+    if (this.url) {
+      var me = this;
+      $.ajax({
+        url: template,
+        dataType: 'text',
+        type: 'GET',
+        success: function (templatedata, textStatus, jqXHR) {      
+          
+          $.ajax({
+            url: me.url,
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'jsonp',
+            type: 'GET',
+            data: {content: params ? _.template(templatedata, params) : templatedata},
+            success: function (data, textStatus, jqXHR) {
+              if (callback) {
+                callback(data);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              if (callback) {
+                callback({
+                  exception: {
+                    message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+                  }
+                });
+              }
             }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            if (callback) {
-              callback({
-                exception: {
-                  message: (errorThrown ? errorThrown : "Hardware server is not available.")
-                }
-              });
-            }
+          });
+                
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          if (callback) {
+            callback({
+              exception: {
+                message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgTemplateNotAvailable'))
+              }
+            });    
+          }
+        }
+      });  
+    } else {
+      if (callback) {
+        callback({exception: {
+            status: 0,
+            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
           }
         });
-              
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        callback({
-          exception: {
-            message: (errorThrown ? errorThrown : "Template not available.")
-          }
-        });        
       }
-    });  
+    }
   };
   
 
