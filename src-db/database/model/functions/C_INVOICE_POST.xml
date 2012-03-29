@@ -58,7 +58,6 @@
   Cur_ReactivateInvoiceLine RECORD;
   Cur_LastContact RECORD;
   Cur_lineqty RECORD;
-  Cur_InvoiceTax RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -148,8 +147,6 @@
   withholdamount NUMBER(10,2);
   cWithHoldId varchar2(32);
   Cur_InvoiceNetLine RECORD;
-
-  v_LineMax NUMBER:=0;
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -617,27 +614,6 @@ BEGIN --BODY
             END LOOP; -- Create Reversal Accounting Dimensions
 
         END LOOP; -- Create Reversal Invoice Lines
-
-        -- Check if there is any manually added tax
-        FOR Cur_InvoiceTax IN
-          (SELECT c_tax_id, ad_client_id, ad_org_id, isactive,
-            taxbaseamt, taxamt, recalculate
-          FROM c_invoicetax
-          WHERE c_invoice_id = v_Record_ID
-          MINUS
-          SELECT c_tax_id, ad_client_id, ad_org_id, isactive,
-            -taxbaseamt, -taxamt, recalculate
-          FROM c_invoicetax
-          WHERE c_invoice_id = v_RInvoice_ID)
-        LOOP
-          SELECT MAX(line) + 10 INTO v_LineMax FROM c_invoicetax WHERE c_invoice_id = v_RInvoice_ID;
-          INSERT INTO c_invoicetax(c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
-            taxbaseamt, taxamt, line, c_invoicetax_id, recalculate)
-          VALUES(Cur_InvoiceTax.c_tax_id, v_RInvoice_ID, Cur_InvoiceTax.ad_client_id, Cur_InvoiceTax.ad_org_id, Cur_InvoiceTax.isactive,
-            now(), v_UpdatedBy, now(), v_UpdatedBy, -Cur_InvoiceTax.taxbaseamt, -Cur_InvoiceTax.taxamt, v_LineMax,
-            get_uuid(), Cur_InvoiceTax.recalculate);
-        END LOOP;
-        
         -- Close Invoice
         UPDATE C_INVOICE
         SET DocStatus='VO', -- it IS reversed
