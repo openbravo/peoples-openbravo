@@ -367,6 +367,9 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getInventoryIncreaseCost() {
+    if (transaction.getPhysicalInventoryLine().getCost() != null) {
+      return transaction.getPhysicalInventoryLine().getCost();
+    }
     return getDefaultCost();
   }
 
