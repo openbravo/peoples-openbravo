@@ -527,6 +527,8 @@ public class UsedByLink extends HttpSecureAppServlet {
       usedByLinkDataJsonObj.put("total", data.total);
       usedByLinkDataJsonObj.put("whereClause", data.whereclause);
       usedByLinkDataJsonObj.put("windowName", data.windowname);
+      usedByLinkDataJsonObj.put("singleRecord", "SR".equals(data.uipattern));
+      usedByLinkDataJsonObj.put("readOnly", "RO".equals(data.uipattern));
       usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
     }
 
