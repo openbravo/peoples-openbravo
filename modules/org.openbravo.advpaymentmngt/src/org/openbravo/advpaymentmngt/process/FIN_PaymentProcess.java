@@ -99,6 +99,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_FinancialAccountNotInNaturalTree@"));
           bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
           return;
         }
         Set<String> invoiceDocNos = new TreeSet<String>();
@@ -122,6 +123,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                 "@APRM_PaymentNoLines@"));
             bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
             return;
           }
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
@@ -260,6 +262,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@NoExecutionProcessFound@"));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             } catch (final Exception e) {
               e.printStackTrace(System.err);
@@ -267,6 +270,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@IssueOnExecutionProcess@"));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             }
           } else {
@@ -350,6 +354,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
               + ": " + payment.getDocumentNo()));
           bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
           return;
         }
         // Transaction exists
@@ -359,6 +364,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_TransactionExists@"));
           bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
           return;
         }
         // Payment with generated credit already used on other payments.
@@ -369,6 +375,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_PaymentGeneratedCreditIsUsed@"));
           bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
           return;
         }
 
@@ -556,6 +563,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@PostedDocument@" + ": " + payment.getDocumentNo()));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             }
             // Transaction exists
@@ -565,6 +573,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_TransactionExists@"));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             }
             // Payment with generated credit already used on other payments.
@@ -575,6 +584,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_PaymentGeneratedCreditIsUsed@"));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             }
             // Payment not in Awaiting Execution
@@ -584,6 +594,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_PaymentNotRPAE_NotVoid@"));
               bundle.setResult(msg);
+              OBDal.getInstance().rollbackAndClose();
               return;
             }
 
@@ -689,6 +700,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
             "@CouldNotUpdateOriginalPaymentPlan@"));
         bundle.setResult(msg);
+        OBDal.getInstance().rollbackAndClose();
         return;
       }
 
