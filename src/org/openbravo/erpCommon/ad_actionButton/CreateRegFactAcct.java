@@ -23,6 +23,8 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -91,7 +95,27 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
           vars.getClient(), strOrgId);
       CreateRegFactAcctData[] acctSchema = CreateRegFactAcctData.treeAcctSchema(this,
           vars.getClient(), strOrgId);
+      String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
       for (int j = 0; j < acctSchema.length; j++) {
+        String balanceAmount = CreateRegFactAcctData.balanceAmount(this, strKey, acctSchema[j].id,
+            Utility.getInStrSet(new OrganizationStructureProvider().getChildTree(strOrgId, true)));
+        if (BigDecimal.ZERO.compareTo(new BigDecimal(balanceAmount)) != 0) {
+          releaseRollbackConnection(conn);
+          myError.setType("Error");
+          myError.setTitle("");
+          Map<String, String> parameters = new HashMap<String, String>();
+          try {
+            OBContext.setAdminMode();
+            AcctSchema schema = OBDal.getInstance().get(AcctSchema.class, acctSchema[j].id);
+            parameters.put("AcctSchema", schema.getName());
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+
+          myError.setMessage(Utility.parseTranslation(this, vars, parameters, vars.getLanguage(),
+              Utility.messageBD(this, "BalanceIsNotBalanced", vars.getLanguage())));
+          return myError;
+        }
         String strRegId = SequenceIdData.getUUID();
         String strCloseId = SequenceIdData.getUUID();
         String strOpenId = SequenceIdData.getUUID();
@@ -108,7 +132,6 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         for (int i = 0; i < dataOrgs.length; i++) {
           if (log4j.isDebugEnabled())
             log4j.debug("Output: Before buttonReg");
-          String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
           String regCount = CreateRegFactAcctData.getRegCount(this, vars.getClient(),
               dataOrgs[i].org, acctSchema[j].id, strPediodId);
           if (new Integer(regCount).intValue() > 0) {
@@ -320,8 +343,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         Fact_Acct_Group_ID, "10", "C", strClosingEntry, strKey, "'L','O'", strAcctSchema);
 
     String Fact_Acct_Group_ID2 = strOpenID;
-    CreateRegFactAcctData.insertSelect(conn, this, vars.getClient(), stradOrgId, vars.getUser(),
-        CreateRegFactAcctData.getStartDate(this, newPeriod), newPeriod, currency,
+    CreateRegFactAcctData.insertSelectOpening(conn, this, vars.getClient(), stradOrgId,
+        vars.getUser(), CreateRegFactAcctData.getStartDate(this, newPeriod), newPeriod, currency,
         Fact_Acct_Group_ID2, "20", "O", strOpeningEntry, strKey, "'A','L','O'", strAcctSchema);
 
     return "Success";
