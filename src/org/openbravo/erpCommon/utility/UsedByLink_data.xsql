@@ -38,6 +38,7 @@
         (CASE WHEN (SELECT COUNT(*)
                      FROM AD_WINDOW_ACCESS WA
                     WHERE W.AD_WINDOW_ID = WA.AD_WINDOW_ID
+                      AND WA.ISACTIVE = 'Y'
                       AND WA.AD_ROLE_ID = ?)=0 THEN 'N'
                                                ELSE 'Y' 
                                                END) AS ACCESSIBLE,
