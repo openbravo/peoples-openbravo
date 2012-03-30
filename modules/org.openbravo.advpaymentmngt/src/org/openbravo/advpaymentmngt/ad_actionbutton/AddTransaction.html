@@ -270,8 +270,17 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         
         //Coming from AddPaymentFromTransaction and Deposit option is selected
         if (closeAutomatically === "Y") {
+          //Coming from button Match Statement
+          if(document.getElementsByName('inpFinBankStatementLineId') && document.getElementsByName('inpFinBankStatementLineId')[0]
+             && document.getElementsByName('inpFinBankStatementLineId')[0].value && document.getElementsByName('inpFinBankStatementLineId')[0].value !== ""){
+            reloadParentGrid();
+            closeThisPage();
+          }
+          //Coming from button Add Transaction
+          else{
             reloadWindowGrid();
-          closeThisPage();
+            closeThisPage();
+          }
         }
       } else {
         document.getElementById('sectionGrid').innerHTML = '';
