@@ -1258,15 +1258,19 @@ CREATE OR REPLACE VIEW user_tab_columns AS
                     ELSE 10 
                 END
         END AS data_precision,
-        0 AS data_scale,
+        CASE 
+            WHEN upper(pg_type.typname) = 'NUMERIC' and cols.numeric_scale is not null THEN cols.numeric_scale
+            ELSE 0
+        END AS data_scale,
         CASE pg_attribute.atthasdef
             WHEN true THEN ( SELECT pg_attrdef.adsrc
                FROM pg_attrdef
               WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
             ELSE NULL::text
         END AS data_default, not pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
-   FROM pg_class, pg_namespace, pg_attribute, pg_type
-  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0
+   FROM pg_class, pg_namespace, pg_attribute, pg_type, information_schema.columns cols
+  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0 
+  AND upper(cols.table_name)=upper(pg_class.relname) AND upper(cols.column_name)=upper(pg_attribute.attname) AND cols.table_schema = current_schema()
 /-- END
 
 SELECT * FROM drop_view('v$version')

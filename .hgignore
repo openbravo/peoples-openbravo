@@ -24,6 +24,7 @@ config/userconfig.xml
 config/setup*
 config/checksums
 config/instance.revision
+config/eclipse/hibernate.cfg.xml
 src/result.xml
 
 src-db/database/lib/dbmanager.jar

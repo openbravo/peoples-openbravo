@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '14275';
+  var number = '15747';
   return number;
 }
 
@@ -3758,6 +3758,8 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("readonly","");
     setObjAttribute(obj, 'readOnly', "false");
     obj.readOnly = false;
+    obj.removeAttribute('readOnly'); // To avoid in Chrome the dropdown arrow be light-greyed although it is not readonly anymore
+                                     // The previous statements are already needed since lower IE versions has problems handling "removeAttribute" function
     if (obj.setReadOnly) {
       obj.setReadOnly(false);
     }
@@ -3773,7 +3775,7 @@ function readOnlyLogicElement(id, readonly) {
     }
 
     if (obj.className.indexOf("Combo")!=-1) {
-      obj.className = className.replace("NoUpdatable","");
+      obj.className = obj.className.replace("NoUpdatable","");
       enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
         onchange_combo = getObjAttribute(obj, 'onChange');

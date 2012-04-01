@@ -5,16 +5,14 @@
 <!--123-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--123-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--123-->  <NAME><![CDATA[Search Key]]></NAME>
-<!--123-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
-<!--123-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
-
-Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
+<!--123-->  <NAME><![CDATA[Product Search Key]]></NAME>
+<!--123-->  <DESCRIPTION><![CDATA[A fast method for finding a particular product.]]></DESCRIPTION>
+<!--123-->  <HELP><![CDATA[A product search key allows for a fast method of finding a particular product. ]]></HELP>
 <!--123-->  <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--123-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--123-->  <AD_REFERENCE_ID><![CDATA[10]]></AD_REFERENCE_ID>
 <!--123-->  <COLUMNNAME><![CDATA[ProductValue]]></COLUMNNAME>
-<!--123-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
+<!--123-->  <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
 <!--123-->  <FIELDLENGTH><![CDATA[15]]></FIELDLENGTH>
 <!--123-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--123-->  <ISRANGE><![CDATA[N]]></ISRANGE>

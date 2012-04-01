@@ -69,8 +69,17 @@ public class DynamicExpressionParser {
   private String code;
   private Tab tab;
   private StringBuffer jsCode;
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   public DynamicExpressionParser(String code, Tab tab) {
+    this.code = code;
+    this.tab = tab;
+    parse();
+  }
+
+  public DynamicExpressionParser(String code, Tab tab,
+      ApplicationDictionaryCachedStructures cachedStructures) {
+    this.cachedStructures = cachedStructures;
     this.code = code;
     this.tab = tab;
     parse();
@@ -222,8 +231,10 @@ public class DynamicExpressionParser {
     List<Field> fields;
     List<AuxiliaryInput> auxIns;
     try {
-      ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
-          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+      if (cachedStructures == null) {
+        cachedStructures = WeldUtils
+            .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+      }
       fields = cachedStructures.getFieldsOfTab(tab.getId());
       auxIns = cachedStructures.getAuxiliarInputList(tab.getId());
     } catch (NullPointerException e) {
