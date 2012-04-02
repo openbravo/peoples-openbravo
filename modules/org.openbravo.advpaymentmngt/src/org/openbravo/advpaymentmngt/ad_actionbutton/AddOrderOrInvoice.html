@@ -131,7 +131,9 @@ function setTextContent(element, text) {
   while (element.firstChild!==null) {
     element.removeChild(element.firstChild); // remove all existing content
   }
-  element.appendChild(document.createTextNode(text));
+  var newdiv = document.createElement("div");
+  newdiv.innerHTML = text.substring(5, text.length-6);
+  element.appendChild(newdiv);
 }
 function loadGLItemList() {
   var table = document.getElementById('sectionGLItemGrid'),
