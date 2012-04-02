@@ -63,7 +63,7 @@ BEGIN
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
    IF (v_ControlNo <> 0) THEN
-    RAISE_APPLICATION_ERROR(-20400, 'Product has active Inventory');
+    RAISE_APPLICATION_ERROR(-20000, '@20400@');
    END IF;
   END IF;
 	
@@ -196,7 +196,7 @@ BEGIN
  END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20009, 'M_Product InsertTrigger Error: No ClientInfo or parent TreeNode');
+  RAISE_APPLICATION_ERROR(-20000, '@20009@');
 
 END M_PRODUCT_TRG
 ]]></body>

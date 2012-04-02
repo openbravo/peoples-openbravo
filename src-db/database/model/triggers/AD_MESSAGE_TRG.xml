@@ -17,7 +17,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+* Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -44,7 +44,7 @@ BEGIN
           OR instr(upper(:new.value), 'EM_'||upper(name)||'_') = 1);
     
     IF v_Aux = 0 THEN
-      RAISE_APPLICATION_ERROR(-20536, 'Messages must start with its module DB prefix') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20536@') ;
     END IF;
   END IF;
 

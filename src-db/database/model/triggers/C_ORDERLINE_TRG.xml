@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -67,11 +67,11 @@ IF (UPDATING) THEN
   */
  IF (DELETING) THEN
   IF (:old.QtyReserved <> 0 AND :old.C_ORDER_DISCOUNT_ID IS NULL) THEN
-   RAISE_APPLICATION_ERROR(-20200, 'Changed Product had Reservation=' || :old.QtyReserved);
+   RAISE_APPLICATION_ERROR(-20000, '@20200@' || ' ' ||:old.QtyReserved);
   ELSIF (:old.QtyDelivered <> 0) THEN
-   RAISE_APPLICATION_ERROR(-20201, 'Changed Product had Delieveries=' || :old.QtyDelivered);
+   RAISE_APPLICATION_ERROR(-20000, '@20201@' || ' ' || :old.QtyDelivered);
   ELSIF (:old.QtyInvoiced <> 0) THEN
-   RAISE_APPLICATION_ERROR(-20202, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
+   RAISE_APPLICATION_ERROR(-20000, '@20202@' || ' ' || :old.QtyInvoiced);
   END IF;
  ELSIF (UPDATING) THEN
    SELECT issotrx INTO v_IsSOTrx
@@ -79,17 +79,17 @@ IF (UPDATING) THEN
    WHERE c_order_id = :old.c_order_id;
    IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
      IF (:old.QtyReserved <> 0) THEN
-       RAISE_APPLICATION_ERROR(-20203, 'Changed Product had Reservation=' || :old.QtyReserved);
+       RAISE_APPLICATION_ERROR(-20000, '@20203@' || ' ' || :old.QtyReserved);
      ELSIF (:old.QtyDelivered <> 0) THEN
-       RAISE_APPLICATION_ERROR(-20204, 'Changed Product had Delieveries=' || :old.QtyDelivered);
+       RAISE_APPLICATION_ERROR(-20000, '@20204@' || ' ' || :old.QtyDelivered);
      ELSIF (:old.QtyInvoiced <> 0) THEN
-       RAISE_APPLICATION_ERROR(-20205, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
+       RAISE_APPLICATION_ERROR(-20000, '@20205@' || ' ' || :old.QtyInvoiced);
      ELSIF (v_IsSOTrx = 'N') THEN
        SELECT count(*) INTO v_Count
        FROM m_inoutline
        WHERE c_orderline_id = :old.c_orderline_id;
        IF (v_count > 0) THEN
-         RAISE_APPLICATION_ERROR(-20206, 'Changed Product has good receipts');
+         RAISE_APPLICATION_ERROR(-20000, '@20206@');
        END IF;
      END IF;
    END IF;
@@ -100,7 +100,7 @@ IF (UPDATING) THEN
      IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
        SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
        IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
-         RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
+         RAISE_APPLICATION_ERROR(-20000, '@20111@');
        END IF;
      END IF;
   v_ID := :new.C_Order_ID;

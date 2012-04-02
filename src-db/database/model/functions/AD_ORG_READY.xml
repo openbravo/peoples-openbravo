@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2009 Openbravo SLU
+* All portions are Copyright (C) 2008-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -78,7 +78,7 @@ BEGIN
     IF (v_num = -1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20545, 'Every ancestor of the organization must be a ready organization');
+      RAISE_APPLICATION_ERROR(-20000, '@20545@');
     END IF;
     
     v_ResultStr:='Checking LE';
@@ -86,7 +86,7 @@ BEGIN
     IF (v_num <> 1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20540, 'Every organization where transactions are possible must have one and only one ancestor (including itself) that is a legal entity');
+      RAISE_APPLICATION_ERROR(-20000, '@20540@');
     END IF;
     
     v_ResultStr:='Checking BU';
@@ -94,11 +94,11 @@ BEGIN
     IF (v_num > 1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20541, 'Each organization can have one and only one ancestor (including itself) that is a business unit');
+      RAISE_APPLICATION_ERROR(-20000, '@20541@');
     ELSIF (v_num = -1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20546, 'A business unit must have one and only one ancestor that is a legal entity');
+      RAISE_APPLICATION_ERROR(-20000, '@20546@');
     END IF;
       
     v_ResultStr:='Checking Schemas';
@@ -106,7 +106,7 @@ BEGIN
     IF (v_num = -1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20542, 'Every legal entity with accounting must have itself or an ancestor at least an accounting schema attached to it');
+      RAISE_APPLICATION_ERROR(-20000, '@20542@');
     END IF;
     
     v_ResultStr:='Checking Calendar';
@@ -114,15 +114,15 @@ BEGIN
     IF (v_num = -3) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20537, 'Every legal entity with accounting must have itself or an ancestor at least a calendar attached to it');
+      RAISE_APPLICATION_ERROR(-20000, '@20537@');
     ELSIF (v_num = -2) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20538, 'All the organizations that belong to the same legal entity must have a unique calendar');
+      RAISE_APPLICATION_ERROR(-20000, '@20538@');
     ELSIF (v_num = -1) THEN
       ROLLBACK;
       v_Result:=0;
-      RAISE_APPLICATION_ERROR(-20539, 'The calendar associated to a legal entity must be unique. So, an organization that is a legal entity must have assigned itself or any ancestor the same calendar');
+      RAISE_APPLICATION_ERROR(-20000, '@20539@');
     END IF;
     
     -- Create PeriodControl for the organization

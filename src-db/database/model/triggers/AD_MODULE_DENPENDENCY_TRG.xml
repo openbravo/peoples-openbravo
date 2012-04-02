@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2008-2010 Openbravo SLU
+  * All portions are Copyright (C) 2008-2012 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -39,7 +39,7 @@ BEGIN
    WHERE AD_Module_ID = :new.AD_Dependent_Module_ID;
    
   IF v_Type = 'M' AND :new.IsIncluded = 'Y' THEN
-    RAISE_APPLICATION_ERROR(-20530, 'Simple modules cannot contain other modules') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20530@') ;
   END IF;
   
   SELECT COUNT(*)

@@ -74,7 +74,7 @@ BEGIN
           OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))
         ) THEN
         IF (v_Processed='Y' AND v_Docaction <> 'CL') THEN
-          RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+          RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
         ELSIF (v_IsSOTrx ='Y' AND v_DocStatus = 'DR' AND (:OLD.QTYDELIVERED <> 0 OR :OLD.QTYINVOICED <> 0) AND (COALESCE(:OLD.PRICEACTUAL, 0) = COALESCE(:NEW.PRICEACTUAL, 0) OR :OLD.QTYINVOICED <> 0)) THEN
           RAISE_APPLICATION_ERROR(-20000, '@DeliveredInvoicedOrderline@');
         END IF;
@@ -94,7 +94,7 @@ BEGIN
   FROM C_ORDER
   WHERE C_ORDER_ID=v_C_ORDER_ID;
     IF (v_Processed='Y') THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
   END IF;
 END C_ORDLINE_CHK_RESTRICTIONS_TRG

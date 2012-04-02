@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -51,7 +51,7 @@ BEGIN
     OR Posted='Y') ;
   IF (v_RO > 0) THEN
     IF (DELETING OR INSERTING) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
     IF (UPDATING) THEN
       IF (:new.M_PRODUCT_ID <> :old.M_PRODUCT_ID
@@ -66,7 +66,7 @@ BEGIN
         OR :new.SECONDARYUNIT <> :old.SECONDARYUNIT
          OR :new.PROCESSED <> :old.PROCESSED
         ) THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
     END IF;
   END IF;

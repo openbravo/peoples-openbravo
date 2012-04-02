@@ -361,7 +361,7 @@ BEGIN --BODY
       WHERE it.c_invoice_id = v_record_id
         AND tp.processed='Y';
       IF (v_count > 0) THEN
-        RAISE_APPLICATION_ERROR(-20615,   '@InvoiceInTaxRegister@');
+        RAISE_APPLICATION_ERROR(-20000, '@20615@');
       ELSE
         DELETE FROM c_taxregisterline 
         WHERE c_taxregisterline.c_invoicetax_id IN

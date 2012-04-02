@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -42,11 +42,11 @@ BEGIN
     FROM C_BUDGET
     WHERE C_BUDGET_ID=:NEW.C_BUDGET_ID;
     IF (v_Type ='F' AND (:NEW.C_ACCTSCHEMA_ID IS NULL OR :NEW.C_ELEMENTVALUE_ID IS NULL)) THEN
-      RAISE_APPLICATION_ERROR(-20270, 'Accounting information missing.');
+      RAISE_APPLICATION_ERROR(-20000, '@20270@');
     END IF;
   END IF;
 EXCEPTION WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20270, 'Accounting information missing.') ;
+  RAISE_APPLICATION_ERROR(-20000, '@20270@') ;
 END C_BUDGETLINE_TRG
 ]]></body>
     </trigger>

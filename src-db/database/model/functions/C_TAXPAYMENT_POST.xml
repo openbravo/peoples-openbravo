@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -284,7 +284,7 @@ BEGIN
       from c_taxregister_type tt where tt.issotrx='N';
 
       if v_TRTcountY=0 or v_TRTcountN=0 then
-      RAISE_APPLICATION_ERROR(-20100, '@TwoRegisterTypesNeeded@');
+      RAISE_APPLICATION_ERROR(-20000, '@TwoRegisterTypesNeeded@');
       end if;
 
       select case when tt.issotrx='Y' then max(glitem_credit_acct) else max(glitem_debit_acct) end, max(tt.c_glitem_id)

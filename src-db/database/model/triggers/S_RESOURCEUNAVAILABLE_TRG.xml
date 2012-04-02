@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -45,7 +45,7 @@ BEGIN
   END IF;
   -- start < end
   IF(:new.DateFrom > :new.DateTo) THEN
-    RAISE_APPLICATION_ERROR(-20403, 'End Date greater than Start Date') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20403@') ;
   END IF;
 END S_RESOURCEUNAVAILABLE_TRG
 ]]></body>

@@ -250,7 +250,7 @@ BEGIN
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20004, 'C_BPartner InsertTrigger Error: No ClientInfo or parent TreeNode');
+  RAISE_APPLICATION_ERROR(-20000, '@20004@');
 
 END C_BPARTNER_TRG
 ]]></body>

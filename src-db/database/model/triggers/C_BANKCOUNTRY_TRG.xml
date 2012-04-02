@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2001-2008 Openbravo SLU
+  * All portions are Copyright (C) 2001-2012 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -36,7 +36,7 @@ BEGIN
     
     IF (v_Count <> 0) THEN
       IF (:NEW.C_LOCATION_ID IS NULL) THEN
-        RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20259@') ;
       END IF;
       SELECT C_COUNTRY_ID
       INTO v_OldCountry
@@ -49,7 +49,7 @@ BEGIN
       WHERE C_LOCATION_ID = :NEW.C_LOCATION_ID;
       
       IF (v_OldCountry <> v_NewCountry) THEN
-        RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20259@') ;
       END IF;
     END IF;
 
@@ -60,7 +60,7 @@ BEGIN
       FROM C_BANKACCOUNT
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
       IF (v_Count   <> 0) THEN
-        RAISE_APPLICATION_ERROR(-20265, 'An Spanish account is defined for this bank. Bank Code, Branch Code and Control Digit must be defined') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20265@') ;
       END IF;
     END IF;
   END IF;
