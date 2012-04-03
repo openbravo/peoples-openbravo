@@ -245,6 +245,11 @@
     border: 1px solid #93A9C0;
     background:#FFFFFF url(./images/Menu/menu_background.png) repeat-y scroll;
 }
+.menuMainRTL {
+    border: 1px solid #93A9C0;
+    background:#FFFFFF url(./images/Menu/menu_background_rtl.png) repeat-y right scroll;
+}
+
 .treeMenuBody {
     border: 1px solid #93A9C0;
 	background: #FFFFFF;
@@ -2205,7 +2210,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calendarDark {
     font-family:Arial,Verdana,sans-serif; font-size:11px;
     color:black;
-    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    border-bottom:1px solid #e0e0e0; border-right:1px solid #e0e0e0;
     background-color:#ffffff;
 }
 
@@ -2331,14 +2336,14 @@ a.calMonthEventLink:active {color:blue; text-decoration:none}
 
 .eventWindow {
     font-family:Arial,Verdana,Bitstream Vera Sans,sans-serif; font-size: 9px;
-    background-color:#EBF4FF;
-    border: 1px solid #d0dff6;
+    background-color:#f0f8ff;
+    border: 1px solid #808fa6;
 }
 
 .eventWindowHeader {
     font-family:Arial,Verdana,Bitstream Vera Sans,sans-serif; font-size: 9px;
     color:#4C4C4C;
-    background-color:#d0dff6;
+    background-color: #d0dff6;
 }
 
 .eventWindowBody {
@@ -2349,8 +2354,6 @@ a.calMonthEventLink:active {color:blue; text-decoration:none}
 }
 
 .eventWindowResizer {
-    border-top:1px solid white;
-    border-bottom: 1px solid white;
 }
 
 /*============================================================

@@ -573,6 +573,7 @@ with (theWindow) {
 	        checkmarkDisabledImage:{src:"[SKIN]check_disabled.png", width:7, height:6},
             bodyStyleName:"gridBody",
 			iconBodyStyleName:"menuMain",
+			iconBodyStyleName_rtl:"menuMainRTL",
             bodyBackgroundColor:null
         });
 		isc.addProperties(isc.Menu.ICON_FIELD, {
@@ -964,7 +965,11 @@ with (theWindow) {
         });
         
         isc.EventWindow.changeDefaults("resizerDefaults", {
-            src:"[SKIN]/Window/resizer.png"
+            src:"[SKIN]/Window/v_resizer.png"
+        });
+        
+        isc.TimelineWindow.changeDefaults("resizerDefaults", {
+            src:"[SKIN]/Window/h_resizer.png"
         })
     }
 
