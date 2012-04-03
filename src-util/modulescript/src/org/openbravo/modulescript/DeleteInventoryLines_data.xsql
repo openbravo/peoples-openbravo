@@ -22,7 +22,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT 1 as DUMMY FROM DUAL;
+      SELECT 1 as DUMMY FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>
@@ -38,7 +38,7 @@
         AND QTYONHAND = 0 
         AND PREQTYONHAND = 0 
         AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
-        AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL);
+        AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL)
       ]]>
     </Sql>
   </SqlMethod>
