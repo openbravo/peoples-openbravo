@@ -12,7 +12,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     this.receipt = context.get('modelorder');
         
     this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
-    this.categoriesview = new OB.COMP.TableView({
+    this.categoriesview = new OB.COMP.CollectionView({
       style: 'list',
       renderLine: function (model) {
         return OB.UTIL.EL(
@@ -29,16 +29,10 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
       }      
     });
     this.categoriesview.setModel(this.categories);    
-    this.categoriesview.stack.on('change:selected', function () {
-      var selected = this.categoriesview.stack.get('selected')
-      if (selected >= 0) {
-        this.categories.trigger('click', this.categories.at(selected));
-      }
-    }, this);
         
     this.receipt.on('clear', function () {
       if (this.categories.length > 0){
-        this.categoriesview.stack.set('selected', 0);
+        this.categories.at(0).trigger('selected', this.categories.at(0));
       }
     }, this);  
      

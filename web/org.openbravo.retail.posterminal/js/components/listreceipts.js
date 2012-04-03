@@ -11,7 +11,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     this.receipt = context.get('modelorder');
     this.receiptlist = context.get('modelorderlist');
  
-    this.receiptsview = new OB.COMP.TableView({ 
+    this.receiptsview = new OB.COMP.CollectionView({ 
       renderEmpty: function () {
         return function () {
           return OB.UTIL.EL(
@@ -38,7 +38,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       }      
     });
     this.receiptsview.setModel(this.receiptlist);  
-    this.receiptsview.stack.on('click', function (model, index) {
+    this.receiptlist.on('click', function (model, index) {
       // this.receipt.setBP(model);
     }, this);
    

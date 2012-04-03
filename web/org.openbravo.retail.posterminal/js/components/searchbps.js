@@ -15,7 +15,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     );
     
     this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    
-    this.bpsview = new OB.COMP.TableView({ 
+    this.bpsview = new OB.COMP.CollectionView({ 
       renderEmpty: function () {
         return function () {
           return OB.UTIL.EL(
@@ -40,7 +40,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       }      
     });
     this.bpsview.setModel(this.bps);  
-    this.bpsview.stack.on('click', function (model, index) {
+    this.bps.on('click', function (model) {
       this.receipt.setBP(model);
     }, this);
     

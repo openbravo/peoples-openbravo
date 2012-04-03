@@ -20,10 +20,10 @@ define(['builder', 'i18n',
         {kind: OB.DATA.ProductPrice},
         {kind: OB.DATA.Category},      
         
-//        {kind: OB.MODEL.OrderList, id: 'modelorderlist', content: [                                                                  
-//          {kind: OB.MODEL.Order, id: 'modelorder'}
-//        ]}, 
-        {kind: OB.MODEL.Order, id: 'modelorder'},
+        {kind: OB.MODEL.OrderList, id: 'modelorderlist', content: [                                                                  
+          {kind: OB.MODEL.Order, id: 'modelorder'}
+        ]}, 
+        // {kind: OB.MODEL.Order, id: 'modelorder'},
         {kind: OB.MODEL.StackOrder, id: 'stackorder'},        
         
         {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
@@ -40,27 +40,27 @@ define(['builder', 'i18n',
           ]}      
         ], init: function () {
           
-          this.context.get('SearchBPs').bpsview.stack.on('click', function (model, index) {
+          this.context.get('SearchBPs').bps.on('click', function (model, index) {
             this.$.modal('hide');
           }, this);
         }},
         
-//        {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
-//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-//            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
-//              {kind: B.KindHTML('<span>&times;</span>')}
-//            ]},
-//            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblReceipts')]}
-//          ]},
-//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-//            {kind: OB.COMP.ListReceipts } 
-//          ]}      
-//        ], init: function () {
-//            var context = this.context;
-//            this.$.on('show', function () {
-//              context.get('modelorderlist').saveCurrent();
-//            });                 
-//        }},        
+        {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
+            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
+              {kind: B.KindHTML('<span>&times;</span>')}
+            ]},
+            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblReceipts')]}
+          ]},
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
+            {kind: OB.COMP.ListReceipts } 
+          ]}      
+        ], init: function () {
+            var context = this.context;
+            this.$.on('show', function () {
+              context.get('modelorderlist').saveCurrent();
+            });                 
+        }},        
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
@@ -72,8 +72,8 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
-                  me.context.get('modelorder').clear();
-                  // me.context.get('modelorderlist').createNew();
+                  // me.context.get('modelorder').clear();
+                  me.context.get('modelorderlist').createNew();
                 });
             }},
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
@@ -97,9 +97,9 @@ define(['builder', 'i18n',
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [
               '** Assign customer **'
             ]},
-//            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [
-//              '** Receipts **'
-//            ]},                  
+            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [
+              '** Receipts **'
+            ]},                  
                             
             
             {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
@@ -154,7 +154,7 @@ define(['builder', 'i18n',
                   context.get('stackorder').on('scan', function () {
                     this.$.tab('show');
                   }, this);
-                  context.get('SearchBPs').bpsview.stack.on('click', function (model, index) {
+                  context.get('SearchBPs').bps.on('click', function (model, index) {
                     this.$.tab('show');
                   }, this);                  
                   
@@ -226,8 +226,8 @@ define(['builder', 'i18n',
         
       ], init: function () {
         this.context.on('ready', function () {
-          this.context.get('modelorder').clear();
-          // this.context.get('modelorderlist').createNew();
+          // this.context.get('modelorder').clear();
+          this.context.get('modelorderlist').createNew();
         }, this);
       }}
       

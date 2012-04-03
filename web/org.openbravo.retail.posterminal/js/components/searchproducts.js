@@ -20,7 +20,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     );    
     
     this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
-    this.productsview = new OB.COMP.TableView({ 
+    this.productsview = new OB.COMP.CollectionView({ 
       renderEmpty: function () {
         return function () {
           return OB.UTIL.EL(
@@ -51,7 +51,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       }      
     });
     this.productsview.setModel(this.products);  
-    this.productsview.stack.on('click', function (model,index) {
+    this.products.on('click', function (model) {
       this.receipt.addProduct(this.stack.get('selected'), model);
     }, this);
     

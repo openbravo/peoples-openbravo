@@ -64,14 +64,16 @@ define(['utilities', 'i18n', 'model/stack'], function () {
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
+      this.trigger('change');      
       this.trigger('clear');
     },
     
     clearWith: function(_order) {
       this.set('date', _order.get('date'));
       this.set('undo', _order.get('undo'));
-      this.set('bp',  _order.get('bp'));
-      this.get('lines').reset( _order.get('lines').models);      
+      this.set('bp', _order.get('bp'));
+      this.get('lines').reset(_order.get('lines').models);
+      this.trigger('change');
       this.trigger('clear');
     },
     

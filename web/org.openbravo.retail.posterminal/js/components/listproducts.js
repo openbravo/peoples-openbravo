@@ -12,12 +12,8 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     this.receipt = context.get('modelorder');
     this.stack = context.get('stackorder');      
     
-
-  
-    
-    // this.products = new OB.MODEL.Collection(context.get('DataProduct'));
     this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
-    this.productsview = new OB.COMP.TableView({ 
+    this.productsview = new OB.COMP.CollectionView({ 
       renderLine: function (model) {
         return OB.UTIL.EL(         
           {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
@@ -38,12 +34,10 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
       }      
     });   
     this.productsview.setModel(this.products);
-    this.productsview.stack.on('click', function (model, index) {
+    this.products.on('click', function (model) {
       this.receipt.addProduct(this.stack.get('selected'), model);
     }, this);    
-    
-
-    
+  
     this.titleProd = OB.UTIL.EL({tag: 'h3'});
     
     this.$ = OB.UTIL.EL(                                           
@@ -55,9 +49,11 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
       ]}                           
     );
     
-    context.get('ListCategories').categories.on('click', function (category) {     
-      this.products.exec({ product: { 'productCategory': category.get('category').id } });    
-      this.titleProd.text(category.get('category')._identifier);           
+    context.get('ListCategories').categories.on('selected', function (category) {
+      if (category) {
+        this.products.exec({ product: { 'productCategory': category.get('category').id } });    
+        this.titleProd.text(category.get('category')._identifier);      
+      }
     }, this);   
   };
   
