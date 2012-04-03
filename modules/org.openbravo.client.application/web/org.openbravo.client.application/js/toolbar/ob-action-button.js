@@ -139,7 +139,7 @@ isc.OBToolbarActionButton.addProperties({
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh;
+        afterRefresh, parsePathPart, parts;
 
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh);
@@ -182,6 +182,13 @@ isc.OBToolbarActionButton.addProperties({
     OB.ActionButton.executingProcess = null;
 
     if (newWindow) {
+      // Split path into protocol, server, port part and the rest (pathname, query, etc)
+      parsePathPart = /^((?:[A-Za-z]+:)?\/\/[^\/]+)?(\/.*)$/;
+      parts = parsePathPart.exec(newWindow);
+      if (parts && parts[2]) {
+        newWindow = parts[2];
+      }
+
       if (OB.Application.contextUrl && newWindow.indexOf(OB.Application.contextUrl) !== -1) {
         newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length - 1);
       }
