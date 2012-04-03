@@ -873,7 +873,7 @@ isc.OBStandardView.addProperties({
 
   refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
     var i, length, tabViewPane, excludeTab = false;
-    if (entity && excludedTabIds && this.childTabSet) {
+    if (entity && excludedTabIds) {
       //Check is the tab has to be refreshed
       for (i = 0; i < excludedTabIds.length; i++) {
         if (excludedTabIds[i].match(this.tabId)) {
@@ -892,10 +892,12 @@ isc.OBStandardView.addProperties({
         }
       }
       // Refresh the child views of this tab
-      length = this.childTabSet.tabs.length;
-      for (i = 0; i < length; i++) {
-        tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+      if (this.childTabSet) {
+        length = this.childTabSet.tabs.length;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+        }
       }
     }
   },

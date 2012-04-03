@@ -363,7 +363,6 @@ public class UsedByLink extends HttpSecureAppServlet {
               strNonAccessibleWhere).equals("0")) {
             nonAccessible = true;
           }
-
         }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
             + vars.getUserClient() + ")";
@@ -522,11 +521,15 @@ public class UsedByLink extends HttpSecureAppServlet {
       usedByLinkDataJsonObj.put("total", data.total);
       usedByLinkDataJsonObj.put("whereClause", data.whereclause);
       usedByLinkDataJsonObj.put("windowName", data.windowname);
+      usedByLinkDataJsonObj.put("singleRecord", "SR".equals(data.uipattern));
+      usedByLinkDataJsonObj.put("readOnly", "RO".equals(data.uipattern));
       usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
     }
 
     jsonObject.put("usedByLinkData", usedByLinkDataJsonObjects);
-    jsonObject.put("msg", msg);
+    if (msg != null) {
+      jsonObject.put("msg", msg.getMessage());
+    }
     return jsonObject;
   }
 

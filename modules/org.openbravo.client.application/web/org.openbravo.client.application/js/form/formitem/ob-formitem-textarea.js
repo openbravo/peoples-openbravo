@@ -27,6 +27,7 @@ isc.OBTextAreaItem.addProperties({
   validateOnExit: true,
 
   selectOnFocus: false,
+  rowSpan: 2,
 
   init: function () {
     if (this.initStyle) {

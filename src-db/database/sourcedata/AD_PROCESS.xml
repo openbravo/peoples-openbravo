@@ -5173,7 +5173,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--1004400000-->  <NAME><![CDATA[Create Purchase Order]]></NAME>
 <!--1004400000-->  <HELP><![CDATA[In order to create a Purchase Order from selected Requisition Lines, it is necessary to set some values:<br/>
 Order Date: The date of the Purchase Order<br/>
-For Business Partner, Price List and Organization: If all the selected requisition lines have a common Business Partner, Price List or Organization, then the common value is shown in the appropriate field.<br/>
+Business Partner, Price List and Organization: If all the selected requisition lines have a common Business Partner, Price List or Organization, then the common value is shown in the appropriate field.<br/>
 For other required values the corresponding default values are used.<br/>
 Once the Purchase Order is created, it is marked as Completed and its Document Number is shown in the success message.]]></HELP>
 <!--1004400000-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>

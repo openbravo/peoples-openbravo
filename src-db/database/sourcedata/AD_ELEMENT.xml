@@ -5225,10 +5225,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--916-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--916-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--916-->  <COLUMNNAME><![CDATA[IsBillTo]]></COLUMNNAME>
-<!--916-->  <NAME><![CDATA[Invoice to Address]]></NAME>
-<!--916-->  <PRINTNAME><![CDATA[Invoice-To Address]]></PRINTNAME>
-<!--916-->  <DESCRIPTION><![CDATA[Indicates that this address is the Invoice to Address]]></DESCRIPTION>
-<!--916-->  <HELP><![CDATA[The Invoice to Address checkbox indicates if this location is the Invoice to Address for this Business Partner]]></HELP>
+<!--916-->  <NAME><![CDATA[Invoicing Address]]></NAME>
+<!--916-->  <PRINTNAME><![CDATA[Invoicing Address]]></PRINTNAME>
+<!--916-->  <DESCRIPTION><![CDATA[Indicates that this address is the Invoicing Address]]></DESCRIPTION>
+<!--916-->  <HELP><![CDATA[The Invoicing Address checkbox indicates if this location is the Invoicing Address for this Business Partner]]></HELP>
 <!--916-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--916-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--916--></AD_ELEMENT>
@@ -5377,10 +5377,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--929-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--929-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--929-->  <COLUMNNAME><![CDATA[IsShipTo]]></COLUMNNAME>
-<!--929-->  <NAME><![CDATA[Ship to Address]]></NAME>
-<!--929-->  <PRINTNAME><![CDATA[Ship-to address]]></PRINTNAME>
+<!--929-->  <NAME><![CDATA[Shipping Address]]></NAME>
+<!--929-->  <PRINTNAME><![CDATA[Shipping address]]></PRINTNAME>
 <!--929-->  <DESCRIPTION><![CDATA[Business Partner address to ship goods to]]></DESCRIPTION>
-<!--929-->  <HELP><![CDATA[The Ship to Address checkbox indicates if this location is the address to use when shipping orders to this Business Partner.]]></HELP>
+<!--929-->  <HELP><![CDATA[The Shipping Address checkbox indicates if this location is the address to use when shipping orders to this Business Partner.]]></HELP>
 <!--929-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--929-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--929--></AD_ELEMENT>
@@ -21509,8 +21509,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <COLUMNNAME><![CDATA[C_Return_Reason_ID]]></COLUMNNAME>
-<!--44CBD6E9427241D1B8052EC48012FC6C-->  <NAME><![CDATA[Return reason]]></NAME>
-<!--44CBD6E9427241D1B8052EC48012FC6C-->  <PRINTNAME><![CDATA[Return reason]]></PRINTNAME>
+<!--44CBD6E9427241D1B8052EC48012FC6C-->  <NAME><![CDATA[Return Reason]]></NAME>
+<!--44CBD6E9427241D1B8052EC48012FC6C-->  <PRINTNAME><![CDATA[Return Reason]]></PRINTNAME>
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--44CBD6E9427241D1B8052EC48012FC6C--></AD_ELEMENT>
@@ -28118,6 +28118,20 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--C8561E14272B427EB15A6C5E81DAC83A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8561E14272B427EB15A6C5E81DAC83A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C8561E14272B427EB15A6C5E81DAC83A--></AD_ELEMENT>
+
+<!--C9626ADBB0154295BE43B3E47A75D7AB--><AD_ELEMENT>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <AD_ELEMENT_ID><![CDATA[C9626ADBB0154295BE43B3E47A75D7AB]]></AD_ELEMENT_ID>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <COLUMNNAME><![CDATA[Process_Time]]></COLUMNNAME>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <NAME><![CDATA[Process Time]]></NAME>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <PRINTNAME><![CDATA[Process Time]]></PRINTNAME>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <DESCRIPTION><![CDATA[Process Time]]></DESCRIPTION>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <HELP><![CDATA[Amount of time in milliseconds the process took to execute.]]></HELP>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C9626ADBB0154295BE43B3E47A75D7AB-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--C9626ADBB0154295BE43B3E47A75D7AB--></AD_ELEMENT>
 
 <!--CA10792A63BB4C1CBD5346A823DFE538--><AD_ELEMENT>
 <!--CA10792A63BB4C1CBD5346A823DFE538-->  <AD_ELEMENT_ID><![CDATA[CA10792A63BB4C1CBD5346A823DFE538]]></AD_ELEMENT_ID>

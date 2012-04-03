@@ -190,19 +190,18 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         orgValueMap.put(orgValueMapItem);
       }
       jsonRole.put("organizationValueMap", orgValueMap);
-      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId()));
+      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId(),orgs));
       jsonRoles.put(jsonRole);
     }
     formItemInfo.put("roles", jsonRoles);
     return formItemInfo;
   }
 
-  private JSONArray getWarehouses(String clientId) throws JSONException {
+  private JSONArray getWarehouses(String clientId, List<Organization> orgs) throws JSONException {
     List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
-    for (Organization org : orgs.list()) {
+    for (Organization org : orgs) {
       JSONObject orgWarehouse = new JSONObject();
       orgWarehouse.put("orgId", org.getId());
       final OBQuery<Warehouse> warehouses = OBDal

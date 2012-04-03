@@ -209,7 +209,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" and psd.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
       whereClause.append(".id in (");
-      whereClause.append(FIN_Utility.getInStrSet(OBContext.getOBContext()
+      whereClause.append(Utility.getInStrSet(OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       whereClause.append(")");
 
@@ -1585,8 +1585,7 @@ public class AdvPaymentMngtDao {
           FIN_Payment.PROPERTY_USEDCREDIT));
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
       Set<String> orgIds = OBContext.getOBContext().getOrganizationStructureProvider()
-          .getChildOrg(legalEntity.getId());
-      orgIds.add(legalEntity.getId());
+          .getChildTree(legalEntity.getId(), true);
       obcPayment.add(Restrictions.in("organization.id", orgIds));
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);

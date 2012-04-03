@@ -104,6 +104,8 @@ isc.OBStandardWindow.addProperties({
     // method is also called explicitly from the personalization window
     if (!this.getClass().windowSettingsRead) {
       this.readWindowSettings();
+    } else if (this.getClass().windowSettingsCached) {
+      this.setWindowSettings(this.getClass().windowSettingsCached);
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
     }
@@ -200,17 +202,25 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, alwaysReadOnly, st, stView, stBtns, stBtn, disabledFields;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, alwaysReadOnly, st, stView, stBtns, stBtn, disabledFields, personalization;
 
     if (data) {
       this.getClass().autoSave = data.autoSave;
       this.getClass().windowSettingsRead = true;
+      this.getClass().windowSettingsCached = data;
       this.getClass().uiPattern = data.uiPattern;
       this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
     }
 
-    if (data && data.personalization) {
-      this.setPersonalization(data.personalization);
+    if (this.getClass().personalization) {
+      // Don't overwrite personalization if it is already set in class
+      personalization = this.getClass().personalization;
+    } else if (data && data.personalization) {
+      personalization = data.personalization;
+    }
+
+    if (personalization) {
+      this.setPersonalization(personalization);
     }
 
     // set the views to readonly

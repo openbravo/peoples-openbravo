@@ -155,7 +155,10 @@ isc.OBToolbar.addClassProperties({
           selectedRecords = grid.getSelectedRecords(),
           length = selectedRecords.length,
           i;
-
+      if (!this.view.isDeleteableTable) {
+        this.setDisabled(true);
+        return;
+      }
       for (i = 0; i < length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);

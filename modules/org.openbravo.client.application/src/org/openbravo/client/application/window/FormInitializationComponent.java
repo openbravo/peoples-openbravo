@@ -1426,7 +1426,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     String initS = "id=\"paramArray\">";
     String resp = calloutResponse.substring(calloutResponse.indexOf(initS) + initS.length());
     resp = resp.substring(0, resp.indexOf("</")).trim();
-    if (!resp.contains("new Array(")) {
+    if (!resp.contains("new Array(") && !resp.contains("[[")) {
       return null;
     }
     try {
