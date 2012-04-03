@@ -19,12 +19,12 @@
 
 /* ob-application-menu-styles.js */
 
-isc.OBApplicationMenuTree.changeDefaults('submenuImage', {
-  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu-RTL.png'
+isc.OBApplicationMenuTreeChild.addProperties({
+  iconBodyStyleName_rtl: 'OBApplicationMenuTreeIconBody'
 });
 
-isc.OBApplicationMenuTree.changeDefaults('submenuDisabledImage', {
-  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu-RTL_Disabled.png'
+isc.OBApplicationMenuTree.addProperties({
+  iconBodyStyleName_rtl: 'OBApplicationMenuTreeIconBody'
 });
 
 

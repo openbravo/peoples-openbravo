@@ -19,6 +19,10 @@
 
 /* ob-widget-styles.js */
 
+isc.OBWidgetMenu.addProperties({
+  iconBodyStyleName_rtl: 'OBWidgetMenuTable'
+});
+
 isc.OBWidget.changeDefaults('headerLabelDefaults', {
   align: isc.Canvas.RIGHT
 });
