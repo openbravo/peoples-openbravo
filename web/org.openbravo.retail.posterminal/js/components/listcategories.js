@@ -36,7 +36,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
       }
     }, this);
         
-    this.receipt.on('reset', function () {
+    this.receipt.on('clear', function () {
       if (this.categories.length > 0){
         this.categoriesview.stack.set('selected', 0);
       }

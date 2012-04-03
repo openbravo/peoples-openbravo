@@ -59,20 +59,20 @@ define(['utilities', 'i18n', 'model/stack'], function () {
       return OB.I18N.formatCurrency(this.getNet());      
     },
     
-    reset: function() {
+    clear: function() {
       this.set('date', new Date());
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
-      this.trigger('reset');
+      this.trigger('clear');
     },
     
-    resetWith: function(_order) {
+    clearWith: function(_order) {
       this.set('date', _order.get('date'));
       this.set('undo', _order.get('undo'));
       this.set('bp',  _order.get('bp'));
       this.get('lines').reset( _order.get('lines').models);      
-      this.trigger('reset');
+      this.trigger('clear');
     },
     
     removeUnit: function (line, qty) {
@@ -202,10 +202,10 @@ define(['utilities', 'i18n', 'model/stack'], function () {
       this.loadCurrent();     
     },    
     saveCurrent: function () {
-      this.current.resetWith(this.modelorder);
+      this.current.clearWith(this.modelorder);
     },
     loadCurrent: function () {
-      this.modelorder.resetWith(this.current);       
+      this.modelorder.clearWith(this.current);       
     }
     
   }); 

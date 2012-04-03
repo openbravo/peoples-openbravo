@@ -48,7 +48,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     
     this.receipt = context.get('modelorder');
     
-    this.receipt.on('reset change:undo', function() {
+    this.receipt.on('clear change:undo', function() {
       var undoaction = this.receipt.get('undo');
       if (undoaction) {
         msgwelcome.hide();

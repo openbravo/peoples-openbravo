@@ -17,7 +17,7 @@
             ], init: function () {
                  this.click(function () {
                    me.receipt.trigger('closed');    
-                   me.receipt.reset();
+                   me.receipt.clear();
                  });
               }
             }            

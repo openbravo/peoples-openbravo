@@ -75,7 +75,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     });    
     this.categoriesview.setModel(this.categories);  
     
-    this.receipt.on('reset', function() {
+    this.receipt.on('clear', function() {
       this.products.reset();                   
     }, this);    
     

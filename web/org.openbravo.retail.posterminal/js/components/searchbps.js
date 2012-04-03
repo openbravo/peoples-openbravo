@@ -44,7 +44,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       this.receipt.setBP(model);
     }, this);
     
-    this.receipt.on('reset', function() {
+    this.receipt.on('clear', function() {
       this.bps.reset();                   
     }, this);    
     

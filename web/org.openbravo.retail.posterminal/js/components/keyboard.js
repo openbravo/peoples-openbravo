@@ -208,7 +208,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
         this.line = null;
         this.index = -1;    
       }
-      this.reset();
+      this.clear();
       
     }, this);  
     
@@ -257,12 +257,12 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
   OB.COMP.Keyboard.prototype.append = function append(child) {
   }; 
    
-  OB.COMP.Keyboard.prototype.reset = function () {
+  OB.COMP.Keyboard.prototype.clear = function () {
       this.editbox.empty();      
   };
   
   OB.COMP.Keyboard.prototype.show = function () {
-      this.reset();
+      this.clear();
       this.$.show();      
   };
   
