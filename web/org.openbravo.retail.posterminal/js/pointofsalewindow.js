@@ -5,7 +5,9 @@ define(['builder', 'i18n',
         'data/product',
         'model/terminal', 'model/order', 'model/stack', 'model/productprice',
         'components/hwmanager', 
-        'components/catalog', 'components/search', 'components/scan', 'components/editline', 'components/order', 'components/total', 'components/payment', 'components/keyboard'
+        'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
+        'components/total', 'components/payment', 'components/keyboard',
+        'components/listcategories', 'components/listproducts'
         ], function (B) {
   
 
@@ -13,15 +15,53 @@ define(['builder', 'i18n',
     return ( 
         
       {kind: B.KindJQuery('section'), content: [
+        {kind: OB.DATA.BPs},
         {kind: OB.DATA.Product},
         {kind: OB.DATA.ProductPrice},
         {kind: OB.DATA.Category},      
         
-        {kind: OB.MODEL.Order, id: 'modelorder'},                                      
+//        {kind: OB.MODEL.OrderList, id: 'modelorderlist', content: [                                                                  
+//          {kind: OB.MODEL.Order, id: 'modelorder'}
+//        ]}, 
+        {kind: OB.MODEL.Order, id: 'modelorder'},
         {kind: OB.MODEL.StackOrder, id: 'stackorder'},        
         
-        {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},           
+        {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
         
+        {kind: B.KindJQuery('div'), attr: {'id': 'modalcustomer', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
+            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
+              {kind: B.KindHTML('<span>&times;</span>')}
+            ]},
+            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignCustomer')]}
+          ]},
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
+            {kind: OB.COMP.SearchBP } 
+          ]}      
+        ], init: function () {
+          
+          this.context.get('SearchBPs').bpsview.stack.on('click', function (model, index) {
+            this.$.modal('hide');
+          }, this);
+        }},
+        
+//        {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
+//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
+//            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
+//              {kind: B.KindHTML('<span>&times;</span>')}
+//            ]},
+//            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblReceipts')]}
+//          ]},
+//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
+//            {kind: OB.COMP.ListReceipts } 
+//          ]}      
+//        ], init: function () {
+//            var context = this.context;
+//            this.$.on('show', function () {
+//              context.get('modelorderlist').saveCurrent();
+//            });                 
+//        }},        
+
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                                                                            
@@ -33,6 +73,7 @@ define(['builder', 'i18n',
                 me.$.click(function (e) {
                   e.preventDefault();
                   me.context.get('modelorder').reset();
+                  // me.context.get('modelorderlist').createNew();
                 });
             }},
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
@@ -53,6 +94,13 @@ define(['builder', 'i18n',
                 });  
             }},                                                                           
                 
+            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [
+              '** Assign customer **'
+            ]},
+//            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [
+//              '** Receipts **'
+//            ]},                  
+                            
             
             {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
               {kind: B.KindJQuery('li'), content: [
@@ -106,6 +154,11 @@ define(['builder', 'i18n',
                   context.get('stackorder').on('scan', function () {
                     this.$.tab('show');
                   }, this);
+                  context.get('SearchBPs').bpsview.stack.on('click', function (model, index) {
+                    this.$.tab('show');
+                  }, this);                  
+                  
+                  
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
@@ -121,7 +174,7 @@ define(['builder', 'i18n',
                     this.$.tab('show');
                   }, this);                        
                 }},        
-              ]}
+              ]}            
             ]}                                                                              
 
             
@@ -139,7 +192,22 @@ define(['builder', 'i18n',
                 {kind: OB.COMP.Scan }                                                                      
               ]}, 
               {kind: B.KindJQuery('div'), attr: {'id': 'catalog', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.Catalog }                                                                      
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
+                    {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
+                      {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px'}, content: [                                                                           
+                        {kind: OB.COMP.ListCategories }  
+                      ]}        
+                    ]}        
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
+                    {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
+                      {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px'}, content: [                                                                           
+                        {kind: OB.COMP.ListProducts }  // Must be defined after ListCategories...
+                      ]}        
+                    ]}        
+                  ]}              
+                ]}                                                                   
               ]},  
               {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
                 {kind: OB.COMP.SearchProduct }                                                                      
@@ -149,14 +217,17 @@ define(['builder', 'i18n',
               ]},       
               {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
                 {kind: OB.COMP.Payment }                                                                      
-              ]}     
+              ]}             
             ]},
             {kind: OB.COMP.Keyboard }
           ]}        
         ]}
+
+        
       ], init: function () {
         this.context.on('ready', function () {
-          this.context.get('modelorder').reset();  
+          this.context.get('modelorder').reset();
+          // this.context.get('modelorderlist').createNew();
         }, this);
       }}
       

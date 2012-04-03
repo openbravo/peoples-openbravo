@@ -48,7 +48,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     
     this.receipt = context.get('modelorder');
     
-    this.receipt.on('change:undo', function() {
+    this.receipt.on('reset change:undo', function() {
       var undoaction = this.receipt.get('undo');
       if (undoaction) {
         msgwelcome.hide();
@@ -63,6 +63,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
           txtaction.text(OB.I18N.getLabel('OBPOS_RemoveUnits', [undoaction.oldqty - undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
         } else if (undoaction.action === 'set') {
           txtaction.text(OB.I18N.getLabel('OBPOS_SetUnits', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+        } else if (undoaction.action === 'setbp') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_SetBP', [undoaction.bp.get('_identifier')]));
+        } else if (undoaction.action === 'resetbp') {
+          txtaction.text(OB.I18N.getLabel('OBPOS_ResetBP'));
         }
         undoclick = undoaction.undo;        
       } else {

@@ -7,6 +7,15 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   OB.COMP.OrderView = function (context) {
   
     var me = this;
+    
+    this.renderTitle = function (receipt) {
+      return OB.UTIL.EL(
+        {tag: 'strong', attr: {'style': 'color: green;'}, content: [                                                                                        
+          OB.I18N.formatHour(receipt.get('date')) + ' - <9332> ', receipt.get('bp') ? receipt.get('bp').get('_identifier') : ''
+        ]}  
+      );
+    };
+    
     this.orderview = new OB.COMP.TableView({
       stack: context.get('stackorder'),
       style: 'edit',
@@ -42,14 +51,15 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
       }      
     });
 
-    this.totalnet = OB.UTIL.EL({tag:'strong'});      
+    this.totalnet = OB.UTIL.EL({tag:'strong'});        
+    this.bp = OB.UTIL.EL({tag: 'span'});    
     
     this.$ = OB.UTIL.EL(
       {tag: 'div', attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
         {tag: 'div', attr: {style: 'overflow:auto; height: 500px'}, content: [         
           {tag: 'div', attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [                                                                                        
             {tag: 'strong', attr: {'style': 'color: green;'}, content: [                                                                                        
-              '10:15 - <9332> Federal Lounge'
+              this.bp
             ]}        
           ]},           
           {tag: 'div', content: [              
@@ -90,7 +100,12 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     
     this.orderview.setModel(lines); 
     
+    this.receipt.on('change:bp', function () {
+      this.bp.empty().append(this.renderTitle(this.receipt));
+    }, this);
+    
     lines.on('reset change add remove', function() {
+      this.bp.empty().append(this.renderTitle(this.receipt));
       this.totalnet.text(this.receipt.printNet());   
     }, this);
   }

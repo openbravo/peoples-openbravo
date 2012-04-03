@@ -20,6 +20,8 @@ define([], function () {
     'OBPOS_AddUnits': 'Added %0 x %1',
     'OBPOS_RemoveUnits': 'Removed %0 x %1',
     'OBPOS_SetUnits': 'Set %0 x %1',
+    'OBPOS_SetBP': 'Assigned customer %0',
+    'OBPOS_ResetBP': 'Removed customer',
     
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
@@ -48,6 +50,8 @@ define([], function () {
     
     
     // Point of sale window
+    'OBPOS_LblAssignCustomer': 'Assign a customer to this receipt',
+    
     'OBPOS_LblNew': ' New',
     'OBPOS_LblDelete': ' Delete',
     'OBPOS_LblPrint': ' Print',
@@ -78,9 +82,8 @@ define([], function () {
       decimals: 2,
       decimal: '.',
       group: ',',
-      currency: '$#'
-    })     
-  };
+      currency: '$#'});    
+  };    
   
   OB.I18N.formatGeneralNumber = function (num, options) {
     n = num.toFixed(options.decimals);
@@ -96,6 +99,26 @@ define([], function () {
     } else {
       return x1 + x2;
     }
+  };  
+  
+  OB.I18N.formatDate = function (d) {
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth();
+    var curr_year = d.getFullYear();
+    var curr_hour = d.getHours();
+    var curr_min = d.getMinutes();
+    var curr_sec = d.getSeconds();
+    return curr_date + '/' + curr_month + '/' + curr_year;
+  };
+  
+  OB.I18N.formatHour = function (d) {
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth();
+    var curr_year = d.getFullYear();
+    var curr_hour = d.getHours();
+    var curr_min = d.getMinutes();
+    var curr_sec = d.getSeconds();
+    return curr_hour + ':' + curr_min;
   };  
 
 });

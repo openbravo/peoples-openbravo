@@ -58,7 +58,7 @@ define([], function () {
      }      
   };
   
-  B.KindText =  function (text) {
+  B.KindText = function (text) {
      var F = function (context) {
        this.$ = $(document.createTextNode(text));
      };
@@ -68,8 +68,24 @@ define([], function () {
      };        
      _.extend(F.prototype, B.Kind);    
      return F;
-   }
-  
+  };
+   
+  B.KindHTML = function (html) {
+    var F = function (context) {
+      this.$ = $(html);
+      this.context = context;
+    };
+    F.prototype.attr = function (attr, value) {
+      this.$.attr(attr, value);
+    };
+    F.prototype.append = function (child) {
+      if (child.$) {
+        this.$.append(child.$);
+      }
+    };      
+     _.extend(F.prototype, B.Kind);    
+     return F;
+  };  
   
   B.KindJQuery = function (tag) {
     var F = function (context) {

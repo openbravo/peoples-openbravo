@@ -3,8 +3,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.SearchProduct = function (context) {
+  OB.COMP.SearchProduct = function (context, id) {
     var me = this;
+    
+    context.set(id || 'SearchProducts', this);    
 
     this.receipt = context.get('modelorder');
     this.stack = context.get('stackorder');   
@@ -17,7 +19,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       {tag: 'select', attr: {}}           
     );    
     
-    this.products = new OB.MODEL.Collection(context.get('DataProduct'));    
+    this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
     this.productsview = new OB.COMP.TableView({ 
       renderEmpty: function () {
         return function () {
@@ -39,7 +41,8 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
             ]},                                                                                      
             {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
               {tag: 'strong', content: [ 
-                OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                            
+                 model.get('price') ?                       
+                OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
               ]}                                                                                                                                                                                                                                 
             ]},                                                                                      
             {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
@@ -79,10 +82,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
         {tag: 'div', attr: {'style': 'background-color: white; color: black; height: 500px; margin: 5px; padding: 5px'}, content: [
-          {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-//            {tag: 'div', attr: {'class': 'span2'}, content: [   
-//            ]},                                  
-//            {tag: 'div', attr: {'class': 'span10', 'style': 'height: 500px; overflow: auto;'}, content: [    
+          {tag: 'div', attr: {'class': 'row-fluid'}, content: [  
             {tag: 'div', attr: {'class': 'span12', 'style': 'height: 500px; overflow: auto;'}, content: [    
               {tag: 'div', attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
                 {tag: 'div', attr: {'class': 'span9'}, content: [    

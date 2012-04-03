@@ -23,6 +23,14 @@ define(['utilities', 'datasource'], function () {
     }   
   };
   
+  OB.DATA.BPs = function (context, id) {
+    this.init(context, id, 'DataBPs');
+    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+      'from BusinessPartner where customer = true and $readableCriteria'));
+    this.loadparams = {};     
+  };
+  _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);  
+  
   OB.DATA.PriceList = function (context, id) {
     this.init(context, id, 'DataPriceList');
     this.ds = new OB.DS.DataSource(new OB.DS.Query(

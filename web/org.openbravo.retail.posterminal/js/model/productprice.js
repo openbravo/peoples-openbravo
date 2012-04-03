@@ -33,8 +33,10 @@ define([], function () {
             var item = data[i];
             (function (item) {
               me.dsProductPrice.find({'priceListVersion': me.priceListVersion, 'product': item.product.id}, function(price) {
-                item.price = price;
-                me.add(item);
+                if (price) {
+                  item.price = price;
+                  me.add(item);
+                }
               });
             }(item));            
           }
