@@ -116,7 +116,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("CALLOUTFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
-      String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
+      String strPaymentMethodId = vars.getRequestGlobalVariable("inpPaymentMethod", "");
       String strOrgId = vars.getRequestGlobalVariable("inpOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
