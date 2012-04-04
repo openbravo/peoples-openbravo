@@ -131,12 +131,10 @@ define(['utilities', 'i18n', 'model/stack'], function () {
       });         
     },
     
-    addProduct: function (index, p) {
+    addProduct: function (line, p) {
       var me = this;
-      var lines = this.get('lines');
-      if (index >= 0 && index < lines.length &&
-          lines.at(index).get('productid') === p.get('product').id) {
-        this.addUnit(lines.at(index));
+      if (line && line.get('productid') === p.get('product').id) {
+        this.addUnit(line);
       } else {
         // a new line with 1 unit
         var newline = new OB.MODEL.OrderLine({
@@ -146,7 +144,7 @@ define(['utilities', 'i18n', 'model/stack'], function () {
           price: p.get('price').listPrice
         });
         // add the created line
-        lines.add(newline);
+        this.get('lines').add(newline);
         // set the undo action
         this.set('undo', {
           action: 'addline',

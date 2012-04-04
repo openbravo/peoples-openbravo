@@ -10,7 +10,10 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     context.set(id || 'ListProducts', this);      
 
     this.receipt = context.get('modelorder');
-    this.stack = context.get('stackorder');      
+    this.line = null;   
+    this.receipt.get('lines').on('selected', function (line) {
+      this.line = line;
+    }, this);    
     
     this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
     this.productsview = new OB.COMP.CollectionView({ 
@@ -35,7 +38,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     });   
     this.productsview.setModel(this.products);
     this.products.on('click', function (model) {
-      this.receipt.addProduct(this.stack.get('selected'), model);
+      this.receipt.addProduct(this.line, model);
     }, this);    
   
     this.titleProd = OB.UTIL.EL({tag: 'h3'});

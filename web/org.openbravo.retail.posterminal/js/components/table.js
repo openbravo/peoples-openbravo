@@ -104,6 +104,7 @@ define(['utilities', 'model/stack'], function () {
         var index = me.collection.indexOf(model)
         me.stack.set('selected', index);
         me.stack.trigger('click', model, index);
+        model.trigger('selected', model); // stack removal
       });
 
       // remove the old selected class
@@ -125,10 +126,12 @@ define(['utilities', 'model/stack'], function () {
         if (this.stack.get('selected') < 0) {
           this.stack.set('selected', index, {silent: true}); 
           this.stack.trigger('change:selected'); // forcing the change to be fired...
+          model.trigger('selected', model); // stack removal
         }
       } else if (this.style === 'edit') {
         this.stack.set('selected', index, {silent: true});
         this.stack.trigger('change:selected'); // forcing the change to be fired...
+        model.trigger('selected', model); // stack removal
       }
     }, this);
     
@@ -138,9 +141,15 @@ define(['utilities', 'model/stack'], function () {
 
       if (index >= this.collection.length) {
         this.stack.set('selected', this.collection.length - 1);
+        if (this.collection.length === 0) {    // stack removal
+          this.collection.trigger('selected'); // stack removal
+        } else {                               // stack removal
+          this.collection.at(this.collection.length - 1).trigger('selected', this.collection.at(this.collection.length - 1)); // stack removal
+        }                                      // stack removal
       } else {
         this.stack.trigger('change:selected'); // we need to force the change event.
         // this.stack.set('selected', index);
+        this.collection.at(index).trigger('selected', this.collection.at(index)); // stack removal
       }  
       
       if (this.collection.length === 0) {             
@@ -156,6 +165,7 @@ define(['utilities', 'model/stack'], function () {
       
       this.tbody.empty();  
       this.stack.set('selected', -1);
+      this.collection.trigger('selected'); // stack removal
     }, this);    
         
     if (this.style) {

@@ -75,51 +75,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
     me.editbox =  $(OB.UTIL.DOM(
       OB.UTIL.NODE('span', {}, [])                 
     ));
-    
-//    // register keys
-//    $(window).keypress(function(e) {
-//      me.keyPressed([String.fromCharCode(e.which), me]);
-//    }); 
-
-//    this.$ = OB.UTIL.EL(
-//      {tag: 'div', attr: {'style': 'width:100%' }, content: [
-//        {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//          {tag: 'div', content: [
-//            {tag: 'button', attr: { 'style': 'width:100%;'}, content: [ '---']}                               
-//          ]},
-//          {tag: 'div', content: [
-//            {tag: 'button', attr: { 'style': 'width:100%;'}, content: [ '---']}                               
-//          ]},
-//          {tag: 'div', content: [
-//            {tag: 'button', attr: { 'style': 'width:100%;'}, content: [ '---']}                               
-//          ]}                    
-//        ]},
-//        {tag: 'div', attr: {'style': 'float:left; width: 80%' }, content: [
-//          {tag: 'div', attr: {'style': 'position:relative; width: 100%' }, content: [
-//            {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//              {tag: 'div', attr: {'style': 'margin:5px' }, content: [
-//                btndiv
-//              ]}                                  
-//            ]},                                  
-//            {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//              btnmultiply
-//            ]},                                  
-//            {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//              btnpercentage
-//            ]},                                  
-//            {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//              btnminus
-//            ]},                                  
-//            {tag: 'div', attr: {'style': 'float:left; width: 20%' }, content: [
-//              btnplus
-//            ]}                                  
-//                                 
-//          ]}                         
-//        ]}
-//                                            
-//                             
-//      ]}
-//    );      
+ 
     this.$ = $(OB.UTIL.DOM(
         OB.UTIL.NODE('div', {'class': 'row-fluid'}, [
           OB.UTIL.NODE('div', {'class': 'span3'}, [
@@ -192,43 +148,29 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
     
     this.products = context.get('DataProduct')
     this.receipt = context.get('modelorder');
-    this.stack = context.get('stackorder');
     this.line = null;
-    this.index = -1;
-        
-    this.stack.on('change:selected', function () {
-      
-      var index = this.stack.get('selected');
-      var lines = this.receipt.get('lines');
- 
-      if (index >= 0 && index < lines.length) {  
-        this.line = lines.at(index);
-        this.index = index;      
-      } else {
-        this.line = null;
-        this.index = -1;    
-      }
-      this.clear();
-      
-    }, this);  
     
+    this.receipt.get('lines').on('selected', function (line) {
+      this.line = line;
+      this.clear();
+    }, this);  
     
     this.on('command', function(cmd) {
       var me = this;      
       if (cmd === '-') {
         if (this.line) {
           this.receipt.removeUnit(this.line, this.getNumber());     
-          this.stack.trigger('scan');
+          this.receipt.trigger('scan');
         }
       } else if (cmd === '+') {
         if (this.line) {
           this.receipt.addUnit(this.line, this.getNumber());    
-          this.stack.trigger('scan');
+          this.receipt.trigger('scan');
         }
       } else if (cmd === 'qty') {
         if (this.line) {
           this.receipt.setUnit(this.line, this.getNumber()); 
-          this.stack.trigger('scan');
+          this.receipt.trigger('scan');
         }
       } else if (cmd === String.fromCharCode(13)) {
 
@@ -236,8 +178,8 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
           product: {uPCEAN: this.getString()}
         }, function (data) {
           if (data) {      
-            me.receipt.addProduct(me.index, new Backbone.Model(data));
-            me.stack.trigger('scan');
+            me.receipt.addProduct(me.line, new Backbone.Model(data));
+            me.receipt.trigger('scan');
           } else {
             alert('UPC/EAN code not found');
           }

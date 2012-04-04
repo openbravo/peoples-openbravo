@@ -36,7 +36,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                     e.preventDefault();
                     if (me.line) {
                       me.receipt.deleteLine(me.line);    
-                      me.stack.trigger('scan');
+                      me.receipt.trigger('scan');
                     }              
                   });
                 }} 

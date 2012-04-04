@@ -148,12 +148,9 @@ define(['builder', 'i18n',
                   this.$.on('shown', function () {
                     context.get('keyboard').show();
                   });
-                  context.get('modelorder').on('clear', function() {
+                  context.get('modelorder').on('clear scan', function() {
                     this.$.tab('show');                         
                   }, this);   
-                  context.get('stackorder').on('scan', function () {
-                    this.$.tab('show');
-                  }, this);
                   context.get('SearchBPs').bps.on('click', function (model, index) {
                     this.$.tab('show');
                   }, this);                  

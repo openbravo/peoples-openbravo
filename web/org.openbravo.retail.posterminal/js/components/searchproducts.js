@@ -9,7 +9,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     context.set(id || 'SearchProducts', this);    
 
     this.receipt = context.get('modelorder');
-    this.stack = context.get('stackorder');   
+    this.line = null;   
+    this.receipt.get('lines').on('selected', function (line) {
+      this.line = line;
+    }, this);    
     
     this.productname = OB.UTIL.EL(
       {tag: 'input', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
@@ -52,7 +55,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     });
     this.productsview.setModel(this.products);  
     this.products.on('click', function (model) {
-      this.receipt.addProduct(this.stack.get('selected'), model);
+      this.receipt.addProduct(this.line, model);
     }, this);
     
     this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
