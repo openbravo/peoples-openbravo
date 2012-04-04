@@ -1823,7 +1823,7 @@ OB.ViewFormProperties = {
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
-      value = this.getValue(item);
+      value = item.getValue();
       if (this.isRequired(item) && value !== false && value !== 0 && !value) {
         return false;
       }
