@@ -44,9 +44,6 @@ public class InventoryCountProcess implements Process {
     msg.setTitle(OBMessageUtils.messageBD("Success"));
 
     try {
-      // retrieve custom params
-      // final String strAction = (String) bundle.getParams().get("action");
-
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
       final InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, recordID);
@@ -61,7 +58,6 @@ public class InventoryCountProcess implements Process {
         SessionHandler.getInstance().commitAndStart();
       }
 
-      // if ("CO".equals(strAction)) {
       OBContext.setAdminMode(false);
       try {
         msg = processInventory(inventory);
@@ -69,7 +65,6 @@ public class InventoryCountProcess implements Process {
         OBContext.restorePreviousMode();
       }
 
-      // }
       inventory.setProcessNow(false);
 
       OBDal.getInstance().save(inventory);
