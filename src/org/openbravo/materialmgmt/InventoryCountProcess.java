@@ -273,8 +273,10 @@ public class InventoryCountProcess implements Process {
   private void checkStock(InventoryCount inventory) {
     StringBuffer where = new StringBuffer();
     where.append(" as icl");
-    where.append(" join icl." + InventoryCountLine.PROPERTY_PRODUCT + " as sd");
+    where.append(" , " + StorageDetail.ENTITY_NAME + " as sd");
     where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
+    where.append("   and sd." + StorageDetail.PROPERTY_PRODUCT + " = icl."
+        + InventoryCountLine.PROPERTY_PRODUCT);
     where.append("   and sd." + StorageDetail.PROPERTY_ORGANIZATION + " = icl."
         + InventoryCountLine.PROPERTY_ORGANIZATION);
     where.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
