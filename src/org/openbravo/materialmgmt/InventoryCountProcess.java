@@ -148,7 +148,7 @@ public class InventoryCountProcess implements Process {
     insert.append(" \nwhere e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
     insert.append(" and u.id = :user");
     insert.append(" and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
-        + ", '0')");
+        + ".id , '0')");
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("inv", inventory.getId());
