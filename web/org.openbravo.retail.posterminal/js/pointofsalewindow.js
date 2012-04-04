@@ -6,7 +6,7 @@ define(['builder', 'i18n',
         'model/terminal', 'model/order', 'model/productprice',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
-        'components/total', 'components/payment', 'components/keyboard',
+        'components/total', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',
         'components/listcategories', 'components/listproducts'
         ], function (B) {
   
@@ -42,8 +42,8 @@ define(['builder', 'i18n',
           this.context.get('SearchBPs').bps.on('click', function (model, index) {
             this.$.modal('hide');
           }, this);
-        }},
-        
+        }},        
+               
         {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
             {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
@@ -74,7 +74,6 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
-                  // me.context.get('modelorder').clear();
                   me.context.get('modelorderlist').createNew();
                 });
             }},
@@ -94,19 +93,12 @@ define(['builder', 'i18n',
                   e.preventDefault();
                   me.context.get('modelorder').trigger('print');
                 });  
-            }},                                                                           
-                
-            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [
-              '** Assign customer **'
-            ]},
-            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [
-              '** Receipts **'
-            ]},                  
+            }},                                                                                         
                             
             
             {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#payment'}, content: [
+                {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#payment'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width:100px;'}, content: [
                     {kind: B.KindJQuery('span'), attr: {'style': 'font-weight: bold'}, content: [
                       {kind: OB.COMP.Total}
@@ -123,7 +115,7 @@ define(['builder', 'i18n',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
+                {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
                   OB.I18N.getLabel('OBPOS_LblBrowse')
                 ], init: function () {  
                   var context = this.context;
@@ -133,7 +125,7 @@ define(['builder', 'i18n',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#search'}, content: [
+                {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#search'}, content: [
                   OB.I18N.getLabel('OBPOS_LblSearch')
                 ], init: function () {  
                   var context = this.context;                      
@@ -143,7 +135,7 @@ define(['builder', 'i18n',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#scan'}, content: [
+                {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#scan'}, content: [
                   OB.I18N.getLabel('OBPOS_LblScan')
                 ], init: function () { 
                   var context = this.context;                      
@@ -161,7 +153,7 @@ define(['builder', 'i18n',
                 }},        
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-nav', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
+                {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
                   OB.I18N.getLabel('OBPOS_LblEdit')
                 ], init: function () {   
                   var context = this.context;                      
@@ -182,9 +174,32 @@ define(['builder', 'i18n',
         ]},
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                                                                                                                                  
           {kind: B.KindJQuery('div'), attr: {'class': 'span5'}, content: [
-            {kind: OB.COMP.OrderView}  
-          ]},
+            {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px'}, content: [                                                                           
+              {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px;'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                             
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [   
+                        {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [                                                                                                                                
+                          {kind: OB.COMP.BusinessPartner}
+                        ]},
+                        {kind: B.KindJQuery('div'), attr: {'style': 'float:right'}, content: [                                                                                                                                
+                          {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [                                                                                                                                
+                          {kind: OB.COMP.ReceiptsCounter}
+                              ]}
+                        ]},                        
+                        {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}} 
+                    ]}
+                  ]}                                                              
+                ]},     
+                
+                {kind: OB.COMP.OrderView}    
+                
+              ]}                                                              
+            ]}  
+          ]},          
+          
           {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
               {kind: B.KindJQuery('div'), attr: {'id': 'scan', 'class': 'tab-pane'}, content: [

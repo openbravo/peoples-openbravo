@@ -29,7 +29,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                                                                              
             {tag: 'div', attr: {'class': 'row-fluid'}, content: [
               {tag: 'div', attr: {'class': 'span12'}, content: [                                                                             
-                {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small' }, content: [
+                {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
                   OB.I18N.getLabel('OBPOS_ButtonDelete')
                 ], init: function () {
                   this.click(function(e) {

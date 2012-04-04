@@ -66,10 +66,11 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                 ]},                                                               
                 {tag: 'div', attr: {'class': 'span3'}, content: [ 
                   {tag: 'div', attr: {'style': 'padding: 10px'}, content: [    
-                    {tag: 'button', attr: {'style': 'width: 100%'}, content: [
+                    {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
                       {tag:'i', attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
                     ], init: function () {
-                      this.click(function () {
+                      this.click(function (e) {
+                        e.preventDefault();
                         var filter = {};
                         if (me.bpname.val() && me.bpname.val() !== '') {
                           filter._identifier = '%i' + OB.UTIL.escapeRegExp(me.bpname.val());

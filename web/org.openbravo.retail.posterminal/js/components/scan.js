@@ -23,10 +23,11 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     var msgaction = OB.UTIL.EL(
         {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
           txtaction,
-          {tag: 'button', attr: {'style': 'float:right;'}, content: [
+          {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
             'Undo'                       
-          ], init: function () {
-              this.click(function() {
+          ], init: function () {           
+              this.click(function(e) {
+                e.preventDefault();
                 if (undoclick) {
                   undoclick();
                 }
