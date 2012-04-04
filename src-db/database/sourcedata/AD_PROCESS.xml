@@ -4800,7 +4800,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800198-->  <VALUE><![CDATA[RV_ReportPendingProductionJr]]></VALUE>
-<!--800198-->  <NAME><![CDATA[Stock for open orders]]></NAME>
+<!--800198-->  <NAME><![CDATA[Stock for Open Orders]]></NAME>
 <!--800198-->  <DESCRIPTION><![CDATA[Show the lines of the pending orders with the actual stock of each product.]]></DESCRIPTION>
 <!--800198-->  <HELP><![CDATA[Show the lines of the pending orders with the actual stock of each product.]]></HELP>
 <!--800198-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
