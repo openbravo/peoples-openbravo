@@ -577,7 +577,7 @@
         C_UOM_ID,QtyInvoiced, PriceList,
         PriceActual,PriceLimit, LineNetAmt,
         ChargeAmt,C_Tax_ID, QuantityOrder, M_Product_UOM_ID,
-        M_Attributesetinstance_ID, PriceStd, taxbaseamt)
+        M_Attributesetinstance_ID, PriceStd, taxbaseamt, excludeforwithholding)
       VALUES 
         (?, ?, ?, ?, 'Y', 
          now(), ?, now(), ?, 
@@ -585,7 +585,7 @@
          ?, TO_NUMBER(?), TO_NUMBER(?), 
          TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
          0, ?, TO_NUMBER(?), ?, 
-         ?, TO_NUMBER(?), TO_NUMBER(?))
+         ?, TO_NUMBER(?), TO_NUMBER(?), 'N')
     </Sql>
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cInvoiceId"/>
