@@ -1,6 +1,6 @@
 
 
-define(['utilities', 'i18n', 'model/stack'], function () {
+define(['utilities', 'i18n'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};

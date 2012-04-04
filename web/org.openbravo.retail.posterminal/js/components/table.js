@@ -1,4 +1,4 @@
-define(['utilities', 'model/stack'], function () {
+define(['utilities'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
