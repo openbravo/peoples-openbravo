@@ -70,12 +70,12 @@ FROM m_internal_consumptionline il
   JOIN m_costing_algorithm ca ON cr.m_costing_algorithm_id = ca.m_costing_algorithm_id AND ca.classname = 'org.openbravo.costing.AverageAlgorithm'
 WHERE t.movementqty &gt; 0
   AND NOT EXISTS (SELECT 1 FROM m_costing c
-    WHERE c.m_product_id = iol.m_product_id AND c.costtype IN ( 'STA', 'AVA') AND c.datefrom &lt;= t.trxprocessdate AND c.dateto &gt; t.trxprocessdate)
+    WHERE c.m_product_id = il.m_product_id AND c.costtype IN ( 'STA', 'AVA') AND c.datefrom &lt;= t.trxprocessdate AND c.dateto &gt; t.trxprocessdate)
   AND NOT EXISTS (SELECT 1 FROM m_productprice pp
                               JOIN m_pricelist_version ppv ON pp.m_pricelist_version_id = ppv.m_pricelist_version_id
                               JOIN m_pricelist pl ON pl.m_pricelist_id = ppv.m_pricelist_id
-                  WHERE pp.m_product_id = iol.m_product_id
-                    AND (bp.po_pricelist_id = ppv.m_pricelist_id OR (bp.po_pricelist_id IS NULL AND pl.issopricelist = 'N'))
+                  WHERE pp.m_product_id = il.m_product_id
+                    AND pl.issopricelist = 'N'
                     AND ppv.validfrom &lt;= t.trxprocessdate)</sql>
     <type>D</type>
   </ADAlertRule>
@@ -117,7 +117,7 @@ WHERE t.movementqty &gt; 0
     <filterClause xsi:nil="true"/>
     <sql>SELECT DISTINCT iol.m_product_id as referencekey_id, '0' as ad_role_id, null as ad_user_id, 'The product ' || p.name || ' has Cancelation Shipments without a related original shipment and does not have a Purchase PriceList nor Standard Cost defined.' as description, 'Y' as isactive, iol.ad_org_id as ad_org_id, iol.ad_client_id as ad_client_id, now() as created, '0' as createdBy, now() as updated, '0' as updatedBy, p.name as RECORD_ID
 FROM m_inoutline iol
-  JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.issotrx = 'Y' AND io.docstatus = 'CO'
+  JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.issotrx = 'Y' AND io.docstatus = 'VO'
   JOIN m_product p ON iol.m_product_id = p.m_product_id
   JOIN m_transaction t ON iol.m_inoutline_id = t.m_inoutline_id
   JOIN c_bpartner bp ON io.c_bpartner_id = bp.c_bpartner_id
