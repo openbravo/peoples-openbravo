@@ -51,6 +51,7 @@ define([], function () {
     
     // Point of sale window
     'OBPOS_LblAssignCustomer': 'Assign a customer to this receipt',
+    'OBPOS_LblAssignReceipt': 'Receipts',
     
     'OBPOS_LblNew': ' New',
     'OBPOS_LblDelete': ' Delete',

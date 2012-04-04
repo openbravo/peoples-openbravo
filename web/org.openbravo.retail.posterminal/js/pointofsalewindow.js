@@ -49,7 +49,7 @@ define(['builder', 'i18n',
             {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
               {kind: B.KindHTML('<span>&times;</span>')}
             ]},
-            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblReceipts')]}
+            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignReceipt')]}
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
             {kind: OB.COMP.ListReceipts } 
@@ -58,7 +58,10 @@ define(['builder', 'i18n',
             var context = this.context;
             this.$.on('show', function () {
               context.get('modelorderlist').saveCurrent();
-            });                 
+            });  
+            this.context.get('ListReceipts').receiptlist.on('click', function (model, index) {
+              this.$.modal('hide');
+            }, this);            
         }},        
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [

@@ -152,7 +152,7 @@ define(['utilities'], function () {
       }
     }, this);
     
-    this.collection.on('reset', function() {
+    this.collection.on('reset', function(a,b,c) {
       
       this.tbody.hide();
       this.tempty.show();

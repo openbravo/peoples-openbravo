@@ -66,9 +66,12 @@ define(['utilities', 'i18n'], function () {
     
     clearWith: function(_order) {
       this.set('date', _order.get('date'));
-      this.set('undo', _order.get('undo'));
+      this.set('undo', null);
       this.set('bp', _order.get('bp'));
-      this.get('lines').reset(_order.get('lines').models);
+      this.get('lines').reset();
+      _order.get('lines').forEach(function (elem) {
+        this.get('lines').add(elem);
+      }, this);
       this.trigger('change');
       this.trigger('clear');
     },
@@ -193,15 +196,25 @@ define(['utilities', 'i18n'], function () {
     },
     
     createNew: function () {
+      this.saveCurrent();
       this.current = new OB.MODEL._Order()
       this.add(this.current);
       this.loadCurrent();     
-    },    
+    },  
+    load: function(model) {
+      this.saveCurrent();
+      this.current = model;
+      this.loadCurrent();
+    },
     saveCurrent: function () {
-      this.current.clearWith(this.modelorder);
+      if (this.current) {
+        this.current.clearWith(this.modelorder);
+      }
     },
     loadCurrent: function () {
-      this.modelorder.clearWith(this.current);       
+      if (this.current) {
+        this.modelorder.clearWith(this.current);
+      }
     }
     
   }); 

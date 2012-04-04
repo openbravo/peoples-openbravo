@@ -39,13 +39,15 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     });
     this.receiptsview.setModel(this.receiptlist);  
     this.receiptlist.on('click', function (model, index) {
-      // this.receipt.setBP(model);
+      this.receiptlist.load(model);
     }, this);
    
     
     this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
         {tag: 'div', attr: {'style': 'background-color: white; color: black; height: 500px; margin: 5px; padding: 5px'}, content: [
+          {tag: 'div', attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [  
+          ]},
           {tag: 'div', attr: {'class': 'row-fluid'}, content: [
             {tag: 'div', attr: {'class': 'span12', 'style': 'height: 500px; overflow: auto;'}, content: [    
              
