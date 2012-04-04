@@ -15,7 +15,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     );
     
     this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    
-    this.bpsview = new OB.COMP.CollectionView({ 
+    this.bpsview = new OB.COMP.TableView({ 
       renderEmpty: function () {
         return function () {
           return OB.UTIL.EL(

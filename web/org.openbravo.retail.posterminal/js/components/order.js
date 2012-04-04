@@ -17,7 +17,6 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     };
     
     this.orderview = new OB.COMP.TableView({
-      stack: context.get('stackorder'),
       style: 'edit',
 
       renderEmpty: function () {

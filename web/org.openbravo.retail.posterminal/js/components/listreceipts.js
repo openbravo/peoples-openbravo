@@ -11,7 +11,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     this.receipt = context.get('modelorder');
     this.receiptlist = context.get('modelorderlist');
  
-    this.receiptsview = new OB.COMP.CollectionView({ 
+    this.receiptsview = new OB.COMP.TableView({ 
       renderEmpty: function () {
         return function () {
           return OB.UTIL.EL(

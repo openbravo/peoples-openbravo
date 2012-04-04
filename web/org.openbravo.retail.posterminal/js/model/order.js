@@ -5,10 +5,6 @@ define(['utilities', 'i18n', 'model/stack'], function () {
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
   
-  
-  OB.MODEL.StackOrder = OB.UTIL.recontext(OB.MODEL.Stack, 'stackorder');
-
-  
   // Sales.OrderLine Model
   OB.MODEL.OrderLine = Backbone.Model.extend({
     defaults : {

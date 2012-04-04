@@ -12,7 +12,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     this.receipt = context.get('modelorder');
         
     this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
-    this.categoriesview = new OB.COMP.CollectionView({
+    this.categoriesview = new OB.COMP.TableView({
       style: 'list',
       renderLine: function (model) {
         return OB.UTIL.EL(

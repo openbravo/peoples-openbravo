@@ -23,8 +23,7 @@ define(['builder', 'i18n',
         {kind: OB.MODEL.OrderList, id: 'modelorderlist', content: [                                                                  
           {kind: OB.MODEL.Order, id: 'modelorder'}
         ]}, 
-        // {kind: OB.MODEL.Order, id: 'modelorder'},
-        {kind: OB.MODEL.StackOrder, id: 'stackorder'},        
+        // {kind: OB.MODEL.Order, id: 'modelorder'}, 
         
         {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
         
@@ -167,7 +166,7 @@ define(['builder', 'i18n',
                     context.get('keyboard').show();
                   });
                   
-                  context.get('stackorder').on('click', function () {
+                  context.get('modelorder').get('lines').on('click', function () {
                     this.$.tab('show');
                   }, this);                        
                 }},        

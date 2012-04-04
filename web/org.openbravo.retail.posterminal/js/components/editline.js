@@ -122,20 +122,18 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     
     this.products = context.get('DataProduct');
     this.receipt = context.get('modelorder');
-    this.stack = context.get('stackorder');
     this.line = null;
-    this.index = -1;
-        
-    this.stack.on('change:selected', function () {
-      
-      var index = this.stack.get('selected');
-      var lines = this.receipt.get('lines');
-      if (index >= 0 && index < lines.length) {  
-        this.editLine(index, lines.at(index));     
-      } else {
-        this.editLine(-1, null);
-      }
-    }, this);    
+    
+    this.receipt.get('lines').on('selected', function (line) {
+      if (this.line) {
+        this.line.off('change', this.renderLine);
+      }    
+      this.line = line;
+      if (this.line) {
+        this.line.on('change', this.renderLine, this);     
+      }      
+      this.renderLine();
+    }, this);   
     
     this.renderLine();
   };
@@ -167,22 +165,5 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       me.editlineprice.empty();
       me.editlinenet.empty();
     }    
-  }  
-  
-  OB.COMP.EditLine.prototype.editLine = function (index, line) {
-    
-    if (this.line) {
-      this.line.off('change', this.renderLine);
-    }
-    
-    this.line = line;
-    this.index = index;
-    
-    if (this.line) {
-      this.line.on('change', this.renderLine, this);     
-    }
-    
-    this.renderLine();
-  };
-  
+  }    
 }); 

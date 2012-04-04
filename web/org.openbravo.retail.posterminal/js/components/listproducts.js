@@ -16,7 +16,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     }, this);    
     
     this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
-    this.productsview = new OB.COMP.CollectionView({ 
+    this.productsview = new OB.COMP.TableView({ 
       renderLine: function (model) {
         return OB.UTIL.EL(         
           {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
