@@ -178,6 +178,7 @@ function OBStartApplication() {
 }
 </script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
+<script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script type="text/javascript" src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
 <iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
