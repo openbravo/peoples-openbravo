@@ -1,4 +1,4 @@
-
+/*global define,B */
 
 
 define(['builder', 'i18n',
@@ -112,7 +112,7 @@ define(['builder', 'i18n',
                   this.$.on('shown', function () {
                     context.get('keyboard').show();
                   });
-                }},        
+                }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
@@ -122,7 +122,7 @@ define(['builder', 'i18n',
                   this.$.on('shown', function () {
                     context.get('keyboard').hide();
                   });                            
-                }},        
+                }} 
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#search'}, content: [
@@ -132,7 +132,7 @@ define(['builder', 'i18n',
                   this.$.on('shown', function () {
                     context.get('keyboard').hide();
                   });
-                }},        
+                }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#scan'}, content: [
@@ -150,7 +150,7 @@ define(['builder', 'i18n',
                   }, this);                  
                   
                   
-                }},        
+                }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
@@ -164,7 +164,7 @@ define(['builder', 'i18n',
                   context.get('modelorder').get('lines').on('click', function () {
                     this.$.tab('show');
                   }, this);                        
-                }},        
+                }}
               ]}            
             ]}                                                                              
 
