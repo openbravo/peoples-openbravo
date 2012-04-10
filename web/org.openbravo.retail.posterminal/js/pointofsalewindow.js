@@ -176,8 +176,8 @@ define(['builder', 'i18n',
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                                                                                                                                   
           {kind: B.KindJQuery('div'), attr: {'class': 'span5'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px'}, content: [                                                                           
-              {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [                                                                           
+              {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                             
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [   
@@ -208,15 +208,15 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('div'), attr: {'id': 'catalog', 'class': 'tab-pane'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
-                    {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
-                      {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px'}, content: [                                                                           
+                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
+                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
                         {kind: OB.COMP.ListCategories }  
                       ]}        
                     ]}        
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
-                    {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; margin: 5px; padding: 5px'}, content: [                                                          
-                      {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px'}, content: [                                                                           
+                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
+                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
                         {kind: OB.COMP.ListProducts }  // Must be defined after ListCategories...
                       ]}        
                     ]}        
@@ -224,7 +224,11 @@ define(['builder', 'i18n',
                 ]}                                                                   
               ]},  
               {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.SearchProduct }                                                                      
+                {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
+                  {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
+                    {kind: OB.COMP.SearchProduct } 
+                  ]}        
+                ]}                                                                      
               ]},  
               {kind: B.KindJQuery('div'), attr: {'id': 'edition', 'class': 'tab-pane'}, content: [
                 {kind: OB.COMP.EditLine }                                                                      

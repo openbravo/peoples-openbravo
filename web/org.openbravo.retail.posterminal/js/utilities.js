@@ -36,9 +36,19 @@ define([], function () {
   // public
   OB.UTIL.getThumbnail = function (base64, width, height, contentType) {
     var url = (base64) ? 'data:' + (contentType ? contentType : 'image/png') + ';base64,' + base64 : 'img/box.png';
-    return $('<div/>').css('margin', 'auto').css('height', height ? height : '48').css('width', width ? width : '48').css('background', 'url(' + url + ') center center no-repeat').css('background-size', 'contain');
-  };
-  
+    return $('<div/>')
+    .addClass('image-wrap')
+    .css('margin', 'auto')
+    .css('height', height ? height : '48')
+    .css('width', width ? width : '48')
+    .append($('<div/>')
+        .css('margin', 'auto')
+        .css('height', '100%')
+        .css('width', '100%')            
+        .css('background', '#ffffff url(' + url + ') center center no-repeat')
+        .css('background-size', 'contain')
+     );
+  }; 
   
   OB.UTIL.getParameterByName = function (name) {
     var n = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');

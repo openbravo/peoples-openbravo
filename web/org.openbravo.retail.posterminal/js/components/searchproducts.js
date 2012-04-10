@@ -85,58 +85,54 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     }, this);    
     
     this.$ = OB.UTIL.EL(
-      {tag: 'div', content: [
-        {tag: 'div', attr: {'style': 'background-color: white; color: black; height: 500px; margin: 5px; padding: 5px'}, content: [
-          {tag: 'div', attr: {'class': 'row-fluid'}, content: [  
-            {tag: 'div', attr: {'class': 'span12', 'style': 'height: 500px; overflow: auto;'}, content: [    
-              {tag: 'div', attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
-                {tag: 'div', attr: {'class': 'span9'}, content: [    
-                  {tag: 'div', attr: {'style': 'padding: 10px'},  content: [    
-                    {tag: 'div', content: [    
-                      this.productname 
-                    ]},
-                    {tag: 'div', content: [    
-                      this.productcategory 
-                    ]}                   
-                  ]}                   
-                ]},                                                               
-                {tag: 'div', attr: {'class': 'span3'}, content: [ 
-                  {tag: 'div', attr: {'style': 'padding: 10px'}, content: [    
-                    {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
-                      {tag:'i', attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
-                    ], init: function () {
-                      this.click(function (e) {
-                        e.preventDefault();
-                        var filter = {};
-                        if (me.productname.val() && me.productname.val() !== '') {
-                          filter.product = filter.product || {};
-                          filter.product._identifier = '%i' + OB.UTIL.escapeRegExp(me.productname.val());
-                        }
-                        if (me.productcategory.val() && me.productcategory.val() !== '') {
-                          filter.product = filter.product || {};
-                          filter.product.productCategory = me.productcategory.val();
-                        }
-                        
-                        // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
-                        me.products.exec(filter);                        
-                      });
-  
-                    }}                                                                   
-                  ]}                                                                   
-                ]}                    
-              ]},
-              
-              {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-                {tag: 'div', attr: {'class': 'span12'}, content: [    
-                  {tag: 'div', content: [ 
-                    this.productsview.div
-                  ]}                   
+      {tag: 'div', attr: {'class': 'row-fluid'}, content: [  
+        {tag: 'div', attr: {'class': 'span12'}, content: [    
+          {tag: 'div', attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
+            {tag: 'div', attr: {'class': 'span9'}, content: [    
+              {tag: 'div', attr: {'style': 'padding: 10px'},  content: [    
+                {tag: 'div', content: [    
+                  this.productname 
+                ]},
+                {tag: 'div', content: [    
+                  this.productcategory 
                 ]}                   
-              ]}                                                             
-            ]}                                                                   
-          ]}                      
-        ]}        
-      ]}
+              ]}                   
+            ]},                                                               
+            {tag: 'div', attr: {'class': 'span3'}, content: [ 
+              {tag: 'div', attr: {'style': 'padding: 10px'}, content: [    
+                {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
+                  {tag:'i', attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
+                ], init: function () {
+                  this.click(function (e) {
+                    e.preventDefault();
+                    var filter = {};
+                    if (me.productname.val() && me.productname.val() !== '') {
+                      filter.product = filter.product || {};
+                      filter.product._identifier = '%i' + OB.UTIL.escapeRegExp(me.productname.val());
+                    }
+                    if (me.productcategory.val() && me.productcategory.val() !== '') {
+                      filter.product = filter.product || {};
+                      filter.product.productCategory = me.productcategory.val();
+                    }
+                    
+                    // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
+                    me.products.exec(filter);                        
+                  });
+
+                }}                                                                   
+              ]}                                                                   
+            ]}                    
+          ]},
+          
+          {tag: 'div', attr: {'class': 'row-fluid'}, content: [
+            {tag: 'div', attr: {'class': 'span12'}, content: [    
+              {tag: 'div', content: [ 
+                this.productsview.div
+              ]}                   
+            ]}                   
+          ]}                                                             
+        ]}                                                                   
+      ]}                      
     );
     
     this.categories.exec({});    

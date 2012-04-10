@@ -9,7 +9,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     var me = this;   
     
     this.editlineimage = OB.UTIL.EL(
-      {tag: 'div', attr: {'class': 'span4'}}
+      {tag: 'div'}
     );
     this.editlinename = OB.UTIL.EL(
       {tag: 'strong'}
@@ -97,7 +97,9 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
             ]}                                                                                                                                      
           ]}                                                                                                                                      
         ]},                             
-        this.editlineimage                                                       
+        {tag: 'div', attr: {'class': 'span4;', 'style': ' padding:20px;'}, content: [
+          this.editlineimage
+        ]}                                                      
       ]}                              
     );
     
@@ -150,7 +152,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
         if (data) {
           me.msgaction.hide();
           me.msgedit.show();
-          me.editlineimage.empty().append(OB.UTIL.getThumbnail(data.img, 128, 164));
+          me.editlineimage.empty().append(OB.UTIL.getThumbnail(data.img, 128, 128));
           me.editlinename.text(data.product._identifier);
           me.editlineqty.text(me.line.printQty());
           me.editlineprice.text(me.line.printPrice());
