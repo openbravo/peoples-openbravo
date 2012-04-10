@@ -441,11 +441,16 @@ BEGIN --BODY
     END;--FOR  COMMIT
     BEGIN -- FOR COMMIT
 
-      -- Set org lines like the headear
-      UPDATE C_INVOICELINE
-      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = v_Record_ID),Updated=now(),
-          UpdatedBy=v_UpdatedBy
-      WHERE C_INVOICE_ID = v_Record_ID;
+      SELECT COUNT(*)
+        INTO v_Count
+      FROM C_INVOICE I, C_INVOICELINE IL
+      WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID
+        AND AD_ISORGINCLUDED(IL.AD_Org_ID, I.AD_Org_ID, I.AD_Client_ID) <> -1
+        AND I.C_INVOICE_ID = v_Record_ID;
+      IF (v_Count=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgLines@') ;
+      END IF;
+
 
       SELECT COUNT(*) INTO v_Count
       FROM C_INVOICE C,
@@ -1254,12 +1259,7 @@ BEGIN --BODY
     SET AD_Client_ID=v_Client_ID
     WHERE C_Invoice_ID=v_Record_ID
       AND AD_Client_ID<>v_Client_ID;
-    v_ResultStr:='SyncOwnershipOrg';
-    UPDATE C_INVOICELINE
-    SET AD_Org_ID=v_Org_ID
-    WHERE C_Invoice_ID=v_Record_ID
-      AND C_Charge_ID IS NULL -- sync for products
-      AND AD_Org_ID<>v_Org_ID;
+
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     /**************************************************************************
