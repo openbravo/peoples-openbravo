@@ -1,4 +1,4 @@
-
+/*global define,_*/
 
 define(['utilities', 'datasource'], function () {
   
