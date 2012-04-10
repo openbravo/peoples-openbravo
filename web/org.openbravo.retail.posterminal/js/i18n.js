@@ -1,3 +1,5 @@
+/*global define */
+
 define([], function () {
   
   // Mockup for OB.I18N
@@ -87,10 +89,10 @@ define([], function () {
   };    
   
   OB.I18N.formatGeneralNumber = function (num, options) {
-    n = num.toFixed(options.decimals);
-    x = n.split('.');
-    x1 = x[0];
-    x2 = x.length > 1 ? options.decimal + x[1] : '';
+    var n = num.toFixed(options.decimals);
+    var x = n.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? options.decimal + x[1] : '';
     var rgx = /(\d+)(\d{3})/;
     while (rgx.test(x1)) {
       x1 = x1.replace(rgx, '$1' + options.group + '$2');
