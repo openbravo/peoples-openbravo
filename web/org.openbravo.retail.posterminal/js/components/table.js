@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities'], function () {
   
   OB = window.OB || {};
@@ -160,6 +162,6 @@ define(['utilities'], function () {
       this.tbody.empty();  
       this.collection.trigger('selected');
     }, this);    
-  }
+  };
 
 }); 

@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -23,7 +25,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
     lines.on('reset change add remove', function() {
       this.totalgross.text(this.receipt.printNet());      
     }, this);
-  }
+  };
   
   OB.COMP.Total.prototype.attr = function (attr, value) {
   };

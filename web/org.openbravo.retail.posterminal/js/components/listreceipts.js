@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};

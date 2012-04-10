@@ -1,3 +1,4 @@
+/*global define,$,_,Backbone */
 
 define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'], function () {
   
@@ -38,7 +39,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
         
       );
 
-    }
+    };
     
     var btndel = createbtn('del', OB.UTIL.NODE('i', {'class': 'icon-chevron-left'}, []));
     
@@ -146,7 +147,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
     ));       
     
     
-    this.products = context.get('DataProduct')
+    this.products = context.get('DataProduct');
     this.receipt = context.get('modelorder');
     this.line = null;
     
@@ -213,7 +214,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
   };
   
   OB.COMP.Keyboard.prototype.getNumber = function () {
-    var i = parseInt(this.editbox.text());
+    var i = parseInt(this.editbox.text(), 10);
     this.editbox.empty();
     return i;
   };
@@ -225,11 +226,12 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
   };  
   
   OB.COMP.Keyboard.prototype.keyPressed = function (key) {
+    var t;
     if (key.match(/^([0-9]|\.|[a-z])$/)) {
-      var t = this.editbox.text();
+      t = this.editbox.text();
       this.editbox.text(t + key);
     } else if (key === 'del') {
-      var t = this.editbox.text();
+      t = this.editbox.text();
       if (t.length > 0) {
         this.editbox.text(t.substring(0, t.length - 1));
       }

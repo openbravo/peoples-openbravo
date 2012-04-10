@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities',  'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -24,7 +26,7 @@ define(['utilities',  'model/order', 'model/terminal'], function () {
     this.receipt.on('clear change:bp', function () {
       this.bp.empty().append(this.renderTitle(this.receipt));
     }, this);
-  }
+  };
   
   OB.COMP.BusinessPartner.prototype.attr = function (attr, value) {
   };

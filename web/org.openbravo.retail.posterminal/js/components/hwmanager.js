@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -31,7 +33,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB.COMP.HWManager.prototype.printOrder = function () {
     
     this.hw.print(this.templatereceipt, { order: this.receipt});    
-  }
+  };
   
   OB.COMP.HWManager.prototype.attrs = function (attrs) {    
     this.templateline = attrs.templateline;

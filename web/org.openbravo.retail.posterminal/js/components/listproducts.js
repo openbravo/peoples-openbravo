@@ -1,4 +1,4 @@
-
+/*global define */
 
 define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/terminal', 'components/table'], function () {
   

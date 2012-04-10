@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities',  'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -31,7 +33,7 @@ define(['utilities',  'model/order', 'model/terminal'], function () {
       }
       
     }, this);
-  }
+  };
   
   OB.COMP.ReceiptsCounter.prototype.attr = function (attr, value) {
   };

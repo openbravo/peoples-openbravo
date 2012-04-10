@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
   
   OB = window.OB || {};
@@ -87,7 +89,7 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
     lines.on('reset change add remove', function() {
       this.totalnet.text(this.receipt.printNet());   
     }, this);
-  }
+  };
   
   OB.COMP.OrderView.prototype.attr = function (attr, value) {
   };

@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -165,5 +167,5 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       me.editlineprice.empty();
       me.editlinenet.empty();
     }    
-  }    
+  };
 }); 

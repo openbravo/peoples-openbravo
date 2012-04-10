@@ -1,3 +1,5 @@
+/*global define */
+
 define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
@@ -22,16 +24,16 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       var locationname = '';
       
       if (this.terminal.get('terminal')) {
-        name = this.terminal.get('terminal')['_identifier'];
+        name = this.terminal.get('terminal')._identifier;
         clientname = this.terminal.get('terminal')['client._identifier'];
         orgname = this.terminal.get('terminal')['organization._identifier'];
       }      
       if (this.terminal.get('pricelist')) {
-        pricelistname = this.terminal.get('pricelist')['_identifier'];
+        pricelistname = this.terminal.get('pricelist')._identifier;
         currencyname = this.terminal.get('pricelist')['currency._identifier'];
       }
       if (this.terminal.get('location')) {
-        locationname = this.terminal.get('location')['_identifier'];
+        locationname = this.terminal.get('location')._identifier;
       }
 
       this.yourterminal.text(name);
@@ -84,6 +86,6 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       );
     }, this);
         
-  }
+  };
 
 });  
