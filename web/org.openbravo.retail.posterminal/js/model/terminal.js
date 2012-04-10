@@ -1,4 +1,4 @@
-
+/*global define,Backbone */
 
 define(['datasource', 'utilities'], function () {
   
@@ -17,13 +17,16 @@ define(['datasource', 'utilities'], function () {
     },
     exec : function (filter) {
       var me = this;
-      this.ds.exec(filter, function (data) {   
+      this.ds.exec(filter, function (data) {
+        var i;
         me.reset();
         if (data.exception) {
           alert(data.exception.message);
         } else {
-          for (var i in data) {
-            me.add(data[i]);
+          for (i in data) {
+            if(data.hasOwnProperty(i)) {
+              me.add(data[i]);
+            }
           }
         }
       });
