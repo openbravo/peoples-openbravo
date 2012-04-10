@@ -168,15 +168,15 @@
 
 .OBGridFilterCell {
  /* border-top: 1px solid #b2b5b0 */
-  border-left: 1px solid #b2b5b0; /*#BBBFB6*/;
+  border-right: 1px solid #b2b5b0; /*#BBBFB6*/;
   background-repeat: repeat-x;
   background-position: left top;
-  background-color: #CDD7BB;
   vertical-align: middle;
 }
 
 .OBGridFilterBase {
-  border-top: 1px solid #b2b5b0;
+  background-color: #CDD7BB;
+  border-bottom: 1px solid #b2b5b0;
 }
 
 .OBGridFilterStaticText,
@@ -202,11 +202,16 @@
   background-color: #CDD7BB;
 }
 
-.OBGridFilterFunnelIconDown,
-.OBGridFilterFunnelIconSelected,
-.OBGridFilterFunnelIconFocused,
 .OBGridFilterFunnelIcon {
   background-color: #CDD7BB;
+  cursor: pointer;
+}
+
+.OBGridFilterFunnelIconOver,
+.OBGridFilterFunnelIconDown,
+.OBGridFilterFunnelIconSelected,
+.OBGridFilterFunnelIconFocused {
+  background-color: #ffe1c0;
   cursor: pointer;
 }
 

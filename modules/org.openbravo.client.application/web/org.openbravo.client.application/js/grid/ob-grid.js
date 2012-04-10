@@ -209,41 +209,6 @@ isc.OBGrid.addProperties({
       return false;
     },
 
-    filterImg: {
-      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
-    },
-
-    makeActionButton: function () {
-      var ret = this.Super('makeActionButton', arguments);
-      this.filterImage.setLeft(this.computeFunnelLeft(2));
-      var layout = isc.HLayout.create({
-        styleName: 'OBGridFilterFunnelBackground',
-        width: '100%',
-        height: '100%',
-        left: this.computeFunnelLeft()
-      });
-      this.funnelLayout = layout;
-      this.addChild(layout);
-      return ret;
-    },
-
-    computeFunnelLeft: function (correction) {
-      correction = correction || 0;
-      return this.getInnerWidth() - this.getScrollbarSize() - 3 + correction;
-    },
-
-    // keep the funnel stuff placed correctly
-    layoutChildren: function () {
-      var ret = this.Super("layoutChildren", arguments);
-      if (this.funnelLayout) {
-        this.funnelLayout.setLeft(this.computeFunnelLeft());
-      }
-      if (this.filterImage) {
-        this.filterImage.setLeft(this.computeFunnelLeft(2));
-      }
-      return ret;
-    },
-
     // overridden for:
     // https://issues.openbravo.com/view.php?id=18509
     editorChanged: function (item) {

@@ -93,6 +93,12 @@ isc.OBGrid.changeDefaults('filterEditorDefaults', {
   baseStyle: 'OBGridFilterCell'
 });
 
+isc.OBGrid.changeDefaults('filterEditorProperties', {
+  filterImg: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
+  }
+});
+
 isc.OBGrid.changeDefaults('sorterDefaults', {
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle
   showFocused: false,
