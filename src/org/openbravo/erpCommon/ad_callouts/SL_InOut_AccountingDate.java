@@ -34,7 +34,7 @@ public class SL_InOut_AccountingDate extends SimpleCallout {
     try {
       info.addResult("inpdateacct", FormatUtilities.replaceJS(strchanged));
     } catch (Exception e) {
-      log4j.info("Process failed populating accounting date from movement date", e);
+      log4j.error("Process failed populating accounting date from movement date", e);
     }
   }
 }
