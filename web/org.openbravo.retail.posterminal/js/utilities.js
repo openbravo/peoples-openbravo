@@ -1,3 +1,5 @@
+/*global define,$ */
+
 define([], function () {
   
   OB = window.OB || {};
@@ -29,7 +31,7 @@ define([], function () {
     } else if (elemBottom > docViewBottom) {
       container.scrollTop(currentScroll + elemBottom - docViewBottom);
     }
-  }
+  };
 
   // public
   OB.UTIL.getThumbnail = function (base64, width, height, contentType) {
@@ -44,7 +46,7 @@ define([], function () {
     var regex = new RegExp(regexS);
     var results = regex.exec(window.location.search);
     return (results) ? decodeURIComponent(results[1].replace(/\+/g, " ")) : "";
-  }
+  };
     
   OB.UTIL.escapeRegExp = function (text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -57,29 +59,33 @@ define([], function () {
       context.set(id || defaultid, obj);
       return obj;
     };
-  }
+  };
   
   OB.UTIL.DOM = function (dom) {
+    var e, attr, i, max, j, maxj;
+
     if (typeof (dom) === "string") { // Is an String
       return document.createTextNode(dom);
     } else if (dom.nodeType) { // Is a DOM Node
       return dom;
     } else if (dom.tag) { //
-      var e = document.createElement(dom.tag);
+      e = document.createElement(dom.tag);
 
       // attributes
       if (dom.attr) {
-        for (var attr in dom.attr) {
-          e.setAttribute(attr, dom.attr[attr]);
+        for (attr in dom.attr) {
+          if(dom.attr.hasOwnProperty(attr)) {
+            e.setAttribute(attr, dom.attr[attr]);
+          }
         }
       }
 
       // children. Always an array
       if (dom.children) {
-        for (var i = 0, max = dom.children.length; i < max; i++) {
+        for (i = 0, max = dom.children.length; i < max; i++) {
           var child = dom.children[i];
           if (child.jquery) {
-            for (var j = 0, maxj = child.length; j < maxj; j++) {
+            for (j = 0, maxj = child.length; j < maxj; j++) {
               e.appendChild(OB.UTIL.DOM(child[j]));
             }
           } else {
@@ -89,7 +95,7 @@ define([], function () {
       }
       return e;
     }
-  }
+  };
 
   OB.UTIL.NODE = function (tag, attr, children) {
     return {
@@ -100,18 +106,21 @@ define([], function () {
   };
 
   OB.UTIL.EL = function (def) {
-    
+    var attr, j, maxj;
+
     if (def.jquery) {
       return def;
     } else if (def.tag) {
       var el = $('<' + def.tag + '/>');
       if (def.attr) {
-        for (var attr in def.attr) {
-          el.attr(attr, def.attr[attr]);
+        for (attr in def.attr) {
+          if(def.attr.hasOwnProperty(attr)) {
+            el.attr(attr, def.attr[attr]);
+          }
         }      
       }
       if (def.content) {
-        for (var j = 0, maxj = def.content.length; j < maxj; j++) {
+        for (j = 0, maxj = def.content.length; j < maxj; j++) {
           el.append(OB.UTIL.EL(def.content[j]));
         }        
       }
@@ -124,7 +133,7 @@ define([], function () {
     } else if (def.nodeType) {
       return $(def);
     }
-  }
+  };
 });
 
 
