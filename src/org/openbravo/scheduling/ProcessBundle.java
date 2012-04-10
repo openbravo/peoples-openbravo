@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -167,8 +167,14 @@ public class ProcessBundle {
    * Returns a string representation of the process parameters in key=value pairs.
    * 
    * @return a deflated string representation of the process' parameter map
+   * 
+   * @deprecated Use instead {@link #getParamsDeflated()}
    */
   public String getParamsDefalated() {
+    return this.getParamsDeflated();
+  }
+
+  public String getParamsDeflated() {
     final XStream xstream = new XStream(new JettisonMappedXmlDriver());
     return xstream.toXML(getParams());
   }
