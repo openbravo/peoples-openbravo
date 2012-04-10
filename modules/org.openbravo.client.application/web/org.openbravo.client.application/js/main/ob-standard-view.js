@@ -2101,8 +2101,12 @@ isc.OBStandardView.addProperties({
       fld.escapeHTML = (fld.escapeHTML === false ? false : true);
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
+      //issue 20192: sometimes the property editorProperties.visible is changed by setFieldFormProperties
+      var prevVisible = fld.editorProperties.visible;
       this.setFieldFormProperties(fld.editorProperties);
-
+      if (prevVisible !== fld.editorProperties.visible){
+        fld.editorProperties.visible = prevVisible;
+      }
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
       }
