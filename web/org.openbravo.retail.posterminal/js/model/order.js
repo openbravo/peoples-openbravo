@@ -1,4 +1,4 @@
-
+/*global define,Backbone */
 
 define(['utilities', 'i18n'], function () {
   
@@ -197,7 +197,7 @@ define(['utilities', 'i18n'], function () {
     
     createNew: function () {
       this.saveCurrent();
-      this.current = new OB.MODEL._Order()
+      this.current = new OB.MODEL._Order();
       this.add(this.current);
       this.loadCurrent();     
     },  
