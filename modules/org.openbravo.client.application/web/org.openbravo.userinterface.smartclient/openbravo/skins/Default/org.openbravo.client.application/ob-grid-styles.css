@@ -82,8 +82,8 @@
   font-family: arial, sans-serif;
   font-size: 12px;
   vertical-align: middle;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   
 /*  margin: 0px; */
   padding: 0px 4px 0px 4px;
@@ -170,8 +170,8 @@
 }
 
 .OBGridFilterCell {
- /* border-top: 1px solid #b2b5b0 */
-  border-right: 1px solid #b2b5b0; /*#BBBFB6*/;
+  border: 1px solid #b2b5b0; /*#BBBFB6*/;
+  border-width: 0px 1px 0px 0px;
   background-repeat: repeat-x;
   background-position: left top;
   vertical-align: middle;
@@ -179,7 +179,8 @@
 
 .OBGridFilterBase {
   background-color: #CDD7BB;
-  border-bottom: 1px solid #b2b5b0;
+  border: 1px solid #b2b5b0;
+  border-width: 0px 0px 1px 0px;
 }
 
 .OBGridFilterStaticText,
@@ -225,8 +226,8 @@
   font-size: 11px;
   font-family: 'lucida sans', sans-serif;
   font-weight: bold;
- /* border-top: 1px solid #BBBFB6;*/
-  border-right: 1px solid #BBBFB6;
+  border: 1px solid #BBBFB6;
+  border-width: 0px 1px 0px 0px;
   text-align: center;
   background: none;
 }
@@ -235,7 +236,8 @@
   background-repeat: repeat-x;
   background-position: left -22px;
   background-color: #FFFFFF;
-  border-bottom: 1px solid #BBBFB6;
+  border: 1px solid #BBBFB6;
+  border-width: 0px 0px 1px 0px;
 }
 
 .OBGridHeaderCell {
@@ -257,8 +259,8 @@
 .OBGridSummaryCell_count {
   font-family: arial, sans-serif;
   vertical-align: middle;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   background-color: #ffffff;
 }
 
@@ -343,8 +345,8 @@
   font-size:12px;
   text-overflow: ellipsis;
   color: #58A618;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   cursor: pointer;
   padding: 0px 0px 1px 3px;
 }

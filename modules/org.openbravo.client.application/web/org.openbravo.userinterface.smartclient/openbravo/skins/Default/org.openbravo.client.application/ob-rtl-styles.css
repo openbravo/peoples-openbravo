@@ -77,6 +77,91 @@
 }
 
 
+/* ob-grid-styles.css */
+
+.OBGridCell,
+.OBGridCellOver,
+.OBGridCellDark,
+.OBGridCellOverDark,
+.OBGridCellSelected,
+.OBGridCellSelectedDark,
+.OBGridCellSelectedOver,
+.OBGridCellSelectedOverDark,
+.OBGridCellDisabled,
+.OBGridCellDisabledDark,
+
+.OBGridCellSelectedViewInactive,
+.OBGridCellSelectedViewInactiveDark,
+
+.OBGridCellEdit,
+.OBGridCellEditOver,
+.OBGridCellEditDark,
+.OBGridCellEditOverDark,
+.OBGridCellEditSelected,
+.OBGridCellEditSelectedDark,
+.OBGridCellEditSelectedOver,
+.OBGridCellEditSelectedOverDark,
+.OBGridCellEditDisabled,
+.OBGridCellEditDisabledDark,
+
+.OBGridCellError,
+.OBGridCellErrorOver,
+.OBGridCellErrorDark,
+.OBGridCellErrorOverDark,
+.OBGridCellErrorSelected,
+.OBGridCellErrorSelectedDark,
+.OBGridCellErrorSelectedOver,
+.OBGridCellErrorSelectedOverDark,
+.OBGridCellErrorDisabled,
+.OBGridCellErrorDisabledDark,
+
+.OBGridCellErrorEdit,
+.OBGridCellErrorEditOver,
+.OBGridCellErrorEditDark,
+.OBGridCellErrorEditOverDark,
+.OBGridCellErrorEditSelected,
+.OBGridCellErrorEditSelectedDark,
+.OBGridCellErrorEditSelectedOver,
+.OBGridCellErrorEditSelectedOverDark,
+.OBGridCellErrorEditDisabled,
+.OBGridCellErrorEditDisabledDark {
+  border-width: 0px 0px 1px 1px;
+}
+
+.OBGridFilterCell {
+  border-width: 0px 0px 0px 1px;
+}
+
+.OBGridHeaderCellTitle,
+.OBGridHeaderCellTitleOver,
+.OBGridHeaderCellTitleDown,
+.OBGridHeaderCellTitleSelected,
+.OBGridHeaderCellTitleSelectedOver,
+.OBGridHeaderCellTitleSelectedDown,
+.OBGridHeaderCellTitleDisabled,
+.OBGridHeaderCellTitleSelectedDisabled {
+  border-width: 0px 0px 0px 1px;
+}
+
+.OBGridSummaryCell,
+.OBGridSummaryCell_sum,
+.OBGridSummaryCell_avg,
+.OBGridSummaryCell_count {
+  border-width: 0px 0px 1px 1px;
+}
+
+.OBGridLinkCell,
+.OBGridLinkCellOver,
+.OBGridLinkCellSelected,
+.OBGridLinkCellSelectedOver,
+.OBGridLinkCellDark,
+.OBGridLinkCellOverDark,
+.OBGridLinkCellSelectedDark,
+.OBGridLinkCellSelectedOverDark {
+  border-width: 0px 0px 1px 1px;
+}
+
+
 /* ob-messagebar-styles.css */
 
 .OBMessageBarDescriptionText {
