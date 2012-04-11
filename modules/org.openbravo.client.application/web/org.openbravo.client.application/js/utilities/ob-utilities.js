@@ -161,17 +161,16 @@ OB.Utilities.createLoadingLayout = function () {
     defaultLayoutAlign: 'center'
   });
   var loadingLayout = isc.HLayout.create({
-    styleName: OB.Styles.LoadingPrompt.loadingLayoutStyleName,
-    width: 1,
-    height: 1,
+    align: 'center',
+    defaultLayoutAlign: 'center',
+    membersMargin: 0,
     overflow: 'visible'
   });
   mainLayout.addMember(loadingLayout);
   loadingLayout.addMember(isc.Label.create({
     contents: OB.I18N.getLabel('OBUIAPP_LOADING'),
-    styleName: 'OBLoadingPromptLabel',
+    styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
     width: 1,
-    height: 1,
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
