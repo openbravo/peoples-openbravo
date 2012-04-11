@@ -4569,7 +4569,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--607-->  <COLUMNNAME><![CDATA[Updated]]></COLUMNNAME>
 <!--607-->  <NAME><![CDATA[Updated]]></NAME>
 <!--607-->  <PRINTNAME><![CDATA[Updated]]></PRINTNAME>
-<!--607-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
+<!--607-->  <DESCRIPTION><![CDATA[The date that this record was last updated]]></DESCRIPTION>
 <!--607-->  <HELP><![CDATA[The Updated field indicates the date that this record was updated.]]></HELP>
 <!--607-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--607-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
