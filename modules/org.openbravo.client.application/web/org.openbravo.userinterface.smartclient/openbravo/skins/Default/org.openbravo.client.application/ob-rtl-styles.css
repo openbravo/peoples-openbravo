@@ -77,6 +77,26 @@
 }
 
 
+/* ob-messagebar-styles.css */
+
+.OBMessageBarDescriptionText {
+  margin: 4px 6px 2px 2px;
+}
+
+.OBMessageBarCloseIconOver,
+.OBMessageBarCloseIcon {
+  margin: 2px 0px 0px 2px;
+}
+
+.OBMessageBarLeftMsgContainer {
+  float: right;
+}
+
+.OBMessageBarRightMsgContainer {
+  float: left;
+}
+
+
 /* ob-navigation-bar-styles.js */
 
 .OBNavBarToolStrip {
