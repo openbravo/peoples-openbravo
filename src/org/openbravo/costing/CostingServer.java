@@ -30,6 +30,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -154,7 +155,9 @@ public class CostingServer {
       if (organization.getCurrency() != null) {
         return organization.getCurrency();
       }
-      return OBContext.getOBContext().getCurrentClient().getCurrency();
+      Client client = OBDal.getInstance().get(Client.class,
+          OBContext.getOBContext().getCurrentClient().getId());
+      return client.getCurrency();
     } else {
       init();
       return getCostCurrency();
