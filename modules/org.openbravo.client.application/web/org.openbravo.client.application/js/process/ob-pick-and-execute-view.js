@@ -109,7 +109,6 @@ isc.OBPickAndExecuteView.addProperties({
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
-          var newButton;
           newButton=isc.OBFormButton.create({
             title: this.buttons[i],
             _buttonValue: i,
