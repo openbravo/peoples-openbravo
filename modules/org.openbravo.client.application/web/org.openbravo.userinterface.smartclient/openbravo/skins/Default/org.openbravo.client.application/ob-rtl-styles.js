@@ -53,6 +53,8 @@ OB.Styles.TopLayout.LogosContainer.align = 'left';
 
 OB.Styles.Personalization.Icons.fieldGroup = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder-RTL.png';
 OB.Styles.Personalization.TabSet.tabBarAlign = 'right';
+OB.Styles.Personalization.Menu.iconBodyStyleName_rtl = 'OBPersonalizationPullDownMenuBody';
+OB.Styles.Personalization.Menu.itemIcon = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView-RTL.png';
 
 
 /* ob-statusbar-styles.js */

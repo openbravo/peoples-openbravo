@@ -129,6 +129,14 @@
 
 /* ob-personalization-styles.css */
 
+.OBPersonalizationPullDownMenuCellIcon,
+.OBPersonalizationPullDownMenuCellIconSelected,
+.OBPersonalizationPullDownMenuCellIconOver,
+.OBPersonalizationPullDownMenuCellIconSelectedOver,
+.OBPersonalizationPullDownMenuCellIconDisabled {
+  border-width: 0px 0px 0px 1px;
+}
+
 .OBFormPersonalizerPreviewPanel {
   border-width: 0px 5px 0px 0px;
 }
