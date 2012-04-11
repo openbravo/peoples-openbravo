@@ -6,7 +6,6 @@
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.dal.core.OBContext" %>
 <%@ page import="org.openbravo.model.ad.module.Module" %>
-<%@ page import="org.quartz.JobExecutionException" %>
 <%@ page import="org.apache.log4j.Logger" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
@@ -45,14 +44,14 @@ if(userId == null){
 }
 
 boolean uncompSC = false;
+String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
 OBContext.setAdminMode();
 try {
-  String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
   if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)) {
     uncompSC = KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment();
   }
 } catch (Exception e) {
-  throw new JobExecutionException(e.getMessage(), e);
+  log.error("Error trying to acquire module \"" + scDevModulePackage + "\": " + e.getMessage(), e);
 } finally {
   OBContext.restorePreviousMode();
 }
