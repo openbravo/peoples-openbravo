@@ -5438,7 +5438,7 @@ function replaceAt(string, what, ini, end) {
 
 function closePage(okEvent) {
   if (isWindowInMDIPopup) {
-    setTimeout(function() { getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, !okEvent); }, 10);
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, !okEvent);
   } else if (isWindowInMDITab) {
   } else {
     top.window.close();
