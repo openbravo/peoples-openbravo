@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '14275';
+  var number = '16049';
   return number;
 }
 
@@ -5436,7 +5436,8 @@ function replaceAt(string, what, ini, end) {
 
 function closePage(okEvent) {
   if (isWindowInMDIPopup) {
-    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, !okEvent);
+    // Timeout is set in order to fix issue https://issues.openbravo.com/view.php?id=20234
+    setTimeout(function() { getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId, !okEvent); }, 10);
   } else if (isWindowInMDITab) {
   } else {
     top.window.close();
