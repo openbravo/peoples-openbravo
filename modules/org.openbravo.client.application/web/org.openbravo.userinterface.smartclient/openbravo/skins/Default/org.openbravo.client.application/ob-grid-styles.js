@@ -50,7 +50,7 @@ isc.OBGrid.addProperties({
   headerMenuButtonWidth: 17,
   headerMenuButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
-  editLinkColumnWidth: 58,
+  editLinkColumnWidth: 56,
 
   summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults: {
@@ -160,6 +160,7 @@ isc.OBGridToolStripIcon.addProperties({
 isc.OBGridToolStripSeparator.addProperties({
   width: 1,
   height: 11,
+  baseStyle: 'OBGridToolStripSeparator',
   imageType: 'normal',
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-separator.png'
 });
@@ -172,6 +173,7 @@ isc.OBGridButtonsComponent.addProperties({
   align: 'center',
   defaultLayoutAlign: 'center',
   styleName: 'OBGridToolStrip',
+  layoutLeftMargin: -2,
   membersMargin: 4
 });
 

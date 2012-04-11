@@ -19,10 +19,13 @@
 
 
 .OBGridToolStrip {
-  padding: 0px 0px 1px 3px;
 }
 
 .OBGridToolStripIcon {
+}
+
+.OBGridToolStripSeparator {
+  padding: 4px 0px 0px 0px;
 }
 
 .OBGridBody {
