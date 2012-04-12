@@ -608,8 +608,8 @@ public abstract class AcctServer {
     // Filter the right acct schemas for the organization
     for (int i = 0; i < (this.m_as).length; i++) {
       acct = m_as[i];
-      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
-          AD_Table_ID, adOrgId)) {
+      if (AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID)) {
         new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
       }
     }
