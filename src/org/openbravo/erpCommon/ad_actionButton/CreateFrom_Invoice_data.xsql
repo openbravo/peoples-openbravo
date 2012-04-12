@@ -225,7 +225,8 @@
     <Sql>
       <![CDATA[
       SELECT (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.QTY ELSE B.QTY END) AS ID, 
-      A.C_UOM_ID,uom.UOMSymbol, A.M_Product_ID,p.NAME, A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, 
+      A.C_UOM_ID,uom.UOMSymbol, A.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(A.m_product_id), to_char(?)) AS NAME, 
+      A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, 
       B.M_InOutLine_ID, A.Description, (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.quantityOrder ELSE B.quantityOrder END) AS quantityOrder, 
       (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.M_Product_UOM_ID ELSE B.M_Product_UOM_ID END) AS M_Product_UOM_ID, A.M_ATTRIBUTESETINSTANCE_ID, A.ad_org_id,
       A.taxbaseamt
@@ -259,6 +260,7 @@
       ORDER BY A.Line
       ]]>
     </Sql>
+    <Parameter name="adLanguage"/>
     <Parameter name="piId"/>
     <Parameter name="piId"/>
     <Parameter name="cOrderlineId" optional="true" type="argument" after="AND A.M_Product_ID=p.M_Product_ID" text=" AND A.C_OrderLine_ID IN "/>
@@ -268,7 +270,7 @@
     <Sql>
       <![CDATA[
         SELECT (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN (l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) ELSE il.MOVEMENTQTY END) AS ID, 
-        l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, 
+        l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, 
         l.C_OrderLine_ID,l.Line, max(uom.stdprecision) AS stdprecision, cur.priceprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*C_DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
@@ -289,6 +291,7 @@
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="cOrderlineId" optional="true" type="argument" after=" AND l.M_Product_ID=p.M_Product_ID " text=" AND l.C_OrderLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="selectFromShipment" type="preparedStatement" return="multiple">
@@ -482,8 +485,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT (l.MovementQty-SUM(COALESCE(mi.Qty,0))) AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,
-      l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description, l.quantityOrder*C_DIVIDE((l.MovementQty-SUM(COALESCE(mi.Qty,0))),l.MovementQty) as quantityOrder, 
+      SELECT (l.MovementQty-SUM(COALESCE(mi.Qty,0))) AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, 
+      l.M_InOutLine_ID,l.Line, l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description, l.quantityOrder*C_DIVIDE((l.MovementQty-SUM(COALESCE(mi.Qty,0))),l.MovementQty) as quantityOrder, 
       l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, COALESCE(co.taxbaseamt,0) * C_DIVIDE((l.MovementQty-SUM(COALESCE(mi.Qty,0))),COALESCE(co.qtyordered,1)) as taxbaseamt
       FROM M_INOUTLINE l left join M_MATCHINV mi on l.M_InOutLine_ID=mi.M_InOutLine_ID
             left join C_ORDERLINE co ON co.C_ORDERLINE_ID=l.C_ORDERLINE_ID,
@@ -494,13 +497,14 @@
       ORDER BY l.Line
       ]]>
     </Sql>
+    <Parameter name="adLanguage"/>
     <Parameter name="cInOutLineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID" text=" AND l.M_InOutLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="selectFromShipmentUpdateSOTrx" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT l.MovementQty AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, l.M_InOutLine_ID,l.Line,
+        SELECT l.MovementQty AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, l.M_InOutLine_ID,l.Line,
         l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description,l.quantityOrder, l.M_Product_UOM_ID,
         l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
         FROM C_UOM uom, M_INOUTLINE l, M_PRODUCT p 
@@ -512,6 +516,7 @@
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="cOrderlineId" optional="true" type="argument" after="AND l.isinvoiced = 'N' " text=" AND l.M_InOutLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
