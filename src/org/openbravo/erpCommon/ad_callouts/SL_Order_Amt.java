@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.common.businessObject.TaxCalculator;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -59,6 +60,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strPriceStd = vars.getNumericParameter("inppricestd");
       String strCOrderId = vars.getStringParameter("inpcOrderId");
+      String strCOrderlineId = vars.getStringParameter("inpcOrderlineId");
       String strProduct = vars.getStringParameter("inpmProductId");
       String strUOM = vars.getStringParameter("inpcUomId");
       String strAttribute = vars.getStringParameter("inpmAttributesetinstanceId");
@@ -66,11 +68,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strQty = vars.getNumericParameter("inpqtyordered");
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
+      String strTaxId = vars.getStringParameter("inpcTaxId");
+      String strTaxInclusive = vars.getNumericParameter("inptaxinclusive");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
-            strPriceLimit, strPriceList, strCOrderId, strProduct, strUOM, strAttribute, strTabId,
-            strQty, strPriceStd, cancelPriceAd, strLineNetAmt);
+            strPriceLimit, strPriceList, strCOrderId, strCOrderlineId, strProduct, strUOM,
+            strAttribute, strTabId, strQty, strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId,
+            strTaxInclusive);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -80,9 +85,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
-      String strPriceList, String strCOrderId, String strProduct, String strUOM,
-      String strAttribute, String strTabId, String strQty, String strPriceStd,
-      String cancelPriceAd, String strLineNetAmt) throws IOException, ServletException {
+      String strPriceList, String strCOrderId, String strCOrderlineId, String strProduct,
+      String strUOM, String strAttribute, String strTabId, String strQty, String strPriceStd,
+      String cancelPriceAd, String strLineNetAmt, String strTaxId, String strTaxInclusive)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
       log4j.debug("CHANGED:" + strChanged);
@@ -245,8 +251,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
             12, BigDecimal.ROUND_HALF_EVEN));
         priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
-            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
-            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd
+                .toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         if (priceStd.scale() > PricePrecision)
           priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
         if (priceActual.scale() > PricePrecision)
@@ -265,8 +271,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             resultStock = stockNoAttribute.subtract(qtyOrdered);
             if (stockSecurity.compareTo(resultStock) > 0) {
               resultado.append("new Array('MESSAGE', \""
-                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
-                      vars.getLanguage())) + "\"),");
+                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
+                      .getLanguage())) + "\"),");
             }
           } else {
             if (!strAttribute.equals("") && strAttribute != null) {
@@ -276,8 +282,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
               resultStock = stockAttribute.subtract(qtyOrdered);
               if (stockSecurity.compareTo(resultStock) > 0) {
                 resultado.append("new Array('MESSAGE', \""
-                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
-                        vars.getLanguage())) + "\"),");
+                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
+                        .getLanguage())) + "\"),");
               }
             }
           }
@@ -305,6 +311,30 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         if (LineNetAmt.scale() > StdPrecision)
           LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
       }
+    }
+    // if taxinclusive field is changed then modify net unit price and gross price
+    if (strChanged.equals("inptaxinclusive")) {
+      // SL_InclusiveTaxPrice_Generator generator;
+      BigDecimal tax = new BigDecimal(strTaxInclusive.trim());
+      TaxCalculator generator;
+      generator = new TaxCalculator(strTaxId);
+      priceActual = generator.taxCalculationFromOrder(strCOrderId, tax);
+      resultado.append("new Array(\"inpgrossprice\",\"" + priceActual.add(tax) + "\"),");
+      resultado.append("new Array(\"inppriceactual\",\"" + priceActual + "\"),");
+
+    }
+
+    // if net unit price changed then modify tax inclusive unit price
+    if (strChanged.equals("inppriceactual")) {
+      BigDecimal TaxInclusive = new BigDecimal(0);
+      priceActual = new BigDecimal(vars.getStringParameter("inppriceactual").trim());
+      TaxCalculator generator;
+      generator = new TaxCalculator(strTaxId);
+      TaxInclusive = generator.taxCalculationFromOrder(strCOrderId, priceActual);
+      resultado.append("new Array(\"inptaxinclusive\",\"" + TaxInclusive + "\"),");
+      resultado.append("new Array(\"inpgrossprice\",\"" + priceActual.add(TaxInclusive) + "\"),");
+      log4j.debug("Net unit price results: " + resultado.toString());
+
     }
     if (strChanged.equals("inplinenetamt"))
       resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
