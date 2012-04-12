@@ -2022,7 +2022,7 @@ isc.OBViewGrid.addProperties({
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
-    if (this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
+    if (!this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,
         method: this.cellEditEnd,
