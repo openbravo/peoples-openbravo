@@ -15,7 +15,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
       this.line = line;
     }, this);    
     
-    this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
+    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
     this.productsview = new OB.COMP.TableView({ 
       renderLine: function (model) {
         return OB.UTIL.EL(         

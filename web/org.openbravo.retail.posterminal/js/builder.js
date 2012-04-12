@@ -7,7 +7,7 @@ define([], function () {
   B = function (b, context) {
 
     var mycontext = context || new B.Context();
-    var inst = new b.kind(context, b.id);
+    var inst = new b.kind(mycontext, b.id);
     var attr, i, max, child;
 
     // attributes

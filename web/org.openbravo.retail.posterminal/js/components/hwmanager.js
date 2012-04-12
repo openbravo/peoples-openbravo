@@ -6,7 +6,6 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB.COMP = window.OB.COMP || {};
   
   OB.COMP.HWManager = function (context) {
-    this.hw = context.get('hwserver');
     this.receipt = context.get('modelorder');
     this.line = null;
     
@@ -26,13 +25,13 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   
   OB.COMP.HWManager.prototype.printLine = function () {
     if (this.line) {
-      this.hw.print(this.templateline, {line: this.line});
+      OB.POS.hwserver.print(this.templateline, {line: this.line});
     }   
   };
   
   OB.COMP.HWManager.prototype.printOrder = function () {
     
-    this.hw.print(this.templatereceipt, { order: this.receipt});    
+    OB.POS.hwserver.print(this.templatereceipt, { order: this.receipt});    
   };
   
   OB.COMP.HWManager.prototype.attrs = function (attrs) {    

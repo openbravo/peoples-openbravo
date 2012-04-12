@@ -24,7 +24,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       {tag: 'select', attr: {}}           
     );    
     
-    this.products = new OB.MODEL.ProductPrice(context.get('modelterminal').get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
+    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
     this.productsview = new OB.COMP.TableView({ 
       renderEmpty: function () {
         return function () {

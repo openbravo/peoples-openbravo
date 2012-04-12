@@ -38,7 +38,7 @@ define(['utilities', 'datasource'], function () {
       'from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
       'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
       'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id)'));
-    this.loadparams = {'org': this.context.get('modelterminal').get('terminal').organization };     
+    this.loadparams = {'org': OB.POS.modelterminal.get('terminal').organization };     
   };
   _.extend(OB.DATA.PriceList.prototype, OB.DATA.Base);
   
@@ -49,7 +49,7 @@ define(['utilities', 'datasource'], function () {
       '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
       'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
       'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))'));
-    this.loadparams = {'org': this.context.get('modelterminal').get('terminal').organization };     
+    this.loadparams = {'org': OB.POS.modelterminal.get('terminal').organization };     
   };
   _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
   

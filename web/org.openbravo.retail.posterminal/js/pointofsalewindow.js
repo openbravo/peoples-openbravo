@@ -166,10 +166,7 @@ define(['builder', 'i18n',
                   }, this);                        
                 }}
               ]}            
-            ]}                                                                              
-
-            
-            
+            ]}                                                                                  
           ]}
         ]},
 
@@ -243,7 +240,7 @@ define(['builder', 'i18n',
 
         
       ], init: function () {
-        this.context.on('ready', function () {
+        OB.POS.modelterminal.on('domready', function () {
           this.context.get('modelorderlist').createNew();
         }, this);
       }}

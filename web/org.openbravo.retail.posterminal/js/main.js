@@ -17,13 +17,15 @@ require(['builder', 'pointofsalewindow', 'datasource', 'model/terminal', 'compon
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
   terminal.setModel(modelterminal); 
   
-  var context = new B.Context();  
-  context.set('hwserver', hwserver);
-  context.set('modelterminal', modelterminal);  
-      
+  // global components.
+  OB.POS = {
+      hwserver: hwserver,
+      modelterminal: modelterminal
+  };
+  
   modelterminal.on('ready', function() {
-    $("#container").append(B(pos(), context).$);   
-    context.trigger('ready');   
+    $("#container").append(B(pos()).$);   
+    OB.POS.modelterminal.trigger('domready'); 
   });    
   
   $(document).ready(function () {
