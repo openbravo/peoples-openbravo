@@ -195,7 +195,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       throw new ServletException(ex);
     }
 
-    if (tld != null && tld.length > 0) {
+    if (l != null && l.length > 0) {
       info.addSelect("inpinvoicerule");
       for (int i = 0; i < l.length; i++) {
         info.addSelectResult(l[i].getField("id"), l[i].getField("name"), l[i].getField("id")
