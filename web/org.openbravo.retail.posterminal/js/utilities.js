@@ -63,10 +63,10 @@ define([], function () {
   };
   
   OB.UTIL.recontext = function (model, defaultid) {
-    return function (context, id) {
+    return function (context) {
       var obj = new model();
+      obj.id = defaultid;      
       obj.context = context;
-      context.set(id || defaultid, obj);
       return obj;
     };
   };

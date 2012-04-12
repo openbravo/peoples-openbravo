@@ -8,6 +8,11 @@ define([], function () {
 
     var mycontext = context || new B.Context();
     var inst = new b.kind(mycontext, b.id);
+    inst.id = b.id || inst.id;
+    if (inst.id) {
+      mycontext.set(inst.id, inst);
+    }
+    
     var attr, i, max, child;
 
     // attributes

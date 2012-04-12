@@ -7,7 +7,7 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
   
   OB.COMP.ListCategories = function (context, id) {   
     
-    context.set(id || 'ListCategories', this);
+    this.id = 'ListCategories';
     
     this.receipt = context.get('modelorder');
         

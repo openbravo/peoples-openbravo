@@ -6,10 +6,6 @@ define(['utilities', 'datasource'], function () {
   OB.DATA = window.OB.DATA || {};
   
   OB.DATA.Base = {
-    init: function (context, id, defaultid) {
-      this.context = context;
-      context.set(id || defaultid, this);      
-    },
     inithandler: function (init) { 
        if (init) {
          init.call(this);
@@ -23,8 +19,9 @@ define(['utilities', 'datasource'], function () {
     }   
   };
   
-  OB.DATA.BPs = function (context, id) {
-    this.init(context, id, 'DataBPs');
+  OB.DATA.BPs = function (context) {
+    this.id = 'DataBPs';
+    this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'from BusinessPartner where customer = true and $readableCriteria'));
     this.loadparams = {};     
@@ -32,7 +29,8 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);  
   
   OB.DATA.PriceList = function (context, id) {
-    this.init(context, id, 'DataPriceList');
+    this.id = 'DataPriceList';
+    this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'select ppl as pricelist, plv as pricelistversion ' +
       'from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
@@ -43,7 +41,8 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.PriceList.prototype, OB.DATA.Base);
   
   OB.DATA.ProductPrice = function (context, id) {
-    this.init(context, id, 'DataProductPrice');
+    this.id = 'DataProductPrice';
+    this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'from PricingProductPrice where priceListVersion in ' + 
       '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
@@ -54,7 +53,8 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
   
   OB.DATA.Product = function (context, id) {
-    this.init(context, id, 'DataProduct');
+    this.id = 'DataProduct';
+    this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'select p as product, img.bindaryData as img ' + 
       'from Product p left outer join p.image img ' + 
@@ -64,7 +64,8 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.Product.prototype, OB.DATA.Base);
   
   OB.DATA.Category = function (context, id) {
-    this.init(context, id, 'DataCategory');
+    this.id = 'DataCategory';
+    this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
         'select c as category, img.bindaryData as img ' + 
         'from ProductCategory as c left outer join c.obposImage img ' +

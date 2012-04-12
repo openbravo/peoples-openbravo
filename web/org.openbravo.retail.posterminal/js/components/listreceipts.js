@@ -5,10 +5,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ListReceipts = function (context, id) {
+  OB.COMP.ListReceipts = function (context) {
     var me = this;
     
-    context.set(id || 'ListReceipts', this);
+    this.id = 'ListReceipts';
 
     this.receipt = context.get('modelorder');
     this.receiptlist = context.get('modelorderlist');

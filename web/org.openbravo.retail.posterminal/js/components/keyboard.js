@@ -5,11 +5,12 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.Keyboard = function (context, id) {
+  OB.COMP.Keyboard = function (context) {
     
-    context.set(id || 'keyboard', this);
+    this.id = 'keyboard';
     
     var me = this;
+
     
     var createbtn = function (command, label) {
       

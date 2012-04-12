@@ -5,10 +5,10 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.SearchProduct = function (context, id) {
+  OB.COMP.SearchProduct = function (context) {
     var me = this;
     
-    context.set(id || 'SearchProducts', this);    
+    this.id = 'SearchProducts';    
 
     this.receipt = context.get('modelorder');
     this.line = null;   

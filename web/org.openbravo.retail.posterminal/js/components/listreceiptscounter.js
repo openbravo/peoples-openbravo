@@ -9,7 +9,6 @@ define(['utilities',  'model/order', 'model/terminal'], function () {
   OB.COMP.ReceiptsCounter = function (context) {
   
     var me = this;
-
     
     this.renderTitle = function (receipt) {
       return OB.UTIL.EL(

@@ -256,11 +256,10 @@ define(['utilities', 'i18n'], function () {
   OB.MODEL.OrderList = Backbone.Collection.extend({
     model: OB.MODEL._Order,
     
-    constructor: function (context, id) {
+    constructor: function (context) {
+      this.id = 'modelorderlist';
       this.context = context;
-      context.set(id || 'modelorderlist', this);
-
-      
+     
       Backbone.Collection.prototype.constructor.call(this);
     }, 
     initialize : function () {

@@ -9,7 +9,6 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   OB.COMP.OrderView = function (context) {
   
     var me = this;
-
     
     this.orderview = new OB.COMP.TableView({
       style: 'edit',

@@ -5,9 +5,9 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.ListProducts = function (context, id) {
+  OB.COMP.ListProducts = function (context) {
     
-    context.set(id || 'ListProducts', this);      
+    this.id = 'ListProducts';      
 
     this.receipt = context.get('modelorder');
     this.line = null;   
