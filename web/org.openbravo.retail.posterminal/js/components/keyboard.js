@@ -66,9 +66,9 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
     var btn9 = createbtn('9', '9');
     var btndot = createbtn('.', '.');
     
-    var btnaction1 = createbtn('---', '---');
-    var btnaction2 = createbtn('---', '---');
-    var btnaction3 = createbtn('---', '---');
+    var btnaction1 = createbtn('paym:cash', OB.I18N.getLabel('OBPOS_KbCash'));
+    var btnaction2 = createbtn('paym:card', OB.I18N.getLabel('OBPOS_KbCard'));
+    var btnaction3 = createbtn('paym:voucher', OB.I18N.getLabel('OBPOS_KbVoucher'));
     var btnaction4 = createbtn('---', '---');
     var btnaction5 = createbtn('---', '---');
     var btnaction6 = createbtn('---', '---');
@@ -173,6 +173,14 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
           this.receipt.setUnit(this.line, this.getNumber()); 
           this.receipt.trigger('scan');
         }
+      } else if (cmd.substring(0, 5) === 'paym:') {
+        // payment
+        me.receipt.addPayment(new OB.MODEL.PaymentLine(
+          {
+            'kind': cmd.substring(5), 
+            'amount': this.getNumber()
+          }
+        ));
       } else if (cmd === String.fromCharCode(13)) {
 
         this.products.ds.find({
@@ -182,7 +190,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'
             me.receipt.addProduct(me.line, new Backbone.Model(data));
             me.receipt.trigger('scan');
           } else {
-            alert('UPC/EAN code not found');
+            alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound')); // 'UPC/EAN code not found'
           }
         });
       }         

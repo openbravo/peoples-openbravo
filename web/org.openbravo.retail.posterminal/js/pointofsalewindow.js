@@ -244,7 +244,6 @@ define(['builder', 'i18n',
         
       ], init: function () {
         this.context.on('ready', function () {
-          // this.context.get('modelorder').clear();
           this.context.get('modelorderlist').createNew();
         }, this);
       }}

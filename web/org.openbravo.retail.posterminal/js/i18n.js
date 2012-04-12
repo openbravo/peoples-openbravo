@@ -36,6 +36,10 @@ define([], function () {
     'OBPOS_KbQuantity': 'Quantity',
     'OBPOS_KbPrice': 'Price',
     'OBPOS_KbDiscount': 'Discount',
+    'OBPOS_KbCash': 'Cash',
+    'OBPOS_KbCard': 'Card',
+    'OBPOS_KbVoucher': 'Voucher',
+    'OBPOS_KbUPCEANCodeNotFound': 'UPC/EAN code not found.',
 
     'OBPOS_ReceiptNew': 'New Receipt',
     'OBPOS_ReceiptTaxes': 'Taxes',
@@ -44,6 +48,13 @@ define([], function () {
     'OBPOS_SearchNoResults': 'No results',
     'OBPOS_SearchAllCategories': '(All categories)',
     'OBPOS_SearchButtonSearch': ' Search',
+    
+    'OBPOS_PaymentsEmpty': 'No payments',
+    'OBPOS_PaymentsRemaining': ' remaining to pay.',
+    
+    'OBPOS_PayKind:cash': 'Cash',
+    'OBPOS_PayKind:voucher': 'Voucher',
+    'OBPOS_PayKind:card': 'Card',
     
     'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',
     'OBPOS_MsgHardwareServerNotAvailable': 'Hardware server is not available.',

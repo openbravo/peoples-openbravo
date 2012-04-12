@@ -35,7 +35,29 @@ define(['utilities', 'i18n'], function () {
   OB.MODEL.OrderLineCol = Backbone.Collection.extend({
     model: OB.MODEL.OrderLine
   });
-
+  
+  // Sales.Payment Model
+  OB.MODEL.PaymentLine = Backbone.Model.extend({
+    defaults : {
+      'kind': 'cash',
+      'amount': 0
+    },
+    printKind: function () {
+      return OB.I18N.getLabel('OBPOS_PayKind:' + this.get('kind'));
+    },  
+    getAmount: function () {
+      return this.get('amount');
+    },      
+    printAmount: function () {
+      return OB.I18N.formatCurrency(this.get('amount'));
+    }  
+  });  
+  
+  // Sales.OrderLineCol Model.  
+  OB.MODEL.PaymentLineCol = Backbone.Collection.extend({
+    model: OB.MODEL.PaymentLine
+  });
+  
   // Sales.Order Model.
   OB.MODEL._Order = Backbone.Model.extend({
     initialize : function () {
@@ -43,6 +65,7 @@ define(['utilities', 'i18n'], function () {
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
+      this.set('payments', new OB.MODEL.PaymentLineCol());        
     },
     
     getNet: function () {
@@ -55,13 +78,41 @@ define(['utilities', 'i18n'], function () {
       return OB.I18N.formatCurrency(this.getNet());      
     },
     
+    getPayment: function () {
+      return this.get('payments').reduce(function (memo, e) { 
+        return memo + e.getAmount(); 
+      }, 0 );      
+    },
+    
+    printPayment: function () {
+      return OB.I18N.formatCurrency(this.getPayment());      
+    },    
+    
+    getPending: function () {
+      return this.getNet() - this.getPayment();    
+    },
+    
+    printPending: function () {
+      var pending = this.getPending();
+      if (this.getPending() >= 0){
+        return OB.I18N.formatCurrency(this.getPending());
+      } else {
+        return OB.I18N.formatCurrency(0);
+      }
+    },
+    
+    printOverPayment: function () {
+      return OB.I18N.formatCurrency(this.getPending());      
+    },    
+    
     clear: function() {
       this.set('date', new Date());
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
+      this.get('payments').reset();      
       this.trigger('change');      
-      this.trigger('clear');
+      this.trigger('clear');            
     },
     
     clearWith: function(_order) {
@@ -72,8 +123,12 @@ define(['utilities', 'i18n'], function () {
       _order.get('lines').forEach(function (elem) {
         this.get('lines').add(elem);
       }, this);
+      this.get('payments').reset();
+      _order.get('payments').forEach(function (elem) {
+        this.get('payments').add(elem);
+      }, this);      
       this.trigger('change');
-      this.trigger('clear');
+      this.trigger('clear'); 
     },
     
     removeUnit: function (line, qty) {
@@ -156,7 +211,7 @@ define(['utilities', 'i18n'], function () {
       }
     },
     
-    setBP: function (bp) {
+    setBP: function (bp) {      
       var me = this;
       var oldbp = this.get('bp');
       this.set('bp', bp);
@@ -169,9 +224,31 @@ define(['utilities', 'i18n'], function () {
           me.set('undo', null);
         }
       });    
+    },
+    
+    addPayment: function(payment) {
+      var i, max, p;
+      
+      if (typeof(payment.get('amount')) !== 'number' || !isFinite(payment.get('amount')) || this.getPending() <= 0) {
+        return;
+      }
+     
+      var payments = this.get('payments');
+   
+      for (i = 0, max = payments.length; i < max; i++) {
+        p = payments.at(i);
+        if (p.get('kind') === payment.get('kind')) {
+          p.set('amount', payment.get('amount') + p.get('amount'));
+          return;
+        }
+      }
+      
+      this.get('payments').add(payment);
+    },
+    
+    removePayment: function(payment) {
+      this.get('payments').remove(payment);
     }    
-    
-    
   }); 
   
   OB.MODEL.Order =  OB.UTIL.recontext(OB.MODEL._Order, 'modelorder');
