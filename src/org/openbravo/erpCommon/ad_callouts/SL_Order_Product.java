@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.common.businessObject.TaxCalculator;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
@@ -137,14 +138,21 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    resultado.append("new Array(\"inppricelist\", "
-        + (strPriceList.equals("") ? "0" : strPriceList) + "),");
-    resultado.append("new Array(\"inppricelimit\", "
-        + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
-    resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
-        + "),");
-    resultado.append("new Array(\"inppriceactual\", "
-        + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+    // if taxInclusive update TaxInclusiveUnitPrice else List Price and Unit Price
+    if (TaxCalculator.isPriceTaxInclusive(strCOrderId)) {
+      resultado.append("new Array(\"inptaxinclusive\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+    } else {
+      resultado.append("new Array(\"inppricelist\", "
+          + (strPriceList.equals("") ? "0" : strPriceList) + "),");
+      resultado.append("new Array(\"inppriceactual\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+      resultado.append("new Array(\"inppricelimit\", "
+          + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
+      resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
+          + "),");
+    }
+
     resultado.append("new Array(\"inpcCurrencyId\", "
         + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
     resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
@@ -174,12 +182,12 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     }
 
     String strCTaxID = "";
-    String orgLocationID = SLOrderProductData.getOrgLocationId(this,
-        Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars,
+        "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
     if (orgLocationID.equals("")) {
       resultado.append("new Array('MESSAGE', \""
-          + FormatUtilities.replaceJS(Utility.messageBD(this, "NoLocationNoTaxCalculated",
-              vars.getLanguage())) + "\"),\n");
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "NoLocationNoTaxCalculated", vars
+              .getLanguage())) + "\"),\n");
     } else {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
       strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID,

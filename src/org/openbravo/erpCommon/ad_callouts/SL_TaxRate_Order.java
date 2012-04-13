@@ -38,10 +38,11 @@ public class SL_TaxRate_Order extends HttpSecureAppServlet {
       String strTax = vars.getStringParameter("inpcTaxId");
       String strTaxInclusive = vars.getNumericParameter("inptaxinclusive");
       String strpriceActual = vars.getNumericParameter("inppriceactual");
+      String strQtyOrdered = vars.getNumericParameter("inpqtyordered");
 
       try {
-        printPage(response, vars, strChanged, strOrderId, strOrderlineId, strTax, strTaxInclusive,
-            strpriceActual);
+        printPage(response, vars, strChanged, strOrderId, strOrderlineId, strQtyOrdered, strTax,
+            strTaxInclusive, strpriceActual);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -50,30 +51,35 @@ public class SL_TaxRate_Order extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strOrderId, String strOrderlineId, String strTax, String strTaxInclusive,
-      String strpriceActual) throws IOException, ServletException {
+      String strOrderId, String strOrderlineId, String strQtyOrdered, String strTax,
+      String strTaxInclusive, String strpriceActual) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    BigDecimal tax = new BigDecimal(0);
+    BigDecimal taxInclusivePrice = new BigDecimal(0);
     BigDecimal unitPrice = new BigDecimal(0);
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_TaxRate_Order';\n\n");
     resultado.append("var respuesta = new Array(");
-    tax = new BigDecimal(strTaxInclusive.trim());
+    taxInclusivePrice = new BigDecimal(strTaxInclusive.trim());
     unitPrice = new BigDecimal(strpriceActual.trim());
     TaxCalculator generator;
     generator = new TaxCalculator(strTax);
     if (TaxCalculator.isPriceTaxInclusive(strOrderId)) {
-      unitPrice = generator.taxCalculationFromOrder(strOrderId, tax);
-      resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\")");
+      unitPrice = taxInclusivePrice.subtract(generator.taxCalculationFromOrder(strOrderId,
+          taxInclusivePrice));
+      resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
+      resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
+      resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
+
     } else {
-      tax = generator.taxCalculationFromOrder(strOrderId, unitPrice);
-      resultado.append("new Array(\"inptaxinclusive\",\"" + tax + "\"),");
-      resultado.append("new Array(\"inpgrossprice\",\"" + unitPrice.add(tax) + "\")");
+      taxInclusivePrice = generator.taxCalculationFromOrder(strOrderId, unitPrice);
+      BigDecimal taxInclusive = unitPrice.add(taxInclusivePrice);
+      resultado.append("new Array(\"inptaxinclusive\",\"" + taxInclusive + "\")");
     }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

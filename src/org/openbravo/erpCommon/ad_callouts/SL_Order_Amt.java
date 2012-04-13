@@ -235,7 +235,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
         resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
       }
-
+      // ordered qty multiply with gross price
+      BigDecimal taxPrice = new BigDecimal(strTaxInclusive.trim()).multiply(new BigDecimal(
+          strQtyOrdered.trim()));
+      resultado.append("new Array(\"inpgrossprice\", " + taxPrice.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
       BigDecimal discount1 = null;
       if (priceList.compareTo(BigDecimal.ZERO) != 0)
@@ -315,24 +318,32 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inptaxinclusive")) {
       // SL_InclusiveTaxPrice_Generator generator;
-      BigDecimal tax = new BigDecimal(strTaxInclusive.trim());
+      BigDecimal priceInclusive = new BigDecimal(strTaxInclusive.trim());
       TaxCalculator generator;
       generator = new TaxCalculator(strTaxId);
-      priceActual = generator.taxCalculationFromOrder(strCOrderId, tax);
-      resultado.append("new Array(\"inpgrossprice\",\"" + priceActual.add(tax) + "\"),");
+      priceActual = priceInclusive.subtract(generator.taxCalculationFromOrder(strCOrderId,
+          priceInclusive));
+      BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyOrdered.trim()));
+      resultado.append("new Array(\"inpgrossprice\",\"" + grossPrice + "\"),");
       resultado.append("new Array(\"inppriceactual\",\"" + priceActual + "\"),");
+      resultado.append("new Array(\"inppricelist\",\"" + priceActual + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + priceActual + "\"),");
+
+      resultado.append("new Array(\"inppricestd\",\"" + priceActual + "\"),");
 
     }
 
     // if net unit price changed then modify tax inclusive unit price
     if (strChanged.equals("inppriceactual")) {
-      BigDecimal TaxInclusive = new BigDecimal(0);
-      priceActual = new BigDecimal(vars.getStringParameter("inppriceactual").trim());
+      BigDecimal tax = new BigDecimal(0);
+      priceActual = new BigDecimal(strPriceActual.trim());
       TaxCalculator generator;
       generator = new TaxCalculator(strTaxId);
-      TaxInclusive = generator.taxCalculationFromOrder(strCOrderId, priceActual);
+      tax = generator.taxCalculationFromOrder(strCOrderId, priceActual);
+      BigDecimal TaxInclusive = priceActual.add(tax);
+      resultado.append("new Array(\"inpgrossprice\",\""
+          + TaxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
       resultado.append("new Array(\"inptaxinclusive\",\"" + TaxInclusive + "\"),");
-      resultado.append("new Array(\"inpgrossprice\",\"" + priceActual.add(TaxInclusive) + "\"),");
       log4j.debug("Net unit price results: " + resultado.toString());
 
     }
