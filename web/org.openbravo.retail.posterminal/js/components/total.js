@@ -26,10 +26,4 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
       this.totalgross.text(this.receipt.printNet());      
     }, this);
   };
-  
-  OB.COMP.Total.prototype.attr = function (attr, value) {
-  };
-  OB.COMP.Total.prototype.append = function append(child) {
-  }; 
-  
 });    

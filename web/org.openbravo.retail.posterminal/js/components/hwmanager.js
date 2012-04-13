@@ -30,11 +30,10 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   };
   
   OB.COMP.HWManager.prototype.printOrder = function () {
-    
     OB.POS.hwserver.print(this.templatereceipt, { order: this.receipt});    
   };
   
-  OB.COMP.HWManager.prototype.attrs = function (attrs) {    
+  OB.COMP.HWManager.prototype.attr = function (attrs) {    
     this.templateline = attrs.templateline;
     this.templatereceipt = attrs.templatereceipt;
   };

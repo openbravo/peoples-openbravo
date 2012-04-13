@@ -1,84 +1,97 @@
 /*global define */
 
-define(['utilities'], function () {
+define(['builder', 'utilities'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
   // Order list
-  OB.COMP.ListView = function (defaults) {
-   
-    this.renderLine = defaults.renderLine;
-    this.renderHeader = defaults.renderHeader;
-    this.header = this.renderHeader ? 1 : 0;
-    this.$ = defaults.$ || OB.UTIL.EL({tag: 'div'});
-  };
-  
-  OB.COMP.ListView.prototype.setModel = function (collection) {
-    this.collection = collection;
+  OB.COMP.ListView = function (tag) {
     
-    this.collection.on('change', function(model, prop) {          
-      var index = this.collection.indexOf(model);
-      this.$.children().eq(index + this.header)
-        .replaceWith(this.renderLine(model));      
-    }, this);
+    var F = function (context) {     
+      this.component = B(
+        {kind: B.KindJQuery(tag)}
+      );
+      this.$ = this.component.$;
+    };
     
-    this.collection.on('add', function(model, prop, options) {     
-      var index = options.index;
-      var me = this;
-      var tr = this.renderLine(model);
-      if (index === this.collection.length - 1) {
-        this.$.append(tr);
-      } else {
-        this.$.children().eq(index + this.header).before(tr);
-      }
-    }, this);
-    
-    this.collection.on('remove', function (model, prop, options) {        
-      var index = options.index;
-      this.$.children().eq(index + this.header).remove();         
-    }, this);
-    
-    this.collection.on('reset', function() {
+    F.prototype.attr = function (attr) {
+      this.renderLine = attr.renderLine;
+      this.renderHeader = attr.renderHeader;
+      this.header = this.renderHeader ? 1 : 0;    
+      this.collection = attr.collection;
+      
+      this.collection.on('change', function(model, prop) {          
+        var index = this.collection.indexOf(model);
+        this.$.children().eq(index + this.header)
+          .replaceWith(this.renderLine(model).$);      
+      }, this);
+      
+      this.collection.on('add', function(model, prop, options) {     
+        var index = options.index;
+        var me = this;
+        var tr = this.renderLine(model).$;
+        if (index === this.collection.length - 1) {
+          this.$.append(tr);
+        } else {
+          this.$.children().eq(index + this.header).before(tr);
+        }
+      }, this);
+      
+      this.collection.on('remove', function (model, prop, options) {        
+        var index = options.index;
+        this.$.children().eq(index + this.header).remove();         
+      }, this);
+      
+      this.collection.on('reset', function() {
+        this.$.empty();
+        if (this.renderHeader) {
+          this.$.append(this.renderHeader().$);
+        }
+      }, this);   
+      
+      // Init clear...
       this.$.empty();
       if (this.renderHeader) {
-        this.$.append(this.renderHeader());
-      }
-    }, this);   
+        this.$.append(this.renderHeader().$);
+      }    
+    };   
     
-    // Init clear...
-    this.$.empty();
-    if (this.renderHeader) {
-      this.$.append(this.renderHeader());
-    }    
-  }; 
-  
-  // Table View
-  OB.COMP.TableView = function (defaults) {
-  
-    var me = this;
-    
-    this.renderHeader = defaults.renderHeader;
-    this.renderLine = defaults.renderLine;
-    this.renderEmpty = defaults.renderEmpty;
-    this.style = defaults.style; // none, "edit", "list"
-
-    this.theader = OB.UTIL.EL({tag: 'div'});                                                             
-    if (this.renderHeader) {      
-      this.theader.append(this.renderHeader());  
-    }
-    this.tempty = OB.UTIL.EL({tag: 'div'});
-    if (this.renderEmpty) {
-      this.tempty.append(this.renderEmpty());
-    }
-    this.tbody = OB.UTIL.EL({tag: 'ul', attr: {'class': 'unstyled', style: 'display: none'}});
-    
-    this.div = OB.UTIL.EL({tag: 'div', content: [this.theader, this.tbody, this.tempty]});
+    return F;
   };
 
-  OB.COMP.TableView.prototype.setModel = function (collection) {
-    this.collection = collection;
-    this.selected = null;  
+  
+  // Table View
+  OB.COMP.TableView = function (context) {
+  
+    this.component = B(
+      {kind: B.KindJQuery('div'), content: [
+        {kind: B.KindJQuery('div'), id: 'header'},
+        {kind: B.KindJQuery('ul'), id: 'body', attr: {'class': 'unstyled', style: 'display: none'}},
+        {kind: B.KindJQuery('div'), id: 'empty'}
+      ]}
+    );
+    this.$ = this.component.$;
+    this.theader = this.component.context.get('header').$;
+    this.tbody = this.component.context.get('body').$;
+    this.tempty = this.component.context.get('empty').$;   
+  };
+  
+  OB.COMP.TableView.prototype.attr = function (attr) {
+    this.style = attr.style; // none, "edit", "list"        
+    this.renderHeader = attr.renderHeader;
+    this.renderLine = attr.renderLine;
+    this.renderEmpty = attr.renderEmpty;
+    this.collection = attr.collection;
+    this.selected = null;      
+    
+    if (this.renderHeader) {      
+      this.theader.append(this.renderHeader().$);  
+    }   
+    
+    if (this.renderEmpty) {
+      this.tempty.append(this.renderEmpty().$);
+    }    
     
     this.collection.on('selected', function (model) {
       if (!model && this.style) {
@@ -95,8 +108,8 @@ define(['utilities'], function () {
       this.tbody.show();
       
       var me = this;
-      var tr = OB.UTIL.EL({tag: 'li'});
-      tr.append(this.renderLine(model));
+      var tr = B({kind: B.KindJQuery('li')}).$;
+      tr.append(this.renderLine(model).$);
       tr.click(function (e) {
         e.preventDefault();
         model.trigger('selected', model);
@@ -104,7 +117,7 @@ define(['utilities'], function () {
       });
       
       model.on('change', function() {
-        tr.empty().append(this.renderLine(model));
+        tr.empty().append(this.renderLine(model).$);
       }, this);
       
       model.on('selected', function() {
@@ -114,7 +127,7 @@ define(['utilities'], function () {
           }
           this.selected = tr;
           this.selected.addClass('selected');
-          OB.UTIL.makeElemVisible(this.div, this.selected);
+          OB.UTIL.makeElemVisible(this.$, this.selected);
         }
       }, this);
 

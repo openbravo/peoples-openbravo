@@ -16,16 +16,8 @@ define([], function () {
     var attr, i, max, child;
 
     // attributes
-    if (b.attr) {
-      if (inst.attr) {
-        for (attr in b.attr) {
-          if (b.attr.hasOwnProperty(attr)) {
-            inst.attr(attr, b.attr[attr]);
-          }
-        }
-      } else if (inst.attrs) {
-        inst.attrs(b.attr);
-      }
+    if (b.attr && inst.attr) {
+      inst.attr(b.attr);
     }
 
     // content array
@@ -79,11 +71,6 @@ define([], function () {
     F = function (context) {
       this.$ = $(document.createTextNode(text));
     };
-
-    F.prototype.attr = function (attr, value) {};
-
-    F.prototype.append = function (child) {};
-
     _.extend(F.prototype, B.Kind);
     return F;
   };
@@ -94,16 +81,6 @@ define([], function () {
     F = function (context) {
       this.$ = $(html);
       this.context = context;
-    };
-
-    F.prototype.attr = function (attr, value) {
-      this.$.attr(attr, value);
-    };
-
-    F.prototype.append = function (child) {
-      if (child.$) {
-        this.$.append(child.$);
-      }
     };
     _.extend(F.prototype, B.Kind);
     return F;
@@ -123,8 +100,13 @@ define([], function () {
       this.context = context;
     };
 
-    F.prototype.attr = function (attr, value) {
-      this.$.attr(attr, value);
+    F.prototype.attr = function (attrs) {
+      var attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          this.$.attr(attr, attrs[attr]);
+        }
+      }      
     };
 
     F.prototype.append = function (child) {

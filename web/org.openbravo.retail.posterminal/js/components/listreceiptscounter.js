@@ -33,10 +33,4 @@ define(['utilities',  'model/order', 'model/terminal'], function () {
       
     }, this);
   };
-  
-  OB.COMP.ReceiptsCounter.prototype.attr = function (attr, value) {
-  };
-  OB.COMP.ReceiptsCounter.prototype.append = function append(child) {
-  }; 
-  
 });    

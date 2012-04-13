@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -20,65 +20,65 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
       {tag: 'input', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
     );
     
-    this.productcategory = OB.UTIL.EL(
-      {tag: 'select', attr: {}}           
-    );    
+    this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
+    
+    this.productcategory = B(
+      {kind: OB.COMP.ListView('select'), attr: {
+        collection: this.categories,
+        renderHeader: function (model) {
+          return B(
+            {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
+               OB.I18N.getLabel('OBPOS_SearchAllCategories')                                                                  
+            ]}
+          );                  
+        },    
+        renderLine: function (model) {
+          return B(
+            {kind: B.KindJQuery('option'), attr: {value: model.get('category').id}, content: [
+                model.get('category')._identifier                                                                                
+            ]}
+          );                  
+        }              
+      }}           
+    );       
     
     this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
-    this.productsview = new OB.COMP.TableView({ 
-      renderEmpty: function () {
-        return function () {
-          return OB.UTIL.EL(
-            {tag: 'div', attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+    this.productsview = B(
+      {kind: OB.COMP.TableView, attr: {
+        collection: this.products,
+        renderEmpty: function () {
+          return B(
+            {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
               OB.I18N.getLabel('OBPOS_SearchNoResults')
             ]}
-          );
-        };            
-      },      
-      renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
-            {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
-              OB.UTIL.getThumbnail(model.get('img'))
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 60%;'}, content: [ 
-              model.get('product')._identifier
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-              {tag: 'strong', content: [ 
-                 model.get('price') ?                       
-                OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
-              ]}                                                                                                                                                                                                                                 
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
-          ]}
-        );                    
-      }      
-    });
-    this.productsview.setModel(this.products);  
+          );            
+        },      
+        renderLine: function (model) {
+          return B(
+            {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
+                model.get('product')._identifier
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                {kind: B.KindJQuery('strong'), content: [ 
+                   model.get('price') ?                       
+                  OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
+                ]}                                                                                                                                                                                                                                 
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+            ]}
+          );                    
+        }         
+      }}
+    );
+
     this.products.on('click', function (model) {
       this.receipt.addProduct(this.line, model);
     }, this);
-    
-    this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
-    this.categoriesview = new OB.COMP.ListView({
-      $: this.productcategory,
-      renderHeader: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'option', attr: {value: ''}, content: [
-             OB.I18N.getLabel('OBPOS_SearchAllCategories')                                                                  
-          ]}
-        );                  
-      },      
-      renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'option', attr: {value: model.get('category').id}, content: [
-              model.get('category')._identifier                                                                                
-          ]}
-        );                  
-      }      
-    });    
-    this.categoriesview.setModel(this.categories);  
+
     
     this.receipt.on('clear', function() {
       this.products.reset();                   
@@ -94,7 +94,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                   this.productname 
                 ]},
                 {tag: 'div', content: [    
-                  this.productcategory 
+                  this.productcategory.$
                 ]}                   
               ]}                   
             ]},                                                               
@@ -110,9 +110,9 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
                       filter.product = filter.product || {};
                       filter.product._identifier = '%i' + OB.UTIL.escapeRegExp(me.productname.val());
                     }
-                    if (me.productcategory.val() && me.productcategory.val() !== '') {
+                    if (me.productcategory.$.val() && me.productcategory.$.val() !== '') {
                       filter.product = filter.product || {};
-                      filter.product.productCategory = me.productcategory.val();
+                      filter.product.productCategory = me.productcategory.$.val();
                     }
                     
                     // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
@@ -127,7 +127,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
           {tag: 'div', attr: {'class': 'row-fluid'}, content: [
             {tag: 'div', attr: {'class': 'span12'}, content: [    
               {tag: 'div', content: [ 
-                this.productsview.div
+                this.productsview.$
               ]}                   
             ]}                   
           ]}                                                             

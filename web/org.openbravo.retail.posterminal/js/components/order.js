@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'model/order', 'model/terminal', 'components/table'], function () {
+define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -10,46 +10,53 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
   
     var me = this;
     
-    this.orderview = new OB.COMP.TableView({
-      style: 'edit',
-
-      renderEmpty: function () {
-        return function () {
-          return OB.UTIL.EL(
-            {tag: 'div', attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+    // Set Model
+    this.receipt =  context.get('modelorder');
+    var lines = this.receipt.get('lines');
+    
+    lines.on('reset change add remove', function() {
+      this.totalnet.text(this.receipt.printNet());   
+    }, this);    
+    
+    this.orderview = B(
+      {kind: OB.COMP.TableView, attr: {
+        style: 'edit',
+        collection: lines,
+        renderEmpty: function () {
+          return B(
+            {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
                OB.I18N.getLabel('OBPOS_ReceiptNew')
             ]}
-          );
-        };            
-      },
-  
-      renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
-            {tag: 'div', attr: {style: 'float: left; width: 40%'}, content: [ 
-              model.get('productidentifier')                                                                
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-              model.printQty()                                                                                                                                                          
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-              model.printPrice()                                                             
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-              model.printNet()
-            ]},
-            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
-          ]}
-        );         
-      }      
-    });
+          );          
+        },
+        renderLine: function (model) {
+          return B(
+            {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                model.get('productidentifier')                                                                
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                model.printQty()                                                                                                                                                          
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                model.printPrice()                                                             
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                model.printNet()
+              ]},
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+            ]}
+          );         
+        }        
+      }}
+    );
 
     this.totalnet = OB.UTIL.EL({tag:'strong'});        
 
     this.$ = OB.UTIL.EL(
           
           {tag: 'div', content: [              
-            this.orderview.div,          
+            this.orderview.$,          
             
             {tag: 'ul', attr: {'class': 'unstyled'}, content: [                                                                                        
               {tag: 'li', content: [                                                                                        
@@ -75,24 +82,8 @@ define(['utilities', 'model/order', 'model/terminal', 'components/table'], funct
                 ]}
               ]}               
             ]} 
-          ]}                                                          
-      
+          ]}                                                               
     );
     
-    // Set Model
-    this.receipt =  context.get('modelorder');
-    var lines = this.receipt.get('lines');
-    
-    this.orderview.setModel(lines); 
-    
-    lines.on('reset change add remove', function() {
-      this.totalnet.text(this.receipt.printNet());   
-    }, this);
   };
-  
-  OB.COMP.OrderView.prototype.attr = function (attr, value) {
-  };
-  OB.COMP.OrderView.prototype.append = function append(child) {
-  }; 
-  
 });    

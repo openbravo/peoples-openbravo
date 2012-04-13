@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -11,46 +11,48 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
     this.id = 'SearchBPs';
 
     this.receipt = context.get('modelorder');
+    this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    
     
     this.bpname = OB.UTIL.EL(
       {tag: 'input', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
     );
     
-    this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    
-    this.bpsview = new OB.COMP.TableView({ 
-      renderEmpty: function () {
-        return function () {
-          return OB.UTIL.EL(
-            {tag: 'div', attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
-              OB.I18N.getLabel('OBPOS_SearchNoResults')
-            ]}
-          );
-        };            
-      },      
-      renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
-            {tag: 'div', content: [ 
-              model.get('_identifier')
-            ]},                                                                                                                                                                     
-            {tag: 'div', attr:{'style': 'color: #888888'}, content: [ 
-              model.get('description')
-            ]},                                                                                                                                                                     
-            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
-          ]}
-        );                    
-      }      
-    });
-    this.bpsview.setModel(this.bps);  
     this.bps.on('click', function (model) {
       this.receipt.setBP(model);
     }, this);
     
     this.receipt.on('clear', function() {
       this.bps.reset();                   
-    }, this);    
+    }, this);  
     
-    this.$ = OB.UTIL.EL(
+    this.bpsview = B(
+      {kind: OB.COMP.TableView, attr: {
+        collection: this.bps,
+        renderEmpty: function () {
+          return B(
+            {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+              OB.I18N.getLabel('OBPOS_SearchNoResults')
+            ]}
+          );            
+        },  
+        renderLine: function (model) {
+          return B(
+            {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+              {kind: B.KindJQuery('div'), content: [ 
+                model.get('_identifier')
+              ]},                                                                                                                                                                     
+              {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
+                model.get('description')
+              ]},                                                                                                                                                                     
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+            ]}
+          );                    
+        }             
+      }}
+    );
+
+ 
+   this.$ = OB.UTIL.EL(
       {tag: 'div', content: [
         {tag: 'div', attr: {'style': 'background-color: white; height: 300px; color: black; margin: 5px; padding: 5px'}, content: [
           {tag: 'div', attr: {'class': 'row-fluid'}, content: [
@@ -89,7 +91,7 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
               {tag: 'div', attr: {'class': 'row-fluid'}, content: [
                 {tag: 'div', attr: {'class': 'span12'}, content: [    
                   {tag: 'div', content: [ 
-                    this.bpsview.div
+                    this.bpsview.$
                   ]}                   
                 ]}                   
               ]}                                                             

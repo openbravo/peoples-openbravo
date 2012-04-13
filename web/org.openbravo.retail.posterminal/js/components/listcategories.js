@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/terminal', 'components/table'], function () {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'model/terminal', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -12,23 +12,25 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
     this.receipt = context.get('modelorder');
         
     this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
-    this.categoriesview = new OB.COMP.TableView({
-      style: 'list',
-      renderLine: function (model) {
-        return OB.UTIL.EL(
-          {tag: 'a', attr: {'href': '#', 'class': 'btnselect'}, content: [
-            {tag: 'div', attr: {style: 'float: left; width: 20%'}, content: [ 
-              OB.UTIL.getThumbnail(model.get('img'))                                                       
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'float: left; width: 80%;'}, content: [ 
-              model.get('category')._identifier                                                                                                                                               
-            ]},                                                                                      
-            {tag: 'div', attr: {style: 'clear: both;'}}                                                                                     
-          ]}
-        );                  
-      }      
-    });
-    this.categoriesview.setModel(this.categories);    
+    this.categoriesview = new B(
+      {kind: OB.COMP.TableView, attr: {
+        style: 'list',  
+        collection: this.categories,
+        renderLine: function (model) {
+          return B(
+            {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [ 
+                model.get('category')._identifier                                                                                                                                               
+              ]},                                                                                      
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+            ]}
+          );                  
+        }            
+      }}
+    ); 
         
     this.receipt.on('clear', function () {
       if (this.categories.length > 0){
@@ -44,16 +46,11 @@ define(['utilities', 'i18n', 'model/order', 'model/productprice', 'model/termina
             'Categories'
           ]}
         ]},
-        this.categoriesview.div
+        this.categoriesview.$
       ]}         
     );
 
     // Exec
     this.categories.exec();
   };
-  
-  OB.COMP.ListCategories.prototype.attr = function (attr, value) {
-  };
-  OB.COMP.ListCategories.prototype.append = function append(child) {
-  };   
 });
