@@ -1,4 +1,4 @@
-/*global define,Backbone */
+/*global define, Backbone */
 
 define(['datasource', 'utilities'], function () {
   

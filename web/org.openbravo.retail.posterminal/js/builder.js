@@ -3,7 +3,7 @@
 define([], function () {
   
   var B;
-
+  
   B = function (b, context) {
 
     var mycontext = context || {};
@@ -13,7 +13,7 @@ define([], function () {
       mycontext[inst._id] = inst;
     }
     
-    var attr, i, max, child;
+    var i, max, child;
 
     // attributes
     if (b.attr && inst.attr) {
@@ -53,9 +53,7 @@ define([], function () {
   };
 
   B.KindText = function (text) {
-    var F;
-
-    F = function (context) {
+    var F = function (context) {
       this.$ = $(document.createTextNode(text));
     };
     _.extend(F.prototype, B.Kind);
@@ -63,9 +61,7 @@ define([], function () {
   };
 
   B.KindHTML = function (html) {
-    var F;
-
-    F = function (context) {
+    var F = function (context) {
       this.$ = $(html);
       this.context = context;
     };
@@ -74,16 +70,8 @@ define([], function () {
   };
 
   B.KindJQuery = function (tag) {
-    var F;
-
-    F = function (context) {
-      if (tag.jquery) {
-        this.$ = tag;
-      } else if (tag.nodeType) {
-        this.$ = $(tag);
-      } else {
-        this.$ = $("<" + tag + "/>");
-      }
+    var F = function (context) {
+      this.$ = $("<" + tag + "/>");
       this.context = context;
     };
 

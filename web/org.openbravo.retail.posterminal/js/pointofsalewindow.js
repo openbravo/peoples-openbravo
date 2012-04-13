@@ -64,7 +64,6 @@ define(['builder', 'i18n',
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                                                                           
 
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
               {kind: B.KindJQuery('i'), attr: {'class': 'icon-asterisk  icon-white'}}, OB.I18N.getLabel('OBPOS_LblNew')
@@ -93,7 +92,6 @@ define(['builder', 'i18n',
                 });  
             }},                                                                                         
                             
-            
             {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#payment'}, content: [
@@ -185,10 +183,8 @@ define(['builder', 'i18n',
                         {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}} 
                     ]}
                   ]}                                                              
-                ]},     
-                
-                {kind: OB.COMP.OrderView}    
-                
+                ]},
+                {kind: OB.COMP.OrderView}                    
               ]}                                                              
             ]}  
           ]},          
@@ -202,20 +198,24 @@ define(['builder', 'i18n',
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
                     {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
-                        {kind: OB.COMP.ListCategories }  
-                      ]}        
-                    ]}        
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
-                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
                         {kind: OB.COMP.ListProducts }  // Must be defined after ListCategories...
                       ]}        
                     ]}        
-                  ]}              
+                  ]},                                                                                    
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
+                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
+                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
+                        {kind: OB.COMP.ListCategories }  
+                      ]}        
+                    ]}        
+                  ]}
                 ]}                                                                   
-              ]},  
+              ], init: function () {
+                this.context.ListCategories.categories.on('selected', function (category) {
+                  this.context.ListProducts.loadCategory(category);
+                }, this);                   
+              }},  
               {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
                 {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                   {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
