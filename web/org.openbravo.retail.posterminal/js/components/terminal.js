@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -38,52 +38,50 @@ define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
 
       this.yourterminal.text(name);
       this.yourcompany.text(orgname);
-      this.yourcompanyproperties.empty().append(
-          OB.UTIL.EL(
-            {tag: 'div', content: [
-              {tag: 'div', content: [
-                {tag: 'span', content: [
-                  OB.I18N.getLabel('OBPOS_CompanyClient')
-                ]},
-                {tag: 'span', attr:{'style': 'font-weight: bold;'}, content: [
-                  clientname
-                ]}
-              ]},
-              {tag: 'div', content: [
-                {tag: 'span', content: [
-                  OB.I18N.getLabel('OBPOS_CompanyOrg')
-                ]},
-                {tag: 'span', attr:{'style': 'font-weight: bold;'}, content: [
-                  orgname
-                ]}
-              ]},
-              {tag: 'div', content: [
-                {tag: 'span', content: [
-                  OB.I18N.getLabel('OBPOS_CompanyPriceList')
-                ]},
-                {tag: 'span', attr:{'style': 'font-weight: bold;'}, content: [
-                  pricelistname
-                ]}
-              ]},
-              {tag: 'div', content: [
-                {tag: 'span', content: [
-                  OB.I18N.getLabel('OBPOS_CompanyCurrency')
-                ]},
-                {tag: 'span', attr:{'style': 'font-weight: bold;'}, content: [
-                  currencyname
-                ]}
-              ]},
-              {tag: 'div', content: [
-                {tag: 'span', content: [
-                  OB.I18N.getLabel('OBPOS_CompanyLocation')
-                ]},
-                {tag: 'span', attr:{'style': 'font-weight: bold;'}, content: [
-                  locationname
-                ]}
-              ]}
+      this.yourcompanyproperties.empty().append(B(
+        {kind: B.KindJQuery('div'), content: [
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('span'), content: [
+              OB.I18N.getLabel('OBPOS_CompanyClient')
+            ]},
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              clientname
             ]}
-          )
-      );
+          ]},
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('span'), content: [
+              OB.I18N.getLabel('OBPOS_CompanyOrg')
+            ]},
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              orgname
+            ]}
+          ]},
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('span'), content: [
+              OB.I18N.getLabel('OBPOS_CompanyPriceList')
+            ]},
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              pricelistname
+            ]}
+          ]},
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('span'), content: [
+              OB.I18N.getLabel('OBPOS_CompanyCurrency')
+            ]},
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              currencyname
+            ]}
+          ]},
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('span'), content: [
+              OB.I18N.getLabel('OBPOS_CompanyLocation')
+            ]},
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              locationname
+            ]}
+          ]}
+        ]}          
+      ).$);
     }, this);
         
   };

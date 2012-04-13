@@ -24,6 +24,7 @@ define([], function () {
     'OBPOS_SetUnits': 'Set %0 x %1',
     'OBPOS_SetBP': 'Assigned customer %0',
     'OBPOS_ResetBP': 'Removed customer',
+    'OBPOS_LblUndo': 'Undo',
     
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
@@ -44,6 +45,8 @@ define([], function () {
     'OBPOS_ReceiptNew': 'New Receipt',
     'OBPOS_ReceiptTaxes': 'Taxes',
     'OBPOS_ReceiptTotal': 'TOTAL',
+    
+    'OBPOS_LblCategories': 'Categories',
 
     'OBPOS_SearchNoResults': 'No results',
     'OBPOS_SearchAllCategories': '(All categories)',

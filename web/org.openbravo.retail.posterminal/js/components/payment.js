@@ -19,87 +19,84 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
       this.updatePending();     
     }, this);      
     
-    this.totalpending = OB.UTIL.EL({tag:'span', attr: {style: 'font-size: 150%; font-weight:bold;'}});  
-
-    this.paymentsview = B(
-      {kind: OB.COMP.TableView, attr: {
-        collection: payments,
-        renderEmpty: function () {
-          return B(
-            {kind: B.KindJQuery('div')}
-          );         
-        },
-        renderLine: function (model) {
-          return B(
-            {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect', 'style': 'color:white; '}, content: [
-              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                model.printKind()                                                                
-              ]},                                                                                      
-              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%; text-align:right;'}, content: [ 
-                model.printAmount()                                                                                                                                                     
-              ]},                                                                                      
-              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                {kind: B.KindJQuery('a'), attr: {'href': '#'}, content: [ 
-                  {kind: B.KindJQuery('i'), attr: {'class': 'icon-remove icon-white'}}
-                ], init: function () {
-                  this.$.click(function(e) {
-                    e.preventDefault();
-                    me.receipt.removePayment(model);                 
-                  });
-                }}                                                         
-              ]},
-              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-            ]}
-          );         
-        }          
-      }}
-    );
-
-    this.$ = OB.UTIL.EL(
-      {tag: 'div', content: [
-        {tag: 'div', attr: {'style': 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {tag: 'div', attr: {'style': 'padding: 10px;'}, content: [
-            this.totalpending, OB.I18N.getLabel('OBPOS_PaymentsRemaining'),
-            {tag: 'button', attr: {'style': 'float:right;'}, content: [
+    this.component = B(
+      {kind: B.KindJQuery('div'), content: [
+        {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px;'}, content: [
+            {kind: B.KindJQuery('span'), id: 'totalpending', attr: {style: 'font-size: 150%; font-weight:bold;'}},
+            OB.I18N.getLabel('OBPOS_PaymentsRemaining'),
+            {kind: B.KindJQuery('button'), attr: {'style': 'float:right;'}, content: [
               'OK'                       
             ], init: function () {
-                 this.click(function () {
+                 this.$.click(function () {
                    me.receipt.trigger('closed');    
                    me.receipt.clear();
                  });
               }
             }            
           ]},
-          {tag: 'div', attr: {'class': 'row-fluid'}, content: [
-            {tag: 'div', attr: {'class': 'span12'}, content: [                                                                             
-              {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                             
+              {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
                 OB.I18N.formatCurrency(50)
               ], init: function () {
-                this.click(function(e) {
+                this.$.click(function(e) {
                   e.preventDefault();
                   me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'cash', 'amount': 50}));                 
                 });
               }},
-              {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
+              {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
                 OB.I18N.formatCurrency(20)
               ], init: function () {
-                this.click(function(e) {
+                this.$.click(function(e) {
                   e.preventDefault();
                   me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'cash', 'amount': 20}));             
                 });
               }}               
             ]}
           ]},           
-          {tag: 'div', attr: {style: 'overflow:auto; height: 150px; width: 300px;'}, content: [                                                                                      
-            {tag: 'div', attr: {'style': 'padding: 5px'}, content: [   
-              {tag: 'div', attr: {'style': 'margin: 5px; border-bottom: 1px solid #cccccc;'}, content: [   
+          {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 150px; width: 300px;'}, content: [                                                                                      
+            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px'}, content: [   
+              {kind: B.KindJQuery('div'), attr: {'style': 'margin: 5px; border-bottom: 1px solid #cccccc;'}, content: [   
               ]},       
-              this.paymentsview.$
+              {kind: OB.COMP.TableView, attr: {
+                collection: payments,
+                renderEmpty: function () {
+                  return B(
+                    {kind: B.KindJQuery('div')}
+                  );         
+                },
+                renderLine: function (model) {
+                  return B(
+                    {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect', 'style': 'color:white; '}, content: [
+                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                        model.printKind()                                                                
+                      ]},                                                                                      
+                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%; text-align:right;'}, content: [ 
+                        model.printAmount()                                                                                                                                                     
+                      ]},                                                                                      
+                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                        {kind: B.KindJQuery('a'), attr: {'href': '#'}, content: [ 
+                          {kind: B.KindJQuery('i'), attr: {'class': 'icon-remove icon-white'}}
+                        ], init: function () {
+                          this.$.click(function(e) {
+                            e.preventDefault();
+                            me.receipt.removePayment(model);                 
+                          });
+                        }}                                                         
+                      ]},
+                      {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                    ]}
+                  );         
+                }          
+              }}
             ]}        
           ]}            
         ]}        
       ]}
     );
+    this.$ = this.component.$;
+    this.totalpending = this.component.context.get('totalpending').$;  
     
   };
   

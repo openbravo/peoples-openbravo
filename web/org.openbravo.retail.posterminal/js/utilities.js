@@ -75,36 +75,7 @@ define(['builder'], function (B) {
       return obj;
     };
   };
-  
-  OB.UTIL.EL = function (def) {
-    var attr, j, maxj;
 
-    if (def.jquery) {
-      return def;
-    } else if (def.tag) {
-      var el = $('<' + def.tag + '/>');
-      if (def.attr) {
-        for (attr in def.attr) {
-          if(def.attr.hasOwnProperty(attr)) {
-            el.attr(attr, def.attr[attr]);
-          }
-        }      
-      }
-      if (def.content) {
-        for (j = 0, maxj = def.content.length; j < maxj; j++) {
-          el.append(OB.UTIL.EL(def.content[j]));
-        }        
-      }
-      if (def.init) {
-        def.init.call(el);
-      }
-      return el;
-    } else if (typeof (def) === 'string') {
-      return $(document.createTextNode(def));
-    } else if (def.nodeType) {
-      return $(def);
-    }
-  };
 });
 
 

@@ -1,53 +1,45 @@
 /*global define */
 
-define(['utilities', 'i18n', 'model/order', 'model/terminal'], function () {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.Scan = function (context) {
     var me = this;
-    
-    var msgwelcome = OB.UTIL.EL(
-        {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
-          {tag: 'div', attr: {'style': 'float:right;'}, content: [
-            OB.I18N.getLabel('OBPOS_WelcomeMessage')
-          ]}
-        ]}
-    );    
-    
+
     var undoclick;
-    
-    var txtaction = OB.UTIL.EL(
-      {tag: 'div', attr: {'style': 'float:left;'}}       
-    );
-    
-    var msgaction = OB.UTIL.EL(
-        {tag: 'div', attr: {'style': 'padding: 10px; display: none;'}, content: [
-          txtaction,
-          {tag: 'a', attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
-            'Undo'                       
-          ], init: function () {           
-              this.click(function(e) {
-                e.preventDefault();
-                if (undoclick) {
-                  undoclick();
-                }
-              });
-          }}                  
-        ]}          
-    );
-    
-    this.$ = OB.UTIL.EL(
-      {tag: 'div', content: [
-        {tag: 'div', attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {tag: 'div', content: [
-            msgwelcome,
-            msgaction
+
+    this.component = B(
+      {kind: B.KindJQuery('div'), content: [
+        {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'float:right;'}, content: [
+                OB.I18N.getLabel('OBPOS_WelcomeMessage')
+              ]}
+            ]},
+            {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px; display: none;'}, content: [
+              {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'float:left;'}},
+              {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
+                OB.I18N.getLabel('OBPOS_LblUndo')   
+              ], init: function () {           
+                  this.$.click(function(e) {
+                    e.preventDefault();
+                    if (undoclick) {
+                      undoclick();
+                    }
+                  });
+              }}                  
+            ]}
           ]}                    
         ]}        
       ]}
     );
+    this.$ = this.component.$;
+    var msgwelcome = this.component.context.get('msgwelcome').$;
+    var txtaction = this.component.context.get('txtaction').$;
+    var msgaction = this.component.context.get('msgaction').$;
     
     this.receipt = context.get('modelorder');
     
