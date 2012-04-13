@@ -74,7 +74,7 @@ public class SL_TaxRate_Order extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
       resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
       resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
-      resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
+      resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\")");
 
     } else {
       taxInclusivePrice = generator.taxCalculationFromOrder(strOrderId, unitPrice);
