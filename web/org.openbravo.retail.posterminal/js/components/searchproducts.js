@@ -10,7 +10,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     
     this._id = 'SearchProducts';    
 
-    this.receipt = context.get('modelorder');
+    this.receipt = context.modelorder;
     
     this.line = null;  
     
@@ -18,9 +18,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.line = line;
     }, this);    
     
-    this.categories = new OB.MODEL.Collection(context.get('DataCategory')); 
+    this.categories = new OB.MODEL.Collection(context.DataCategory); 
     
-    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));    
+    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.DataProduct, context.DataProductPrice);    
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(this.line, model);
@@ -124,8 +124,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       ]}                      
     );
     this.$ = this.component.$;
-    this.productname = this.component.context.get('productname').$;
-    this.productcategory = this.component.context.get('productcategory').$;
+    this.productname = this.component.context.productname.$;
+    this.productcategory = this.component.context.productcategory.$;
  
     this.categories.exec({});    
   };

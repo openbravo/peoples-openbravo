@@ -14,10 +14,10 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
       ]}
     );
     this.$ = this.component.$;
-    this.totalgross = this.component.context.get('totalgross').$;
+    this.totalgross = this.component.context.totalgross.$;
     
     // Set Model
-    this.receipt =  context.get('modelorder');
+    this.receipt =  context.modelorder;
     var lines = this.receipt.get('lines');
     
     lines.on('reset change add remove', function() {

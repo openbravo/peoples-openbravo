@@ -6,7 +6,7 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
   OB.COMP = window.OB.COMP || {};
   
   OB.COMP.HWManager = function (context) {
-    this.receipt = context.get('modelorder');
+    this.receipt = context.modelorder;
     this.line = null;
     
     this.receipt.get('lines').on('selected', function (line) {

@@ -1,16 +1,16 @@
-/*global define,$,_,Backbone */
+/*global define, $, _ */
 
 define([], function () {
-  // depends on jQuery
+  
   var B;
 
   B = function (b, context) {
 
-    var mycontext = context || new B.Context();
+    var mycontext = context || {};
     var inst = new b.kind(mycontext);
     inst._id = b.id || inst._id;
     if (inst._id) {
-      mycontext.set(inst._id, inst);
+      mycontext[inst._id] = inst;
     }
     
     var attr, i, max, child;
@@ -42,19 +42,6 @@ define([], function () {
     }
 
     return inst;
-  };
-
-  B.Context = function () {
-    this.models = [];
-    _.extend(this, Backbone.Events);
-  };
-
-  B.Context.prototype.set = function (name, value) {
-    this.models[name] = value;
-  };
-
-  B.Context.prototype.get = function (name) {
-    return this.models[name];
   };
 
   B.Kind = {
@@ -120,5 +107,4 @@ define([], function () {
   };
 
   return B;
-
 });

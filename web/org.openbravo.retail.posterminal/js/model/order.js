@@ -260,7 +260,7 @@ define(['utilities', 'i18n'], function () {
     
     constructor: function (context) {
       this._id = 'modelorderlist';
-      this.modelorder = context.get('modelorder');
+      this.modelorder = context.modelorder;
      
       Backbone.Collection.prototype.constructor.call(this);
     }, 

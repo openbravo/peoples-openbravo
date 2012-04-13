@@ -9,8 +9,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
     
     this._id = 'ListCategories';
     
-    this.receipt = context.get('modelorder');        
-    this.categories = new OB.MODEL.Collection(context.get('DataCategory'));
+    this.receipt = context.modelorder;        
+    this.categories = new OB.MODEL.Collection(context.DataCategory);
         
     this.receipt.on('clear', function () {
       if (this.categories.length > 0){

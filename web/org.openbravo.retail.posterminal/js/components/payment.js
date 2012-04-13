@@ -8,7 +8,7 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
   OB.COMP.Payment = function (context) {
     var me = this;
     
-    this.receipt = context.get('modelorder');
+    this.receipt = context.modelorder;
     var payments = this.receipt.get('payments');
     var lines = this.receipt.get('lines');
     
@@ -96,7 +96,7 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
       ]}
     );
     this.$ = this.component.$;
-    this.totalpending = this.component.context.get('totalpending').$;  
+    this.totalpending = this.component.context.totalpending.$;  
     
   };
   

@@ -37,7 +37,7 @@ define(['builder', 'i18n',
           ]}      
         ], init: function () {
           
-          this.context.get('SearchBPs').bps.on('click', function (model, index) {
+          this.context.SearchBPs.bps.on('click', function (model, index) {
             this.$.modal('hide');
           }, this);
         }},        
@@ -53,11 +53,11 @@ define(['builder', 'i18n',
             {kind: OB.COMP.ListReceipts } 
           ]}      
         ], init: function () {
-            var context = this.context;
+          var context = this.context;
             this.$.on('show', function () {
-              context.get('modelorderlist').saveCurrent();
+              context.modelorderlist.saveCurrent();
             });  
-            this.context.get('ListReceipts').receiptlist.on('click', function (model, index) {
+            this.context.ListReceipts.receiptlist.on('click', function (model, index) {
               this.$.modal('hide');
             }, this);            
         }},        
@@ -72,7 +72,7 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
-                  me.context.get('modelorderlist').createNew();
+                  me.context.modelorderlist.createNew();
                 });
             }},
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
@@ -89,7 +89,7 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
-                  me.context.get('modelorder').trigger('print');
+                  me.context.modelorder.trigger('print');
                 });  
             }},                                                                                         
                             
@@ -105,20 +105,20 @@ define(['builder', 'i18n',
                       OB.I18N.getLabel('OBPOS_LblPay')
                     ]}
                   ]}
-                ], init: function () {   
+                ], init: function () {
                   var context = this.context;
                   this.$.on('shown', function () {
-                    context.get('keyboard').show();
+                    context.keyboard.show();
                   });
                 }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
                   OB.I18N.getLabel('OBPOS_LblBrowse')
-                ], init: function () {  
+                ], init: function () { 
                   var context = this.context;
                   this.$.on('shown', function () {
-                    context.get('keyboard').hide();
+                    context.keyboard.hide();
                   });                            
                 }} 
               ]},
@@ -126,40 +126,38 @@ define(['builder', 'i18n',
                 {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#search'}, content: [
                   OB.I18N.getLabel('OBPOS_LblSearch')
                 ], init: function () {  
-                  var context = this.context;                      
+                  var context = this.context;
                   this.$.on('shown', function () {
-                    context.get('keyboard').hide();
+                    context.keyboard.hide();
                   });
                 }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#scan'}, content: [
                   OB.I18N.getLabel('OBPOS_LblScan')
-                ], init: function () { 
-                  var context = this.context;                      
+                ], init: function () {
+                  var context = this.context;
                   this.$.on('shown', function () {
-                    context.get('keyboard').show();
+                    context.keyboard.show();
                   });
-                  context.get('modelorder').on('clear scan', function() {
+                  this.context.modelorder.on('clear scan', function() {
                     this.$.tab('show');                         
                   }, this);   
-                  context.get('SearchBPs').bps.on('click', function (model, index) {
+                  this.context.SearchBPs.bps.on('click', function (model, index) {
                     this.$.tab('show');
                   }, this);                  
-                  
-                  
                 }}        
               ]},
               {kind: B.KindJQuery('li'), content: [
                 {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
                   OB.I18N.getLabel('OBPOS_LblEdit')
-                ], init: function () {   
-                  var context = this.context;                      
+                ], init: function () {
+                  var context = this.context;
                   this.$.on('shown', function () {
-                    context.get('keyboard').show();
+                    context.keyboard.show();
                   });
                   
-                  context.get('modelorder').get('lines').on('click', function () {
+                  this.context.modelorder.get('lines').on('click', function () {
                     this.$.tab('show');
                   }, this);                        
                 }}
@@ -239,7 +237,7 @@ define(['builder', 'i18n',
         
       ], init: function () {
         OB.POS.modelterminal.on('domready', function () {
-          this.context.get('modelorderlist').createNew();
+          this.context.modelorderlist.createNew();
         }, this);
       }}
       

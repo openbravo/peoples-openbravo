@@ -23,7 +23,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'compon
         ]}
       );
       this.$ = this.component.$;
-      this.anchor = this.component.context.get('anchor').$;
+      this.anchor = this.component.context.anchor.$;
     };
     BtnAction.prototype.attr = function (attr) {
       this.command = attr.command;
@@ -182,10 +182,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'compon
     );
     
     this.$ = this.component.$;
-    this.editbox =  this.component.context.get('editbox').$; 
+    this.editbox =  this.component.context.editbox.$; 
     
-    this.products = context.get('DataProduct');
-    this.receipt = context.get('modelorder');
+    this.products = context.DataProduct;
+    this.receipt = context.modelorder;
     this.line = null;
     
     this.receipt.get('lines').on('selected', function (line) {

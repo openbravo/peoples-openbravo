@@ -41,7 +41,7 @@ define(['builder'], function (B) {
       ]}
     );
     this.$ = this.component.$;
-    this.image = this.component.context.get('image').$;
+    this.image = this.component.context.image.$;
   };
   OB.UTIL.Thumbnail.prototype.attr = function (attr) {
     var url = (attr.img) ? 'data:' + (attr.contentType ? attr.contentType : 'image/png') + ';base64,' + attr.img : 'img/box.png';

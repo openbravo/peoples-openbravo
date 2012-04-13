@@ -10,8 +10,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     
     this._id = 'SearchBPs';
 
-    this.receipt = context.get('modelorder');
-    this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    
+    this.receipt = context.modelorder;
+    this.bps = new OB.MODEL.Collection(context.DataBPs);    
     
     this.bps.on('click', function (model) {
       this.receipt.setBP(model);
@@ -91,7 +91,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       ]}
     );
     this.$ = this.component.$;
-    this.bpname = this.component.context.get('bpname').$;
+    this.bpname = this.component.context.bpname.$;
         
   };
   

@@ -8,19 +8,19 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   OB.COMP.ListProducts = function (context) {
     
     this._id = 'ListProducts';      
-    this.receipt = context.get('modelorder');
+    this.receipt = context.modelorder;
     this.line = null;   
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
     }, this);    
     
-    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.get('DataProduct'), context.get('DataProductPrice'));
+    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.DataProduct, context.DataProductPrice);
   
     this.products.on('click', function (model) {
       this.receipt.addProduct(this.line, model);
     }, this);    
     
-    context.get('ListCategories').categories.on('selected', function (category) {
+    context.ListCategories.categories.on('selected', function (category) {
       if (category) {
         this.products.exec({ product: { 'productCategory': category.get('category').id } });    
         this.titleProd.text(category.get('category')._identifier);      
@@ -56,6 +56,6 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
       ]}                           
     );
     this.$ = this.component.$;
-    this.titleProd = this.component.context.get('title').$; 
+    this.titleProd = this.component.context.title.$; 
   };   
 });

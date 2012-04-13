@@ -10,8 +10,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     
     this._id = 'ListReceipts';
 
-    this.receipt = context.get('modelorder');
-    this.receiptlist = context.get('modelorderlist');
+    this.receipt = context.modelorder;
+    this.receiptlist = context.modelorderlist;
  
     this.receiptlist.on('click', function (model, index) {
       this.receiptlist.load(model);

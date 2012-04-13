@@ -13,7 +13,7 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     );      
     this.$ = this.component.$;
     
-    this.receiptlist = context.get('modelorderlist'); 
+    this.receiptlist = context.modelorderlist; 
     this.receiptlist.on('reset add remove', function () {
       if (this.receiptlist.length > 1) {
         this.$.parent().show();

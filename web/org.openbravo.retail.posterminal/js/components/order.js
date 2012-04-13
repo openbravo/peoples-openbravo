@@ -9,7 +9,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
   OB.COMP.OrderView = function (context) {
   
     // Set Model
-    this.receipt =  context.get('modelorder');
+    this.receipt =  context.modelorder;
     var lines = this.receipt.get('lines');
     
     lines.on('reset change add remove', function() {
@@ -75,7 +75,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
       ]}                                                               
     );
     this.$ = this.component.$;
-    this.totalnet = this.component.context.get('totalnet').$;
+    this.totalnet = this.component.context.totalnet.$;
     
   };
 });    

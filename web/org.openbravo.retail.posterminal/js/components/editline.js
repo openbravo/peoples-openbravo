@@ -93,19 +93,19 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     );
     
     this.$ = this.component.$;
-    this.msgedit = this.component.context.get('msgedit').$;
-    this.msgaction = this.component.context.get('msgaction').$;
-    this.txtaction = this.component.context.get('txtaction').$;
-    this.editlineimage = this.component.context.get('editlineimage').$;
-    this.editlinename = this.component.context.get('editlinename').$;
-    this.editlineqty = this.component.context.get('editlineqty').$;
-    this.editlineprice = this.component.context.get('editlineprice').$;
-    this.editlinenet = this.component.context.get('editlinenet').$;
+    this.msgedit = this.component.context.msgedit.$;
+    this.msgaction = this.component.context.msgaction.$;
+    this.txtaction = this.component.context.txtaction.$;
+    this.editlineimage = this.component.context.editlineimage.$;
+    this.editlinename = this.component.context.editlinename.$;
+    this.editlineqty = this.component.context.editlineqty.$;
+    this.editlineprice = this.component.context.editlineprice.$;
+    this.editlinenet = this.component.context.editlinenet.$;
     
     // Set Model
     
-    this.products = context.get('DataProduct');
-    this.receipt = context.get('modelorder');
+    this.products = context.DataProduct;
+    this.receipt = context.modelorder;
     this.line = null;
     
     this.receipt.get('lines').on('selected', function (line) {

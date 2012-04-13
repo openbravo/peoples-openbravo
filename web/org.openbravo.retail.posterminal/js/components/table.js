@@ -72,9 +72,9 @@ define(['builder', 'utilities'], function (B) {
       ]}
     );
     this.$ = this.component.$;
-    this.theader = this.component.context.get('header').$;
-    this.tbody = this.component.context.get('body').$;
-    this.tempty = this.component.context.get('empty').$;   
+    this.theader = this.component.context.header.$;
+    this.tbody = this.component.context.body.$;
+    this.tempty = this.component.context.empty.$;   
   };
   
   OB.COMP.TableView.prototype.attr = function (attr) {

@@ -37,11 +37,11 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       ]}
     );
     this.$ = this.component.$;
-    var msgwelcome = this.component.context.get('msgwelcome').$;
-    var txtaction = this.component.context.get('txtaction').$;
-    var msgaction = this.component.context.get('msgaction').$;
+    var msgwelcome = this.component.context.msgwelcome.$;
+    var txtaction = this.component.context.txtaction.$;
+    var msgaction = this.component.context.msgaction.$;
     
-    this.receipt = context.get('modelorder');
+    this.receipt = context.modelorder;
     
     this.receipt.on('clear change:undo', function() {
       var undoaction = this.receipt.get('undo');
