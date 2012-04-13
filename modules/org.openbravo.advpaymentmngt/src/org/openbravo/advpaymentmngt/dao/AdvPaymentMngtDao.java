@@ -1319,7 +1319,11 @@ public class AdvPaymentMngtDao {
     obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACTIVE, true));
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    return obc.list().get(0);
+    try {
+      return obc.list().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      throw new OBException(FIN_Utility.messageBD("APRM_PaymentMethod"));
+    }
   }
 
   public boolean isAutomatedExecutionPayment(FIN_FinancialAccount account,
