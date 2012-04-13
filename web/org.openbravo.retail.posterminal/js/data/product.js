@@ -20,7 +20,7 @@ define(['utilities', 'datasource'], function () {
   };
   
   OB.DATA.BPs = function (context) {
-    this.id = 'DataBPs';
+    this._id = 'DataBPs';
     this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'from BusinessPartner where customer = true and $readableCriteria'));
@@ -29,7 +29,7 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);  
   
   OB.DATA.PriceList = function (context, id) {
-    this.id = 'DataPriceList';
+    this._id = 'DataPriceList';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'select ppl as pricelist, plv as pricelistversion ' +
@@ -41,7 +41,7 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.PriceList.prototype, OB.DATA.Base);
   
   OB.DATA.ProductPrice = function (context, id) {
-    this.id = 'DataProductPrice';
+    this._id = 'DataProductPrice';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'from PricingProductPrice where priceListVersion in ' + 
@@ -53,7 +53,7 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
   
   OB.DATA.Product = function (context, id) {
-    this.id = 'DataProduct';
+    this._id = 'DataProduct';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'select p as product, img.bindaryData as img ' + 
@@ -64,7 +64,7 @@ define(['utilities', 'datasource'], function () {
   _.extend(OB.DATA.Product.prototype, OB.DATA.Base);
   
   OB.DATA.Category = function (context, id) {
-    this.id = 'DataCategory';
+    this._id = 'DataCategory';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
         'select c as category, img.bindaryData as img ' + 

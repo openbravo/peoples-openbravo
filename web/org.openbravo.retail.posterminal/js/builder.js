@@ -7,10 +7,10 @@ define([], function () {
   B = function (b, context) {
 
     var mycontext = context || new B.Context();
-    var inst = new b.kind(mycontext, b.id);
-    inst.id = b.id || inst.id;
-    if (inst.id) {
-      mycontext.set(inst.id, inst);
+    var inst = new b.kind(mycontext);
+    inst._id = b.id || inst._id;
+    if (inst._id) {
+      mycontext.set(inst._id, inst);
     }
     
     var attr, i, max, child;

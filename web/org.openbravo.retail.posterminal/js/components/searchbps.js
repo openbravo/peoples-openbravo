@@ -8,7 +8,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   OB.COMP.SearchBP = function (context) {
     var me = this;
     
-    this.id = 'SearchBPs';
+    this._id = 'SearchBPs';
 
     this.receipt = context.get('modelorder');
     this.bps = new OB.MODEL.Collection(context.get('DataBPs'));    

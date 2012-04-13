@@ -7,7 +7,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'compon
   
   OB.COMP.Keyboard = function (context) {    
     var me = this;
-    this.id = 'keyboard';
+    this._id = 'keyboard';
     
     var BtnAction = function (context) {
       var btnme = this;

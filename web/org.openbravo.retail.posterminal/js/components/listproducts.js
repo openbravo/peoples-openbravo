@@ -7,7 +7,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   
   OB.COMP.ListProducts = function (context) {
     
-    this.id = 'ListProducts';      
+    this._id = 'ListProducts';      
     this.receipt = context.get('modelorder');
     this.line = null;   
     this.receipt.get('lines').on('selected', function (line) {

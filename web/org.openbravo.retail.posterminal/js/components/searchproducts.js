@@ -8,7 +8,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   OB.COMP.SearchProduct = function (context) {
     var me = this;
     
-    this.id = 'SearchProducts';    
+    this._id = 'SearchProducts';    
 
     this.receipt = context.get('modelorder');
     

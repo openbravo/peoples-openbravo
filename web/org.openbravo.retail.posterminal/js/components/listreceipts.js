@@ -8,7 +8,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   OB.COMP.ListReceipts = function (context) {
     var me = this;
     
-    this.id = 'ListReceipts';
+    this._id = 'ListReceipts';
 
     this.receipt = context.get('modelorder');
     this.receiptlist = context.get('modelorderlist');

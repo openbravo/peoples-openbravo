@@ -59,7 +59,11 @@ define(['utilities', 'i18n'], function () {
   });
   
   // Sales.Order Model.
-  OB.MODEL._Order = Backbone.Model.extend({
+  OB.MODEL.Order = Backbone.Model.extend({
+    constructor: function (context) {
+      this._id = 'modelorder';    
+      Backbone.Model.prototype.constructor.call(this);
+    },    
     initialize : function () {
       this.set('date', new Date());
       this.set('undo', null);
@@ -251,29 +255,22 @@ define(['utilities', 'i18n'], function () {
     }    
   }); 
   
-  OB.MODEL.Order =  OB.UTIL.recontext(OB.MODEL._Order, 'modelorder');
-  
   OB.MODEL.OrderList = Backbone.Collection.extend({
-    model: OB.MODEL._Order,
+    model: OB.MODEL.Order,
     
     constructor: function (context) {
-      this.id = 'modelorderlist';
-      this.context = context;
+      this._id = 'modelorderlist';
+      this.modelorder = context.get('modelorder');
      
       Backbone.Collection.prototype.constructor.call(this);
     }, 
     initialize : function () {
       this.current = null;
     },    
-    attr: function (attr, value) {
-    },
-    append: function append(child) {
-      this.modelorder = child;
-    },
-    
+
     createNew: function () {
       this.saveCurrent();
-      this.current = new OB.MODEL._Order();
+      this.current = new OB.MODEL.Order();
       this.add(this.current);
       this.loadCurrent();     
     },  

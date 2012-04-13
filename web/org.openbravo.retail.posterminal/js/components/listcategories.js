@@ -5,9 +5,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.ListCategories = function (context, id) {   
+  OB.COMP.ListCategories = function (context) {   
     
-    this.id = 'ListCategories';
+    this._id = 'ListCategories';
     
     this.receipt = context.get('modelorder');        
     this.categories = new OB.MODEL.Collection(context.get('DataCategory'));

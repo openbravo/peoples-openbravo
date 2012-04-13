@@ -20,10 +20,8 @@ define(['builder', 'i18n',
         {kind: OB.DATA.ProductPrice},
         {kind: OB.DATA.Category},      
         
-        {kind: OB.MODEL.OrderList, id: 'modelorderlist', content: [                                                                  
-          {kind: OB.MODEL.Order, id: 'modelorder'}
-        ]}, 
-        // {kind: OB.MODEL.Order, id: 'modelorder'}, 
+        {kind: OB.MODEL.Order},
+        {kind: OB.MODEL.OrderList}, 
         
         {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
         
