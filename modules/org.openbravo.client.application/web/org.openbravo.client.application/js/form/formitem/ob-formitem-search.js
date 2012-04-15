@@ -39,7 +39,9 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         targetFld.valueMap = {};
       }
       targetFld.valueMap[targetFld.getValue()] = display;
-      targetFld.form.setValue(targetFld.displayField, display);
+      if (targetFld.displayField) {
+        targetFld.form.setValue(targetFld.displayField, display);
+      }
       targetFld.updateValueMap(true);
 
       if (parameters && parameters.length > 0) {
