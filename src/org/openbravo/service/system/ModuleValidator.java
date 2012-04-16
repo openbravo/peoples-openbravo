@@ -370,10 +370,14 @@ public class ModuleValidator implements SystemValidator {
 
     if (module.isHasReferenceData() && numDatasets == 0) {
       result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-          + " has been marked as 'has reference data' but it has no Dataset associated");
+          + " has been marked as 'has reference data' but it does not have any Dataset associated");
     } else if (!module.isHasReferenceData() && numDatasets > 0) {
-      result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-          + " has Dataset associated but it has not been marked as 'has reference data'");
+      result
+          .addWarning(
+              SystemValidationType.MODULE_ERROR,
+              "Module "
+                  + module.getName()
+                  + " has at least one Dataset associated but it has not been marked as 'has reference data'");
     }
   }
 
