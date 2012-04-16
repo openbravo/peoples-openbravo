@@ -89,10 +89,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strUOM, String strAttribute, String strTabId, String strQty, String strPriceStd,
       String cancelPriceAd, String strLineNetAmt, String strTaxId, String strTaxInclusive)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("Output: dataSheet");
-      log4j.debug("CHANGED:" + strChanged);
-    }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -315,6 +311,32 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
       }
     }
+    // if taxRate field is changed
+    if (strChanged.equals("inpcTaxId")) {
+      BigDecimal taxInclusivePrice = new BigDecimal(0);
+      BigDecimal unitPrice = new BigDecimal(0);
+      taxInclusivePrice = new BigDecimal(strTaxInclusive.trim());
+      unitPrice = new BigDecimal(strPriceActual.trim());
+      TaxCalculator generator;
+      generator = new TaxCalculator(strTaxId);
+      if (TaxCalculator.isPriceTaxInclusive(strCOrderId)) {
+        unitPrice = taxInclusivePrice.subtract(generator.taxCalculationFromOrder(strCOrderId,
+            taxInclusivePrice));
+        resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
+
+      } else {
+        taxInclusivePrice = generator.taxCalculationFromOrder(strCOrderId, unitPrice);
+        BigDecimal taxInclusive = unitPrice.add(taxInclusivePrice);
+        resultado.append("new Array(\"inpgrossprice\",\""
+            + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
+        resultado.append("new Array(\"inptaxinclusive\", \"" + taxInclusive + "\"),");
+      }
+
+    }
+
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inptaxinclusive")) {
       // SL_InclusiveTaxPrice_Generator generator;
@@ -328,9 +350,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppriceactual\",\"" + priceActual + "\"),");
       resultado.append("new Array(\"inppricelist\",\"" + priceActual + "\"),");
       resultado.append("new Array(\"inppricelimit\", \"" + priceActual + "\"),");
-
       resultado.append("new Array(\"inppricestd\",\"" + priceActual + "\"),");
-
     }
 
     // if net unit price changed then modify tax inclusive unit price
