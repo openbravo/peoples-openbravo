@@ -216,17 +216,58 @@ isc.OBToolbarActionButton.addProperties({
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
+    var multiSelect = false,
+        readonly, i, selection;
+
     if (hideButton || !record) {
-      this.hide();
-      return;
+      multiSelect = this.multiRecord && this.contextView.viewGrid.getSelectedRecords().length > 1;
+      if (!multiSelect) {
+        this.hide();
+        return;
+      }
     }
 
     context = context || this.contextView.getContextInfo(false, true, true);
 
 
-    OB.Utilities.fixNull250(currentValues);
+    if (!multiSelect) {
+      OB.Utilities.fixNull250(currentValues);
 
-    this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
+      this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
+      readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
+
+      var buttonValue = record[this.property];
+      if (buttonValue === '--') {
+        buttonValue = 'CL';
+      }
+
+      // Changing button name associated with a list is not allowed in multi record buttons.
+      var label = this.labelValue[buttonValue];
+      if (!label) {
+        if (this.realTitle) {
+          label = this.realTitle;
+        } else {
+          label = this.title;
+        }
+      }
+      this.realTitle = label;
+      this.setTitle(label);
+
+    } else {
+      // For multi selection processes:
+      //   -Button is displayed in case it should be displayed in ALL selected records
+      //   -Button is readonly in case it should be readonly in ALL sected records
+      selection = this.contextView.viewGrid.getSelectedRecords();
+      readonly = false;
+      this.visible = true;
+      for (i = 0; i < selection.length; i++) {
+        currentValues = selection[i];
+        OB.Utilities.fixNull250(currentValues);
+        this.visible = this.visible && (!this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context)));
+        readonly = readonly || (this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context));
+      }
+
+    }
 
     // Even visible is correctly set, it is necessary to execute show() or hide()
     if (this.visible) {
@@ -234,28 +275,12 @@ isc.OBToolbarActionButton.addProperties({
     } else {
       this.hide();
     }
-
-    var readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
     if (readonly) {
       this.disable();
     } else {
       this.enable();
     }
 
-    var buttonValue = record[this.property];
-    if (buttonValue === '--') {
-      buttonValue = 'CL';
-    }
 
-    var label = this.labelValue[buttonValue];
-    if (!label) {
-      if (this.realTitle) {
-        label = this.realTitle;
-      } else {
-        label = this.title;
-      }
-    }
-    this.realTitle = label;
-    this.setTitle(label);
   }
 });

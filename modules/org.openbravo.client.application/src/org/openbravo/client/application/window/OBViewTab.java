@@ -515,6 +515,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String windowTitle = "";
     private boolean newDefinition = false;
     private String uiPattern = "";
+    private boolean multiRecord = false;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -535,6 +536,7 @@ public class OBViewTab extends BaseTemplateComponent {
         command = newProcess.getJavaClassName();
         newDefinition = true;
         uiPattern = newProcess.getUIPattern();
+        multiRecord = newProcess.isMultiRecord();
 
         if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
@@ -708,6 +710,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getUiPattern() {
       return uiPattern;
+    }
+
+    public boolean isMultiRecord() {
+      return multiRecord;
     }
 
     public void setNewDefinition(boolean newDefinition) {
