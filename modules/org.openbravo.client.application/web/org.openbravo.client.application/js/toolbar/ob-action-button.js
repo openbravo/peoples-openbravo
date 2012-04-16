@@ -91,7 +91,8 @@ isc.OBToolbarActionButton.addProperties({
           windowId: me.windowId,
           windowTitle: me.windowTitle,
           actionHandler: me.command,
-          buttons: me.labelValue
+          buttons: me.labelValue,
+          uiPattern: me.uiPattern
         });
         me.opening = false; // Activate again the button
       };

@@ -514,6 +514,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String windowId = "";
     private String windowTitle = "";
     private boolean newDefinition = false;
+    private String uiPattern = "";
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -533,8 +534,9 @@ public class OBViewTab extends BaseTemplateComponent {
         url = "/";
         command = newProcess.getJavaClassName();
         newDefinition = true;
+        uiPattern = newProcess.getUIPattern();
 
-        if ("OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern())) {
+        if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
           for (org.openbravo.client.application.Parameter p : newProcess.getOBUIAPPParameterList()) {
@@ -702,6 +704,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public boolean isNewDefinition() {
       return newDefinition;
+    }
+
+    public String getUiPattern() {
+      return uiPattern;
     }
 
     public void setNewDefinition(boolean newDefinition) {

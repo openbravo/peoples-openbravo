@@ -116,25 +116,32 @@ isc.OBStandardWindow.addProperties({
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack;
+        vStack, manualJS;
 
-    if (params.windowId) {
-      className = className + params.windowId;
-      if (len === 3) {
-        // debug mode, we have added _timestamp
-        className = className + '_' + parts[2];
+    if (params.uiPattern === 'M') { // Manual UI Pattern
+      manualJS = eval(params.actionHandler);
+      if (isc.isA.Function(manualJS)) {
+        manualJS(params, this);
       }
+    } else {
+      if (params.windowId) {
+        className = className + params.windowId;
+        if (len === 3) {
+          // debug mode, we have added _timestamp
+          className = className + '_' + parts[2];
+        }
 
-      if (isc[className]) {
-        this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
-        this.runningProcess = isc[className].create(isc.addProperties({}, params, {
-          parentWindow: this
-        }));
+        if (isc[className]) {
+          this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+          this.runningProcess = isc[className].create(isc.addProperties({}, params, {
+            parentWindow: this
+          }));
 
-        this.processLayout.addMember(this.runningProcess);
-        this.toolBarLayout.hide();
-        this.view.hide();
-        this.processLayout.show();
+          this.processLayout.addMember(this.runningProcess);
+          this.toolBarLayout.hide();
+          this.view.hide();
+          this.processLayout.show();
+        }
       }
     }
   },

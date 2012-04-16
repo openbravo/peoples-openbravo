@@ -67,7 +67,8 @@
        command: '${field.command?js_string}',
        property: '${field.propertyName?js_string}',
        processId: '${field.processId?js_string}',
-       <#if field.newDefinition>newDefinition: ${field.newDefinition?string},</#if>
+       <#if field.newDefinition>newDefinition: ${field.newDefinition?string}, 
+       uiPattern: '${field.uiPattern?js_string}',</#if>
        <#if field.windowId != "">windowId: '${field.windowId?js_string}',</#if>
        <#if field.windowTitle != "">windowTitle: '${field.windowTitle?js_string}',</#if>
        <#if !field.modal>modal: ${field.modal?string},</#if>
