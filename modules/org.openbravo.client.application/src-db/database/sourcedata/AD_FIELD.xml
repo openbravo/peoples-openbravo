@@ -370,10 +370,12 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <NAME><![CDATA[Java Class Name]]></NAME>
-<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
-<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <HELP><![CDATA[The classname is used when generating a representation of the table in java (the entity or business object). The classname is the simplename of the class (so without the package name). Often the AD_Table.name can be used here. The combination of classname and package needs to be unique.]]></HELP>
-<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
+<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <NAME><![CDATA[Handler]]></NAME>
+<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <DESCRIPTION><![CDATA[Java or Javascript that handles the process execution]]></DESCRIPTION>
+<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <HELP><![CDATA[Handler can be:
+*A JavaScript function in case of "Manual" UI Pattern processes. This function is invoked when the process is executed.
+*An Java class implementing ActionHandler. This java class is invoked when the process is executed.]]></HELP>
+<!--0D7D1CCBA5E54A66A433D37759D2C074-->  <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <AD_TAB_ID><![CDATA[FF80818132D7FB620132D819C1720046]]></AD_TAB_ID>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <AD_COLUMN_ID><![CDATA[EFB04F185A9045FC98A38657EA8109AB]]></AD_COLUMN_ID>
 <!--0D7D1CCBA5E54A66A433D37759D2C074-->  <ISDISPLAYED><![CDATA[Y]]></ISDISPLAYED>
@@ -1219,9 +1221,11 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--51E1B1350A334292A67AEBAA9011AB95-->  <NAME><![CDATA[Process]]></NAME>
-<!--51E1B1350A334292A67AEBAA9011AB95-->  <DESCRIPTION><![CDATA[A series of actions carried out in sequential order.]]></DESCRIPTION>
-<!--51E1B1350A334292A67AEBAA9011AB95-->  <HELP><![CDATA[The Process field identifies a unique Process or Report in the system.]]></HELP>
+<!--51E1B1350A334292A67AEBAA9011AB95-->  <NAME><![CDATA[Process Definition]]></NAME>
+<!--51E1B1350A334292A67AEBAA9011AB95-->  <DESCRIPTION><![CDATA[Process to be executed by the button]]></DESCRIPTION>
+<!--51E1B1350A334292A67AEBAA9011AB95-->  <HELP><![CDATA[Process to be executed by the button. There are 2 kind of processes:
+*"Process": Implements the 2.50 style processes with a sevlet.
+*"Process Definition": Implements 3.0 processes with a pure SmartClient UI.]]></HELP>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <AD_TAB_ID><![CDATA[101]]></AD_TAB_ID>
 <!--51E1B1350A334292A67AEBAA9011AB95-->  <AD_COLUMN_ID><![CDATA[CD3A95C8A05D45A0A2B6D250E9C83170]]></AD_COLUMN_ID>
