@@ -140,6 +140,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     // if taxInclusive update TaxInclusiveUnitPrice else List Price and Unit Price
     if (TaxCalculator.isPriceTaxInclusive(strCOrderId)) {
+      resultado.append("new Array(\"inptaxinclusivelistprice\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
       resultado.append("new Array(\"inptaxinclusive\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
     } else {

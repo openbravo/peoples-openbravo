@@ -332,6 +332,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         BigDecimal taxInclusive = unitPrice.add(taxInclusivePrice);
         resultado.append("new Array(\"inpgrossprice\",\""
             + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
+        resultado.append("new Array(\"inptaxinclusivelistprice\",\"" + taxInclusive + "\"),");
         resultado.append("new Array(\"inptaxinclusive\", \"" + taxInclusive + "\"),");
       }
 
@@ -360,10 +361,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       TaxCalculator generator;
       generator = new TaxCalculator(strTaxId);
       tax = generator.taxCalculationFromOrder(strCOrderId, priceActual);
-      BigDecimal TaxInclusive = priceActual.add(tax);
+      BigDecimal taxInclusive = priceActual.add(tax);
       resultado.append("new Array(\"inpgrossprice\",\""
-          + TaxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
-      resultado.append("new Array(\"inptaxinclusive\",\"" + TaxInclusive + "\"),");
+          + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
+      resultado.append("new Array(\"inptaxinclusivelistprice\",\"" + taxInclusive + "\"),");
+      resultado.append("new Array(\"inptaxinclusive\",\"" + taxInclusive + "\"),");
       log4j.debug("Net unit price results: " + resultado.toString());
 
     }
