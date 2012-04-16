@@ -1577,14 +1577,15 @@ public class AdvPaymentMngtDao {
    */
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
+
+    List<String> confirmedStatus = FIN_Utility.getListPaymentConfirmed();
     try {
       OBContext.setAdminMode(true);
       OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
       obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
-      obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
+      obcPayment.add(Restrictions.in(FIN_Payment.PROPERTY_STATUS, confirmedStatus));
       obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
           FIN_Payment.PROPERTY_USEDCREDIT));
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
