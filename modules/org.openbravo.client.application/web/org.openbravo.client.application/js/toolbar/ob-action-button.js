@@ -135,7 +135,7 @@ isc.OBToolbarActionButton.addProperties({
     theView.setContextInfo(sessionProperties, callbackFunction, true);
   },
 
-  closeProcessPopup: function (newWindow) {
+  closeProcessPopup: function (newWindow, params) {
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
@@ -201,11 +201,20 @@ isc.OBToolbarActionButton.addProperties({
         // Refreshing current tab, do not open it again.
         return;
       }
+
       var windowParams = {
         viewId: this.title,
         tabTitle: this.title,
         obManualURL: newWindow
       };
+      if (params) {
+        if (params.tabTitle) {
+          windowParams.tabTitle = params.tabTitle;
+        }
+        if (params.addToRecents !== null && params.addToRecents !== undefined) {
+          windowParams.addToRecents = params.addToRecents;
+        }
+      }
       OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
     }
   },
