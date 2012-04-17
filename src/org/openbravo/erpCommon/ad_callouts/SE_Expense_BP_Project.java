@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,12 +113,15 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
           if (strProject != null && !strProject.equals("")) {
             strProjectId = strProject;
+          } else {
+            strProjectId = "";
           }
+          resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\"),\n");
         }
         if (strReset.equals("1")) {
           // Reset Project Phase and Project Task fields
           resultado.append("new Array(\"inpcProjectphaseId\", \"\"),\n");
-          resultado.append("new Array(\"inpcProjecttaskId\", \"\"),\n");
+          resultado.append("new Array(\"inpcProjecttaskId\", \"\")\n");
         }
       }
     }
