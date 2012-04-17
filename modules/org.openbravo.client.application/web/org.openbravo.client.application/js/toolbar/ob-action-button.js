@@ -207,11 +207,13 @@ isc.OBToolbarActionButton.addProperties({
         tabTitle: this.title,
         obManualURL: newWindow
       };
-      if (params.tabTitle) {
-        windowParams.tabTitle = params.tabTitle;
-      }
-      if (params.addToRecents !== null && params.addToRecents !== undefined) {
-        windowParams.addToRecents = params.addToRecents;
+      if (params) {
+        if (params.tabTitle) {
+          windowParams.tabTitle = params.tabTitle;
+        }
+        if (params.addToRecents !== null && params.addToRecents !== undefined) {
+          windowParams.addToRecents = params.addToRecents;
+        }
       }
       OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
     }
