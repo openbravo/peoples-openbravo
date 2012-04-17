@@ -1480,7 +1480,7 @@ isc.OBStandardView.addProperties({
     var msg, dialogTitle, view = this,
         deleteCount, callback;
 
-    if (!this.readOnly) {
+    if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
       if (!autoSaveDone) {
         var actionObject = {
