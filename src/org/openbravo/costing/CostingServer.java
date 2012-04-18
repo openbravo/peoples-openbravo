@@ -70,28 +70,29 @@ public class CostingServer {
       // Transaction cost has already been calculated. Nothing to do.
       return;
     }
+    log4j.debug("Process cost");
     try {
       OBContext.setAdminMode(false);
       // Get needed algorithm. And set it in the M_Transaction.
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
       costingAlgorithm.init(this);
-      log4j.debug("Algorithm initializated: " + costingAlgorithm.getClass());
+      log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
       if (trxCost == null) {
         throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }
 
-      trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision().intValue(),
-          RoundingMode.HALF_UP);
-      log4j.debug("Transaction cost: " + trxCost.toString());
+      trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
+          .intValue(), RoundingMode.HALF_UP);
+      log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
       // Save calculated cost on M_Transaction.
       transaction.setTransactionCost(trxCost);
       transaction.setCostCalculated(true);
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
-      OBDal.getInstance().flush();
+      // OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -135,6 +136,7 @@ public class CostingServer {
     where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
+    crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("organization", organization);
     crQry.setNamedParameter("startdate", transaction.getTransactionProcessDate());
     crQry.setNamedParameter("enddate", transaction.getTransactionProcessDate());
