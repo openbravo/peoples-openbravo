@@ -24,11 +24,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
@@ -78,6 +77,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
         }
       }
       insertCost(currentCosting, newCost, currentStock, trxCostWithSign);
+
     default:
       break;
     }
@@ -141,23 +141,31 @@ public class AverageAlgorithm extends CostingAlgorithm {
   private Costing getProductCost() {
     Product product = transaction.getProduct();
     Date date = transaction.getTransactionProcessDate();
-    OBCriteria<Costing> obcCosting = OBDal.getInstance().createCriteria(Costing.class);
-    obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
-    obcCosting.add(Restrictions.le(Costing.PROPERTY_STARTINGDATE, date));
-    obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
-    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "AVA"));
+    StringBuffer where = new StringBuffer();
+    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
+    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
+    where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
+    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
-          costDimensions.get(CostDimension.Warehouse)));
+      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
-    obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, costOrg));
-    obcCosting.setFilterOnReadableOrganization(false);
-    if (obcCosting.count() > 0) {
-      if (obcCosting.count() > 1) {
+    where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
+    costQry.setFilterOnReadableOrganization(false);
+    costQry.setNamedParameter("product", product.getId());
+    costQry.setNamedParameter("startingDate", date);
+    costQry.setNamedParameter("endingDate", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    costQry.setNamedParameter("org", costOrg);
+
+    if (costQry.count() > 0) {
+      if (costQry.count() > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
             + " for product: " + product.getName() + " (" + product.getId() + ")");
       }
-      return obcCosting.list().get(0);
+      return costQry.list().get(0);
     }
     // If no average cost is found return null.
     return null;
