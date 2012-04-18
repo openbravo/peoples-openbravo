@@ -1,6 +1,8 @@
 package org.openbravo.materialmgmt;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
@@ -99,6 +101,7 @@ public class InventoryCountProcess implements Process {
         .getSessionFactory()).getDialect();
     dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
     dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
+    dialect.getFunctions().put("to_date", new StandardSQLFunction("to_date", new DateType()));
 
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + MaterialTransaction.ENTITY_NAME + "(");
@@ -120,6 +123,7 @@ public class InventoryCountProcess implements Process {
     insert.append(", " + MaterialTransaction.PROPERTY_ORDERQUANTITY);
     insert.append(", " + MaterialTransaction.PROPERTY_ORDERUOM);
     insert.append(", " + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE);
+    insert.append(", " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     // select from inventory line
     insert.append(" ) \n select get_uuid() ");
     insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
@@ -142,6 +146,7 @@ public class InventoryCountProcess implements Process {
         + InventoryCountLine.PROPERTY_QUANTITYORDERBOOK + ", 0)");
     insert.append(", e." + InventoryCountLine.PROPERTY_ORDERUOM);
     insert.append(", e");
+    insert.append(", to_timestamp(to_char(:currentDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
     insert.append(" \nfrom " + InventoryCountLine.ENTITY_NAME + " as e");
     insert.append(" , " + User.ENTITY_NAME + " as u");
     insert.append(" , " + AttributeSetInstance.ENTITY_NAME + " as asi");
@@ -153,6 +158,8 @@ public class InventoryCountProcess implements Process {
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("inv", inventory.getId());
     queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    queryInsert.setString("currentDate", dateFormatter.format(new Date()));
     queryInsert.executeUpdate();
 
     if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()) {
