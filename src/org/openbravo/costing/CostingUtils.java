@@ -21,11 +21,10 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Projections;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
@@ -73,28 +72,25 @@ public class CostingUtils {
    */
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
       boolean calculateTrx) {
-    OBCriteria<TransactionCost> obcTrxCost = OBDal.getInstance().createCriteria(
-        TransactionCost.class);
-    obcTrxCost.add(Restrictions.eq(TransactionCost.PROPERTY_INVENTORYTRANSACTION, transaction));
-    obcTrxCost.add(Restrictions.le(TransactionCost.PROPERTY_COSTDATE, date));
-    // obcTrxCost.setProjection(Projections.sum(TransactionCost.PROPERTY_COST));
-
-    if (obcTrxCost.count() == 0) {
+    log4j.debug("Get Transaction Cost");
+    if (!transaction.isCostCalculated()) {
       // Transaction hasn't been calculated yet.
       if (calculateTrx) {
-        log4j.debug("Cost for transaction will be calculated." + transaction.getIdentifier());
+        log4j.debug("  *** Cost for transaction will be calculated." + transaction.getIdentifier());
         CostingServer transactionCost = new CostingServer(transaction);
         transactionCost.process();
         return transactionCost.getTransactionCost();
       }
-      log4j.error("No cost found for transaction " + transaction.getIdentifier() + " with id "
-          + transaction.getId() + " on date " + OBDateUtils.formatDate(date));
+      log4j.error("  *** No cost found for transaction " + transaction.getIdentifier()
+          + " with id " + transaction.getId() + " on date " + OBDateUtils.formatDate(date));
       throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: "
           + transaction.getIdentifier() + " @Date@ " + OBDateUtils.formatDate(date));
     }
     BigDecimal cost = BigDecimal.ZERO;
-    for (TransactionCost trxCost : obcTrxCost.list()) {
-      cost = cost.add(trxCost.getCost());
+    for (TransactionCost trxCost : transaction.getTransactionCostList()) {
+      if (!trxCost.getCostDate().after(date)) {
+        cost = cost.add(trxCost.getCost());
+      }
     }
     return cost;
   }
@@ -202,28 +198,34 @@ public class CostingUtils {
    */
   public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions) {
-    OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
-    obcTrx.createAlias(MaterialTransaction.PROPERTY_STORAGEBIN, "locator");
-    obcTrx.setFilterOnReadableOrganization(false);
-    obcTrx.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
-    obcTrx.add(Restrictions.le(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, date));
-    // Include only transactions that have its cost calculated
-    obcTrx.add(Restrictions.isNotNull(MaterialTransaction.PROPERTY_TRANSACTIONCOST));
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      obcTrx.add(Restrictions.eq("locator." + Locator.PROPERTY_WAREHOUSE,
-          costDimensions.get(CostDimension.Warehouse)));
-    }
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(org.getId(), true);
-    obcTrx.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
-    obcTrx.setProjection(Projections.sum(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY));
 
-    if (obcTrx.list() != null && obcTrx.list().size() > 0) {
-      @SuppressWarnings("rawtypes")
-      List o = obcTrx.list();
-      Object resultSet = (Object) o.get(0);
+    StringBuffer select = new StringBuffer();
+    select
+        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    select
+        .append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", product.getId());
+    trxQry.setParameter("date", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+
+    if (trxQry.uniqueResult() != null) {
+      Object resultSet = trxQry.uniqueResult();
       return (resultSet != null) ? (BigDecimal) resultSet : BigDecimal.ZERO;
     }
 
@@ -262,6 +264,7 @@ public class CostingUtils {
     where.append("   and dt." + DocumentType.PROPERTY_RETURN + " = false");
     where.append(" order by o." + Order.PROPERTY_ORDERDATE + " desc");
     OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
+    olQry.setFilterOnReadableOrganization(false);
     olQry.setNamedParameter("bp", bp);
     olQry.setNamedParameter("product", product);
     olQry.setNamedParameter("org", osp.getChildTree(org.getId(), true));
