@@ -45,7 +45,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                     renderHeader: function (model) {
                       return B(
                         {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
-                           OB.I18N.getLabel('OBPOS_SearchAllCategories')                                                                  
+                           OB.I18N.getLabel('OBPOS_SearchAllCategories')
                         ]}
                       );                  
                     },    

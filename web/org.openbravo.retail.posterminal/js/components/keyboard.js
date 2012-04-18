@@ -45,21 +45,21 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'compon
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                 
-                {kind: BtnAction, attr: {'command': 'paym:cash'}, content: [OB.I18N.getLabel('OBPOS_KbCash')]}
+                {kind: BtnAction, attr: {'command': 'paym:payment.cash'}, content: [OB.I18N.getLabel('OBPOS_KbCash')]}
               ]}          
             ]}                
           ]},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction, attr: {'command': 'paym:card'}, content: [OB.I18N.getLabel('OBPOS_KbCard')]}
+                {kind: BtnAction, attr: {'command': 'paym:payment.card'}, content: [OB.I18N.getLabel('OBPOS_KbCard')]}
               ]}          
             ]}                
           ]},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction, attr: {'command': 'paym:voucher'}, content: [OB.I18N.getLabel('OBPOS_KbVoucher')]}
+                {kind: BtnAction, attr: {'command': 'paym:payment.voucher'}, content: [OB.I18N.getLabel('OBPOS_KbVoucher')]}
               ]}          
             ]}                
           ]},

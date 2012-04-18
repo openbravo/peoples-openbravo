@@ -21,7 +21,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
     var lines = this.receipt.get('lines');
     
     lines.on('reset change add remove', function() {
-      this.totalgross.text(this.receipt.printNet());      
+      this.totalgross.text(this.receipt.printTotal());      
     }, this);
   };
 });    

@@ -13,7 +13,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     var lines = this.receipt.get('lines');
     
     lines.on('reset change add remove', function() {
-      this.totalnet.text(this.receipt.printNet());   
+      this.totalnet.text(this.receipt.printTotal());   
     }, this);    
 
     this.component = B(

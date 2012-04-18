@@ -28,6 +28,13 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
         {kind: OB.COMP.TableView, attr: {
           style: 'list',  
           collection: this.categories,
+          renderEmpty: function () {
+            return B(
+              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+                OB.I18N.getLabel('OBPOS_SearchNoResults')
+              ]}
+            );            
+          },                
           renderLine: function (model) {
             return B(
               {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [

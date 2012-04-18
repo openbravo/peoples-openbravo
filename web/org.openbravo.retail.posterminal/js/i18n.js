@@ -47,17 +47,20 @@ define([], function () {
     'OBPOS_ReceiptTotal': 'TOTAL',
     
     'OBPOS_LblCategories': 'Categories',
+    'OBPOS_LblNoCategory': '(No category)',
 
     'OBPOS_SearchNoResults': 'No results',
     'OBPOS_SearchAllCategories': '(All categories)',
     'OBPOS_SearchButtonSearch': ' Search',
     
     'OBPOS_PaymentsEmpty': 'No payments',
-    'OBPOS_PaymentsRemaining': ' remaining to pay.',
+    'OBPOS_PaymentsRemaining': ' remaining to pay. ',
+    'OBPOS_PaymentsChange': ' change.',
+    'OBPOS_PaymentsOverpayment': ' overpayment.',
     
-    'OBPOS_PayKind:cash': 'Cash',
-    'OBPOS_PayKind:voucher': 'Voucher',
-    'OBPOS_PayKind:card': 'Card',
+    'OBPOS_PayKind:payment.cash': 'Cash',
+    'OBPOS_PayKind:payment.voucher': 'Voucher',
+    'OBPOS_PayKind:payment.card': 'Card',
     
     'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',
     'OBPOS_MsgHardwareServerNotAvailable': 'Hardware server is not available.',
@@ -66,6 +69,7 @@ define([], function () {
     
     
     // Point of sale window
+    'OBPOS_MsgConfirmDelete': 'Do you really want to delete the current receipt?',
     'OBPOS_LblAssignCustomer': 'Assign a customer to this receipt',
     'OBPOS_LblAssignReceipt': 'Receipts',
     

@@ -39,19 +39,16 @@ define(['utilities', 'i18n'], function () {
   // Sales.Payment Model
   OB.MODEL.PaymentLine = Backbone.Model.extend({
     defaults : {
-      'kind': 'cash',
-      'amount': 0
+      'amount': 0,
+      'paid': 0 // amount - change...      
     },
     printKind: function () {
       return OB.I18N.getLabel('OBPOS_PayKind:' + this.get('kind'));
-    },  
-    getAmount: function () {
-      return this.get('amount');
-    },      
+    },     
     printAmount: function () {
       return OB.I18N.formatCurrency(this.get('amount'));
-    }  
-  });  
+    }
+  });       
   
   // Sales.OrderLineCol Model.  
   OB.MODEL.PaymentLineCol = Backbone.Collection.extend({
@@ -69,8 +66,18 @@ define(['utilities', 'i18n'], function () {
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
-      this.set('payments', new OB.MODEL.PaymentLineCol());        
+      this.set('payments', new OB.MODEL.PaymentLineCol());       
+      this.set('payment', 0);
+      this.set('change', 0);
     },
+    
+    getTotal: function () {
+      return this.getNet();
+    },  
+    
+    printTotal: function () {
+      return OB.I18N.formatCurrency(this.getTotal());      
+    },    
     
     getNet: function () {
       return this.get('lines').reduce(function (memo, e) { 
@@ -83,38 +90,37 @@ define(['utilities', 'i18n'], function () {
     },
     
     getPayment: function () {
-      return this.get('payments').reduce(function (memo, e) { 
-        return memo + e.getAmount(); 
-      }, 0 );      
-    },
+      return this.get('payment');  
+    }, 
     
-    printPayment: function () {
-      return OB.I18N.formatCurrency(this.getPayment());      
-    },    
+    getChange: function () {
+      return this.get('change');  
+    },     
     
     getPending: function () {
-      return this.getNet() - this.getPayment();    
+      return this.getTotal() - this.getPayment();    
     },
     
-    printPending: function () {
-      var pending = this.getPending();
-      if (this.getPending() >= 0){
-        return OB.I18N.formatCurrency(this.getPending());
-      } else {
-        return OB.I18N.formatCurrency(0);
-      }
+    getPaymentStatus: function () {
+      var total = this.getTotal();
+      var pay = this.getPayment();
+      return {
+        'done': (total > 0 && pay >= total),
+        'total': OB.I18N.formatCurrency(total),
+        'pending': pay >= total ? OB.I18N.formatCurrency(0) : OB.I18N.formatCurrency(total - pay),
+        'change': this.getChange() > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
+        'overpayment': pay > total ? OB.I18N.formatCurrency(pay - total) : null
+      };               
     },
-    
-    printOverPayment: function () {
-      return OB.I18N.formatCurrency(this.getPending());      
-    },    
     
     clear: function() {
       this.set('date', new Date());
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
-      this.get('payments').reset();      
+      this.get('payments').reset();  
+      this.set('payment', 0);
+      this.set('change', 0);
       this.trigger('change');      
       this.trigger('clear');            
     },
@@ -131,6 +137,8 @@ define(['utilities', 'i18n'], function () {
       _order.get('payments').forEach(function (elem) {
         this.get('payments').add(elem);
       }, this);      
+      this.set('payment', _order.get('payment'));
+      this.set('change', _order.get('change'));
       this.trigger('change');
       this.trigger('clear'); 
     },
@@ -140,6 +148,7 @@ define(['utilities', 'i18n'], function () {
         qty = 1;
       }
       this.setUnit(line, line.get('qty') - qty, 'rem');
+      this.adjustPayment();
     },
     
     addUnit: function (line, qty) {
@@ -147,6 +156,7 @@ define(['utilities', 'i18n'], function () {
         qty = 1;
       }
       this.setUnit(line, line.get('qty') + qty, 'add');
+      this.adjustPayment();
     },
     
     setUnit: function (line, qty, action) {
@@ -169,8 +179,9 @@ define(['utilities', 'i18n'], function () {
           });        
         } else {
           this.deleteLine(line);     
-        }     
-      }
+        }  
+        this.adjustPayment();
+      }      
     },
     
     deleteLine:function (line) {
@@ -186,7 +197,8 @@ define(['utilities', 'i18n'], function () {
           me.get('lines').add(line, {at: index});
           me.set('undo', null);
         }
-      });         
+      });  
+      this.adjustPayment();
     },
     
     addProduct: function (line, p) {
@@ -213,6 +225,7 @@ define(['utilities', 'i18n'], function () {
           }
         });
       }
+      this.adjustPayment();
     },
     
     setBP: function (bp) {      
@@ -230,6 +243,47 @@ define(['utilities', 'i18n'], function () {
       });    
     },
     
+    adjustPayment: function () {   
+      var i, max, p;
+      var payments = this.get('payments');   
+      var total = this.getTotal();
+          
+      var nocash = 0;
+      var cash = 0;
+      var pcash;
+      
+      for (i = 0, max = payments.length; i < max; i++) {  
+        p = payments.at(i);    
+        p.set('paid', p.get('amount'));
+        if (p.get('kind') === 'payment.cash') {   
+          cash = cash + p.get('amount');
+          pcash = p;
+        } else {
+          nocash = nocash + p.get('amount');
+        }
+      }
+      
+      // Calculation of the change....
+      if (pcash) {
+        if (nocash > total) {
+          pcash.set('paid', 0);
+          this.set('payment', nocash);     
+          this.set('change', cash);           
+        } else if (nocash + cash > total) {
+          pcash.set('paid', total - nocash);
+          this.set('payment', total);     
+          this.set('change', nocash + cash - total);           
+        } else {
+          pcash.set('paid', cash);
+          this.set('payment', nocash + cash);     
+          this.set('change', 0);             
+        }
+      } else {
+        this.set('payment', nocash);     
+        this.set('change', 0);          
+      }
+    },
+    
     addPayment: function(payment) {
       var i, max, p;
       
@@ -243,15 +297,18 @@ define(['utilities', 'i18n'], function () {
         p = payments.at(i);
         if (p.get('kind') === payment.get('kind')) {
           p.set('amount', payment.get('amount') + p.get('amount'));
+          this.adjustPayment();
           return;
         }
-      }
-      
-      this.get('payments').add(payment);
+      }      
+      payments.add(payment);      
+      this.adjustPayment();
     },
     
     removePayment: function(payment) {
-      this.get('payments').remove(payment);
+      var payments = this.get('payments');
+      payments.remove(payment);
+      this.adjustPayment();     
     }    
   }); 
   
@@ -267,13 +324,27 @@ define(['utilities', 'i18n'], function () {
     initialize : function () {
       this.current = null;
     },    
-
+    
     createNew: function () {
       this.saveCurrent();
       this.current = new OB.MODEL.Order();
       this.add(this.current);
       this.loadCurrent();     
     },  
+    
+    deleteCurrent: function () {
+      if (this.current) {
+        this.remove(this.current);
+        if (this.length > 0) {
+          this.current = this.at(this.length - 1);
+        } else {
+          this.current = new OB.MODEL.Order();
+          this.add(this.current);
+        }
+        this.loadCurrent();
+      }
+    },
+    
     load: function(model) {
       this.saveCurrent();
       this.current = model;

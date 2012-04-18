@@ -80,6 +80,9 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
+                  if (window.confirm(OB.I18N.getLabel('OBPOS_MsgConfirmDelete'))) {
+                    me.context.modelorderlist.deleteCurrent();
+                  }
                 });
             }},            
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
@@ -227,7 +230,7 @@ define(['builder', 'i18n',
                 {kind: OB.COMP.EditLine }                                                                      
               ]},       
               {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.Payment }                                                                      
+                {kind: OB.COMP.Payment, attr: {'cashcoins': [50, 20, 10, 5, 2, 1, 0.50, 0.20, 0.10, 0.05, 0.01] }}                                                                      
               ]}             
             ]},
             {kind: OB.COMP.Keyboard }

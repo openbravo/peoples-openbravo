@@ -6,8 +6,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   OB.COMP = window.OB.COMP || {};
   
   OB.COMP.ListProducts = function (context) {
+    var me = this;
     
-    this._id = 'ListProducts';      
+    this._id = 'ListProducts';   
     this.receipt = context.modelorder;
     this.line = null;   
     this.receipt.get('lines').on('selected', function (line) {
@@ -27,6 +28,13 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
         ]},
         {kind: OB.COMP.TableView, attr: {
           collection: this.products,
+          renderEmpty: function () {
+            return B(
+              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+                OB.I18N.getLabel('OBPOS_SearchNoResults')
+              ]}
+            );            
+          },                
           renderLine: function (model) {
             return B(         
               {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
@@ -37,7 +45,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
                   model.get('product')._identifier
                 ]},                                                                                      
                 {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                  {tag: 'strong', content: [ 
+                  {kind: B.KindJQuery('strong'), content: [ 
                     OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                         
                   ]}                                                                                                                                                                                                                                 
                 ]},                                                                                      
@@ -55,7 +63,11 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   OB.COMP.ListProducts.prototype.loadCategory = function (category) {
     if (category) {
       this.products.exec({ product: { 'productCategory': category.get('category').id } });    
-      this.titleProd.text(category.get('category')._identifier);      
-    }    
+      this.titleProd.text(category.get('category')._identifier);
+    } else {
+      this.products.reset();
+      this.titleProd.text(OB.I18N.getLabel('OBPOS_LblNoCategory'));
+
+    }
   };
 });
