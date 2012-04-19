@@ -147,7 +147,7 @@
       RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@') ;
     END IF;
     IF (v_C_CURRENCY_ID IS NULL) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@"C_CURRENCY_ID" IS NOT NULL@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@CurrencyNull@') ;
     END IF;
     /**************************************************************************
     *  Start Processing ------------------------------------------------------
