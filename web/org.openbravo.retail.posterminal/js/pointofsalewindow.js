@@ -2,7 +2,7 @@
 
 
 define(['builder', 'i18n',
-        'data/product',
+        'data/datamaster', 'data/dataorder',
         'model/terminal', 'model/order', 'model/productprice',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
@@ -19,6 +19,7 @@ define(['builder', 'i18n',
         {kind: OB.DATA.Product},
         {kind: OB.DATA.ProductPrice},
         {kind: OB.DATA.Category},      
+        {kind: OB.DATA.Order},      
         
         {kind: OB.MODEL.Order},
         {kind: OB.MODEL.OrderList}, 

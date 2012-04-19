@@ -12,11 +12,7 @@ define(['utilities', 'datasource'], function () {
        }
        // load datasource
        this.ds.load(this.loadparams);
-    },
-    attr: function (attr, value) {
-    },
-    append: function (child) {
-    }   
+    } 
   };
   
   OB.DATA.BPs = function (context) {
