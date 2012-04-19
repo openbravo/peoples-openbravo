@@ -40,7 +40,7 @@ define([], function () {
     'OBPOS_KbCash': 'Cash',
     'OBPOS_KbCard': 'Card',
     'OBPOS_KbVoucher': 'Voucher',
-    'OBPOS_KbUPCEANCodeNotFound': 'UPC/EAN code not found.',
+    'OBPOS_KbUPCEANCodeNotFound': 'UPC/EAN code not found: %0',
 
     'OBPOS_ReceiptNew': 'New Receipt',
     'OBPOS_ReceiptTaxes': 'Taxes',

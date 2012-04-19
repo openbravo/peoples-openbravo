@@ -219,21 +219,22 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           }
         ));
       } else if (cmd === String.fromCharCode(13)) {
-
+        var code = this.getString();
         this.products.ds.find({
-          product: {uPCEAN: this.getString()}
+          product: {uPCEAN: code}
         }, function (data) {
           if (data) {      
             me.receipt.addProduct(me.line, new Backbone.Model(data));
             me.receipt.trigger('scan');
           } else {
-            alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound')); // 'UPC/EAN code not found'
+            alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code])); // 'UPC/EAN code not found'
           }
         });
       }         
     }, this);       
-    
+
     $(window).keypress(function(e) {
+
       me.keyPressed(String.fromCharCode(e.which));
     });     
   };
@@ -266,6 +267,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   };  
   
   OB.COMP.Keyboard.prototype.keyPressed = function (key) {
+
     var t;
     if (key.match(/^([0-9]|\.|[a-z])$/)) {
       t = this.editbox.text();
