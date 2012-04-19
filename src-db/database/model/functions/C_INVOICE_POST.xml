@@ -150,6 +150,8 @@
   Cur_InvoiceNetLine RECORD;
 
   v_LineMax NUMBER:=0;
+
+  v_Isquantityvariable CHAR(1);
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -1427,12 +1429,13 @@ BEGIN --BODY
         LOOP
           IF (CurLines.C_OrderLine_ID IS NOT NULL) THEN
             --Check that qty pending to invoice is higher or equal to the qty being invoiced
-            SELECT o.documentno, ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced)
-              INTO v_ODocumentNo, v_NewPendingToInvoice
+            SELECT o.documentno, ABS(ol.qtyordered) - ABS(ol.qtyinvoiced + CurLines.QtyInvoiced), p.isquantityvariable
+              INTO v_ODocumentNo, v_NewPendingToInvoice, v_Isquantityvariable
             FROM c_order o, c_orderline ol
+            LEFT JOIN m_product p ON p.m_product_id = ol.m_product_id
             WHERE o.c_order_id = ol.c_order_id
               AND ol.c_orderline_id = CurLines.c_orderline_id;
-            IF (v_NewPendingToInvoice <0 ) THEN
+            IF (v_Isquantityvariable <> 'Y' AND v_NewPendingToInvoice <0) THEN
               v_Message := '@NotPossibleCompleteInvoice@' || ' ' || v_DocumentNo;
               v_Message := v_Message || ' ' || '@line@' || ' ' || CurLines.line || '. ';
               v_Message := v_Message || '@OrderDocumentno@' || ' ' || v_ODocumentNo;
