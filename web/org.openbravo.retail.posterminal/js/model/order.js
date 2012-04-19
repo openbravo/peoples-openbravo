@@ -1,6 +1,6 @@
 /*global define,Backbone */
 
-define(['utilities', 'i18n'], function () {
+define(['utilities', 'arithmetic', 'i18n'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -10,8 +10,9 @@ define(['utilities', 'i18n'], function () {
     defaults : {
       productid: null,
       productidentifier: null,
-      qty: 0,
-      price: 0
+      qty: OB.DEC.Zero,
+      price: OB.DEC.Zero,
+      net: OB.DEC.Zero
     },
     
     printQty: function () {
@@ -22,8 +23,12 @@ define(['utilities', 'i18n'], function () {
       return OB.I18N.formatCurrency(this.get('price'));
     },
     
+    calculateNet: function () {
+      this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+    },
+    
     getNet: function () {
-      return this.get('price') * this.get('qty');
+      return this.get('net');
     },
     
     printNet: function () {
@@ -39,8 +44,8 @@ define(['utilities', 'i18n'], function () {
   // Sales.Payment Model
   OB.MODEL.PaymentLine = Backbone.Model.extend({
     defaults : {
-      'amount': 0,
-      'paid': 0 // amount - change...      
+      'amount': OB.DEC.Zero,
+      'paid': OB.DEC.Zero // amount - change...      
     },
     printKind: function () {
       return OB.I18N.getLabel('OBPOS_PayKind:' + this.get('kind'));
@@ -67,8 +72,9 @@ define(['utilities', 'i18n'], function () {
       this.set('bp', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
       this.set('payments', new OB.MODEL.PaymentLineCol());       
-      this.set('payment', 0);
-      this.set('change', 0);
+      this.set('payment', OB.DEC.Zero);
+      this.set('change', OB.DEC.Zero);
+      this.set('net', OB.DEC.Zero);
     },
     
     getTotal: function () {
@@ -77,12 +83,17 @@ define(['utilities', 'i18n'], function () {
     
     printTotal: function () {
       return OB.I18N.formatCurrency(this.getTotal());      
+    },   
+    
+    calculateNet: function () {
+      var net = this.get('lines').reduce(function (memo, e) { 
+        return OB.DEC.add(memo, e.getNet()); 
+      }, OB.DEC.Zero );
+      this.set('net', net);
     },    
     
     getNet: function () {
-      return this.get('lines').reduce(function (memo, e) { 
-        return memo + e.getNet(); 
-      }, 0 );
+      return this.get('net');
     },
     
     printNet: function () {
@@ -98,18 +109,18 @@ define(['utilities', 'i18n'], function () {
     },     
     
     getPending: function () {
-      return this.getTotal() - this.getPayment();    
+      return OB.DEC.sub(this.getTotal(), this.getPayment());    
     },
     
     getPaymentStatus: function () {
       var total = this.getTotal();
       var pay = this.getPayment();
       return {
-        'done': (total > 0 && pay >= total),
+        'done': (OB.DEC.compare(total) > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
-        'pending': pay >= total ? OB.I18N.formatCurrency(0) : OB.I18N.formatCurrency(total - pay),
-        'change': this.getChange() > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': pay > total ? OB.I18N.formatCurrency(pay - total) : null
+        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
+        'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
       };               
     },
     
@@ -119,8 +130,9 @@ define(['utilities', 'i18n'], function () {
       this.set('bp', null);
       this.get('lines').reset();      
       this.get('payments').reset();  
-      this.set('payment', 0);
-      this.set('change', 0);
+      this.set('payment', OB.DEC.Zero);
+      this.set('change', OB.DEC.Zero);
+      this.set('net', OB.DEC.Zero);      
       this.trigger('change');      
       this.trigger('clear');            
     },
@@ -139,34 +151,35 @@ define(['utilities', 'i18n'], function () {
       }, this);      
       this.set('payment', _order.get('payment'));
       this.set('change', _order.get('change'));
+      this.set('net', _order.get('net'));
       this.trigger('change');
       this.trigger('clear'); 
     },
     
     removeUnit: function (line, qty) {
-      if (typeof(qty) !== 'number' || isNaN(qty)) {
-        qty = 1;
+      if (!OB.DEC.isNumber(qty)) {
+        qty = OB.DEC.One;
       }
-      this.setUnit(line, line.get('qty') - qty, 'rem');
-      this.adjustPayment();
+      this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), 'rem');
     },
     
     addUnit: function (line, qty) {
-      if (typeof(qty) !== 'number' || isNaN(qty)) {
-        qty = 1;
+      if (!OB.DEC.isNumber(qty)) {
+        qty = OB.DEC.One;
       }
-      this.setUnit(line, line.get('qty') + qty, 'add');
-      this.adjustPayment();
+      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), 'add');
     },
     
     setUnit: function (line, qty, action) {
       
-      if (typeof(qty) === 'number' && !isNaN(qty)) {     
+      if (OB.DEC.isNumber(qty)) {     
         var oldqty = line.get('qty');      
-        if (qty > 0) {
+        if (OB.DEC.compare(qty) > 0) {
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
+          line.calculateNet();
+          this.calculateNet();
           // sets the undo action
           this.set('undo', {
             action: action ? action : 'set',
@@ -174,6 +187,8 @@ define(['utilities', 'i18n'], function () {
             line: line,
             undo: function () {
               line.set('qty', oldqty);
+              line.calculateNet();
+              me.calculateNet();
               me.set('undo', null);
             }
           });        
@@ -189,12 +204,14 @@ define(['utilities', 'i18n'], function () {
       var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
+      this.calculateNet();
       // set the undo action
       this.set('undo', {
         action: 'deleteline',
         line: line,
         undo: function() {
           me.get('lines').add(line, {at: index});
+          me.calculateNet();
           me.set('undo', null);
         }
       });  
@@ -210,17 +227,21 @@ define(['utilities', 'i18n'], function () {
         var newline = new OB.MODEL.OrderLine({
           productid: p.get('product').id,
           productidentifier: p.get('product')._identifier,
-          qty: 1,
-          price: p.get('price').listPrice
+          qty: OB.DEC.One,
+          price: OB.DEC.number(p.get('price').listPrice)
         });
+        newline.calculateNet();
+   
         // add the created line
         this.get('lines').add(newline);
+        this.calculateNet();
         // set the undo action
         this.set('undo', {
           action: 'addline',
           line: newline,
           undo: function() {
             me.get('lines').remove(newline);
+            this.calculateNet();
             me.set('undo', null);
           }
         });
@@ -248,46 +269,46 @@ define(['utilities', 'i18n'], function () {
       var payments = this.get('payments');   
       var total = this.getTotal();
           
-      var nocash = 0;
-      var cash = 0;
+      var nocash = OB.DEC.Zero;
+      var cash = OB.DEC.Zero;
       var pcash;
       
       for (i = 0, max = payments.length; i < max; i++) {  
         p = payments.at(i);    
         p.set('paid', p.get('amount'));
         if (p.get('kind') === 'payment.cash') {   
-          cash = cash + p.get('amount');
+          cash = OB.DEC.add(cash, p.get('amount'));
           pcash = p;
         } else {
-          nocash = nocash + p.get('amount');
+          nocash = OB.DEC.add(cash, p.get('amount'));
         }
       }
       
       // Calculation of the change....
       if (pcash) {
-        if (nocash > total) {
-          pcash.set('paid', 0);
+        if (OB.DEC.compare(nocash - total) > 0) {
+          pcash.set('paid', OB.DEC.Zero);
           this.set('payment', nocash);     
           this.set('change', cash);           
-        } else if (nocash + cash > total) {
-          pcash.set('paid', total - nocash);
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(nocash, cash), total)) > 0) {
+          pcash.set('paid', OB.DEC.sub(total, nocash));
           this.set('payment', total);     
-          this.set('change', nocash + cash - total);           
+          this.set('change', OB.DEC.sub(OB.DEC.add(nocash, cash), total));           
         } else {
           pcash.set('paid', cash);
-          this.set('payment', nocash + cash);     
-          this.set('change', 0);             
+          this.set('payment', OB.DEC.add(nocash, cash));     
+          this.set('change', OB.DEC.Zero);             
         }
       } else {
         this.set('payment', nocash);     
-        this.set('change', 0);          
+        this.set('change', OB.DEC.Zero);          
       }
     },
     
     addPayment: function(payment) {
       var i, max, p;
       
-      if (typeof(payment.get('amount')) !== 'number' || !isFinite(payment.get('amount')) || this.getPending() <= 0) {
+      if (!OB.DEC.isNumber(payment.get('amount')) || OB.DEC.compare(this.getPending()) <= 0) {
         return;
       }
      
@@ -296,7 +317,7 @@ define(['utilities', 'i18n'], function () {
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         if (p.get('kind') === payment.get('kind')) {
-          p.set('amount', payment.get('amount') + p.get('amount'));
+          p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
           this.adjustPayment();
           return;
         }

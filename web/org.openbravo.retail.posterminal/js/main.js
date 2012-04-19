@@ -9,7 +9,7 @@ require.config({
 });
 
 
-require(['builder', 'pointofsalewindow', 'datasource', 'model/terminal', 'components/terminal'], function(B, pos) {
+require(['builder', 'pointofsalewindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, pos) {
   
   var hwserver = new OB.DS.HWServer();  // 'http://192.168.0.8:8090/printer'
   var modelterminal = new OB.MODEL.Terminal();
@@ -24,6 +24,11 @@ require(['builder', 'pointofsalewindow', 'datasource', 'model/terminal', 'compon
   };
   
   modelterminal.on('ready', function() {
+    
+    // Set Arithmetic properties:
+    OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
+    
+    // Show window.
     $("#container").append(B(pos()).$);   
     OB.POS.modelterminal.trigger('domready'); 
   });    

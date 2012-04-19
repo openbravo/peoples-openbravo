@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -15,10 +15,7 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
     var payments = this.receipt.get('payments');
     var lines = this.receipt.get('lines');
     
-    lines.on('reset change add remove', function() {
-      this.updatePending();     
-    }, this);    
-    this.receipt.on('change:payment change:change', function() {
+    this.receipt.on('change:payment change:change change:net', function() {
       this.updatePending();     
     }, this);      
     
@@ -101,6 +98,8 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
     this.overpayment = this.component.context.overpayment.$;  
     this.overpaymentlbl = this.component.context.overpaymentlbl.$;     
     this.doneaction = this.component.context.doneaction.$;
+    
+    this.updatePending();
   };
   
   OB.COMP.Payment.prototype.attr = function (attrs) {
@@ -114,7 +113,7 @@ define(['builder', 'utilities', 'i18n', 'model/order'], function (B) {
         ], init: function () {
           this.$.click(function(e) {
             e.preventDefault();
-            me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'payment.cash', 'amount': v}));                 
+            me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'payment.cash', 'amount': OB.DEC.number(v)}));                 
           });
         }}
       ).$);      

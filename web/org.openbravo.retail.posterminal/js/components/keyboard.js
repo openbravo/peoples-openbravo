@@ -1,6 +1,6 @@
 /*global define,$,_,Backbone */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -254,7 +254,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'compon
   };
   
   OB.COMP.Keyboard.prototype.getNumber = function () {
-    var i = parseInt(this.editbox.text(), 10);
+    var i = OB.DEC.number(parseInt(this.editbox.text(), 10));
     this.editbox.empty();
     return i;
   };

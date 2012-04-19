@@ -18,10 +18,12 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
     
     // Set Model
     this.receipt =  context.modelorder;
-    var lines = this.receipt.get('lines');
     
-    lines.on('reset change add remove', function() {
+    this.receipt.on('change:net', function() {
       this.totalgross.text(this.receipt.printTotal());      
     }, this);
+    
+    // Initial total display
+    this.totalgross.text(this.receipt.printTotal());      
   };
 });    

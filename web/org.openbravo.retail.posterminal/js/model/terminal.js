@@ -61,6 +61,7 @@ define(['datasource', 'utilities'], function () {
           me.loadLocation();
           me.loadPriceList();
           me.loadPriceListVersion();
+          me.loadCurrency();
         } else {
           alert("Terminal does not exists: " + t);
         }
@@ -107,9 +108,27 @@ define(['datasource', 'utilities'], function () {
       }, function (data) {
         if (data[0]) {
           me.set('pricelistversion', data[0]);
-          me.trigger('ready');
+          me.triggerReady();
         }
       });    
+    },
+    
+    loadCurrency: function () {
+      var me = this;    
+      new OB.DS.Query('from Currency where id =:currency and $readableCriteria').exec({
+        currency: this.get('terminal').currency
+      }, function (data) {
+        if (data[0]) {
+          me.set('currency', data[0]);
+          me.triggerReady();
+        }
+      });    
+    },   
+    
+    triggerReady: function() {
+      if (this.get('pricelistversion') && this.get('currency')) {
+        this.trigger('ready');
+      }     
     }
   });
   

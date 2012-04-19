@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.receipt =  context.modelorder;
     var lines = this.receipt.get('lines');
     
-    lines.on('reset change add remove', function() {
+    this.receipt.on('change:net', function() {
       this.totalnet.text(this.receipt.printTotal());   
     }, this);    
 
@@ -76,6 +76,9 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     );
     this.$ = this.component.$;
     this.totalnet = this.component.context.totalnet.$;
+    
+    // Initial total display...
+    this.totalnet.text(this.receipt.printTotal());   
     
   };
 });    
