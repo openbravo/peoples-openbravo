@@ -968,9 +968,7 @@ public class FIN_Utility {
     try {
       final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class);
-      obCriteria.createAlias(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, "r",
-          OBCriteria.LEFT_JOIN);
-      obCriteria.add(Restrictions.ilike("r." + org.openbravo.model.ad.domain.Reference.PROPERTY_ID,
+      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
           "575BCB88A4694C27BC013DE9C73E6FE7"));
       List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
       for (org.openbravo.model.ad.domain.List adRef : adRefList) {
