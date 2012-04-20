@@ -10,7 +10,7 @@ define(['i18n'], function () {
     this.query = query;
   };
 
-  OB.DS.Query.prototype.exec = function (params, callback) {
+  OB.DS.Query.prototype.exec = function (params, callback, username, password) {
     var p, i;
 
     var data = {
@@ -51,9 +51,17 @@ define(['i18n'], function () {
       }
       data.parameters = p;
     }
+    
+    // Create the URL string
+    var url = '../../org.openbravo.service.retail.posterminal.jsonrest/hql/?auth=false';  
+    if (username && password) {
+      url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
+    }
 
+    console.log(url + '\n' + JSON.stringify(data));
+    
     $.ajax({
-      url: '../../org.openbravo.service.retail.posterminal.jsonrest/hql/?auth=false',
+      url: url,
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'POST',
@@ -84,7 +92,9 @@ define(['i18n'], function () {
       error: function (jqXHR, textStatus, errorThrown) {
         callback({
           exception: {
-            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable'))
+            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+            status: jqXHR.status,
+            username: username
           }
         });
       }

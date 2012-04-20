@@ -176,11 +176,18 @@
             <div id="yourcompanyproperties"></div>
           </div>
         </div>
-        <div style="display: inline-block; font-weight: bold; float:right">Openbravo Point of Sale</div>
+        
+        <div style="display: inline-block; font-weight: bold; float:right">
+        <span>Openbravo Point of Sale </span> 
+        <a id="logoutaction" href="#" class=""><i class="icon-off icon-white"></i></a>
+        </div>
 		  </div>
 	  </div>
   </div>
-<!-- Here it goes the POS window... -->
+  <div>
+  <div id="containerwindow">
+    <!-- Here it goes the POS window... -->
+  </div>
 </div>
 
 <script type="text/javascript" src="../org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
@@ -193,6 +200,13 @@
 <script type="text/javascript" src="js/libs/bootstrap/js/bootstrap-modal.js"></script>
 
 <script type="text/javascript" data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
+
+<script type="text/javascript">
+	$('#logoutaction').click(function (e) {
+	  e.preventDefault();
+	  OB.POS.logout();
+	});
+</script>
 
 </body>
 </html>

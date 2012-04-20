@@ -137,6 +137,14 @@ public class TerminalServlet extends BaseWebServiceServlet {
         log.error(e.getMessage(), e);
         writeResult(response, JsonUtils.convertExceptionToJson(e));
       }
+    } else if (pathparts.length == 2 || "logout".equals(pathparts[1])) {
+      request.getSession(true).invalidate();
+      try {      
+        writeResult(response, getJSONResult("success"));
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        writeResult(response, JsonUtils.convertExceptionToJson(e));
+      }      
     } else {
       writeResult(
           response,
@@ -256,5 +264,11 @@ public class TerminalServlet extends BaseWebServiceServlet {
     } else {
       return new JSONObject(content);
     }
+  }
+
+  private String getJSONResult(String result) throws JSONException {
+    final JSONObject jsonResult = new JSONObject();
+    jsonResult.put("result", result);
+    return jsonResult.toString();
   }
 }

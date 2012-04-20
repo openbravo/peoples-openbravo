@@ -234,7 +234,6 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     }, this);       
 
     $(window).keypress(function(e) {
-
       me.keyPressed(String.fromCharCode(e.which));
     });     
   };

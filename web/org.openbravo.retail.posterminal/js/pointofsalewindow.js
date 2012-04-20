@@ -1,4 +1,4 @@
-/*global define,B */
+/*global define */
 
 
 define(['builder', 'i18n',

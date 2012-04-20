@@ -46,26 +46,36 @@ define(['datasource', 'utilities'], function () {
       pricelistversion: null
     },
     
-    load: function () {
+    load: function (user, password) {
+      
+      // reset all application state.
+      $(window).off('keypress');
+      
+      // Starting app
       var me = this;
-      var t = OB.UTIL.getParameterByName("terminal") || "POS-1";
+      var params = {
+          terminal:OB.UTIL.getParameterByName("terminal") || "POS-1"
+      };
   
-      new OB.DS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec({
-        terminal: t
-      }, function (data) {
-        if (data.exception) {
-          window.location = '../org.openbravo.client.application.mobile/login.jsp';
-        } else if (data[0]) {
-          me.set('terminal', data[0]);
-          me.loadBPLocation();
-          me.loadLocation();
-          me.loadPriceList();
-          me.loadPriceListVersion();
-          me.loadCurrency();
-        } else {
-          alert("Terminal does not exists: " + t);
-        }
-      });        
+      new OB.DS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec(
+        params,
+        function (data) {
+          if (data.exception) {
+            me.triggerFail(data.exception);
+          } else if (data[0]) {
+            me.set('terminal', data[0]);
+            me.loadBPLocation();
+            me.loadLocation();
+            me.loadPriceList();
+            me.loadPriceListVersion();
+            me.loadCurrency();
+          } else {
+            alert("Terminal does not exists: " + params.terminal);
+          }
+        },
+        user,
+        password
+      );        
     },
     
     loadBPLocation: function () {
@@ -125,10 +135,14 @@ define(['datasource', 'utilities'], function () {
       });    
     },   
     
-    triggerReady: function() {
+    triggerReady: function () {
       if (this.get('pricelistversion') && this.get('currency')) {
         this.trigger('ready');
       }     
+    },
+    
+    triggerFail: function (exception) {
+      this.trigger('fail', exception);
     }
   });
   
