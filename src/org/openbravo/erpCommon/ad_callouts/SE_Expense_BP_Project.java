@@ -111,12 +111,7 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           // business partner (if any).
           strReset = "1";
           strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
-          if (strProject != null && !strProject.equals("")) {
-            strProjectId = strProject;
-          } else {
-            strProjectId = "";
-          }
-          resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\"),\n");
+          resultado.append("new Array(\"inpcProjectId\", \"" + strProject + "\"),\n");
         }
         if (strReset.equals("1")) {
           // Reset Project Phase and Project Task fields
