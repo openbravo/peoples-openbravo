@@ -1217,7 +1217,6 @@ BEGIN --BODY
       Cur_MultiTax RECORD;
       xTaxBaseAmt NUMBER:=0;
       xTaxAmt NUMBER:=0;
-      v_TaxNoRecalculable NUMBER:=0;
       v_PreviousTaxAmt NUMBER:=0;
       HeaderNotAdded BOOLEAN:=TRUE;
       v_LineNo NUMBER:=0;
@@ -1258,17 +1257,11 @@ BEGIN --BODY
         C_INVOICELINETAX_INSERT(v_Org_ID, v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
       END LOOP; -- Insert New Taxes
       -- Update Header
-      SELECT COALESCE(SUM(TaxAmt),0) INTO v_TaxNoRecalculable
-      FROM C_INVOICETAX
-      WHERE C_Invoice_ID = v_Record_ID
-        AND Recalculate = 'N';
       IF (v_IsSOTrx = 'N') THEN
         SELECT c_getwithholding(v_record_id) INTO withholdamount FROM dual;
       ELSE
         withholdamount:=0;
       END IF;
-
-      v_GrandTotal:=C_Currency_Round(v_GrandTotal+v_TaxNoRecalculable, v_Currency_ID, NULL) ;
       SELECT COALESCE(SUM(TAXAMT), 0) INTO v_GrandTotal
       FROM C_INVOICETAX
       WHERE C_INVOICE_ID = v_Record_ID;
