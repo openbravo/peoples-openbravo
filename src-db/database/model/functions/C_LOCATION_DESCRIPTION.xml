@@ -36,15 +36,10 @@ BEGIN
     ) || (
     CASE
       WHEN COALESCE(TO_CHAR(L.POSTAL), TO_CHAR(L.CITY), TO_CHAR(R.NAME)) IS NULL THEN ''
-      ELSE CHR(10) || (
-        CASE
-          WHEN L.POSTAL IS NULL THEN ''
-          ELSE TO_CHAR(L.POSTAL)
-        END
-      ) || (
+      ELSE CHR(10) || COALESCE(TO_CHAR(L.POSTAL), '')  
+      || (
       CASE
-        WHEN L.POSTAL IS NULL THEN ''
-        WHEN L.CITY IS NULL AND R.NAME IS NULL THEN ''
+        WHEN (L.POSTAL IS NULL) OR (L.CITY IS NULL AND R.NAME IS NULL) THEN ''
         ELSE ' - '
       END
       ) || (
@@ -54,13 +49,10 @@ BEGIN
       END
       ) || (
       CASE
-        WHEN L.CITY IS NULL THEN ''
-        ELSE ' '
-      END
-      ) || (
-      CASE
         WHEN R.NAME IS NULL THEN ''
-        ELSE '('||TO_CHAR(R.NAME) || ')'
+        ELSE (CASE WHEN L.CITY IS NOT NULL THEN ' ('||TO_CHAR(R.NAME) || ')' 
+                   ELSE '('||TO_CHAR(R.NAME) || ')' 
+              END)
       END
       )
     END
