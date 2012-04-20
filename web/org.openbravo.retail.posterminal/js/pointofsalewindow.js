@@ -181,8 +181,8 @@ define(['builder', 'i18n',
                         ]},
                         {kind: B.KindJQuery('div'), attr: {'style': 'float:right'}, content: [                                                                                                                                
                           {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [                                                                                                                                
-                          {kind: OB.COMP.ReceiptsCounter}
-                              ]}
+                            {kind: OB.COMP.ReceiptsCounter}
+                          ]}
                         ]},                        
                         {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}} 
                     ]}
