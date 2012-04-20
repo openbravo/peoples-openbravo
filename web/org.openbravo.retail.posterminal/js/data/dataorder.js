@@ -12,7 +12,7 @@ define(['utilities', 'datasource'], function () {
   };
   OB.DATA.Order.prototype.exec = function (order) {
     order.trigger('closed');    
-    console.log(JSON.stringify(order.toJSON()));
+    // console.log(JSON.stringify(order.toJSON()));
   };
   
  });

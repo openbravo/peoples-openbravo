@@ -58,7 +58,7 @@ define(['i18n'], function () {
       url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
     }
 
-    console.log(url + '\n' + JSON.stringify(data));
+    // console.log(url + '\n' + JSON.stringify(data));
     
     $.ajax({
       url: url,

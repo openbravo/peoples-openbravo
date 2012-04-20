@@ -1,4 +1,4 @@
-/*global require,$,OB */
+/*global require,$, confirm, OB */
 
 require.config({
   paths: {

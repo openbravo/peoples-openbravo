@@ -155,41 +155,38 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
                 {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
                   {kind: BtnAction, attr: {'command': '.'}, content: ['.']}                                                                            
                 ]}   
+              ]}
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [     
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                  {kind: BtnAction, attr: {'command': 'qty'}, content: [OB.I18N.getLabel('OBPOS_KbQuantity')]}                                                                            
+                ]}     
               ]},
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                  {kind: BtnAction, attr: {'command': 'price'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
+                ]}     
               ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [     
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction, attr: {'command': 'qty'}, content: [OB.I18N.getLabel('OBPOS_KbQuantity')]}                                                                            
-                  ]}     
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction, attr: {'command': 'price'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
-                  ]}     
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction, attr: {'command': 'dto'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
-                  ]}     
-                ]},   
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}                                                                            
-                  ]}     
-                ]},                     
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction, attr: {'command': String.fromCharCode(13)}, content: [
-                      {kind: B.KindJQuery('i'), attr:{'class': 'icon-ok'}}                                                                                      
-                    ]}                                                                            
-                  ]}     
-                ]}                
-                
-                
-              ]}                
-            ]}             
-          
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                  {kind: BtnAction, attr: {'command': 'dto'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
+                ]}     
+              ]},   
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                  {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}                                                                            
+                ]}     
+              ]},                     
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                  {kind: BtnAction, attr: {'command': String.fromCharCode(13)}, content: [
+                    {kind: B.KindJQuery('i'), attr:{'class': 'icon-ok'}}                                                                                      
+                  ]}                                                                            
+                ]}     
+              ]}                    
+            ]}                
+          ]}             
         ]}
       ]}                                                                                                                                
     );

@@ -32,11 +32,11 @@ define([], function (B) {
   };  
   
   OB.DEC.mul = function (a, b) {
-    return toNumber(toBigDecimal(a).multiply(toBigDecimal(b)));;
+    return toNumber(toBigDecimal(a).multiply(toBigDecimal(b)));
   }; 
   
   OB.DEC.div = function (a, b) {
-    return toNumber(toBigDecimal(a).divide(toBigDecimal(b)));;
+    return toNumber(toBigDecimal(a).divide(toBigDecimal(b)));
   };  
   
   OB.DEC.compare = function (a) {

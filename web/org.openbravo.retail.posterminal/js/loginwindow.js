@@ -1,4 +1,4 @@
-/*global define */
+/*global define, $ */
 
 
 define(['builder', 'i18n',
@@ -39,7 +39,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [   
                 {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password'}, init: function () {
                   this.$.keyup(function (e) {
-                      if(event.keyCode == 13){
+                      if(event.keyCode === 13){
                           $("#loginaction").click();
                       }
                   });                  
