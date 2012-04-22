@@ -261,7 +261,7 @@ OB.ViewFormProperties = {
       var parentRecord = this.view.getParentRecord();
       if (parentRecord) {
         this.setValue(this.view.parentProperty, parentRecord.id);
-        this.setValue(this.view.parentProperty + '.' + OB.Constants.IDENTIFIER, parentRecord[OB.Constants.IDENTIFIER]);
+        this.setValue(this.view.parentProperty + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER, parentRecord[OB.Constants.IDENTIFIER]);
         if (this.getField(this.view.parentProperty) && !this.getField(this.view.parentProperty).valueMap) {
           var valueMap = {};
           this.getField(this.view.parentProperty).valueMap = valueMap;
@@ -986,10 +986,10 @@ OB.ViewFormProperties = {
             // only set the display field name if the field does not have its own
             // datasource and the field displayfield contains a dot, otherwise 
             // it is a direct field
-            if (field.displayField && field.displayField.contains('.') && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
+            if (field.displayField && field.displayField.contains(OB.Constants.SEPARATOR) && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
               field.form.setItemValue(field.displayField, identifier);
             } else if (!field.displayField) {
-              field.form.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
+              field.form.setItemValue(field.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER, identifier);
             }
           }
         }
@@ -1000,8 +1000,8 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
-      if (this.getValue(field.name + '.' + OB.Constants.IDENTIFIER)) {
-        this.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, null);
+      if (this.getValue(field.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER)) {
+        this.setItemValue(field.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER, null);
       }
     }
 
@@ -1064,7 +1064,7 @@ OB.ViewFormProperties = {
           identifier = valueMap[columnValue.value];
         }
         if (identifier) {
-          editValues[prop + '.' + OB.Constants.IDENTIFIER] = identifier;
+          editValues[prop + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER] = identifier;
         }
         editValues[prop] = columnValue.value;
       }

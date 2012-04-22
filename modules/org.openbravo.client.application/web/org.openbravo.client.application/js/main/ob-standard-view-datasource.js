@@ -83,7 +83,7 @@ isc.OBViewDataSource.addProperties({
       var correctedData = {},
           prop;
       for (prop in data) {
-        if (data.hasOwnProperty(prop) && !prop.contains('.')) {
+        if (data.hasOwnProperty(prop) && !prop.contains(OB.Constants.SEPARATOR)) {
           correctedData[prop] = data[prop];
         }
       }

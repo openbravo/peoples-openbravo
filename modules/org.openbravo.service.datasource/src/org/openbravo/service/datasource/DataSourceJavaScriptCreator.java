@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.service.datasource.DataSourceProperty.RefListEntry;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.web.BaseWebServiceServlet;
@@ -154,7 +155,7 @@ public class DataSourceJavaScriptCreator extends BaseWebServiceServlet {
 
   protected String getReferenceProperty(Property property, String subPropName) {
     final StringBuilder sb = new StringBuilder("{");
-    sb.append("name: \"" + property.getName() + "." + subPropName + "\"");
+    sb.append("name: \"" + property.getName() + DalUtil.FIELDSEPARATOR + subPropName + "\"");
     sb.append(", type: \"text\"");
     sb.append(", hidden: true");
     if (property.isMandatory()) {

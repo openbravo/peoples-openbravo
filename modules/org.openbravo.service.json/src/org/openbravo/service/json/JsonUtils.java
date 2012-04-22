@@ -35,6 +35,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -243,7 +244,7 @@ public class JsonUtils {
    * @return the list of properties determined from the property path
    */
   public static List<Property> getPropertiesOnPath(Entity entity, String propertyPath) {
-    final String[] parts = propertyPath.split("\\.");
+    final String[] parts = propertyPath.replace(DalUtil.FIELDSEPARATOR, ".").split("\\.");
     Entity currentEntity = entity;
     Property result = null;
     final List<Property> properties = new ArrayList<Property>();

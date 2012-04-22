@@ -95,7 +95,7 @@ the outputted value is already covered by a default.
             },          
         </#if>
         <#if field.searchField>
-            displayField: '${field.name?js_string}._identifier',
+            displayField: '${field.name?js_string}$_identifier',
             <#if field.parentProperty>
                 showPickerIcon: ${(!field.parentProperty)?string},
             </#if>

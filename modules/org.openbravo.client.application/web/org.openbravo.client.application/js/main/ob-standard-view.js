@@ -2126,7 +2126,7 @@ isc.OBStandardView.addProperties({
       }
 
       if (fld.fkField) {
-        fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.displayField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
 
@@ -2148,8 +2148,8 @@ isc.OBStandardView.addProperties({
       fld.filterEditorProperties.required = false;
 
       if (fld.fkField) {
-        fld.filterEditorProperties.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
-        fld.filterEditorProperties.valueField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.filterEditorProperties.displayField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
+        fld.filterEditorProperties.valueField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
       }
 
       result.push(fld);

@@ -108,7 +108,9 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       // fallback to the default
       return null;
     }
-    return prop.getName() + "." + displayFieldName;
+    final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(".",
+        DalUtil.FIELDSEPARATOR);
+    return result;
   }
 
   public String getFieldProperties(Field field) {

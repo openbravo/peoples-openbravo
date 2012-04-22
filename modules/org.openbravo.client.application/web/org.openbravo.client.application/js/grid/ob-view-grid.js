@@ -1410,7 +1410,7 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function () {
           var fldName = field.name;
-          var dotIndex = fldName.indexOf('.');
+          var dotIndex = fldName.indexOf(OB.Constants.SEPARATOR);
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }
