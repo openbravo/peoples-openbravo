@@ -84,7 +84,6 @@
       <unique name="C_BP_VENDOR_ACCT_ACCTSCHEMA_UN">
         <unique-column name="C_ACCTSCHEMA_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
-        <unique-column name="STATUS"/>
       </unique>
       <check name="C_BP_VENDOR_ACC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

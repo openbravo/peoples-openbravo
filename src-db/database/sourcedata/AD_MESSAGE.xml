@@ -8720,7 +8720,7 @@
 <!--800202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800202-->  <VALUE><![CDATA[C_BP_CUSTOMER_ACCT_BPARTNER_UN]]></VALUE>
-<!--800202-->  <MSGTEXT><![CDATA[The customer already has a record with the same accounting schema, with the same organization and with the same status. Please change at least one of the three]]></MSGTEXT>
+<!--800202-->  <MSGTEXT><![CDATA[The customer already has a record for the same accounting schema. Only one record per accounting schema is allowed.]]></MSGTEXT>
 <!--800202-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800202--></AD_MESSAGE>
@@ -8731,7 +8731,7 @@
 <!--800203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800203-->  <VALUE><![CDATA[C_BP_VENDOR_ACCT_ACCTSCHEMA_UN]]></VALUE>
-<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema and with the same status. Please change at least one of them]]></MSGTEXT>
+<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record for the same accounting schema. Only one record per accounting schema is allowed.]]></MSGTEXT>
 <!--800203-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800203--></AD_MESSAGE>
@@ -17818,6 +17818,17 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--8927B08F10B745E9883A329F1FCBC63A-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--8927B08F10B745E9883A329F1FCBC63A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8927B08F10B745E9883A329F1FCBC63A--></AD_MESSAGE>
+
+<!--89882D07B9804B3ABB93C55FDBC52284--><AD_MESSAGE>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <AD_MESSAGE_ID><![CDATA[89882D07B9804B3ABB93C55FDBC52284]]></AD_MESSAGE_ID>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <VALUE><![CDATA[C_BP_GROUP_ACCT_SCHEM_GROUP_UN]]></VALUE>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <MSGTEXT><![CDATA[The business partner category already has a record for the same accounting schema. Only one record per accounting schema is allowed.]]></MSGTEXT>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--89882D07B9804B3ABB93C55FDBC52284-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--89882D07B9804B3ABB93C55FDBC52284--></AD_MESSAGE>
 
 <!--89FDE3CB1891401A8CEDB277C95D6A90--><AD_MESSAGE>
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <AD_MESSAGE_ID><![CDATA[89FDE3CB1891401A8CEDB277C95D6A90]]></AD_MESSAGE_ID>
