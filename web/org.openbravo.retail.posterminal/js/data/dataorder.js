@@ -10,8 +10,13 @@ define(['utilities', 'datasource'], function () {
     this.context = context;
     
   };
+
+  OB.DATA.Order.prototype.load = function () {
+  };
+
   OB.DATA.Order.prototype.exec = function (order) {
     order.trigger('closed');    
+    // this saves the order in the buffer...
     // console.log(JSON.stringify(order.toJSON()));
   };
   

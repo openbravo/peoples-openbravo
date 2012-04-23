@@ -13,13 +13,15 @@ define(['builder', 'i18n',
 
   return function () {
     return ( 
-        
+
       {kind: B.KindJQuery('section'), content: [
-        {kind: OB.DATA.BPs},
-        {kind: OB.DATA.Product},
-        {kind: OB.DATA.ProductPrice},
-        {kind: OB.DATA.Category},      
-        {kind: OB.DATA.Order},      
+        {kind: OB.DATA.Container, content: [
+          {kind: OB.DATA.BPs},
+          {kind: OB.DATA.Product},
+          {kind: OB.DATA.ProductPrice},
+          {kind: OB.DATA.Category},      
+          {kind: OB.DATA.Order}
+        ]},
         
         {kind: OB.MODEL.Order},
         {kind: OB.MODEL.OrderList}, 
@@ -41,8 +43,7 @@ define(['builder', 'i18n',
           this.context.SearchBPs.bps.on('click', function (model, index) {
             this.$.modal('hide');
           }, this);
-        }},        
-               
+        }},
         {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
             {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 

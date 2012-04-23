@@ -58,7 +58,7 @@ define(['i18n'], function () {
       url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
     }
 
-    // console.log(url + '\n' + JSON.stringify(data));
+    console.log(url + '\n' + JSON.stringify(data));
     
     $.ajax({
       url: url,
@@ -169,47 +169,39 @@ define(['i18n'], function () {
     this.params = null;
     this.cache = null;
   };
+  _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
   OB.DS.DataSource.prototype.load = function (params) {
     this.params = params;
     this.cache = null;
+    
+    // OFFLINE GOES HERE
+    var me = this;
+    this.query.exec(this.params, function (data) {
+      if (!data.exception) {
+        me.cache = data;
+      }
+      me.trigger('ready');
+    });
   };
 
-  OB.DS.DataSource.prototype.find = function (filter, callback) {
-    // OFFLINE GOES HERE
-    if (this.cache) { // Check cache validity
-      // Data cached...
+  OB.DS.DataSource.prototype.find = function (filter, callback) {    
+    if (this.cache) {
       findInData(this.cache, filter, callback);
     } else {
-      // Execute query...
-      var me = this;
-      this.query.exec(this.params, function (data) {
-        if (data.exception) {
-          callback(data);
-        } else {
-          me.cache = data;
-          findInData(me.cache, filter, callback);
-        }
-      });
+      this.on('ready', function() {
+        findInData(this.cache, filter, callback);
+      }, this);
     }
   };
 
   OB.DS.DataSource.prototype.exec = function (filter, callback) {
-    // OFFLINE GOES HERE
-    if (this.cache) { // Check cache validity
-      // Data cached...
+    if (this.cache) {
       execInData(this.cache, filter, callback);
     } else {
-      // Execute Query
-      var me = this;
-      this.query.exec(this.params, function (data) {
-        if (data.exception) {
-          callback(data);
-        } else {
-          me.cache = data;
-          execInData(me.cache, filter, callback);
-        }
-      });
+      this.on('ready', function() {
+        execInData(this.cache, filter, callback);
+      }, this);
     }
   };
 

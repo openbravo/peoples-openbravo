@@ -3,10 +3,11 @@
 define([], function () {
   
   var B;
-  
+
   B = function (b, context) {
 
     var mycontext = context || {};
+
     var inst = new b.kind(mycontext);
     inst._id = b.id || inst._id;
     if (inst._id) {
