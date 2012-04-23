@@ -2104,7 +2104,7 @@ isc.OBStandardView.addProperties({
       //issue 20192: sometimes the property editorProperties.visible is changed by setFieldFormProperties
       var prevVisible = fld.editorProperties.visible;
       this.setFieldFormProperties(fld.editorProperties);
-      if (prevVisible !== fld.editorProperties.visible){
+      if (prevVisible !== fld.editorProperties.visible) {
         fld.editorProperties.visible = prevVisible;
       }
       if (fld.disabled) {
