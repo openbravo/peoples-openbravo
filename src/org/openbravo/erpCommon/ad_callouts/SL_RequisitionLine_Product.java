@@ -92,7 +92,10 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     OBContext.setAdminMode(true);
     try {
       PriceList pList = OBDal.getInstance().get(PriceList.class, strPriceListId);
-      strResult.append("new Array(\"inpcCurrencyId\", \"" + pList.getCurrency().getId() + "\"),\n");
+      if (pList != null) {
+        strResult.append("new Array(\"inpcCurrencyId\", \"" + pList.getCurrency().getId()
+            + "\"),\n");
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
