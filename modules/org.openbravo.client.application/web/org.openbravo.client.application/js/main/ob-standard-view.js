@@ -2147,11 +2147,6 @@ isc.OBStandardView.addProperties({
       }
       fld.filterEditorProperties.required = false;
 
-      if (fld.fkField) {
-        fld.filterEditorProperties.displayField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
-        fld.filterEditorProperties.valueField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
-      }
-
       result.push(fld);
     }
 
