@@ -1323,6 +1323,13 @@ OB.ViewFormProperties = {
     if (this.isNew) {
       this.view.refreshChildViews();
     }
+
+    if (this.view.directNavigation) {
+      // direct navigation opens form view, set message in toolbar when switching 
+      // back to grid
+      this.view.viewGrid.setSingleRecordFilterMessage();
+    }
+
     this.view.standardWindow.setDirtyEditForm(null);
   },
 

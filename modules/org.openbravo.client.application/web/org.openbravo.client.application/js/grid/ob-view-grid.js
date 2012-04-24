@@ -1217,6 +1217,10 @@ isc.OBViewGrid.addProperties({
       if (this.isOpenDirectMode && this.view.parentView) {
         params._filterByParentProperty = this.view.parentProperty;
       }
+
+      if (this.view && this.view.directNavigation) {
+        params._directNavigation = true;
+      }
     } else if (params._targetRecordId) {
       delete params._targetRecordId;
     }

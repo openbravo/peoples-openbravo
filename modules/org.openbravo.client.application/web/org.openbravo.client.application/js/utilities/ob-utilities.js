@@ -367,7 +367,7 @@ OB.Utilities.removeFragment = function (str) {
 // ** {{{OB.Utilities.openView}}} **
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
-OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord) {
+OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
 
   var openObject;
@@ -411,19 +411,18 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
   if (command) {
     openObject.command = command;
   }
-  OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, direct);
   return openObject;
 };
 
 // ** {{{OB.Utilities.openDirectView}}} **
 // Open the correct view for a passed in target definition, coming from a certain source Window.
 OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity, recordId) {
-
   var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html',
       callback, reqObj, request;
 
   callback = function (response, data, request) {
-    OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
+    OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId, null, null, null, null, true);
   };
 
   reqObj = {

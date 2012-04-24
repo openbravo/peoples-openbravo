@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -281,6 +281,24 @@ public class JsonUtils {
   public static JSONObject buildCriteria(Map<String, String> parameters) {
     try {
       final JSONObject criteria = new JSONObject();
+      final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
+
+      if (parameters.containsKey("_directNavigation")
+          && "true".equals(parameters.get("_directNavigation"))
+          && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+
+        criteria.put("_constructor", "AdvancedCriteria");
+        criteria.put("operator", "and");
+
+        JSONObject id = new JSONObject();
+        id.put("fieldName", "id");
+        id.put("operator", "equals");
+        id.put("value", parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
+
+        criteriaObjects.add(id);
+        criteria.put("criteria", new JSONArray(criteriaObjects));
+        return criteria;
+      }
 
       if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
         criteria.put("operator", "or");
@@ -289,7 +307,6 @@ public class JsonUtils {
       }
       criteria.put("_constructor", "AdvancedCriteria");
 
-      final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
       if (parameters.containsKey("criteria") && !parameters.get("criteria").equals("")) {
         String fullCriteriaStr = parameters.get("criteria");
         if (fullCriteriaStr.startsWith("[")) {

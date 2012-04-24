@@ -443,6 +443,9 @@ isc.OBGrid.addProperties({
     if (!noPerformAction) {
       this.filterEditor.performAction();
     }
+    if (this.view && this.view.directNavigation) {
+      delete this.view.directNavigation;
+    }
   },
 
   showSummaryRow: function () {
@@ -478,6 +481,19 @@ isc.OBGrid.addProperties({
     this.checkShowFilterFunnelIcon(criteria);
   },
 
+  setSingleRecordFilterMessage: function () {
+    var showMessageProperty, showMessage;
+
+    if (!this.view.isShowingForm && (this.view.messageBar && !this.view.messageBar.isVisible())) {
+
+      showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowSingleRecordFilterMsg');
+      showMessage = showMessageProperty !== 'N' && showMessageProperty !== '"N"';
+
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_SingleRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowSingleRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+      this.view.messageBar.hasFilterMessage = true;
+    }
+  },
+
   checkShowFilterFunnelIcon: function (criteria) {
     if (!this.filterImage) {
       return;
@@ -485,7 +501,12 @@ isc.OBGrid.addProperties({
     var gridIsFiltered = this.isGridFiltered(criteria);
     var noParentOrParentSelected = !this.view || !this.view.parentView || (this.view.parentView.viewGrid.getSelectedRecords() && this.view.parentView.viewGrid.getSelectedRecords().length > 0);
 
-    if (this.filterClause && gridIsFiltered) {
+    if (this.view && this.view.directNavigation) {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterSingleRecord');
+      this.filterImage.show(true);
+      this.setSingleRecordFilterMessage();
+      return;
+    } else if (this.filterClause && gridIsFiltered) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');
       this.filterImage.show(true);
     } else if (this.filterClause) {

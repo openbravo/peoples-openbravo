@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -208,14 +208,22 @@ public class DefaultJsonDataService implements JsonDataService {
     if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
       queryService.setUseAlias();
     }
-    // set the where/org filter parameters and the @ parameters
-    for (String key : parameters.keySet()) {
-      if (key.equals(JsonConstants.WHERE_PARAMETER)
-          || key.equals(JsonConstants.IDENTIFIER)
-          || key.equals(JsonConstants.ORG_PARAMETER)
-          || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
-              .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
-        queryService.addFilterParameter(key, parameters.get(key));
+    boolean directNavigation = parameters.containsKey("_directNavigation")
+        && "true".equals(parameters.get("_directNavigation"))
+        && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
+
+    if (!directNavigation) {
+      // set the where/org filter parameters and the @ parameters
+      for (String key : parameters.keySet()) {
+        if (key.equals(JsonConstants.WHERE_PARAMETER)
+            || key.equals(JsonConstants.IDENTIFIER)
+            || key.equals(JsonConstants.ORG_PARAMETER)
+            || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
+            || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
+                .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
+          queryService.addFilterParameter(key, parameters.get(key));
+        }
+
       }
     }
     queryService.setCriteria(JsonUtils.buildCriteria(parameters));
@@ -260,7 +268,7 @@ public class DefaultJsonDataService implements JsonDataService {
 
     // compute a new startrow if the targetrecordid was passed in
     int targetRowNumber = -1;
-    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+    if (!directNavigation && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
       targetRowNumber = queryService.getRowNumber(targetRecordId);
       if (targetRowNumber != -1) {

@@ -230,7 +230,7 @@
     // information
     // to initialize an instance.
     //
-    openView: function (viewName, params, state) {
+    openView: function (viewName, params, state, direct) {
       var recentObjProperties;
       params = params || {};
 
@@ -262,7 +262,7 @@
       // Returns the function implementation of a View
       //
 
-      function getView(viewName, params, state) {
+      function getView(viewName, params, state, direct) {
 
         if (!viewName) {
           throw {
@@ -275,7 +275,7 @@
         // Shows a view in a tab in the {{{ TabSet }}} or external
         //
 
-        function showTab(viewName, params, state) {
+        function showTab(viewName, params, state, direct) {
 
           // will as a default display a loading tab when loading the 
           // view from the server or creating a new instance
@@ -284,7 +284,8 @@
           // 2) view is not open but class was loaded (open view and show loading bar)
           // 3) view is open and class is loaded (show loading bar in open view)          
           var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params),
-              loadingPane, currentPane, tabSet = OB.MainView.TabSet;
+              loadingPane, currentPane, tabSet = OB.MainView.TabSet,
+              parent, i;
 
           params = params || {};
 
@@ -323,7 +324,7 @@
             // but don't forget to destroy it afterwards...
             var cnv = isc.Canvas.create({
               openView: function () {
-                vmgr.openView(viewName, params);
+                vmgr.openView(viewName, params, null, direct);
                 // delete so that at the next opening a new loading layout
                 // is created
                 delete params.loadingTabId;
@@ -340,6 +341,29 @@
 
           if (state && viewInstance.setViewState) {
             viewInstance.setViewState(state);
+          }
+
+          if (direct) {
+            // set directly opened tab and all its ancestors as directNavigation
+            if (params && params.id) {
+              var tabId = params.id;
+
+              if (viewInstance.view && viewInstance.view.tabId === tabId) {
+                viewInstance.view.directNavigation = true;
+              } else if (viewInstance.views) {
+                for (i = 0; viewInstance.views.length; i++) {
+                  if (viewInstance.views[i].tabId === tabId) {
+                    viewInstance.views[i].directNavigation = true;
+                    parent = viewInstance.views[i].parentView;
+                    while (parent) {
+                      parent.directNavigation = true;
+                      parent = parent.parentView;
+                    }
+                    break;
+                  }
+                }
+              }
+            }
           }
 
           // is not shown in a tab, let it show itself in a different way
@@ -425,16 +449,16 @@
               message: 'The view ' + viewName + ' not defined'
             };
           }
-          showTab(viewName, params);
+          showTab(viewName, params, null, direct);
         }
 
         if (isc[viewName]) {
-          showTab(viewName, params);
+          showTab(viewName, params, null, direct);
         } else {
           vmgr.fetchView(viewName, fetchViewCallback, null, params, true);
         }
       }
-      getView(viewName, params, state);
+      getView(viewName, params, state, direct);
     },
 
     // ** {{{ ViewManager.restoreState(state, data) }}} **
