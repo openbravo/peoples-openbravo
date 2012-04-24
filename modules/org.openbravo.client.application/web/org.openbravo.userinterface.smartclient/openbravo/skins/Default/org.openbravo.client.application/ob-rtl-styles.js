@@ -35,6 +35,14 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
 });
 
 
+/* ob-grid-styles.js */
+
+isc.OBGridButtonsComponent.addProperties({
+  layoutLeftMargin: 0,
+  layoutRightMargin: -2
+});
+
+
 /* ob-navigation-bar-styles.js */
 
 isc.OBQuickLaunch.addProperties({

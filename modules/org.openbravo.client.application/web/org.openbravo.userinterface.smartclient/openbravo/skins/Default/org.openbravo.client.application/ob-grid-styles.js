@@ -174,6 +174,7 @@ isc.OBGridButtonsComponent.addProperties({
   defaultLayoutAlign: 'center',
   styleName: 'OBGridToolStrip',
   layoutLeftMargin: -2,
+  layoutRightMargin: 0,
   membersMargin: 4
 });
 
