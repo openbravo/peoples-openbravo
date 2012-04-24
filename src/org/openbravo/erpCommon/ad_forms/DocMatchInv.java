@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -201,11 +201,20 @@ public class DocMatchInv extends AcctServer {
 
     DocMatchInvData[] invoiceData = DocMatchInvData.selectInvoiceData(conn, vars.getClient(),
         data[0].getField("C_InvoiceLine_Id"));
+    String costCurrencyId = as.getC_Currency_ID();
+    OBContext.setAdminMode(false);
+    try {
+      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     String strExpenses = invoiceData[0].linenetamt;
     String strInvoiceCurrency = invoiceData[0].cCurrencyId;
     String strDate = invoiceData[0].dateacct;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
+    strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, costCurrencyId, strDate, "",
+        vars.getClient(), vars.getOrg(), conn);
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
         data[0].getField("MOVEMENTQTY"))).signum())
@@ -221,10 +230,10 @@ public class DocMatchInv extends AcctServer {
         as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        as.m_C_Currency_ID, bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-        conn);
+        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
     bdExpenses = new BigDecimal(getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency,
-        as.m_C_Currency_ID, strDate, "", vars.getClient(), vars.getOrg(), conn));
+        costCurrency.getId(), strDate, "", vars.getClient(), vars.getOrg(), conn));
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
     if (dr == null) {
@@ -234,13 +243,19 @@ public class DocMatchInv extends AcctServer {
     }
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
     for (DocLine docLineInvoice : p_lines) {
-      bdExpenses.toString();
-      String strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
-          new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
+      String strAmount = "";
+      if (strInvoiceCurrency != costCurrencyId) {
+        strAmount = getConvertedAmt((changeSign) ? new BigDecimal(docLineInvoice.getAmount())
+            .multiply(new BigDecimal(-1)).toString() : docLineInvoice.getAmount(),
+            strInvoiceCurrency, costCurrencyId, strDate, "", vars.getClient(), vars.getOrg(), conn);
+      } else {
+        strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
+            new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
+      }
+
       cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          docLineInvoice.m_C_Currency_ID, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
-      if (cr == null) {
+          costCurrencyId, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      if (cr == null && ZERO.compareTo(new BigDecimal(strAmount)) != 0) {
         log4j.warn("createFact - unable to calculate line with "
             + " expenses to product expenses account.");
         return null;
@@ -258,7 +273,7 @@ public class DocMatchInv extends AcctServer {
 
     if (!bdCost.equals(bdExpenses)) {
       diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-          as.m_C_Currency_ID, (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
+          costCurrency.getId(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
               .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
               .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (diff == null) {

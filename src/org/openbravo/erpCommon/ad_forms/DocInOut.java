@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -176,7 +177,13 @@ public class DocInOut extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     String strScale = DocInOutData.selectClientCurrencyPrecission(conn, vars.getClient());
-
+    String costCurrencyId = as.getC_Currency_ID();
+    OBContext.setAdminMode(false);
+    try {
+      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     // Sales
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
@@ -216,8 +223,10 @@ public class DocInOut extends AcctServer {
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-          setStatus(STATUS_InvalidCost);
-          break;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         }
         // CoGS DR
         dr = fact.createLine(line, cogsAccount, costCurrency.getId(), strCosts, "",
@@ -262,8 +271,10 @@ public class DocInOut extends AcctServer {
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0
             && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-          setStatus(STATUS_InvalidCost);
-          break;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         }
         Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
             as, conn);
@@ -410,8 +421,11 @@ public class DocInOut extends AcctServer {
         }
 
         if (!existsOldCost && trxCost == null) {
-          setStatus(STATUS_InvalidCost);
-          return false;
+          Map<String, String> parameters = getInvalidCostParameters(
+              OBDal.getInstance().get(Product.class, data[i].getField("mProductId"))
+                  .getIdentifier(), strDateAcct);
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
         } else if (trxCost != null && trxCost.signum() != 0) {
           validLines++;
         }

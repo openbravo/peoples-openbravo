@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -35,6 +36,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 public class DocProduction extends AcctServer {
@@ -162,6 +164,13 @@ public class DocProduction extends AcctServer {
     Fact fact = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocProduction.debug("createFact - object created");
+    String costCurrencyId = as.getC_Currency_ID();
+    OBContext.setAdminMode(false);
+    try {
+      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
@@ -175,11 +184,13 @@ public class DocProduction extends AcctServer {
       }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
-      if (dCosts.compareTo(BigDecimal.ZERO) == 0) {
-        setStatus(STATUS_InvalidCost);
-        continue;
-      } else
-        setStatus(STATUS_NotPosted);// Default status. LoadDocument
+      if (BigDecimal.ZERO.compareTo(dCosts) == 0
+          && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
+        Map<String, String> parameters = getInvalidCostParameters(
+            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
+        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
