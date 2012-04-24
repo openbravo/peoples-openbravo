@@ -34,6 +34,7 @@ isc.OBGrid.addProperties({
   recordComponentPosition: 'within',
   poolComponentsPerColumn: true,
   showRecordComponents: true,
+  loadingDataMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   escapeHTML: true,
   bodyProperties: {
     canSelectText: true,

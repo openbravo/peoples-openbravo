@@ -329,6 +329,44 @@
   padding: 5px 0px 5px 0px;
 }
 
+.OBGridNotificationTextLink,
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLinkDown,
+.OBGridNotificationTextLinkFocused,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLinkFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  vertical-align: middle;
+  background: transparent;
+  padding: 5px 5px 5px 5px;
+}
+
+.OBGridNotificationTextLink,
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLink:hover {
+  cursor: pointer;
+  color: #58A618;
+}
+
+.OBGridNotificationTextLinkDown,
+.OBGridNotificationTextLink:active {
+  color: #004E27;
+}
+
+.OBGridNotificationTextLinkFocused,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLinkFocusedDown,
+.OBGridNotificationTextLink:focus {
+  color: #fa962f;
+}
+
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLink:hover {
+  text-decoration: underline;
+}
+
 /*=======================================================================
  * Defines the style of a OBGrid with records representing links 
  * (used in LinkedItems components)

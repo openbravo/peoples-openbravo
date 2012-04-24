@@ -31,6 +31,8 @@ isc.OBGrid.addProperties({
   headerBaseStyle: 'OBGridHeaderCell',
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
+  emptyMessageStyle: 'OBGridNotificationText',
+  emptyMessageLinkStyle: 'OBGridNotificationTextLink',
   cellPadding: 0,
   /* Set in the CSS */
   cellAlign: 'center',
