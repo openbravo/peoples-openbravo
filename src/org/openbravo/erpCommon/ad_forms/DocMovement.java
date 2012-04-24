@@ -34,8 +34,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
-import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;

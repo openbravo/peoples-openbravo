@@ -230,8 +230,8 @@ public class DocMatchInv extends AcctServer {
         as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-        conn);
+        costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
     bdExpenses = new BigDecimal(getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency,
         costCurrency.getId(), strDate, "", vars.getClient(), vars.getOrg(), conn));
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
