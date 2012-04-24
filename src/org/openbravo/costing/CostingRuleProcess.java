@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
@@ -41,7 +40,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
@@ -163,21 +161,21 @@ public class CostingRuleProcess implements Process {
   }
 
   public boolean isCostingMigrationNeeded() {
-    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
-    obcPreference.setFilterOnReadableClients(false);
-    obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationNeeded"));
+    OBQuery<org.openbravo.model.materialmgmt.cost.Costing> costingQry = OBDal.getInstance()
+        .createQuery(org.openbravo.model.materialmgmt.cost.Costing.class, "");
+    costingQry.setFilterOnReadableClients(false);
+    costingQry.setFilterOnReadableOrganization(false);
 
-    return obcPreference.count() > 0;
+    return costingQry.count() > 0;
   }
 
   private boolean isPendingMigration() {
-    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
-    obcPreference.setFilterOnReadableClients(false);
-    obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationDone"));
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
 
-    return obcPreference.count() == 0;
+    return prefQry.count() == 0;
   }
 
   private boolean existsPreviousRule(CostingRule rule) {

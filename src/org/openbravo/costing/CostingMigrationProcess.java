@@ -69,12 +69,12 @@ public class CostingMigrationProcess implements Process {
       OBContext.setAdminMode(false);
 
       // FIXME: Add proper messages
-      if (isCostingMigrationNeeded()) {
-        if (isMigrated()) {
-          throw new OBException("Migration already done");
-        }
+      if (isMigrated()) {
+        throw new OBException("Migration already done");
       } else {
-        throw new OBException("Migration not needed");
+        if (isCostingMigrationNeeded()) {
+          throw new OBException("Migration not needed");
+        }
       }
 
       boolean migrationStarted = rulesCreated();
@@ -129,29 +129,28 @@ public class CostingMigrationProcess implements Process {
   }
 
   private boolean isCostingMigrationNeeded() {
-    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
-    obcPreference.setFilterOnReadableClients(false);
-    obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationNeeded"));
+    OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, "");
+    costingQry.setFilterOnReadableClients(false);
+    costingQry.setFilterOnReadableOrganization(false);
 
-    return obcPreference.count() > 0;
+    return costingQry.count() > 0;
   }
 
   private boolean isMigrated() {
-    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
-    obcPreference.setFilterOnReadableClients(false);
-    obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationDone"));
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
 
-    return obcPreference.count() > 0;
+    return prefQry.count() > 0;
   }
 
   private boolean rulesCreated() {
-    OBCriteria<CostingRule> crCrit = OBDal.getInstance().createCriteria(CostingRule.class);
-    crCrit.setFilterOnReadableClients(false);
-    crCrit.setFilterOnReadableOrganization(false);
+    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class, "");
+    crQry.setFilterOnReadableClients(false);
+    crQry.setFilterOnReadableOrganization(false);
 
-    return crCrit.count() > 0;
+    return crQry.count() > 0;
   }
 
   private void doChecks() {
