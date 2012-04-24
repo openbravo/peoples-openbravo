@@ -20,7 +20,7 @@
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
     suggestionTextMatchStyle: '${data.selector.suggestiontextmatchstyle}',
     defaultPopupFilterField : '${data.defaultPopupFilterField}',
-    displayField: '${data.targetPropertyName?js_string}$_identifier',
+    displayField: '${data.targetPropertyName?js_string}${Constants_FIELDSEPARATOR}${Constants_IDENTIFIER}',
     valueField: '${data.targetPropertyName?js_string}',
     gridDisplayField: '${data.displayField?js_string}',
     gridValueField: '${data.valueField?js_string}',    

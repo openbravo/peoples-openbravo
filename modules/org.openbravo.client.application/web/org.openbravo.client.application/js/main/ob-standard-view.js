@@ -2126,7 +2126,7 @@ isc.OBStandardView.addProperties({
       }
 
       if (fld.fkField) {
-        fld.displayField = fld.name + OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER;
+        fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
 

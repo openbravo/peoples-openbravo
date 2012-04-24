@@ -287,8 +287,8 @@ isc.OBGrid.addProperties({
             continue;
           }
           fullPropName = prop;
-          if (prop.endsWith(OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER)) {
-            var index = prop.lastIndexOf(OB.Constants.SEPARATOR);
+          if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+            var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
             prop = prop.substring(0, index);
           }
           var fnd = false,
@@ -505,8 +505,8 @@ isc.OBGrid.addProperties({
       }
       var value = criterion.value;
       // see the description in setValuesAsCriteria above
-      if (prop.endsWith(OB.Constants.SEPARATOR + OB.Constants.IDENTIFIER)) {
-        var index = prop.lastIndexOf(OB.Constants.SEPARATOR);
+      if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+        var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
         prop = prop.substring(0, index);
       }
 

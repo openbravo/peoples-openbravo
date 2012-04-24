@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.service.json.JsonConstants;
+
 /**
  * Contains generic code for {@link TemplateProcessor} instances.
  * 
@@ -45,6 +48,10 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
    * , java.util.Map)
    */
   public String process(Template template, Map<String, Object> data) {
+
+    // add some defaults
+    data.put("Constants_FIELDSEPARATOR", DalUtil.FIELDSEPARATOR);
+    data.put("Constants_IDENTIFIER", JsonConstants.IDENTIFIER);
 
     T templateImplementation = getTemplateImplementation(template);
     if (templateImplementation == null) {
