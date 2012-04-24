@@ -141,9 +141,9 @@ isc.OBDateTimeItem.addProperties({
       return 0; // same date instance
     }
     var aval = (isc.isA.Date(a) ? a.getTime() : 0),
-      bval = (isc.isA.Date(b) ? b.getTime() : 0),
-      diff = aval - bval;
-    return diff > 1000 ? -1 : (diff < -1000 ? 1 : 0); 
+        bval = (isc.isA.Date(b) ? b.getTime() : 0),
+        diff = aval - bval;
+    return diff > 1000 ? -1 : (diff < -1000 ? 1 : 0);
   },
 
   parseValue: function () {
