@@ -325,12 +325,12 @@
     <Sql>
       <![CDATA[
         SELECT t.name || ' - ' || w.name  as objectName, m.name as moduleName, t.ad_module_id as moduleId FROM
-        (SELECT ad_tab_id, count(*) as cuenta
+        (SELECT ad_tab_id, count(*) as linesCount
         FROM ad_field
         GROUP BY ad_tab_id,ad_column_id) a inner join ad_tab t on a.ad_tab_id = t.ad_tab_id
                    inner join ad_window w on t.ad_window_id = w.ad_window_id
                    inner join ad_module m on m.ad_module_id = t.ad_module_id
-        WHERE a.cuenta > 1
+        WHERE a.linesCount > 1
       ]]>
     </Sql>
   </SqlMethod>
