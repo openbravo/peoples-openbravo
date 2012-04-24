@@ -3,10 +3,12 @@ package org.openbravo.materialmgmt;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
@@ -99,10 +101,20 @@ public class InventoryCountProcess implements Process {
     // In case get_uuid is not already registered, it's registered now.
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
         .getSessionFactory()).getDialect();
-    dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
-    dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
-    dialect.getFunctions().put("to_date", new StandardSQLFunction("to_date", new DateType()));
-
+    Map<String, SQLFunction> function = dialect.getFunctions();
+    if (!function.containsKey("get_uuid")) {
+      dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
+    }
+    if (!function.containsKey("now")) {
+      dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
+    }
+    if (!function.containsKey("to_date")) {
+      dialect.getFunctions().put("to_date", new StandardSQLFunction("to_date", new DateType()));
+    }
+    if (!function.containsKey("to_timestamp")) {
+      dialect.getFunctions().put("to_timestamp",
+          new StandardSQLFunction("to_timestamp", new DateType()));
+    }
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + MaterialTransaction.ENTITY_NAME + "(");
     insert.append(" id ");
@@ -252,16 +264,17 @@ public class InventoryCountProcess implements Process {
     }
     if (headerLEorBU.getOrganizationType().isLegalEntityWithAccounting()) {
       where = new StringBuffer();
-      where.append(" as p ");
+      where.append(" as pc ");
+      where.append("   join pc." + PeriodControl.PROPERTY_PERIOD + " as p");
       where.append(" where p." + Period.PROPERTY_STARTINGDATE + " <= :dateStarting");
-      where.append(" and p." + Period.PROPERTY_ENDINGDATE + " >= :dateEnding");
-      where.append(" and exists (select 1 from " + PeriodControl.ENTITY_NAME + " as pc ");
-      where.append("    where p." + Period.PROPERTY_ID + " = pc." + PeriodControl.PROPERTY_PERIOD);
-      where.append("      and pc." + PeriodControl.PROPERTY_DOCUMENTCATEGORY + " = 'MMI' ");
-      where.append("      and pc." + PeriodControl.PROPERTY_ORGANIZATION + ".id = :org");
-      where.append("      and pc." + PeriodControl.PROPERTY_PERIODSTATUS + " = 'O'");
-      where.append("            )");
-      OBQuery<Period> pQry = OBDal.getInstance().createQuery(Period.class, where.toString());
+      where.append("   and p." + Period.PROPERTY_ENDINGDATE + " >= :dateEnding");
+      where.append("   and pc." + PeriodControl.PROPERTY_DOCUMENTCATEGORY + " = 'MMI' ");
+      where.append("   and pc." + PeriodControl.PROPERTY_ORGANIZATION + ".id = :org");
+      where.append("   and pc." + PeriodControl.PROPERTY_PERIODSTATUS + " = 'O'");
+      OBQuery<PeriodControl> pQry = OBDal.getInstance().createQuery(PeriodControl.class,
+          where.toString());
+      pQry.setFilterOnReadableClients(false);
+      pQry.setFilterOnReadableOrganization(false);
       pQry.setNamedParameter("dateStarting", inventory.getMovementDate());
       pQry.setNamedParameter("dateEnding",
           DateUtils.truncate(inventory.getMovementDate(), Calendar.DATE));
