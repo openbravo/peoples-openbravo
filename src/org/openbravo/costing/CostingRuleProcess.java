@@ -19,15 +19,18 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
@@ -38,17 +41,18 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.CostingRuleInit;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -77,68 +81,53 @@ public class CostingRuleProcess implements Process {
 
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
-      // FIXME: Review checks to include organization filter!!
-      Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
-      Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
+      final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+      final Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
 
       // Checks
-      boolean hasProductWithCost = checkProductWithCost(rule, naturalOrgs);
-      boolean hasTrxWithNoPreviousCostingRule = checkTrxWithNoPreviousCostingRule(rule, naturalOrgs);
-      // 1. Not mixed products. Cannot mix products with calculated costs and products with
-      // transactions that do not have a previous costing rule.
-      if (hasProductWithCost && hasTrxWithNoPreviousCostingRule) {
-        throw new OBException("@MixedProductsWithCost@");
-      }
-      if (hasProductWithCost) {
-        // Product with legacy cost. Trx must be set to calculated and legacy process executed.
-        updateLegacyCostTrx();
+      migrationCheck(rule);
+      boolean existsPreviousRule = existsPreviousRule(rule);
+      boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);
+      if (existsPreviousRule) {
         // Product with costing rule. All trx must be calculated.
         checkAllTrxCalculated(naturalOrgs, childOrgs);
-      } else if (hasTrxWithNoPreviousCostingRule) {
-        // Product configured to have cost not calculated cannot have records in M_Costing nor
-        // transactions with cost calculated.
+      } else if (existsTransactions) {
+        // Product configured to have cost not calculated cannot have transactions with cost
+        // calculated.
         checkNoTrxWithCostCalculated(naturalOrgs, childOrgs);
       }
       // Inventories are only needed if the costing rule is updating a previous rule or legacy cost
       // engine was used.
-      if (hasProductWithCost) {
-        // Create inventories.
-        List<Object[]> whorgl = getWarehouseAndOrgsWithStock(childOrgs);
-        for (Object[] record : whorgl) {
-          // Warehouse wh = OBDal.getInstance().get(Warehouse.class, record[0]);
-          createPhysicalInventories((String) record[1], (Warehouse) record[0], rule);
-        }
-
-        // Process closing physical inventories.
-        for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
-          new InventoryCountProcess().processInventory(cri.getCloseInventory());
-        }
-
+      if (existsPreviousRule) {
+        createCostingRuleInits(rule, childOrgs);
         // Set valid from date
         Date startingDate = new Date();
         rule.setStartingDate(startingDate);
+        log4j.debug("setting starting date " + startingDate);
         OBDal.getInstance().flush();
 
         // Update cost of inventories and process starting physical inventories.
         for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
           for (InventoryCountLine icl : cri.getCloseInventory()
               .getMaterialMgmtInventoryCountLineList()) {
-            OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-                MaterialTransaction.class,
-                MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id = :invline");
-            trxQry.setNamedParameter("invline", icl.getId());
-            MaterialTransaction trx = trxQry.list().get(0);
-            BigDecimal cost = CostingUtils.getTransactionCost(trx, startingDate, true);
-            InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl.getLineNo());
+            MaterialTransaction trx = getInventoryLineTransaction(icl);
+            BigDecimal cost = BigDecimal.ZERO;
+            // Remove 1 second from transaction date to ensure that cost is calculated with previous
+            // costing rule.
+            trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
+            cost = CostingUtils.getTransactionCost(trx, startingDate, true);
+            trx.setCostCalculated(true);
+            trx.setTransactionCost(cost);
+            OBDal.getInstance().save(trx);
+            InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
             initICL.setCost(cost);
             OBDal.getInstance().save(initICL);
           }
           OBDal.getInstance().flush();
           new InventoryCountProcess().processInventory(cri.getInitInventory());
         }
-
       } else {
-        rule.setStartingDate(getFirstDate());
+        rule.setStartingDate(new SimpleDateFormat("dd-MM-yyyy").parse("01-01-1900"));
       }
 
       rule.setValidated(true);
@@ -167,69 +156,56 @@ public class CostingRuleProcess implements Process {
     bundle.setResult(msg);
   }
 
-  private void updateLegacyCostTrx() {
-    // TODO Auto-generated method stub
-
+  private void migrationCheck(CostingRule rule) {
+    if (isCostingMigrationNeeded() && isPendingMigration()) {
+      throw new OBException("Instance not migrated.");
+    }
   }
 
-  private boolean checkProductWithCost(CostingRule rule, Set<String> naturalOrgs) {
-    Date currentDate = new Date();
+  public boolean isCostingMigrationNeeded() {
+    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
+    obcPreference.setFilterOnReadableClients(false);
+    obcPreference.setFilterOnReadableOrganization(false);
+    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationNeeded"));
+
+    return obcPreference.count() > 0;
+  }
+
+  private boolean isPendingMigration() {
+    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
+    obcPreference.setFilterOnReadableClients(false);
+    obcPreference.setFilterOnReadableOrganization(false);
+    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "CostingMigrationDone"));
+
+    return obcPreference.count() == 0;
+  }
+
+  private boolean existsPreviousRule(CostingRule rule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as cr");
+    where.append(" where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
+    where.append("   and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
+
+    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
+        where.toString());
+    crQry.setFilterOnReadableOrganization(false);
+    crQry.setNamedParameter("ruleOrg", rule.getOrganization());
+    return crQry.count() > 0;
+  }
+
+  private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
     StringBuffer where = new StringBuffer();
     where.append(" as p");
     where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
-    where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in :porgs");
-    where.append("   and (p." + Product.PROPERTY_COSTTYPE + " is not null");
-    // TODO: Change query if current algorithm property is added to product.
-    where.append("     or exists (select 1 from " + CostingRule.ENTITY_NAME + " as cr");
-    where.append("        where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
-    where.append("          and cr != :rule");
-    where.append("          and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
-    where.append("          and cr." + CostingRule.PROPERTY_STARTINGDATE + " < :startingDate");
-    where.append("          and COALESCE(cr." + CostingRule.PROPERTY_ENDINGDATE
-        + ", :defaultDate) >= :endingDate");
-    where.append("         )");
-    where.append("     )");
+    where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
+    where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
+    where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p)");
+    where.append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs)");
 
     OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
-    pQry.setNamedParameter("ruleOrg", rule.getOrganization());
-    pQry.setNamedParameter("rule", rule);
-    pQry.setNamedParameter("startingDate", currentDate);
-    pQry.setNamedParameter("defaultDate", currentDate);
-    pQry.setNamedParameter("endingDate", currentDate);
-    return pQry.count() > 0;
-  }
-
-  private boolean checkTrxWithNoPreviousCostingRule(CostingRule rule, Set<String> naturalOrgs) {
-    Date currentDate = new Date();
-    StringBuffer where = new StringBuffer();
-    where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
-    where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in :porgs");
-    // No previous costing rule for product
-    where.append("   and p." + Product.PROPERTY_COSTTYPE + " is null");
-    // TODO: Change query if current algorithm property is added to product.
-    where.append("   and not exists (select 1 from " + CostingRule.ENTITY_NAME + " as cr");
-    where.append("      where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
-    where.append("        and cr != :rule");
-    where.append("        and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
-    where.append("        and cr." + CostingRule.PROPERTY_STARTINGDATE + " < :startingDate");
-    where.append("        and COALESCE(cr." + CostingRule.PROPERTY_ENDINGDATE
-        + ", :defaultDate) >= :endingDate");
-    where.append("     )");
-    // Has trx.
-    where.append(" and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
-    where.append("   where " + MaterialTransaction.PROPERTY_PRODUCT + " = p)");
-
-    OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
-    pQry.setFilterOnReadableOrganization(false);
-    pQry.setNamedParameter("porgs", naturalOrgs);
-    pQry.setNamedParameter("ruleOrg", rule.getOrganization());
-    pQry.setNamedParameter("rule", rule);
-    pQry.setNamedParameter("startingDate", currentDate);
-    pQry.setNamedParameter("defaultDate", currentDate);
-    pQry.setNamedParameter("endingDate", currentDate);
+    pQry.setNamedParameter("childOrgs", childOrgs);
     return pQry.count() > 0;
   }
 
@@ -269,20 +245,19 @@ public class CostingRuleProcess implements Process {
     if (pQry.count() > 0) {
       throw new OBException("@ProductsWithTrxCalculated@");
     }
+  }
 
-    where = new StringBuffer();
-    where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
-    where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in :porgs");
-    where.append("   and exists (select 1 from " + Costing.ENTITY_NAME + " as costing ");
-    where.append("       where costing." + Costing.PROPERTY_PRODUCT + " = p");
-    where.append("         and costing." + Costing.PROPERTY_COSTTYPE + " = 'AV'");
-    where.append("     )");
-    pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
-    pQry.setFilterOnReadableOrganization(false);
-    pQry.setNamedParameter("porgs", naturalOrgs);
-    if (pQry.count() > 0) {
-      throw new OBException("@ProductsWithCosting@");
+  protected void createCostingRuleInits(CostingRule rule, Set<String> childOrgs) {
+    // Create inventories.
+    List<Object[]> whorgl = getWarehouseAndOrgsWithStock(childOrgs);
+    for (Object[] record : whorgl) {
+      // Warehouse wh = OBDal.getInstance().get(Warehouse.class, record[0]);
+      createPhysicalInventories((String) record[1], (Warehouse) record[0], rule);
+    }
+
+    // Process closing physical inventories.
+    for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
+      new InventoryCountProcess().processInventory(cri.getCloseInventory());
     }
   }
 
@@ -307,6 +282,7 @@ public class CostingRuleProcess implements Process {
   private void createPhysicalInventories(String orgId, Warehouse wh, CostingRule rule) {
     Organization org = OBDal.getInstance().get(Organization.class, orgId);
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
+    cri.setClient(org.getClient());
     cri.setOrganization(org);
     cri.setWarehouse(wh);
     cri.setCostingRule(rule);
@@ -315,6 +291,7 @@ public class CostingRuleProcess implements Process {
     rule.setCostingRuleInitList(criList);
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
+    closeInv.setClient(org.getClient());
     closeInv.setOrganization(org);
     // FIXME: Set proper name on inventory using translated messages
     closeInv.setName("close inventory " + rule.getIdentifier());
@@ -323,17 +300,17 @@ public class CostingRuleProcess implements Process {
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
+    initInv.setClient(org.getClient());
     initInv.setOrganization(org);
     // FIXME: Set proper name on inventory using translated messages
     initInv.setName("init inventory " + rule.getIdentifier());
     initInv.setWarehouse(wh);
     initInv.setMovementDate(new Date());
     cri.setInitInventory(initInv);
-
+    OBDal.getInstance().save(rule);
     OBDal.getInstance().save(closeInv);
     OBDal.getInstance().save(initInv);
     OBDal.getInstance().flush();
-
     insertLines(closeInv, true, orgId, wh.getId());
     insertLines(initInv, false, orgId, wh.getId());
     OBDal.getInstance().refresh(closeInv);
@@ -346,8 +323,13 @@ public class CostingRuleProcess implements Process {
     // In case get_uuid is not already registered, it's registered now.
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
         .getSessionFactory()).getDialect();
-    dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
-    dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
+    Map<String, SQLFunction> function = dialect.getFunctions();
+    if (!function.containsKey("get_uuid")) {
+      dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
+    }
+    if (!function.containsKey("now")) {
+      dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
+    }
 
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + InventoryCountLine.ENTITY_NAME + "(");
@@ -379,7 +361,7 @@ public class CostingRuleProcess implements Process {
     insert.append(", now()");
     insert.append(", u");
     insert.append(", inv");
-    insert.append(", (rownum * 10)");
+    insert.append(", 10L");
     insert.append(", locator");
     insert.append(", p");
     insert.append(", sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE);
@@ -417,24 +399,39 @@ public class CostingRuleProcess implements Process {
     queryInsert.executeUpdate();
   }
 
-  private InventoryCountLine getInitIcl(InventoryCount initInventory, Long lineNo) {
-    OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(
-        InventoryCountLine.class,
-        InventoryCountLine.PROPERTY_PHYSINVENTORY + " = :inventory and "
-            + InventoryCountLine.PROPERTY_LINENO + " = :line");
-    iclQry.setNamedParameter("inventory", initInventory);
-    iclQry.setNamedParameter("line", lineNo);
-    return iclQry.uniqueResult();
+  protected MaterialTransaction getInventoryLineTransaction(InventoryCountLine icl) {
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class,
+        MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id = :invline");
+    trxQry.setFilterOnReadableClients(false);
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("invline", icl.getId());
+    MaterialTransaction trx = trxQry.list().get(0);
+    return trx;
   }
 
-  private Date getFirstDate() {
-    SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
-    try {
-      return outputFormat.parse("01-01-1900");
-    } catch (ParseException e) {
-      // Error parsing the date.
-      log4j.error("Error parsing the date.", e);
-      return null;
+  protected InventoryCountLine getInitIcl(InventoryCount initInventory, InventoryCountLine icl) {
+    StringBuffer where = new StringBuffer();
+    where.append(InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
+    where.append(" and " + InventoryCountLine.PROPERTY_PRODUCT + ".id = :product");
+    where.append(" and " + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ".id = :asi");
+    where.append(" and " + InventoryCountLine.PROPERTY_STORAGEBIN + ".id = :locator");
+    if (icl.getOrderUOM() == null) {
+      where.append(" and " + InventoryCountLine.PROPERTY_ORDERUOM + " is null");
+    } else {
+      where.append(" and " + InventoryCountLine.PROPERTY_ORDERUOM + ".id = :orderuom");
     }
+    OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
+        where.toString());
+    iclQry.setFilterOnReadableClients(false);
+    iclQry.setFilterOnReadableOrganization(false);
+    iclQry.setNamedParameter("inventory", initInventory.getId());
+    iclQry.setNamedParameter("product", icl.getProduct().getId());
+    iclQry.setNamedParameter("asi", icl.getAttributeSetValue().getId());
+    iclQry.setNamedParameter("locator", icl.getStorageBin().getId());
+    if (icl.getOrderUOM() != null) {
+      iclQry.setNamedParameter("orderuom", icl.getOrderUOM().getId());
+    }
+    return iclQry.uniqueResult();
   }
 }
