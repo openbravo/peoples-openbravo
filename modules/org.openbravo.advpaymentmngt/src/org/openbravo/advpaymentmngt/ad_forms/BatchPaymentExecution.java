@@ -148,7 +148,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpChkIsReceipt", strIsReceipt);
 
     String newOrg = strOrganizationId;
-    if (null != (strOrganizationId)) {
+    if (null != strOrganizationId) {
       xmlDocument.setParameter("orgId", strOrganizationId);
     }
     try {
