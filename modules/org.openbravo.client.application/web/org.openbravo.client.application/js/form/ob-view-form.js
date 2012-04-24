@@ -149,8 +149,8 @@ OB.ViewFormProperties = {
         // one
         if (item.displayField && this.getValue(item.displayField)) {
           displayedValue = this.getValue(item.displayField);
-        } else if (this.getValue(item.name + '._identifier')) {
-          displayedValue = this.getValue(item.name + '._identifier');
+        } else if (this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+          displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER);
         }
 
         statusBarFields[0].push(title);

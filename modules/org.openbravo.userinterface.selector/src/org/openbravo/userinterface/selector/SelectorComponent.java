@@ -721,7 +721,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setTabFieldName(String tabFieldName) {
-      this.tabFieldName = tabFieldName;
+      this.tabFieldName = tabFieldName != null ? tabFieldName.replace(DalUtil.DOT,
+          DalUtil.FIELDSEPARATOR) : tabFieldName;
     }
 
     public String getOutFieldName() {
@@ -729,7 +730,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setOutFieldName(String outFieldName) {
-      this.outFieldName = outFieldName;
+      this.outFieldName = outFieldName != null ? outFieldName.replace(DalUtil.DOT,
+          DalUtil.FIELDSEPARATOR) : outFieldName;
     }
 
     public void setOutSuffix(String suffix) {
