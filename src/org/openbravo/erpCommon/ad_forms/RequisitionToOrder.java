@@ -28,10 +28,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -47,6 +49,7 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.procurement.RequisitionLine;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -461,6 +464,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       myMessage.setMessage(Utility.messageBD(this, "VendorWithNoPaymentTerm", vars.getLanguage()));
       return myMessage;
     }
+    if ("".equals(RequisitionToOrderData.cBPartnerLocationId(this, strVendor))) {
+      myMessage.setType("Error");
+      myMessage.setMessage(Utility.messageBD(this, "NoBPLocation", vars.getLanguage()));
+      return myMessage;
+    }
 
     try {
       conn = getTransactionConnection();
@@ -515,6 +523,17 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
               : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
               .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
       for (int i = 0; lines != null && i < lines.length; i++) {
+        if ("".equals(lines[i].tax)) {
+          RequisitionLine rl = OBDal.getInstance().get(RequisitionLine.class,
+              lines[i].mRequisitionlineId);
+          myMessage.setType("Error");
+          myMessage.setMessage(Utility.messageBD(this, String.format(FIN_Utility
+              .messageBD("NoTaxRequisition"), rl.getLineNo(), rl.getRequisition().getDocumentNo()),
+              vars.getLanguage()));
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
+
         if (i == 0)
           strCOrderlineID = SequenceIdData.getUUID();
         if (i == lines.length - 1) {
@@ -559,6 +578,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           strCOrderlineID = SequenceIdData.getUUID();
         }
       }
+
       unlockRequisitionLines(vars, strSelected);
       for (int i = 0; lines != null && i < lines.length; i++) {
         String strRequisitionOrderId = SequenceIdData.getUUID();
