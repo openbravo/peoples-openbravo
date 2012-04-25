@@ -886,8 +886,8 @@ public class DocInvoice extends AcctServer {
     // Filter the right acct schemas for the organization
     for (int i = 0; i < m_aslocal.length; i++) {
       acct = m_aslocal[i];
-      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
-          AD_Table_ID, adOrgId)) {
+      if (AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID)) {
         new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
       }
     }
