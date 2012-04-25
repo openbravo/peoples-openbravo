@@ -72,7 +72,7 @@ public class CostingMigrationProcess implements Process {
       if (isMigrated()) {
         throw new OBException("Migration already done");
       } else {
-        if (isCostingMigrationNeeded()) {
+        if (isCostingMigrationNotNeeded()) {
           throw new OBException("Migration not needed");
         }
       }
@@ -128,12 +128,12 @@ public class CostingMigrationProcess implements Process {
 
   }
 
-  private boolean isCostingMigrationNeeded() {
+  private boolean isCostingMigrationNotNeeded() {
     OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, "");
     costingQry.setFilterOnReadableClients(false);
     costingQry.setFilterOnReadableOrganization(false);
 
-    return costingQry.count() > 0;
+    return costingQry.count() == 0;
   }
 
   private boolean isMigrated() {
@@ -154,7 +154,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void doChecks() {
-    // TODO Auto-generated method stub
+    // TODO Check unposted documents in the future.
 
   }
 
