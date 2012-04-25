@@ -83,7 +83,7 @@ public class CostingRuleProcess implements Process {
       final Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
 
       // Checks
-      migrationCheck(rule);
+      migrationCheck();
       boolean existsPreviousRule = existsPreviousRule(rule);
       boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);
       if (existsPreviousRule) {
@@ -132,11 +132,12 @@ public class CostingRuleProcess implements Process {
       OBDal.getInstance().save(rule);
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      logger.log(e.getMessage());
+      String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
+      logger.log(resultMsg);
       log4j.error(e.getMessage(), e);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
-      msg.setMessage(e.getMessage());
+      msg.setMessage(resultMsg);
       bundle.setResult(msg);
 
     } catch (final Exception e) {
@@ -154,7 +155,7 @@ public class CostingRuleProcess implements Process {
     bundle.setResult(msg);
   }
 
-  private void migrationCheck(CostingRule rule) {
+  private void migrationCheck() {
     if (isCostingMigrationNeeded() && isPendingMigration()) {
       throw new OBException("Instance not migrated.");
     }
