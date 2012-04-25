@@ -2501,7 +2501,7 @@
 <!--800086-->  <AD_MENU_ID><![CDATA[800086]]></AD_MENU_ID>
 <!--800086-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800086-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800086-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800086-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800086-->  <NAME><![CDATA[Create Purchase Invoices from Deliveries]]></NAME>
 <!--800086-->  <DESCRIPTION><![CDATA[Create purchase invoices from deliveries]]></DESCRIPTION>
 <!--800086-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
