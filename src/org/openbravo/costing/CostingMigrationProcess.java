@@ -92,11 +92,12 @@ public class CostingMigrationProcess implements Process {
       }
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      logger.log(e.getMessage());
+      String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
+      logger.log(resultMsg);
       log4j.error(e.getMessage(), e);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
-      msg.setMessage(e.getMessage());
+      msg.setMessage(resultMsg);
       bundle.setResult(msg);
 
     } catch (final Exception e) {
