@@ -6,7 +6,7 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
   OB.COMP = window.OB.COMP || {};
 
   // Order list
-  OB.COMP.BusinessPartner = function (context) {
+  OB.COMP.OrderDetails = function (context) {
   
     var me = this;
     this.context = context;
@@ -14,17 +14,17 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     this.renderTitle = function (receipt) {
       return B(
         {kind: B.KindJQuery('strong'), content: [                                                                                        
-          receipt.get('bp') ? receipt.get('bp').get('_identifier') : ''
+          OB.I18N.formatHour(receipt.get('orderdate')) + ' - ' + receipt.get('documentno')
         ]}            
       );
     };    
     
-    this.bp = B({kind: B.KindJQuery('span')});      
-    this.$ = this.bp.$;
+    this.details = B({kind: B.KindJQuery('span')});      
+    this.$ = this.details.$;
     
     this.receipt =  context.modelorder;   
-    this.receipt.on('clear change:bp', function () {
-      this.bp.$.empty().append(this.renderTitle(this.receipt).$);
+    this.receipt.on('clear change:orderdate change:documentno', function () {
+      this.details.$.empty().append(this.renderTitle(this.receipt).$);
     }, this);
   };  
 });    

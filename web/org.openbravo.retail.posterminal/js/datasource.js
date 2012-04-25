@@ -1,9 +1,11 @@
-/*global define,$,_ */
+/*global define,$,Backbone,_ */
 
 define(['i18n'], function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
+  
+  OB.DS.MAXSIZE = 100;
 
   // Query object
   OB.DS.Query = function (query) {
@@ -58,7 +60,7 @@ define(['i18n'], function () {
       url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
     }
 
-    console.log(url + '\n' + JSON.stringify(data));
+    // console.log(url + '\n' + JSON.stringify(data));
     
     $.ajax({
       url: url,
@@ -126,58 +128,65 @@ define(['i18n'], function () {
     return true;
   }
 
-  function findInData(data, filter, callback) {
+  function findInData(data, filter) {
     var i, max;
 
     if ($.isEmptyObject(filter)) {
-      callback({
+      return {
         exception: 'filter not defined'
-      });
+      };
     } else {
       for (i = 0, max = data.length; i < max; i++) {
         if (check(data[i], filter)) {
-          callback(data[i]);
-          return;
+          return data[i];
         }
       }
-      callback(null);
+      return null;
     }
   }
 
-
-
-  function execInData(data, filter, callback) {
-    var newdata, i, max;
+  function execInData(data, filter, filterfunction) {
+    var newdata, info, i, max, f, item;
     
-    if ($.isEmptyObject(filter)) {
-      callback(data);
+    
+    
+    if ($.isEmptyObject(filter) && ! filterfunction) {
+      return {data: data.slice(0, OB.DS.MAXSIZE), info: (data.length > OB.DS.MAXSIZE ? 'OBPOS_DataMaxReached' : null) };
     } else {
+      f = filterfunction || function (item) { return item; };
       newdata = [];
+      info = null;
       for (i = 0, max = data.length; i < max; i++) {
         if (check(data[i], filter)) {
-          newdata.push(data[i]);
+          item = f(data[i]);
+          if (item) {
+            if (newdata.length >= OB.DS.MAXSIZE) {
+              info = 'OBPOS_DataMaxReached';
+              break;
+            }
+            newdata.push(data[i]);
+          }
         }
       }
-      callback(newdata);
+      return {data: newdata, info: info};
     }
   }
-
-  // DataSource object
+  
+  // DataSource objects
   // OFFLINE GOES HERE
+  
   OB.DS.DataSource = function (query) {
     this.query = query;
-    this.params = null;
     this.cache = null;
   };
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
   OB.DS.DataSource.prototype.load = function (params) {
-    this.params = params;
     this.cache = null;
     
     // OFFLINE GOES HERE
     var me = this;
-    this.query.exec(this.params, function (data) {
+    this.query.exec(params, function (data) {
       if (!data.exception) {
         me.cache = data;
       }
@@ -187,23 +196,98 @@ define(['i18n'], function () {
 
   OB.DS.DataSource.prototype.find = function (filter, callback) {    
     if (this.cache) {
-      findInData(this.cache, filter, callback);
+      callback(findInData(this.cache, filter));
     } else {
       this.on('ready', function() {
-        findInData(this.cache, filter, callback);
+        callback(findInData(this.cache, filter));
       }, this);
     }
   };
 
   OB.DS.DataSource.prototype.exec = function (filter, callback) {
     if (this.cache) {
-      execInData(this.cache, filter, callback);
+      var result1 = execInData(this.cache, filter);
+      callback(result1.data, result1.info);
     } else {
       this.on('ready', function() {
-        execInData(this.cache, filter, callback);
+        var result2 = execInData(this.cache, filter);
+        callback(result2.data, result2.info);
       }, this);
     }
   };
+  
+  // Datasource for product and prices...
+  
+  OB.DS.DataSourceProductPrice = function (pquery, ppquery) {
+    this.pquery = pquery;
+    this.ppquery = ppquery;
+    this.pcache = null;
+    this.ppcache = null;
+  };
+  _.extend(OB.DS.DataSourceProductPrice.prototype, Backbone.Events);
+  
+  OB.DS.DataSourceProductPrice.prototype.load = function (params) {
+    this.pcache = null;
+    this.ppcache = null;
+    
+    // OFFLINE GOES HERE
+    var me = this;
+    me.pquery.exec(params.product, function (pdata) {
+      me.ppquery.exec(params.productprice, function (ppdata) {        
+        if (!pdata.exception && !ppdata.exception) {
+          me.pcache = pdata;
+          me.ppcache = ppdata;
+        }
+        me.trigger('ready');        
+      });
+    });    
+  };
+  
+  var findPrice = function (item, prices, priceListVersion) {
+    if (item) {
+      var price = findInData(prices, {'priceListVersion': priceListVersion, 'product': item.product.id});
+      if (price) {
+        item.price = price;
+        return item;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }    
+  };
+  
+  OB.DS.DataSourceProductPrice.prototype.find = function (filter, callback) {    
+    if (this.pcache && this.ppcache) {
+      callback(findPrice(findInData(this.pcache, filter.product), this.ppcache, filter.priceListVersion));
+    } else {
+      this.on('ready', function() {
+        callback(findPrice(findInData(this.pcache, filter.product), this.ppcache, filter.priceListVersion));
+      }, this);
+    }
+  };
+
+  OB.DS.DataSourceProductPrice.prototype.exec = function (filter, callback) {
+
+    var filterfunction = function (cache) { 
+      return function (item) {
+        return findPrice(item, cache, filter.priceListVersion);
+      };
+    };
+    
+    if (this.pcache && this.ppcache) {     
+      var result1 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
+      callback(result1.data, result1.info);
+    } else {
+      this.on('ready', function() {
+        
+        var result2 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
+        callback(result2.data, result2.info);
+      }, this);
+    }
+  };
+  
+  // HWServer
 
   OB.DS.HWServer = function (url) {
     this.url = url;

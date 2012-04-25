@@ -71,13 +71,12 @@ define(['builder'], function (B) {
     return text.replace(/[\-\[\]{}()+?.,\\\^$|#\s]/g, '\\$&');
   };
   
-  OB.UTIL.recontext = function (model, defaultid) {
-    return function (context) {
-      var obj = new model();
-      obj.id = defaultid;      
-      obj.context = context;
-      return obj;
-    };
+  OB.UTIL.padNumber = function (n, p) {
+    var s = n.toString();
+    while (s.length < p) {
+      s = '0' + s;
+    }
+    return s;
   };
 
 });

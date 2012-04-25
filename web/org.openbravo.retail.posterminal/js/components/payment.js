@@ -24,28 +24,19 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
         {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                                    
+
+            ]}
+          ]},
+          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px;height: 30px;'}, content: [
                 {kind: B.KindJQuery('span'), id: 'totalpending', attr: {style: 'font-size: 175%; font-weight:bold;'}},
                 {kind: B.KindJQuery('span'), id: 'totalpendinglbl', content: [OB.I18N.getLabel('OBPOS_PaymentsRemaining')]},
                 {kind: B.KindJQuery('span'), id: 'change', attr: {style: 'font-size: 175%; font-weight:bold;'}},
                 {kind: B.KindJQuery('span'), id: 'changelbl', content: [OB.I18N.getLabel('OBPOS_PaymentsChange')]},
                 {kind: B.KindJQuery('span'), id: 'overpayment', attr: {style: 'font-size: 175%; font-weight:bold;'}},
-                {kind: B.KindJQuery('span'), id: 'overpaymentlbl', content: [OB.I18N.getLabel('OBPOS_PaymentsOverpayment')]},
-                {kind: B.KindJQuery('a'), id: 'doneaction', attr: { 'href': '#', 'class': 'btnlink btnlink-small', 'style': 'float:right;'}, content: [
-                  'Done'                       
-                ], init: function () {
-                     this.$.click(function (e) {
-                       e.preventDefault();
-                       me.dataorder.exec(me.receipt);
-                       me.modelorderlist.deleteCurrent();
-                     });
-                  }
-                }    
-                 ]}
-               ]}
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+                {kind: B.KindJQuery('span'), id: 'overpaymentlbl', content: [OB.I18N.getLabel('OBPOS_PaymentsOverpayment')]} 
+              ]},                
               {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; width: 100%;'}, content: [                                                                                      
                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px'}, content: [   
                   {kind: B.KindJQuery('div'), attr: {'style': 'margin: 5px; border-bottom: 1px solid #cccccc;'}, content: [   
@@ -84,7 +75,21 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
                 ]}        
               ]}                                                                                          
             ]},
-            {kind: B.KindJQuery('div'), id: 'coins', attr: {'class': 'span6'}, content: [                                                                                          
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [    
+              {kind: B.KindJQuery('div'), id: 'coinscontainer', content: [
+              ]},
+              {kind: B.KindJQuery('div'), id: 'doneaction', content: [
+                    {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink', 'style': 'font-size: 150%; font-weight: bold; float: right;'}, content: [
+                      OB.I18N.getLabel('OBPOS_LblDone')                 
+                    ], init: function () {
+                         this.$.click(function (e) {
+                           e.preventDefault();
+                           me.dataorder.exec(me.receipt);
+                           me.modelorderlist.deleteCurrent();
+                         });
+                      }
+                    }                   
+              ]}
             ]}
           ]}                      
         ]}        
@@ -98,7 +103,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
     this.overpayment = this.component.context.overpayment.$;  
     this.overpaymentlbl = this.component.context.overpaymentlbl.$;     
     this.doneaction = this.component.context.doneaction.$;
-    
+    this.coinscontainer = this.component.context.coinscontainer.$;    
     this.updatePending();
   };
   
@@ -106,23 +111,31 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
     var i, max;
     var me = this;
     
-    var addCoinButton = function (c, v) {
-      c.append(B(
-        {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
-          OB.I18N.formatCurrency(v)
+    var addCoinButton = function (v) {
+      var amount;
+      var classcolor;
+      if (v.amount) {
+        amount = v.amount;
+        classcolor = v.classcolor || 'btnlink-orange';
+      } else {
+        amount = v;
+        classcolor = 'btnlink-orange';
+      }     
+      
+      me.coinscontainer.append(B(
+        {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small ' + classcolor, 'style': 'width:40px; text-align:right' }, content: [
+          OB.I18N.formatCurrency(amount)
         ], init: function () {
           this.$.click(function(e) {
             e.preventDefault();
-            me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'payment.cash', 'amount': OB.DEC.number(v)}));                 
+            me.receipt.addPayment(new OB.MODEL.PaymentLine({'kind': 'payment.cash', 'amount': OB.DEC.number(amount)}));                 
           });
         }}
       ).$);      
-    };
-       
+    };       
     if (attrs.cashcoins) {
-      var coinscontainer = this.component.context.coins.$;
       for (i = 0, max = attrs.cashcoins.length; i < max; i++) {
-        addCoinButton(coinscontainer, attrs.cashcoins[i]);
+        addCoinButton(attrs.cashcoins[i]);
       }
     }
   };
@@ -147,9 +160,11 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
       this.overpaymentlbl.hide();      
     } 
     if (paymentstatus.done) {
+      this.coinscontainer.hide();
       this.doneaction.show();
     } else {
       this.doneaction.hide();
+      this.coinscontainer.show();
     }
   };
   

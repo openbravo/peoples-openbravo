@@ -41,51 +41,77 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     
     this.component = B(
       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-        {kind: B.KindJQuery('div'), attr: {'class': 'span3'}, content: [
-          {kind: B.KindJQuery('div'), content: [
+        {kind: B.KindJQuery('div'), id: 'payment', attr: {'class': 'span5'}, content: [
+                                                                                       
+          {kind: B.KindJQuery('div'), id: 'toolbarpayment', attr: {'style': 'display:none;'}, content: [                                                                            
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                 
                 {kind: BtnAction, attr: {'command': 'paym:payment.cash'}, content: [OB.I18N.getLabel('OBPOS_KbCash')]}
               ]}          
-            ]}                
-          ]},
-          {kind: B.KindJQuery('div'), content: [
+            ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
                 {kind: BtnAction, attr: {'command': 'paym:payment.card'}, content: [OB.I18N.getLabel('OBPOS_KbCard')]}
               ]}          
-            ]}                
-          ]},
-          {kind: B.KindJQuery('div'), content: [
+            ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
                 {kind: BtnAction, attr: {'command': 'paym:payment.voucher'}, content: [OB.I18N.getLabel('OBPOS_KbVoucher')]}
               ]}          
-            ]}                
-          ]},
-          {kind: B.KindJQuery('div'), content: [
+            ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction, attr: {'command': '---'}, content: ['---']}
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
               ]}          
-            ]}                
-          ]},
-          {kind: B.KindJQuery('div'), content: [
+            ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction, attr: {'command': '---'}, content: ['---']}
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
               ]}          
-            ]}                
-          ]},
-          {kind: B.KindJQuery('div'), content: [
+            ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction, attr: {'command': '---'}, content: ['---']}
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
               ]}          
-            ]}                
-          ]}          
-        ]},    
-        {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [ 
+            ]}               
+          ]},
+          
+          {kind: B.KindJQuery('div'), id: 'toolbarempty', attr: {'style': 'display:block;'}, content: [                                                                            
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+                {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+              ]}          
+            ]}               
+          ]}
+          
+        ]},   
+        
+        {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [ 
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [ 
               {kind: B.KindJQuery('div'), attr: {'style': 'margin:5px'}, content: [ 
@@ -100,19 +126,19 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               {kind: BtnAction, attr: {'command': 'del'}, content: [
                 {kind: B.KindJQuery('i'), attr:{'class': 'icon-chevron-left'}}
               ]}
-            ]}                        
+            ]}              
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [     
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                  {kind: BtnAction, attr: {'command': '*'}, content: ['*']}                                                                            
+                  {kind: BtnAction, attr: {'command': '/'}, content: ['/']}                                                                            
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                  {kind: BtnAction, attr: {'command': '-'}, content: ['-']}                                                                            
+                  {kind: BtnAction, attr: {'command': '*'}, content: ['*']}                                                                            
                 ]},     
                 {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                  {kind: BtnAction, attr: {'command': '+'}, content: ['+']}                                                                            
+                  {kind: BtnAction, attr: {'command': '%'}, content: ['%']}                                                                            
                 ]}           
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -157,7 +183,15 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
                 ]}   
               ]}
             ]},
-            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [     
+            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [    
+              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+                  {kind: BtnAction, attr: {'command': '-'}, content: ['-']}                                                                            
+                ]},     
+                {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+                  {kind: BtnAction, attr: {'command': '+'}, content: ['+']}                                                                            
+                ]}     
+              ]},                                                                              
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: BtnAction, attr: {'command': 'qty'}, content: [OB.I18N.getLabel('OBPOS_KbQuantity')]}                                                                            
@@ -172,12 +206,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: BtnAction, attr: {'command': 'dto'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
                 ]}     
-              ]},   
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction, attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}                                                                            
-                ]}     
-              ]},                     
+              ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: BtnAction, attr: {'command': String.fromCharCode(13)}, content: [
@@ -187,14 +216,16 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               ]}                    
             ]}                
           ]}             
-        ]}
-      ]}                                                                                                                                
+        ]}       
+      ]}                                                                                                                               
     );
     
     this.$ = this.component.$;
     this.editbox =  this.component.context.editbox.$; 
+    this.toolbarpayment =  this.component.context.toolbarpayment.$; 
+    this.toolbarempty =  this.component.context.toolbarempty.$; 
     
-    this.products = context.DataProduct;
+    this.products = context.DataProductPrice;
     this.receipt = context.modelorder;
     this.line = null;
     
@@ -231,7 +262,8 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       } else if (cmd === String.fromCharCode(13)) {
         var code = this.getString();
         this.products.ds.find({
-          product: {uPCEAN: code}
+          priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
+          product: { product: {uPCEAN: code}}
         }, function (data) {
           if (data) {      
             me.receipt.addProduct(me.line, new Backbone.Model(data));
@@ -254,8 +286,13 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       this.editbox.empty();      
   };
   
-  OB.COMP.Keyboard.prototype.show = function () {
+  OB.COMP.Keyboard.prototype.show = function (toolbar) {
       this.clear();
+      if (toolbar) {
+        this.toolbarpayment.hide();
+        this.toolbarempty.hide();
+        this[toolbar].show();
+      }
       this.$.show();      
   };
   

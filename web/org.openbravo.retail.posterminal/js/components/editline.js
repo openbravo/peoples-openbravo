@@ -104,7 +104,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     
     // Set Model
     
-    this.products = context.DataProduct;
+    this.products = context.DataProductPrice;
     this.receipt = context.modelorder;
     this.line = null;
     
@@ -127,7 +127,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     var me = this;  
     if (this.line) {      
       this.products.ds.find({
-        product: {id: this.line.get('productid')}
+        priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
+        product: { product: {id: this.line.get('productid')}}
       }, function (data) {
         if (data) {
           me.msgaction.hide();

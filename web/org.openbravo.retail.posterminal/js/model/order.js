@@ -1,4 +1,4 @@
-/*global define,Backbone */
+/*global define,Backbone,localStorage */
 
 define(['utilities', 'arithmetic', 'i18n'], function () {
   
@@ -67,7 +67,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       Backbone.Model.prototype.constructor.call(this);
     },    
     initialize : function () {
-      this.set('date', new Date());
+      this.set('orderdate', new Date());
+      this.set('documentno', '99094');
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
@@ -125,7 +126,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     },
     
     clear: function() {
-      this.set('date', new Date());
+      this.set('orderdate', new Date());
+      this.set('documentno', '9904');
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
@@ -138,7 +140,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     },
     
     clearWith: function(_order) {
-      this.set('date', _order.get('date'));
+      this.set('orderdate', _order.get('orderdate'));
+      this.set('documentno', _order.get('documentno'));
       this.set('undo', null);
       this.set('bp', _order.get('bp'));
       this.get('lines').reset();
@@ -241,7 +244,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
           line: newline,
           undo: function() {
             me.get('lines').remove(newline);
-            this.calculateNet();
+            me.calculateNet();
             me.set('undo', null);
           }
         });
@@ -339,16 +342,29 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     constructor: function (context) {
       this._id = 'modelorderlist';
       this.modelorder = context.modelorder;
+      
+      this.logicdocument = 
      
       Backbone.Collection.prototype.constructor.call(this);
     }, 
     initialize : function () {
       this.current = null;
-    },    
+    },  
     
-    createNew: function () {
+    newOrder: function () {
+      var order = new OB.MODEL.Order();
+      order.set('orderdate', new Date());
+      var documentseq = localStorage.getItem('Document_Sequence') || '0';
+      documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5); 
+      localStorage.setItem('Document_Sequence', documentseq);
+      order.set('documentno', '<' + documentseq + '>');
+      order.set('bp', new Backbone.Model(OB.POS.modelterminal.get('businesspartner')));
+      return order;
+    },
+    
+    addNewOrder: function () {
       this.saveCurrent();
-      this.current = new OB.MODEL.Order();
+      this.current = this.newOrder();
       this.add(this.current);
       this.loadCurrent();     
     },  
@@ -359,7 +375,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
         if (this.length > 0) {
           this.current = this.at(this.length - 1);
         } else {
-          this.current = new OB.MODEL.Order();
+          this.current = this.newOrder();
           this.add(this.current);
         }
         this.loadCurrent();

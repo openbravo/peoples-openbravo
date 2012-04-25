@@ -49,7 +49,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                           filter._identifier = '%i' + OB.UTIL.escapeRegExp(me.bpname.val());
                         }
                         // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
-                        me.bps.exec(filter);                        
+                        me.bps.exec(filter);
                       });
                     }}                                                                   
                   ]}                                                                   

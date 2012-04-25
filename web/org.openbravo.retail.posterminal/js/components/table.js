@@ -174,7 +174,13 @@ define(['builder', 'utilities'], function (B) {
       
       this.tbody.empty();  
       this.collection.trigger('selected');
-    }, this);    
+    }, this);   
+    
+    this.collection.on('info', function (info) {
+//      if (info) {
+//        console.log(info);
+//      }
+    }, this);
   };
 
 }); 

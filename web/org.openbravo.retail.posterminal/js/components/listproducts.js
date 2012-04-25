@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -15,7 +15,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
       this.line = line;
     }, this);    
     
-    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.DataProduct, context.DataProductPrice);
+    this.products = new OB.MODEL.Collection(context.DataProductPrice);
   
     this.products.on('click', function (model) {
       this.receipt.addProduct(this.line, model);
@@ -62,7 +62,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/productprice', 'mo
   
   OB.COMP.ListProducts.prototype.loadCategory = function (category) {
     if (category) {
-      this.products.exec({ product: { 'productCategory': category.get('category').id } });    
+      this.products.exec({ priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {product: { 'productCategory': category.get('category').id }}});    
       this.titleProd.text(category.get('category')._identifier);
     } else {
       this.products.reset();

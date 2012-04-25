@@ -1,6 +1,6 @@
 /*global define */
 
-define([], function () {
+define(['utilities'], function () {
   
   // Mockup for OB.I18N
   
@@ -55,8 +55,9 @@ define([], function () {
     
     'OBPOS_PaymentsEmpty': 'No payments',
     'OBPOS_PaymentsRemaining': ' remaining to pay. ',
-    'OBPOS_PaymentsChange': ' change.',
-    'OBPOS_PaymentsOverpayment': ' overpayment.',
+    'OBPOS_PaymentsChange': ' change. ',
+    'OBPOS_PaymentsOverpayment': ' overpayment. ',
+    'OBPOS_LblDone': 'Done',
     
     'OBPOS_PayKind:payment.cash': 'Cash',
     'OBPOS_PayKind:payment.voucher': 'Voucher',
@@ -129,7 +130,7 @@ define([], function () {
     var curr_hour = d.getHours();
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
-    return curr_date + '/' + curr_month + '/' + curr_year;
+    return OB.UTIL.padNumber(curr_date) + '/' + OB.UTIL.padNumber(curr_month) + '/' + curr_year;
   };
   
   OB.I18N.formatHour = function (d) {
@@ -139,7 +140,9 @@ define([], function () {
     var curr_hour = d.getHours();
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
-    return curr_hour + ':' + curr_min;
+    return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min);
   };  
+  
+
 
 });

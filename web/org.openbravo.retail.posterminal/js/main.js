@@ -9,13 +9,18 @@ require.config({
 });
 
 
-require(['builder', 'pointofsalewindow', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, pos, login) {
+require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   
   var hwserver = new OB.DS.HWServer();  // 'http://192.168.0.8:8090/printer'
   var modelterminal = new OB.MODEL.Terminal();
   
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
   terminal.setModel(modelterminal); 
+  
+  // alert all errors
+  window.onerror = function (e) {
+    alert(e);
+  };
   
   // global components.
   OB.POS = {
@@ -48,9 +53,12 @@ require(['builder', 'pointofsalewindow', 'loginwindow', 'arithmetic', 'datasourc
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
     
-    // Show window.
-    $("#containerwindow").empty().append(B(pos()).$);   
-    OB.POS.modelterminal.trigger('domready'); 
+    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/windows/webpos");
+    
+    require([webwindowname], function (webwindow) { // load window...
+      $("#containerwindow").empty().append(B(webwindow()).$);   
+      OB.POS.modelterminal.trigger('domready'); 
+    });
   });    
   
   modelterminal.on('fail', function (exception) {

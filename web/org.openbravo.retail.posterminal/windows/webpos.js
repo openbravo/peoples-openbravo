@@ -3,10 +3,10 @@
 
 define(['builder', 'i18n',
         'data/datamaster', 'data/dataorder',
-        'model/terminal', 'model/order', 'model/productprice',
+        'model/terminal', 'model/order',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
-        'components/total', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',
+        'components/total', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',
         'components/listcategories', 'components/listproducts'
         ], function (B) {
   
@@ -17,10 +17,9 @@ define(['builder', 'i18n',
       {kind: B.KindJQuery('section'), content: [
         {kind: OB.DATA.Container, content: [
           {kind: OB.DATA.BPs},
-          {kind: OB.DATA.Product},
           {kind: OB.DATA.ProductPrice},
           {kind: OB.DATA.Category},      
-          {kind: OB.DATA.Order}
+          {kind: OB.DATA.Order}          
         ]},
         
         {kind: OB.MODEL.Order},
@@ -73,7 +72,7 @@ define(['builder', 'i18n',
                 var me = this;
                 me.$.click(function (e) {
                   e.preventDefault();
-                  me.context.modelorderlist.createNew();
+                  me.context.modelorderlist.addNewOrder();
                 });
             }},
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
@@ -111,7 +110,7 @@ define(['builder', 'i18n',
                 ], init: function () {
                   var context = this.context;
                   this.$.on('shown', function () {
-                    context.keyboard.show();
+                    context.keyboard.show('toolbarpayment');
                   });
                 }}        
               ]},
@@ -141,7 +140,7 @@ define(['builder', 'i18n',
                 ], init: function () {
                   var context = this.context;
                   this.$.on('shown', function () {
-                    context.keyboard.show();
+                    context.keyboard.show('toolbarempty');
                   });
                   this.context.modelorder.on('clear scan', function() {
                     this.$.tab('show');                         
@@ -157,7 +156,7 @@ define(['builder', 'i18n',
                 ], init: function () {
                   var context = this.context;
                   this.$.on('shown', function () {
-                    context.keyboard.show();
+                    context.keyboard.show('toolbarempty');
                   });
                   
                   this.context.modelorder.get('lines').on('click', function () {
@@ -177,6 +176,9 @@ define(['builder', 'i18n',
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                             
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [   
+                        {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#'}, content: [                                                                                                                                
+                          {kind: OB.COMP.OrderDetails}
+                        ]},                                                                                                                          
                         {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [                                                                                                                                
                           {kind: OB.COMP.BusinessPartner}
                         ]},
@@ -204,14 +206,14 @@ define(['builder', 'i18n',
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
                     {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
-                        {kind: OB.COMP.ListProducts }  // Must be defined after ListCategories...
+                        {kind: OB.COMP.ListProducts }
                       ]}        
                     ]}        
                   ]},                                                                                    
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
                     {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
-                        {kind: OB.COMP.ListCategories }  
+                        {kind: OB.COMP.ListCategories }
                       ]}        
                     ]}        
                   ]}
@@ -232,7 +234,17 @@ define(['builder', 'i18n',
                 {kind: OB.COMP.EditLine }                                                                      
               ]},       
               {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.Payment, attr: {'cashcoins': [50, 20, 10, 5, 2, 1, 0.50, 0.20, 0.10, 0.05, 0.01] }}                                                                      
+                {kind: OB.COMP.Payment, attr: {'cashcoins': [
+                  {amount:50, classcolor: 'btnlink-lightblue'},
+                  {amount:20, classcolor: 'btnlink-lightpink'},
+                  {amount:10, classcolor: 'btnlink-lightgreen'},
+                  {amount:5, classcolor: 'btnlink-wheat'},
+                  {amount:1, classcolor: 'btnlink-lightgreen'},
+                  {amount:0.50, classcolor: 'btnlink-orange'},
+                  {amount:0.20, classcolor: 'btnlink-gray'},
+                  {amount:0.10, classcolor: 'btnlink-lightblue'},
+                  {amount:0.05, classcolor: 'btnlink-lightpink'}
+                ]}}                                                                      
               ]}             
             ]},
             {kind: OB.COMP.Keyboard }
@@ -242,7 +254,7 @@ define(['builder', 'i18n',
         
       ], init: function () {
         OB.POS.modelterminal.on('domready', function () {
-          this.context.modelorderlist.createNew();
+          this.context.modelorderlist.addNewOrder();
         }, this);
       }}
       

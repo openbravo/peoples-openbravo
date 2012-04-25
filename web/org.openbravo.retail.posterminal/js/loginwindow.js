@@ -3,7 +3,7 @@
 
 define(['builder', 'i18n',
         'data/datamaster', 'data/dataorder',
-        'model/terminal', 'model/order', 'model/productprice',
+        'model/terminal', 'model/order',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
         'components/total', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',

@@ -18,9 +18,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.line = line;
     }, this);    
     
-    this.categories = new OB.MODEL.Collection(context.DataCategory); 
-    
-    this.products = new OB.MODEL.ProductPrice(OB.POS.modelterminal.get('pricelistversion').id, context.DataProduct, context.DataProductPrice);    
+    this.categories = new OB.MODEL.Collection(context.DataCategory);   
+    this.products = new OB.MODEL.Collection(context.DataProductPrice);
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(this.line, model);
@@ -75,10 +74,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                     if (me.productcategory.val() && me.productcategory.val() !== '') {
                       filter.product = filter.product || {};
                       filter.product.productCategory = me.productcategory.val();
-                    }
-                    
-                    // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
-                    me.products.exec(filter);                        
+                    }                   
+                    me.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: filter});                        
                   });
                 }}                                                                   
               ]}                                                                   

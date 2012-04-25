@@ -17,9 +17,10 @@ define(['datasource', 'utilities'], function () {
     },
     exec : function (filter) {
       var me = this;
-      this.ds.exec(filter, function (data) {
+      this.ds.exec(filter, function (data, info) {
         var i;
         me.reset();
+        me.trigger('info', info);
         if (data.exception) {
           alert(data.exception.message);
         } else {
@@ -32,7 +33,6 @@ define(['datasource', 'utilities'], function () {
       });
     }
   });  
-  
 
   // Terminal model.
   
@@ -50,6 +50,11 @@ define(['datasource', 'utilities'], function () {
       
       // reset all application state.
       $(window).off('keypress');
+      this.set('terminal', null);
+      this.set('bplocation', null);
+      this.set('location', null);
+      this.set('pricelist', null);
+      this.set('pricelistversion', null);
       
       // Starting app
       var me = this;
@@ -64,6 +69,7 @@ define(['datasource', 'utilities'], function () {
             me.triggerFail(data.exception);
           } else if (data[0]) {
             me.set('terminal', data[0]);
+            me.loadBP();
             me.loadBPLocation();
             me.loadLocation();
             me.loadPriceList();
@@ -76,6 +82,18 @@ define(['datasource', 'utilities'], function () {
         user,
         password
       );        
+    },
+    
+    loadBP: function () {
+      var me = this;
+      new OB.DS.Query('from BusinessPartner where id = :bp and $readableCriteria)').exec({
+        bp: this.get('terminal').businessPartner
+      }, function (data) {
+        if (data[0]) {
+          me.set('businesspartner', data[0]);
+          me.triggerReady();
+        }
+      });    
     },
     
     loadBPLocation: function () {
@@ -136,7 +154,7 @@ define(['datasource', 'utilities'], function () {
     },   
     
     triggerReady: function () {
-      if (this.get('pricelistversion') && this.get('currency')) {
+      if (this.get('pricelistversion') && this.get('currency') && this.get('businesspartner')) {
         this.trigger('ready');
       }     
     },
