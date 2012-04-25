@@ -120,7 +120,7 @@ public class SE_Locator_Activate extends SimpleCallout {
         + ",0) <> 0");
     hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITY + ",0) <> 0");
     hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITYORDER
-        + ",0) <> 0)) ");
+        + ",0) <> 0) ");
 
     final OBQuery<StoragePending> query = OBDal.getInstance().createQuery(StoragePending.class,
         hsqlScript.toString());
