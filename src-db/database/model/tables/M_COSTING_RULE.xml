@@ -38,7 +38,7 @@
         <onCreateDefault/>
       </column>
       <column name="DATEFROM" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA[SYSDATE]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="ORG_DIMENSION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
