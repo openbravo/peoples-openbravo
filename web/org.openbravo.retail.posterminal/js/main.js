@@ -53,7 +53,7 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
     
-    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/windows/webpos");
+    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/windows/pointofsale");
     
     require([webwindowname], function (webwindow) { // load window...
       var c = _.extend({}, Backbone.Events);
