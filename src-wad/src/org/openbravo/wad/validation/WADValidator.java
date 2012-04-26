@@ -64,7 +64,7 @@ class WADValidator {
     validateAuxiliarInput(result);
     validateReferences(result);
     validateProcessWithoutClass(result);
-    validateFieldsOfTabs(result);
+    validateTabsWithMultipleFieldsForSameColumn(result);
     return result;
   }
 
@@ -218,16 +218,16 @@ class WADValidator {
    * 
    * @param result
    */
-  private void validateFieldsOfTabs(WADValidationResult result) {
+  private void validateTabsWithMultipleFieldsForSameColumn(WADValidationResult result) {
     try {
-      WADValidatorData data[] = WADValidatorData.checkColumnIdsOfFields(conn);
+      WADValidatorData data[] = WADValidatorData.checkTabsWithMultipleFieldsForSameColumn(conn,
+          modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(
-            issue.moduleid,
-            issue.modulename,
-            WADValidationType.MODEL_OBJECT,
-            "The tab " + issue.objectname.split(" - ")[0] + " of the window "
-                + issue.objectname.split(" - ")[1] + " has to fields pointing to the same column.");
+        result.addError(issue.moduleid, issue.modulename,
+            WADValidationType.TABS_WITH_MULTIPLE_FIELDS_FOR_SAME_COLUMN, "Error in field "
+                + issue.fieldname + ". There are more than one fields pointing to the column "
+                + issue.columnname + " in the tab " + issue.tabname + " of the " + issue.windowname
+                + " window.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
