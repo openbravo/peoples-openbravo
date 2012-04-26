@@ -53,6 +53,7 @@ public class Posted extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Posted: doPost");
 
+    final String generalLedgerJournalReport_ID = "800000";
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -71,7 +72,6 @@ public class Posted extends HttpSecureAppServlet {
       printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
           strForcedTableId, strPath, strTabName, strPosted);
     } else if (vars.commandIn("SAVE")) {
-
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
       String strTableId = vars.getRequiredGlobalVariable("inpTableId", "Posted|tableId");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "Posted|tabId");
@@ -98,9 +98,15 @@ public class Posted extends HttpSecureAppServlet {
             vars.setMessage(strTabId, messageResult);
             printPageClosePopUp(response, vars);
           } else {
-            String title = "POST";
+            String title;
             OBContext.setAdminMode();
-            title = OBDal.getInstance().get(Process.class, "800000").getIdentifier();
+            Process genLedJour = OBDal.getInstance().get(Process.class,
+                generalLedgerJournalReport_ID);
+            if (genLedJour != null) {
+              title = genLedJour.getIdentifier();
+            } else {
+              title = "POST";
+            }
             printPageClosePopUp(response, vars, strDireccion
                 + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
                 + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org, title);
@@ -120,9 +126,15 @@ public class Posted extends HttpSecureAppServlet {
                 Utility.translateError(this, vars, vars.getLanguage(), "NoFactAcct"));
             printPageClosePopUp(response, vars);
           } else {
-            String title = "POST";
+            String title;
             OBContext.setAdminMode();
-            title = OBDal.getInstance().get(Process.class, "800000").getIdentifier();
+            Process genLedJour = OBDal.getInstance().get(Process.class,
+                generalLedgerJournalReport_ID);
+            if (genLedJour != null) {
+              title = genLedJour.getIdentifier();
+            } else {
+              title = "POST";
+            }
             printPageClosePopUp(response, vars, strDireccion
                 + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
                 + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org, title);

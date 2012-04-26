@@ -64,6 +64,7 @@ class WADValidator {
     validateAuxiliarInput(result);
     validateReferences(result);
     validateProcessWithoutClass(result);
+    validateFieldsOfTabs(result);
     return result;
   }
 
@@ -204,6 +205,29 @@ class WADValidator {
       for (WADValidatorData issue : data) {
         result.addError(issue.moduleid, issue.modulename, WADValidationType.PROCESS_WITHOUT_CLASS,
             issue.objectname + " process does not define a Java class to implement it.");
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating references: " + e.getMessage());
+    }
+  }
+
+  /**
+   * The validation fails when there are fields referencing to a column that is already referenced
+   * by another field of the tab
+   * 
+   * @param result
+   */
+  private void validateFieldsOfTabs(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkColumnIdsOfFields(conn);
+      for (WADValidatorData issue : data) {
+        result.addError(
+            issue.moduleid,
+            issue.modulename,
+            WADValidationType.MODEL_OBJECT,
+            "The tab " + issue.objectname.split(" - ")[0] + " of the window "
+                + issue.objectname.split(" - ")[1] + " has to fields pointing to the same column.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
