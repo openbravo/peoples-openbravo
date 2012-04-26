@@ -157,7 +157,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void doChecks() {
-    // TODO Check unposted documents in the future.
+    // TODO Check there are not transactions in the future.
 
   }
 
@@ -225,8 +225,7 @@ public class CostingMigrationProcess implements Process {
         MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
 
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
-        BigDecimal cost = getLegacyProductCost(trx.getProduct()).multiply(
-            trx.getMovementQuantity().abs());
+        BigDecimal cost = getLegacyProductCost(trx.getProduct());
         trx.setCostCalculated(true);
         trx.setTransactionCost(cost);
         OBDal.getInstance().save(trx);

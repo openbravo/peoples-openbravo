@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -109,11 +111,14 @@ public class CostingRuleProcess implements Process {
           for (InventoryCountLine icl : cri.getCloseInventory()
               .getMaterialMgmtInventoryCountLineList()) {
             MaterialTransaction trx = getInventoryLineTransaction(icl);
-            BigDecimal cost = BigDecimal.ZERO;
             // Remove 1 second from transaction date to ensure that cost is calculated with previous
             // costing rule.
             trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
-            cost = CostingUtils.getTransactionCost(trx, startingDate, true);
+            BigDecimal trxCost = CostingUtils.getTransactionCost(trx, startingDate, true);
+            Currency cur = new CostingServer(trx).getCostCurrency();
+            BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), cur
+                .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+
             trx.setCostCalculated(true);
             trx.setTransactionCost(cost);
             OBDal.getInstance().save(trx);
