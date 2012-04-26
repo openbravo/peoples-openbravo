@@ -24,5 +24,6 @@ OB.Styles.Process.PickAndExecute = {
   gridCellHeight: 25,
   iconPinSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/process/iconPin.png',
   iconDeleteSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/process/iconDelete.png',
+  addNewButtonAlign: 'left',
   buttonLayoutHeight: 80
 };

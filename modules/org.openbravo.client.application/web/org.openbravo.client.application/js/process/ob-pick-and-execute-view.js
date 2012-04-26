@@ -155,7 +155,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.items = [this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
-      align: 'left',
+      align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
       width: '100%',
       visibility: (this.addNewButton ? 'visible' : 'hidden'),
       members: (this.addNewButton ? [this.addNewButton] : [])

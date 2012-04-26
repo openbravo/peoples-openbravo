@@ -65,6 +65,11 @@ OB.Styles.Personalization.Menu.iconBodyStyleName_rtl = 'OBPersonalizationPullDow
 OB.Styles.Personalization.Menu.itemIcon = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView-RTL.png';
 
 
+/* ob-process-styles.js */
+
+OB.Styles.Process.PickAndExecute.addNewButtonAlign = 'right';
+
+
 /* ob-statusbar-styles.js */
 
 isc.OBStatusBarLeftBar.addProperties({
