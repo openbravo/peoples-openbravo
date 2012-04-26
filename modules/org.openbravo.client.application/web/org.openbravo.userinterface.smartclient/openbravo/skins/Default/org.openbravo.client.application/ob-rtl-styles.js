@@ -30,6 +30,10 @@ isc.OBApplicationMenuTree.addProperties({
 
 /* ob-form-styles.js */
 
+isc.OBDateItem.addProperties({
+  textAlign: 'right'
+});
+
 isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-ico-RTL.png'
 });
