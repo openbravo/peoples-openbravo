@@ -18,76 +18,70 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }, this);
     
     this.receipt.on('clear', function() {
-      // this.bps.reset(); 
-      // reset form too
+      me.bpname.val('');
       this.bps.exec({});
     }, this);  
  
    this.component = B(
-      {kind: B.KindJQuery('div'), content: [
-        {kind: B.KindJQuery('div'), attr: {'style': 'background-color: white; height: 300px; color: black; margin: 5px; padding: 5px'}, content: [
+      {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
+          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [    
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [    
+                {kind: B.KindJQuery('div'), content: [    
+                  {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
+                ]}                  
+              ]}                   
+            ]},                                                               
+            {kind: B.KindJQuery('div'), attr: {'class': 'span3'}, content: [ 
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'}, content: [    
+                {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
+                  {kind: B.KindJQuery('i'), attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
+                ], init: function () {
+                  this.$.click(function (e) {
+                    e.preventDefault();
+                    var filter = {};
+                    if (me.bpname.val() && me.bpname.val() !== '') {
+                      filter._identifier = '%i' + OB.UTIL.escapeRegExp(me.bpname.val());
+                    }
+                    me.bps.exec(filter);
+                  });
+                }}                                                                   
+              ]}                                                                   
+            ]}                    
+          ]},
+          
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'overflow: auto;'}, content: [    
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [    
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [    
-                    {kind: B.KindJQuery('div'), content: [    
-                      {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
-                    ]}                  
-                  ]}                   
-                ]},                                                               
-                {kind: B.KindJQuery('div'), attr: {'class': 'span3'}, content: [ 
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'}, content: [    
-                    {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
-                      {kind: B.KindJQuery('i'), attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
-                    ], init: function () {
-                      this.$.click(function (e) {
-                        e.preventDefault();
-                        var filter = {};
-                        if (me.bpname.val() && me.bpname.val() !== '') {
-                          filter._identifier = '%i' + OB.UTIL.escapeRegExp(me.bpname.val());
-                        }
-                        // this.products.exec({ product: { 'productCategory': this.categories.at(selected).get('category').id } });
-                        me.bps.exec(filter);
-                      });
-                    }}                                                                   
-                  ]}                                                                   
-                ]}                    
-              ]},
-              
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
-                  {kind: B.KindJQuery('div'), content: [ 
-                    {kind: OB.COMP.TableView, attr: {
-                      collection: this.bps,
-                      renderEmpty: function () {
-                        return B(
-                          {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
-                            OB.I18N.getLabel('OBPOS_SearchNoResults')
-                          ]}
-                        );            
-                      },  
-                      renderLine: function (model) {
-                        return B(
-                          {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
-                            {kind: B.KindJQuery('div'), content: [ 
-                              model.get('_identifier')
-                            ]},                                                                                                                                                                     
-                            {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
-                              model.get('description')
-                            ]},                                                                                                                                                                     
-                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                          ]}
-                        );                    
-                      }             
-                    }}
-                  ]}                   
-                ]}                   
-              ]}                                                             
-            ]}                                                                   
-          ]}                      
-        ]}        
-      ]}
+            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
+              {kind: B.KindJQuery('div'), content: [ 
+                {kind: OB.COMP.TableView, attr: {
+                  collection: this.bps,
+                  renderEmpty: function () {
+                    return B(
+                      {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+                        OB.I18N.getLabel('OBPOS_SearchNoResults')
+                      ]}
+                    );            
+                  },  
+                  renderLine: function (model) {
+                    return B(
+                      {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+                        {kind: B.KindJQuery('div'), content: [ 
+                          model.get('_identifier')
+                        ]},                                                                                                                                                                     
+                        {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
+                          model.get('description')
+                        ]},                                                                                                                                                                     
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                      ]}
+                    );                    
+                  }             
+                }}
+              ]}                   
+            ]}                   
+          ]}                                                             
+        ]}                                                                   
+      ]}                      
     );
     this.$ = this.component.$;
     this.bpname = this.component.context.bpname.$;

@@ -26,8 +26,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }, this);
     
     this.receipt.on('clear', function() {
-      //this.products.reset();       
-      // reset form tooo...
+      this.productname.val('');
+      this.productcategory.val('');
       this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
     }, this);    
     
