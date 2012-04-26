@@ -669,10 +669,14 @@ isc.OBSelectorItem.addProperties({
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value && !this.valueMap) {
-      this.valueMap = {};
-      this.valueMap[value] = '';
-      return '';
+    if (ret === value) {
+      if (!this.valueMap) {
+        this.valueMap = {};
+        this.valueMap[value] = '';
+        return '';
+      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
+        return '';
+      }
     }
     return ret;
   },
