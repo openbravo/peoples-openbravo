@@ -81,9 +81,8 @@ response.addHeader("Expires", "0");
 %>
 <!DOCTYPE html>
 
-<html>
+<html dir="<%=(OBContext.isRightToLeft() ? "RTL" : "LTR")%>">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
 <meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT"/>
 <meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
 <meta http-equiv="Cache-Control" content="no-cache no-store must-revalidate" >
@@ -132,7 +131,7 @@ response.addHeader("Expires", "0");
 </style>
 
 </head>
-<body dir="<%=(OBContext.isRightToLeft() ? "RTL" : "LTR")%>">
+<body>
 
 <!-- shows the loading div -->
 <div class="OBLoadingPromptModalMask" id="OBLoadingDiv">
