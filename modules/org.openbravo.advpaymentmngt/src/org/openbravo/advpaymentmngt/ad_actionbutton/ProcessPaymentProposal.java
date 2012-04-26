@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -160,6 +160,7 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
               "#AccessibleOrgTree", "ProcessProposalWindow"), Utility.getContext(this, vars,
               "#User_Client", "ProcessProposalWindow"), 0);
 
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ProcessProposalWindow", null);
       FieldProvider[] filterApplied = filterComboTableData(comboTableData, filterActions, false);
       xmlDocument.setData("reportPROCESS_PROPOSAL_ACTION", "liststructure", filterApplied);
       // comboTableData = null;
