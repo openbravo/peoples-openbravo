@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION C_GET_ISO_DAYS">
-    <function name="C_GET_ISO_DAYS" type="NUMERIC">
+  <database name="FUNCTION C_GET_ISOWEEK_DAY">
+    <function name="C_GET_ISOWEEK_DAY" type="NUMERIC">
       <parameter name="p_date" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
@@ -20,11 +20,13 @@
  * All Rights Reserved.
 *************************************************************************/
 BEGIN
+  --Returns the number of the weekday for given date. Monday=1 and Sunday=7.
+  
   --The first day of the week depends on the database configuration for oracle
   --It is used the Julian day to ensure that saturday and sunday are always
   --the days 6 and 7 of the week in both oracle and postgresql databases.
   RETURN (MOD(to_number(to_char(p_date, 'J')), 7) + 1);
-END C_GET_ISO_DAYS
+END C_GET_ISOWEEK_DAY
 ]]></body>
     </function>
   </database>
