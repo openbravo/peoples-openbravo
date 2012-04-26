@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // grid implementations.
 isc.OBGrid.addProperties({
 
+  reverseRTLAlign: true,
   dragTrackerMode: 'none',
 
   // recycle gives better performance but also results
