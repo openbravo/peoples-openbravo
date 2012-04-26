@@ -76,7 +76,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     this.theader = this.component.context.header.$;
     this.tbody = this.component.context.body.$;
     this.tempty = this.component.context.empty.$;   
-    this.tinfo = this.component.context.info.$
+    this.tinfo = this.component.context.info.$;
   };
   
   OB.COMP.TableView.prototype.attr = function (attr) {
