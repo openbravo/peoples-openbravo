@@ -303,6 +303,7 @@ define(['i18n'], function () {
         success: function (templatedata, textStatus, jqXHR) {
 
           $.ajax({
+            timeout: 5000,
             url: me.url,
             contentType: 'application/json;charset=utf-8',
             dataType: 'jsonp',
