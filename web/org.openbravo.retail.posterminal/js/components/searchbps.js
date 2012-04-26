@@ -18,16 +18,15 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }, this);
     
     this.receipt.on('clear', function() {
-      this.bps.reset();                   
+      // this.bps.reset(); 
+      // reset form too
+      this.bps.exec({});
     }, this);  
  
    this.component = B(
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), attr: {'style': 'background-color: white; height: 300px; color: black; margin: 5px; padding: 5px'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//            {tag: 'div', attr: {'class': 'span2'}, content: [   
-//            ]},                                  
-//            {tag: 'div', attr: {'class': 'span10', 'style': 'height: 500px; overflow: auto;'}, content: [    
             {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'overflow: auto;'}, content: [    
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [    

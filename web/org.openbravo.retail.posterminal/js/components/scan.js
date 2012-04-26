@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
 
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
-        {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'style': 'background: #7da7d9 url(img/scan.png) center center no-repeat; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'float:right;'}, content: [

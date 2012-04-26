@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities'], function (B) {
+define(['builder', 'utilities', 'i18n'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -67,7 +67,8 @@ define(['builder', 'utilities'], function (B) {
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), id: 'header'},
-        {kind: B.KindJQuery('ul'), id: 'body', attr: {'class': 'unstyled', style: 'display: none'}},
+        {kind: B.KindJQuery('ul'), id: 'body', attr: {'class': 'unstyled', 'style': 'display: none'}},
+        {kind: B.KindJQuery('div'), id: 'info', attr: {'style': 'display: none; border-bottom: 1px solid #cccccc; padding: 15px; font-weight:bold; color: #cccccc'}},
         {kind: B.KindJQuery('div'), id: 'empty'}
       ]}
     );
@@ -75,6 +76,7 @@ define(['builder', 'utilities'], function (B) {
     this.theader = this.component.context.header.$;
     this.tbody = this.component.context.body.$;
     this.tempty = this.component.context.empty.$;   
+    this.tinfo = this.component.context.info.$
   };
   
   OB.COMP.TableView.prototype.attr = function (attr) {
@@ -177,9 +179,12 @@ define(['builder', 'utilities'], function (B) {
     }, this);   
     
     this.collection.on('info', function (info) {
-//      if (info) {
-//        console.log(info);
-//      }
+      if (info) {
+        this.tinfo.text(OB.I18N.getLabel(info));
+        this.tinfo.show();
+      } else {
+        this.tinfo.hide();
+      }
     }, this);
   };
 

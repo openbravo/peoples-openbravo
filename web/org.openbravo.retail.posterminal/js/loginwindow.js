@@ -65,7 +65,7 @@ define(['builder', 'i18n',
           ]}
         ]}
       ], init: function () {
-        OB.POS.modelterminal.on('domready', function () {
+        this.context.on('domready', function () {
           this.context.username.$.focus();
         }, this);
       }}

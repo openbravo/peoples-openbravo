@@ -56,8 +56,9 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
     var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/windows/webpos");
     
     require([webwindowname], function (webwindow) { // load window...
-      $("#containerwindow").empty().append(B(webwindow()).$);   
-      OB.POS.modelterminal.trigger('domready'); 
+      var c = _.extend({}, Backbone.Events);
+      $("#containerwindow").empty().append(B(webwindow(), c).$);   
+      c.trigger('domready'); 
     });
   });    
   
@@ -69,15 +70,15 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
       // The user tried to log in
       alert('Invalid user name or password.\nPlease try again.');
     }
-
-    $("#containerwindow").empty().append(B(login()).$);   
-    OB.POS.modelterminal.trigger('domready'); 
+    
+    var c = _.extend({}, Backbone.Events);
+    $("#containerwindow").empty().append(B(login(), c).$);   
+    c.trigger('domready'); 
   });
   
   $(document).ready(function () {
     hwserver.print('res/welcome.xml');
-    
-    
+       
     // Entry Point
     modelterminal.load();  
   });

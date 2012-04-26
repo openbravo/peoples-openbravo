@@ -26,6 +26,8 @@ define(['utilities'], function () {
     'OBPOS_ResetBP': 'Removed customer',
     'OBPOS_LblUndo': 'Undo',
     
+    'OBPOS_DataMaxReached': 'It has been reached the maximum data to display.',
+    
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
     'OBPOS_LineQuantity': 'Quantity',

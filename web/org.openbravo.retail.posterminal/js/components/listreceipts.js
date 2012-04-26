@@ -40,13 +40,13 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                       renderLine: function (model) {
                         return B(
                           {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 10%;'}, content: [ 
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
                                OB.I18N.formatHour(model.get('orderdate'))
                             ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 10%;'}, content: [ 
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
                               model.get('documentno')
                             ]}, 
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 60%;'}, content: [ 
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [ 
                               model.get('bp').get('_identifier')
                             ]}, 
                             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
