@@ -1,6 +1,6 @@
 /*global define, $, Backbone */
 
-define(['datasource', 'utilities'], function () {
+define(['datasource', 'utilities', 'utilitiesui'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -22,7 +22,7 @@ define(['datasource', 'utilities'], function () {
         me.reset();
         me.trigger('info', info);
         if (data.exception) {
-          alert(data.exception.message);
+          OB.UTIL.showError(data.exception.message);
         } else {
           for (i in data) {
             if(data.hasOwnProperty(i)) {
@@ -76,7 +76,7 @@ define(['datasource', 'utilities'], function () {
             me.loadPriceListVersion();
             me.loadCurrency();
           } else {
-            alert("Terminal does not exists: " + params.terminal);
+            OB.UTIL.showError("Terminal does not exists: " + params.terminal);
           }
         },
         user,

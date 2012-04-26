@@ -320,7 +320,7 @@ define(['i18n'], function () {
               if (callback) {
                 callback({
                   exception: {
-                    message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+                    message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
                   }
                 });
               }
@@ -332,7 +332,7 @@ define(['i18n'], function () {
           if (callback) {
             callback({
               exception: {
-                message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgTemplateNotAvailable'))
+                message: (OB.I18N.getLabel('OBPOS_MsgTemplateNotAvailable'))
               }
             });
           }

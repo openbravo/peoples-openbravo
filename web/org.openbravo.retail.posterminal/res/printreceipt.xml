@@ -13,11 +13,11 @@
         
         <line>
             <text align="left" length="15">Document:</text>
-            <text>9332</text>
+            <text><%= OB.UTIL.encodeXMLComponent(order.get('documentno')) %></text>
         </line>
         <line>
             <text align="left" length="15">Date:</text>
-            <text>Feb. 21, 2012.</text>
+            <text><%= OB.I18N.formatDate(order.get('orderdate')) %></text>
         </line>   
         
         <line></line>

@@ -27,6 +27,8 @@ define(['utilities'], function () {
     'OBPOS_LblUndo': 'Undo',
     
     'OBPOS_DataMaxReached': 'It has been reached the maximum data to display.',
+    'OBPOS_LblError': 'ERROR!',
+    'OBPOS_LblWarning': 'WARNING!',
     
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
@@ -132,7 +134,7 @@ define(['utilities'], function () {
     var curr_hour = d.getHours();
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
-    return OB.UTIL.padNumber(curr_date) + '/' + OB.UTIL.padNumber(curr_month) + '/' + curr_year;
+    return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month, 2) + '/' + curr_year;
   };
   
   OB.I18N.formatHour = function (d) {
@@ -142,7 +144,7 @@ define(['utilities'], function () {
     var curr_hour = d.getHours();
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
-    return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min);
+    return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min, 2);
   };  
   
 

@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};

@@ -1,4 +1,4 @@
-/*global define */
+/*global define, setInterval */
 
 define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
@@ -17,7 +17,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'float:right;'}, content: [
                 OB.I18N.getLabel('OBPOS_WelcomeMessage')
-              ]}
+              ]},
+              {kind: B.KindJQuery('div'), id: 'clock', attr: {'style': 'float:right;padding-top: 20px; font-size:300%;font-weight:bold;clear:both;'}, content: [
+              ]}        
             ]},
             {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px; display: none;'}, content: [
               {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'float:left;'}},
@@ -40,6 +42,12 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     var msgwelcome = this.component.context.msgwelcome.$;
     var txtaction = this.component.context.txtaction.$;
     var msgaction = this.component.context.msgaction.$;
+    var clock = this.component.context.clock.$;
+    var updateclock = function () {
+      clock.text(OB.I18N.formatHour(new Date()));
+    };
+    updateclock();
+    setInterval(updateclock, 1000);
     
     this.receipt = context.modelorder;
     

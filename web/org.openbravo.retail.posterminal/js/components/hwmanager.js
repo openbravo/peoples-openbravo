@@ -1,6 +1,6 @@
 /*global define */
 
-define(['utilities', 'model/order', 'model/terminal'], function () {
+define(['utilities', 'utilitiesui', 'model/order', 'model/terminal'], function () {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -23,14 +23,20 @@ define(['utilities', 'model/order', 'model/terminal'], function () {
     this.receipt.on('closed print', this.printOrder, this);        
   };
   
+  var hwcallback = function (e) {
+    if (e.exception) {
+      OB.UTIL.showError(e.exception.message);
+    }
+  };
+  
   OB.COMP.HWManager.prototype.printLine = function () {
     if (this.line) {
-      OB.POS.hwserver.print(this.templateline, {line: this.line});
+      OB.POS.hwserver.print(this.templateline, {line: this.line}, hwcallback);
     }   
   };
   
   OB.COMP.HWManager.prototype.printOrder = function () {
-    OB.POS.hwserver.print(this.templatereceipt, { order: this.receipt});    
+    OB.POS.hwserver.print(this.templatereceipt, { order: this.receipt}, hwcallback);    
   };
   
   OB.COMP.HWManager.prototype.attr = function (attrs) {    

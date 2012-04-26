@@ -11,7 +11,7 @@ require.config({
 
 require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   
-  var hwserver = new OB.DS.HWServer();  // 'http://192.168.0.8:8090/printer'
+  var hwserver = new OB.DS.HWServer('http://localhost:8090/printer');  // 'http://localhost:8090/printer'
   var modelterminal = new OB.MODEL.Terminal();
   
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
