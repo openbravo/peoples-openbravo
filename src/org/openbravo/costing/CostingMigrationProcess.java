@@ -77,17 +77,18 @@ public class CostingMigrationProcess implements Process {
         }
       }
 
-      boolean migrationStarted = rulesCreated();
-      if (!migrationStarted) {
+      if (!isMigrationFirstPhaseCompleted()) {
         doChecks();
         prepareInstance();
         createRules();
+        createMigrationFirstPhaseCompletedPreference();
       } else {
         checkAllInventoriesAreProcessed();
         for (CostingRule rule : getRules()) {
           rule.setValidated(true);
           OBDal.getInstance().save(rule);
         }
+        deleteMigrationFirstPhaseCompletedPreference();
         createCostMigratedPreference();
       }
     } catch (final OBException e) {
@@ -146,12 +147,13 @@ public class CostingMigrationProcess implements Process {
     return prefQry.count() > 0;
   }
 
-  private boolean rulesCreated() {
-    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class, "");
-    crQry.setFilterOnReadableClients(false);
-    crQry.setFilterOnReadableOrganization(false);
+  private boolean isMigrationFirstPhaseCompleted() {
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationFirstPhaseCompleted'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
 
-    return crQry.count() > 0;
+    return prefQry.count() > 0;
   }
 
   private void doChecks() {
@@ -313,7 +315,34 @@ public class CostingMigrationProcess implements Process {
   }
 
   /**
-   * Create a preference to be able to determine that the instance is ready to use APRM.
+   * Create a preference to be able to determine that the migration first phase is completed.
+   */
+  private void createMigrationFirstPhaseCompletedPreference() {
+    Organization org0 = OBDal.getInstance().get(Organization.class, "0");
+    Client client0 = OBDal.getInstance().get(Client.class, "0");
+
+    Preference newPref = OBProvider.getInstance().get(Preference.class);
+    newPref.setClient(client0);
+    newPref.setOrganization(org0);
+    newPref.setPropertyList(false);
+    newPref.setAttribute("CostingMigrationFirstPhaseCompleted");
+
+    OBDal.getInstance().save(newPref);
+  }
+
+  private void deleteMigrationFirstPhaseCompletedPreference() {
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationFirstPhaseCompleted'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
+
+    if (!prefQry.list().isEmpty()) {
+      OBDal.getInstance().remove(prefQry.list().get(0));
+    }
+  }
+
+  /**
+   * Create a preference to be able to determine that the migration has been completed.
    */
   private void createCostMigratedPreference() {
     Organization org0 = OBDal.getInstance().get(Organization.class, "0");
