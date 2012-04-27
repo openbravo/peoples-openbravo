@@ -132,7 +132,7 @@ public class CostingServer {
     where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
     where.append(" and " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate");
     where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
-    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " < :enddate )");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
     where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
