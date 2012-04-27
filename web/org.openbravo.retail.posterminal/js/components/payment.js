@@ -7,8 +7,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
 
   OB.COMP.Payment = function (context) {
     var me = this;
-    
-    this.dataorder = context.DataOrder;
+
     this.modelorderlist = context.modelorderlist;
     
     this.receipt = context.modelorder;
@@ -84,7 +83,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
                     ], init: function () {
                          this.$.click(function (e) {
                            e.preventDefault();
-                           me.dataorder.exec(me.receipt);
+                           me.receipt.trigger('closed');    
                            me.modelorderlist.deleteCurrent();
                          });
                       }

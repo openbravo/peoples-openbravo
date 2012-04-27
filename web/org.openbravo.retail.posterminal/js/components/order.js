@@ -55,7 +55,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
                 OB.I18N.getLabel('OBPOS_ReceiptTaxes')
               ]},                                                                                                                                                                           
               {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                ''
+                OB.I18N.formatCurrency(0)
               ]},
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
             ]}

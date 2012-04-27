@@ -9,15 +9,24 @@ define(['utilities', 'datasource'], function () {
     this._id = 'DataOrder';
     this.context = context;
     
+    this.receipt = context.modelorder;
+    
+    this.receipt.on('closed', function () {
+      
+      
+      this.proc.exec({
+        order: this.receipt.toJSON()
+      }, function (data) {
+        console.log(JSON.stringify(data));
+      });
+      
+    }, this);
+    
+    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
+    
   };
 
   OB.DATA.Order.prototype.load = function () {
-  };
-
-  OB.DATA.Order.prototype.exec = function (order) {
-    order.trigger('closed');    
-    // this saves the order in the buffer...
-    // console.log(JSON.stringify(order.toJSON()));
   };
   
  });

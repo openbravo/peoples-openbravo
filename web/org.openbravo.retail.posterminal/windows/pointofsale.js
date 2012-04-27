@@ -15,15 +15,16 @@ define(['builder', 'i18n',
     return ( 
 
       {kind: B.KindJQuery('section'), content: [
+
+        {kind: OB.MODEL.Order},
+        {kind: OB.MODEL.OrderList}, 
+        
         {kind: OB.DATA.Container, content: [
           {kind: OB.DATA.BPs},
           {kind: OB.DATA.ProductPrice},
           {kind: OB.DATA.Category},      
           {kind: OB.DATA.Order}          
         ]},
-        
-        {kind: OB.MODEL.Order},
-        {kind: OB.MODEL.OrderList}, 
         
         {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
         

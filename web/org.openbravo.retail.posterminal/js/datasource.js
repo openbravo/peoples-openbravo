@@ -6,6 +6,76 @@ define(['i18n'], function () {
   OB.DS = window.OB.DS || {};
   
   OB.DS.MAXSIZE = 100;
+  
+  var serviceJSON = function (dataparams, callback, username, password) {
+    
+    var url = '../../org.openbravo.service.retail.posterminal.jsonrest/?auth=false';  
+    if (username && password) {
+      url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
+    }
+
+    // console.log(url + '\n' + JSON.stringify(data));
+    
+    $.ajax({
+      url: url,
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'POST',
+      data: JSON.stringify(dataparams),
+      success: function (data, textStatus, jqXHR) {
+        if (data._entityname) {
+          callback([data]);
+        } else {
+          var response = data.response;
+          var status = response.status;
+          if (status === 0) {
+            callback(response.data);
+          } else if (response.errors) {
+            callback({
+              exception: {
+                message: response.errors.id
+              }
+            });
+          } else {
+            callback({
+              exception: {
+                message: response.error.message
+              }
+            });
+          }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        callback({
+          exception: {
+            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+            status: jqXHR.status,
+            username: username
+          }
+        });
+      }
+    });    
+  };
+  
+  // Process object
+  OB.DS.Process = function (process) {
+    this.process = process;
+  };  
+  
+  OB.DS.Process.prototype.exec = function  (params, callback, username, password) {
+    var attr;
+    var data = {
+      className: this.process,
+    };
+    
+    for (attr in params) {
+      if (params.hasOwnProperty(attr)) {
+        data[attr] = params[attr];;
+      }
+    }  
+    
+    serviceJSON(data, callback, username, password);
+  };
 
   // Query object
   OB.DS.Query = function (query) {
@@ -54,53 +124,7 @@ define(['i18n'], function () {
       data.parameters = p;
     }
     
-    // Create the URL string
-    var url = '../../org.openbravo.service.retail.posterminal.jsonrest/hql/?auth=false';  
-    if (username && password) {
-      url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
-    }
-
-    // console.log(url + '\n' + JSON.stringify(data));
-    
-    $.ajax({
-      url: url,
-      contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'POST',
-      data: JSON.stringify(data),
-      success: function (data, textStatus, jqXHR) {
-        if (data._entityname) {
-          callback([data]);
-        } else {
-          var response = data.response;
-          var status = response.status;
-          if (status === 0) {
-            callback(response.data);
-          } else if (response.errors) {
-            callback({
-              exception: {
-                message: response.errors.id
-              }
-            });
-          } else {
-            callback({
-              exception: {
-                message: response.error.message
-              }
-            });
-          }
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        callback({
-          exception: {
-            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-            status: jqXHR.status,
-            username: username
-          }
-        });
-      }
-    });
+    serviceJSON(data, callback, username, password);
   };
 
   function check(elem, filter) {
