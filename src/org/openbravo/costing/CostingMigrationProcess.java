@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +28,12 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.DateType;
+import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -37,6 +42,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -117,7 +123,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void prepareInstance() {
-    // TODO update products with costtype = 'AV' to calculate_cost = true
+    // update products with costtype = 'AV' to calculate_cost = true
     StringBuffer update = new StringBuffer();
     update.append("update " + Product.ENTITY_NAME);
     update.append(" set " + Product.PROPERTY_CALCULATECOST + " = true");
@@ -126,7 +132,65 @@ public class CostingMigrationProcess implements Process {
     Query updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
     updateProduct.executeUpdate();
 
-    // TODO insert STANDARD cost for products with costtype = 'ST'.
+    // Update old transactions to calculated = true.
+    update = new StringBuffer();
+    update.append("update " + MaterialTransaction.ENTITY_NAME);
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED);
+    update.append(" where " + MaterialTransaction.PROPERTY_PRODUCT + " in (");
+    update.append("   select p from " + Product.ENTITY_NAME + " as p");
+    update.append("   where p." + Product.PROPERTY_CALCULATECOST + " = true");
+    update.append(" )");
+    updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
+    updateProduct.executeUpdate();
+
+    OBDal.getInstance().registerSQLFunction("get_uuid",
+        new StandardSQLFunction("get_uuid", new StringType()));
+    OBDal.getInstance().registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
+
+    // Insert STANDARD cost for products with costtype = 'ST'.
+    StringBuffer insert = new StringBuffer();
+    insert.append("insert into " + Costing.ENTITY_NAME);
+    insert.append(" id ");
+    insert.append(", " + Costing.PROPERTY_ACTIVE);
+    insert.append(", " + Costing.PROPERTY_CLIENT);
+    insert.append(", " + Costing.PROPERTY_ORGANIZATION);
+    insert.append(", " + Costing.PROPERTY_CREATIONDATE);
+    insert.append(", " + Costing.PROPERTY_CREATEDBY);
+    insert.append(", " + Costing.PROPERTY_UPDATED);
+    insert.append(", " + Costing.PROPERTY_UPDATEDBY);
+    insert.append(", " + Costing.PROPERTY_COSTTYPE);
+    insert.append(", " + Costing.PROPERTY_COST);
+    insert.append(", " + Costing.PROPERTY_STARTINGDATE);
+    insert.append(", " + Costing.PROPERTY_ENDINGDATE);
+    insert.append(", " + Costing.PROPERTY_MANUAL);
+    insert.append(", " + Costing.PROPERTY_PERMANENT);
+    insert.append(" )\n select get_uuid()");
+    insert.append(", c." + Costing.PROPERTY_ACTIVE);
+    insert.append(", c." + Costing.PROPERTY_CLIENT);
+    insert.append(", c." + Costing.PROPERTY_ORGANIZATION);
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", 'STA'");
+    insert.append(", c." + Costing.PROPERTY_COST);
+    insert.append(", to_date(to_char(:startingDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+    insert.append(", c." + Costing.PROPERTY_ENDINGDATE);
+    insert.append(", c." + Costing.PROPERTY_MANUAL);
+    insert.append(", c." + Costing.PROPERTY_PERMANENT);
+    insert.append("\n from " + Costing.ENTITY_NAME + " as c");
+    insert.append(", " + User.ENTITY_NAME + " as u");
+    insert.append("\n where c." + Costing.PROPERTY_COSTTYPE + " = 'ST'");
+    insert.append("   and c." + Costing.PROPERTY_STARTINGDATE + " <= :limitDate");
+    insert.append("   and c." + Costing.PROPERTY_ENDINGDATE + " > :limitDate2");
+    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    String startingDate = dateFormatter.format(new Date());
+    queryInsert.setString("startingDate", startingDate);
+    queryInsert.setString("limitDate", startingDate);
+    queryInsert.setString("limitDate2", startingDate);
+    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.executeUpdate();
 
   }
 
@@ -201,7 +265,6 @@ public class CostingMigrationProcess implements Process {
     rule.setOrganization(org);
     rule.setCostingAlgorithm(getAverageAlgorithm());
     rule.setValidated(false);
-    rule.setEndingDate(null);
     rule.setStartingDate(null);
     OBDal.getInstance().save(rule);
     return rule;
@@ -227,7 +290,6 @@ public class CostingMigrationProcess implements Process {
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         BigDecimal cost = getLegacyProductCost(trx.getProduct());
         trx.setCostCalculated(true);
-        trx.setTransactionCost(cost);
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
         initICL.setCost(cost);
