@@ -23,17 +23,12 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.impl.SessionImpl;
 import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
@@ -325,15 +320,9 @@ public class CostingRuleProcess implements Process {
 
   private void insertLines(InventoryCount closeInv, boolean isClosing, String orgId, String whId) {
     // In case get_uuid is not already registered, it's registered now.
-    final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-        .getSessionFactory()).getDialect();
-    Map<String, SQLFunction> function = dialect.getFunctions();
-    if (!function.containsKey("get_uuid")) {
-      dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
-    }
-    if (!function.containsKey("now")) {
-      dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
-    }
+    OBDal.getInstance().registerSQLFunction("get_uuid",
+        new StandardSQLFunction("get_uuid", new StringType()));
+    OBDal.getInstance().registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
 
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + InventoryCountLine.ENTITY_NAME + "(");
