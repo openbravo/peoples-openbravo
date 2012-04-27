@@ -79,13 +79,15 @@ public class CostingServer {
       log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
 
       trxCost = costingAlgorithm.getTransactionCost();
-      if (trxCost == null) {
+      if (trxCost == null && costingAlgorithm.trxType != TrxType.Manufacturing) {
         throw new OBException("@NoCostCalculated@: " + transaction.getIdentifier());
       }
 
-      trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
-          .intValue(), RoundingMode.HALF_UP);
-      log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
+      if (trxCost != null) {
+        trxCost = trxCost.setScale(costingAlgorithm.getCostCurrency().getStandardPrecision()
+            .intValue(), RoundingMode.HALF_UP);
+        log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
+      }
       // Save calculated cost on M_Transaction.
       transaction.setTransactionCost(trxCost);
       transaction.setCostCalculated(true);

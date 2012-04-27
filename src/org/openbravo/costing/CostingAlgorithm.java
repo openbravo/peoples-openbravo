@@ -132,7 +132,7 @@ public abstract class CostingAlgorithm {
       return getBOMProductCost();
     case Manufacturing:
       // Manufacturing transactions are not implemented.
-      return BigDecimal.ZERO;
+      return null;
     case Unknown:
       throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
     default:
