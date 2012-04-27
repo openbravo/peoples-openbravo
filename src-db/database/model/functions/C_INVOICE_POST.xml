@@ -1239,12 +1239,9 @@ BEGIN --BODY
           AND Recalculate = 'N'
         )
       LOOP
-      v_LineNo:=v_LineNo+10;
-      UPDATE C_INVOICETAX
-      SET line=v_LineNo
-      WHERE C_INVOICETAX_ID =Cur_TaxMAct.C_INVOICETAX_ID;   
-      END LOOP; 
-      v_LineNo:=0;
+        v_LineNo:=v_LineNo+10;
+        UPDATE C_INVOICETAX SET line=v_LineNo WHERE C_INVOICETAX_ID=Cur_TaxMAct.C_INVOICETAX_ID;   
+      END LOOP;
       -- For all Tax Rates
       v_ResultStr:='InsertNewTaxes';
       FOR Cur_Tax IN
