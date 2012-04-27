@@ -66,7 +66,7 @@ define(['builder', 'i18n'], function (B) {
           {kind: B.KindHTML('<span>&times;</span>')}
         ]},      
         {kind: B.KindJQuery('strong'), content: [ title ]}, ' ',
-        {kind: B.KindJQuery('span'), content: [ s ]},          
+        {kind: B.KindJQuery('span'), content: [ s ]} 
       ]}
     );
     

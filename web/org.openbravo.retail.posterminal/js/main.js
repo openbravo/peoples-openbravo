@@ -9,7 +9,7 @@ require.config({
 });
 
 
-require(['builder', 'utilitiesui', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
+require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   
   var modelterminal = new OB.MODEL.Terminal();
   
