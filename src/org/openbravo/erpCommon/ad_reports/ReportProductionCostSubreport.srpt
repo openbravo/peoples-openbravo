@@ -12,18 +12,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  -->
 <div>
 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-  <tr class="DataGrid_Body_Cell DataGrid_Body_Cell_hover">
-    <td class="DataGrid_Body_Cell" colspan="6"></td>
-    <td class="DataGrid_Body_Cell" width="10%" id="fieldRealCostMaterialTotal"></td>
-    <td class="DataGrid_Body_Cell" width="10%" id="fieldStandardCostMaterialTotal"></td>
-  </tr>
   <div id="sectionMaterial">
     <tr class="DataGrid_Body_Row DataGrid_Body_Row_1" id="fieldLevelMaterial">
       <td width="xx%" class="DataGrid_Body_Cell" id="fieldLevelBlanckMaterial"></td>
