@@ -1481,7 +1481,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
                 ids[k]);
           else
-            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, strKey, vars.getLanguage(),
+            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, vars.getLanguage(), strKey,
                 ids[k]);
         }
         if (data != null) {
