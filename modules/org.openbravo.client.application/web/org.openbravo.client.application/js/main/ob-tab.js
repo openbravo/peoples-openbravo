@@ -491,12 +491,6 @@ isc.OBTabSetChild.addProperties({
       }
     } else if (this.state === isc.OBStandardView.STATE_BOTTOM_MAX) {
       this.setState(isc.OBStandardView.STATE_MID);
-    } else if (this.state === isc.OBStandardView.STATE_MID) {
-      if (this.parentTabSet) {
-        this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
-      } else {
-        this.parentContainer.setHalfSplit();
-      }
     } else if (this.state === isc.OBStandardView.STATE_TOP_MAX) {
       this.doHandleDoubleClick();
     }
