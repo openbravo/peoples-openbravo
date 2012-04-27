@@ -60,6 +60,11 @@ function validate() {
     showJSMessage(7);
     return false;
   }
+  if (isValidDate(frm.inpMainDate.value, frm.inpMainDate.getAttribute("displayformat"))==false) {
+	  setWindowElementFocus(frm.inpMainDate);
+	  showJSMessage(5);
+	  return false;
+  }
   if (opt == 'P') {
     var chk = frm.inpPaymentId;
     if (chk === undefined) {
