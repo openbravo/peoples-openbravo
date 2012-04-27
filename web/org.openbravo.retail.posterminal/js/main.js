@@ -9,9 +9,8 @@ require.config({
 });
 
 
-require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
+require(['builder', 'utilitiesui', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   
-  var hwserver = new OB.DS.HWServer('http://localhost:8090/printer');  // 'http://localhost:8090/printer'
   var modelterminal = new OB.MODEL.Terminal();
   
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
@@ -24,7 +23,6 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
   
   // global components.
   OB.POS = {
-      hwserver: hwserver,
       modelterminal: modelterminal,
   
       logout: function (callback) {
@@ -49,6 +47,14 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
     // We are Logged !!!
     
     $('#logoutaction').css('visibility', 'visible');
+    
+    // Set Hardware..
+    OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl);
+    OB.POS.hwserver.print('res/welcome.xml', {}, function (e) {
+      if (e.exception) {
+        OB.UTIL.showError(e.exception.message);
+      }   
+    });
     
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
@@ -77,8 +83,6 @@ require(['builder', 'loginwindow', 'arithmetic', 'datasource', 'model/terminal',
   });
   
   $(document).ready(function () {
-    hwserver.print('res/welcome.xml');
-       
     // Entry Point
     modelterminal.load();  
   });
