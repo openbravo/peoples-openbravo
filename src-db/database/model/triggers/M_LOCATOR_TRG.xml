@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_LOCATOR_TRG">
-    <trigger name="M_LOCATOR_TRG" table="M_LOCATOR" fires="before" insert="false" update="true" delete="true" foreach="row">
+    <trigger name="M_LOCATOR_TRG" table="M_LOCATOR" fires="before" insert="false" update="true" delete="false" foreach="row">
       <body><![CDATA[
 
 
