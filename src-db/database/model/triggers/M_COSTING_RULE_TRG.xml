@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_COSTING_RULE_TRG">
-    <trigger name="M_COSTING_RULE_TRG" table="M_COSTING_RULE" fires="after" insert="false" update="true" delete="true" foreach="row">
+    <trigger name="M_COSTING_RULE_TRG" table="M_COSTING_RULE" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -19,9 +19,18 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
+  v_count NUMBER;
 BEGIN
 
   IF AD_isTriggerEnabled()='N' THEN RETURN;
+  END IF;
+  IF (INSERTING) THEN
+    SELECT count(*) INTO v_count
+    FROM ad_preference
+    WHERE attribute = 'CostingMigrationFirstPhaseCompleted';
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@OngoingMigrationProcess@');
+    END IF;
   END IF;
 
   IF (UPDATING) THEN
