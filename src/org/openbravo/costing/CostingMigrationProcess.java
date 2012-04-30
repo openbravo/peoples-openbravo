@@ -194,6 +194,10 @@ public class CostingMigrationProcess implements Process {
     queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     queryInsert.executeUpdate();
 
+    // Delete manually created rules.
+    Query queryDelete = OBDal.getInstance().getSession()
+        .createQuery("delete from " + CostingRule.ENTITY_NAME);
+    queryDelete.executeUpdate();
   }
 
   private boolean isCostingMigrationNotNeeded() {
