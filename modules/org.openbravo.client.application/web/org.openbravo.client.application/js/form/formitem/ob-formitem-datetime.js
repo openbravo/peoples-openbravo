@@ -133,19 +133,6 @@ isc.OBDateTimeItem.addProperties({
     return value;
   },
 
-  // compare on seconds, ignoring less than
-  // 1 sec difference
-  // related to https://issues.openbravo.com/view.php?id=20278  
-  compareValues: function (a, b) {
-    if (a === b) {
-      return 0; // same date instance
-    }
-    var aval = (isc.isA.Date(a) ? a.getTime() : 0),
-        bval = (isc.isA.Date(b) ? b.getTime() : 0),
-        diff = aval - bval;
-    return diff > 1000 ? -1 : (diff < -1000 ? 1 : 0);
-  },
-
   parseValue: function () {
     return this.dateTextField.getElementValue();
   },

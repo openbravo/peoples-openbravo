@@ -1492,10 +1492,6 @@ OB.ViewFormProperties = {
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
 
-      // needed until save refreshes form items in the 
-      // correct way
-      // https://issues.openbravo.com/view.php?id=20278
-      form.markForRedraw();
       return false;
     };
 
@@ -1526,16 +1522,6 @@ OB.ViewFormProperties = {
       return false;
     }
     return true;
-  },
-
-  // overridden as the super does not compare all values
-  // correctly:
-  // https://issues.openbravo.com/view.php?id=20278
-  fieldValuesAreEqual: function (field, value1, value2) {
-    if (field && field.compareValues) {
-      return 0 === field.compareValues(value1, value2);
-    }
-    return this.Super('fieldValuesAreEqual', arguments);
   },
 
   // called when someone picks something from a picklist, the focus should go to the next
