@@ -195,7 +195,10 @@ public class EntityXMLIssues extends XMLBaseTest {
 
     exc.process(obc.list());
 
+    assertFalse(sw2.toString().contains("<searchKey>"));
+    assertTrue(sw.toString().contains("<searchKey>"));
+
     // dummy assert
-    assertNotSame("Exported XML is the same", exc.toString(), sw2.toString());
+    assertNotSame("Exported XML is the same", sw.toString(), sw2.toString());
   }
 }
