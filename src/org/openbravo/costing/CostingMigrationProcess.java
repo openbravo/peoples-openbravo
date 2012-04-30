@@ -135,7 +135,7 @@ public class CostingMigrationProcess implements Process {
     // Update old transactions to calculated = true.
     update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
-    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED);
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     update.append(" where " + MaterialTransaction.PROPERTY_PRODUCT + " in (");
     update.append("   select p from " + Product.ENTITY_NAME + " as p");
     update.append("   where p." + Product.PROPERTY_CALCULATECOST + " = true");
@@ -150,7 +150,7 @@ public class CostingMigrationProcess implements Process {
     // Insert STANDARD cost for products with costtype = 'ST'.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + Costing.ENTITY_NAME);
-    insert.append(" id ");
+    insert.append(" (id ");
     insert.append(", " + Costing.PROPERTY_ACTIVE);
     insert.append(", " + Costing.PROPERTY_CLIENT);
     insert.append(", " + Costing.PROPERTY_ORGANIZATION);
@@ -183,6 +183,8 @@ public class CostingMigrationProcess implements Process {
     insert.append("\n where c." + Costing.PROPERTY_COSTTYPE + " = 'ST'");
     insert.append("   and c." + Costing.PROPERTY_STARTINGDATE + " <= :limitDate");
     insert.append("   and c." + Costing.PROPERTY_ENDINGDATE + " > :limitDate2");
+    insert.append("   and u.id = :user");
+
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     String startingDate = dateFormatter.format(new Date());
