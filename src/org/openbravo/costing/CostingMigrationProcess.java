@@ -158,6 +158,7 @@ public class CostingMigrationProcess implements Process {
     insert.append(", " + Costing.PROPERTY_CREATEDBY);
     insert.append(", " + Costing.PROPERTY_UPDATED);
     insert.append(", " + Costing.PROPERTY_UPDATEDBY);
+    insert.append(", " + Costing.PROPERTY_PRODUCT);
     insert.append(", " + Costing.PROPERTY_COSTTYPE);
     insert.append(", " + Costing.PROPERTY_COST);
     insert.append(", " + Costing.PROPERTY_STARTINGDATE);
@@ -167,23 +168,40 @@ public class CostingMigrationProcess implements Process {
     insert.append(" )\n select get_uuid()");
     insert.append(", c." + Costing.PROPERTY_ACTIVE);
     insert.append(", c." + Costing.PROPERTY_CLIENT);
-    insert.append(", c." + Costing.PROPERTY_ORGANIZATION);
+    insert.append(", org");
     insert.append(", now()");
     insert.append(", u");
     insert.append(", now()");
     insert.append(", u");
+    insert.append(", c." + Costing.PROPERTY_PRODUCT);
     insert.append(", 'STA'");
     insert.append(", c." + Costing.PROPERTY_COST);
     insert.append(", to_date(to_char(:startingDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+
     insert.append(", c." + Costing.PROPERTY_ENDINGDATE);
     insert.append(", c." + Costing.PROPERTY_MANUAL);
     insert.append(", c." + Costing.PROPERTY_PERMANENT);
     insert.append("\n from " + Costing.ENTITY_NAME + " as c");
+    insert.append("   join c." + Costing.PROPERTY_PRODUCT + " as p");
     insert.append(", " + User.ENTITY_NAME + " as u");
+    insert.append(", " + Organization.ENTITY_NAME + " as org");
+    insert.append("   join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
     insert.append("\n where c." + Costing.PROPERTY_COSTTYPE + " = 'ST'");
-    insert.append("   and c." + Costing.PROPERTY_STARTINGDATE + " <= :limitDate");
-    insert.append("   and c." + Costing.PROPERTY_ENDINGDATE + " > :limitDate2");
+    insert.append("   and c." + Costing.PROPERTY_STARTINGDATE
+        + " <= to_date(to_char(:limitDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+    insert.append("   and c." + Costing.PROPERTY_ENDINGDATE
+        + " > to_date(to_char(:limitDate2), to_char('DD-MM-YYYY HH24:MI:SS'))");
     insert.append("   and u.id = :user");
+    insert.append("   and ot." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    insert.append("   and org." + Organization.PROPERTY_CLIENT + " = c." + Costing.PROPERTY_CLIENT);
+    insert.append("   and (ad_isorgincluded(c." + Costing.PROPERTY_ORGANIZATION + ".id, org."
+        + Organization.PROPERTY_ID + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1");
+    insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, c."
+        + Costing.PROPERTY_ORGANIZATION + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1)");
+    insert.append("   and (ad_isorgincluded(p." + Product.PROPERTY_ORGANIZATION + ".id, org."
+        + Organization.PROPERTY_ID + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1");
+    insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, p."
+        + Product.PROPERTY_ORGANIZATION + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1)");
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
