@@ -1220,7 +1220,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         final String[] discardAux = new String[discard.length + 1];
         for (int i = 0; i < discard.length; i++) {
-          discardAux[0] = discard[0];
+          discardAux[i] = discard[i];
         }
         discardAux[discard.length] = "discardSelect";
         return discardAux;
@@ -1294,8 +1294,8 @@ public class PrintController extends HttpSecureAppServlet {
    */
   private File prepareFile(AttachContent content, String documentId) throws ServletException {
     try {
-      final String attachPath = new OBPropertiesProvider().getOpenbravoProperties().getProperty(
-          "attach.path")
+      final String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("attach.path")
           + "/tmp";
       final File f = new File(attachPath, content.getFileName());
       final InputStream inputStream = content.getFileItem().getInputStream();

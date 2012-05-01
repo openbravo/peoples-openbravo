@@ -43,7 +43,6 @@ import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -190,7 +189,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         orgValueMap.put(orgValueMapItem);
       }
       jsonRole.put("organizationValueMap", orgValueMap);
-      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId(),orgs));
+      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId(), orgs));
       jsonRoles.put(jsonRole);
     }
     formItemInfo.put("roles", jsonRoles);

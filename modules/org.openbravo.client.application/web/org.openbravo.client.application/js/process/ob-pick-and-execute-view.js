@@ -109,14 +109,14 @@ isc.OBPickAndExecuteView.addProperties({
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
-          newButton=isc.OBFormButton.create({
+          newButton = isc.OBFormButton.create({
             title: this.buttons[i],
             _buttonValue: i,
             click: actionClick
           });
-        buttonLayout.push(newButton);
-        OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' +i, newButton);
- 
+          buttonLayout.push(newButton);
+          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
+
 
           // pushing a spacer
           buttonLayout.push(isc.LayoutSpacer.create({
@@ -135,7 +135,7 @@ isc.OBPickAndExecuteView.addProperties({
     buttonLayout.push(cancelButton);
     buttonLayout.push(isc.LayoutSpacer.create({}));
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
- 
+
 
     if (this.viewProperties.allowAdd) {
       this.addNewButton = isc.OBLinkButtonItem.create({
