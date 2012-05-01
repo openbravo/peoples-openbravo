@@ -91,6 +91,7 @@ isc.OBToolbarActionButton.addProperties({
           windowId: me.windowId,
           windowTitle: me.windowTitle,
           actionHandler: me.command,
+          button: me,
           buttons: me.labelValue,
           uiPattern: me.uiPattern
         });
