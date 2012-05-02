@@ -188,7 +188,7 @@ public class CostingServer {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingRawMaterial, Manufacturing, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -282,8 +282,13 @@ public class CostingServer {
         } else {
           log4j.debug("Manufacturing Product");
           // Work Effort
-          // TODO: Pending to implement manufacturing cost management.
-          return Manufacturing;
+          if (transaction.getProductionLine().getProductionType().equals("-")
+              && transaction.getProduct().isPurchase()) {
+            return ManufacturingRawMaterial;
+          } else {
+            // TODO: Pending to implement manufacturing cost management.
+            return Manufacturing;
+          }
         }
       }
       return Unknown;

@@ -130,6 +130,8 @@ public abstract class CostingAlgorithm {
       return getBOMPartCost();
     case BOMProduct:
       return getBOMProductCost();
+    case ManufacturingRawMaterial:
+      return getManufacturingRawMaterialCost();
     case Manufacturing:
       // Manufacturing transactions are not implemented.
       return null;
@@ -469,6 +471,16 @@ public abstract class CostingAlgorithm {
           transaction.getTransactionProcessDate(), true));
     }
     return totalCost;
+  }
+
+  /**
+   * Calculates the cost of a Raw Material consumed in a Work Effort using by default the
+   * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  private BigDecimal getManufacturingRawMaterialCost() {
+    return getOutgoingTransactionCost();
   }
 
   protected BigDecimal getDefaultCost() {
