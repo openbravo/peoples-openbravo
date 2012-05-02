@@ -28,7 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -44,6 +43,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -527,9 +527,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           RequisitionLine rl = OBDal.getInstance().get(RequisitionLine.class,
               lines[i].mRequisitionlineId);
           myMessage.setType("Error");
-          myMessage.setMessage(Utility.messageBD(this, String.format(FIN_Utility
-              .messageBD("NoTaxRequisition"), rl.getLineNo(), rl.getRequisition().getDocumentNo()),
-              vars.getLanguage()));
+          myMessage.setMessage(String.format(OBMessageUtils.messageBD("NoTaxRequisition"),
+              rl.getLineNo(), rl.getRequisition().getDocumentNo()));
           releaseRollbackConnection(conn);
           return myMessage;
         }
