@@ -38,6 +38,8 @@ isc.OBAlertGrid.addProperties({
   selectOnEdit: false,
   dataPageSize: 100,
 
+  arrowKeyAction: 'select',
+
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
