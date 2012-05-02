@@ -29,6 +29,12 @@ isc.OBViewGrid.addClassProperties({
   ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP
 });
 
+if (!isc.Browser.isIE) {
+  isc.OBViewGrid.addProperties({
+    enforceVClipping: true // To avoid apply in IE, since it moves the grid row content to the top of each cell (issue 17884)
+  });
+}
+
 // = OBViewGrid =
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
@@ -142,7 +148,6 @@ isc.OBViewGrid.addProperties({
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
 
-  enforceVClipping: true,
   fixedRecordHeights: true,
 
   validateByCell: true,
