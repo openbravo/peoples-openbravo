@@ -43,9 +43,10 @@
 .OBNavBarImgButtonSelectedFocusedDown,
 .OBNavBarImgButtonSelectedOver,
 .OBNavBarImgButtonSelectedFocusedOver {
-	cursor: pointer;
-	font-size: 11px;
+  cursor: pointer;
+  font-size: 11px;
   text-align: center;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBNavBarImgButtonDisabled,

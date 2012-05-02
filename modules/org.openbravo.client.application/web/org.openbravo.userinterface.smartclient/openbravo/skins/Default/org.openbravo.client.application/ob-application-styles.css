@@ -57,6 +57,21 @@ body {
   -moz-outline-style: none;
 }
 
+.imgButton,
+.imgButtonOver,
+.imgButtonFocused,
+.imgButtonFocusedOver,
+.imgButtonDown,
+.imgButtonFocusedDown,
+.imgButtonSelected,
+.imgButtonSelectedFocused,
+.imgButtonSelectedDown,
+.imgButtonSelectedFocusedDown,
+.imgButtonSelectedOver,
+.imgButtonSelectedFocusedOver {
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
+}
+
 /*============================================================
  Top Layout
  ============================================================*/

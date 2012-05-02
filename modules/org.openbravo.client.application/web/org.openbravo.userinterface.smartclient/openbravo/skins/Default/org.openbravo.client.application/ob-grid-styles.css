@@ -21,7 +21,11 @@
 .OBGridToolStrip {
 }
 
-.OBGridToolStripIcon {
+.OBGridToolStripIcon,
+.OBGridToolStripIconOver,
+.OBGridToolStripIconFocused,
+.OBGridToolStripIconDown {
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBGridToolStripSeparator {
