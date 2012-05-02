@@ -27,23 +27,40 @@
   v_quantity       NUMBER;
   v_costamt        NUMBER;
   v_costtype       M_Product.Costtype%TYPE;
+  v_hasrule        CHAR(1);
+  v_hascost        M_Transaction.iscostcalculated%TYPE;
   --TYPE RECORD IS REF CURSOR;
   --  Cur_Cost RECORD;
 BEGIN
-  SELECT sum(cost) INTO v_costamt
-  FROM m_transaction_cost
-  WHERE m_transaction_id = p_transaction_id
-    AND costdate <= p_date;
-  IF (v_costamt IS NOT NULL) THEN
-    RETURN v_costamt;
+  SELECT CASE count(1) WHEN 0 THEN 'N' ELSE 'Y' END, COALESCE(max(trx.iscostcalculated), 'N')
+    INTO v_hasrule, v_hascost
+  FROM m_costing_rule cr
+      JOIN m_transaction trx ON ad_isorgincluded(trx.ad_org_id, cr.ad_org_id, trx.ad_client_id) >= 0
+                                AND trx.m_transaction_id = p_transaction_id
+      JOIN m_product p ON trx.m_product_id = p.m_product_id
+  WHERE cr.isvalidated = 'Y'
+    AND cr.datefrom <= trx.trxprocessdate
+    AND p.calculate_cost = 'Y';
+
+  IF (v_hasrule = 'Y') THEN
+    IF (v_hascost = 'Y') THEN
+      SELECT sum(cost) INTO v_costamt
+      FROM m_transaction_cost
+      WHERE m_transaction_id = p_transaction_id
+        AND costdate <= p_date;
+      RETURN v_costamt;
+    ELSE
+      RETURN 0;
+    END IF;
+  ELSE
+    --Calculate cost using legacy engine
+    SELECT m_transaction.m_product_id, movementqty, costtype
+      INTO v_product_id, v_quantity, v_costtype
+    FROM M_Transaction JOIN m_product ON m_transaction.m_product_id = m_product.m_product_id
+    WHERE m_transaction_id = p_transaction_id;
+
+    RETURN m_get_product_cost(v_product_id, p_date, v_costtype) * v_quantity;
   END IF;
-
-  SELECT m_transaction.m_product_id, movementqty, costtype
-    INTO v_product_id, v_quantity, v_costtype
-  FROM M_Transaction JOIN m_product ON m_transaction.m_product_id = m_product.m_product_id
-  WHERE m_transaction_id = p_transaction_id;
-
-  RETURN m_get_product_cost(v_product_id, p_date, v_costtype) * v_quantity;
 END M_GET_TRANSACTION_COST
 ]]></body>
     </function>
