@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -156,32 +158,26 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
           + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
           + strGeneratePayment);
-      // Check if the register types have document type
-      for (TaxRegisterType taxRegisterType : taxregistertypes) {
-        OBCriteria<TaxRegisterTypeLines> obCriteria = OBDal.getInstance().createCriteria(
-            TaxRegisterTypeLines.class);
-        obCriteria.add(Restrictions.eq(TaxRegisterTypeLines.PROPERTY_TAXREGISTERTYPE + ".id",
-            taxRegisterType.cTaxregisterTypeId));
-        obCriteria.add(Restrictions.isNull(TaxRegisterTypeLines.PROPERTY_DOCUMENTTYPE));
-        if (obCriteria.list().size() > 0) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-              Utility.messageBD(this, "DocumentTypeInTaxRegisterType", vars.getLanguage()));
-          return myMessage;
-        }
-      }
 
       // For all active Register Type i create a Tax Register
       for (TaxRegisterType taxRegisterType : taxregistertypes) {
         String strSequence = SequenceIdData.getUUID();
         log4j.info("Sequence: " + strSequence);
-
         try {
+          OBContext.setAdminMode(true);
+          // Check if the register types have document type
+          OBError msg = validateTaxRegisterType(taxRegisterType);
+          if (msg != null) {
+            return msg;
+          }
           TaxRegister.insert(this, taxpayment[0].adClientId, taxpayment[0].adOrgId, strSequence,
               strTaxpaymentID, taxRegisterType.cTaxregisterTypeId, "0",
               taxRegisterType.registername, strUser, strUser);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           return myMessage;
+        } finally {
+          OBContext.restorePreviousMode();
         }
       }
       // For every TaxRegister i select the invoices with a specific
@@ -363,6 +359,22 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private OBError validateTaxRegisterType(TaxRegisterType taxRegisterType) {
+    OBError myMessage = new OBError();
+    OBCriteria<TaxRegisterTypeLines> obCriteria = OBDal.getInstance().createCriteria(
+        TaxRegisterTypeLines.class);
+    obCriteria.add(Restrictions.eq(TaxRegisterTypeLines.PROPERTY_TAXREGISTERTYPE + ".id",
+        taxRegisterType.cTaxregisterTypeId));
+    obCriteria.add(Restrictions.isNull(TaxRegisterTypeLines.PROPERTY_DOCUMENTTYPE));
+    if (obCriteria.list().size() > 0) {
+      myMessage.setTitle("Error");
+      myMessage.setType("Error");
+      myMessage.setMessage(FIN_Utility.messageBD("DocumentTypeInTaxRegisterType"));
+      return myMessage;
+    }
+    return null;
   }
 
   public String getServletInfo() {
