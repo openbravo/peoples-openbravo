@@ -56,7 +56,7 @@ with (theWindow) {
 		groupBorderCSS: "1px solid #A7ABB4"
 	});
 
-    if(isc.Browser.isIE && isc.Browser.version >= 7) {
+    if(isc.Browser.isIE && isc.Browser.version >= 7 && !isc.Browser.isIE9) {
         isc.Canvas.setAllowExternalFilters(false);
         isc.Canvas.setNeverUseFilters(true);
         if(isc.Window) {
