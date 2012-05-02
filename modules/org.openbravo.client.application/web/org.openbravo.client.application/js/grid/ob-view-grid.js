@@ -92,6 +92,7 @@ isc.OBViewGrid.addProperties({
   canAddSummaryFields: true,
   canGroupBy: false,
   selectionAppearance: 'checkbox',
+  arrowKeyAction: 'select',
   useAllDataSourceFields: false,
   editEvent: 'none',
   showCellContextMenus: true,
