@@ -24,11 +24,11 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -58,20 +58,20 @@ public class SE_Locator_Activate extends SimpleCallout {
 
       if (tab.equals(STORAGEBIN_TAB)) {
         if (storageIsNotEmpty(strLocator)) {
-          info.addResult("MESSAGE", FIN_Utility.messageBD("M_STORAGE_ACTIVE_CHECK_FULL"));
+          info.addResult("MESSAGE", OBMessageUtils.messageBD("M_STORAGE_ACTIVE_CHECK_FULL"));
         } else {
           Locator locator = OBDal.getInstance().get(Locator.class, strLocator);
           if (numberOfActiveStorageBins(locator.getWarehouse()) == 1 && locator.isActive()) {
             // This means that the warehouse has only one active storage bin and it is this one
-            info.addResult("MESSAGE", FIN_Utility.messageBD("M_STORAGE_ACTIVE_CHECK_LAST"));
+            info.addResult("MESSAGE", OBMessageUtils.messageBD("M_STORAGE_ACTIVE_CHECK_LAST"));
           }
         }
       } else if (tab.equals(WAREHOUSE_TAB)) {
         Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouse);
         if (numberOfActiveStorageBins(warehouse) > 0) {
-          info.addResult("MESSAGE", FIN_Utility.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ACTIVES"));
+          info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ACTIVES"));
         } else if (warehouseWithPendingReceipts(warehouse.getId())) {
-          info.addResult("MESSAGE", FIN_Utility.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ENTRIES"));
+          info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ENTRIES"));
         }
       }
 
