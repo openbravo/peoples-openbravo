@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -40,6 +39,7 @@ import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.tax.TaxRegisterTypeLines;
@@ -371,7 +371,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     if (obCriteria.list().size() > 0) {
       myMessage.setTitle("Error");
       myMessage.setType("Error");
-      myMessage.setMessage(FIN_Utility.messageBD("DocumentTypeInTaxRegisterType"));
+      myMessage.setMessage(OBMessageUtils.messageBD("DocumentTypeInTaxRegisterType"));
       return myMessage;
     }
     return null;
