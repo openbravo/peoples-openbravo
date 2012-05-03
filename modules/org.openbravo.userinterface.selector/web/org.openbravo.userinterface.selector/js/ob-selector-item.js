@@ -376,9 +376,23 @@ isc.OBSelectorItem.addProperties({
           }
         }
       }
+    } else { //Select by default the first option in the picklist, if possible
+      this.selectFirstPickListOption();
     }
 
     this.Super('setValue', arguments);
+  },
+
+  selectFirstPickListOption: function () {
+    var firstRecord;
+    if (this.pickList) {
+      if (this.pickList.data && (this.pickList.data.totalRows > 0)) {
+        firstRecord = this.pickList.data.get(0);
+        this.pickList.selection.selectSingle(firstRecord);
+        this.pickList.clearLastHilite();
+        this.pickList.scrollRecordIntoView(0);
+      }
+    }
   },
 
   // changed handles the case that the user removes the value using the keyboard
