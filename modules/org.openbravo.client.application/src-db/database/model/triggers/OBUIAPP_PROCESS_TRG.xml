@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER OBUIAPP_PROCESS_TRG">
-    <trigger name="OBUIAPP_PROCESS_TRG" table="OBUIAPP_PROCESS" fires="after" insert="true" update="true" delete="false" foreach="row">
+    <trigger name="OBUIAPP_PROCESS_TRG" table="OBUIAPP_PROCESS" fires="after" insert="true" update="false" delete="false" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
