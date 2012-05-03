@@ -103,6 +103,9 @@ isc.OBGrid.addProperties({
   },
 
   bodyKeyPress: function (event, eventInfo) {
+    if ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id)) {
+      return true;
+    }
     var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body');
     if (response !== false) {
       response = this.Super('bodyKeyPress', arguments);
