@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -47,6 +48,7 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.model.ad.ui.ProcessRun;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
@@ -272,6 +274,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
   private void printPageRedirect(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
+    final String heartBeatConf_win_id = "1005400002";
+    String newTabTitle;
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
@@ -279,9 +283,19 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/HeartbeatRedirect")
         .createXmlDocument();
 
+    OBContext.setAdminMode();
+    Window heartBeatConf_win = OBDal.getInstance().get(Window.class, heartBeatConf_win_id);
+    if (heartBeatConf_win != null) {
+      newTabTitle = heartBeatConf_win.getIdentifier();
+    } else {
+      newTabTitle = "Heartbeat Configuration";
+    }
+    OBContext.restorePreviousMode();
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("newTabTitle", "var newTabTitle = \"" + newTabTitle + "\";");
     out.println(xmlDocument.print());
     out.close();
   }

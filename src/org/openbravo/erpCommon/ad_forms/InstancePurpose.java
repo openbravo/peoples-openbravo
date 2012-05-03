@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,12 +31,14 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Form;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -76,6 +78,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
+    final String instanceActivationId = "8D6282279F464B1696B0EE3E23023B65";
+    String newTabTitle;
     log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -87,6 +91,17 @@ public class InstancePurpose extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+
+    OBContext.setAdminMode();
+    Form instanceActivationForm = OBDal.getInstance().get(Form.class, instanceActivationId);
+    if (instanceActivationForm != null) {
+      newTabTitle = instanceActivationForm.getIdentifier();
+    } else {
+      newTabTitle = "Instance Activation";
+    }
+    OBContext.restorePreviousMode();
+
+    xmlDocument.setParameter("newTabTitle", "var newTabTitle = \"" + newTabTitle + "\";");
 
     String strTitle = "IP_WELCOME_TITLE";
     String strWelcomeMsg = "IP_WELCOME_MSG";
