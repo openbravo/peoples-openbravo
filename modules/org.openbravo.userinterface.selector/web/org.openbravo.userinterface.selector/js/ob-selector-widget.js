@@ -35,6 +35,16 @@ isc.ClassFactory.defineClass('OBSelectorWidget', isc.DynamicForm);
 // the dependent modules js file needs to be passes as a static
 // resource in the GlobalResources provided by the modules
 // componentprovider.
+if (!isc.Page.isRTL()) {
+  isc.OBSelectorWidget.addClassProperties({
+    fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton.png'
+  });
+} else {
+  isc.OBSelectorWidget.addClassProperties({
+    fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton-RTL.png'
+  });
+}
+
 isc.OBSelectorWidget.addClassProperties({
   styling: {
 
@@ -55,7 +65,7 @@ isc.OBSelectorWidget.addClassProperties({
 
     // ** {{{ fieldPicker properties }}} **
     // fieldPicker icon is shown next to the field in the form
-    fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton.png',
+    //fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton.png', //Set before to allow RTL operation
     fieldPickerIconWidth: 27,
     fieldPickerIconHeight: 17,
     fieldPickerIconHSpace: 0,
@@ -585,7 +595,7 @@ isc.OBSelectorWidget.addProperties({
         selector: this,
         showFocused: true,
         showOver: true,
-        src: isc.OBSelectorWidget.styling.fieldPickerIconSrc,
+        src: isc.OBSelectorWidget.fieldPickerIconSrc,
         width: isc.OBSelectorWidget.styling.fieldPickerIconWidth,
         height: isc.OBSelectorWidget.styling.fieldPickerIconHeight,
         hspace: isc.OBSelectorWidget.styling.fieldPickerIconHSpace,

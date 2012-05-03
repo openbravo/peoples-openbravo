@@ -220,19 +220,13 @@ isc.OBQuickLaunch.addProperties({
         fetchDelay: 50,
 
         optionDataSource: OB.Datasource.get(this.dataSourceId),
+        valueField: OB.Constants.ID,
 
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
         command: this.command,
 
         pickValue: function (theValue) {
-          // HACK: set this temporary value to prevent a temporary 
-          // display of the db id
-          if (!this.getValueMap()) {
-            this.setValueMap({});
-          }
-          this.getValueMap()[theValue] = '';
-
           this.Super('pickValue', arguments);
 
           if (this.getSelectedRecord()) {

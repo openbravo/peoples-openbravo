@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,7 @@ public class DalUtil {
 
   private static final String IDENTIFIER_PART_PATH = "_identifier";
 
-  public static final String FIELDSEPARATOR = ".";
+  public static final String FIELDSEPARATOR = "$";
   public static final String DOT = ".";
 
   /**
@@ -82,7 +82,7 @@ public class DalUtil {
    * @return the found property
    */
   public static Property getPropertyFromPath(Entity entity, String propertyPath) {
-    final String[] parts = propertyPath.split("\\.");
+    final String[] parts = propertyPath.replace(FIELDSEPARATOR, DOT).split("\\" + DOT);
     Entity currentEntity = entity;
     Property result = null;
     for (String part : parts) {
@@ -140,7 +140,7 @@ public class DalUtil {
    * @return the found property
    */
   public static Object getValueFromPath(BaseOBObject bob, String propertyPath) {
-    final String[] parts = propertyPath.split("\\.");
+    final String[] parts = propertyPath.replace(FIELDSEPARATOR, DOT).split("\\" + DOT);
     BaseOBObject currentBob = bob;
     Property result = null;
     Object value = null;

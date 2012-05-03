@@ -31,9 +31,12 @@ isc.OBGrid.addProperties({
   headerBaseStyle: 'OBGridHeaderCell',
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
+  emptyMessageStyle: 'OBGridNotificationText',
+  emptyMessageLinkStyle: 'OBGridNotificationTextLink',
   cellPadding: 0,
   /* Set in the CSS */
   cellAlign: 'center',
+  leaveHeaderMenuButtonSpace: false,
   sortAscendingImage: {
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortAscending.png',
     width: 7,
@@ -49,7 +52,7 @@ isc.OBGrid.addProperties({
   headerMenuButtonWidth: 17,
   headerMenuButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
-  editLinkColumnWidth: 58,
+  editLinkColumnWidth: 56,
 
   summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults: {
@@ -90,6 +93,12 @@ isc.OBGrid.changeDefaults('filterEditorDefaults', {
   height: 22,
   styleName: 'OBGridFilterBase',
   baseStyle: 'OBGridFilterCell'
+});
+
+isc.OBGrid.changeDefaults('filterEditorProperties', {
+  filterImg: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
+  }
 });
 
 isc.OBGrid.changeDefaults('sorterDefaults', {
@@ -153,6 +162,7 @@ isc.OBGridToolStripIcon.addProperties({
 isc.OBGridToolStripSeparator.addProperties({
   width: 1,
   height: 11,
+  baseStyle: 'OBGridToolStripSeparator',
   imageType: 'normal',
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-separator.png'
 });
@@ -165,6 +175,8 @@ isc.OBGridButtonsComponent.addProperties({
   align: 'center',
   defaultLayoutAlign: 'center',
   styleName: 'OBGridToolStrip',
+  layoutLeftMargin: -2,
+  layoutRightMargin: 0,
   membersMargin: 4
 });
 

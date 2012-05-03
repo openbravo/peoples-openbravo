@@ -174,11 +174,23 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
             if (opProductAtt.isSpecialatt()) {
               // special att
               // lot
-              if (opProductAtt.getSpecialatt().equals(lotSearchKey))
-                attSetInstanceTo.setLot(attSetInstanceFrom.getLotName());
+              if (opProductAtt.getSpecialatt().equals(lotSearchKey)) {
+                if (opProductAtt.isCopySpecialIntoNormal()) {
+                  attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute().getName()),
+                      attSetInstanceFrom.getLotName());
+                } else {
+                  attSetInstanceTo.setLot(attSetInstanceFrom.getLotName());
+                }
+              }
               // serNo
-              if (opProductAtt.getSpecialatt().equals(serialNoSearchKey))
-                attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
+              if (opProductAtt.getSpecialatt().equals(serialNoSearchKey)) {
+                if (opProductAtt.isCopySpecialIntoNormal()) {
+                  attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute().getName()),
+                      attSetInstanceFrom.getSerialNo());
+                } else {
+                  attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
+                }
+              }
               // gDate
               if (opProductAtt.getSpecialatt().equals(expirationDateSearchKey)) {
                 attSetInstanceTo.setGuaranteeDate(dateToString(attSetInstanceFrom

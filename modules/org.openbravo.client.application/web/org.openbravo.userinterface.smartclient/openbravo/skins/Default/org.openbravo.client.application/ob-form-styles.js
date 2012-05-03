@@ -278,6 +278,9 @@ OB.Styles.OBFormField.DefaultDateInput = {
 };
 
 isc.OBDateItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
+isc.OBDateItem.addProperties({
+  textAlign: 'left'
+});
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 

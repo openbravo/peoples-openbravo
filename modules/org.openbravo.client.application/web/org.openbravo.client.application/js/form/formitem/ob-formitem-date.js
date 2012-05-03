@@ -47,8 +47,6 @@ OB.DateItemProperties = {
   validateOnChange: false,
   stopOnError: false,
 
-  textAlign: 'left',
-
   dateParts: [],
 
   doInit: function () {

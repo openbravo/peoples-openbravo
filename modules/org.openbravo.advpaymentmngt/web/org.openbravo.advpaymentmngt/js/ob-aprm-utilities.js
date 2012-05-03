@@ -111,9 +111,9 @@ OB.APRM.addNew = function (grid) {
   returnObject.awaitingExecutionAmount = 0;
   returnObject.id = '';
   returnObject.paymentMethod = selectedRecord.paymentMethod;
-  returnObject['paymentMethod._identifier'] = selectedRecord['paymentMethod._identifier'];
+  returnObject['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] = selectedRecord['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
   returnObject.currency = selectedRecord.currency;
-  returnObject['currency._identifier'] = selectedRecord['currency._identifier'];
+  returnObject['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] = selectedRecord['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
   returnObject.duedate = selectedRecord.invoiceDate;
   //General properties
   returnObject.organization = selectedRecord.organization;

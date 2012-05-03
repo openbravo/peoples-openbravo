@@ -27,7 +27,7 @@ isc.OBMessageBar.addProperties({
     this.mainIcon.setSrc('');
     this.closeIcon.setSrc('');
     this.setStyleName('OBMessageBar_' + type);
-    this.mainIcon.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/messagebar/mainIcon-' + type + '.png');
+    this.mainIcon.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/messagebar/mainIcon-' + type + (isc.Page.isRTL() ? "-RTL" : "") + '.png');
     this.text.setStyleName('OBMessageBarDescriptionText OBMessageBarDescriptionText_' + type);
     this.closeIcon.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/messagebar/closeIcon-' + type + '.png');
   }
@@ -56,3 +56,9 @@ isc.OBMessageBarCloseIcon.addProperties({
   overflow: 'visible',
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/messagebar/closeIcon-tip.png'
 });
+
+OB.Styles.MessageBar = {
+  leftMsgContainerStyle: "OBMessageBarLeftMsgContainer",
+  rightMsgContainerStyle: "OBMessageBarRightMsgContainer",
+  rightMsgTextStyle: "OBMessageBarRightMsgText"
+};

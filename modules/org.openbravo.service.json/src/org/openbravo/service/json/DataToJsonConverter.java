@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -174,9 +174,9 @@ public class DataToJsonConverter {
               .getPropertyFromPath(bob.getEntity(), additionalProperty);
           // identifier
           if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
-            jsonObject.put(additionalProperty, value);
+            jsonObject.put(replaceDots(additionalProperty), value);
           } else {
-            jsonObject.put(additionalProperty, convertPrimitiveValue(property, value));
+            jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
           }
         }
       }
@@ -189,6 +189,10 @@ public class DataToJsonConverter {
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private String replaceDots(String value) {
+    return value.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
   }
 
   private Property getPropertyFromPath(BaseOBObject bob, String propertyPath) {
@@ -227,13 +231,14 @@ public class DataToJsonConverter {
       } catch (ObjectNotFoundException e) {
         // Referenced object does not exist, set UUID
         jsonObject.put(propertyName, e.getIdentifier());
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, e.getIdentifier());
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            e.getIdentifier());
         return;
       }
     } else {
       jsonObject.put(propertyName, obObject.getId());
     }
-    // jsonObject.put(propertyName + "." + JsonConstants.ID, obObject.getId());
+    // jsonObject.put(propertyName + DalUtil.DOT + JsonConstants.ID, obObject.getId());
 
     if (referencingProperty != null && referencingProperty.hasDisplayColumn()) {
 
@@ -241,19 +246,21 @@ public class DataToJsonConverter {
           referencingProperty.getDisplayPropertyName());
       if (displayColumnProperty.hasDisplayColumn()) {
         // Allowing one level deep of displayed column pointing to references with display column
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).get(displayColumnProperty
-            .getDisplayPropertyName()));
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .get(displayColumnProperty.getDisplayPropertyName()));
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .getIdentifier());
       } else {
-        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER,
+        jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
             obObject.get(referencingProperty.getDisplayPropertyName()));
       }
     } else {
-      jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
+      jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
+          obObject.getIdentifier());
     }
   }
 

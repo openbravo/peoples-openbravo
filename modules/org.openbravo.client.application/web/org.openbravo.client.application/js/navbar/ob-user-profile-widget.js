@@ -24,7 +24,9 @@ isc.ClassFactory.defineClass('OBUserProfile', isc.OBQuickRun);
 // user/role information and change the password.
 isc.OBUserProfile.addProperties({
 
-  layoutProperties: {},
+  layoutProperties: {
+    width: 280
+  },
 
   // ** {{{ title }}} **
   //
@@ -360,8 +362,12 @@ isc.OBUserProfile.addProperties({
       align: 'center',
       overflow: 'visible',
       height: 1,
-      width: '100%'
+      width: 248
     });
+    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+      buttonLayout.width = 220;
+    }
+
     buttonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function () {
@@ -525,11 +531,14 @@ isc.OBUserProfile.addProperties({
     pwdButtonLayout = isc.HStack.create({
       layoutTopMargin: 10,
       membersMargin: 10,
-      width: '100%',
+      width: 248,
       align: 'center',
       overflow: 'visible',
       height: 1
     });
+    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+      pwdButtonLayout.width = 220;
+    }
     pwdButtonLayout.addMembers(pwdSaveButton);
     pwdButtonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('UINAVBA_Cancel'),

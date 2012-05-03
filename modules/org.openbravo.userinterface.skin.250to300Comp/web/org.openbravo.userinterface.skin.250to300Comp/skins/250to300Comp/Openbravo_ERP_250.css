@@ -921,8 +921,8 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
   color: #333333;
   background-color: #F5F7F1 !important;
   background-image: none;
-  padding: 1px 1px 1px 4px;
-  _padding: 2px 1px 1px 4px;
+  padding: 1px 1px 1px 4px; /*~RTL   padding: 1px 4px 1px 1px; */
+  _padding: 2px 1px 1px 4px; /*~RTL   _padding: 2px 4px 1px 1px; */
   height: 21px;
 }
 

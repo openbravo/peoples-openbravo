@@ -155,7 +155,7 @@ isc.OBPickAndExecuteView.addProperties({
     this.items = [this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
-      align: 'left',
+      align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
       width: '100%',
       visibility: (this.addNewButton ? 'visible' : 'hidden'),
       members: (this.addNewButton ? [this.addNewButton] : [])
@@ -247,7 +247,7 @@ isc.OBPickAndExecuteView.addProperties({
       width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+          return '<img class="' + OB.Styles.Process.PickAndExecute.iconPinStyle + '" src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
         }
         return '';
       },
@@ -285,7 +285,7 @@ isc.OBPickAndExecuteView.addProperties({
             onmouseover = 'this.src=\'' + srcWithoutExt + '_Over.' + srcExt + '\'',
             onmousedown = 'this.src=\'' + srcWithoutExt + '_Down.' + srcExt + '\'',
             onmouseout = 'this.src=\'' + src + '\'';
-        return '<img style="cursor: pointer;" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
+        return '<img class="' + OB.Styles.Process.PickAndExecute.iconDeleteStyle + '" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);

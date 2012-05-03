@@ -19,10 +19,17 @@
 
 
 .OBGridToolStrip {
-  padding: 0px 0px 1px 3px;
 }
 
-.OBGridToolStripIcon {
+.OBGridToolStripIcon,
+.OBGridToolStripIconOver,
+.OBGridToolStripIconFocused,
+.OBGridToolStripIconDown {
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
+}
+
+.OBGridToolStripSeparator {
+  padding: 4px 0px 0px 0px;
 }
 
 .OBGridBody {
@@ -79,8 +86,8 @@
   font-family: arial, sans-serif;
   font-size: 12px;
   vertical-align: middle;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   
 /*  margin: 0px; */
   padding: 0px 4px 0px 4px;
@@ -167,16 +174,17 @@
 }
 
 .OBGridFilterCell {
- /* border-top: 1px solid #b2b5b0 */
-  border-left: 1px solid #b2b5b0; /*#BBBFB6*/;
+  border: 1px solid #b2b5b0; /*#BBBFB6*/;
+  border-width: 0px 1px 0px 0px;
   background-repeat: repeat-x;
   background-position: left top;
-  background-color: #CDD7BB;
   vertical-align: middle;
 }
 
 .OBGridFilterBase {
-  border-top: 1px solid #b2b5b0;
+  background-color: #CDD7BB;
+  border: 1px solid #b2b5b0;
+  border-width: 0px 0px 1px 0px;
 }
 
 .OBGridFilterStaticText,
@@ -185,7 +193,7 @@
   font-size: 11px;
   font-weight: normal;
   color: #333333;
-  padding: 2px 0px 0px 0px;
+  padding: 3px 0px 0px 0px;
 }
 
 .OBGridFilterStaticTextLink:hover {
@@ -198,15 +206,16 @@
   cursor: pointer;
 }
 
-.OBGridFilterFunnelBackground {
-  background-color: #CDD7BB;
-}
-
-.OBGridFilterFunnelIconDown,
-.OBGridFilterFunnelIconSelected,
-.OBGridFilterFunnelIconFocused,
 .OBGridFilterFunnelIcon {
   background-color: #CDD7BB;
+  cursor: pointer;
+}
+
+.OBGridFilterFunnelIconOver,
+.OBGridFilterFunnelIconDown,
+.OBGridFilterFunnelIconSelected,
+.OBGridFilterFunnelIconFocused {
+  background-color: #ffe1c0;
   cursor: pointer;
 }
 
@@ -221,8 +230,8 @@
   font-size: 11px;
   font-family: 'lucida sans', sans-serif;
   font-weight: bold;
- /* border-top: 1px solid #BBBFB6;*/
-  border-right: 1px solid #BBBFB6;
+  border: 1px solid #BBBFB6;
+  border-width: 0px 1px 0px 0px;
   text-align: center;
   background: none;
 }
@@ -231,7 +240,8 @@
   background-repeat: repeat-x;
   background-position: left -22px;
   background-color: #FFFFFF;
-  border-bottom: 1px solid #BBBFB6;
+  border: 1px solid #BBBFB6;
+  border-width: 0px 0px 1px 0px;
 }
 
 .OBGridHeaderCell {
@@ -253,8 +263,8 @@
 .OBGridSummaryCell_count {
   font-family: arial, sans-serif;
   vertical-align: middle;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   background-color: #ffffff;
 }
 
@@ -323,6 +333,44 @@
   padding: 5px 0px 5px 0px;
 }
 
+.OBGridNotificationTextLink,
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLinkDown,
+.OBGridNotificationTextLinkFocused,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLinkFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  vertical-align: middle;
+  background: transparent;
+  padding: 5px 5px 5px 5px;
+}
+
+.OBGridNotificationTextLink,
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLink:hover {
+  cursor: pointer;
+  color: #58A618;
+}
+
+.OBGridNotificationTextLinkDown,
+.OBGridNotificationTextLink:active {
+  color: #004E27;
+}
+
+.OBGridNotificationTextLinkFocused,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLinkFocusedDown,
+.OBGridNotificationTextLink:focus {
+  color: #fa962f;
+}
+
+.OBGridNotificationTextLinkOver,
+.OBGridNotificationTextLinkFocusedOver,
+.OBGridNotificationTextLink:hover {
+  text-decoration: underline;
+}
+
 /*=======================================================================
  * Defines the style of a OBGrid with records representing links 
  * (used in LinkedItems components)
@@ -339,8 +387,8 @@
   font-size:12px;
   text-overflow: ellipsis;
   color: #58A618;
-  border-right: 1px solid #cdd7bb;
-  border-bottom: 1px solid #cdd7bb;
+  border: 1px solid #cdd7bb;
+  border-width: 0px 1px 1px 0px;
   cursor: pointer;
   padding: 0px 0px 1px 3px;
 }

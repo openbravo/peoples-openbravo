@@ -4680,7 +4680,7 @@ td.DimensionUDArrows_ContentCell {
   font-size: 8pt;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4692,7 +4692,7 @@ td.DimensionUDArrows_ContentCell {
   color: #303030;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4704,7 +4704,7 @@ td.DimensionUDArrows_ContentCell {
   background-color: #FFFFFF;
   color: Red;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4715,7 +4715,7 @@ td.DimensionUDArrows_ContentCell {
   font-size: 8pt;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4729,7 +4729,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4743,7 +4743,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4757,7 +4757,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4771,7 +4771,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }

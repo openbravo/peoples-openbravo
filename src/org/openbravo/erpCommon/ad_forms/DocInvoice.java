@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -886,8 +886,8 @@ public class DocInvoice extends AcctServer {
     // Filter the right acct schemas for the organization
     for (int i = 0; i < m_aslocal.length; i++) {
       acct = m_aslocal[i];
-      if (AcctSchemaData.selectAcctSchemaTable2(connectionProvider, acct.m_C_AcctSchema_ID,
-          AD_Table_ID, adOrgId)) {
+      if (AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID,
+          AD_Table_ID)) {
         new_as.add(new AcctSchema(connectionProvider, acct.m_C_AcctSchema_ID));
       }
     }
