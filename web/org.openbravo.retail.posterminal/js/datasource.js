@@ -29,7 +29,7 @@ define(['i18n'], function () {
           var response = data.response;
           var status = response.status;
           if (status === 0) {
-            callback(response.data);
+            callback(response.data, response.message);
           } else if (response.errors) {
             callback({
               exception: {
@@ -65,12 +65,12 @@ define(['i18n'], function () {
   OB.DS.Process.prototype.exec = function  (params, callback, username, password) {
     var attr;
     var data = {
-      className: this.process,
+      className: this.process
     };
     
     for (attr in params) {
       if (params.hasOwnProperty(attr)) {
-        data[attr] = params[attr];;
+        data[attr] = params[attr];
       }
     }  
     

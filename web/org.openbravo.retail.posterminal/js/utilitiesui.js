@@ -76,6 +76,10 @@ define(['builder', 'i18n'], function (B) {
     }, 5000);
   };
   
+  OB.UTIL.showSuccess = function (s) {
+    OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');  
+  };  
+  
   OB.UTIL.showWarning = function (s) {
     OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');  
   };

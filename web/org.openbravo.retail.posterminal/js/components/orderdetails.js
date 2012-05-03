@@ -14,7 +14,7 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     this.renderTitle = function (receipt) {
       return B(
         {kind: B.KindJQuery('strong'), content: [                                                                                        
-          OB.I18N.formatHour(receipt.get('orderdate')) + ' - ' + receipt.get('documentno')
+          OB.I18N.formatHour(receipt.get('orderDate')) + ' - ' + receipt.get('documentNo')
         ]}            
       );
     };    
@@ -23,7 +23,7 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     this.$ = this.details.$;
     
     this.receipt =  context.modelorder;   
-    this.receipt.on('clear change:orderdate change:documentno', function () {
+    this.receipt.on('clear change:orderDate change:documentNo', function () {
       this.details.$.empty().append(this.renderTitle(this.receipt).$);
     }, this);
   };  

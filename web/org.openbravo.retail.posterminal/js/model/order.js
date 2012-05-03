@@ -8,8 +8,9 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
   // Sales.OrderLine Model
   OB.MODEL.OrderLine = Backbone.Model.extend({
     defaults : {
-      productid: null,
+      product: null,
       productidentifier: null,
+      uOM: null,
       qty: OB.DEC.Zero,
       price: OB.DEC.Zero,
       net: OB.DEC.Zero
@@ -67,8 +68,14 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       Backbone.Model.prototype.constructor.call(this);
     },    
     initialize : function () {
-      this.set('orderdate', new Date());
-      this.set('documentno', '99094');
+      this.set('client', null);
+      this.set('organization', null); 
+      this.set('documentType', null);
+      this.set('priceList', null);      
+      this.set('currency', null);      
+      this.set('warehouse',null);         
+      this.set('orderDate', new Date());
+      this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
@@ -126,8 +133,14 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     },
     
     clear: function() {
-      this.set('orderdate', new Date());
-      this.set('documentno', '9904');
+      this.set('client', null);
+      this.set('organization', null);
+      this.set('documentType', null);
+      this.set('priceList', null);      
+      this.set('currency', null);      
+      this.set('warehouse',null);       
+      this.set('orderDate', new Date());
+      this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
       this.get('lines').reset();      
@@ -140,8 +153,14 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     },
     
     clearWith: function(_order) {
-      this.set('orderdate', _order.get('orderdate'));
-      this.set('documentno', _order.get('documentno'));
+      this.set('client', _order.get('client'));
+      this.set('organization', _order.get('organization'));
+      this.set('documentType', _order.get('documentType'));      
+      this.set('priceList', _order.get('priceList'));      
+      this.set('currency', _order.get('currency'));      
+      this.set('warehouse', _order.get('warehouse'));      
+      this.set('orderDate', _order.get('orderDate'));
+      this.set('documentNo', _order.get('documentNo'));
       this.set('undo', null);
       this.set('bp', _order.get('bp'));
       this.get('lines').reset();
@@ -223,13 +242,14 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     
     addProduct: function (line, p) {
       var me = this;
-      if (line && line.get('productid') === p.get('product').id) {
+      if (line && line.get('product') === p.get('product').id) {
         this.addUnit(line);
       } else {
         // a new line with 1 unit
         var newline = new OB.MODEL.OrderLine({
-          productid: p.get('product').id,
+          product: p.get('product').id,
           productidentifier: p.get('product')._identifier,
+          uOM: p.get('product').uOM,
           qty: OB.DEC.One,
           price: OB.DEC.number(p.get('price').listPrice)
         });
@@ -353,11 +373,19 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     
     newOrder: function () {
       var order = new OB.MODEL.Order();
-      order.set('orderdate', new Date());
+      
+      order.set('client', OB.POS.modelterminal.get('terminal').client);
+      order.set('organization', OB.POS.modelterminal.get('terminal').organization);
+      order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
+      order.set('currency', OB.POS.modelterminal.get('terminal').currency);
+      order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
+      
+      order.set('orderDate', new Date());
       var documentseq = localStorage.getItem('Document_Sequence') || '0';
       documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5); 
       localStorage.setItem('Document_Sequence', documentseq);
-      order.set('documentno', '<' + documentseq + '>');
+      order.set('documentNo', 'POS-' + documentseq);
       order.set('bp', new Backbone.Model(OB.POS.modelterminal.get('businesspartner')));
       return order;
     },

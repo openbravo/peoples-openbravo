@@ -128,7 +128,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     if (this.line) {      
       this.products.ds.find({
         priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
-        product: { product: {id: this.line.get('productid')}}
+        product: { product: {id: this.line.get('product')}}
       }, function (data) {
         if (data) {
           me.msgaction.hide();

@@ -36,10 +36,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                 return B(
                   {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                       OB.I18N.formatHour(model.get('orderdate'))
+                       OB.I18N.formatHour(model.get('orderDate'))
                     ]},                                                                                      
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                      model.get('documentno')
+                      model.get('documentNo')
                     ]}, 
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [ 
                       model.get('bp').get('_identifier')

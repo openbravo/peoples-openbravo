@@ -27,6 +27,7 @@ define(['utilities'], function () {
     'OBPOS_LblUndo': 'Undo',
     
     'OBPOS_DataMaxReached': 'It has been reached the maximum data to display.',
+    'OBPOS_LblSuccess': 'SUCCESS',
     'OBPOS_LblError': 'ERROR!',
     'OBPOS_LblWarning': 'WARNING!',
     

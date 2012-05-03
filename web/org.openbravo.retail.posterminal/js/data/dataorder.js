@@ -1,6 +1,6 @@
 /*global define,_*/
 
-define(['utilities', 'datasource'], function () {
+define(['utilities', 'utilities', 'datasource'], function () {
   
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
@@ -16,8 +16,12 @@ define(['utilities', 'datasource'], function () {
       
       this.proc.exec({
         order: this.receipt.toJSON()
-      }, function (data) {
-        console.log(JSON.stringify(data));
+      }, function (data, message) {
+        if (message) {
+          OB.UTIL.showSuccess(message);
+        }
+//        console.log(JSON.stringify(data));
+//        console.log(JSON.stringify(message));
       });
       
     }, this);
