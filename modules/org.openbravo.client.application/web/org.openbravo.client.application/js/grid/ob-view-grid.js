@@ -2299,9 +2299,11 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.setDirtyEditForm(form);
     }
 
-    if (record && record.editColumnLayout) {
-      record.editColumnLayout.showSaveCancel();
-    }
+    setTimeout(function () {
+      if (record && record.editColumnLayout) {
+        record.editColumnLayout.showSaveCancel();
+      }
+    }, 1);
 
     this.view.messageBar.hide();
 
