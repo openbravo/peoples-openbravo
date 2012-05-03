@@ -86,8 +86,11 @@ isc.OBWidget.changeDefaults('headerDefaults', {
 });
 
 isc.OBWidget.changeDefaults('headerLabelDefaults', {
+  wrap: false,
+  width: '100%',
+  inherentWidth: true,
   styleName: 'OBWidgetHeaderText',
-  align: isc.Canvas.CENTER
+  align: isc.Canvas.LEFT
 });
 
 isc.OBWidget.changeDefaults('restoreButtonDefaults', {
@@ -118,52 +121,6 @@ isc.OBWidget.changeDefaults('minimizeButtonDefaults', {
   height: 20
 });
 
-// MyOpenbravo dialogs (left menu)
-isc.OBMyOBDialog.addProperties({
-  styleName: 'OBMyOBDialog',
-  headerStyle: 'OBMyOBDialogHeader',
-  bodyStyle: "OBMyOBDialogBody",
-  showEdges: true,
-  edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/dialog/window.png',
-  customEdges: null,
-  edgeSize: 6,
-  edgeTop: 23,
-  edgeBottom: 6,
-  edgeOffsetTop: 2,
-  edgeOffsetRight: 5,
-  edgeOffsetBottom: 5,
-  showHeaderBackground: false,
-  // part of edges
-  showHeaderIcon: true,
-
-  border: null,
-
-  layoutMargin: 0,
-  membersMargin: 0,
-
-  showFooter: false,
-
-  showShadow: false,
-  shadowDepth: 5
-});
-
-isc.OBMyOBDialog.changeDefaults('headerDefaults', {
-  layoutMargin: 0,
-  height: 24
-});
-
-isc.OBMyOBDialog.changeDefaults('headerLabelDefaults', {
-  styleName: 'OBMyOBDialogHeaderText',
-  align: isc.Canvas.CENTER
-});
-
-isc.OBMyOBDialog.changeDefaults("closeButtonDefaults", {
-  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/dialog/headerIcons/close.png',
-  showRollOver: true,
-  showDown: false,
-  width: 15,
-  height: 15
-});
 
 isc.OBWidgetInFormItem.changeDefaults("widgetProperties", {
   edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/form/border.png',

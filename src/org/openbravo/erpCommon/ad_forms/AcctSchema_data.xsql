@@ -77,7 +77,7 @@
      <Parameter name="ad_table_id"/>
    </SqlMethod>
    <SqlMethod name="selectAcctSchemaTable2" type="preparedStatement" return="boolean" default="false">
-    <SqlMethodComment></SqlMethodComment>
+    <SqlMethodComment>Deprecated. Use selectAcctSchemaTable</SqlMethodComment>
     <Sql>
       <![CDATA[
         SELECT count(C_ACCTSCHEMA_TABLE_ID) AS TOTAL FROM C_ACCTSCHEMA_TABLE

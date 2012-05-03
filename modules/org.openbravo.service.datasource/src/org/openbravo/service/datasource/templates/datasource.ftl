@@ -93,7 +93,7 @@ the following is not needed, is covered in the form fields/grid fields
 <#if !property.primitive>
     <#-- Note the subPropName are constants from the JsonConstants class -->
     <#-- , <@generateReferenceField property=property subPropName='id'/> -->
-    , <@generateReferenceField property=property subPropName='_identifier'/>
+    , <@generateReferenceField property=property subPropName=Constants_IDENTIFIER/>
 </#if>
 </@compress>    
 </#macro>

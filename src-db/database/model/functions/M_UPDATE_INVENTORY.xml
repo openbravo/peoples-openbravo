@@ -57,6 +57,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_cuenta NUMBER;
+  v_count NUMBER;
   v_qtyorder NUMBER;
   v_preqtyorder NUMBER;
   v_Storage_ID VARCHAR2(32);
@@ -132,9 +133,10 @@ BEGIN
     AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
     AND PREQTYONHAND=0
     AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL)
-    AND P.M_PRODUCT_ID=p_product;
+    AND P.M_PRODUCT_ID=p_product
+    AND NOT EXISTS (SELECT 1 FROM m_stock_aux WHERE M_STORAGE_DETAIL_ID = SD.M_STORAGE_DETAIL_ID);
 
-    IF (v_Storage_ID IS NOT NULL) THEN
+    IF (v_Storage_ID IS NOT NULL) THEN    
       DELETE FROM M_STORAGE_DETAIL WHERE M_STORAGE_DETAIL_ID =v_Storage_ID;
     END IF;
 

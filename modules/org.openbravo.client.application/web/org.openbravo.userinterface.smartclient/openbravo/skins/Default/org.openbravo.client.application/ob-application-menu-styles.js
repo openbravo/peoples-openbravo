@@ -50,7 +50,17 @@ isc.OBApplicationMenuTree.addProperties({
   iconBodyStyleName: 'OBApplicationMenuTreeIconBody',
   tableStyle: "OBApplicationMenuTreeTable",
   hideButtonLineStyle: 'OBNavBarComponentHideLine',
-  submenuOffset: -6,
+  submenuOffset: 0,
+  submenuImage: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu.png',
+    height: 7,
+    width: 4
+  },
+  submenuDisabledImage: {
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/subMenu_Disabled.png',
+    height: 7,
+    width: 4
+  },
   drawStyle: function () {
     //this.setStyleName(this.styleName);
   },

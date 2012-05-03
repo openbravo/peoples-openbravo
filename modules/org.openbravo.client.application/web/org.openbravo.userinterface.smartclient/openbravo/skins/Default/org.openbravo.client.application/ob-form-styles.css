@@ -63,6 +63,7 @@
   font-family: 'lucida sans', sans-serif;
   padding: 4px 8px 4px 8px;
   vertical-align: top;
+  line-height: 1.4em;
 }
 
 .OBFormFieldLabel,

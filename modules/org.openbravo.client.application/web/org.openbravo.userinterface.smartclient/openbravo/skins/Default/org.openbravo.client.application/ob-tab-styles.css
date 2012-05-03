@@ -152,8 +152,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonMainTitleDisabledInactive,
 .OBTabBarButtonMainTitleSelectedDisabledInactive {
   color: #333333;
-  padding-top: 4px;
-  padding-bottom:1px;
+  padding-top: 2px;
 }
 
 .OBTabBarButtonMainTitleSelected,
@@ -180,7 +179,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonMainTitleDisabledInactive,
 .OBTabBarButtonMainTitleSelectedDisabledInactive {
   color: #777;
-  padding-bottom: 1px;
 }
 
 
@@ -317,8 +315,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonChildTitleDisabledInactive,
 .OBTabBarButtonChildTitleSelectedDisabledInactive {
   color: #ffffff;
-  padding-top: 2px;
-  padding-bottom: 1px;
 }
 
 .OBTabBarButtonChildTitleOver,
@@ -331,5 +327,4 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonChildTitleDisabledInactive,
 .OBTabBarButtonChildTitleSelectedDisabledInactive {
   color: #777;
-  padding-bottom: 1px;
 }

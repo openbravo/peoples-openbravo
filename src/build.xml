@@ -616,7 +616,7 @@ build.war: build a war file in the lib directory.
         <include name="*/web/*/**" />
         <exclude name="*/web/*/skins/**" />
       </fileset>
-      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
+      <mapper type="regexp" from="(.*)(\${file.separator}web)(\${file.separator}.*)" to="\3" />
     </copy>
   </target>
 

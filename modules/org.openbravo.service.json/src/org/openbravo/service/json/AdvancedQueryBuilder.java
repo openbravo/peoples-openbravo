@@ -401,8 +401,8 @@ public class AdvancedQueryBuilder {
           }
           sb.append(prop.getName());
         }
-        throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidProperty",
-            new String[] { value.toString(), sb.toString() }));
+        throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidProperty", new String[] {
+            value.toString(), sb.toString() }));
       }
       final Property fieldProperty = properties.get(properties.size() - 1);
       if (property == null) {
@@ -424,7 +424,7 @@ public class AdvancedQueryBuilder {
     // handle a special case the table reference which shows a tablename in a combo
     // or uses the display column to display that in the grid
     Property useProperty = property;
-    String useFieldName = fieldName;
+    String useFieldName = fieldName.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT);
     if (properties.size() >= 2) {
       final Property refProperty = properties.get(properties.size() - 2);
       if (refProperty.getDomainType() instanceof TableDomainType) {
@@ -433,8 +433,8 @@ public class AdvancedQueryBuilder {
             Table.ENTITY_NAME);
         if (isTable) {
           useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
-          final int index = fieldName.indexOf(".");
-          useFieldName = fieldName.substring(0, index + 1) + useProperty.getName();
+          final int index = useFieldName.indexOf(DalUtil.DOT);
+          useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
         } else {
           // read the reference to get the table reference
           final Reference reference = OBDal.getInstance().get(Reference.class,
@@ -444,8 +444,8 @@ public class AdvancedQueryBuilder {
                 && referencedTable.getDisplayedColumn().isActive()) {
               useProperty = property.getEntity().getPropertyByColumnName(
                   referencedTable.getDisplayedColumn().getDBColumnName());
-              final int index = fieldName.indexOf(".");
-              useFieldName = fieldName.substring(0, index + 1) + useProperty.getName();
+              final int index = useFieldName.indexOf(DalUtil.DOT);
+              useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
               break;
             }
           }
@@ -457,7 +457,7 @@ public class AdvancedQueryBuilder {
     if (orNesting > 0) {
       clause = resolveJoins(properties, useFieldName);
     } else if (getMainAlias() != null) {
-      clause = getMainAlias() + "." + useFieldName.trim();
+      clause = getMainAlias() + DalUtil.DOT + useFieldName.trim();
     } else {
       clause = useFieldName;
     }
@@ -468,10 +468,11 @@ public class AdvancedQueryBuilder {
     // because the key contains the original string (with the _identifier part).
     // Within the if the leftWherePart is used because it contains the join aliases
     if (useFieldName.equals(JsonConstants.IDENTIFIER)
-        || useFieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
-      if (useFieldName.endsWith("." + JsonConstants.IDENTIFIER)
+        || useFieldName.endsWith(DalUtil.DOT + JsonConstants.IDENTIFIER)) {
+      if (useFieldName.endsWith(DalUtil.DOT + JsonConstants.IDENTIFIER)
           && (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL))) {
-        clause = getMainAlias() + "." + useFieldName.replace("." + JsonConstants.IDENTIFIER, "");
+        clause = getMainAlias() + DalUtil.DOT
+            + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
         clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
       }
@@ -643,9 +644,9 @@ public class AdvancedQueryBuilder {
     Check.isTrue(identifierProperties.contains(property), "Property " + property
         + " not part of identifier of " + property.getEntity());
     final String prefix;
-    final int index = leftWherePart.lastIndexOf(".");
+    final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
-      prefix = getMainAlias() + ".";
+      prefix = getMainAlias() + DalUtil.DOT;
     } else if (index == -1) {
       prefix = "";
     } else {
@@ -951,7 +952,8 @@ public class AdvancedQueryBuilder {
       if (!firstElement) {
         sb.append(",");
       }
-      sb.append(getOrderByClausePart(localOrderBy.trim()));
+      sb.append(getOrderByClausePart(localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR,
+          DalUtil.DOT)));
       firstElement = false;
     }
 
@@ -978,7 +980,7 @@ public class AdvancedQueryBuilder {
     // handle the following case:
     // table.window.identifier as the sort string
     boolean isIdentifier = localOrderBy.equals(JsonConstants.IDENTIFIER)
-        || localOrderBy.endsWith("." + JsonConstants.IDENTIFIER);
+        || localOrderBy.endsWith(DalUtil.DOT + JsonConstants.IDENTIFIER);
     if (isIdentifier) {
       Entity searchEntity = getEntity();
       // a path to an entity, find the last entity
@@ -989,7 +991,7 @@ public class AdvancedQueryBuilder {
         Check.isNotNull(prop, "Property path " + localOrderBy + " is not valid for entity "
             + searchEntity);
         searchEntity = prop.getEntity();
-        prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(".") + 1);
+        prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(DalUtil.DOT) + 1);
       } else {
         prefix = "";
       }
@@ -1005,7 +1007,7 @@ public class AdvancedQueryBuilder {
           // wrong identifier definitions in the AD
           final Entity targetEntity = prop.getTargetEntity();
           for (Property targetEntityProperty : targetEntity.getIdentifierProperties()) {
-            paths.add(prefix + prop.getName() + "." + targetEntityProperty.getName());
+            paths.add(prefix + prop.getName() + DalUtil.DOT + targetEntityProperty.getName());
           }
         } else {
           paths.add(prefix + prop.getName());
@@ -1071,7 +1073,8 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName() + "."));
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
+            + DalUtil.DOT));
       }
     }
 
@@ -1166,7 +1169,7 @@ public class AdvancedQueryBuilder {
     if (joinedPropertyIndex == (props.size() - 1)) {
       return alias;
     }
-    return alias + "." + props.get(props.size() - 1).getName();
+    return alias + DalUtil.DOT + props.get(props.size() - 1).getName();
   }
 
   private String getNewUniqueAlias() {
@@ -1184,9 +1187,10 @@ public class AdvancedQueryBuilder {
 
     public String getJoinStatement() {
       if (orNesting > 0) {
-        return " left outer join " + ownerAlias + "." + property.getName() + " as " + joinAlias;
+        return " left outer join " + ownerAlias + DalUtil.DOT + property.getName() + " as "
+            + joinAlias;
       } else {
-        return " left join " + ownerAlias + "." + property.getName() + " as " + joinAlias;
+        return " left join " + ownerAlias + DalUtil.DOT + property.getName() + " as " + joinAlias;
       }
     }
 
@@ -1222,7 +1226,8 @@ public class AdvancedQueryBuilder {
   public void setOrderBy(String orderBy) {
     this.orderBy = orderBy;
     // do outer joining if the order by has more than 1 dot
-    if (orderBy.indexOf(".") != -1 && orderBy.indexOf(".") != orderBy.lastIndexOf(".")) {
+    if (orderBy.indexOf(DalUtil.DOT) != -1
+        && orderBy.indexOf(DalUtil.DOT) != orderBy.lastIndexOf(DalUtil.DOT)) {
       setMainAlias(JsonConstants.MAIN_ALIAS);
     }
   }

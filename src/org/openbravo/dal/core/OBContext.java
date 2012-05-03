@@ -545,7 +545,7 @@ public class OBContext implements OBNotSingleton {
   @SuppressWarnings("unchecked")
   private List<Organization> getOrganizationList(Role thisRole) {
     if (organizationList != null) {
-      return organizationList;
+      return new ArrayList<Organization>(organizationList);
     }
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o from " + Organization.class.getName() + " o, " + RoleOrganization.class.getName()
@@ -561,7 +561,7 @@ public class OBContext implements OBNotSingleton {
         organizationList.add(org);
       }
     }
-    return organizationList;
+    return new ArrayList<Organization>(organizationList);
   }
 
   @SuppressWarnings("unchecked")
@@ -595,7 +595,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Client getCurrentClient() {
-    return currentClient;
+
+    return (Client) DalUtil.copy(currentClient, true, false);
   }
 
   public void setCurrentClient(Client currentClient) {
@@ -607,7 +608,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Language getLanguage() {
-    return language;
+    return (Language) DalUtil.copy(language, true, false);
   }
 
   public void setLanguage(Language language) {
@@ -616,7 +617,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Organization getCurrentOrganization() {
-    return currentOrganization;
+    return (Organization) DalUtil.copy(currentOrganization, true, false);
   }
 
   public void removeWritableOrganization(String orgId) {
@@ -931,7 +932,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public User getUser() {
-    return user;
+    return (User) DalUtil.copy(user, true, false);
   }
 
   public void setUser(User user) {
@@ -939,7 +940,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Role getRole() {
-    return role;
+    return (Role) DalUtil.copy(role, true, false);
   }
 
   public void setRole(Role role) {
@@ -972,21 +973,21 @@ public class OBContext implements OBNotSingleton {
     if (readableOrganizations == null) {
       setReadableOrganizations(getRole());
     }
-    return readableOrganizations;
+    return readableOrganizations.clone();
   }
 
   public Set<String> getWritableOrganizations() {
     if (writableOrganizations == null) {
       setWritableOrganizations(getRole());
     }
-    return writableOrganizations;
+    return new HashSet<String>(writableOrganizations);
   }
 
   public String[] getReadableClients() {
     if (readableClients == null) {
       setReadableClients(getRole());
     }
-    return readableClients;
+    return readableClients.clone();
   }
 
   public EntityAccessChecker getEntityAccessChecker() {
@@ -1123,9 +1124,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRTL(boolean isRTL) {
-    // Forced to false until RTL project be completed
-    // this.isRTL = isRTL;
-    this.isRTL = false;
+    this.isRTL = isRTL;
   }
 
   private boolean isTranslationInstalled() {

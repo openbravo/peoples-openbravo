@@ -60,6 +60,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -432,7 +433,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       try {
         while (itKeysF.hasNext()) {
           String key = (String) itKeysF.next();
-          if (key.endsWith("_identifier")) {
+          if (key.endsWith(JsonConstants.IDENTIFIER)) {
             continue;
           }
           if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
@@ -468,7 +469,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         boolean isFirst = true;
         while (itKeys.hasNext()) {
           String key = (String) itKeys.next();
-          if (key.endsWith("_identifier")) {
+          if (key.endsWith(JsonConstants.IDENTIFIER)) {
             continue;
           }
           if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
@@ -483,8 +484,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (!json.has(key)) {
             continue;
           }
-          Object keyValue = json.has(key + "._identifier") ? json.get(key + "._identifier") : json
-              .get(key);
+          Object keyValue = json.has(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) ? json
+              .get(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) : json.get(key);
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number && keyValue != null) {

@@ -49,7 +49,7 @@ public class JsonReadRestTest extends JsonRestTest {
     String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
     final JSONObject jsonObject = doRequest(URL_PART + "/ADColumn?" + JsonConstants.WHERE_PARAMETER
-        + "=" + whereClause, "_identifier", "GET", 200);
+        + "=" + whereClause, JsonConstants.IDENTIFIER, "GET", 200);
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
     assertEquals(2, jsonArray.length());
@@ -74,7 +74,7 @@ public class JsonReadRestTest extends JsonRestTest {
    * Query for one {@link Table}.
    */
   public void testRestOneObject() throws Exception {
-    final JSONObject jsonObject = doRequest(URL_PART + "/ADTable/104", "_identifier", "GET", 200);
+    final JSONObject jsonObject = doRequest(URL_PART + "/ADTable/104", JsonConstants.IDENTIFIER, "GET", 200);
 
     setSystemAdministratorContext();
     final JsonToDataConverter converter = new JsonToDataConverter();
@@ -91,7 +91,7 @@ public class JsonReadRestTest extends JsonRestTest {
     String filterClause = "Reference List";
     filterClause = URLEncoder.encode(filterClause, "UTF-8");
     final JSONObject jsonObject = doRequest(URL_PART + "/ADTable?description=" + filterClause,
-        "_identifier", "GET", 200);
+        JsonConstants.IDENTIFIER, "GET", 200);
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
     assertEquals(1, jsonArray.length());
@@ -116,7 +116,7 @@ public class JsonReadRestTest extends JsonRestTest {
     colCriteria.setFilterOnActive(false);
     final int columnCnt = colCriteria.count();
     final JSONObject jsonObject = doRequest(URL_PART + "/ADColumn?_startRow=10&_endRow=17",
-        "_identifier", "GET", 200);
+        JsonConstants.IDENTIFIER, "GET", 200);
     assertEquals(
         columnCnt,
         jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
@@ -152,7 +152,7 @@ public class JsonReadRestTest extends JsonRestTest {
     String filterClause = "Reference List";
     filterClause = URLEncoder.encode(filterClause, "UTF-8");
     final JSONObject jsonObject = doRequest(URL_PART + "/ADRole?clientList=1000000&_sortBy="
-        + (ascending ? "" : "-") + "name", "_identifier", "GET", 200);
+        + (ascending ? "" : "-") + "name", JsonConstants.IDENTIFIER, "GET", 200);
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
     assertEquals(8, jsonArray.length());

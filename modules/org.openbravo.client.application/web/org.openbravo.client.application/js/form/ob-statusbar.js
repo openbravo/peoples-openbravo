@@ -336,6 +336,11 @@ isc.OBStatusBar.addProperties({
     var linkImageWidth = this.titleLinkImageWidth,
         linkImageHeight = this.titleLinkImageHeight,
         msg = '',
+        msgTmp = '',
+        ltrSep = '',
+        rtlSep = '',
+        imgLink, ltrImgLink = '',
+        rtlImgLink = '',
         i, length, undef;
 
     if (typeof linkImageWidth !== 'undefined') {
@@ -367,97 +372,79 @@ isc.OBStatusBar.addProperties({
     this.content.destroyAndRemoveMembers(this.content.members);
     this.content.setMembers([]);
 
-    if (!isc.Page.isRTL()) { // LTR mode
-      if (this.statusCode) {
-        msg = '<span class="' + (this.statusLabelStyle ? this.statusLabelStyle : '') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
-        this.content.addMember(isc.OBStatusBarTextLabel.create({
-          contents: msg
-        }));
-      }
-      if (arrayTitleField) {
-        length = arrayTitleField[0].length;
-        for (i = 0; i < length; i++) {
-          if (i !== 0 || this.statusCode) {
-            msg = '<span class="' + (this.separatorLabelStyle ? this.separatorLabelStyle : '') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
-          }
-          if (isc.isA.Canvas(arrayTitleField[1][i])) {
-            if (msg) {
-              this.content.addMember(isc.OBStatusBarTextLabel.create({
-                contents: msg
-              }));
-            }
-            if (arrayTitleField[0][i]) {
-              msg = '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + arrayTitleField[0][i] + ':&nbsp;' + '</span>';
-              this.content.addMember(isc.OBStatusBarTextLabel.create({
-                contents: msg
-              }));
-            }
-
-            // required by the automatic smoke test
-            arrayTitleField[1][i]._title = arrayTitleField[0][i];
-            arrayTitleField[1][i]._value = arrayTitleField[1][i].contents;
-
-            arrayTitleField[1][i].show();
-            arrayTitleField[1][i].inStatusBar = true;
-            this.content.addMember(arrayTitleField[1][i]);
-            continue;
-          }
-
-          if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
-            msg += '<span class="' + (this.titleLinkStyle ? this.titleLinkStyle : '') + '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + arrayTitleField[0][i] + ':&nbsp;<img src="' + (this.titleLinkImageSrc ? this.titleLinkImageSrc : '') + '" style="' + linkImageWidth + linkImageHeight + '" />&nbsp;' + '</span>';
-          } else {
-            msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + arrayTitleField[0][i] + ':&nbsp;' + '</span>';
-          }
-          msg += '<span class="' + (this.fieldLabelStyle ? this.fieldLabelStyle : '') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
-          this.content.addMember(isc.OBStatusBarTextLabel.create({
-            contents: msg,
-            _title: arrayTitleField[0][i],
-            _value: this.getValidValue(arrayTitleField[1][i])
-          }));
-          msg = null;
-        }
-      }
-      if (message) {
-        if (arrayTitleField || this.statusCode) {
+    imgLink = '<img src="' + (this.titleLinkImageSrc ? this.titleLinkImageSrc : '') + '" style="' + linkImageWidth + linkImageHeight + '" />';
+    if (!isc.Page.isRTL()) {
+      ltrSep = ':&nbsp;';
+      ltrImgLink = imgLink + '&nbsp;';
+    } else {
+      rtlSep = '&nbsp;:';
+      rtlImgLink = '&nbsp;' + imgLink;
+    }
+    if (this.statusCode) {
+      msg = '<span class="' + (this.statusLabelStyle ? this.statusLabelStyle : '') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+      this.content.addMember(isc.OBStatusBarTextLabel.create({
+        contents: msg
+      }));
+    }
+    if (arrayTitleField) {
+      length = arrayTitleField[0].length;
+      for (i = 0; i < length; i++) {
+        if (i !== 0 || this.statusCode) {
           msg = '<span class="' + (this.separatorLabelStyle ? this.separatorLabelStyle : '') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
-        msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + message + '</span>';
-        this.content.addMember(isc.OBStatusBarTextLabel.create({
-          contents: msg
-        }));
-      }
-    } else { // RTL mode
-      if (message) {
-        msg = '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + message + '</span>';
-        if (arrayTitleField || this.statusCode) {
-          msg += '<span class="' + (this.separatorLabelStyle ? this.separatorLabelStyle : '') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
-        }
-        this.content.addMember(isc.OBStatusBarTextLabel.create({
-          contents: msg
-        }));
-      }
-      if (arrayTitleField) {
-        for (i = arrayTitleField[0].length - 1; i >= 0; i--) {
-          msg = '<span class="' + (this.fieldLabelStyle ? this.fieldLabelStyle : '') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
-          if (arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
-            msg += '<span class="' + (this.titleLinkStyle ? this.titleLinkStyle : '') + '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + '&nbsp;<img src="' + (this.titleLinkImageSrc ? this.titleLinkImageSrc : '') + '" style="' + linkImageWidth + linkImageHeight + '"/>&nbsp;:' + arrayTitleField[0][i] + '</span>';
-          } else {
-            msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + ' :' + arrayTitleField[0][i] + '</span>';
+        if (isc.isA.Canvas(arrayTitleField[1][i])) {
+          if (msg) {
+            this.content.addMember(isc.OBStatusBarTextLabel.create({
+              contents: msg
+            }));
           }
-          if (i !== 0 || this.statusCode) {
-            msg += '<span class="' + (this.separatorLabelStyle ? this.separatorLabelStyle : '') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          if (arrayTitleField[0][i]) {
+            msg = '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + rtlSep + arrayTitleField[0][i] + ltrSep + '</span>';
+            this.content.addMember(isc.OBStatusBarTextLabel.create({
+              contents: msg
+            }));
           }
-          this.content.addMember(isc.OBStatusBarTextLabel.create({
-            contents: msg
-          }));
+
+          // required by the automatic smoke test
+          arrayTitleField[1][i]._title = arrayTitleField[0][i];
+          arrayTitleField[1][i]._value = arrayTitleField[1][i].contents;
+
+          arrayTitleField[1][i].show();
+          arrayTitleField[1][i].inStatusBar = true;
+          this.content.addMember(arrayTitleField[1][i]);
+          continue;
         }
-      }
-      if (this.statusCode) {
-        msg = '<span class="' + (this.statusLabelStyle ? this.statusLabelStyle : '') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+
+        msgTmp = '<span class="' + (this.fieldLabelStyle ? this.fieldLabelStyle : '') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+
+        if (isc.Page.isRTL()) {
+          msg += msgTmp;
+        }
+        if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
+          msg += '<span class="' + (this.titleLinkStyle ? this.titleLinkStyle : '') + '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + rtlImgLink + rtlSep + arrayTitleField[0][i] + ltrSep + ltrImgLink + '</span>';
+        } else {
+          msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + rtlSep + arrayTitleField[0][i] + ltrSep + '</span>';
+        }
+        if (!isc.Page.isRTL()) {
+          msg += msgTmp;
+        }
+
         this.content.addMember(isc.OBStatusBarTextLabel.create({
-          contents: msg
+          contents: msg,
+          _title: arrayTitleField[0][i],
+          _value: this.getValidValue(arrayTitleField[1][i])
         }));
+        msg = null;
       }
+    }
+    if (message) {
+      if (arrayTitleField || this.statusCode) {
+        msg = '<span class="' + (this.separatorLabelStyle ? this.separatorLabelStyle : '') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+      }
+      msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + message + '</span>';
+      this.content.addMember(isc.OBStatusBarTextLabel.create({
+        contents: msg
+      }));
     }
   },
 

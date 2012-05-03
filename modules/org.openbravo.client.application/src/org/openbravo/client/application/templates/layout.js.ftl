@@ -120,13 +120,8 @@ OB.Layout.initialize = function() {
   OB.TopLayout.addMember(OB.NavBar);
   OB.TopLayout.addMember(
           isc.HLayout.create({
-              width: '100%',
-              align: 'right',
-              layoutRightMargin: 10,
-              membersMargin: 20,
-              defaultLayoutAlign: 'center',
               members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
-          })      
+          }, OB.Styles.TopLayout.LogosContainer)
   );
   
   // add the top part to the main layout

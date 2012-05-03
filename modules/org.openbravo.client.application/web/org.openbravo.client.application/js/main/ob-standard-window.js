@@ -116,25 +116,36 @@ isc.OBStandardWindow.addProperties({
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack;
+        vStack, manualJS;
 
-    if (params.windowId) {
-      className = className + params.windowId;
-      if (len === 3) {
-        // debug mode, we have added _timestamp
-        className = className + '_' + parts[2];
+    if (params.uiPattern === 'M') { // Manual UI Pattern
+      try {
+        if (isc.isA.Function(params.actionHandler)) {
+          params.actionHandler(params, this);
+        }
+      } catch (e) {
+        // handling possible exceptions in manual code not to lock the application
+        isc.warn(e.message);
       }
+    } else {
+      if (params.windowId) {
+        className = className + params.windowId;
+        if (len === 3) {
+          // debug mode, we have added _timestamp
+          className = className + '_' + parts[2];
+        }
 
-      if (isc[className]) {
-        this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
-        this.runningProcess = isc[className].create(isc.addProperties({}, params, {
-          parentWindow: this
-        }));
+        if (isc[className]) {
+          this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
+          this.runningProcess = isc[className].create(isc.addProperties({}, params, {
+            parentWindow: this
+          }));
 
-        this.processLayout.addMember(this.runningProcess);
-        this.toolBarLayout.hide();
-        this.view.hide();
-        this.processLayout.show();
+          this.processLayout.addMember(this.runningProcess);
+          this.toolBarLayout.hide();
+          this.view.hide();
+          this.processLayout.show();
+        }
       }
     }
   },
@@ -202,7 +213,9 @@ isc.OBStandardWindow.addProperties({
 
   // set window specific user settings, purposely set on class level
   setWindowSettings: function (data) {
-    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, alwaysReadOnly, st, stView, stBtns, stBtn, disabledFields, personalization;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field, button, st, stView, stBtns, stBtn, disabledFields, personalization, notAccessibleProcesses, alwaysReadOnly = function (view, record, context) {
+        return true;
+        };
 
     if (data) {
       this.getClass().autoSave = data.autoSave;
@@ -231,11 +244,37 @@ isc.OBStandardWindow.addProperties({
       this.views[i].toolBar.updateButtonState(true);
     }
 
+    // set as readonly not accessible processes
+    if (data && data.notAccessibleProcesses) {
+      for (t = 0; t < data.notAccessibleProcesses.length; t++) {
+        notAccessibleProcesses = data.notAccessibleProcesses[t];
+        view = this.getView(notAccessibleProcesses.tabId);
+        for (i = 0; i < view.toolBar.rightMembers.length; i++) {
+          button = view.toolBar.rightMembers[i];
+          if (notAccessibleProcesses.tabId === button.contextView.tabId && button.property && notAccessibleProcesses.processes.contains(button.property)) {
+            button.readOnlyIf = alwaysReadOnly;
+            // looking for this button in subtabs
+            for (st = 0; st < this.views.length; st++) {
+              stView = this.views[st];
+              if (stView === view) {
+                continue;
+              }
+              for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
+                stBtn = stView.toolBar.rightMembers[stBtns];
+                if (stBtn.contextView === button.contextView && stBtn.property && notAccessibleProcesses.processes.contains(stBtn.property)) {
+                  stBtn.readOnlyIf = alwaysReadOnly;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     // Field level permissions
     if (data && data.tabs) {
-      alwaysReadOnly = function (view, record, context) {
-        return true;
-      };
+
       for (t = 0; t < data.tabs.length; t++) {
         tab = data.tabs[t];
         view = this.getView(tab.tabId);

@@ -29,6 +29,12 @@ isc.OBViewGrid.addClassProperties({
   ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP
 });
 
+if (!isc.Browser.isIE) {
+  isc.OBViewGrid.addProperties({
+    enforceVClipping: true // To avoid apply in IE, since it moves the grid row content to the top of each cell (issue 17884)
+  });
+}
+
 // = OBViewGrid =
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
@@ -92,6 +98,7 @@ isc.OBViewGrid.addProperties({
   canAddSummaryFields: true,
   canGroupBy: false,
   selectionAppearance: 'checkbox',
+  arrowKeyAction: 'select',
   useAllDataSourceFields: false,
   editEvent: 'none',
   showCellContextMenus: true,
@@ -141,7 +148,6 @@ isc.OBViewGrid.addProperties({
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
 
-  enforceVClipping: true,
   fixedRecordHeights: true,
 
   validateByCell: true,
@@ -294,8 +300,8 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
-    this.filterNoRecordsEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLinkButtonItem">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
+    this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
 
     return ret;
   },
@@ -862,9 +868,9 @@ isc.OBViewGrid.addProperties({
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
-      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="OBLinkButtonItem">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
 
@@ -1318,11 +1324,11 @@ isc.OBViewGrid.addProperties({
       parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
       } else if (selectedValues.length === 0) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
       } else if (selectedValues.length > 1) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
       } else {
         this.emptyMessage = this.noDataEmptyMessage;
       }
@@ -1414,7 +1420,7 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function () {
           var fldName = field.name;
-          var dotIndex = fldName.indexOf('.');
+          var dotIndex = fldName.indexOf(OB.Constants.FIELDSEPARATOR);
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }

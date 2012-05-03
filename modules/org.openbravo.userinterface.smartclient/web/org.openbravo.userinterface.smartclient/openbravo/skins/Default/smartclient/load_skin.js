@@ -56,7 +56,7 @@ with (theWindow) {
 		groupBorderCSS: "1px solid #A7ABB4"
 	});
 
-    if(isc.Browser.isIE && isc.Browser.version >= 7) {
+    if(isc.Browser.isIE && isc.Browser.version >= 7 && !isc.Browser.isIE9) {
         isc.Canvas.setAllowExternalFilters(false);
         isc.Canvas.setNeverUseFilters(true);
         if(isc.Window) {
@@ -350,6 +350,7 @@ with (theWindow) {
 			edgeOffsetTop:2,
 			edgeOffsetRight:5,
 			edgeOffsetBottom:5,
+			minimizeHeight:29,
             showHeaderBackground:false, // part of edges
             showHeaderIcon:true,
 
@@ -572,6 +573,7 @@ with (theWindow) {
 	        checkmarkDisabledImage:{src:"[SKIN]check_disabled.png", width:7, height:6},
             bodyStyleName:"gridBody",
 			iconBodyStyleName:"menuMain",
+			iconBodyStyleName_rtl:"menuMainRTL",
             bodyBackgroundColor:null
         });
 		isc.addProperties(isc.Menu.ICON_FIELD, {
@@ -664,7 +666,9 @@ with (theWindow) {
 			headerMenuButtonConstructor:"HeaderImgButton",
             headerMenuButtonWidth:17,
             headerMenuButtonSrc:"[SKIN]/ListGrid/header_menu.png",
-            headerMenuButtonIcon:null,
+            headerMenuButtonIcon:"[SKINIMG]/ListGrid/sort_descending.png",
+            headerMenuButtonIconWidth: 9,
+            headerMenuButtonIconHeight: 6,
 
             groupLeadingIndent : 1,
             groupIconPadding : 3,            
@@ -961,7 +965,11 @@ with (theWindow) {
         });
         
         isc.EventWindow.changeDefaults("resizerDefaults", {
-            src:"[SKIN]/Window/resizer.png"
+            src:"[SKIN]/Window/v_resizer.png"
+        });
+        
+        isc.TimelineWindow.changeDefaults("resizerDefaults", {
+            src:"[SKIN]/Window/h_resizer.png"
         })
     }
 
@@ -970,7 +978,6 @@ with (theWindow) {
 // -------------------------------------------
     if(isc.ToolStrip) {
         isc.ToolStrip.addProperties({
-            width: 450,
             height:30,
             defaultLayoutAlign:"center",
 			verticalStyleName:"toolStripVertical"

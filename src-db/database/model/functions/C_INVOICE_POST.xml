@@ -59,6 +59,7 @@
   Cur_LastContact RECORD;
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
+  Cur_TaxMAct RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -1223,6 +1224,7 @@ BEGIN --BODY
       v_ActualBaseAmt NUMBER;
       v_FirstLine BOOLEAN;
       v_C_InvoiceTax_ID VARCHAR2(32);
+      
     BEGIN
       v_ResultStr:='DeleteOldTaxes';
       DELETE FROM C_INVOICELINETAX
@@ -1230,6 +1232,16 @@ BEGIN --BODY
       DELETE FROM C_INVOICETAX
       WHERE C_Invoice_ID=v_Record_ID
         AND Recalculate = 'Y';
+      -- Update line if recalculate='N'
+      FOR Cur_TaxMAct IN
+        ( SELECT C_INVOICETAX_ID FROM C_INVOICETAX
+          WHERE C_Invoice_ID=v_Record_ID
+          AND Recalculate = 'N'
+        )
+      LOOP
+        v_LineNo:=v_LineNo+10;
+        UPDATE C_INVOICETAX SET line=v_LineNo WHERE C_INVOICETAX_ID=Cur_TaxMAct.C_INVOICETAX_ID;   
+      END LOOP;
       -- For all Tax Rates
       v_ResultStr:='InsertNewTaxes';
       FOR Cur_Tax IN

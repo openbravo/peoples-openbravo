@@ -26,8 +26,7 @@
   font-size: 14px;
   font-family: 'lucida sans', sans-serif;
   font-weight: bold;
-  padding-left: 5px;
-  padding-top: 4px;
+  padding: 4px 0px 0px 5px;
   vertical-align: top;
 }
 
@@ -37,7 +36,7 @@
 .OBWidgetIconMinimizeOver,
 .OBWidgetIconMinimizeDown,
 .OBWidgetIconMinimizeDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -45,7 +44,7 @@
 .OBWidgetIconMaximizeOver,
 .OBWidgetIconMaximizeDown,
 .OBWidgetIconMaximizeDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -53,7 +52,7 @@
 .OBWidgetIconRestoreOver,
 .OBWidgetIconRestoreDown,
 .OBWidgetIconRestoreDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #91A777;
 }
 
@@ -61,7 +60,7 @@
 .OBWidgetIconCloseOver,
 .OBWidgetIconCloseDown,
 .OBWidgetIconCloseDisabled {
-  margin-right: 4px;
+  margin: 0px 4px 0px 0px;
   border: 1px solid #FA962F;
 }
 
@@ -108,7 +107,7 @@
   font-family: 'lucida sans', sans-serif; 
   font-size: 12px;
   color: #fff;
-  padding-left: 4px;
+  padding: 0px 0px 0px 4px;
 }
 
 .OBWidgetMenuCellTitleFieldOver {
@@ -181,70 +180,6 @@
 }
 
 
-/* Portal part*/
-
-.OBMyOBPortal {
-  padding-top: 12px;
-}
-
-/* Left Column*/
-
-.OBMyOBLeftColumn {
-  padding-top: 16px;
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
-.OBMyOBLeftColumnLink {
-  color: #000;
-  padding-top: 10px;
-  padding-left: 4px;
-  cursor: pointer;
-}
-
-.OBMyOBLeftColumnLink:hover {
-  text-decoration: underline;
-}
-
-/* RecentViews */
-.OBMyOBRecentViews { 
-  border-bottom: 2px solid #72AB10; 
-  padding: 10px 0px 0px 4px;
-  font-weight: bold;
-}
-
-.OBMyOBRecentViewsEntry {
-  cursor: pointer;
-  font-family: 'lucida sans', sans-serif; 
-  font-size: 12px;
-  padding: 4px;
-}
-
-.OBMyOBRecentViewsEntry:hover {
-  text-decoration: underline;
-}
-
-/* Left menu Dialogs */
-.OBMyOBDialog {
-  background-color: #E6F0DB;
-}
-
-.OBMyOBDialogHeader { 
-}
-
-.OBMyOBDialogHeaderText {
-  line-height: 0px;
-}
-
-.OBMyOBDialogBody {
-  margin-top: -10px;
-}
-
-/* Widget Parameters */
-.OBMyOBEditParametersLabel {
-  font-weight: bold;
-  padding-top: 10px;
-}
 
 /* Community branding widget */
 .OBWidgetCommunityBranding{

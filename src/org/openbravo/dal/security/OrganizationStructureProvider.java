@@ -127,10 +127,12 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public Set<String> getNaturalTree(String orgId) {
     initialize();
-    Set<String> result = naturalTreesByOrgID.get(orgId);
-    if (result == null) {
+    Set<String> result;
+    if (naturalTreesByOrgID.get(orgId) == null) {
       result = new HashSet<String>();
       result.add(orgId);
+    } else {
+      result = new HashSet<String>(naturalTreesByOrgID.get(orgId));
     }
     return result;
   }
@@ -266,7 +268,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     if (childByOrganizationID.get(orgId) == null) {
       reInitialize();
     }
-    return childByOrganizationID.get(orgId);
+    return new HashSet<String>(childByOrganizationID.get(orgId));
   }
 
   class OrgNode {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -284,7 +284,6 @@ public class ActivationKey {
     errorMessage = "";
     messageType = "Error";
     instanceProperties = null;
-    opsLog = false;
     hasExpired = false;
     subscriptionConvertedProperty = false;
     subscriptionActuallyConverted = false;
