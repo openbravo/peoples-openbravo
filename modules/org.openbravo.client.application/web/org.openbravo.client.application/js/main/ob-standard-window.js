@@ -125,7 +125,7 @@ isc.OBStandardWindow.addProperties({
         }
       } catch (e) {
         // handling possible exceptions in manual code not to lock the application
-        isc.warn(e);
+        isc.warn(e.message);
       }
     } else {
       if (params.windowId) {
