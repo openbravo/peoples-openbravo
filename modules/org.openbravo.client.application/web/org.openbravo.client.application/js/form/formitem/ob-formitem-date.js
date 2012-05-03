@@ -78,6 +78,9 @@ OB.DateItemProperties = {
     this.Super('init', arguments);
 
     if (this.textField) {
+      if (this.length) {
+        this.textField.length = this.length;
+      }
       this.textField.changed = function () {
         // when the textfield of the date is updated, the date
         // field should be flagged as changed
