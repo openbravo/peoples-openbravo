@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -47,6 +48,8 @@ import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.security.EntityAccessChecker;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -54,6 +57,7 @@ import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -66,6 +70,7 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
@@ -649,6 +654,171 @@ public class IssuesTest extends BaseTest {
     @SuppressWarnings("unchecked")
     java.util.List<Object[]> l = query.list();
 
+  }
+
+  /**
+   * Testing issue 20129. https://issues.openbravo.com/view.php?id=20129 Tests getChildOrg()
+   */
+  public void test20129A() {
+    setTestAdminContext();
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
+    final Set<String> childOrg = osp.getChildOrg(OBContext.getOBContext().getCurrentOrganization()
+        .getId());
+    childOrg.removeAll(childOrg);
+    final Set<String> childOrg2 = osp.getChildOrg(OBContext.getOBContext().getCurrentOrganization()
+        .getId());
+    assertFalse(childOrg2.isEmpty());
+  }
+
+  /**
+   * Tests getNaturalTree()
+   */
+  public void test20129B() {
+    setTestAdminContext();
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
+    final Set<String> naturalTree = osp.getNaturalTree(OBContext.getOBContext()
+        .getCurrentOrganization().getId());
+    naturalTree.removeAll(naturalTree);
+    final Set<String> naturalTree2 = osp.getNaturalTree(OBContext.getOBContext()
+        .getCurrentOrganization().getId());
+    assertFalse(naturalTree2.isEmpty());
+  }
+
+  /**
+   * Tests getReadableOrganizations()
+   */
+  public void test20129C() {
+    setTestAdminContext();
+    String[] readableOrganizations = OBContext.getOBContext().getReadableOrganizations();
+    readableOrganizations[0] = "Test";
+    String[] readableOrganizations2 = OBContext.getOBContext().getReadableOrganizations();
+    assertFalse("Test".equals(readableOrganizations2[0]));
+  }
+
+  /**
+   * Tests getReadableClients()
+   */
+  public void test20129D() {
+    setTestAdminContext();
+    String[] readableClients = OBContext.getOBContext().getReadableClients();
+    readableClients[0] = "Test";
+    String[] readableClients2 = OBContext.getOBContext().getReadableClients();
+    assertFalse("Test".equals(readableClients2[0]));
+  }
+
+  /**
+   * Tests getCurrentClient()
+   */
+  public void test20129E() {
+    setTestAdminContext();
+    Client currentClient = OBContext.getOBContext().getCurrentClient();
+    currentClient.setDescription("Test description");
+    Client currentClient2 = OBContext.getOBContext().getCurrentClient();
+    assertFalse("Test description".equals(currentClient2.getDescription()));
+  }
+
+  /**
+   * Tests currentOrganization()
+   */
+  public void test20129F() {
+    setTestAdminContext();
+    Organization currentOrganization = OBContext.getOBContext().getCurrentOrganization();
+    currentOrganization.setDescription("Test description");
+    Organization currentOrganization2 = OBContext.getOBContext().getCurrentOrganization();
+    assertFalse("Test description".equals(currentOrganization2.getDescription()));
+  }
+
+  /**
+   * Tests getRole()
+   */
+  public void test20129G() {
+    setTestAdminContext();
+    Role role = OBContext.getOBContext().getRole();
+    role.setDescription("Test description");
+    Role role2 = OBContext.getOBContext().getRole();
+    assertFalse("Test description".equals(role2.getDescription()));
+  }
+
+  /**
+   * Tests getUser()
+   */
+  public void test20129H() {
+    setTestAdminContext();
+    User user = OBContext.getOBContext().getUser();
+    user.setDescription("Test description");
+    User user2 = OBContext.getOBContext().getUser();
+    assertFalse("Test description".equals(user2.getDescription()));
+  }
+
+  /**
+   * Tests getUser()
+   */
+  public void test20129I() {
+    setTestAdminContext();
+    Language language = OBContext.getOBContext().getLanguage();
+    language.setName("Test");
+    Language language2 = OBContext.getOBContext().getLanguage();
+    assertFalse("Test".equals(language2.getName()));
+  }
+
+  /**
+   * Tests getWarehouse()
+   */
+  public void test20129J() {
+    setTestUserContext();
+    Warehouse warehouse = OBContext.getOBContext().getWarehouse();
+    warehouse.setDescription("Test description");
+    Warehouse warehouse2 = OBContext.getOBContext().getWarehouse();
+    assertFalse("Test description".equals(warehouse2.getDescription()));
+  }
+
+  /**
+   * Tests getWritableOrganizations()
+   */
+  public void test20129K() {
+    setTestAdminContext();
+    Set<String> writableOrganizations = OBContext.getOBContext().getWritableOrganizations();
+    writableOrganizations.removeAll(writableOrganizations);
+    Set<String> writableOrganizations2 = OBContext.getOBContext().getWritableOrganizations();
+    assertFalse(writableOrganizations2.isEmpty());
+  }
+
+  /**
+   * Tests getOrganizationStructureProvider()
+   */
+  public void test20129L() {
+    setTestAdminContext();
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        clientId);
+    osp.setClientId("Test");
+    OrganizationStructureProvider osp2 = OBContext.getOBContext().getOrganizationStructureProvider(
+        clientId);
+    assertFalse("Test".equals(osp2.getClientId()));
+  }
+
+  /**
+   * Tests getEntityAccessChecker()
+   */
+  public void test20129M() {
+    setTestAdminContext();
+    EntityAccessChecker eac = OBContext.getOBContext().getEntityAccessChecker();
+    eac.setRoleId("Test");
+    EntityAccessChecker eac2 = OBContext.getOBContext().getEntityAccessChecker();
+    assertFalse("Test".equals(eac2.getRoleId()));
+  }
+
+  public void testNewAlertRule() {
+    final AlertRule alertRule = OBProvider.getInstance().get(AlertRule.class);
+    Client currentClient = OBContext.getOBContext().getCurrentClient();
+    alertRule.setClient(currentClient);
+    alertRule.setName("Test Alert Rule");
+    alertRule.setActive(true);
+    OBDal.getInstance().save(alertRule);
   }
 
 }
