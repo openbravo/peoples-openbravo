@@ -42,9 +42,11 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.model.common.plm.Product;
@@ -253,11 +255,12 @@ public class CostingMigrationProcess implements Process {
     List<Client> clients = getClients();
     for (Client client : clients) {
       List<Organization> legalEntities = getLegalEntitiesOfClient(client);
+      Currency clientCurrency = client.getCurrency();
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(client.getId());
       for (Organization org : legalEntities) {
         CostingRule rule = createCostingRule(org);
-        processRule(rule, osp);
+        processRule(rule, osp, clientCurrency);
       }
     }
   }
@@ -294,8 +297,11 @@ public class CostingMigrationProcess implements Process {
     return rule;
   }
 
-  private void processRule(CostingRule rule, OrganizationStructureProvider osp) {
+  private void processRule(CostingRule rule, OrganizationStructureProvider osp,
+      Currency clientCurrency) {
     final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+    Currency orgCurrency = rule.getOrganization().getCurrency() != null ? rule.getOrganization()
+        .getCurrency() : clientCurrency;
     CostingRuleProcess crp = new CostingRuleProcess();
     crp.createCostingRuleInits(rule, childOrgs);
 
@@ -316,6 +322,10 @@ public class CostingMigrationProcess implements Process {
         trx.setCostCalculated(true);
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+        if (!clientCurrency.getId().equals(orgCurrency.getId())) {
+          cost = FinancialUtils.getConvertedAmount(cost, clientCurrency, orgCurrency, startingDate,
+              rule.getOrganization(), FinancialUtils.PRECISION_COSTING);
+        }
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);
       }
