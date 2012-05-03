@@ -119,9 +119,13 @@ isc.OBStandardWindow.addProperties({
         vStack, manualJS;
 
     if (params.uiPattern === 'M') { // Manual UI Pattern
-      manualJS = eval(params.actionHandler);
-      if (isc.isA.Function(manualJS)) {
-        manualJS(params, this);
+      try {
+        if (isc.isA.Function(params.actionHandler)) {
+          params.actionHandler(params, this);
+        }
+      } catch (e) {
+        // handling possible exceptions in manual code not to lock the application
+        isc.warn(e);
       }
     } else {
       if (params.windowId) {

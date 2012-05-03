@@ -64,7 +64,7 @@
       {id: '${field.id?js_string}', 
        title: '${field.label?js_string}',
        obManualURL: '${field.url?js_string}',
-       command: '${field.command?js_string}',
+       command: <#if field.newDefinition && field.uiPattern == 'M'>${field.command}<#else>'${field.command?js_string}'</#if>,
        property: '${field.propertyName?js_string}',
        processId: '${field.processId?js_string}',
        <#if field.newDefinition>newDefinition: ${field.newDefinition?string},
