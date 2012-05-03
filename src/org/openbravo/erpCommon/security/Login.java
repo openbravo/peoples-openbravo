@@ -58,19 +58,19 @@ public class Login extends HttpBaseServlet {
       OBContext.setAdminMode();
       try {
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
+        final String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
             .getLanguage().getLanguage());
-        String validBrowserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
-            .getLanguage().getLanguage());
-        String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
-            .getLanguage());
-        String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE",
+        final String validBrowserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED",
             systemClient.getLanguage().getLanguage());
-        String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT", systemClient
+        final String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient
             .getLanguage().getLanguage());
-        String identificationFailureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE",
+        final String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE",
             systemClient.getLanguage().getLanguage());
-        String emptyUsernameOrPasswordText = Utility.messageBD(this,
+        final String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT",
+            systemClient.getLanguage().getLanguage());
+        final String identificationFailureTitle = Utility.messageBD(this,
+            "IDENTIFICATION_FAILURE_TITLE", systemClient.getLanguage().getLanguage());
+        final String emptyUsernameOrPasswordText = Utility.messageBD(this,
             "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemClient.getLanguage().getLanguage());
 
         if (OBVersion.getInstance().is30()) {
@@ -212,20 +212,12 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("theme", strTheme);
     xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
 
-    String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
-        : "Your browser's cache has outdated files. Please clean it and reload the page.";
-    cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
+    String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
 
-    String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
-        : "or higher";
-
-    String validBrowserMsgFinal = (validBrowserMsg != null && !validBrowserMsg.equals("")) ? validBrowserMsg
-        : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
-
-    validBrowserMsgFinal = validBrowserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
-        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
-    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsgFinal + "\"";
+    String validBrowserMsgFinal = validBrowserMsg + "\\n * Mozilla Firefox 3.0 " + orHigherMsg
+        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsg;
+    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
     xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
 
     response.setContentType("text/html; charset=UTF-8");
@@ -293,44 +285,26 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("itServiceUrl",
         "var itServiceUrl = '" + SessionLoginData.selectSupportContact(this) + "'");
 
-    String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
-        : "Your browser's cache has outdated files. Please clean it and reload the page.";
-    cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
+    String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
 
-    String identificationFailureFinal = (identificationFailureTitle != null && !identificationFailureTitle
-        .equals("")) ? identificationFailureTitle : "Invalid user name or password.";
-    identificationFailureFinal = "var identificationFailureTitle = \"" + identificationFailureFinal
-        + "\"";
+    String identificationFailureFinal = "var identificationFailureTitle = \""
+        + identificationFailureTitle + "\"";
     xmlDocument.setParameter("identificationFailureTitle",
         identificationFailureFinal.replaceAll("\\n", "\n"));
 
-    String emptyUserNameOrPasswordFinal = (emptyUsernameOrPasswordText != null && !emptyUsernameOrPasswordText
-        .equals("")) ? emptyUsernameOrPasswordText : "Enter your username and password.";
-    emptyUserNameOrPasswordFinal = "var errorEmptyContent = \"" + emptyUserNameOrPasswordFinal
-        + "\"";
+    String emptyUserNameOrPasswordFinal = "var errorEmptyContent = \""
+        + emptyUsernameOrPasswordText + "\"";
     xmlDocument.setParameter("errorEmptyContent",
         emptyUserNameOrPasswordFinal.replaceAll("\\n", "\n"));
 
-    String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
-        : "or higher";
-
-    String validBrowserMsgFinal = (validBrowserMsg != null && !validBrowserMsg.equals("")) ? validBrowserMsg
-        : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
-
-    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsgFinal + "\"";
-    orHigherMsgFinal = "var validBrowserMsgOrHigher = \"" + orHigherMsgFinal + "\"";
+    String validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
+    String orHigherMsgFinal = "var validBrowserMsgOrHigher = \"" + orHigherMsg + "\"";
     xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
     xmlDocument.setParameter("validBrowserMsgOrHigher", orHigherMsgFinal.replaceAll("\\n", "\n"));
 
-    String recBrowserMsgTitleFinal = (recBrowserMsgTitle != null && !recBrowserMsgTitle.equals("")) ? recBrowserMsgTitle
-        : "NOTE";
-
-    String recBrowserMsgTextFinal = (recBrowserMsgText != null && !recBrowserMsgText.equals("")) ? recBrowserMsgText
-        : "For a better experience, it is recommended to use XX or YY";
-
-    recBrowserMsgTitleFinal = "var recBrowserMsgTitle = \"" + recBrowserMsgTitleFinal + "\"";
-    recBrowserMsgTextFinal = "var recBrowserMsgText = \"" + recBrowserMsgTextFinal + "\"";
+    String recBrowserMsgTitleFinal = "var recBrowserMsgTitle = \"" + recBrowserMsgTitle + "\"";
+    String recBrowserMsgTextFinal = "var recBrowserMsgText = \"" + recBrowserMsgText + "\"";
     xmlDocument.setParameter("recBrowserMsgTitle", recBrowserMsgTitleFinal.replaceAll("\\n", "\n"));
     xmlDocument.setParameter("recBrowserMsgText", recBrowserMsgTextFinal.replaceAll("\\n", "\n"));
 
