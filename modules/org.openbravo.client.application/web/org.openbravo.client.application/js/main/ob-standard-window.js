@@ -116,7 +116,7 @@ isc.OBStandardWindow.addProperties({
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack, manualJS;
+        vStack, manualJS, originalClassName, processClass;
 
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
@@ -131,13 +131,18 @@ isc.OBStandardWindow.addProperties({
       if (params.windowId) {
         className = className + params.windowId;
         if (len === 3) {
+          // keep original classname in case one with timestamp is not present
+          originalClassName = className;
+
           // debug mode, we have added _timestamp
           className = className + '_' + parts[2];
         }
 
-        if (isc[className]) {
+        processClass = isc[className] || isc[originalClassName];
+
+        if (processClass) {
           this.selectedState = this.activeView && this.activeView.viewGrid && this.activeView.viewGrid.getSelectedState();
-          this.runningProcess = isc[className].create(isc.addProperties({}, params, {
+          this.runningProcess = processClass.create(isc.addProperties({}, params, {
             parentWindow: this
           }));
 
@@ -145,6 +150,10 @@ isc.OBStandardWindow.addProperties({
           this.toolBarLayout.hide();
           this.view.hide();
           this.processLayout.show();
+        } else {
+          if (window.console) {
+            window.console.error('Cannot find class for process in window ' + params.windowId);
+          }
         }
       }
     }
