@@ -20,7 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -124,8 +123,6 @@ public class CostingRuleProcess implements Process {
           OBDal.getInstance().flush();
           new InventoryCountProcess().processInventory(cri.getInitInventory());
         }
-      } else {
-        rule.setStartingDate(new SimpleDateFormat("dd-MM-yyyy").parse("01-01-1900"));
       }
 
       rule.setValidated(true);
