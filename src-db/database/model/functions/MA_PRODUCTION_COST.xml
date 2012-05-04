@@ -80,7 +80,8 @@ BEGIN
         JOIN m_transaction trx ON pl.m_productionline_id = trx.m_productionline_id
     WHERE p.m_production_id = p_production_id
       AND pl.productiontype = '-'
-      AND pr.calculate_cost = 'Y'
+      AND pr.producttype = 'I'
+      AND pr.isstocked = 'Y'
       AND pr.ispurchased = 'Y'
       AND trx.iscostcalculated = 'N'
       AND EXISTS (SELECT 1 FROM m_costing_rule cr
@@ -216,7 +217,8 @@ BEGIN
         --Second sum of raw materials that had not been added previously as WIP
         v_ResultStr := 'Raw Material cost';
         FOR Cur_RawMaterial IN (SELECT m_get_transaction_cost(trx.m_transaction_id, trx.trxprocessdate) AS cost,
-                                    ppl.M_PRODUCTIONLINE_ID, p.calculate_cost
+                                    ppl.M_PRODUCTIONLINE_ID,
+                                    CASE WHEN p.producttype = 'I' AND p.isstocked = 'Y' THEN 'Y' ELSE 'N' END AS calculate_cost
                                 FROM M_PRODUCTIONLINE ppl
                                     JOIN m_transaction trx ON ppl.m_productionline_id = trx.m_productionline_id
                                     JOIN m_product p ON ppl.m_product_id = p.m_product_id

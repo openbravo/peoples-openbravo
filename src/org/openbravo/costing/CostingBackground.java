@@ -61,7 +61,8 @@ public class CostingBackground extends DalBaseProcess {
         MaterialTransaction.class);
     obcTrx.createAlias(MaterialTransaction.PROPERTY_PRODUCT, "pr");
     obcTrx.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISCOSTCALCULATED, false));
-    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_CALCULATECOST, true));
+    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_STOCKED, true));
+    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_PRODUCTTYPE, "I"));
     obcTrx.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     List<MaterialTransaction> trxs = obcTrx.list();
     int counter = 0, total = trxs.size();

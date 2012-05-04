@@ -40,7 +40,8 @@ BEGIN
       JOIN m_product p ON trx.m_product_id = p.m_product_id
   WHERE cr.isvalidated = 'Y'
     AND cr.datefrom <= trx.trxprocessdate
-    AND p.calculate_cost = 'Y';
+    AND p.producttype = 'I'
+    AND p.isstocked = 'Y';
 
   IF (v_hasrule = 'Y') THEN
     IF (v_hascost = 'Y') THEN

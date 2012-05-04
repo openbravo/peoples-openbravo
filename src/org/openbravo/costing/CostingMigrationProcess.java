@@ -125,24 +125,16 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void prepareInstance() {
-    // update products with costtype = 'AV' to calculate_cost = true
-    StringBuffer update = new StringBuffer();
-    update.append("update " + Product.ENTITY_NAME);
-    update.append(" set " + Product.PROPERTY_CALCULATECOST + " = true");
-    update.append(" where " + Product.PROPERTY_COSTTYPE + " is not null");
-    update.append("   and " + Product.PROPERTY_COSTTYPE + " <> 'ST'");
-    Query updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
-    updateProduct.executeUpdate();
-
     // Update old transactions to calculated = true.
-    update = new StringBuffer();
+    StringBuffer update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     update.append(" where " + MaterialTransaction.PROPERTY_PRODUCT + " in (");
     update.append("   select p from " + Product.ENTITY_NAME + " as p");
-    update.append("   where p." + Product.PROPERTY_CALCULATECOST + " = true");
+    update.append("   where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    update.append("     and p." + Product.PROPERTY_STOCKED + " = true");
     update.append(" )");
-    updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
+    Query updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
     updateProduct.executeUpdate();
 
     OBDal.getInstance().registerSQLFunction("get_uuid",

@@ -281,10 +281,6 @@
         <default/>
         <onCreateDefault><![CDATA[CASE WHEN M_ATTRIBUTESETINSTANCE_ID IS NOT NULL THEN 'D' ELSE NULL END]]></onCreateDefault>
       </column>
-      <column name="CALCULATE_COST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[CASE WHEN COSTTYPE IS NULL THEN 'N' ELSE 'Y' END]]></onCreateDefault>
-      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -359,7 +355,6 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NULL) OR (ATTRSETVALUETYPE IS NOT NULL)]]></check>
-      <check name="M_PRODUCT_CALCULATE_COST_CHK"><![CDATA[CALCULATE_COST IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

@@ -195,7 +195,8 @@ public class CostingRuleProcess implements Process {
   private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
     StringBuffer where = new StringBuffer();
     where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
+    where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
     where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
     where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p)");
@@ -211,7 +212,8 @@ public class CostingRuleProcess implements Process {
   private void checkAllTrxCalculated(Set<String> naturalOrgs, Set<String> childOrgs) {
     StringBuffer where = new StringBuffer();
     where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
+    where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("  and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("  and p." + Product.PROPERTY_ORGANIZATION + ".id in :porgs");
     where.append("  and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx ");
     where.append("   where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = p");
@@ -230,7 +232,8 @@ public class CostingRuleProcess implements Process {
   private void checkNoTrxWithCostCalculated(Set<String> naturalOrgs, Set<String> childOrgs) {
     StringBuffer where = new StringBuffer();
     where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_CALCULATECOST + " = true");
+    where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("  and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("  and p." + Product.PROPERTY_ORGANIZATION + ".id in :porgs");
     where.append("  and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx ");
     where.append("   where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = p");
@@ -272,7 +275,8 @@ public class CostingRuleProcess implements Process {
     select.append("\n where sd." + StorageDetail.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " <> 0");
     select.append("        or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " <> 0)");
-    select.append("   and p." + Product.PROPERTY_CALCULATECOST + " = true");
+    select.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    select.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     Query querySelect = OBDal.getInstance().getSession().createQuery(select.toString());
     querySelect.setParameterList("orgs", orgs);
     return querySelect.list();
@@ -380,7 +384,8 @@ public class CostingRuleProcess implements Process {
     insert.append("   and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
     insert.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " <> 0");
     insert.append("    or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " <> 0)");
-    insert.append("   and p." + Product.PROPERTY_CALCULATECOST + " = true");
+    insert.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    insert.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     insert.append("   and inv.id = :inv");
     insert.append("   and u.id = :user");
     insert.append("\n order by p." + Product.PROPERTY_NAME);
