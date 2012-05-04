@@ -70,8 +70,8 @@
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Check existence of Costing Rules
-    SELECT count(*) INTO v_count
-    FROM m_costing_rule;
+    SELECT count(1) INTO v_count
+    FROM DUAL WHERE EXISTS (SELECT 1 FROM m_costing_rule);
     IF (v_count > 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CostingEngineMigrationDone@');
     END IF;

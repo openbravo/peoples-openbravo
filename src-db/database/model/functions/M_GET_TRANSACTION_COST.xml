@@ -39,7 +39,7 @@ BEGIN
                                 AND trx.m_transaction_id = p_transaction_id
       JOIN m_product p ON trx.m_product_id = p.m_product_id
   WHERE cr.isvalidated = 'Y'
-    AND cr.datefrom <= trx.trxprocessdate
+    AND COALESCE(cr.datefrom, trx.trxprocessdate) <= trx.trxprocessdate
     AND p.producttype = 'I'
     AND p.isstocked = 'Y';
 

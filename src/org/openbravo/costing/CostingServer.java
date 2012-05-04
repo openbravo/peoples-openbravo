@@ -132,10 +132,12 @@ public class CostingServer {
   private CostingRule getCostDimensionRule() {
     StringBuffer where = new StringBuffer();
     where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
-    where.append(" and " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate");
+    where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
+    where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
     where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
     where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
-    where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+    where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
+        + " is null then 0 else 1 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
     crQry.setFilterOnReadableOrganization(false);
