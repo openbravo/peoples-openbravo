@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -380,5 +382,26 @@ public class TransactionsDao {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  public static BigDecimal getCurrentlyClearedAmt(String strAccountId) {
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append("select sum(ft.depositAmount) - sum(ft.paymentAmount)");
+    hqlString.append(" from FIN_Finacc_Transaction as ft");
+    hqlString.append(" left outer join ft.reconciliation as rec");
+    hqlString.append(" where ft.account.id = '" + strAccountId + "'");
+    hqlString.append(" and rec.processed = 'N'");
+    hqlString.append(" and ft.processed = 'Y'");
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hqlString.toString());
+
+    for (Object resultObject : query.list()) {
+      if (resultObject != null && resultObject.getClass().isInstance(BigDecimal.ONE)) {
+        return (BigDecimal) resultObject;
+      }
+    }
+
+    return BigDecimal.ZERO;
   }
 }
