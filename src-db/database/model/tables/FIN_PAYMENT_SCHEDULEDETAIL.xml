@@ -120,6 +120,9 @@
       <index name="FIN_PAY_SCHEDULEDETAIL_OR" unique="false">
         <index-column name="FIN_PAYMENT_SCHEDULE_ORDER"/>
       </index>
+      <index name="FIN_PYMT_SCHDET_DET_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_DETAIL_ID"/>
+      </index>
       <check name="FIN_PAY_SCHE_DETAIL_ISCANC_CHK"><![CDATA[ISCANCELED IN ('Y', 'N')]]></check>
     </table>
   </database>

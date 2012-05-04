@@ -78,6 +78,9 @@
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_C_BP_VENDOR_ACCT" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <index name="C_BP_VND_ACC_BP_IDX" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
       <unique name="C_BP_VENDOR_ACCT_ACCTSCHEMA_UN">
         <unique-column name="C_ACCTSCHEMA_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
