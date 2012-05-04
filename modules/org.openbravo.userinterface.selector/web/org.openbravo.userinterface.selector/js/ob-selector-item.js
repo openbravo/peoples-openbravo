@@ -539,7 +539,7 @@ isc.OBSelectorItem.addProperties({
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
             if (item && item.valueMap) {
-              item.valueMap[value] = record[outFields[i].fieldName +  OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+              item.valueMap[value] = record[outFields[i].fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
             }
           } else {
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;

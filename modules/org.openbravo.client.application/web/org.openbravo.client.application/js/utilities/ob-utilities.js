@@ -913,11 +913,11 @@ OB.Utilities.getValue = function (object, property) {
  * which complies with the OB UUID format (that is, its a
  * hexadecimal number of length 32)
  */
-OB.Utilities.isUUID = function(object) {
-  if(typeof object !=='string'){
+OB.Utilities.isUUID = function (object) {
+  if (typeof object !== 'string') {
     return false;
   }
-  if(object.length!==32){
+  if (object.length !== 32) {
     return false;
   }
   return (/[A-Fa-f0-9]{32,32}/).test(object);
