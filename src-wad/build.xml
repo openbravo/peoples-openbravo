@@ -81,19 +81,10 @@ doc: generates the api for the project.
     </javac>
   </target>
 
-  <path id="my-src-wad-dirs">
-    <pathelement path="src" />
-    <dirset dir="../modules">
-      <include name="*/src-wad/*" />
-    </dirset>
-  </path>
-
   <target name="compile" depends="compileSqlc">
-    <javac destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
-      <src refid="my-src-wad-dirs" />
+    <javac srcdir="${main.dir}" includes="src-wad/src/**/*.java,modules/*/src-wad/**/*.java" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
       <classpath refid="wad.class.path" />
     </javac>
-
     <copy todir="${build.wad}" encoding="UTF-8">
       <fileset dir="${build.wad.src}" includes="**/*xml" />
       <fileset dir="${build.wad.src}" includes="**/*html" />

@@ -327,21 +327,8 @@ build.war: build a war file in the lib directory.
 	<jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" export="${export}" />
   </target>
   
-  <path id="my-src-dirs">
-   <pathelement path="${basedir}" />
-   <pathelement path="${build.sqlc}/src" />
-   <pathelement path="${build.sqlc}/srcAD" />
-   <pathelement path="${base.src.test}" />
-   <dirset dir="${base.modules}">
-     <include name="*/*" />
-     <exclude name="*/src-util" />
-     <exclude name="*/src-wad" />
-   </dirset>
-  </path>
-  
   <target name="compileSqlc" depends="sqlc">
-    <javac excludes="*/src-wad/**,*/src-util/**,**/org/openbravo/erpWindows/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
-      <src refid="my-src-dirs"/>
+    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="*/src-wad/**,*/src-util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
       <classpath refid="project.class.path" />
     </javac>
 
