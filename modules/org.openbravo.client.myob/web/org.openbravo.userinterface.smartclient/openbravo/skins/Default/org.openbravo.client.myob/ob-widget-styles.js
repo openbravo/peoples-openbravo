@@ -50,6 +50,8 @@ isc.OBWidgetMenuItem.addProperties({
 
 isc.OBWidget.addProperties({
   headerStyle: 'OBWidgetHeader',
+  bodyStyle: 'OBWidgetBody',
+  bodyColor: "transparent",
   showEdges: true,
   edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/widget/window.png',
   customEdges: null,
@@ -68,8 +70,6 @@ isc.OBWidget.addProperties({
   backgroundColor: null,
   border: null,
   edgeCenterBackgroundColor: "#FFFFFF",
-  bodyColor: "transparent",
-  bodyStyle: "windowBody",
 
   layoutMargin: 0,
   membersMargin: 0,
