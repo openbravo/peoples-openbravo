@@ -47,13 +47,26 @@ public class JSONRowConverter {
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
   private String[] fields;
+  private DataResolvingMode mode;
+
+  public JSONRowConverter(String[] fields, DataResolvingMode mode) {
+    this.fields = fields;
+    this.mode = mode;
+  }
 
   public JSONRowConverter(String[] fields) {
     this.fields = fields;
+    this.mode = DataResolvingMode.FULL;
+  }
+
+  public JSONRowConverter(DataResolvingMode mode) {
+    this.fields = new String[0];
+    this.mode = mode;
   }
 
   public JSONRowConverter() {
     this.fields = new String[0];
+    this.mode = DataResolvingMode.FULL;
   }
 
   public Object convert(Object obj) throws JSONException {
@@ -63,7 +76,7 @@ public class JSONRowConverter {
   private Object convert(String[] fi, Object obj) throws JSONException {
 
     if (obj instanceof BaseOBObject) {
-      return toJsonConverter.toJsonObject((BaseOBObject) obj, DataResolvingMode.FULL);
+      return toJsonConverter.toJsonObject((BaseOBObject) obj, mode);
     } else if (obj instanceof Object[]) {
       if (fi == null) {
         JSONArray row = new JSONArray();
