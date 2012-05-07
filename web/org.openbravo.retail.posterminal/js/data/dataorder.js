@@ -1,6 +1,6 @@
 /*global define,_*/
 
-define(['utilities', 'utilities', 'datasource'], function () {
+define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
   
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
@@ -13,13 +13,11 @@ define(['utilities', 'utilities', 'datasource'], function () {
     
     this.receipt.on('closed', function () {
       
-      
+      var docno = this.receipt.get('documentNo');
       this.proc.exec({
         order: this.receipt.toJSON()
       }, function (data, message) {
-        if (message) {
-          OB.UTIL.showSuccess(message);
-        }
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
 //        console.log(JSON.stringify(data));
 //        console.log(JSON.stringify(message));
       });

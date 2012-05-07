@@ -23,10 +23,9 @@ define(['builder', 'i18n',
           {kind: OB.DATA.BPs},
           {kind: OB.DATA.ProductPrice},
           {kind: OB.DATA.Category},      
-          {kind: OB.DATA.Order}          
-        ]},
-        
-        {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}},     
+          {kind: OB.DATA.Order},
+          {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
+        ]},       
         
         {kind: B.KindJQuery('div'), attr: {'id': 'modalcustomer', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [

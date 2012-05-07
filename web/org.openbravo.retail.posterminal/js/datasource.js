@@ -317,51 +317,33 @@ define(['i18n'], function () {
     this.url = url;
   };
 
-  OB.DS.HWServer.prototype.print = function (template, params, callback) {
+  OB.DS.HWServer.prototype.print = function (templatedata, params, callback) {
     if (this.url) {
       var me = this;
-      $.ajax({
-        url: template,
-        dataType: 'text',
-        type: 'GET',
-        success: function (templatedata, textStatus, jqXHR) {
-
-          $.ajax({
-            timeout: 5000,
-            url: me.url,
-            contentType: 'application/json;charset=utf-8',
-            dataType: 'jsonp',
-            type: 'GET',
-            data: {
-              content: params ? _.template(templatedata, params) : templatedata
-            },
-            success: function (data, textStatus, jqXHR) {
-              if (callback) {
-                callback(data);
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              if (callback) {
-                callback({
-                  exception: {
-                    message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
-                  }
-                });
-              }
+        $.ajax({
+          timeout: 5000,
+          url: me.url,
+          contentType: 'application/json;charset=utf-8',
+          dataType: 'jsonp',
+          type: 'GET',
+          data: {
+            content: params ? _.template(templatedata, params) : templatedata
+          },
+          success: function (data, textStatus, jqXHR) {
+            if (callback) {
+              callback(data);
             }
-          });
-
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          if (callback) {
-            callback({
-              exception: {
-                message: (OB.I18N.getLabel('OBPOS_MsgTemplateNotAvailable'))
-              }
-            });
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            if (callback) {
+              callback({
+                exception: {
+                  message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+                }
+              });
+            }
           }
-        }
-      });
+        });
     } else {
       if (callback) {
         callback({

@@ -36,18 +36,6 @@ define(['utilities', 'datasource'], function () {
   };
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);
 
-//  OB.DATA.PriceList = function (context, id) {
-//    this._id = 'DataPriceList';
-//    this.context = context;    
-//    this.ds = new OB.DS.DataSource(new OB.DS.Query(
-//      'select ppl as pricelist, plv as pricelistversion ' +
-//      'from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
-//      'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
-//      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id)'));
-//    this.loadparams = {'org': OB.POS.modelterminal.get('terminal').organization };
-//  };
-//  _.extend(OB.DATA.PriceList.prototype, OB.DATA.Base);
-
   OB.DATA.ProductPrice = function (context, id) {
     this._id = 'DataProductPrice';
     this.context = context;

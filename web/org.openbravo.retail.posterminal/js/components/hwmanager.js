@@ -1,4 +1,4 @@
-/*global define */
+/*global define, */
 
 define(['utilities', 'utilitiesui', 'model/order', 'model/terminal'], function () {
   
@@ -31,16 +31,28 @@ define(['utilities', 'utilitiesui', 'model/order', 'model/terminal'], function (
   
   OB.COMP.HWManager.prototype.printLine = function () {
     if (this.line) {
-      OB.POS.hwserver.print(this.templateline, {line: this.line}, hwcallback);
+      OB.POS.hwserver.print(this.templatelinedata, {line: this.line}, hwcallback);
     }   
   };
   
   OB.COMP.HWManager.prototype.printOrder = function () {
-    OB.POS.hwserver.print(this.templatereceipt, { order: this.receipt}, hwcallback);    
+    OB.POS.hwserver.print(this.templatereceiptdata, { order: this.receipt}, hwcallback);    
   };
   
   OB.COMP.HWManager.prototype.attr = function (attrs) {    
     this.templateline = attrs.templateline;
     this.templatereceipt = attrs.templatereceipt;
+  };
+  
+  OB.COMP.HWManager.prototype.load = function () { 
+    OB.UTIL.loadResource(this.templateline, function(data) {
+      this.templatelinedata = data;
+    }, this);
+    OB.UTIL.loadResource(this.templatereceipt, function(data) {
+      this.templatereceiptdata = data;
+    }, this);
+    OB.UTIL.loadResource('res/welcome.xml', function(data) {
+      OB.POS.hwserver.print(data, {}, hwcallback);
+    }, this);      
   };
 });

@@ -50,11 +50,6 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl);
-    OB.POS.hwserver.print('res/welcome.xml', {}, function (e) {
-      if (e.exception) {
-        OB.UTIL.showError(e.exception.message);
-      }   
-    });
     
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  

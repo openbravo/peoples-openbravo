@@ -1,4 +1,4 @@
-/*global define,$ */
+/*global define, $, _ */
 
 define([], function () {
   
@@ -27,6 +27,20 @@ define([], function () {
   
   OB.UTIL.encodeXMLComponent = function (s, title, type) {
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('\'', '&apos;').replace('\"', '&quot;');
+  };
+  
+  OB.UTIL.loadResource = function (res, callback, context) {
+   $.ajax({
+        url: res,
+        dataType: 'text',
+        type: 'GET',
+        success: function (data, textStatus, jqXHR) {
+          callback.call(context || this, data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          callback.call(context || this);
+        }
+    });
   };
   
 });

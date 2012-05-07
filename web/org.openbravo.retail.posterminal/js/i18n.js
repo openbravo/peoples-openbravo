@@ -31,6 +31,8 @@ define(['utilities'], function () {
     'OBPOS_LblError': 'ERROR!',
     'OBPOS_LblWarning': 'WARNING!',
     
+    'OBPOS_MsgReceiptSaved': 'Receipt no: %0 has been closed successfully.',
+    
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
     'OBPOS_LineQuantity': 'Quantity',
