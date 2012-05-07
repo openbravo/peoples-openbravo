@@ -22,16 +22,15 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       var pricelistname = '';
       var currencyname = '';
       var locationname = '';
-      var fs = '$'; // we should use OB.Constants.FIELDSEPARATOR
       
       if (this.terminal.get('terminal')) {
         name = this.terminal.get('terminal')._identifier;
-        clientname = this.terminal.get('terminal')['client' + fs + '_identifier'];
-        orgname = this.terminal.get('terminal')['organization' + fs + '_identifier'];
+        clientname = this.terminal.get('terminal')['client' + OB.Constants.FIELDSEPARATOR + '_identifier'];
+        orgname = this.terminal.get('terminal')['organization' + OB.Constants.FIELDSEPARATOR + '_identifier'];
       }      
       if (this.terminal.get('pricelist')) {
         pricelistname = this.terminal.get('pricelist')._identifier;
-        currencyname = this.terminal.get('pricelist')['currency' + fs + '_identifier'];
+        currencyname = this.terminal.get('pricelist')['currency' + OB.Constants.FIELDSEPARATOR + '_identifier'];
       }
       if (this.terminal.get('location')) {
         locationname = this.terminal.get('location')._identifier;

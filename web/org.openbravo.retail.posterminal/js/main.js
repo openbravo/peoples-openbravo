@@ -43,6 +43,10 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
       }
   };
   
+  OB.Constants = {
+      FIELDSEPARATOR: '$'
+  };
+  
   modelterminal.on('ready', function () {
     // We are Logged !!!
     
