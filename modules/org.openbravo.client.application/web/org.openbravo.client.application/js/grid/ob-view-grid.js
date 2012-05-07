@@ -2299,11 +2299,9 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.setDirtyEditForm(form);
     }
 
-    setTimeout(function () {
-      if (record && record.editColumnLayout) {
-        record.editColumnLayout.showSaveCancel();
-      }
-    }, 1);
+    if (record && record.editColumnLayout) {
+      record.editColumnLayout.showSaveCancel();
+    }
 
     this.view.messageBar.hide();
 
@@ -2537,8 +2535,12 @@ isc.OBViewGrid.addProperties({
       });
       layout.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      layout.showEditOpen();
       record.editColumnLayout = layout;
+      if (record._new) {
+        layout.showSaveCancel();
+      } else {
+        layout.showEditOpen();
+      }
       return layout;
     }
     if (fld.clientClass && !isEditRecord) {
@@ -2569,7 +2571,11 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout = component;
       component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      component.showEditOpen();
+      if (record._new) {
+        component.showSaveCancel();
+      } else {
+        component.showEditOpen();
+      }
     } else if (isEditRecord) {
       return null;
     } else {
