@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW OBPOS_FLOORSVIEW">
-    <view name="OBPOS_FLOORSVIEW"><![CDATA[SELECT obpos_floors.obpos_floors_id, obpos_floors.ad_client_id, obpos_floors.ad_org_id, obpos_floors.isactive, obpos_floors.created, obpos_floors.createdby, obpos_floors.updated, obpos_floors.updatedby, obpos_floors.name
-FROM obpos_floors]]></view>
-  </database>

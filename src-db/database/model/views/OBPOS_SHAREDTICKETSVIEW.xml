@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW OBPOS_SHAREDTICKETSVIEW">
-    <view name="OBPOS_SHAREDTICKETSVIEW"><![CDATA[SELECT obpos_sharedtickets.obpos_sharedtickets_id, obpos_sharedtickets.ad_client_id, obpos_sharedtickets.ad_org_id, obpos_sharedtickets.isactive, obpos_sharedtickets.created, obpos_sharedtickets.createdby, obpos_sharedtickets.updated, obpos_sharedtickets.updatedby, obpos_sharedtickets.name, obpos_sharedtickets.place
-FROM obpos_sharedtickets]]></view>
-  </database>
