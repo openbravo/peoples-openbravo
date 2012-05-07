@@ -504,7 +504,7 @@ isc.OBSelectorWidget.addProperties({
     };
 
     for (i = 0; i < gridFields.length; i++) {
-      var gridField = gridFields[i];
+      var gridField = gridFields[i], type;
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
           required: false
@@ -517,6 +517,19 @@ isc.OBSelectorWidget.addProperties({
 
       if (!gridField.filterEditorProperties.icons) {
         gridField.filterEditorProperties.icons = [];
+      }
+
+      type = isc.SimpleType.getType(gridField.type);
+      if (type && type.editorType && !gridField.editorType) {
+        gridField.editorType = type.editorType;
+      }
+
+      if (type && type.filterEditorType && !gridField.filterEditorType) {
+        gridField.filterEditorType = type.filterEditorType;
+        
+        if (gridField.filterEditorType === 'OBMiniDateRangeItem') {
+          gridField.filterEditorType = 'OBDateItem';
+        }
       }
 
       gridField.filterEditorProperties.showLabel = false;
