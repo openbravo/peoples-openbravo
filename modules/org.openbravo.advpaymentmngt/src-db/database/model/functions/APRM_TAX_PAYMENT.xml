@@ -209,7 +209,7 @@ BEGIN
   ELSIF (v_ispayment = 'Y' AND v_Processed = 'Y') THEN
     select posted into v_posted from FIN_PAYMENT where FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
     if v_posted = 'Y' then
-      RAISE_APPLICATION_ERROR(-20000, '@PaymentDocumentPosted@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@PostedDocument@') ;
     end if;
     select count(*) INTO v_Count
     from fin_finacc_transaction
