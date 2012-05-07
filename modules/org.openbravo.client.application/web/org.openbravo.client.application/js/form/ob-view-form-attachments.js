@@ -235,6 +235,7 @@ isc.OBAttachmentsLayout.addProperties({
             name: 'inpname',
             title: attachmentFile,
             type: 'upload',
+            multiple: false,
             canFocus: false,
             align: 'right'
           }, {
