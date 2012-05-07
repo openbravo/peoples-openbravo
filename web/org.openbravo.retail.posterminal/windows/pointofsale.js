@@ -15,17 +15,19 @@ define(['builder', 'i18n',
     return ( 
 
       {kind: B.KindJQuery('section'), content: [
-
-        {kind: OB.MODEL.Order},
-        {kind: OB.MODEL.OrderList}, 
         
         {kind: OB.DATA.Container, content: [
           {kind: OB.DATA.BPs},
           {kind: OB.DATA.ProductPrice},
           {kind: OB.DATA.Category},      
+          {kind: OB.DATA.TaxRate},      
           {kind: OB.DATA.Order},
           {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
-        ]},       
+        ]},    
+        
+        {kind: OB.MODEL.Order},
+        {kind: OB.MODEL.OrderList}, 
+        {kind: OB.MODEL.OrderTaxes},
         
         {kind: B.KindJQuery('div'), attr: {'id': 'modalcustomer', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [

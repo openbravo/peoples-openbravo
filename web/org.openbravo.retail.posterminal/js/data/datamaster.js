@@ -67,4 +67,13 @@ define(['utilities', 'datasource'], function () {
     this.loadparams = {};
   };
   _.extend(OB.DATA.Category.prototype, OB.DATA.Base);
+ 
+  OB.DATA.TaxRate = function (context, id) {
+    this._id = 'DataTaxRate';
+    this.context = context;    
+    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+        'from FinancialMgmtTaxRate where $readableCriteria'));
+    this.loadparams = {};
+  };
+  _.extend(OB.DATA.Category.prototype, OB.DATA.Base);  
 });
