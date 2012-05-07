@@ -95,11 +95,18 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
       Client c = OBDal.getInstance().get(Client.class,
           OBContext.getOBContext().getCurrentClient().getId());
+      BusinessPartner bp = OBDal.getInstance()
+          .get(
+              BusinessPartner.class,
+              strcBpartnerId.substring(strcBpartnerId.indexOf("'") + 1,
+                  strcBpartnerId.lastIndexOf("'")));
 
       RptCBpartnerSalesData[] dataPaymentsIn = RptCBpartnerSalesData.selectPayments(this,
-          "PAYMENTIN", c.getCurrency().getId(), "Y", strcBpartnerId);
+          "PAYMENTIN", c.getCurrency().getId(), c.getId(), bp.getOrganization().getId(), "Y",
+          strcBpartnerId);
       RptCBpartnerSalesData[] dataPaymentsOut = RptCBpartnerSalesData.selectPayments(this,
-          "PAYMENTOUT", c.getCurrency().getId(), "N", strcBpartnerId);
+          "PAYMENTOUT", c.getCurrency().getId(), c.getId(), bp.getOrganization().getId(), "N",
+          strcBpartnerId);
 
       RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this,
           vars.getLanguage(), strcBpartnerId);
@@ -134,7 +141,6 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
         dataCustomer = RptCBpartnerCustomerData.set();
         discard[4] = "selDelete5";
       } else {
-        BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strcBpartnerId);
         dataCustomer[0].availablecredit = getCustomerCredit(bp, true).toString();
       }
       if (dataVendor == null || dataVendor.length == 0) {
