@@ -56,7 +56,6 @@ import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -709,91 +708,14 @@ public class IssuesTest extends BaseTest {
   }
 
   /**
-   * Tests getCurrentClient()
-   */
-  public void test20129E() {
-    setTestAdminContext();
-    Client currentClient = OBContext.getOBContext().getCurrentClient();
-    currentClient.setDescription("Test description");
-    Client currentClient2 = OBContext.getOBContext().getCurrentClient();
-    assertFalse("Test description".equals(currentClient2.getDescription()));
-  }
-
-  /**
-   * Tests currentOrganization()
-   */
-  public void test20129F() {
-    setTestAdminContext();
-    Organization currentOrganization = OBContext.getOBContext().getCurrentOrganization();
-    currentOrganization.setDescription("Test description");
-    Organization currentOrganization2 = OBContext.getOBContext().getCurrentOrganization();
-    assertFalse("Test description".equals(currentOrganization2.getDescription()));
-  }
-
-  /**
-   * Tests getRole()
-   */
-  public void test20129G() {
-    setTestAdminContext();
-    Role role = OBContext.getOBContext().getRole();
-    role.setDescription("Test description");
-    Role role2 = OBContext.getOBContext().getRole();
-    assertFalse("Test description".equals(role2.getDescription()));
-  }
-
-  /**
-   * Tests getUser()
-   */
-  public void test20129H() {
-    setTestAdminContext();
-    User user = OBContext.getOBContext().getUser();
-    user.setDescription("Test description");
-    User user2 = OBContext.getOBContext().getUser();
-    assertFalse("Test description".equals(user2.getDescription()));
-  }
-
-  /**
-   * Tests getUser()
-   */
-  public void test20129I() {
-    setTestAdminContext();
-    Language language = OBContext.getOBContext().getLanguage();
-    language.setName("Test");
-    Language language2 = OBContext.getOBContext().getLanguage();
-    assertFalse("Test".equals(language2.getName()));
-  }
-
-  // This test has been commented out because it has not been possible to find an user context whose
-  // getWarehouse function did not return a null value
-  // /**
-  // * Tests getWarehouse()
-  // */
-  // public void test20129J() {
-  // setTestUserContext();
-  // Warehouse warehouse = OBContext.getOBContext().getWarehouse();
-  // warehouse.setDescription("Test description");
-  // Warehouse warehouse2 = OBContext.getOBContext().getWarehouse();
-  // assertFalse("Test description".equals(warehouse2.getDescription()));
-  // }
-
-  /**
    * Tests getWritableOrganizations()
    */
-  public void test20129K() {
+  public void test20129E() {
     setTestAdminContext();
     Set<String> writableOrganizations = OBContext.getOBContext().getWritableOrganizations();
     writableOrganizations.removeAll(writableOrganizations);
     Set<String> writableOrganizations2 = OBContext.getOBContext().getWritableOrganizations();
     assertFalse(writableOrganizations2.isEmpty());
-  }
-
-  public void testNewAlertRule() {
-    final AlertRule alertRule = OBProvider.getInstance().get(AlertRule.class);
-    Client currentClient = OBContext.getOBContext().getCurrentClient();
-    alertRule.setClient(currentClient);
-    alertRule.setName("Test Alert Rule");
-    alertRule.setActive(true);
-    OBDal.getInstance().save(alertRule);
   }
 
 }

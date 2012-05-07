@@ -595,8 +595,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Client getCurrentClient() {
-
-    return (Client) DalUtil.copy(currentClient, true, false);
+    return currentClient;
   }
 
   public void setCurrentClient(Client currentClient) {
@@ -608,7 +607,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Language getLanguage() {
-    return (Language) DalUtil.copy(language, true, false);
+    return language;
   }
 
   public void setLanguage(Language language) {
@@ -617,7 +616,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Organization getCurrentOrganization() {
-    return (Organization) DalUtil.copy(currentOrganization, true, false);
+    return currentOrganization;
   }
 
   public void removeWritableOrganization(String orgId) {
@@ -932,7 +931,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public User getUser() {
-    return (User) DalUtil.copy(user, true, false);
+    return user;
   }
 
   public void setUser(User user) {
@@ -940,7 +939,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public Role getRole() {
-    return (Role) DalUtil.copy(role, true, false);
+    return role;
   }
 
   public void setRole(Role role) {
