@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW OBPOS_USERPOS">
-    <view name="OBPOS_USERPOS"><![CDATA[SELECT c.ad_user_id AS obpos_userpos_id, c.ad_client_id, c.ad_org_id, c.isactive, c.created, c.createdby, c.updated, c.updatedby, c.name, c.description, c.c_bpartner_id, c.default_ad_client_id, c.default_ad_org_id, c.default_ad_role_id, c.default_m_warehouse_id, img.binarydata
-FROM ad_user c
-JOIN c_bpartner bp ON bp.c_bpartner_id = c.c_bpartner_id
-LEFT JOIN ad_image img ON img.ad_image_id = bp.em_obpos_ad_image_id
-WHERE c.password IS NOT NULL AND bp.isemployee = 'Y' AND bp.issalesrep = 'Y' AND bp.em_obpos_ispos = 'Y']]></view>
-  </database>

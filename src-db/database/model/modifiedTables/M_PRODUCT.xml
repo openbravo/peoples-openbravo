@@ -5,7 +5,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_SCALE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="EM_OBPOS_SCALE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -17,7 +17,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_CATALOG" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="EM_OBPOS_CATALOG" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
