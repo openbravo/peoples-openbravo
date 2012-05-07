@@ -295,7 +295,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         String strPaymentId = data[i].getField("FIN_Payment_ID");
         if (strPaymentId != null && !strPaymentId.equals("")) {
           docLine.setFinPaymentId(strPaymentId);
-          docLine.m_Record_Id2 = strPaymentId;
+          // docLine.m_Record_Id2 = strPaymentId;
           FIN_PaymentDetail detail = OBDal.getInstance().get(FIN_PaymentDetail.class,
               paymentDetail_ID);
           docLine

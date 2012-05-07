@@ -201,7 +201,7 @@ public class DocInvoice extends AcctServer {
         DocLine_FinPaymentSchedule dpLine = new DocLine_FinPaymentSchedule(DocumentType, Record_ID,
             Line_ID);
         log4jDocInvoice.debug(" dpLine.m_Record_Id2 = " + data[i].finPaymentScheduleId);
-        dpLine.m_Record_Id2 = data[i].finPaymentScheduleId;
+        // dpLine.m_Record_Id2 = data[i].finPaymentScheduleId;
         dpLine.C_Currency_ID_From = data[i].cCurrencyId;
         dpLine.isPaid = data[i].ispaid;
         dpLine.Amount = data[i].amount;

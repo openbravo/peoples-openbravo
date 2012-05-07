@@ -477,7 +477,7 @@ public class DocFINReconciliation extends AcctServer {
         String strPaymentId = data[i].getField("FIN_Payment_ID");
         if (strPaymentId != null && !strPaymentId.equals(""))
           docLine.setFinPaymentId(strPaymentId);
-        docLine.m_Record_Id2 = strPaymentId;
+        // docLine.m_Record_Id2 = strPaymentId;
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
         docLine.setPaymentAmount(data[i].getField("PaymentAmount"));
