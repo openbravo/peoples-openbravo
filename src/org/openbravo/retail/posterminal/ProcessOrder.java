@@ -87,9 +87,9 @@ public class ProcessOrder implements JSONProcess {
     order.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
         jsonorder.getJSONObject("bp").getString("id")));
     order.setPartnerAddress(OBDal.getInstance().get(Location.class,
-        "41309C18643643B4844BF4F45B0D2194"));
+        jsonorder.getJSONObject("bploc").getString("id")));
     order.setInvoiceAddress(OBDal.getInstance().get(Location.class,
-        "41309C18643643B4844BF4F45B0D2194"));
+        jsonorder.getJSONObject("bploc").getString("id")));
     order.setPaymentMethod(OBDal.getInstance().get(FIN_PaymentMethod.class,
         jsonorder.getJSONObject("bp").getString("paymentMethod")));
     order.setPaymentTerms(OBDal.getInstance().get(PaymentTerm.class,
@@ -123,7 +123,7 @@ public class ProcessOrder implements JSONProcess {
       orderline.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
           jsonorder.getJSONObject("bp").getString("id")));
       orderline.setPartnerAddress(OBDal.getInstance().get(Location.class,
-          "41309C18643643B4844BF4F45B0D2194"));
+          jsonorder.getJSONObject("bploc").getString("id")));
       orderline.setCurrency(OBDal.getInstance()
           .get(Currency.class, jsonorder.getString("currency")));
       
@@ -134,7 +134,7 @@ public class ProcessOrder implements JSONProcess {
           orderlines.getJSONObject(i).getString("uOM")));
       orderline.setUnitPrice(new BigDecimal(orderlines.getJSONObject(i).getString("price")));    
       orderline.setOrderedQuantity(new BigDecimal(orderlines.getJSONObject(i).getString("qty")));
-      orderline.setTax(OBDal.getInstance().get(TaxRate.class, "8142DAB7ACED4F23B5D1B4EF70AE1AE8"));
+      orderline.setTax(OBDal.getInstance().get(TaxRate.class, "8142DAB7ACED4F23B5D1B4EF70AE1AE8")); // Exempt
       
       order.getOrderLineList().add(orderline);
     }

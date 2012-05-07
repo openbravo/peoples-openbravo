@@ -98,8 +98,8 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadBPLocation: function () {
       var me = this;
-      new OB.DS.Query('from BusinessPartnerLocation where id = (select min(id) from BusinessPartnerLocation where businessPartner.id = :bp and $readableCriteria)').exec({
-        bp: this.get('terminal').businessPartner
+      new OB.DS.Query('from BusinessPartnerLocation where id = :bploc and $readableCriteria)').exec({
+        bploc: this.get('terminal').partnerAddress
       }, function (data) {
         if (data[0]) {
           me.set('bplocation', data[0]);

@@ -78,6 +78,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
+      this.set('bploc', null);
       this.set('lines', new OB.MODEL.OrderLineCol());
       this.set('payments', new OB.MODEL.PaymentLineCol());       
       this.set('payment', OB.DEC.Zero);
@@ -143,6 +144,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
+      this.set('bploc', null);      
       this.get('lines').reset();      
       this.get('payments').reset();  
       this.set('payment', OB.DEC.Zero);
@@ -163,6 +165,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('documentNo', _order.get('documentNo'));
       this.set('undo', null);
       this.set('bp', _order.get('bp'));
+      this.set('bploc', _order.get('bploc'));
       this.get('lines').reset();
       _order.get('lines').forEach(function (elem) {
         this.get('lines').add(elem);
@@ -271,21 +274,24 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       }
       this.adjustPayment();
     },
-    
-    setBP: function (bp) {      
+   
+    setBPandBPLoc: function (bp, bploc) {      
       var me = this;
       var oldbp = this.get('bp');
+      var oldbploc = this.get('bploc');
       this.set('bp', bp);
+      this.set('bploc', bploc);
       // set the undo action
       this.set('undo', {
         action: bp ? 'setbp' : 'resetbp',
         bp: bp,
         undo: function() {
           me.set('bp', oldbp);
+          me.set('bploc', oldbploc);
           me.set('undo', null);
         }
       });    
-    },
+    },    
     
     adjustPayment: function () {   
       var i, max, p;
@@ -387,6 +393,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       localStorage.setItem('Document_Sequence', documentseq);
       order.set('documentNo', 'POS-' + documentseq);
       order.set('bp', new Backbone.Model(OB.POS.modelterminal.get('businesspartner')));
+      order.set('bploc', new Backbone.Model(OB.POS.modelterminal.get('bplocation')));
       return order;
     },
     

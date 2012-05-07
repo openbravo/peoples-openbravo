@@ -31,7 +31,9 @@ define(['utilities', 'datasource'], function () {
     this._id = 'DataBPs';
     this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
-      'from BusinessPartner where customer = true and $readableCriteria'));
+      'select bp as BusinessPartner, loc as BusinessPartnerLocation ' + 
+      'from BusinessPartner bp, BusinessPartnerLocation loc ' + 
+      'where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableCriteria'));
     this.loadparams = {};     
   };
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);

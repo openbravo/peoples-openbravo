@@ -23,7 +23,7 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     this.$ = this.bp.$;
     
     this.receipt =  context.modelorder;   
-    this.receipt.on('clear change:bp', function () {
+    this.receipt.on('clear change:bp change:bploc', function () {
       this.bp.$.empty().append(this.renderTitle(this.receipt).$);
     }, this);
   };  

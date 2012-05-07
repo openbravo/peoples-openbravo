@@ -1,4 +1,4 @@
-/*global define */
+/*global define, Backbone */
 
 define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
@@ -14,7 +14,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     this.bps = new OB.MODEL.Collection(context.DataBPs);    
     
     this.bps.on('click', function (model) {
-      this.receipt.setBP(model);
+      this.receipt.setBPandBPLoc(new Backbone.Model(model.get('BusinessPartner')), new Backbone.Model(model.get('BusinessPartnerLocation')));
     }, this);
     
     this.receipt.on('clear', function() {
@@ -67,10 +67,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                     return B(
                       {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
                         {kind: B.KindJQuery('div'), content: [ 
-                          model.get('_identifier')
+                          model.get('BusinessPartner')._identifier
                         ]},                                                                                                                                                                     
                         {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
-                          model.get('description')
+                          model.get('BusinessPartnerLocation')._identifier
                         ]},                                                                                                                                                                     
                         {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
                       ]}
