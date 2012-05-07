@@ -104,7 +104,9 @@ function loadGridList() {
       OB.APRM.APFT_dt !== frmMain['inpDocumentType'].value ||
       OB.APRM.APFT_cu !== frmMain['inpCurrencyId'].value ||
       OB.APRM.APFT_dn !== frmMain['inpDocumentNo'].value ||
-      OB.APRM.APFT_re !== frmMain['isReceipt'].value) {
+      OB.APRM.APFT_re !== frmMain['isReceipt'].value ||
+      OB.APRM.APFT_af !== frmMain['inpAmountFrom'].value ||
+      OB.APRM.APFT_at !== frmMain['inpAmountTo'].value) {
 
     OB.APRM.APFT_bp = frmMain['inpcBpartnerId'].value;
     OB.APRM.APFT_fa = frmMain['inpFinancialAccountId'].value;
@@ -116,6 +118,8 @@ function loadGridList() {
     OB.APRM.APFT_cu = frmMain['inpCurrencyId'].value;
     OB.APRM.APFT_dn = frmMain['inpDocumentNo'].value;
     OB.APRM.APFT_re = frmMain['isReceipt'].value;
+    OB.APRM.APFT_af = frmMain['inpAmountFrom'].value;
+    OB.APRM.APFT_at = frmMain['inpAmountTo'].value;
 
     try {
       var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
@@ -1357,7 +1361,21 @@ function closeProcessPayment() {
                     <td class="TextBox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" id="paramTransDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpTransDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id);  validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                          <input type="text" id="paramTransDateFrom" 
+                                 class="dojoValidateValid TextBox_btn_OneCell_width" 
+                                 value="" 
+                                 maxlength="10" 
+                                 name="inpTransDateFrom" 
+                                 onkeyup="autoCompleteDate(this);" 
+                                 onkeydown="changeToEditingMode('onkeydown');" 
+                                 onkeypress="changeToEditingMode('onkeypress');" 
+                                 oncut="changeToEditingMode('oncut');" 
+                                 onpaste="changeToEditingMode('onpaste');" 
+                                 oncontextmenu="changeToEditingMode('oncontextmenu');" 
+                                 onblur="expandDateYear(this.id);" 
+                                 onchange="validateDateTextBox(this.id);  validateDate(this);return true;" 
+                                 displayFormat="xx" 
+                                 saveFormat="xx"></input>
                         </td></tr>
                       </table>
                       <span id="paramTransDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -1413,6 +1431,78 @@ function closeProcessPayment() {
                 </table>
               </td>
             </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText" id="lblAmountFrom">Amount From</span></td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;" id="paramAmountFromCell">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="loadGridList();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpAmountFrom" maxlength="22" value="" required="false" class="dojoValidateValid TextBox_btn_OneCell_width number" id="paramAmountFrom"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramAmountFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramAmountFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpAmountFrom', document.frmMain.inpAmountFrom.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>
+              <td class="TitleCell"><span class="LabelText" id="lblAmountTo">Amount To</span></td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;" id="paramAmountToCell">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="loadGridList();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpAmountTo" maxlength="22" value="" required="false" class="dojoValidateValid TextBox_btn_OneCell_width number" id="paramAmountTo"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramAmountToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramAmountToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount To'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpAmountTo', document.frmMain.inpAmountTo.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>              
+            </tr>            
             <tr id="glitemRow">
               <td class="TitleCell"><span class="LabelText">Received In</span></td>
               <td class="TextBox_btn_ContentCell">

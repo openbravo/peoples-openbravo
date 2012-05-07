@@ -187,6 +187,17 @@ public class AdvPaymentMngtDao {
       Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
       String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, null, null, strTransactionType, "", paymentMethod,
+        selectedScheduledPaymentDetails, isReceipt, "", "");
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
+      String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt,
+      String strAmountFrom, String strAmountTo) {
 
     final StringBuilder whereClause = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
@@ -233,7 +244,20 @@ public class AdvPaymentMngtDao {
         }
         whereClause.append(" and psd.id not in (" + FIN_Utility.getInStrList(aux) + ")");
       }
-
+      if (!StringUtils.isEmpty(strAmountFrom)) {
+        whereClause.append(" and psd.");
+        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
+        whereClause.append(" >= ");
+        whereClause.append(strAmountFrom);
+        whereClause.append(" ");
+      }
+      if (!StringUtils.isEmpty(strAmountTo)) {
+        whereClause.append(" and psd.");
+        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
+        whereClause.append(" <= ");
+        whereClause.append(strAmountTo);
+        whereClause.append(" ");
+      }
       // Transaction type filter
       whereClause.append(" and (");
       if (strTransactionType.equals("I") || strTransactionType.equals("B")) {
