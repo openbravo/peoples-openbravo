@@ -367,10 +367,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     
     constructor: function (context) {
       this._id = 'modelorderlist';
-      this.modelorder = context.modelorder;
-      
-      this.logicdocument = 
-     
+      this.modelorder = context.modelorder;     
       Backbone.Collection.prototype.constructor.call(this);
     }, 
     initialize : function () {
