@@ -345,7 +345,7 @@ export.database: exports database structure and data to xml files.
     </exec>
   </target>
 
-  <target name="compile.complete" depends="init">
+  <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -422,7 +422,7 @@ export.database: exports database structure and data to xml files.
     <antcall target="tomcat.restart" />
   </target>
 
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,core.lib, wad.lib, trl.lib">
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
