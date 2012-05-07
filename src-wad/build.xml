@@ -84,7 +84,7 @@ doc: generates the api for the project.
   <path id="my-src-wad-dirs">
     <pathelement path="src" />
     <dirset dir="../modules">
-      <include name="*/src-wad/*" />
+      <include name="*/src-wad" />
     </dirset>
   </path>
 
