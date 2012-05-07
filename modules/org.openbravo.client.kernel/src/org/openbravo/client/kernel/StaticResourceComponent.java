@@ -121,6 +121,13 @@ public class StaticResourceComponent extends BaseComponent {
             + "'></link>\");\n");
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
+
+        final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
+        if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)
+            && KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
+          result
+              .append("document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
+        }
       }
       result.append("document.write(\"<s\" + \"cript type='text/javascript' src='" + scriptPath
           + "'><\\/s\"+\"cript>\");");

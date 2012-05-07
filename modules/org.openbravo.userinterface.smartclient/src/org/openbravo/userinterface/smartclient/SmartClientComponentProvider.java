@@ -29,6 +29,7 @@ import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.StaticResourceComponent;
 
 /**
@@ -68,8 +69,12 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_PARAMETER + "/smartclient/skin_styles.css", true));
 
     // note ISC_Combined.js is only added for the classic mode
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js", true, false));
+    final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
+    if (!KernelUtils.getInstance().isModulePresent(scDevModulePackage)
+        || !KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
+      globalResources.add(createStaticResource(
+          "web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js", true, false));
+    }
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
