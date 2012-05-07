@@ -74,8 +74,8 @@ function transactionFind(selected) {
   document.getElementById("inpFinancialTransactionId_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = selected.id;
   document.getElementById("inpTransactionDate_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = OB.Utilities.Date.JSToOB(selected.transactionDate, sc_JsDateFormat);
   document.getElementById("inpMatchedDocument_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = document.getElementById("paraMatchedAgainstTransaction").value;
-  document.getElementById("inpBPartner_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment.businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]==undefined?'':selected["finPayment.businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
-  document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment.referenceNo"]==undefined?'':selected["finPayment.referenceNo"];
+  document.getElementById("inpBPartner_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "businessPartner" + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+  document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"];
   document.getElementById("inpAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = subtract(depositAmt, paymentAmt);
   document.getElementById("inpMatchingType_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = "MA";
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).checked = true;
