@@ -12,6 +12,7 @@ define(['builder', 'i18n',
   
 
   return function () {
+
     return ( 
 
       {kind: B.KindJQuery('section'), content: [
@@ -249,7 +250,14 @@ define(['builder', 'i18n',
                 ]}}                                                                      
               ]}             
             ]},
-            {kind: OB.COMP.Keyboard }
+            {kind: OB.COMP.Keyboard, attr: {toolbarpayment: [ 
+              {command:'paym:payment.cash', label: OB.I18N.getLabel('OBPOS_KbCash')},
+              {command:'paym:payment.card', label: OB.I18N.getLabel('OBPOS_KbCard')},
+              {command:'paym:payment.voucher', label: OB.I18N.getLabel('OBPOS_KbVoucher')},
+              {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+              {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+              {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
+            ]}}
           ]}        
         ]}
 

@@ -111,7 +111,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         var i, max, permissions = {};
         if (data) {                  
           for (i = 0, max = data.length; i < max; i++) {
-            permissions[data[i]['obposPos' + OB.Constants.FIELDSEPARATOR + '_identifier']] = true
+            permissions[data[i]['obposPos' + OB.Constants.FIELDSEPARATOR + '_identifier']] = true;
           }
           me.set('permissions', permissions);
           me.triggerReady();
