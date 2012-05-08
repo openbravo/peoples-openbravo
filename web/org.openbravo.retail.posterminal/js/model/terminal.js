@@ -40,6 +40,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     defaults : {
       terminal: null,
+      context: null,
       bplocation: null,
       location: null,
       pricelist: null,
@@ -51,6 +52,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       // reset all application state.
       $(window).off('keypress');
       this.set('terminal', null);
+      this.set('context', null);
       this.set('bplocation', null);
       this.set('location', null);
       this.set('pricelist', null);
@@ -69,6 +71,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
             me.triggerFail(data.exception);
           } else if (data[0]) {
             me.set('terminal', data[0]);
+            me.loadContext();
             me.loadBP();
             me.loadBPLocation();
             me.loadLocation();
@@ -82,6 +85,18 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         user,
         password
       );        
+    },
+    
+    loadContext: function () {
+      var me = this;
+      new OB.DS.Query('from BusinessPartner where id = :bp and $readableCriteria)').exec({
+        bp: this.get('terminal').businessPartner
+      }, function (data) {
+        if (data[0]) {
+          me.set('context', data[0]);
+          me.triggerReady();
+        }
+      });    
     },
     
     loadBP: function () {

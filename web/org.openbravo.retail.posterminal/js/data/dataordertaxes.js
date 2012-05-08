@@ -3,9 +3,9 @@
 define(['utilities', 'arithmetic', 'i18n'], function () {
   
   OB = window.OB || {};
-  OB.MODEL = window.OB.MODEL || {};
+  OB.DATA = window.OB.DATA || {};
 
-  OB.MODEL.OrderTaxes = function(context) {
+  OB.DATA.OrderTaxes = function(context) {
     this._id = 'logicOrderTaxes';
       
     this.receipt =  context.modelorder;

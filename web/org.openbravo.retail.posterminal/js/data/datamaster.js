@@ -75,5 +75,5 @@ define(['utilities', 'datasource'], function () {
         'from FinancialMgmtTaxRate where $readableCriteria'));
     this.loadparams = {};
   };
-  _.extend(OB.DATA.Category.prototype, OB.DATA.Base);  
+  _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);  
 });

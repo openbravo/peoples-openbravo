@@ -2,7 +2,7 @@
 
 
 define(['builder', 'i18n',
-        'data/datamaster', 'data/dataorder',
+        'data/datamaster', 'data/dataordersave',
         'model/terminal', 'model/order',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 

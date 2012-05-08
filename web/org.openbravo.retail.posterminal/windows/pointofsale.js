@@ -2,7 +2,7 @@
 
 
 define(['builder', 'i18n',
-        'data/datamaster', 'data/dataorder',
+        'data/datamaster', 'data/dataordersave', 'data/dataordertaxes',
         'model/terminal', 'model/order',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
@@ -16,18 +16,19 @@ define(['builder', 'i18n',
 
       {kind: B.KindJQuery('section'), content: [
         
+        {kind: OB.MODEL.Order},
+        {kind: OB.MODEL.OrderList}, 
+        
         {kind: OB.DATA.Container, content: [
           {kind: OB.DATA.BPs},
           {kind: OB.DATA.ProductPrice},
           {kind: OB.DATA.Category},      
-          {kind: OB.DATA.TaxRate},      
-          {kind: OB.DATA.Order},
+          {kind: OB.DATA.TaxRate},               
           {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
         ]},    
-        
-        {kind: OB.MODEL.Order},
-        {kind: OB.MODEL.OrderList}, 
-        {kind: OB.MODEL.OrderTaxes},
+               
+        {kind: OB.DATA.OrderTaxes},
+        {kind: OB.DATA.OrderSave},
         
         {kind: B.KindJQuery('div'), attr: {'id': 'modalcustomer', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [

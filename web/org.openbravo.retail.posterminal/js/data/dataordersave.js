@@ -5,8 +5,8 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
   
-  OB.DATA.Order = function (context) {
-    this._id = 'DataOrder';
+  OB.DATA.OrderSave = function (context) {
+    this._id = 'logicOrderSave';
     this.context = context;
     
     this.receipt = context.modelorder;
@@ -25,10 +25,6 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
     }, this);
     
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
-    
   };
-
-  OB.DATA.Order.prototype.load = function () {
-  };
-  
+ 
  });
