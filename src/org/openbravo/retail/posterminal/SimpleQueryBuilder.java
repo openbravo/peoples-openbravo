@@ -37,92 +37,123 @@ public class SimpleQueryBuilder {
     // :activeCriteria
   }
 
-  private String getOrganizationCriteria() {
-
-    StringBuilder orgfilter = new StringBuilder();
-
-    final String[] orgs = OBContext.getOBContext().getReadableOrganizations();
-
-    if (orgs.length == 0) {
-      orgfilter.append(" (1=1) ");
-    } else {
-      orgfilter.append(" ($$$$organization.id in (");
-      boolean comma = false;
-      for (String s : orgs) {
-        if (comma) {
-          orgfilter.append(", ");
-        } else {
-          comma = true;
+  private static class OrganizationCriteria implements PartBuilder {
+    public String getPart() {
+  
+      StringBuilder orgfilter = new StringBuilder();
+  
+      final String[] orgs = OBContext.getOBContext().getReadableOrganizations();
+  
+      if (orgs.length == 0) {
+        orgfilter.append(" (1=1) ");
+      } else {
+        orgfilter.append(" ($$$$organization.id in (");
+        boolean comma = false;
+        for (String s : orgs) {
+          if (comma) {
+            orgfilter.append(", ");
+          } else {
+            comma = true;
+          }
+          orgfilter.append("'");
+          orgfilter.append(s);
+          orgfilter.append("'");
         }
-        orgfilter.append("'");
-        orgfilter.append(s);
-        orgfilter.append("'");
+        orgfilter.append(")) ");
       }
-      orgfilter.append(")) ");
+      return orgfilter.toString();
     }
-    return orgfilter.toString();
   }
 
-  private String getClientCriteria() {
+  private static class ClientCriteria implements PartBuilder {
+    public String getPart() {
 
-    StringBuilder clientfilter = new StringBuilder();
+      StringBuilder clientfilter = new StringBuilder();
 
-    final String[] clients = OBContext.getOBContext().getReadableClients();
+      final String[] clients = OBContext.getOBContext().getReadableClients();
 
-    if (clients.length == 0) {
-      clientfilter.append(" (1=1) ");
-    } else {
-      clientfilter.append(" ($$$$client.id in (");
-      boolean comma = false;
-      for (String s : clients) {
-        if (comma) {
-          clientfilter.append(", ");
-        } else {
-          comma = true;
+      if (clients.length == 0) {
+        clientfilter.append(" (1=1) ");
+      } else {
+        clientfilter.append(" ($$$$client.id in (");
+        boolean comma = false;
+        for (String s : clients) {
+          if (comma) {
+            clientfilter.append(", ");
+          } else {
+            comma = true;
+          }
+          clientfilter.append("'");
+          clientfilter.append(s);
+          clientfilter.append("'");
         }
-        clientfilter.append("'");
-        clientfilter.append(s);
-        clientfilter.append("'");
+        clientfilter.append(")) ");
       }
-      clientfilter.append(")) ");
-    }
 
-    return clientfilter.toString();
+      return clientfilter.toString();
+    }
   }
 
-  private String getActiveCriteria() {
+  private static class ReadableCriteria implements PartBuilder {
+    private PartBuilder client = new ClientCriteria();
+    private PartBuilder org = new OrganizationCriteria();
+    private PartBuilder active = new ActiveCriteria();
 
-    return " ($$$$active = 'Y') ";
+    public String getPart() {
+      return " (" + client.getPart() + " and " + org.getPart() + " and " + active.getPart() + ") ";
+    }
+  }
+
+  private static class ActiveCriteria implements PartBuilder {
+    public String getPart() {
+      return " ($$$$active = 'Y') ";
+    }
+  }
+
+  private static class RoleId implements PartBuilder {
+    public String getPart() {
+      return "'" + OBContext.getOBContext().getRole().getId() + "'";
+    }
+  }
+
+  private static class UserId implements PartBuilder {
+    public String getPart() {
+      return "'" + OBContext.getOBContext().getUser().getId() + "'";
+    }
   }
 
   public String getHQLQuery() {
 
     String newhql = hql;
 
-    newhql = replaceAll(newhql, "$clientCriteria", getClientCriteria());
-    newhql = replaceAll(newhql, "$orgCriteria", getOrganizationCriteria());
-    newhql = replaceAll(newhql, "$activeCriteria", getActiveCriteria());
-    newhql = replaceAll(newhql, "$readableCriteria", " (" + getClientCriteria() + " and "
-        + getOrganizationCriteria() + " and " + getActiveCriteria() + ") ");
+    newhql = replaceAll(newhql, "$clientCriteria", new ClientCriteria());
+    newhql = replaceAll(newhql, "$orgCriteria", new OrganizationCriteria());
+    newhql = replaceAll(newhql, "$activeCriteria", new ActiveCriteria());
+    newhql = replaceAll(newhql, "$readableCriteria", new ReadableCriteria());
+    newhql = replaceAll(newhql, "$roleId", new RoleId());
+    newhql = replaceAll(newhql, "$userId", new UserId());
 
     return newhql;
   }
 
-  private String replaceAll(String s, String search, String replacement) {
+  private String replaceAll(String s, String search, PartBuilder part) {
     String news = s;
     int i = news.indexOf(search);
-    while (i >= 0) {
-      int alias = findalias(news, i);
-      if (alias >= 0) {
-        news = news.substring(0, alias)
-            + replacement.replaceAll("\\$\\$\\$\\$", news.substring(alias, i))
-            + news.substring(i + search.length());
-      } else {
-        news = news.substring(0, i) + replacement.replaceAll("\\$\\$\\$\\$", "")
-            + news.substring(i + search.length());
-      }
+    if (i >= 0) {
+      String replacement = part.getPart();
+      while (i >= 0) {
+        int alias = findalias(news, i);
+        if (alias >= 0) {
+          news = news.substring(0, alias)
+              + replacement.replaceAll("\\$\\$\\$\\$", news.substring(alias, i))
+              + news.substring(i + search.length());
+        } else {
+          news = news.substring(0, i) + replacement.replaceAll("\\$\\$\\$\\$", "")
+              + news.substring(i + search.length());
+        }
 
-      i = news.indexOf(search);
+        i = news.indexOf(search);
+      }
     }
     return news;
   }
