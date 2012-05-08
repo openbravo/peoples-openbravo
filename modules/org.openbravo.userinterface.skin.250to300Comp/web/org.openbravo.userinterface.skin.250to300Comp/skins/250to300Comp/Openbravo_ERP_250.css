@@ -1468,7 +1468,15 @@ border-collapse: separate; border-spacing: 4;
   border-collapse: collapse;
 }
 
+.Main_ContentPane_Right_Container {
+  background-color: #3A6B01;
+}
+
 .Main_ContentPane_Right {
+  background-color: #3A6B01;
+}
+
+.Main_ContentPane_Left_Container {
   background-color: #3A6B01;
 }
 

@@ -6001,6 +6001,10 @@ table.Main_ContentPane_LeftTabsBar {
   width: 100%;
 }
 
+.Main_ContentPane_Right_Container {
+  background-color: #505050;
+}
+
 .Main_ContentPane_Right {
   border: 0px none;
   text-indent: 0px;
@@ -6010,6 +6014,10 @@ table.Main_ContentPane_LeftTabsBar {
   height: 100%;
   width: 8px;
   border-collapse: collapse;
+  background-color: #505050;
+}
+
+.Main_ContentPane_Left_Container {
   background-color: #505050;
 }
 

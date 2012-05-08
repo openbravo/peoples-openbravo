@@ -33,7 +33,7 @@ function utilsJSDirectExecution() {
   if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
   }
-  if (getBrowserInfo('documentMode') >= 8) {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 8) {
     isIE8Strict = true;
   }
 }
@@ -99,7 +99,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '16049';
+  var number = '16452';
   return number;
 }
 
@@ -5664,6 +5664,33 @@ function sendWindowInfoToMDI() {
       }
     }
   } catch (e) { }
+}
+
+function fixIE9WindowBorders() {
+  if (isIE8Strict) {
+    var leftContentPane = getElementsByClassName('Main_ContentPane_Left', 'table');
+    if (leftContentPane[0]) {
+      leftContentPane = leftContentPane[0];
+      leftContentPane = leftContentPane.parentNode;
+      if (leftContentPane && !leftContentPane.className) {
+        leftContentPane.className='Main_ContentPane_Left_Container';
+      }
+    }
+
+    var rightContentPane = getElementsByClassName('Main_ContentPane_Right', 'table');
+    if (rightContentPane[0]) {
+      rightContentPane = rightContentPane[0];
+      rightContentPane = rightContentPane.parentNode;
+      if (rightContentPane && !rightContentPane.className) {
+        rightContentPane.className='Main_ContentPane_Right_Container';
+      }
+    }
+  }
+}
+
+function moreOnLoadDoFunctions() {
+  setMDIEnvironment();
+  fixIE9WindowBorders();
 }
 
 

@@ -168,7 +168,9 @@ function windowTableId(tableId, defaultActionButtonId) {
 }
 
 function setWindowTableParentElement() {
-  setMDIEnvironment();
+  if (moreOnLoadDoFunctions) {
+    moreOnLoadDoFunctions();
+  }
   windowTableParentElement = windowTables[focusedWindowTable].tableId;
 }
 
