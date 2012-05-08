@@ -41,6 +41,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     defaults : {
       terminal: null,
       context: null,
+      permissions: null,
       bplocation: null,
       location: null,
       pricelist: null,
@@ -72,6 +73,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           } else if (data[0]) {
             me.set('terminal', data[0]);
             me.loadContext();
+            me.loadPermissions();
             me.loadBP();
             me.loadBPLocation();
             me.loadLocation();
@@ -89,15 +91,33 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadContext: function () {
       var me = this;
-      new OB.DS.Query('from BusinessPartner where id = :bp and $readableCriteria)').exec({
-        bp: this.get('terminal').businessPartner
-      }, function (data) {
-        if (data[0]) {
+      new OB.DS.Query(
+          'select u as user, img.bindaryData as img, r as role ' + 
+          'from ADUser u left outer join u.obposImage img, ADRole r where u.id = $userId and u.$readableCriteria ' + 
+          'and r.id = $roleId and r.$readableCriteria').exec({}
+      , function (data) {
+        if (data[0]) {         
           me.set('context', data[0]);
           me.triggerReady();
         }
       });    
     },
+    
+    loadPermissions: function () {
+      var me = this;
+      new OB.DS.Query(
+          'from OBPOS_POS_Access where role.id = $roleId and $readableCriteria').exec({}
+      , function (data) {
+        var i, max, permissions = {};
+        if (data) {                  
+          for (i = 0, max = data.length; i < max; i++) {
+            permissions[data[i]['obposPos' + OB.Constants.FIELDSEPARATOR + '_identifier']] = true
+          }
+          me.set('permissions', permissions);
+          me.triggerReady();
+        }
+      });    
+    },    
     
     loadBP: function () {
       var me = this;
@@ -169,13 +189,17 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     },   
     
     triggerReady: function () {
-      if (this.get('pricelistversion') && this.get('currency') && this.get('businesspartner')) {
+      if (this.get('pricelistversion') && this.get('currency') && this.get('businesspartner') && this.get('context') && this.get('permissions')) {
         this.trigger('ready');
       }     
     },
     
     triggerFail: function (exception) {
       this.trigger('fail', exception);
+    },
+    
+    hasPermission: function (p) {
+      return OB.POS.modelterminal.get('context').role.clientAdmin || this.get('permissions')[p];
     }
   });
   
