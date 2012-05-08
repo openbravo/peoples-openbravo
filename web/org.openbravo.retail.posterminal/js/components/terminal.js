@@ -10,7 +10,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     this.yourcompany = yourcompany;
     this.yourcompanyproperties = yourcompanyproperties;
     this.loggeduser = loggeduser;
-    this.loggeduserproperties = loggeduserproperties
+    this.loggeduserproperties = loggeduserproperties;
   };
   
   OB.COMP.Terminal.prototype.setModel = function (terminal) {
