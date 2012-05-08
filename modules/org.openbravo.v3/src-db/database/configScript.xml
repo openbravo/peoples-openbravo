@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <vector>
-    <versionInfo version="3.0.15680"/>
+    <versionInfo version="3.0.16249"/>
     <columnDataChange tablename="AD_PROCESS" columnname="ISACTIVE" pkRow="800026">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -1645,10 +1645,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5E7451300D254B11B582F0FBA8F11D2A">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="61B11EA6D16C4948910D06E49A728085">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -1662,10 +1658,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="6CB07FBC8A50435ABCE5E5D5A612B56F">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6D4222062B0040F0879E23FBC99CE55B">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -1714,10 +1706,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="9670FA4B7131465FA2A6FA6E93D77BDF">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="970254B3E03D4A009FE4BF179AC61703">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
