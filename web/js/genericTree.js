@@ -421,7 +421,7 @@
     if (typeof node != "undefined") {
       var nodeId = node.getAttribute('id').replace('node_','');
       if (document.getElementById('inpNodes_' + nodeId)) {
-        if (isClick == true && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && !isIE8Strict) {
+        if (isClick == true && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && !isIE9Strict) {
           gt_setActiveUninstall('buttonUninstall');
           gt_setActiveUninstall('buttonDisable');
         } else if (isClick == true) {
