@@ -33,8 +33,12 @@ function utilsJSDirectExecution() {
   if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
   }
+  if (getBrowserInfo('documentMode') >= 8) {
+    isIE8Strict = true;
+  }
 }
 
+var isIE8Strict = false;
 var isWindowInMDIPopup = false;
 var isWindowInMDITab = false;
 var isWindowInMDIPage = false;
@@ -175,6 +179,12 @@ function getBrowserInfo(param) {
     return browserMajorVersion;
   } else if (param == "nameAndVersion" || typeof param == "undefined" || param == "" || param == null) {
     return browserNameAndVersion;
+  } else if (param == "documentMode") {
+    if (document.documentMode) {
+      return document.documentMode;
+    } else {
+      return null;
+    }
   } else {
     return false;
   }
@@ -203,7 +213,7 @@ function checkBrowserCompatibility250() {
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
   var attribute_text = "";
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1 || isIE8Strict) {
     attribute_text = obj.getAttribute(attribute);
   } else {
     attribute_text = obj.getAttribute(attribute).toString();
@@ -221,7 +231,7 @@ function setObjAttribute(obj, attribute, attribute_text) {
   attribute = attribute.toLowerCase();
   attribute_text = attribute_text.toString();
   attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1 || isIE8Strict) {
     obj.setAttribute(attribute, attribute_text);
   } else {
     obj[attribute]=new Function(attribute_text);
@@ -236,7 +246,7 @@ function setObjAttribute(obj, attribute, attribute_text) {
 function getElementsByName(name, tag) {
   var resultArray = [];
   if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
-    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && !isIE8Strict) {
       var inputs = document.all;
       for (var i=0; i<inputs.length; i++){
         if (inputs.item(i).getAttribute('name') == name){
@@ -266,13 +276,13 @@ function getElementsByName(name, tag) {
 */
 function getElementsByClassName(className, tag) {
   var resultArray = [], classAttributeName;
-  if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+  if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1 && !isIE8Strict) {
     classAttributeName = 'className';
   } else {
     classAttributeName = 'class';
   }
   if (!tag) {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1 && !isIE8Strict) {
       var inputs = document.all;
       for (var i=0; i<inputs.length; i++) {
         if (inputs.item(i).getAttribute(classAttributeName) === className){
@@ -4451,15 +4461,15 @@ function resizeArea(isOnResize) {
   var body = document.getElementsByTagName("BODY");
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-  var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-  var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var name = window.navigator.userAgent;
+  var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("MSIE")==-1)?2:0);
+  var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
   if (mnuWidth < 0) { mnuWidth = 0; }
   if (mnuHeight < 0) { mnuHeight = 0; }
   mnu.style.width = mnuWidth;
   mnu.style.height = mnuHeight;
   var mbottomButtons = document.getElementById("tdbottomButtons");
-  if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
+  if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("MSIE")==-1)?2:0);
 
 /*  try {
     dojo.addOnLoad(dijit.byId('grid').onResize);
@@ -4481,8 +4491,8 @@ function resizeAreaHelp() {
   var body = document.getElementsByTagName("BODY");
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-//  var mnuWidth = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
+  var name = window.navigator.userAgent;
+//  var mnuWidth = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   var mnuHeight =  h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
 //  if (mnuWidth < 0) { mnuWidth = 0; }
   if (mnuHeight < 0) { mnuHeight = 0; }
@@ -4506,8 +4516,8 @@ function resizeAreaUserOps() {
   var body = document.getElementsByTagName("BODY");
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-//  mnu.style.width = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
+  var name = window.navigator.userAgent;
+//  mnu.style.width = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
   mnuIndex.style.height = mnu.style.height;
 
@@ -4530,9 +4540,9 @@ function resizeAreaInfo(isOnResize) {
   var body = document.getElementsByTagName("BODY");
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
-  var name = window.navigator.appName;
+  var name = window.navigator.userAgent;
   var client_middleWidth = w;
-  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
   if (client_middleWidth < 0) { client_middleWidth = 0; }
   if (client_middleHeight < 170) { client_middleHeight = 170; } // To avoid middle area (usually a grid) disappear completly in small windows.
   client_middle.style.height = client_middleHeight;
@@ -4564,7 +4574,7 @@ function resizeAreaCreateFrom(isOnResize) {
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
   var client_middleWidth = w - 0;
-  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:1);
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:1);
   if (client_middleWidth < 0) { client_middleWidth = 0; }
   if (client_middleHeight < 80) { client_middleHeight = 80; } // To avoid middle area (usually a grid) disappear completly in small windows.
   client_middle.style.height = client_middleHeight;
@@ -4584,8 +4594,8 @@ function resizeAreaInstallationHistoryGrid(isOnResize) {
   var client = document.getElementById("client");
   var client_top = document.getElementById("client_top");
   var installationHistoryGrid = document.getElementById("installationHistoryGrid");
-  var name = window.navigator.appName;
-  installationHistoryGrid.style.height = client.clientHeight -((client_top?client_top.clientHeight:0) -((name.indexOf("Microsoft")==-1)?1:0) + 8);
+  var name = window.navigator.userAgent;
+  installationHistoryGrid.style.height = client.clientHeight -((client_top?client_top.clientHeight:0) -((name.indexOf("MSIE")==-1)?1:0) + 8);
 
 /*  try {
     dojo.addOnLoad(dijit.byId('grid').onResize);
