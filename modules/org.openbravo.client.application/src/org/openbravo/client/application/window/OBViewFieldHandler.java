@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1199,10 +1199,6 @@ public class OBViewFieldHandler {
     public boolean getRequired() {
       // booleans are never required as their input only allows 2 values
       if (property.isBoolean()) {
-        return false;
-      }
-
-      if (!getUpdatable()) {
         return false;
       }
 
