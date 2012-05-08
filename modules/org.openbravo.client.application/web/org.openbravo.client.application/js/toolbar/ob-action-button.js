@@ -148,7 +148,7 @@ isc.OBToolbarActionButton.addProperties({
 
       // Refresh context view
       contextView.getTabMessage();
-      currentView.toolBar.refreshCustomButtons();
+      contextView.toolBar.refreshCustomButtons();
 
       if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
         // Executing an action defined in parent tab, current tab is maximized,
