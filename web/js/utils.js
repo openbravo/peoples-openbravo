@@ -4459,8 +4459,14 @@ function resizeArea(isOnResize) {
   var mbottombut = document.getElementById("tdbottomButtons");
   var mbottom = document.getElementById("tdbottomSeparator");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.userAgent;
   var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("MSIE")==-1)?2:0);
   var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
@@ -4489,8 +4495,14 @@ function resizeAreaHelp() {
   var mTopSeparator = document.getElementById("tdSeparator");
   var mTopNavigation = document.getElementById("tdNavigation");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.userAgent;
 //  var mnuWidth = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   var mnuHeight =  h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
@@ -4514,8 +4526,14 @@ function resizeAreaUserOps() {
   var mVerSeparator = document.getElementById("tdVerSeparator");
   var mTopNavigation = document.getElementById("tdNavigation");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.userAgent;
 //  mnu.style.width = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
@@ -4538,8 +4556,14 @@ function resizeAreaInfo(isOnResize) {
   var client_middle = document.getElementById("client_middle");
   var client_bottom = document.getElementById("client_bottom");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.userAgent;
   var client_middleWidth = w;
   var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
@@ -4570,8 +4594,14 @@ function resizeAreaCreateFrom(isOnResize) {
   var client_middle = document.getElementById("client_middle");
   var client_bottom = document.getElementById("client_bottom");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.appName;
   var client_middleWidth = w - 0;
   var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:1);
@@ -4612,8 +4642,14 @@ function resizePopup() {
   var mnu = document.getElementById("client");
   var table_header = document.getElementById("table_header");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE8Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.appName;
   var mnuHeight = h -(table_header?table_header.clientHeight:0);
   var mnuWidth = w;
