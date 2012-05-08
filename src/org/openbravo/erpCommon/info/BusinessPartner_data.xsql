@@ -42,7 +42,7 @@
                                                left join ad_user u on bp.c_bpartner_id = u.c_bpartner_id
 					        WHERE bp.AD_Client_ID IN ('1') 
 					        AND bp.AD_Org_ID IN ('1') 
-					        AND (u is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
+					        AND (u.isactive is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
 					        AND bp.IsSummary='N' 
 					        AND bp.IsActive='Y'
 					        ORDER BY bp.value
@@ -79,7 +79,7 @@
 	                           left join ad_user  u on bp.c_bpartner_id = u.c_bpartner_id
 	        WHERE bp.AD_Client_ID IN ('1') 
 	        AND bp.AD_Org_ID IN ('1') 
-	        AND (u is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
+	        AND (u.isactive is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
 	        AND bp.IsSummary='N' 
 	        AND bp.IsActive='Y'
 	        AND 1=1
@@ -119,7 +119,7 @@
                            left join ad_user  u on bp.c_bpartner_id = u.c_bpartner_id
         WHERE  bp.AD_Client_ID IN ('1') 
         AND bp.AD_Org_ID IN ('1') 
-        AND (u is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
+        AND (u.isactive is null OR u.isactive='Y') and (u.c_bpartner_location_id is null or u.c_bpartner_location_id = bpl.C_BPartner_Location_ID)
         AND bp.IsSummary='N' 
         AND bp.IsActive='Y'
         AND UPPER(bp.VALUE) LIKE UPPER(?)
