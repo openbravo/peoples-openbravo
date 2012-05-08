@@ -86,6 +86,7 @@ v_currency_ID VARCHAR2(32);
 v_currencyratetype VARCHAR2(30);
 v_gl_category_ID VARCHAR2(32);
 v_period_ID VARCHAR2(32);
+v_gl_category_count  NUMBER;
 
 v_name NVARCHAR2(255);
 v_TRTcountY  NUMBER;
@@ -135,9 +136,22 @@ BEGIN
         from c_taxpayment
         where c_taxpayment_id=v_record_id;
 
-      select max(gl_category_id)
-      into v_gl_category_id
-      from gl_category where name='Standard';
+      select count(*) 
+      into v_gl_category_count
+      from gl_category where name='Standard'
+      AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+      AND gl_category.ad_client_id = v_client_id;
+
+      if (v_gl_category_count>0) then
+          select max(gl_category_id)
+          into v_gl_category_id
+          from gl_category where name='Standard'
+          AND ad_isorgincluded(v_org_id, gl_category.ad_org_id, v_client_id)<>-1
+          AND gl_category.ad_client_id = v_client_id;
+      else
+          RAISE_APPLICATION_ERROR(-20000, '@OrgForStandardGLCategory@');
+      end if;
+   
 
         v_paymentrule := 'T';
         v_currencyratetype := 'S';
