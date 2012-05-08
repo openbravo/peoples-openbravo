@@ -13,7 +13,7 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
   
   var modelterminal = new OB.MODEL.Terminal();
   
-  var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'));
+  var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
   terminal.setModel(modelterminal); 
   
   // alert all errors

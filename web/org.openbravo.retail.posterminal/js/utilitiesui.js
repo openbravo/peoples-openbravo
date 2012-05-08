@@ -46,9 +46,7 @@ define(['builder', 'i18n'], function (B) {
   OB.UTIL.Thumbnail.prototype.attr = function (attr) {
     var url = (attr.img) 
       ? 'data:' + (attr.contentType ? attr.contentType : 'image/png') + ';base64,' + attr.img 
-      : (attr['default'] 
-        ? 'data:' + (attr.contentType ? attr.contentType : 'image/png') + ';base64,' + attr['default']
-        :'img/box.png');
+      : (attr['default'] ? attr['default'] :'img/box.png');
     this.$.css('height', attr.height ? attr.height : '48');
     this.$.css('width', attr.width ? attr.width : '48');
     this.image

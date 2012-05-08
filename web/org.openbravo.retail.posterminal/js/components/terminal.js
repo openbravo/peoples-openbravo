@@ -5,17 +5,58 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.Terminal = function (yourterminal, yourcompany, yourcompanyproperties) {
+  OB.COMP.Terminal = function (yourterminal, yourcompany, yourcompanyproperties, loggeduser, loggeduserproperties) {
     this.yourterminal = yourterminal;
     this.yourcompany = yourcompany;
     this.yourcompanyproperties = yourcompanyproperties;
+    this.loggeduser = loggeduser;
+    this.loggeduserproperties = loggeduserproperties
   };
   
   OB.COMP.Terminal.prototype.setModel = function (terminal) {
     this.terminal = terminal;
     
-    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {
+    this.terminal.on('change:context', function() {
+      var ctx = this.terminal.get('context');
+      if (ctx) {
+        this.loggeduser.text(ctx.user._identifier);
+        this.loggeduserproperties.empty();
+        this.loggeduserproperties.append(B(         
+          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+            {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
+          ]}
+        ).$);   
+        this.loggeduserproperties.append(B(         
+          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 70%;'}, content: [ 
+            {kind: B.KindJQuery('div'), content: [
+              {kind: B.KindJQuery('span'), content: [
+                OB.I18N.getLabel('OBPOS_User')
+              ]},
+              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+                ctx.user._identifier
+              ]}
+            ]},
+            {kind: B.KindJQuery('div'), content: [
+              {kind: B.KindJQuery('span'), content: [
+                OB.I18N.getLabel('OBPOS_Role')
+              ]},
+              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+                ctx.role._identifier
+              ]}
+            ]}
+          ]}
+        ).$);
+        this.loggeduserproperties.append(B(         
+          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}  
+        ).$);        
+      } else {
+        this.loggeduser.text('');
+        this.loggeduserproperties.empty();        
+      }
       
+    },this);
+
+    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {    
       var name = '';     
       var clientname = '';
       var orgname = '';

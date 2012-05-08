@@ -14,6 +14,8 @@ define(['utilities'], function () {
     'OBPOS_CompanyPriceList': 'Price list: ',
     'OBPOS_CompanyCurrency': 'Currency: ',
     'OBPOS_CompanyLocation': 'Location: ',
+    'OBPOS_User': 'User: ',
+    'OBPOS_Role': 'Role: ',
          
     'OBPOS_WelcomeMessage': 'Welcome to Openbravo POS',
     'OBPOS_NoLineSelected': 'There is no line selected',

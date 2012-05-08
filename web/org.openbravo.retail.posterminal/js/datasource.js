@@ -171,9 +171,7 @@ define(['i18n'], function () {
 
   function execInData(data, filter, filterfunction) {
     var newdata, info, i, max, f, item;
-    
-    
-    
+
     if ($.isEmptyObject(filter) && ! filterfunction) {
       return {data: data.slice(0, OB.DS.MAXSIZE), info: (data.length > OB.DS.MAXSIZE ? 'OBPOS_DataMaxReached' : null) };
     } else {
@@ -304,13 +302,12 @@ define(['i18n'], function () {
       callback(result1.data, result1.info);
     } else {
       this.on('ready', function() {
-        
         var result2 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
         callback(result2.data, result2.info);
       }, this);
     }
   };
-  
+
   // HWServer
 
   OB.DS.HWServer = function (url) {
