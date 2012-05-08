@@ -94,12 +94,12 @@ response.addHeader("Expires", "0");
 <link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
 
 <title>Openbravo</title>
-<script type="text/javascript" src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
-<script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
-<script type="text/javascript" src="./web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
+<script src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
+<script src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
+<script src="./web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
 
 <!-- styles used during loading -->
-<style type="text/css">
+<style>
   html, body {
       height: 100%;
       width: 100%;
@@ -149,7 +149,7 @@ response.addHeader("Expires", "0");
     </div>
 </div>
 <!-- load the rest -->
-<script type="text/javascript">
+<script>
 $LAB.setGlobalDefaults({AppendTo: 'body'});
 
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
@@ -175,9 +175,9 @@ function OBStartApplication() {
 %>
 }
 </script>
-<script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
-<script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
-<script type="text/javascript" src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
+<script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
+<script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
+<script src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
 <iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>
