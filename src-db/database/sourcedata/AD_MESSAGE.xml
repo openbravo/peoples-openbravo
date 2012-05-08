@@ -16930,7 +16930,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--681E09E265944CFB9FDED468F351081E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--681E09E265944CFB9FDED468F351081E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--681E09E265944CFB9FDED468F351081E-->  <VALUE><![CDATA[PriceListNotUpdated]]></VALUE>
-<!--681E09E265944CFB9FDED468F351081E-->  <MSGTEXT><![CDATA[The price list is not going to be updated. You should add this product to the price list (if it is not included already).]]></MSGTEXT>
+<!--681E09E265944CFB9FDED468F351081E-->  <MSGTEXT><![CDATA[The temporary price list is not going to be automatically updated (you can do it manually). The Unit Net Price defined on Project Line tab will be used when creating orders from this project.]]></MSGTEXT>
 <!--681E09E265944CFB9FDED468F351081E-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--681E09E265944CFB9FDED468F351081E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--681E09E265944CFB9FDED468F351081E--></AD_MESSAGE>
