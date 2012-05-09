@@ -32,9 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -42,8 +40,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.domain.Reference;
-import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -275,24 +271,6 @@ public class JsonUtils {
         return properties;
       }
       result = currentEntity.getProperty(part);
-
-      // Handling special case of Table reference: property is the one set in the reference itself
-      // instead of identifier
-      if (result.getDomainType() instanceof TableDomainType) {
-        final Reference reference = OBDal.getInstance().get(Reference.class,
-            result.getDomainType().getReference().getId());
-        for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
-          if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
-              && referencedTable.getDisplayedColumn().isActive()) {
-            Entity refEntity = ModelProvider.getInstance().getEntityByTableId(
-                referencedTable.getTable().getId());
-            result = refEntity.getPropertyByColumnName(referencedTable.getDisplayedColumn()
-                .getDBColumnName());
-            break;
-          }
-        }
-      }
-
       properties.add(result);
       if (result.getTargetEntity() != null) {
         currentEntity = result.getTargetEntity();
