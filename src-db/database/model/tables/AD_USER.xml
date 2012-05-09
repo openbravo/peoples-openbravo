@@ -121,7 +121,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="USERNAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="USERNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
