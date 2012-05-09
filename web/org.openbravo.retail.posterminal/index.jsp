@@ -1,5 +1,12 @@
+<%@ page import="org.openbravo.retail.posterminal.POSUtils" %>
+<%
+String manifest = "manifest=\"../../org.openbravo.client.kernel/OBPOS_Main/AppCacheManifest\"";
+if(POSUtils.isModuleInDevelopment()) {
+  manifest = "";
+}
+%>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" manifest="../../org.openbravo.client.kernel/OBPOS_Main/AppCacheManifest">
+<html xmlns="http://www.w3.org/1999/xhtml" <%=manifest%>>
  <head>
      <title>Openbravo Point of Sale</title>
      <meta charset="utf-8">
