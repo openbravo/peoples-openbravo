@@ -49,12 +49,11 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                 }}                                                                   
               ]}                                                                   
             ]}                    
-          ]},
-          
+          ]},          
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
               {kind: B.KindJQuery('div'), content: [ 
-                {kind: OB.COMP.TableView, attr: {
+                {kind: OB.COMP.TableView, id: 'tableview', attr: {
                   collection: this.bps,
                   renderEmpty: function () {
                     return B(
@@ -62,20 +61,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                         OB.I18N.getLabel('OBPOS_SearchNoResults')
                       ]}
                     );            
-                  },  
-                  renderLine: function (model) {
-                    return B(
-                      {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
-                        {kind: B.KindJQuery('div'), content: [ 
-                          model.get('BusinessPartner')._identifier
-                        ]},                                                                                                                                                                     
-                        {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
-                          model.get('BusinessPartnerLocation')._identifier
-                        ]},                                                                                                                                                                     
-                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                      ]}
-                    );                    
-                  }             
+                  }            
                 }}
               ]}                   
             ]}                   
@@ -85,7 +71,20 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     );
     this.$ = this.component.$;
     this.bpname = this.component.context.bpname.$;
-        
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(
+        {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('BusinessPartner')._identifier
+          ]}
+        ]}
+      );                    
+    };           
   };
+  
+  OB.COMP.SearchBP.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };  
   
 }); 

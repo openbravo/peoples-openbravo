@@ -26,7 +26,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
           {kind: B.KindJQuery('h3'), id: 'title'}
         ]},
-        {kind: OB.COMP.TableView, attr: {
+        {kind: OB.COMP.TableView, id: 'tableview', attr: {
           collection: this.products,
           renderEmpty: function () {
             return B(
@@ -58,7 +58,21 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     );
     this.$ = this.component.$;
     this.titleProd = this.component.context.title.$; 
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(    
+        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('product')._identifier
+          ]}                                                                                   
+        ]}          
+      );                    
+    };
   };   
+  
+  OB.COMP.ListProducts.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };  
   
   OB.COMP.ListProducts.prototype.loadCategory = function (category) {
     if (category) {

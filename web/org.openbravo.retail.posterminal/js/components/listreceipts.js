@@ -23,7 +23,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
         {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [   
           {kind: B.KindJQuery('div'), attr: {'style':  'border-bottom: 1px solid #cccccc;'}},                                                                        
           {kind: B.KindJQuery('div'), content: [ 
-            {kind: OB.COMP.TableView, attr: {
+            {kind: OB.COMP.TableView, id: 'tableview', attr: {
               collection: this.receiptlist,
               renderEmpty: function () {
                 return B(
@@ -31,27 +31,6 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                     OB.I18N.getLabel('OBPOS_SearchNoResults')
                   ]}
                 );        
-              },
-              renderLine: function (model) {
-                return B(
-                  {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                       OB.I18N.formatHour(model.get('orderDate'))
-                    ]},                                                                                      
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                      model.get('documentNo')
-                    ]}, 
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [ 
-                      model.get('bp').get('_identifier')
-                    ]}, 
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                      {kind: B.KindJQuery('strong'), content: [ 
-                         model.printNet()                                                                                                                             
-                      ]}                                                                                                                                                                                                                                 
-                    ]},              
-                    {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                  ]}
-                );
               }
             }}
           ]}                   
@@ -59,6 +38,19 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       ]}
     );
     this.$ = this.component.$;
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(
+        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('documentNo')
+          ]}                                                                           
+        ]}
+      );
+    };
   };
   
+  OB.COMP.ListReceipts.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };   
 }); 

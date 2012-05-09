@@ -18,7 +18,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
 
     this.component = B(
       {kind: B.KindJQuery('div'), content: [                                                
-        {kind: OB.COMP.TableView, attr: {
+        {kind: OB.COMP.TableView, id: 'tableview', attr: {
           style: 'edit',
           collection: lines,
           renderEmpty: function () {
@@ -27,27 +27,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
                  OB.I18N.getLabel('OBPOS_ReceiptNew')
               ]}
             );          
-          },
-          renderLine: function (model) {
-            return B(
-              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                  model.get('productidentifier')                                                                
-                ]},                                                                                      
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                  model.printQty()                                                                                                                                                          
-                ]},                                                                                      
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                  model.printPrice()                                                             
-                ]},                                                                                      
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                  model.printNet()
-                ]},
-                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-              ]}
-            );         
-          }        
-        }},                                                
+          }
+        }},
         {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled'}, content: [                                                                                        
           {kind: B.KindJQuery('li'), content: [                                                                                        
             {kind: B.KindJQuery('div'), attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
@@ -76,9 +57,23 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     );
     this.$ = this.component.$;
     this.totalnet = this.component.context.totalnet.$;
-    
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(
+        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('productidentifier')                                                                
+          ]}                                                                  
+        ]}
+      );         
+    }; 
+      
     // Initial total display...
     this.totalnet.text(this.receipt.printTotal());   
     
   };
+  
+  OB.COMP.OrderView.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };  
 });    

@@ -87,7 +87,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
               {kind: B.KindJQuery('div'), content: [ 
-                {kind: OB.COMP.TableView, attr: {
+                {kind: OB.COMP.TableView, id: 'tableview', attr: {
                   collection: this.products,
                   renderEmpty: function () {
                     return B(
@@ -95,26 +95,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                         OB.I18N.getLabel('OBPOS_SearchNoResults')
                       ]}
                     );            
-                  },      
-                  renderLine: function (model) {
-                    return B(
-                      {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                          {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                        ]},                                                                                      
-                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
-                          model.get('product')._identifier
-                        ]},                                                                                      
-                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                          {kind: B.KindJQuery('strong'), content: [ 
-                             model.get('price') ?                       
-                            OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
-                          ]}                                                                                                                                                                                                                                 
-                        ]},                                                                                      
-                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                      ]}
-                    );                    
-                  }         
+                  }       
                 }}
               ]}                   
             ]}                   
@@ -125,8 +106,21 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     this.$ = this.component.$;
     this.productname = this.component.context.productname.$;
     this.productcategory = this.component.context.productcategory.$;
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(
+        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('product')._identifier
+          ]}                                                                      
+        ]}
+      );                    
+    };
  
     this.categories.exec({});    
   };
   
+  OB.COMP.SearchProduct.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };
 }); 

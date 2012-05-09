@@ -25,7 +25,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
             OB.I18N.getLabel('OBPOS_LblCategories')
           ]}
         ]},
-        {kind: OB.COMP.TableView, attr: {
+        {kind: OB.COMP.TableView, id: 'tableview', attr: {
           style: 'list',  
           collection: this.categories,
           renderEmpty: function () {
@@ -34,26 +34,27 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                 OB.I18N.getLabel('OBPOS_SearchNoResults')
               ]}
             );            
-          },                
-          renderLine: function (model) {
-            return B(
-              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                  {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                ]},                                                                                      
-                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [ 
-                  model.get('category')._identifier                                                                                                                                               
-                ]},                                                                                      
-                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-              ]}
-            );                  
-          }            
+          }        
         }}
       ]}         
     );
     this.$ = this.component.$;
+    this.tableview = this.component.context.tableview;       
+    this.tableview.renderLine = function (model) {
+      return B(
+        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                              
+          {kind: B.KindJQuery('div'), content: [ 
+            model.get('category')._identifier                                                                                                                                               
+          ]}                                                                                   
+        ]}          
+      );               
+    };     
 
     // Exec
     this.categories.exec();
   };
+  
+  OB.COMP.ListCategories.prototype.attr = function (attrs) {
+    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
+  };  
 });

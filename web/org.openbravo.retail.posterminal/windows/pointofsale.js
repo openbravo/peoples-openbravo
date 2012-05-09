@@ -39,7 +39,21 @@ define(['builder', 'i18n',
             {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignCustomer')]}
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-            {kind: OB.COMP.SearchBP } 
+            {kind: OB.COMP.SearchBP, attr: {
+              renderLine: function (model) {
+                return B(
+                  {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+                    {kind: B.KindJQuery('div'), content: [ 
+                      model.get('BusinessPartner')._identifier
+                    ]},                                                                                                                                                                     
+                    {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
+                      model.get('BusinessPartnerLocation')._identifier
+                    ]},                                                                                                                                                                     
+                    {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                  ]}
+                );                    
+              }
+            }} 
           ]}      
         ], init: function () {
           
@@ -55,7 +69,29 @@ define(['builder', 'i18n',
             {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignReceipt')]}
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-            {kind: OB.COMP.ListReceipts } 
+            {kind: OB.COMP.ListReceipts, attr: {
+              renderLine: function (model) {
+                return B(
+                  {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
+                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
+                       OB.I18N.formatHour(model.get('orderDate'))
+                    ]},                                                                                      
+                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
+                      model.get('documentNo')
+                    ]}, 
+                    {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [ 
+                      model.get('bp').get('_identifier')
+                    ]}, 
+                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                      {kind: B.KindJQuery('strong'), content: [ 
+                         model.printNet()                                                                                                                             
+                      ]}                                                                                                                                                                                                                                 
+                    ]},              
+                    {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                  ]}
+                );
+              }
+            }} 
           ]}      
         ], init: function () {
           var context = this.context;
@@ -194,11 +230,31 @@ define(['builder', 'i18n',
                     ]}
                   ]}                                                              
                 ]},
-                {kind: OB.COMP.OrderView}                    
+                {kind: OB.COMP.OrderView, attr: {
+                  renderLine: function (model) {
+                    return B(
+                      {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                          model.get('productidentifier')                                                                
+                        ]},                                                                                      
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                          model.printQty()                                                                                                                                                          
+                        ]},                                                                                      
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                          model.printPrice()                                                             
+                        ]},                                                                                      
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                          model.printNet()
+                        ]},
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                      ]}
+                    );         
+                  }                 
+                }}                    
               ]}                                                              
             ]}  
           ]},          
-          
+
           {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
               {kind: B.KindJQuery('div'), attr: {'id': 'scan', 'class': 'tab-pane'}, content: [
@@ -209,14 +265,47 @@ define(['builder', 'i18n',
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
                     {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
-                        {kind: OB.COMP.ListProducts }
+                        {kind: OB.COMP.ListProducts, attr: {
+                          renderLine: function (model) {
+                            return B(             
+                              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                                  {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
+                                ]},                                                                                      
+                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
+                                  model.get('product')._identifier
+                                ]},                                                                                      
+                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                                  {kind: B.KindJQuery('strong'), content: [ 
+                                    OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                         
+                                  ]}                                                                                                                                                                                                                                 
+                                ]},                                                                                      
+                                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                              ]}
+                            );                    
+                          }                          
+                        }}
                       ]}        
                     ]}        
                   ]},                                                                                    
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
                     {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
-                        {kind: OB.COMP.ListCategories }
+                        {kind: OB.COMP.ListCategories, attr:{
+                          renderLine:function (model) {
+                            return B(
+                              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                                  {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
+                                ]},                                                                                      
+                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [ 
+                                  model.get('category')._identifier                                                                                                                                               
+                                ]},                                                                                      
+                                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                              ]}
+                            );               
+                          }
+                        }}
                       ]}        
                     ]}        
                   ]}
@@ -229,7 +318,27 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
                 {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
                   {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
-                    {kind: OB.COMP.SearchProduct } 
+                    {kind: OB.COMP.SearchProduct, attr: {
+                      renderLine: function (model) {
+                        return B(
+                          {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                              {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
+                              model.get('product')._identifier
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                              {kind: B.KindJQuery('strong'), content: [ 
+                                 model.get('price') ?                       
+                                OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
+                              ]}                                                                                                                                                                                                                                 
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                          ]}
+                        );                    
+                      }                                                  
+                    }} 
                   ]}        
                 ]}                                                                      
               ]},  
