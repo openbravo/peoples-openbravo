@@ -189,6 +189,18 @@ public class CostingMigrationProcess implements Process {
 
       SQLQuery alertQry = OBDal.getInstance().getSession()
           .createSQLQuery(legacyCostAvailableAlert.getSql());
+      alertQry.addScalar("REFERENCEKEY_ID", StringType.INSTANCE);
+      alertQry.addScalar("AD_ROLE_ID", StringType.INSTANCE);
+      alertQry.addScalar("AD_USER_ID", StringType.INSTANCE);
+      alertQry.addScalar("DESCRIPTION", StringType.INSTANCE);
+      alertQry.addScalar("ISACTIVE", StringType.INSTANCE);
+      alertQry.addScalar("AD_ORG_ID", StringType.INSTANCE);
+      alertQry.addScalar("AD_CLIENT_ID", StringType.INSTANCE);
+      alertQry.addScalar("CREATED", DateType.INSTANCE);
+      alertQry.addScalar("CREATEDBY", StringType.INSTANCE);
+      alertQry.addScalar("UPDATED", DateType.INSTANCE);
+      alertQry.addScalar("UPDATEDBY", StringType.INSTANCE);
+      alertQry.addScalar("RECORD_ID", StringType.INSTANCE);
       List<?> rows = alertQry.list();
       for (final Object row : rows) {
         final Object[] values = (Object[]) row;
@@ -408,7 +420,7 @@ public class CostingMigrationProcess implements Process {
     costingQry.setFilterOnReadableOrganization(false);
     costingQry.setNamedParameter("client", legalEntity.getClient());
     costingQry.setNamedParameter("orgs", naturalTree);
-    costingQry.setMaxResult(100);
+    costingQry.setMaxResult(1000);
     return costingQry.list();
   }
 
