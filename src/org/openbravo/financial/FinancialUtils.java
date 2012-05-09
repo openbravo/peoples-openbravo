@@ -32,6 +32,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -183,7 +184,7 @@ public class FinancialUtils {
    * @return a valid ConversionRate for the given parameters, null if none is found.
    */
   public static ConversionRate getConversionRate(Date date, Currency fromCurrency,
-      Currency toCurrency, Organization org) {
+      Currency toCurrency, Organization org, Client client) {
     ConversionRate conversionRate;
     // Readable Client Org filters to false as organization is filtered explicitly.
     OBContext.setAdminMode(false);
@@ -191,10 +192,13 @@ public class FinancialUtils {
       final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
           ConversionRate.class);
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_ORGANIZATION, org));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT, client));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
       obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, date));
       obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, date));
+      obcConvRate.setFilterOnReadableClients(false);
+      obcConvRate.setFilterOnReadableOrganization(false);
       conversionRate = (ConversionRate) obcConvRate.uniqueResult();
       if (conversionRate != null) {
         return conversionRate;
@@ -203,7 +207,7 @@ public class FinancialUtils {
         return null;
       } else {
         return getConversionRate(date, fromCurrency, toCurrency, OBContext.getOBContext()
-            .getOrganizationStructureProvider().getParentOrg(org));
+            .getOrganizationStructureProvider(org.getClient().getId()).getParentOrg(org), client);
       }
     } catch (Exception e) {
       log4j.error(e);
@@ -224,7 +228,7 @@ public class FinancialUtils {
    *          Currency to convert to.
    * @param date
    *          Date conversion is being performed.
-   * @param organization
+   * @param org
    *          Organization of the document that needs to be converted.
    * @param strPrecision
    *          type of precision to be used to round the converted amount.
@@ -234,14 +238,16 @@ public class FinancialUtils {
    */
 
   public static BigDecimal getConvertedAmount(BigDecimal amount, Currency curFrom, Currency curTo,
-      Date date, Organization organization, String strPrecision) throws OBException {
+      Date date, Organization org, String strPrecision) throws OBException {
     if (curFrom.getId().equals(curTo.getId()) || amount.signum() == 0) {
       return amount;
     }
-    ConversionRate cr = getConversionRate(date, curFrom, curTo, organization);
+    ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
     if (cr == null) {
       // FIXME: improve message with context information.
-      throw new OBException("@NoCurrencyConversion@");
+      throw new OBException("@NoCurrencyConversion@ " + curFrom.getISOCode() + " @to@ "
+          + curTo.getISOCode() + " @ForDate@ " + OBDateUtils.formatDate(date)
+          + " @And@ @ACCS_AD_ORG_ID_D@ " + org.getIdentifier());
     }
     Long precision = curTo.getStandardPrecision();
     if (PRECISION_COSTING.equals(strPrecision)) {
