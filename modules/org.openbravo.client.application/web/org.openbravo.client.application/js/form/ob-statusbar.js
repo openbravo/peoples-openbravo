@@ -420,7 +420,7 @@ isc.OBStatusBar.addProperties({
         if (isc.Page.isRTL()) {
           msg += msgTmp;
         }
-        if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef) {
+        if (arrayTitleField.length === 6 && arrayTitleField[2][i] !== undef && arrayTitleField[3][i] !== undef && arrayTitleField[4][i] !== undef && arrayTitleField[5][i] !== undef && OB.AccessibleEntities[arrayTitleField[4][i]]) {
           msg += '<span class="' + (this.titleLinkStyle ? this.titleLinkStyle : '') + '" onclick="OB.Utilities.openDirectView(\'' + arrayTitleField[2][i] + '\', \'' + arrayTitleField[3][i] + '\', \'' + arrayTitleField[4][i] + '\', \'' + arrayTitleField[5][i] + '\')">' + rtlImgLink + rtlSep + arrayTitleField[0][i] + ltrSep + ltrImgLink + '</span>';
         } else {
           msg += '<span class="' + (this.titleLabelStyle ? this.titleLabelStyle : '') + '">' + rtlSep + arrayTitleField[0][i] + ltrSep + '</span>';
