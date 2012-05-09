@@ -153,8 +153,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "BatchPaymentExecution"),
-          Utility.getContext(this, vars, "#User_Client", "BatchPaymentExecution"), 0);
+          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#User_Org",
+              "BatchPaymentExecution"), Utility.getContext(this, vars, "#User_Client",
+              "BatchPaymentExecution"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PrintInvoices", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
