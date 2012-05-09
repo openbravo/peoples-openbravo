@@ -234,7 +234,7 @@ define(['builder', 'i18n',
                     return (
                       {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                         {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                          model.get('productidentifier')                                                                
+                          model.get('product').get('product')._identifier                                                                
                         ]},                                                                                      
                         {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
                           model.printQty()                                                                                                                                                          

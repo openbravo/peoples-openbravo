@@ -245,13 +245,12 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     
     addProduct: function (line, p) {
       var me = this;
-      if (line && line.get('product') === p.get('product').id) {
+      if (line && line.get('product').get('product').id === p.get('product').id) {
         this.addUnit(line);
       } else {
         // a new line with 1 unit
         var newline = new OB.MODEL.OrderLine({
-          product: p.get('product').id,
-          productidentifier: p.get('product')._identifier,
+          product: p,
           uOM: p.get('product').uOM,
           qty: OB.DEC.One,
           price: OB.DEC.number(p.get('price').listPrice)

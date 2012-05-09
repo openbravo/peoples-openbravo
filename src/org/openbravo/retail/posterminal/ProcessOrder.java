@@ -129,7 +129,8 @@ public class ProcessOrder implements JSONProcess {
       
       orderline.setLineNo((long) ((i + 1) * 10));
       orderline.setProduct(OBDal.getInstance().get(Product.class,
-          orderlines.getJSONObject(i).getString("product")));
+          orderlines.getJSONObject(i).getJSONObject("product").getJSONObject("product")
+              .getString("id")));
       orderline.setUOM(OBDal.getInstance().get(UOM.class,
           orderlines.getJSONObject(i).getString("uOM")));
       orderline.setUnitPrice(new BigDecimal(orderlines.getJSONObject(i).getString("price")));    

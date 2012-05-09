@@ -124,33 +124,25 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
   
   OB.COMP.EditLine.prototype.renderLine = function () {
     
-    var me = this;  
     if (this.line) {      
-      this.products.ds.find({
-        priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
-        product: { product: {id: this.line.get('product')}}
-      }, function (data) {
-        if (data) {
-          me.msgaction.hide();
-          me.msgedit.show();
-          me.editlineimage.empty().append(B(
-              {kind: OB.UTIL.Thumbnail, attr: {img: data.img, width: 128, height: 128}}
-          ).$);
-          me.editlinename.text(data.product._identifier);
-          me.editlineqty.text(me.line.printQty());
-          me.editlineprice.text(me.line.printPrice());
-          me.editlinenet.text(me.line.printNet());
-        }
-      });
+      this.msgaction.hide();
+      this.msgedit.show();
+      this.editlineimage.empty().append(B(
+          {kind: OB.UTIL.Thumbnail, attr: {img: this.line.get('product').get('img'), width: 128, height: 128}}
+      ).$);
+      this.editlinename.text(this.line.get('product').get('product')._identifier);
+      this.editlineqty.text(this.line.printQty());
+      this.editlineprice.text(this.line.printPrice());
+      this.editlinenet.text(this.line.printNet());
     } else {
-      me.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
-      me.msgedit.hide();
-      me.msgaction.show();
-      me.editlineimage.empty();
-      me.editlinename.empty();
-      me.editlineqty.empty();
-      me.editlineprice.empty();
-      me.editlinenet.empty();
+      this.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
+      this.msgedit.hide();
+      this.msgaction.show();
+      this.editlineimage.empty();
+      this.editlinename.empty();
+      this.editlineqty.empty();
+      this.editlineprice.empty();
+      this.editlinenet.empty();
     }    
   };
 }); 
