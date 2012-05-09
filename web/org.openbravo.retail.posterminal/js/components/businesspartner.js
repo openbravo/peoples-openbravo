@@ -20,11 +20,11 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     };    
     
     this.bp = B({kind: B.KindJQuery('span')});      
-    this.$ = this.bp.$;
-    
+    this.$el = this.bp.$el;
+
     this.receipt =  context.modelorder;   
     this.receipt.on('clear change:bp change:bploc', function () {
-      this.bp.$.empty().append(this.renderTitle(this.receipt).$);
+      this.bp.$el.empty().append(this.renderTitle(this.receipt).$el);
     }, this);
   };  
 });    

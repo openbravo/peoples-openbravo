@@ -56,8 +56,8 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
         }}
       ]}                           
     );
-    this.$ = this.component.$;
-    this.titleProd = this.component.context.title.$; 
+    this.$el = this.component.$el;
+    this.titleProd = this.component.context.title.$el; 
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return B(    

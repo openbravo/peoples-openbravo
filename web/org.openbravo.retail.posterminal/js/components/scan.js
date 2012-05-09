@@ -26,7 +26,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
               {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
                 OB.I18N.getLabel('OBPOS_LblUndo')   
               ], init: function () {           
-                  this.$.click(function(e) {
+                  this.$el.click(function(e) {
                     e.preventDefault();
                     if (undoclick) {
                       undoclick();
@@ -38,11 +38,11 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
         ]}        
       ]}
     );
-    this.$ = this.component.$;
-    var msgwelcome = this.component.context.msgwelcome.$;
-    var txtaction = this.component.context.txtaction.$;
-    var msgaction = this.component.context.msgaction.$;
-    var clock = this.component.context.clock.$;
+    this.$el = this.component.$el;
+    var msgwelcome = this.component.context.msgwelcome.$el;
+    var txtaction = this.component.context.txtaction.$el;
+    var msgaction = this.component.context.msgaction.$el;
+    var clock = this.component.context.clock.$el;
     var updateclock = function () {
       clock.text(OB.I18N.formatHour(new Date()));
     };
@@ -57,15 +57,15 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
         msgwelcome.hide();
         msgaction.show();
         if (undoaction.action === 'deleteline') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_DeleteLine', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+          txtaction.text(OB.I18N.getLabel('OBPOS_DeleteLine', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
         } else if (undoaction.action === 'addline') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_AddLine', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+          txtaction.text(OB.I18N.getLabel('OBPOS_AddLine', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
         } else if (undoaction.action === 'add') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_AddUnits', [undoaction.line.get('qty') - undoaction.oldqty, undoaction.line.get('productidentifier')]));
+          txtaction.text(OB.I18N.getLabel('OBPOS_AddUnits', [undoaction.line.get('qty') - undoaction.oldqty, undoaction.line.get('product').get('product')._identifier]));
         } else if (undoaction.action === 'rem') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_RemoveUnits', [undoaction.oldqty - undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+          txtaction.text(OB.I18N.getLabel('OBPOS_RemoveUnits', [undoaction.oldqty - undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
         } else if (undoaction.action === 'set') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_SetUnits', [undoaction.line.get('qty'), undoaction.line.get('productidentifier')]));
+          txtaction.text(OB.I18N.getLabel('OBPOS_SetUnits', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
         } else if (undoaction.action === 'setbp') {
           txtaction.text(OB.I18N.getLabel('OBPOS_SetBP', [undoaction.bp.get('_identifier')]));
         } else if (undoaction.action === 'resetbp') {

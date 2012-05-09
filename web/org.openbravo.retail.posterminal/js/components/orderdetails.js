@@ -20,11 +20,11 @@ define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) 
     };    
     
     this.details = B({kind: B.KindJQuery('span')});      
-    this.$ = this.details.$;
+    this.$el = this.details.$el;
     
     this.receipt =  context.modelorder;   
     this.receipt.on('clear change:orderDate change:documentNo', function () {
-      this.details.$.empty().append(this.renderTitle(this.receipt).$);
+      this.details.$el.empty().append(this.renderTitle(this.receipt).$el);
     }, this);
   };  
 });    

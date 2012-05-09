@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         {kind: B.KindJQuery('div'), attr: {'style': 'margin: 5px;'}, content: [
         ]}
       );
-      this.$ = this.component.$;
+      this.$el = this.component.$el;
     };
     
     Btn.prototype.attr = function (attr) {
@@ -28,22 +28,20 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       
       if (this.command) {
         this.button = B({kind: B.KindJQuery('a'), id: 'button', attr: {'href': '#', 'class': 'btnkeyboard'}, init: function () {           
-            this.$.click(function(e) {          
+            this.$el.click(function(e) {          
               e.preventDefault();
               kb.keyPressed(me.command);  
             });                
-          }}).$;             
+          }}).$el;             
       } else {
-        this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}}).$;        
+        this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}}).$el;        
       }
-      this.$.append(this.button);   
+      this.$el.append(this.button);   
     };
     
     Btn.prototype.append = function (child) {
       if (child.$el) {
         this.button.append(child.$el);
-      } else if (child.$) {
-        this.button.append(child.$);
       }
     };
     
@@ -205,11 +203,11 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       ]}                                                                                                                               
     );
     
-    this.$ = this.component.$;
-    this.editbox =  this.component.context.editbox.$; 
-    this.toolbarcontainer = this.component.context.toolbarcontainer.$;
+    this.$el = this.component.$el;
+    this.editbox =  this.component.context.editbox.$el; 
+    this.toolbarcontainer = this.component.context.toolbarcontainer.$el;
     this.toolbars = {
-        toolbarempty : this.component.context.toolbarempty.$
+        toolbarempty : this.component.context.toolbarempty.$el
     };
     
     this.products = context.DataProductPrice;
@@ -283,7 +281,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           ]});
         }
 
-        this.toolbars[attr] = B({kind: B.KindJQuery('div'), attr:{'style': 'display:none;'},content: content}).$;        
+        this.toolbars[attr] = B({kind: B.KindJQuery('div'), attr:{'style': 'display:none;'},content: content}).$el;        
         this.toolbarcontainer.append(this.toolbars[attr]);
       }
     }          
@@ -304,11 +302,11 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       }
       this.toolbars[toolbar].show();
     }
-    this.$.show();      
+    this.$el.show();      
   };
   
   OB.COMP.Keyboard.prototype.hide = function () {
-      this.$.hide();    
+      this.$el.hide();    
   };
   
   OB.COMP.Keyboard.prototype.getNumber = function () {

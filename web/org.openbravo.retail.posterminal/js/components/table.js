@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.component = B(
         {kind: B.KindJQuery(tag)}
       );
-      this.$ = this.component.$;
+      this.$el = this.component.$el;
     };
     
     F.prototype.attr = function (attr) {
@@ -23,37 +23,37 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       
       this.collection.on('change', function(model, prop) {          
         var index = this.collection.indexOf(model);
-        this.$.children().eq(index + this.header)
-          .replaceWith(B(this.renderLine(model)).$);      
+        this.$el.children().eq(index + this.header)
+          .replaceWith(B(this.renderLine(model)).$el);      
       }, this);
       
       this.collection.on('add', function(model, prop, options) {     
         var index = options.index;
         var me = this;
-        var tr = B(this.renderLine(model)).$;
+        var tr = B(this.renderLine(model)).$el;
         if (index === this.collection.length - 1) {
-          this.$.append(tr);
+          this.$el.append(tr);
         } else {
-          this.$.children().eq(index + this.header).before(tr);
+          this.$el.children().eq(index + this.header).before(tr);
         }
       }, this);
       
       this.collection.on('remove', function (model, prop, options) {        
         var index = options.index;
-        this.$.children().eq(index + this.header).remove();         
+        this.$el.children().eq(index + this.header).remove();         
       }, this);
       
       this.collection.on('reset', function() {
-        this.$.empty();
+        this.$el.empty();
         if (this.renderHeader) {
-          this.$.append(B(this.renderHeader()).$);
+          this.$el.append(B(this.renderHeader()).$el);
         }
       }, this);   
       
       // Init clear...
-      this.$.empty();
+      this.$el.empty();
       if (this.renderHeader) {
-        this.$.append(B(this.renderHeader()).$);
+        this.$el.append(B(this.renderHeader()).$el);
       }    
     };   
     
@@ -72,11 +72,11 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         {kind: B.KindJQuery('div'), id: 'empty'}
       ]}
     );
-    this.$ = this.component.$;
-    this.theader = this.component.context.header.$;
-    this.tbody = this.component.context.body.$;
-    this.tempty = this.component.context.empty.$;   
-    this.tinfo = this.component.context.info.$;
+    this.$el = this.component.$el;
+    this.theader = this.component.context.header.$el;
+    this.tbody = this.component.context.body.$el;
+    this.tempty = this.component.context.empty.$el;   
+    this.tinfo = this.component.context.info.$el;
   };
   
   OB.COMP.TableView.prototype.attr = function (attr) {
@@ -88,11 +88,11 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     this.selected = null;      
     
     if (this.renderHeader) {      
-      this.theader.append(B(this.renderHeader()).$);  
+      this.theader.append(B(this.renderHeader()).$el);  
     }   
     
     if (this.renderEmpty) {
-      this.tempty.append(B(this.renderEmpty()).$);
+      this.tempty.append(B(this.renderEmpty()).$el);
     }    
     
     this.collection.on('selected', function (model) {
@@ -110,8 +110,8 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.tbody.show();
       
       var me = this;
-      var tr = B({kind: B.KindJQuery('li')}).$;
-      tr.append(B(this.renderLine(model)).$);
+      var tr = B({kind: B.KindJQuery('li')}).$el;
+      tr.append(B(this.renderLine(model)).$el);
       tr.click(function (e) {
         e.preventDefault();
         model.trigger('selected', model);
@@ -119,7 +119,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       });
       
       model.on('change', function() {
-        tr.empty().append(B(this.renderLine(model)).$);
+        tr.empty().append(B(this.renderLine(model)).$el);
       }, this);
       
       model.on('selected', function() {
@@ -129,7 +129,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
           }
           this.selected = tr;
           this.selected.addClass('selected');
-          OB.UTIL.makeElemVisible(this.$, this.selected);
+          OB.UTIL.makeElemVisible(this.$el, this.selected);
         }
       }, this);
 

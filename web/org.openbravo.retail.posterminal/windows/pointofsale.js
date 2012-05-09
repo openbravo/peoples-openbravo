@@ -57,7 +57,7 @@ define(['builder', 'i18n',
         ], init: function () {
           
           this.context.SearchBPs.bps.on('click', function (model, index) {
-            this.$.modal('hide');
+            this.$el.modal('hide');
           }, this);
         }},
         {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
@@ -94,11 +94,11 @@ define(['builder', 'i18n',
           ]}      
         ], init: function () {
           var context = this.context;
-            this.$.on('show', function () {
+            this.$el.on('show', function () {
               context.modelorderlist.saveCurrent();
             });  
             this.context.ListReceipts.receiptlist.on('click', function (model, index) {
-              this.$.modal('hide');
+              this.$el.modal('hide');
             }, this);            
         }},        
 
@@ -108,7 +108,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('i'), attr: {'class': 'icon-asterisk  icon-white'}}, OB.I18N.getLabel('OBPOS_LblNew')
             ], init: function () {
                 var me = this;
-                me.$.click(function (e) {
+                me.$el.click(function (e) {
                   e.preventDefault();
                   me.context.modelorderlist.addNewOrder();
                 });
@@ -117,7 +117,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('i'), attr: {'class': 'icon-trash  icon-white'}}, OB.I18N.getLabel('OBPOS_LblDelete')
             ], init: function () {
                 var me = this;
-                me.$.click(function (e) {
+                me.$el.click(function (e) {
                   e.preventDefault();
                   if (window.confirm(OB.I18N.getLabel('OBPOS_MsgConfirmDelete'))) {
                     me.context.modelorderlist.deleteCurrent();
@@ -128,7 +128,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('i'), attr: {'class': 'icon-print  icon-white'}}, OB.I18N.getLabel('OBPOS_LblPrint')
             ], init: function () {
                 var me = this;
-                me.$.click(function (e) {
+                me.$el.click(function (e) {
                   e.preventDefault();
                   me.context.modelorder.trigger('print');
                 });  
@@ -147,7 +147,7 @@ define(['builder', 'i18n',
                   ]}
                 ], init: function () {
                   var context = this.context;
-                  this.$.on('shown', function () {
+                  this.$el.on('shown', function () {
                     context.keyboard.show('toolbarpayment');
                   });
                 }}        
@@ -157,7 +157,7 @@ define(['builder', 'i18n',
                   OB.I18N.getLabel('OBPOS_LblBrowse')
                 ], init: function () { 
                   var context = this.context;
-                  this.$.on('shown', function () {
+                  this.$el.on('shown', function () {
                     context.keyboard.hide();
                   });                            
                 }} 
@@ -167,7 +167,7 @@ define(['builder', 'i18n',
                   OB.I18N.getLabel('OBPOS_LblSearch')
                 ], init: function () {  
                   var context = this.context;
-                  this.$.on('shown', function () {
+                  this.$el.on('shown', function () {
                     context.keyboard.hide();
                   });
                 }}        
@@ -177,14 +177,14 @@ define(['builder', 'i18n',
                   OB.I18N.getLabel('OBPOS_LblScan')
                 ], init: function () {
                   var context = this.context;
-                  this.$.on('shown', function () {
+                  this.$el.on('shown', function () {
                     context.keyboard.show('toolbarempty');
                   });
                   this.context.modelorder.on('clear scan', function() {
-                    this.$.tab('show');                         
+                    this.$el.tab('show');                         
                   }, this);   
                   this.context.SearchBPs.bps.on('click', function (model, index) {
-                    this.$.tab('show');
+                    this.$el.tab('show');
                   }, this);                  
                 }}        
               ]},
@@ -193,12 +193,12 @@ define(['builder', 'i18n',
                   OB.I18N.getLabel('OBPOS_LblEdit')
                 ], init: function () {
                   var context = this.context;
-                  this.$.on('shown', function () {
+                  this.$el.on('shown', function () {
                     context.keyboard.show('toolbarempty');
                   });
                   
                   this.context.modelorder.get('lines').on('click', function () {
-                    this.$.tab('show');
+                    this.$el.tab('show');
                   }, this);                        
                 }}
               ]}            

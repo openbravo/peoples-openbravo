@@ -55,7 +55,7 @@ define([], function () {
 
   B.KindText = function (text) {
     var F = function (context) {
-      this.$ = $(document.createTextNode(text));
+      this.$el = $(document.createTextNode(text));
     };
     _.extend(F.prototype, B.Kind);
     return F;
@@ -63,7 +63,7 @@ define([], function () {
 
   B.KindHTML = function (html) {
     var F = function (context) {
-      this.$ = $(html);
+      this.$el = $(html);
       this.context = context;
     };
     _.extend(F.prototype, B.Kind);
@@ -72,7 +72,7 @@ define([], function () {
 
   B.KindJQuery = function (tag) {
     var F = function (context) {
-      this.$ = $("<" + tag + "/>");
+      this.$el = $("<" + tag + "/>");
       this.context = context;
     };
 
@@ -80,16 +80,14 @@ define([], function () {
       var attr;
       for (attr in attrs) {
         if (attrs.hasOwnProperty(attr)) {
-          this.$.attr(attr, attrs[attr]);
+          this.$el.attr(attr, attrs[attr]);
         }
       }      
     };
 
     F.prototype.append = function (child) {
       if (child.$el) {
-        this.$.append(child.$el);
-      } else if (child.$) {
-        this.$.append(child.$);
+        this.$el.append(child.$el);
       }
     };
 

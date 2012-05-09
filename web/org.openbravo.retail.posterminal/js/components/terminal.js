@@ -25,7 +25,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
             {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
           ]}
-        ).$);   
+        ).$el);   
         this.loggeduserproperties.append(B(         
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 70%;'}, content: [ 
             {kind: B.KindJQuery('div'), content: [
@@ -45,10 +45,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
               ]}
             ]}
           ]}
-        ).$);
+        ).$el);
         this.loggeduserproperties.append(B(         
           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}  
-        ).$);        
+        ).$el);        
       } else {
         this.loggeduser.text('');
         this.loggeduserproperties.empty();        
@@ -122,7 +122,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             ]}
           ]}
         ]}          
-      ).$);
+      ).$el);
     }, this);
         
   };

@@ -62,7 +62,7 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     
     require([webwindowname], function (webwindow) { // load window...
       var c = _.extend({}, Backbone.Events);
-      $("#containerwindow").empty().append(B(webwindow(), c).$);   
+      $("#containerwindow").empty().append(B(webwindow(), c).$el);   
       c.trigger('domready'); 
     });
   });    
@@ -77,7 +77,7 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     }
     
     var c = _.extend({}, Backbone.Events);
-    $("#containerwindow").empty().append(B(login(), c).$);   
+    $("#containerwindow").empty().append(B(login(), c).$el);   
     c.trigger('domready'); 
   });
   

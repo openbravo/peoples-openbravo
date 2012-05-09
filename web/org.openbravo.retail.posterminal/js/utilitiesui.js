@@ -40,15 +40,15 @@ define(['builder', 'i18n'], function (B) {
         {kind: B.KindJQuery('div'), id: 'image'}                                                                           
       ]}
     );
-    this.$ = this.component.$;
-    this.image = this.component.context.image.$;
+    this.$el = this.component.$el;
+    this.image = this.component.context.image.$el;
   };
   OB.UTIL.Thumbnail.prototype.attr = function (attr) {
     var url = (attr.img) 
       ? 'data:' + (attr.contentType ? attr.contentType : 'image/png') + ';base64,' + attr.img 
       : (attr['default'] ? attr['default'] :'img/box.png');
-    this.$.css('height', attr.height ? attr.height : '48');
-    this.$.css('width', attr.width ? attr.width : '48');
+    this.$el.css('height', attr.height ? attr.height : '48');
+    this.$el.css('width', attr.width ? attr.width : '48');
     this.image
         .css('margin', 'auto')
         .css('height', '100%')
@@ -68,7 +68,7 @@ define(['builder', 'i18n'], function (B) {
       ]}
     );
     
-    $("#container").append(c.$);
+    $("#container").append(c.$el);
     setTimeout(function () { 
       $('.alert').alert('close');
     }, 5000);

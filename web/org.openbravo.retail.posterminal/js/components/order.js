@@ -55,8 +55,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
         ]} 
       ]}                                                               
     );
-    this.$ = this.component.$;
-    this.totalnet = this.component.context.totalnet.$;
+    this.$el = this.component.$el;
+    this.totalnet = this.component.context.totalnet.$el;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (

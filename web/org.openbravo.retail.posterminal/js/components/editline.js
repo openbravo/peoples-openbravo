@@ -19,7 +19,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                     {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange' }, content: [
                       OB.I18N.getLabel('OBPOS_ButtonDelete')
                     ], init: function () {
-                      this.$.click(function(e) {
+                      this.$el.click(function(e) {
                         e.preventDefault();
                         if (me.line) {
                           me.receipt.deleteLine(me.line);    
@@ -92,15 +92,15 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       ]}
     );
     
-    this.$ = this.component.$;
-    this.msgedit = this.component.context.msgedit.$;
-    this.msgaction = this.component.context.msgaction.$;
-    this.txtaction = this.component.context.txtaction.$;
-    this.editlineimage = this.component.context.editlineimage.$;
-    this.editlinename = this.component.context.editlinename.$;
-    this.editlineqty = this.component.context.editlineqty.$;
-    this.editlineprice = this.component.context.editlineprice.$;
-    this.editlinenet = this.component.context.editlinenet.$;
+    this.$el = this.component.$el;
+    this.msgedit = this.component.context.msgedit.$el;
+    this.msgaction = this.component.context.msgaction.$el;
+    this.txtaction = this.component.context.txtaction.$el;
+    this.editlineimage = this.component.context.editlineimage.$el;
+    this.editlinename = this.component.context.editlinename.$el;
+    this.editlineqty = this.component.context.editlineqty.$el;
+    this.editlineprice = this.component.context.editlineprice.$el;
+    this.editlinenet = this.component.context.editlinenet.$el;
     
     // Set Model
     
@@ -188,7 +188,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       this.msgedit.show();
       this.editlineimage.empty().append(B(
           {kind: OB.UTIL.Thumbnail, attr: {img: this.line.get('product').get('img'), width: 128, height: 128}}
-      ).$);
+      ).$el);
       this.editlinename.text(this.line.get('product').get('product')._identifier);
       this.editlineqty.text(this.line.printQty());
       this.editlineprice.text(this.line.printPrice());

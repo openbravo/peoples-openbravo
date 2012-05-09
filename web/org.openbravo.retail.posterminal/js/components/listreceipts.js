@@ -37,7 +37,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
         ]}                   
       ]}
     );
-    this.$ = this.component.$;
+    this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (

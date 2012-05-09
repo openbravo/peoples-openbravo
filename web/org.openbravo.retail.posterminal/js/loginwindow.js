@@ -38,7 +38,7 @@ define(['builder', 'i18n',
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [   
                 {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password'}, init: function () {
-                  this.$.keyup(function (e) {
+                  this.$el.keyup(function (e) {
                       if(event.keyCode === 13){
                           $("#loginaction").click();
                       }
@@ -50,7 +50,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'btnlink', 'href': '#'}, content: [
                 {kind: B.KindJQuery('i'), attr: {'class': 'icon-ok  icon-white'}}, ' Log in'
               ], init: function () {
-                  this.$.click(function (e) {
+                  this.$el.click(function (e) {
                     e.preventDefault();
                     var u = $('#username').val();
                     var p = $('#password').val();
@@ -66,7 +66,7 @@ define(['builder', 'i18n',
         ]}
       ], init: function () {
         this.context.on('domready', function () {
-          this.context.username.$.focus();
+          this.context.username.$el.focus();
         }, this);
       }}
       

@@ -13,8 +13,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
         {kind: B.KindJQuery('strong'), id: 'totalgross'}
       ]}
     );
-    this.$ = this.component.$;
-    this.totalgross = this.component.context.totalgross.$;
+    this.$el = this.component.$el;
+    this.totalgross = this.component.context.totalgross.$el;
     
     // Set Model
     this.receipt =  context.modelorder;

@@ -66,7 +66,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                 {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
                   {kind: B.KindJQuery('i'), attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
                 ], init: function () {
-                  this.$.click(function (e) {
+                  this.$el.click(function (e) {
                     e.preventDefault();
                     var filter = {};
                     if (me.productname.val() && me.productname.val() !== '') {
@@ -103,9 +103,9 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
         ]}                                                                   
       ]}                      
     );
-    this.$ = this.component.$;
-    this.productname = this.component.context.productname.$;
-    this.productcategory = this.component.context.productcategory.$;
+    this.$el = this.component.$el;
+    this.productname = this.component.context.productname.$el;
+    this.productcategory = this.component.context.productcategory.$el;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
