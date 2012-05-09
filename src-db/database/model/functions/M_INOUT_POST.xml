@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -91,6 +91,7 @@
     Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
+    v_ProductName VARCHAR2(40);
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -380,7 +381,8 @@
             IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1) THEN
               M_Check_Stock(Cur_InOutLine.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID, v_Result, v_Message) ;
               IF v_Result=0 THEN
-			    RAISE_APPLICATION_ERROR(-20000, v_Message||' '||'@line@'||' '||Cur_InOutLine.line) ;
+                SELECT name INTO v_ProductName FROM M_Product WHERE M_Product_id = Cur_InOutLine.M_Product_ID;
+			    RAISE_APPLICATION_ERROR(-20000, v_Message||' '||'@line@'||' '||Cur_InOutLine.line||', '||'@Product@'||' '||v_ProductName) ;
               END IF;
             END IF;
           END LOOP; -- For all InOut Lines
