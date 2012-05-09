@@ -330,12 +330,12 @@
         FROM C_BPARTNER
         WHERE C_BPARTNER.C_BPARTNER_ID=CUR_INVOICE.C_BPARTNER_ID;
 
-	IF(v_paymenttermId is NULL) THEN
-	RAISE_APPLICATION_ERROR(-20000, '@notnullpayment@') ;
-	END IF;
-	IF(v_pricelistId is NULL) THEN
-	RAISE_APPLICATION_ERROR(-20000, '@notnullpricelist@') ;
-	END IF;
+        IF (v_paymenttermId is NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@notnullpaymentterm@') ;
+        END IF;
+        IF (v_pricelistId is NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@notnullpricelist@') ;
+        END IF;
 
         INSERT
         INTO C_INVOICE
