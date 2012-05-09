@@ -22,7 +22,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
           style: 'edit',
           collection: lines,
           renderEmpty: function () {
-            return B(
+            return (
               {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
                  OB.I18N.getLabel('OBPOS_ReceiptNew')
               ]}
@@ -59,7 +59,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.totalnet = this.component.context.totalnet.$;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
-      return B(
+      return (
         {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
           {kind: B.KindJQuery('div'), content: [ 
             model.get('productidentifier')                                                                

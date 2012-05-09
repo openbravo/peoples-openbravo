@@ -13,8 +13,7 @@ define(['builder', 'i18n',
 
   return function () {
 
-    return ( 
-
+    return (
       {kind: B.KindJQuery('section'), content: [
         
         {kind: OB.MODEL.Order},
@@ -41,7 +40,7 @@ define(['builder', 'i18n',
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
             {kind: OB.COMP.SearchBP, attr: {
               renderLine: function (model) {
-                return B(
+                return (
                   {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
                     {kind: B.KindJQuery('div'), content: [ 
                       model.get('BusinessPartner')._identifier
@@ -71,7 +70,7 @@ define(['builder', 'i18n',
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
             {kind: OB.COMP.ListReceipts, attr: {
               renderLine: function (model) {
-                return B(
+                return (
                   {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
                        OB.I18N.formatHour(model.get('orderDate'))
@@ -232,7 +231,7 @@ define(['builder', 'i18n',
                 ]},
                 {kind: OB.COMP.OrderView, attr: {
                   renderLine: function (model) {
-                    return B(
+                    return (
                       {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                         {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
                           model.get('productidentifier')                                                                
@@ -267,7 +266,7 @@ define(['builder', 'i18n',
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
                         {kind: OB.COMP.ListProducts, attr: {
                           renderLine: function (model) {
-                            return B(             
+                            return (
                               {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                                 {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                                   {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
@@ -293,7 +292,7 @@ define(['builder', 'i18n',
                       {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
                         {kind: OB.COMP.ListCategories, attr:{
                           renderLine:function (model) {
-                            return B(
+                            return (
                               {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                                 {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                                   {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
@@ -320,7 +319,7 @@ define(['builder', 'i18n',
                   {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
                     {kind: OB.COMP.SearchProduct, attr: {
                       renderLine: function (model) {
-                        return B(
+                        return (
                           {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                               {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
@@ -376,7 +375,6 @@ define(['builder', 'i18n',
           this.context.modelorderlist.addNewOrder();
         }, this);
       }}
-      
     );           
   };
 });

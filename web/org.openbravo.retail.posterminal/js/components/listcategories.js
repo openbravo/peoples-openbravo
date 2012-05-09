@@ -29,7 +29,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
           style: 'list',  
           collection: this.categories,
           renderEmpty: function () {
-            return B(
+            return (
               {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
                 OB.I18N.getLabel('OBPOS_SearchNoResults')
               ]}
@@ -41,12 +41,12 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     this.$ = this.component.$;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
-      return B(
+      return (
         {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                              
           {kind: B.KindJQuery('div'), content: [ 
             model.get('category')._identifier                                                                                                                                               
           ]}                                                                                   
-        ]}          
+        ]}
       );               
     };     
 

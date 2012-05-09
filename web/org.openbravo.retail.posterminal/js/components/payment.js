@@ -43,12 +43,12 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
                   {kind: OB.COMP.TableView, attr: {
                     collection: payments,
                     renderEmpty: function () {
-                      return B(
+                      return (
                         {kind: B.KindJQuery('div')}
                       );         
                     },
                     renderLine: function (model) {
-                      return B(
+                      return (
                         {kind: B.KindJQuery('div'), attr: {'class': 'btnselect', 'style': 'color:white; '}, content: [
                           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
                             model.printKind()                                                                

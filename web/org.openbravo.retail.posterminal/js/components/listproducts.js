@@ -29,14 +29,14 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
         {kind: OB.COMP.TableView, id: 'tableview', attr: {
           collection: this.products,
           renderEmpty: function () {
-            return B(
+            return (
               {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
                 OB.I18N.getLabel('OBPOS_SearchNoResults')
               ]}
             );            
           },                
           renderLine: function (model) {
-            return B(         
+            return (      
               {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
                 {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                   {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}

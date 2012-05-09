@@ -24,13 +24,13 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.collection.on('change', function(model, prop) {          
         var index = this.collection.indexOf(model);
         this.$.children().eq(index + this.header)
-          .replaceWith(this.renderLine(model).$);      
+          .replaceWith(B(this.renderLine(model)).$);      
       }, this);
       
       this.collection.on('add', function(model, prop, options) {     
         var index = options.index;
         var me = this;
-        var tr = this.renderLine(model).$;
+        var tr = B(this.renderLine(model)).$;
         if (index === this.collection.length - 1) {
           this.$.append(tr);
         } else {
@@ -46,14 +46,14 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.collection.on('reset', function() {
         this.$.empty();
         if (this.renderHeader) {
-          this.$.append(this.renderHeader().$);
+          this.$.append(B(this.renderHeader()).$);
         }
       }, this);   
       
       // Init clear...
       this.$.empty();
       if (this.renderHeader) {
-        this.$.append(this.renderHeader().$);
+        this.$.append(B(this.renderHeader()).$);
       }    
     };   
     
@@ -88,11 +88,11 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     this.selected = null;      
     
     if (this.renderHeader) {      
-      this.theader.append(this.renderHeader().$);  
+      this.theader.append(B(this.renderHeader()).$);  
     }   
     
     if (this.renderEmpty) {
-      this.tempty.append(this.renderEmpty().$);
+      this.tempty.append(B(this.renderEmpty()).$);
     }    
     
     this.collection.on('selected', function (model) {
@@ -111,7 +111,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       
       var me = this;
       var tr = B({kind: B.KindJQuery('li')}).$;
-      tr.append(this.renderLine(model).$);
+      tr.append(B(this.renderLine(model)).$);
       tr.click(function (e) {
         e.preventDefault();
         model.trigger('selected', model);
@@ -119,7 +119,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       });
       
       model.on('change', function() {
-        tr.empty().append(this.renderLine(model).$);
+        tr.empty().append(B(this.renderLine(model)).$);
       }, this);
       
       model.on('selected', function() {
