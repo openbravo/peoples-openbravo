@@ -40,7 +40,9 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     };
     
     Btn.prototype.append = function (child) {
-      if (child.$) {
+      if (child.$el) {
+        this.button.append(child.$el);
+      } else if (child.$) {
         this.button.append(child.$);
       }
     };

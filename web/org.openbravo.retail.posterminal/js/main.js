@@ -4,10 +4,10 @@ require.config({
   paths: {
     jQuery: 'libs/jquery/jquery',
     Underscore: 'libs/underscore/underscore',
-    Backbone: 'libs/backbone/backbone'
+    Backbone: 'libs/backbone/backbone',
+    text: 'libs/text-1.0.8.min'
   }
 });
-
 
 require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   

@@ -86,7 +86,9 @@ define([], function () {
     };
 
     F.prototype.append = function (child) {
-      if (child.$) {
+      if (child.$el) {
+        this.$.append(child.$el);
+      } else if (child.$) {
         this.$.append(child.$);
       }
     };
