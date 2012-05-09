@@ -6940,7 +6940,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1174-->  <NAME><![CDATA[High Volume]]></NAME>
 <!--1174-->  <PRINTNAME><![CDATA[High Volume]]></PRINTNAME>
 <!--1174-->  <DESCRIPTION><![CDATA[Use Search instead of Pick list]]></DESCRIPTION>
-<!--1174-->  <HELP><![CDATA[The High Volume Checkbox indicates if a search screen will display as opposed to a pick list for selecting records from this table.]]></HELP>
+<!--1174-->  <HELP><![CDATA[If a table is defined as High Volume, it means that it has or may have a large number of rows.]]></HELP>
 <!--1174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1174-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1174--></AD_ELEMENT>
@@ -22452,7 +22452,7 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--56EB0A0CAC4DB232E040007F01001BD8-->  <NAME><![CDATA[Java Package]]></NAME>
 <!--56EB0A0CAC4DB232E040007F01001BD8-->  <PRINTNAME><![CDATA[Java Package]]></PRINTNAME>
 <!--56EB0A0CAC4DB232E040007F01001BD8-->  <DESCRIPTION><![CDATA[Java package for the module]]></DESCRIPTION>
-<!--56EB0A0CAC4DB232E040007F01001BD8-->  <HELP><![CDATA[Is the Java package the module will use.]]></HELP>
+<!--56EB0A0CAC4DB232E040007F01001BD8-->  <HELP><![CDATA[The Java Package is a unique identifier of your module and has to match the Java package naming rules as described in the Java Naming Conventions (names and package names). Be careful when setting this value as you are not allowed to change it once your module is registered in the central repository. If your module includes Java files they have to be packaged within your module's Java package or in its sub-packages.]]></HELP>
 <!--56EB0A0CAC4DB232E040007F01001BD8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--56EB0A0CAC4DB232E040007F01001BD8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--56EB0A0CAC4DB232E040007F01001BD8--></AD_ELEMENT>
