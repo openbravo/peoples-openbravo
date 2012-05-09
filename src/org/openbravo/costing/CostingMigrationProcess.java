@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.DateType;
@@ -35,6 +36,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -43,9 +45,14 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.alert.Alert;
+import org.openbravo.model.ad.alert.AlertRecipient;
+import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
@@ -54,6 +61,7 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.CostingRuleInit;
+import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -66,6 +74,7 @@ public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
   private static Logger log4j = Logger.getLogger(CostingRuleProcess.class);
   private static CostingAlgorithm averageAlgorithm = null;
+  private final String alertRuleName = "Products with transactions without available cost on date.";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -85,9 +94,16 @@ public class CostingMigrationProcess implements Process {
         }
       }
 
+      // FIXME: Load functions in core
+      OBDal.getInstance().registerSQLFunction("get_uuid",
+          new StandardSQLFunction("get_uuid", new StringType()));
+      OBDal.getInstance()
+          .registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
+
       if (!isMigrationFirstPhaseCompleted()) {
         doChecks();
-        prepareInstance();
+
+        updateLegacyCosts();
         createRules();
         createMigrationFirstPhaseCompletedPreference();
       } else {
@@ -124,23 +140,460 @@ public class CostingMigrationProcess implements Process {
     bundle.setResult(msg);
   }
 
-  private void prepareInstance() {
-    // Update old transactions to calculated = true.
+  private void doChecks() {
+    // Check all transactions have a legacy cost available.
+    AlertRule legacyCostAvailableAlert = getLegacyCostAvailableAlert();
+    if (legacyCostAvailableAlert == null) {
+      Organization org0 = OBDal.getInstance().get(Organization.class, "0");
+      Client client0 = OBDal.getInstance().get(Client.class, "0");
+
+      legacyCostAvailableAlert = OBProvider.getInstance().get(AlertRule.class);
+      legacyCostAvailableAlert.setClient(client0);
+      legacyCostAvailableAlert.setOrganization(org0);
+      legacyCostAvailableAlert.setName(alertRuleName);
+      // Header tab of Product window
+      legacyCostAvailableAlert.setTab(OBDal.getInstance().get(org.openbravo.model.ad.ui.Tab.class,
+          "180"));
+      StringBuffer sql = new StringBuffer();
+      sql.append("select t.m_product_id as referencekey_id, '0' as ad_role_id, null as ad_user_id,");
+      sql.append("\n    'Product ' || p.name || ' has transactions on dates without available");
+      sql.append(" costs. Min date ' || min(t.movementdate) || '. Max date ' || max(t.movementdate)");
+      sql.append(" as description,");
+      sql.append("\n    'Y' as isactive, p.ad_org_id, p.ad_client_id,");
+      sql.append("\n    now() as created, '0' as createdby, now() as updated, '0' as updatedby,");
+      sql.append("\n    p.name as record_id");
+      sql.append("\nfrom m_transaction t join m_product p on t.m_product_id = p.m_product_id");
+      sql.append("\nwhere not exists (select 1 from m_costing c ");
+      sql.append("\n                  where t.isactive = 'Y'");
+      sql.append("\n                    and t.m_product_id = c.m_product_id");
+      sql.append("\n                    and t.movementdate >= c.datefrom");
+      sql.append("\n                    and t.movementdate < c.dateto)");
+      sql.append("\ngroup by t.m_product_id, p.ad_org_id, p.ad_client_id, p.name");
+      legacyCostAvailableAlert.setSql(sql.toString());
+
+      OBDal.getInstance().save(legacyCostAvailableAlert);
+      OBDal.getInstance().flush();
+
+      insertAlertRecipients(legacyCostAvailableAlert);
+    }
+
+    // Delete previous alerts
+    StringBuffer delete = new StringBuffer();
+    delete.append("delete from " + Alert.ENTITY_NAME);
+    delete.append(" where " + Alert.PROPERTY_ALERTRULE + " = :alertRule ");
+    Query queryDelete = OBDal.getInstance().getSession().createQuery(delete.toString());
+    queryDelete.setEntity("alertRule", legacyCostAvailableAlert);
+    queryDelete.executeUpdate();
+
+    if (legacyCostAvailableAlert.isActive()) {
+
+      SQLQuery alertQry = OBDal.getInstance().getSession()
+          .createSQLQuery(legacyCostAvailableAlert.getSql());
+      List<?> rows = alertQry.list();
+      for (final Object row : rows) {
+        final Object[] values = (Object[]) row;
+        Alert alert = OBProvider.getInstance().get(Alert.class);
+        alert.setCreatedBy(OBDal.getInstance().get(User.class, "0"));
+        alert.setUpdatedBy(OBDal.getInstance().get(User.class, "0"));
+        alert.setClient(OBDal.getInstance().get(Client.class, values[6]));
+        alert.setOrganization(OBDal.getInstance().get(Organization.class, values[5]));
+        alert.setAlertRule(legacyCostAvailableAlert);
+        alert.setRecordID((String) values[11]);
+        alert.setReferenceSearchKey((String) values[0]);
+        alert.setDescription((String) values[3]);
+        alert.setUserContact(null);
+        alert.setRole(OBDal.getInstance().get(org.openbravo.model.ad.access.Role.class, "0"));
+        OBDal.getInstance().save(alert);
+      }
+      if (SessionHandler.isSessionHandlerPresent()) {
+        SessionHandler.getInstance().commitAndStart();
+      }
+      if (rows.size() > 0) {
+        // FIXME: Add proper messages
+        throw new OBException("Transactions with no available cost found");
+      }
+    }
+  }
+
+  private void updateLegacyCosts() {
+    log4j.debug("UpdateLegacyCosts");
+    // Reset costs in m_transaction and m_transaction_cost.
+    Query queryDelete = OBDal.getInstance().getSession()
+        .createQuery("delete from " + TransactionCost.ENTITY_NAME);
+    queryDelete.executeUpdate();
+
     StringBuffer update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
-    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    update.append(" where " + MaterialTransaction.PROPERTY_PRODUCT + " in (");
-    update.append("   select p from " + Product.ENTITY_NAME + " as p");
-    update.append("   where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-    update.append("     and p." + Product.PROPERTY_STOCKED + " = true");
-    update.append(" )");
-    Query updateProduct = OBDal.getInstance().getSession().createQuery(update.toString());
-    updateProduct.executeUpdate();
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false,");
+    update.append("     " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = null");
+    update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0");
+    update.append("   or " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
+    updateQry.executeUpdate();
+    OBDal.getInstance().flush();
 
-    OBDal.getInstance().registerSQLFunction("get_uuid",
-        new StandardSQLFunction("get_uuid", new StringType()));
-    OBDal.getInstance().registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
+    for (Client client : getClients()) {
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client.getId());
+      Currency clientCur = client.getCurrency();
+      log4j.debug("** Processing client: " + client.getIdentifier() + " with currency: "
+          + clientCur.getIdentifier());
+      for (Organization legalEntity : getLegalEntitiesOfClient(client)) {
+        Currency orgCur = legalEntity.getCurrency() != null ? legalEntity.getCurrency() : clientCur;
+        log4j.debug("** Processing organization: " + legalEntity.getIdentifier()
+            + " with currency: " + orgCur.getIdentifier());
+        boolean conversionNeeded = !clientCur.getId().equals(orgCur.getId());
+        Date minDate = null;
+        Date maxDate = null;
+        Set<String> naturalTree = osp.getNaturalTree(legalEntity.getId());
+        List<Costing> legacyCosts = getLegacyCostBatch(legalEntity, naturalTree);
+        while (!legacyCosts.isEmpty()) {
+          log4j.debug("**** Processing legacy costs batch: " + legacyCosts.size());
+          for (Costing cost : legacyCosts) {
+            if (minDate == null || minDate.after(cost.getStartingDate())) {
+              minDate = cost.getStartingDate();
+            }
+            if (maxDate == null || maxDate.before(cost.getEndingDate())) {
+              maxDate = cost.getEndingDate();
+            }
+            updateTrxLegacyCosts(cost, !conversionNeeded, clientCur.getStandardPrecision(),
+                naturalTree);
+          }
+          if (SessionHandler.isSessionHandlerPresent()) {
+            SessionHandler.getInstance().commitAndStart();
+          }
+          legacyCosts = getLegacyCostBatch(legalEntity, naturalTree);
+        }
 
+        // If minDate is null there isn't any cost to update.
+        if (!orgCur.getId().equals(clientCur.getId()) && minDate != null) {
+          Organization convOrg = legalEntity;
+          boolean hasTrxToConvert = hasTrxToConvert(naturalTree, minDate, maxDate);
+          while (hasTrxToConvert) {
+            log4j.debug("**** HasTrxToConvert ");
+            for (ConversionRate convRate : getConversionRates(convOrg, clientCur, orgCur, minDate,
+                maxDate)) {
+              convertTrxLegacyCosts(convRate, orgCur.getStandardPrecision(), naturalTree);
+            }
+
+            if (SessionHandler.isSessionHandlerPresent()) {
+              SessionHandler.getInstance().commitAndStart();
+            }
+            hasTrxToConvert = hasTrxToConvert(naturalTree, minDate, maxDate);
+            if (hasTrxToConvert) {
+              if (convOrg.getId().equals("0")) {
+                throw new OBException("NoConversionRateFound");
+              }
+              convOrg = osp.getParentOrg(convOrg);
+            }
+
+          }
+        }
+      }
+    }
+
+    updateWithCeroCostRemainingTrx();
+
+    insertTrxCosts();
+    insertStandardCosts();
+  }
+
+  private void createRules() throws Exception {
+    // Delete manually created rules.
+    Query queryDelete = OBDal.getInstance().getSession()
+        .createQuery("delete from " + CostingRule.ENTITY_NAME);
+    queryDelete.executeUpdate();
+
+    List<Client> clients = getClients();
+    for (Client client : clients) {
+      List<Organization> legalEntities = getLegalEntitiesOfClient(client);
+      Currency clientCurrency = client.getCurrency();
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client.getId());
+      for (Organization org : legalEntities) {
+        CostingRule rule = createCostingRule(org);
+        processRule(rule, osp, clientCurrency);
+      }
+    }
+  }
+
+  private void processRule(CostingRule rule, OrganizationStructureProvider osp,
+      Currency clientCurrency) {
+    final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+    Currency orgCurrency = rule.getOrganization().getCurrency() != null ? rule.getOrganization()
+        .getCurrency() : clientCurrency;
+    CostingRuleProcess crp = new CostingRuleProcess();
+    crp.createCostingRuleInits(rule, childOrgs);
+
+    // Set valid from date
+    Date startingDate = new Date();
+    rule.setStartingDate(startingDate);
+    log4j.debug("setting starting date " + startingDate);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(rule);
+
+    // Update cost of inventories and process starting physical inventories.
+    for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
+      for (InventoryCountLine icl : cri.getCloseInventory().getMaterialMgmtInventoryCountLineList()) {
+        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
+
+        trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
+        BigDecimal cost = getLegacyProductCost(trx.getProduct());
+        trx.setCostCalculated(true);
+        OBDal.getInstance().save(trx);
+        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+        if (!clientCurrency.getId().equals(orgCurrency.getId())) {
+          cost = FinancialUtils.getConvertedAmount(cost, clientCurrency, orgCurrency, startingDate,
+              rule.getOrganization(), FinancialUtils.PRECISION_COSTING);
+        }
+        initICL.setCost(cost);
+        OBDal.getInstance().save(initICL);
+      }
+    }
+  }
+
+  private boolean isCostingMigrationNotNeeded() {
+    OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, "");
+    costingQry.setFilterOnReadableClients(false);
+    costingQry.setFilterOnReadableOrganization(false);
+
+    return costingQry.count() == 0;
+  }
+
+  private boolean isMigrated() {
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
+
+    return prefQry.count() > 0;
+  }
+
+  private boolean isMigrationFirstPhaseCompleted() {
+    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
+        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationFirstPhaseCompleted'");
+    prefQry.setFilterOnReadableClients(false);
+    prefQry.setFilterOnReadableOrganization(false);
+
+    return prefQry.count() > 0;
+  }
+
+  private AlertRule getLegacyCostAvailableAlert() {
+    String where = AlertRule.PROPERTY_NAME + " = '" + alertRuleName + "'";
+    OBQuery<AlertRule> alertQry = OBDal.getInstance().createQuery(AlertRule.class, where);
+    alertQry.setFilterOnActive(false);
+
+    return alertQry.uniqueResult();
+  }
+
+  private List<Costing> getLegacyCostBatch(Organization legalEntity, Set<String> naturalTree) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as c");
+    where.append(" where c." + Costing.PROPERTY_CLIENT + " = :client");
+    where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append("     where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    where.append("       and trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= c."
+        + Costing.PROPERTY_STARTINGDATE);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = c."
+        + Costing.PROPERTY_PRODUCT);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < c."
+        + Costing.PROPERTY_ENDINGDATE);
+    where.append("     )");
+    where.append(" order by " + Costing.PROPERTY_PRODUCT + ", " + Costing.PROPERTY_STARTINGDATE
+        + ", " + Costing.PROPERTY_ENDINGDATE + " desc");
+
+    OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
+    costingQry.setFilterOnReadableClients(false);
+    costingQry.setFilterOnReadableOrganization(false);
+    costingQry.setNamedParameter("client", legalEntity.getClient());
+    costingQry.setNamedParameter("orgs", naturalTree);
+    costingQry.setMaxResult(100);
+    return costingQry.list();
+  }
+
+  private void updateTrxLegacyCosts(Costing cost, boolean calculated, Long standardPrecision,
+      Set<String> naturalTree) {
+    log4j.debug("****** UpdateTrxLegacyCosts");
+
+    StringBuffer update = new StringBuffer();
+    update.append("update " + MaterialTransaction.ENTITY_NAME);
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = :isCalculated,");
+    update.append("     " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = round(:cost * abs("
+        + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + "), :precision)");
+    update.append(" where " + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    update.append("   and " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    update.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :dateFrom");
+    update.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :dateTo");
+
+    Query trxUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
+    trxUpdate.setBoolean("isCalculated", calculated);
+    trxUpdate.setBigDecimal("cost", cost.getCost());
+    trxUpdate.setLong("precision", standardPrecision);
+    trxUpdate.setEntity("product", cost.getProduct());
+    trxUpdate.setParameterList("orgs", naturalTree);
+    trxUpdate.setDate("dateFrom", cost.getStartingDate());
+    trxUpdate.setDate("dateTo", cost.getEndingDate());
+    int updated = trxUpdate.executeUpdate();
+    log4j.debug("****** UpdateTrxLegacyCosts updated:" + updated);
+  }
+
+  private boolean hasTrxToConvert(Set<String> naturalTree, Date minDate, Date maxDate) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :minDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
+    OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    whereQry.setFilterOnReadableClients(false);
+    whereQry.setFilterOnReadableOrganization(false);
+    whereQry.setNamedParameter("orgs", naturalTree);
+    whereQry.setNamedParameter("minDate", minDate);
+    whereQry.setNamedParameter("maxDate", maxDate);
+
+    return whereQry.count() > 0;
+  }
+
+  private List<ConversionRate> getConversionRates(Organization organization, Currency fromCur,
+      Currency toCur, Date minDate, Date maxDate) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as cr");
+    where.append(" where cr." + ConversionRate.PROPERTY_ORGANIZATION + ".id = :organizationId");
+    where.append("   and cr." + ConversionRate.PROPERTY_CURRENCY + ".id = :fromCur");
+    where.append("   and cr." + ConversionRate.PROPERTY_TOCURRENCY + ".id = :toCur");
+    where.append("   and cr." + ConversionRate.PROPERTY_VALIDFROMDATE + " < :maxDate");
+    where.append("   and cr." + ConversionRate.PROPERTY_VALIDTODATE + " > :minDate");
+    where.append("   and cr." + ConversionRate.PROPERTY_ACTIVE + " = true");
+    where.append(" order by cr." + ConversionRate.PROPERTY_VALIDFROMDATE);
+
+    OBQuery<ConversionRate> convRateQry = OBDal.getInstance().createQuery(ConversionRate.class,
+        where.toString());
+    convRateQry.setFilterOnReadableClients(false);
+    convRateQry.setFilterOnReadableOrganization(false);
+    convRateQry.setNamedParameter("organizationId", organization.getId());
+    convRateQry.setNamedParameter("fromCur", fromCur.getId());
+    convRateQry.setNamedParameter("toCur", toCur.getId());
+    convRateQry.setNamedParameter("maxDate", maxDate);
+    convRateQry.setNamedParameter("minDate", minDate);
+    return convRateQry.list();
+  }
+
+  private void convertTrxLegacyCosts(ConversionRate convRate, Long standardPrecision,
+      Set<String> naturalTree) {
+    log4j.debug("****** ConvertTrxLegacyCosts");
+    StringBuffer convUpd = new StringBuffer();
+    convUpd.append(" update " + MaterialTransaction.ENTITY_NAME);
+    convUpd.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true,");
+    convUpd.append("     " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = round("
+        + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " * :convRate, :precision)");
+    convUpd.append(" where " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    convUpd.append("   and " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    convUpd.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :dateFrom");
+    convUpd.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :dateTo");
+
+    Query trxUpdate = OBDal.getInstance().getSession().createQuery(convUpd.toString());
+    trxUpdate.setBigDecimal("convRate", convRate.getMultipleRateBy());
+    trxUpdate.setLong("precision", standardPrecision);
+    trxUpdate.setParameterList("orgs", naturalTree);
+    trxUpdate.setDate("dateFrom", convRate.getValidFromDate());
+    trxUpdate.setDate("dateTo", convRate.getValidToDate());
+    int updated = trxUpdate.executeUpdate();
+    log4j.debug("****** ConvertTrxLegacyCosts updated: " + updated);
+  }
+
+  private void updateWithCeroCostRemainingTrx() {
+    log4j.debug("****** updateWithCeroRemainingTrx");
+
+    StringBuffer update = new StringBuffer();
+    update.append("update " + MaterialTransaction.ENTITY_NAME);
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true,");
+    update.append("     " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = 0");
+    update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
+
+    Query trxUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
+    // trxUpdate.setBigDecimal("cost", BigDecimal.ZERO);
+    int updated = trxUpdate.executeUpdate();
+    log4j.debug("****** updateWithCeroRemainingTrx updated:" + updated);
+  }
+
+  private void insertAlertRecipients(AlertRule alertRule) {
+    StringBuffer insert = new StringBuffer();
+    insert.append("insert into " + AlertRecipient.ENTITY_NAME);
+    insert.append(" (id ");
+    insert.append(", " + AlertRecipient.PROPERTY_ACTIVE);
+    insert.append(", " + AlertRecipient.PROPERTY_CLIENT);
+    insert.append(", " + AlertRecipient.PROPERTY_ORGANIZATION);
+    insert.append(", " + AlertRecipient.PROPERTY_CREATIONDATE);
+    insert.append(", " + AlertRecipient.PROPERTY_CREATEDBY);
+    insert.append(", " + AlertRecipient.PROPERTY_UPDATED);
+    insert.append(", " + AlertRecipient.PROPERTY_UPDATEDBY);
+    insert.append(", " + AlertRecipient.PROPERTY_ROLE);
+    insert.append(", " + AlertRecipient.PROPERTY_ALERTRULE);
+    insert.append(" )\n select get_uuid()");
+    insert.append(", r." + Role.PROPERTY_ACTIVE);
+    insert.append(", r." + Role.PROPERTY_CLIENT);
+    insert.append(", r." + Role.PROPERTY_ORGANIZATION);
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", r");
+    insert.append(", ar");
+    insert.append(" from " + Role.ENTITY_NAME + " as r");
+    insert.append(", " + User.ENTITY_NAME + " as u");
+    insert.append(", " + AlertRule.ENTITY_NAME + " as ar");
+    insert.append("  where r." + Role.PROPERTY_MANUAL + " = false");
+    insert.append("    and r." + Role.PROPERTY_CLIENT + ".id <> '0'");
+    insert.append("    and u.id = '0'");
+    insert.append("    and ar.id = :ar");
+
+    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+    queryInsert.setString("ar", alertRule.getId());
+    int inserted = queryInsert.executeUpdate();
+    log4j.debug("** inserted alert recipients: " + inserted);
+  }
+
+  private void insertTrxCosts() {
+    StringBuffer insert = new StringBuffer();
+    insert.append("insert into " + TransactionCost.ENTITY_NAME);
+    insert.append(" (id ");
+    insert.append(", " + TransactionCost.PROPERTY_ACTIVE);
+    insert.append(", " + TransactionCost.PROPERTY_CLIENT);
+    insert.append(", " + TransactionCost.PROPERTY_ORGANIZATION);
+    insert.append(", " + TransactionCost.PROPERTY_CREATIONDATE);
+    insert.append(", " + TransactionCost.PROPERTY_CREATEDBY);
+    insert.append(", " + TransactionCost.PROPERTY_UPDATED);
+    insert.append(", " + TransactionCost.PROPERTY_UPDATEDBY);
+    insert.append(", " + TransactionCost.PROPERTY_INVENTORYTRANSACTION);
+    insert.append(", " + TransactionCost.PROPERTY_COST);
+    insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
+    insert.append(" )\n select get_uuid()");
+    insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
+    insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
+    insert.append(", t." + MaterialTransaction.PROPERTY_ORGANIZATION);
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", now()");
+    insert.append(", u");
+    insert.append(", t");
+    insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
+    insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+    insert.append(", " + User.ENTITY_NAME + " as u");
+    insert.append("  where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
+    insert.append("    and not exists (select 1 from " + TransactionCost.ENTITY_NAME + " as tc");
+    insert.append("        where t = tc)");
+    insert.append("    and u.id = :user");
+
+    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.executeUpdate();
+  }
+
+  private void insertStandardCosts() {
     // Insert STANDARD cost for products with costtype = 'ST'.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + Costing.ENTITY_NAME);
@@ -206,76 +659,6 @@ public class CostingMigrationProcess implements Process {
     queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     queryInsert.executeUpdate();
 
-    // Delete manually created rules.
-    Query queryDelete = OBDal.getInstance().getSession()
-        .createQuery("delete from " + CostingRule.ENTITY_NAME);
-    queryDelete.executeUpdate();
-  }
-
-  private boolean isCostingMigrationNotNeeded() {
-    OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, "");
-    costingQry.setFilterOnReadableClients(false);
-    costingQry.setFilterOnReadableOrganization(false);
-
-    return costingQry.count() == 0;
-  }
-
-  private boolean isMigrated() {
-    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
-        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
-    prefQry.setFilterOnReadableClients(false);
-    prefQry.setFilterOnReadableOrganization(false);
-
-    return prefQry.count() > 0;
-  }
-
-  private boolean isMigrationFirstPhaseCompleted() {
-    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
-        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationFirstPhaseCompleted'");
-    prefQry.setFilterOnReadableClients(false);
-    prefQry.setFilterOnReadableOrganization(false);
-
-    return prefQry.count() > 0;
-  }
-
-  private void doChecks() {
-    // TODO Check there are not transactions in the future.
-
-  }
-
-  private void createRules() throws Exception {
-    List<Client> clients = getClients();
-    for (Client client : clients) {
-      List<Organization> legalEntities = getLegalEntitiesOfClient(client);
-      Currency clientCurrency = client.getCurrency();
-      OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(client.getId());
-      for (Organization org : legalEntities) {
-        CostingRule rule = createCostingRule(org);
-        processRule(rule, osp, clientCurrency);
-      }
-    }
-  }
-
-  private static List<Client> getClients() {
-    OBCriteria<Client> obcClient = OBDal.getInstance().createCriteria(Client.class);
-    obcClient.setFilterOnReadableClients(false);
-    obcClient.add(Restrictions.ne(Client.PROPERTY_ID, "0"));
-    return obcClient.list();
-  }
-
-  private List<Organization> getLegalEntitiesOfClient(Client client) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as org");
-    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
-    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
-    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
-    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-        where.toString());
-    orgQry.setFilterOnReadableClients(false);
-    orgQry.setFilterOnReadableOrganization(false);
-    orgQry.setNamedParameter("client", client.getId());
-    return orgQry.list();
   }
 
   private CostingRule createCostingRule(Organization org) {
@@ -287,41 +670,6 @@ public class CostingMigrationProcess implements Process {
     rule.setStartingDate(null);
     OBDal.getInstance().save(rule);
     return rule;
-  }
-
-  private void processRule(CostingRule rule, OrganizationStructureProvider osp,
-      Currency clientCurrency) {
-    final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
-    Currency orgCurrency = rule.getOrganization().getCurrency() != null ? rule.getOrganization()
-        .getCurrency() : clientCurrency;
-    CostingRuleProcess crp = new CostingRuleProcess();
-    crp.createCostingRuleInits(rule, childOrgs);
-
-    // Set valid from date
-    Date startingDate = new Date();
-    rule.setStartingDate(startingDate);
-    log4j.debug("setting starting date " + startingDate);
-    OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(rule);
-
-    // Update cost of inventories and process starting physical inventories.
-    for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
-      for (InventoryCountLine icl : cri.getCloseInventory().getMaterialMgmtInventoryCountLineList()) {
-        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
-
-        trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
-        BigDecimal cost = getLegacyProductCost(trx.getProduct());
-        trx.setCostCalculated(true);
-        OBDal.getInstance().save(trx);
-        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
-        if (!clientCurrency.getId().equals(orgCurrency.getId())) {
-          cost = FinancialUtils.getConvertedAmount(cost, clientCurrency, orgCurrency, startingDate,
-              rule.getOrganization(), FinancialUtils.PRECISION_COSTING);
-        }
-        initICL.setCost(cost);
-        OBDal.getInstance().save(initICL);
-      }
-    }
   }
 
   private BigDecimal getLegacyProductCost(Product product) {
@@ -405,6 +753,17 @@ public class CostingMigrationProcess implements Process {
    * Create a preference to be able to determine that the migration first phase is completed.
    */
   private void createMigrationFirstPhaseCompletedPreference() {
+    createPreference("CostingMigrationFirstPhaseCompleted", null);
+  }
+
+  /**
+   * Create a preference to be able to determine that the migration has been completed.
+   */
+  private void createCostMigratedPreference() {
+    createPreference("CostingMigrationDone", null);
+  }
+
+  private void createPreference(String attribute, String value) {
     Organization org0 = OBDal.getInstance().get(Organization.class, "0");
     Client client0 = OBDal.getInstance().get(Client.class, "0");
 
@@ -412,7 +771,8 @@ public class CostingMigrationProcess implements Process {
     newPref.setClient(client0);
     newPref.setOrganization(org0);
     newPref.setPropertyList(false);
-    newPref.setAttribute("CostingMigrationFirstPhaseCompleted");
+    newPref.setAttribute(attribute);
+    newPref.setSearchKey(value);
 
     OBDal.getInstance().save(newPref);
   }
@@ -428,20 +788,18 @@ public class CostingMigrationProcess implements Process {
     }
   }
 
-  /**
-   * Create a preference to be able to determine that the migration has been completed.
-   */
-  private void createCostMigratedPreference() {
-    Organization org0 = OBDal.getInstance().get(Organization.class, "0");
-    Client client0 = OBDal.getInstance().get(Client.class, "0");
-
-    Preference newPref = OBProvider.getInstance().get(Preference.class);
-    newPref.setClient(client0);
-    newPref.setOrganization(org0);
-    newPref.setPropertyList(false);
-    newPref.setAttribute("CostingMigrationDone");
-
-    OBDal.getInstance().save(newPref);
+  private List<Organization> getLegalEntitiesOfClient(Client client) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as org");
+    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
+    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+        where.toString());
+    orgQry.setFilterOnReadableClients(false);
+    orgQry.setFilterOnReadableOrganization(false);
+    orgQry.setNamedParameter("client", client.getId());
+    return orgQry.list();
   }
 
   private static CostingAlgorithm getAverageAlgorithm() {
@@ -458,5 +816,12 @@ public class CostingMigrationProcess implements Process {
     costalgCrit.setFilterOnReadableOrganization(false);
     averageAlgorithm = (CostingAlgorithm) costalgCrit.uniqueResult();
     return averageAlgorithm;
+  }
+
+  private static List<Client> getClients() {
+    OBCriteria<Client> obcClient = OBDal.getInstance().createCriteria(Client.class);
+    obcClient.setFilterOnReadableClients(false);
+    obcClient.add(Restrictions.ne(Client.PROPERTY_ID, "0"));
+    return obcClient.list();
   }
 }
