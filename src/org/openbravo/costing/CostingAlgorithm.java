@@ -530,14 +530,13 @@ public abstract class CostingAlgorithm {
    *           when no PriceList is found for the product.
    */
   protected BigDecimal getPriceListCost() {
-    org.openbravo.model.common.businesspartner.BusinessPartner bp = CostingUtils
-        .getTrxBusinessPartner(transaction, trxType);
-    org.openbravo.model.pricing.pricelist.PriceList pricelist = null;
+    BusinessPartner bp = CostingUtils.getTrxBusinessPartner(transaction, trxType);
+    PriceList pricelist = null;
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    org.openbravo.model.pricing.pricelist.ProductPrice pp = FinancialUtils.getProductPrice(
-        transaction.getProduct(), transaction.getMovementDate(), false, pricelist);
+    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
+        transaction.getMovementDate(), false, pricelist);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
     if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
         costCurrency.getId())) {
