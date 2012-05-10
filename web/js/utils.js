@@ -33,12 +33,14 @@ function utilsJSDirectExecution() {
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIPage = checkWindowInMDIPage();
   isWindowInMDIContext = checkWindowInMDIContext();
+  isRTL = checkWindowInRTLMode();
   if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
   }
 }
 
 var isIE9Strict = false;
+var isRTL = false;
 var isWindowInMDIPopup = false;
 var isWindowInMDITab = false;
 var isWindowInMDIPage = false;
@@ -3403,6 +3405,12 @@ function adaptSkinToMDIEnvironment() {
   if (isIE9Strict) {
     addStyleRule("th.DataGrid_Header_Cell", "height: 20px;");
 
+    if (!isRTL) {
+      addStyleRule('.LabelTextAfterCheckbox', 'margin-left: 15px;');
+    } else {
+      addStyleRule('.LabelTextAfterCheckbox', 'margin-right: 15px;');
+    }
+
     var messageType = {};
     messageType.name = ['ERROR', 'INFO', 'SUCCESS', 'WARNING'];
     messageType.backgroundColor = ['C72F15', '5886BF', '7BBF58', 'ECE274'];
@@ -5726,6 +5734,28 @@ function sendWindowInfoToMDI() {
       }
     }
   } catch (e) { }
+}
+
+/*
+ * Function that checks if the rendered html is rendered in RTL mode or not.
+ */
+function checkWindowInRTLMode() {
+  var strDirection = '';
+  var htmlTag = document.getElementsByTagName('html')[0];
+
+  if (htmlTag) {
+    if(document.defaultView && document.defaultView.getComputedStyle){
+      strDirection = document.defaultView.getComputedStyle(htmlTag, '').getPropertyValue('direction');
+    } else if(htmlTag.currentStyle){
+      strDirection = htmlTag.currentStyle['direction'];
+    }
+  }
+
+  if (strDirection.toLowerCase() === 'rtl') {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function fixIE9WindowBorders() {

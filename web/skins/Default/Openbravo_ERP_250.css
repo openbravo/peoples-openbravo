@@ -2869,6 +2869,9 @@ table.FieldGroup {
   color: #404040;
 }
 
+.LabelTextAfterCheckbox {
+}
+
 .Label_ReadOnly_Text {
   font-size: 8pt;
   font-weight: bold;
