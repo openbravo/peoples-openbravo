@@ -44,8 +44,14 @@
         var mtop2 = document.getElementById("MenuTop2");
         var mbottom = document.getElementById("MenuBottom");
         var body = document.getElementsByTagName("BODY");
-        var h = body[0].clientHeight;
-        var w = body[0].clientWidth;
+        var h, w;
+        if (isIE9Strict) {
+          h = window.innerHeight;
+          w = window.innerWidth;
+        } else {
+          h = body[0].clientHeight;
+          w = body[0].clientWidth;
+        }
         var name = window.navigator.appName;
         mnu.style.height = h -(mtop.clientHeight + mtop2.clientHeight + mbottom.clientHeight) - ((name.indexOf("Microsoft")==-1)?2:0);
         mnu.style.width = w - (mleft.clientWidth + mright.clientWidth) - ((name.indexOf("Microsoft")==-1)?2:0);
