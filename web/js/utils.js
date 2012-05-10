@@ -26,15 +26,15 @@
  * Code that will be executed once the file is parsed
 */
 function utilsJSDirectExecution() {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 9 && parseInt(getBrowserInfo('majorVersion'), 10) >= 9) {
+    isIE9Strict = true;
+  }
   isWindowInMDIPopup = checkWindowInMDIPopup();
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIPage = checkWindowInMDIPage();
   isWindowInMDIContext = checkWindowInMDIContext();
   if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
-  }
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 9 && parseInt(getBrowserInfo('majorVersion'), 10) >= 9) {
-    isIE9Strict = true;
   }
 }
 
@@ -246,7 +246,7 @@ function setObjAttribute(obj, attribute, attribute_text) {
 function getElementsByName(name, tag) {
   var resultArray = [];
   if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
-    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && !isIE9Strict) {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
       var inputs = document.all;
       for (var i=0; i<inputs.length; i++){
         if (inputs.item(i).getAttribute('name') == name){
@@ -3399,6 +3399,9 @@ function adaptSkinToMDIEnvironment() {
     addStyleRule(".Popup_ContentPane_NavBar", "display: none;");
     addStyleRule(".Popup_ContentPane_SeparatorBar", "display: none;");
     addStyleRule(".Popup_ContentPane_CircleLogo", "display: none;");
+  }
+  if (isIE9Strict) {
+    addStyleRule("th.DataGrid_Header_Cell", "height: 20px;");
   }
 }
 

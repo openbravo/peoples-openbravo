@@ -93,8 +93,18 @@ function rememberIsReceipt() {
 function calculateNumRows() {
   resizeArea();
   document.getElementById("grid_sample").style.display = "block";
-  var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
-  var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+  var grid_header = document.getElementById("grid_sample_header");
+  var grid_row = document.getElementById("grid_sample_row");
+  var grid_header_height, grid_row_height;
+
+  if (isIE9Strict) {
+    grid_header_height = parseInt(getComputedStyle(grid_header, null).getPropertyValue("height").replace('px', ''), 10) + 4;
+    grid_row_height = parseInt(getComputedStyle(grid_row, null).getPropertyValue("height").replace('px', ''), 10) + 1;
+  } else {
+    grid_header_height = grid_header.clientHeight + 1;
+    grid_row_height = grid_row.clientHeight + 1;
+  }
+
   if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
     grid_header_height = grid_header_height + 1;
     grid_row_height = grid_row_height - 1;
@@ -108,19 +118,28 @@ function calculateNumRows() {
   var bottomrow_cont = document.getElementById("bottomRow");
   var related_info_cont = document.getElementById("related_info_cont");
   var client_height = document.getElementById("client").clientHeight;
-
-  client_height = client_height
-      - grid_header_height
-      - (related_info_cont?related_info_cont.clientHeight:0)
-      - (filterRow1_cont?filterRow1_cont.clientHeight:0)
-      - (filterRow2_cont?filterRow2_cont.clientHeight:0)
-      - (filterRow3_cont?filterRow3_cont.clientHeight:0)
-      - (filterRow4_cont?filterRow4_cont.clientHeight:0)
-      - (filterRow5_cont?filterRow5_cont.clientHeight:0)
-      - (bottomrow_cont?bottomrow_cont.clientHeight:0)
-      - (messagebox_cont?messagebox_cont.clientHeight:0);
   
-  client_height = client_height - 20;
+  if (isIE9Strict) {
+    client_height = client_height
+        - 25
+        - grid_header_height
+        - (related_info_cont?related_info_cont.clientHeight:0)
+        - 30 - 30 - 30 - 36 - 40 - 40
+        - (messagebox_cont?messagebox_cont.clientHeight:0);
+  } else {
+    client_height = client_height
+        - 20
+        - grid_header_height
+        - (related_info_cont?related_info_cont.clientHeight:0)
+        - (filterRow1_cont?filterRow1_cont.clientHeight:0)
+        - (filterRow2_cont?filterRow2_cont.clientHeight:0)
+        - (filterRow3_cont?filterRow3_cont.clientHeight:0)
+        - (filterRow4_cont?filterRow4_cont.clientHeight:0)
+        - (filterRow5_cont?filterRow5_cont.clientHeight:0)
+        - (bottomrow_cont?bottomrow_cont.clientHeight:0)
+        - (messagebox_cont?messagebox_cont.clientHeight:0);
+  }
+
   var numRows = (client_height)/(grid_row_height);
   numRows = parseInt(numRows);
   if (numRows > 1) { numRows -= 1; }
