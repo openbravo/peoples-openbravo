@@ -161,9 +161,12 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
           var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
           temp.innerHTML = newRows;
           tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-          temp.parentNode.removeChild(temp);
+          if (temp.parentNode) {
+            temp.parentNode.removeChild(temp);
+          }
+        } else {
+          tableBody.innerHTML = aux;
         }
-        tableBody.innerHTML = aux;
         
         reloadOpener();
         updateExpectedAmt();
