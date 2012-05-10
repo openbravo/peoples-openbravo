@@ -42,7 +42,11 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
                     e.preventDefault();
                     var filter = {};
                     if (me.bpname.val() && me.bpname.val() !== '') {
-                      filter._identifier = '%i' + OB.UTIL.escapeRegExp(me.bpname.val());
+                      filter = {
+                          BusinessPartner :{
+                            _identifier : '%i' + OB.UTIL.escapeRegExp(me.bpname.val())
+                          }
+                      };
                     }
                     me.bps.exec(filter);
                   });

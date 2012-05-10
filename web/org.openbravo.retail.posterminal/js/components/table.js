@@ -109,13 +109,14 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.tempty.hide();
       this.tbody.show();
       
-      var me = this;
+      var me = this; var mimi = this;
       var tr = B({kind: B.KindJQuery('li')}).$el;
       tr.append(B(this.renderLine(model)).$el);
       tr.click(function (e) {
         e.preventDefault();
         model.trigger('selected', model);
         model.trigger('click', model);
+        me.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
       });
       
       model.on('change', function() {

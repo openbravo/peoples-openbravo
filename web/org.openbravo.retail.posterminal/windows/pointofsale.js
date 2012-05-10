@@ -6,9 +6,9 @@ define(['builder', 'i18n',
         'model/terminal', 'model/order',
         'components/commonbuttons',
         'components/hwmanager', 
-        'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
-        'components/total', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',
-        'components/listcategories', 'components/listproducts'
+        'components/modalreceipts', 'components/modalbps',
+        'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
+        'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
         ], function (B) {
   
 
@@ -31,171 +31,31 @@ define(['builder', 'i18n',
         {kind: OB.DATA.OrderTaxes},
         {kind: OB.DATA.OrderSave},
         
-        {kind: B.KindJQuery('div'), attr: {'id': 'modalcustomer', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
-              {kind: B.KindHTML('<span>&times;</span>')}
-            ]},
-            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignCustomer')]}
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-            {kind: OB.COMP.SearchBP, attr: {
-              renderLine: function (model) {
-                return (
-                  {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
-                    {kind: B.KindJQuery('div'), content: [ 
-                      model.get('BusinessPartner')._identifier
-                    ]},                                                                                                                                                                     
-                    {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
-                      model.get('BusinessPartnerLocation')._identifier
-                    ]},                                                                                                                                                                     
-                    {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                  ]}
-                );                    
-              }
-            }} 
-          ]}      
-        ], init: function () {
-          
-          this.context.SearchBPs.bps.on('click', function (model, index) {
-            this.$el.modal('hide');
-          }, this);
-        }},
-        {kind: B.KindJQuery('div'), attr: {'id': 'modalreceipts', 'class': 'modal hide fade', 'style': 'display: none;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
-              {kind: B.KindHTML('<span>&times;</span>')}
-            ]},
-            {kind: B.KindJQuery('h3'), content: [OB.I18N.getLabel('OBPOS_LblAssignReceipt')]}
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-            {kind: OB.COMP.ListReceipts, attr: {
-              renderLine: function (model) {
-                return (
-                  {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                       OB.I18N.formatHour(model.get('orderDate'))
-                    ]},                                                                                      
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
-                      model.get('documentNo')
-                    ]}, 
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [ 
-                      model.get('bp').get('_identifier')
-                    ]}, 
-                    {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                      {kind: B.KindJQuery('strong'), content: [ 
-                         model.printNet()                                                                                                                             
-                      ]}                                                                                                                                                                                                                                 
-                    ]},              
-                    {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                  ]}
-                );
-              }
-            }} 
-          ]}      
-        ], init: function () {
-          var context = this.context;
-            this.$el.on('show', function () {
-              context.modelorderlist.saveCurrent();
-            });  
-            this.context.ListReceipts.receiptlist.on('click', function (model, index) {
-              this.$el.modal('hide');
-            }, this);            
-        }},        
+        {kind: OB.COMP.ModalBPs},
+        {kind: OB.COMP.ModalReceipts},      
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [ 
             
             {kind: OB.COMP.ButtonNew},
-
-            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
-              {kind: B.KindJQuery('i'), attr: {'class': 'icon-trash  icon-white'}}, OB.I18N.getLabel('OBPOS_LblDelete')
-            ], init: function () {
-                var me = this;
-                me.$el.click(function (e) {
-                  e.preventDefault();
-                  if (window.confirm(OB.I18N.getLabel('OBPOS_MsgConfirmDelete'))) {
-                    me.context.modelorderlist.deleteCurrent();
-                  }
-                });
-            }},            
-            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
-              {kind: B.KindJQuery('i'), attr: {'class': 'icon-print  icon-white'}}, OB.I18N.getLabel('OBPOS_LblPrint')
-            ], init: function () {
-                var me = this;
-                me.$el.click(function (e) {
-                  e.preventDefault();
-                  me.context.modelorder.trigger('print');
-                });  
-            }},                                                                                         
+            {kind: OB.COMP.ButtonDelete},
+            {kind: OB.COMP.ButtonPrint},
                             
             {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'paylink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#payment'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width:100px;'}, content: [
-                    {kind: B.KindJQuery('span'), attr: {'style': 'font-weight: bold'}, content: [
-                      {kind: OB.COMP.Total}
-                    ]},                    
-                    {kind: B.KindJQuery('span'), content: [
-                      OB.I18N.getLabel('OBPOS_LblPay')
-                    ]}
-                  ]}
-                ], init: function () {
-                  var context = this.context;
-                  this.$el.on('shown', function () {
-                    context.keyboard.show('toolbarpayment');
-                  });
-                }}        
+                {kind: OB.COMP.ButtonTabPayment}                                                        
+              ]},
+              {kind: B.KindJQuery('li'), content: [                                                  
+                {kind: OB.COMP.ButtonTabBrowse}                              
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'cataloglink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#catalog'}, content: [
-                  OB.I18N.getLabel('OBPOS_LblBrowse')
-                ], init: function () { 
-                  var context = this.context;
-                  this.$el.on('shown', function () {
-                    context.keyboard.hide();
-                  });                            
-                }} 
+                {kind: OB.COMP.ButtonTabSearch}
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'searchlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#search'}, content: [
-                  OB.I18N.getLabel('OBPOS_LblSearch')
-                ], init: function () {  
-                  var context = this.context;
-                  this.$el.on('shown', function () {
-                    context.keyboard.hide();
-                  });
-                }}        
+                {kind: OB.COMP.ButtonTabScan}      
               ]},
               {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'scanlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#scan'}, content: [
-                  OB.I18N.getLabel('OBPOS_LblScan')
-                ], init: function () {
-                  var context = this.context;
-                  this.$el.on('shown', function () {
-                    context.keyboard.show('toolbarempty');
-                  });
-                  this.context.modelorder.on('clear scan', function() {
-                    this.$el.tab('show');                         
-                  }, this);   
-                  this.context.SearchBPs.bps.on('click', function (model, index) {
-                    this.$el.tab('show');
-                  }, this);                  
-                }}        
-              ]},
-              {kind: B.KindJQuery('li'), content: [
-                {kind: B.KindJQuery('a'), attr: {'id': 'editionlink', 'class': 'btnlink btnlink-gray', 'data-toggle': 'tab', 'href': '#edition', 'style': 'text-shadow:none;'}, content: [
-                  OB.I18N.getLabel('OBPOS_LblEdit')
-                ], init: function () {
-                  var context = this.context;
-                  this.$el.on('shown', function () {
-                    context.keyboard.show('toolbarempty');
-                  });
-                  
-                  this.context.modelorder.get('lines').on('click', function () {
-                    this.$el.tab('show');
-                  }, this);                        
-                }}
+                {kind: OB.COMP.ButtonTabEditLine }    
               ]}            
             ]}                                                                                  
           ]}
@@ -251,107 +111,11 @@ define(['builder', 'i18n',
 
           {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'id': 'scan', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.Scan }                                                                      
-              ]}, 
-              {kind: B.KindJQuery('div'), attr: {'id': 'catalog', 'class': 'tab-pane'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
-                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                        
-                        {kind: OB.COMP.ListProducts, attr: {
-                          renderLine: function (model) {
-                            return (
-                              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                                  {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                                ]},                                                                                      
-                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
-                                  model.get('product')._identifier
-                                ]},                                                                                      
-                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                                  {kind: B.KindJQuery('strong'), content: [ 
-                                    OB.I18N.formatCurrency(model.get('price').listPrice)                                                                                                                                         
-                                  ]}                                                                                                                                                                                                                                 
-                                ]},                                                                                      
-                                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                              ]}
-                            );                    
-                          }                          
-                        }}
-                      ]}        
-                    ]}        
-                  ]},                                                                                    
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [ 
-                    {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
-                        {kind: OB.COMP.ListCategories, attr:{
-                          renderLine:function (model) {
-                            return (
-                              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                                  {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                                ]},                                                                                      
-                                {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [ 
-                                  model.get('category')._identifier                                                                                                                                               
-                                ]},                                                                                      
-                                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                              ]}
-                            );               
-                          }
-                        }}
-                      ]}        
-                    ]}        
-                  ]}
-                ]}                                                                   
-              ], init: function () {
-                this.context.ListCategories.categories.on('selected', function (category) {
-                  this.context.ListProducts.loadCategory(category);
-                }, this);                   
-              }},  
-              {kind: B.KindJQuery('div'), attr: {'id': 'search', 'class': 'tab-pane'}, content: [
-                {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
-                  {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
-                    {kind: OB.COMP.SearchProduct, attr: {
-                      renderLine: function (model) {
-                        return (
-                          {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                              {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
-                              model.get('product')._identifier
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                              {kind: B.KindJQuery('strong'), content: [ 
-                                 model.get('price') ?                       
-                                OB.I18N.formatCurrency(model.get('price').listPrice)                : ''                                                                                                                             
-                              ]}                                                                                                                                                                                                                                 
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                          ]}
-                        );                    
-                      }                                                  
-                    }} 
-                  ]}        
-                ]}                                                                      
-              ]},  
-              {kind: B.KindJQuery('div'), attr: {'id': 'edition', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.EditLine }                                                                      
-              ]},       
-              {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
-                {kind: OB.COMP.Payment, attr: {'cashcoins': [
-                  {amount:50, classcolor: 'btnlink-lightblue'},
-                  {amount:20, classcolor: 'btnlink-lightpink'},
-                  {amount:10, classcolor: 'btnlink-lightgreen'},
-                  {amount:5, classcolor: 'btnlink-wheat'},
-                  {amount:1, classcolor: 'btnlink-lightgreen'},
-                  {amount:0.50, classcolor: 'btnlink-orange'},
-                  {amount:0.20, classcolor: 'btnlink-gray'},
-                  {amount:0.10, classcolor: 'btnlink-lightblue'},
-                  {amount:0.05, classcolor: 'btnlink-lightpink'}
-                ]}}                                                                      
-              ]}             
+              {kind: OB.COMP.TabScan },               
+              {kind: OB.COMP.TabBrowse },                
+              {kind: OB.COMP.TabSearch },  
+              {kind: OB.COMP.TabEditLine },     
+              {kind: OB.COMP.TabPayment }                
             ]},
             {kind: OB.COMP.Keyboard, attr: {toolbarpayment: [ 
               {command:'paym:payment.cash', label: OB.I18N.getLabel('OBPOS_KbCash')},
