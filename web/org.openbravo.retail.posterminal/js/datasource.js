@@ -341,15 +341,15 @@ define(['i18n'], function () {
             }
           }
         });
-    } else {
-      if (callback) {
-        callback({
-          exception: {
-            status: 0,
-            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
-          }
-        });
-      }
+//    } else {
+//      if (callback) {
+//        callback({
+//          exception: {
+//            status: 0,
+//            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
+//          }
+//        });
+//      }
     }
   };
 });

@@ -4,6 +4,7 @@
 define(['builder', 'i18n',
         'data/datamaster', 'data/dataordersave', 'data/dataordertaxes',
         'model/terminal', 'model/order',
+        'components/commonbuttons',
         'components/hwmanager', 
         'components/searchproducts', 'components/searchbps', 'components/listreceipts', 'components/scan', 'components/editline', 'components/order', 
         'components/total', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/payment', 'components/keyboard',
@@ -104,15 +105,9 @@ define(['builder', 'i18n',
 
         {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [ 
-            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
-              {kind: B.KindJQuery('i'), attr: {'class': 'icon-asterisk  icon-white'}}, OB.I18N.getLabel('OBPOS_LblNew')
-            ], init: function () {
-                var me = this;
-                me.$el.click(function (e) {
-                  e.preventDefault();
-                  me.context.modelorderlist.addNewOrder();
-                });
-            }},
+            
+            {kind: OB.COMP.ButtonNew},
+
             {kind: B.KindJQuery('a'), attr: {'class': 'btnlink', 'href': '#'}, content: [
               {kind: B.KindJQuery('i'), attr: {'class': 'icon-trash  icon-white'}}, OB.I18N.getLabel('OBPOS_LblDelete')
             ], init: function () {
