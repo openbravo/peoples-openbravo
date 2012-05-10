@@ -54,6 +54,9 @@
       <foreign-key foreignTable="M_TRANSACTION" name="M_TRANSACTION_COST_TRANSACTION">
         <reference local="M_TRANSACTION_ID" foreign="M_TRANSACTION_ID"/>
       </foreign-key>
+      <index name="M_TRANSACTION_COST_TRX" unique="false">
+        <index-column name="M_TRANSACTION_ID"/>
+      </index>
       <check name="M_TRANSACTION_COST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
