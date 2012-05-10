@@ -37,7 +37,7 @@ BEGIN
     IF (:old.isvalidated = 'Y'
         AND (:old.ad_org_id <> :new.ad_org_id
           OR :old.m_costing_algorithm_id <> :new.m_costing_algorithm_id
-          OR COALESCE(:old.datefrom, to_date('01-01-1900', 'DD-MM-YYY')) <> COALESCE(:new.datefrom, to_date('01-01-1900', 'DD-MM-YYY'))
+          OR COALESCE(:old.datefrom, TO_DATE('01-01-1900', 'DD-MM-YYY')) <> COALESCE(:new.datefrom, TO_DATE('01-01-1900', 'DD-MM-YYY'))
           OR :old.warehouse_dimension <> :new.warehouse_dimension
           )
         ) THEN

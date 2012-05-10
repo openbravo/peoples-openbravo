@@ -133,7 +133,7 @@ BEGIN
     FROM m_costing_rule cr
           JOIN ad_org org ON cr.ad_org_id = org.ad_org_id
           JOIN ad_client c ON cr.ad_client_id = c.ad_client_id
-    WHERE coalesce(datefrom, to_date('01-01-1900', 'DD-MM-YYYY')) = (SELECT max(coalesce(datefrom, to_date('01-01-1900', 'DD-MM-YYYY'))) FROM m_costing_rule cr2
+    WHERE coalesce(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY')) = (SELECT max(coalesce(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY'))) FROM m_costing_rule cr2
                          WHERE cr2.datefrom <= v_productiondate
                            AND cr2.isvalidated = 'Y'
                            AND ad_isorgincluded(v_org_id, cr2.ad_org_id, cr2.ad_client_id) <> -1)
