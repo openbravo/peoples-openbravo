@@ -3402,6 +3402,29 @@ function adaptSkinToMDIEnvironment() {
   }
   if (isIE9Strict) {
     addStyleRule("th.DataGrid_Header_Cell", "height: 20px;");
+
+    var messageType = {};
+    messageType.name = ['ERROR', 'INFO', 'SUCCESS', 'WARNING'];
+    messageType.backgroundColor = ['C72F15', '5886BF', '7BBF58', 'ECE274'];
+    messageType.borderColor = ['461107', '1F3044', '2C441F', '535029'];
+    messageType.image = ['Error', 'Info', 'Success', 'Warning'];
+
+    for (var i=0; i < messageType.name.length; i++) {
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'border-top-left-radius: 20px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-color: #' + messageType.backgroundColor[i] + ';');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-image: url(../../Default/Common/MessageBox/message' + messageType.image[i] + 'Left.png);');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-repeat: repeat-y;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_TopLeft', 'border-top-left-radius: 20px;');
+
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'border-top-right-radius: 20px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-color: #' + messageType.backgroundColor[i] + ';');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-image: url(../../Default/Common/MessageBox/message' + messageType.image[i] + 'Right.png);');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-repeat: repeat-y;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_TopRight', 'border-top-right-radius: 20px;');
+
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' td.MessageBox_Icon_ContentCell', 'padding-top: 10px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_Body_ContentCell #messageBoxIDContent', 'padding-top: 10px;');
+    }
   }
 }
 

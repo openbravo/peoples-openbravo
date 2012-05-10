@@ -3334,11 +3334,13 @@ table.MessageBoxERROR .MessageBox_Right {
 table.MessageBoxERROR .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxERROR .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxERROR td.MessageBox_BottomRight {
@@ -3510,11 +3512,13 @@ table.MessageBoxINFO .MessageBox_Right {
 table.MessageBoxINFO .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxINFO .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxINFO td.MessageBox_BottomRight {
@@ -3686,11 +3690,13 @@ table.MessageBoxSUCCESS .MessageBox_Right {
 table.MessageBoxSUCCESS .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxSUCCESS .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxSUCCESS td.MessageBox_BottomRight {
@@ -3862,11 +3868,13 @@ table.MessageBoxWARNING .MessageBox_Right {
 table.MessageBoxWARNING .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxWARNING .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxWARNING td.MessageBox_BottomRight {
