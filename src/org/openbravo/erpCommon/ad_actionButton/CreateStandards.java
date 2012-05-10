@@ -305,7 +305,8 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
             if (attSet.isExpirationDate()) {
               Date movementdate = ((productionPlan.getProductionplandate() != null) ? productionPlan
                   .getProductionplandate() : productionPlan.getProduction().getMovementDate());
-              int days = attSet.getGuaranteedDays().intValue();
+              int days = (attSet.getGuaranteedDays() == null ? 0 : attSet.getGuaranteedDays()
+                  .intValue());
               attSetInstance.setGuaranteeDate(dateToString(addDays(movementdate, days)));
             }
             OBError createAttributeInstanceError = attSetInstance.setAttributeInstance(conn, vars,
