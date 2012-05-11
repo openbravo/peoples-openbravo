@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -107,6 +107,7 @@
             (SELECT *
             FROM M_Product_BOM b
             WHERE p.M_Product_ID=b.M_ProductBOM_ID
+              AND b.isactive='Y'
               AND b.M_Product_ID IN
               (SELECT C_TEMP_Selection_ID FROM C_TEMP_Selection)
             )
@@ -132,6 +133,7 @@
           (SELECT *
           FROM M_Product_BOM b
           WHERE p.M_Product_ID=b.M_ProductBOM_ID
+            AND b.isactive='Y'
             AND b.M_Product_ID IN
             (SELECT C_TEMP_Selection_ID FROM C_TEMP_Selection)
           )

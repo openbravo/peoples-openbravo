@@ -284,6 +284,7 @@
               WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                 AND pb.M_Product_ID=pp.M_PRODUCT_ID
                 AND pp.M_PRODUCTION_ID=v_Record_ID
+                AND pb.isactive='Y'
               ORDER BY pb.M_PRODUCTBOM_ID,
                 pb.Line
               )
@@ -451,6 +452,7 @@
                   M_PRODUCT p
                 WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                   AND pb.M_Product_ID=CUR_PLineBOM.M_Product_ID
+                  AND pb.isactive='Y'
                 ORDER BY pb.M_PRODUCTBOM_ID,
                   pb.Line
                 )
