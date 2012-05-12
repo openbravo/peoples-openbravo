@@ -372,16 +372,16 @@
 .OBPickListBodyFocused {
   border:1px solid #CDD7BB;
   outline: none; 
-  background-color:#FFFFFF;
+  background-color: #F5F7F1;
 }
 
-// workaround for this issue:
-// https://issues.openbravo.com/view.php?id=18501
+/* workaround for this issue:
+   https://issues.openbravo.com/view.php?id=18501 */
 .pickListMenuBody,
 .pickListMenuBodyFocused {
   border:1px solid #CDD7BB;
   outline: none; 
-  background-color:#FFFFFF;
+  background-color: #F5F7F1;
 }
 
 .OBFormFieldPickListCell,
