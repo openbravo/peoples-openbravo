@@ -363,6 +363,16 @@
         if (isModal !== false) {
           isModal = true;
         }
+        var _htmlCode, _isIE9Strict = false,
+            _navUserAgent = navigator.userAgent.toUpperCase();
+        if (_navUserAgent.indexOf("MSIE") !== -1 && (document.documentMode && document.documentMode >= 9)) {
+          _isIE9Strict = true;
+        }
+        if (_isIE9Strict || _navUserAgent.indexOf("MSIE") === -1) { // IE >= 9 (Strict) or any other browser
+          _htmlCode = '<html><head></head><body style="margin: 0; padding: 0; border: none;">' + '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' + '<iframe name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' + '</body></html>';
+        } else { // IE <= 8
+          _htmlCode = '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>';
+        }
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
           width: width,
@@ -376,7 +386,7 @@
           areParamsSet: false,
           isFramesetDraw: false,
           isLoaded: false,
-          htmlCode: '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>',
+          htmlCode: _htmlCode,
           popupURL: url + urlCharacter + 'IsPopUpCall=1'
         });
         cPopup.show();
