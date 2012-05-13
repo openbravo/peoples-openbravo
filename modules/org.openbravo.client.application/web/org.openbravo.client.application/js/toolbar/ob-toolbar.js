@@ -1654,7 +1654,12 @@ OB.ToolbarUtils.showTree = function (view) {
     var popupParams = 'Command=DEFAULT';
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
-    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, true, true, true, null, false);
+
+    if (OB.Utilities.isIE9Strict) { // Drag and drop tree is not well rendered with IE9 + HTML5, so it should be opened in an isolated popup
+      OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, true, null, 670, 750);
+    } else {
+      OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, true, true, true, null, false);
+    }
   }
 
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
