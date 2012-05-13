@@ -2164,7 +2164,7 @@ isc.OBViewGrid.addProperties({
 
     if (ficCallDone) {
       // reset the new values as this can have changed because of a fic call
-      newValues = this.getEditValues(editValuesID);
+      newValues = this.getEditValues(rowNum);
     } else {
       var editForm = this.getEditForm(),
           focusItem = editForm.getFocusItem();
@@ -2172,7 +2172,7 @@ isc.OBViewGrid.addProperties({
         focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(editValuesID);
+          var editValues = this.getEditValues(rowNum);
           editValues.actionAfterFicReturn = {
             target: this,
             method: this.saveEditedValues,
