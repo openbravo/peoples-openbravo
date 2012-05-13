@@ -22,6 +22,11 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+OB.Utilities.isIE9Strict = false;
+if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && (document.documentMode && document.documentMode >= 9)) {
+  OB.Utilities.isIE9Strict = true;
+}
+
 //** {{{OB.Utilities.checkProfessionalLicense}}} **
 // Checks if the current instance is using a professional license 
 // (!= community). If the instance has a community instance then 
