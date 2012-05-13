@@ -2054,32 +2054,16 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    if (ficCallDone) {
-      // get new value as the row can have changed
-      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum)]);
-      return;
-    } else {
-      // only needed for non picklist fields
-      // as picklist fields will always have picked a value
-      // note that focusItem updatevalue for picklist can result in extra datasource requests
-      if (focusItem && !focusItem.hasPickList) {
-        focusItem.blur(focusItem.form, focusItem);
-        if (editForm.inFicCall) {
-          // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(rowNum);
-          editValues.actionAfterFicReturn = {
-            target: this,
-            method: this.cellEditEnd,
-            parameters: [editCompletionEvent, newValue, true, autoSaveDone]
-          };
-          return;
-        }
-      }
-    }
     if (newValue) {
       this.Super('cellEditEnd', [editCompletionEvent, newValue]);
     } else {
       this.Super('cellEditEnd', [editCompletionEvent]);
+    }
+    // only needed for non picklist fields
+    // as picklist fields will always have picked a value
+    // note that focusItem updatevalue for picklist can result in extra datasource requests
+    if (focusItem && !focusItem.hasPickList) {
+      focusItem.blur(focusItem.form, focusItem);
     }
   },
 
