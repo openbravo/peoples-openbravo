@@ -216,7 +216,6 @@ public abstract class CostingAlgorithm {
     org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine receiptline = transaction
         .getGoodsShipmentLine();
     if (receiptline.getSalesOrderLine() == null) {
-      // FIXME: Try also searching a recent purchase order of the vendor for the same product
       return getReceiptDefaultCost();
     }
     for (org.openbravo.model.procurement.POInvoiceMatch matchPO : receiptline

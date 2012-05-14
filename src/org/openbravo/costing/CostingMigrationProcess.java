@@ -747,7 +747,6 @@ public class CostingMigrationProcess implements Process {
       }
       inventoryList.append(cri.getInitInventory().getIdentifier());
     }
-    // FIXME: Add message to AD
     throw new OBException("@unprocessedInventories@: " + inventoryList.toString());
   }
 
