@@ -254,6 +254,13 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       for (OBCQL_QueryColumn column : columns) {
         if (column.isCanBeFiltered()) {
           String value = parameters.get(column.getDisplayExpression());
+          if (column.getReference().getName().equals("YesNo") && value != null) {
+            if (value.equals("true")) {
+              value = "Y";
+            } else {
+              value = "N";
+            }
+          }
           String whereClause = " 1=1 ";
           if (value != null) {
             whereClause = getWhereClause(value, column, xmlDateFormat);
