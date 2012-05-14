@@ -154,7 +154,7 @@ public class CostingRuleProcess implements Process {
 
   private void migrationCheck() {
     if (isCostingMigrationNeeded() && isPendingMigration()) {
-      throw new OBException("Instance not migrated.");
+      throw new OBException("@CostMigrationNotDone@");
     }
   }
 
