@@ -1,6 +1,6 @@
 /*global define,Backbone,localStorage */
 
-define(['utilities', 'arithmetic', 'i18n'], function () {
+define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
   
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -248,32 +248,46 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     
     addProduct: function (line, p) {
       var me = this;
-      if (line && line.get('product').get('product').id === p.get('product').id) {
+      if (p.get('product').obposScale) {
+        OB.POS.hwserver.getWeight(function (data) {
+          if (data.exception) {
+            OB.UTIL.showError(data.exception.message);
+          } else if (data.result === 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WeightZero'));
+          } else {
+            me.createLine(p, data.result);
+          }
+        });        
+      } else if (line && line.get('product').get('product').id === p.get('product').id) {
         this.addUnit(line);
       } else {
-        // a new line with 1 unit
-        var newline = new OB.MODEL.OrderLine({
-          product: p,
-          uOM: p.get('product').uOM,
-          qty: OB.DEC.One,
-          price: OB.DEC.number(p.get('price').listPrice)
-        });
-        newline.calculateNet();
-   
-        // add the created line
-        this.get('lines').add(newline);
-        this.calculateNet();
-        // set the undo action
-        this.set('undo', {
-          action: 'addline',
-          line: newline,
-          undo: function() {
-            me.get('lines').remove(newline);
-            me.calculateNet();
-            me.set('undo', null);
-          }
-        });
-      }
+        this.createLine(p, 1);
+      }      
+    },
+    
+    createLine: function (p, units) {
+      var me = this;
+      var newline = new OB.MODEL.OrderLine({
+        product: p,
+        uOM: p.get('product').uOM,
+        qty: OB.DEC.number(units),
+        price: OB.DEC.number(p.get('price').listPrice)
+      });
+      newline.calculateNet();
+ 
+      // add the created line
+      this.get('lines').add(newline);
+      this.calculateNet();
+      // set the undo action
+      this.set('undo', {
+        action: 'addline',
+        line: newline,
+        undo: function() {
+          me.get('lines').remove(newline);
+          me.calculateNet();
+          me.set('undo', null);
+        }
+      }); 
       this.adjustPayment();
     },
    

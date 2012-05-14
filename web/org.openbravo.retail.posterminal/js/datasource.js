@@ -310,9 +310,38 @@ define(['i18n'], function () {
 
   // HWServer
 
-  OB.DS.HWServer = function (url) {
+  OB.DS.HWServer = function (url, scaleurl) {
     this.url = url;
+    this.scaleurl = scaleurl;
   };
+  
+  OB.DS.HWServer.prototype.getWeight = function (callback) {
+    if (this.scaleurl) {
+      var me = this;
+      $.ajax({
+        timeout: 5000,
+        url: me.scaleurl,
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'jsonp',
+        type: 'GET',
+        success: function (data, textStatus, jqXHR) {
+          callback(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          if (callback) {
+            callback({
+              exception: {
+                message: (OB.I18N.getLabel('OBPOS_MsgScaleServerNotAvailable'))
+              },
+              result: 1
+            });
+          }
+        }
+      });
+    } else {
+      callback({result: 1});
+    }
+  };  
 
   OB.DS.HWServer.prototype.print = function (templatedata, params, callback) {
     if (this.url) {

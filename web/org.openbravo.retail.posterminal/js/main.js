@@ -53,7 +53,7 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     $('#logoutaction').css('visibility', 'visible');
     
     // Set Hardware..
-    OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl);
+    OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl, modelterminal.get('terminal').scaleurl);
     
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
