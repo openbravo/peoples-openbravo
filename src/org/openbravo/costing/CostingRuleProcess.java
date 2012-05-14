@@ -293,7 +293,6 @@ public class CostingRuleProcess implements Process {
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient(org.getClient());
     closeInv.setOrganization(org);
-    // FIXME: Set proper name on inventory using translated messages
     closeInv.setName(OBMessageUtils.messageBD("@CostCloseInventory@") + " " + rule.getIdentifier());
     closeInv.setWarehouse(wh);
     closeInv.setMovementDate(new Date());
@@ -302,7 +301,6 @@ public class CostingRuleProcess implements Process {
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient(org.getClient());
     initInv.setOrganization(org);
-    // FIXME: Set proper name on inventory using translated messages
     initInv.setName(OBMessageUtils.messageBD("@CostInitInventory@") + " " + rule.getIdentifier());
     initInv.setWarehouse(wh);
     initInv.setMovementDate(new Date());
