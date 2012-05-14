@@ -18,15 +18,15 @@
  */
 package org.openbravo.costing;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.Product;
@@ -57,14 +57,18 @@ public class CostingBackground extends DalBaseProcess {
     result.setType("Success");
     result.setTitle(OBMessageUtils.messageBD("Success"));
 
-    OBCriteria<MaterialTransaction> obcTrx = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
-    obcTrx.createAlias(MaterialTransaction.PROPERTY_PRODUCT, "pr");
-    obcTrx.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISCOSTCALCULATED, false));
-    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_STOCKED, true));
-    obcTrx.add(Restrictions.eq("pr." + Product.PROPERTY_PRODUCTTYPE, "I"));
-    obcTrx.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
-    List<MaterialTransaction> trxs = obcTrx.list();
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and pr." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and pr." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setNamedParameter("now", new Date());
+    List<MaterialTransaction> trxs = trxQry.list();
     int counter = 0, total = trxs.size();
     for (MaterialTransaction transaction : trxs) {
       counter++;
