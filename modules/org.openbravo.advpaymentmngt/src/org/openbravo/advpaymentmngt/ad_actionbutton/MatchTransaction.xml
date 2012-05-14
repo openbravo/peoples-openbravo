@@ -23,7 +23,6 @@
     <PARAMETER id="paramLanguage" name="language" default=""/>
     <PARAMETER id="paramChecked" name="checked" default="Y"/>
     <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-    <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
     <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
     <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
     <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
