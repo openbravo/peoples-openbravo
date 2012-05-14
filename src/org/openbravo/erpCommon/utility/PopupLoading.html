@@ -42,8 +42,11 @@ var baseDirectory = "../../../../../web/";
         var i=0;
         var setOpenerInterval = setInterval(
           function() {
-            if (window.opener || i === 30000) {
+            if (window.opener) {
               window.opener.setPopupLoadingWindowLoaded(true);
+              clearInterval(setOpenerInterval);
+            } else if (i === 400) {
+              console.log('Error: Timeout. window.opener not found');
               clearInterval(setOpenerInterval);
             } else {
               i++;

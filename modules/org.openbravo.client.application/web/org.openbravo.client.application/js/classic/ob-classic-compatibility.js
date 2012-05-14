@@ -434,8 +434,14 @@
               function () {
                 if (!cPopup.getIframeHtmlObj()) {
                   clearInterval(setOpenerInterval);
-                } else if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete' && !cPopup.getIframeHtmlObj().contentWindow.frames[0].opener) {
-                  cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                } else if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete') {
+                  if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].opener) {
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                  }
+                  if (cPopup.getIframeHtmlObj().contentWindow.frames[0].window.MDIPopupId !== wName) {
+                    cPopup.getIframeHtmlObj().contentWindow.document.getElementById('MDIPopupContainer').name = wName;
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].window.checkWindowInMDIPopup();
+                  }
                 }
               }, 100);
             }
