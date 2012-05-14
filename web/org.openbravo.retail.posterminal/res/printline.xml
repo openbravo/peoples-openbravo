@@ -3,7 +3,7 @@
 <output>
     <display>
         <line>
-            <text align="left" length="15"><%= line.get('productidentifier') %></text>
+            <text align="left" length="15"><%= line.get('product').get('product')._identifier %></text>
             <text align="right" length="5">x<%= line.printQty() %></text>
         </line>
         <line>

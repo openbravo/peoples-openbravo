@@ -37,7 +37,7 @@
         
         <line>
 
-            <text align ="left" length="17"><%= lines.at(i).get('productidentifier') %></text>
+            <text align ="left" length="17"><%= lines.at(i).get('product').get('product')._identifier %></text>
 
             <text align ="right" length="10"><%= lines.at(i).printPrice() %></text>
             <text align ="right" length="5">x<%= lines.at(i).printQty() %></text>
