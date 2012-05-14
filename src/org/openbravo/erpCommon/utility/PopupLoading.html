@@ -43,15 +43,15 @@ var baseDirectory = "../../../../../web/";
         var setOpenerInterval = setInterval(
           function() {
             if (window.opener) {
+              clearInterval(setOpenerInterval);
               window.opener.setPopupLoadingWindowLoaded(true);
-              clearInterval(setOpenerInterval);
             } else if (i === 400) {
-              console.log('Error: Timeout. window.opener not found');
               clearInterval(setOpenerInterval);
+              console.log('Error: Timeout. window.opener not found');
             } else {
               i++;
             }
-          }, 300);
+          }, 20);
       } else {
         window.opener.setPopupLoadingWindowLoaded(true);
       }
