@@ -428,18 +428,16 @@
             if (OB.Utilities.isIE9Strict) {
               // In IE9 Strict, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
               cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
-              var nu = 0;
               var setOpenerInterval;
               setOpenerInterval = setInterval(
 
               function () {
-                if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete' || nu === 30000) {
-                  cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                if (!cPopup.getIframeHtmlObj()) {
                   clearInterval(setOpenerInterval);
-                } else {
-                  nu++;
+                } else if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete' && !cPopup.getIframeHtmlObj().contentWindow.frames[0].opener) {
+                  cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
                 }
-              }, 1);
+              }, 100);
             }
           } else {
             // Create a form and POST parameters as input hidden values
