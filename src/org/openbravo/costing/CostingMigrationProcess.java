@@ -85,12 +85,11 @@ public class CostingMigrationProcess implements Process {
     try {
       OBContext.setAdminMode(false);
 
-      // FIXME: Add proper messages
       if (isMigrated()) {
-        throw new OBException("Migration already done");
+        throw new OBException("@CostMigratedInstance@");
       } else {
         if (isCostingMigrationNotNeeded()) {
-          throw new OBException("Migration not needed");
+          throw new OBException("@CostMigrationNoNeeded@");
         }
       }
 
@@ -221,8 +220,7 @@ public class CostingMigrationProcess implements Process {
         SessionHandler.getInstance().commitAndStart();
       }
       if (rows.size() > 0) {
-        // FIXME: Add proper messages
-        throw new OBException("Transactions with no available cost found");
+        throw new OBException("@TrxWithNoCost@");
       }
     }
   }
@@ -294,7 +292,7 @@ public class CostingMigrationProcess implements Process {
             hasTrxToConvert = hasTrxToConvert(naturalTree, minDate, maxDate);
             if (hasTrxToConvert) {
               if (convOrg.getId().equals("0")) {
-                throw new OBException("NoConversionRateFound");
+                throw new OBException("@NoCurrencyConversion@");
               }
               convOrg = osp.getParentOrg(convOrg);
             }
@@ -750,7 +748,7 @@ public class CostingMigrationProcess implements Process {
       inventoryList.append(cri.getInitInventory().getIdentifier());
     }
     // FIXME: Add message to AD
-    throw new OBException("@unprocessedInventories@ " + inventoryList.toString());
+    throw new OBException("@unprocessedInventories@: " + inventoryList.toString());
   }
 
   private List<CostingRule> getRules() {
