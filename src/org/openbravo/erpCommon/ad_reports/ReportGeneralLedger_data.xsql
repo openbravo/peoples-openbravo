@@ -149,9 +149,9 @@
                   WHEN 'Project' THEN c_project.c_project_id
                   ELSE '' END AS groupbyid,
                 CASE ?
-                  WHEN 'BPartner' THEN (select name from c_bpartner b where b.c_bpartner_id = c_bpartner.c_bpartner_id)
-                  WHEN 'Product' THEN (select value || ' - ' || name from m_product p where p.m_product_id = m_product.m_product_id)
-                  WHEN 'Project' THEN (select name from c_project pj where pj.c_project_id = c_project.c_project_id)
+                  WHEN 'BPartner' THEN (select to_char(name) from c_bpartner b where b.c_bpartner_id = c_bpartner.c_bpartner_id)
+                  WHEN 'Product' THEN (select to_char(value || ' - ' || name) from m_product p where p.m_product_id = m_product.m_product_id)
+                  WHEN 'Project' THEN (select to_char(name) from c_project pj where pj.c_project_id = c_project.c_project_id)
                   ELSE '' END AS groupbyname,
                 CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
         CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
@@ -212,7 +212,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT COALESCE(SUM(AMTACCTDR),0) AS AMTACCTDR, COALESCE(SUM(AMTACCTCR)) AS AMTACCTCR
+        SELECT COALESCE(SUM(AMTACCTDR),0) AS AMTACCTDR, COALESCE(SUM(AMTACCTCR),0) AS AMTACCTCR
         FROM ( SELECT '0' AS RN1, C.* FROM (
           SELECT VALUE, NAME, DATEACCT,
           COALESCE(SUM(AMTACCTDR),0) AS AMTACCTDR, COALESCE(SUM(AMTACCTCR),0) AS AMTACCTCR,
@@ -235,9 +235,9 @@
                   WHEN 'Project' THEN c_project.c_project_id
                   ELSE '' END AS groupbyid,
                 CASE ?
-                  WHEN 'BPartner' THEN (select name from c_bpartner b where b.c_bpartner_id = c_bpartner.c_bpartner_id)
-                  WHEN 'Product' THEN (select value || ' - ' || name from m_product p where p.m_product_id = m_product.m_product_id)
-                  WHEN 'Project' THEN (select name from c_project pj where pj.c_project_id = c_project.c_project_id)
+                  WHEN 'BPartner' THEN (select to_char(name) from c_bpartner b where b.c_bpartner_id = c_bpartner.c_bpartner_id)
+                  WHEN 'Product' THEN (select to_char(value || ' - ' || name) from m_product p where p.m_product_id = m_product.m_product_id)
+                  WHEN 'Project' THEN (select to_char(name) from c_project pj where pj.c_project_id = c_project.c_project_id)
                   ELSE '' END AS groupbyname,
                 CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
         CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE

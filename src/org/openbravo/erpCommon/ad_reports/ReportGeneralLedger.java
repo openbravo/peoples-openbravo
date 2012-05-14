@@ -282,8 +282,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       }
       Long initMainSelect = System.currentTimeMillis();
-      data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
-          strcelementvaluefrom, strcelementvalueto,
+      data = ReportGeneralLedgerData.select2(this, rowNum, strGroupByText, strGroupBy,
+          strAllaccounts, strcelementvaluefrom, strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
           strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
