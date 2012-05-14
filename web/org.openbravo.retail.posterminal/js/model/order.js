@@ -73,7 +73,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('documentType', null);
       this.set('priceList', null);      
       this.set('currency', null);      
-      this.set('warehouse',null);         
+      this.set('warehouse',null);     
+      this.set('salesRepresentative', null);
       this.set('orderDate', new Date());
       this.set('documentNo', '');
       this.set('undo', null);
@@ -139,7 +140,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('documentType', null);
       this.set('priceList', null);      
       this.set('currency', null);      
-      this.set('warehouse',null);       
+      this.set('warehouse',null);    
+      this.set('salesRepresentative', null);
       this.set('orderDate', new Date());
       this.set('documentNo', '');
       this.set('undo', null);
@@ -161,6 +163,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       this.set('priceList', _order.get('priceList'));      
       this.set('currency', _order.get('currency'));      
       this.set('warehouse', _order.get('warehouse'));      
+      this.set('salesRepresentative',  _order.get('salesRepresentative'));
       this.set('orderDate', _order.get('orderDate'));
       this.set('documentNo', _order.get('documentNo'));
       this.set('undo', null);
@@ -382,6 +385,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
+      order.set('salesRepresentative',  OB.POS.modelterminal.get('context').user.id);
       
       order.set('orderDate', new Date());
       var documentseq = localStorage.getItem('Document_Sequence') || '0';

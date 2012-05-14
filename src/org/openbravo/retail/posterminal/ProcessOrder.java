@@ -38,6 +38,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -101,6 +102,8 @@ public class ProcessOrder implements JSONProcess {
     order.setScheduledDeliveryDate((Date) JsonToDataConverter.convertJsonToPropertyValue(
         PropertyByType.DATE, jsonorder.getString("orderDate")));
     order.setWarehouse(OBDal.getInstance().get(Warehouse.class, jsonorder.getString("warehouse")));
+    order.setSalesRepresentative(OBDal.getInstance().get(User.class,
+        jsonorder.getString("salesRepresentative")));
 
     order.setSalesTransaction(true);
     order.setDocumentStatus("DR");
