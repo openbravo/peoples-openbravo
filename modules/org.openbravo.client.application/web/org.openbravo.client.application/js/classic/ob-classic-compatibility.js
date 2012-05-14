@@ -339,13 +339,12 @@
       // be set as a String as a %
       // * {{{url}}} type: String - the url to be opened in the popup
       // * {{{title}}} type: String - the title to be displayed in the popup
-      // * {{{theOpener}}} type: Window Object - the window object of the opener
+      // * {{{theOpener}}} type: Window Object - the window object of the opener of the popup. Used in window.open to allow IE know which is the opener
       // * {{{showMinimizeControl}}} type: Boolean - to specify if the popup should show the minimize control or not. The default value is "true" if it is not specified
       // * {{{showMaximizeControl}}} type: Boolean - to specify if the popup should show the maximize control or not. The default value is "true" if it is not specified
       // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is "true" if it is not specified
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is "true" if it is not specified
-      // of the popup. Used in window.open to allow IE know which is the opener
       // 
       // returns the created OBClassicPopupWindow
       open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal) {
@@ -410,7 +409,7 @@
           return true;
         }
         if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-          //  In IE if window.open is executed against a frame, the target frame doesn't know which is its opener
+          //  In IE (non-Strict) if window.open is executed against a frame, the target frame doesn't know which is its opener
           if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
             if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
@@ -426,6 +425,22 @@
         if (!cPopup.areParamsSet) {
           if (!postParams) {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
+            if (OB.Utilities.isIE9Strict) {
+              // In IE9 Strict, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
+              cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+              var nu = 0;
+              var setOpenerInterval;
+              setOpenerInterval = setInterval(
+
+              function () {
+                if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete' || nu === 30000) {
+                  cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                  clearInterval(setOpenerInterval);
+                } else {
+                  nu++;
+                }
+              }, 1);
+            }
           } else {
             // Create a form and POST parameters as input hidden values
             var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,
