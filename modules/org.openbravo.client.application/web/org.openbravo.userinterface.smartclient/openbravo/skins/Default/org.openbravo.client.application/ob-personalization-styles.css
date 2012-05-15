@@ -146,7 +146,8 @@
 .OBPersonalizationPullDownMenuCellSeparatorOver,
 .OBPersonalizationPullDownMenuCellSeparatorSelectedOver,
 .OBPersonalizationPullDownMenuCellSeparatorDisabled {
-  border-top: 1px solid #64932d;
+  border: 1px solid #64932d;
+  border-width: 1px 0px 0px 0px;
 }
 
 .OBPersonalizationPullDownMenuCell,
