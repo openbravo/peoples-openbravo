@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -143,8 +143,8 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (requestETag != null && eTag.equals(requestETag)) {
       response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
-          request.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
+      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED, request
+          .getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
       return;
     }
 
@@ -236,11 +236,7 @@ public class KernelServlet extends BaseKernelServlet {
     }
 
     if (!parameterMap.containsKey(KernelConstants.SKIN_PARAMETER)) {
-      if (OBContext.getOBContext().isNewUI()) { // FIXME: isNewUI true the first load?
-        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
-      } else {
-        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_CLASSIC);
-      }
+      parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
     }
 
     return parameterMap;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,9 +116,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
         && getParameters().get("_cssDataUri").equals("true");
 
     final String skinParam;
-    if (classicMode) {
-      skinParam = KernelConstants.SKIN_CLASSIC;
-    } else if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
       skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
     } else {
       skinParam = KernelConstants.SKIN_DEFAULT;

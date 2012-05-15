@@ -26,6 +26,19 @@
 // The widget is a compound widget extending the OBSelectorWidget.
 isc.ClassFactory.defineClass('OBSelectorLinkWidget', isc.OBSelectorWidget);
 
+// Three class definitions just for generic styling purposes
+if (!isc.OBClassicWindow) {
+  isc.ClassFactory.defineClass('OBClassicWindow', isc.Window);
+}
+
+if (!isc.OBClassicGrid) {
+  isc.ClassFactory.defineClass('OBClassicGrid', isc.ListGrid);
+}
+
+if (!isc.OBClassicIButton) {
+  isc.ClassFactory.defineClass('OBClassicIButton', isc.IButton);
+}
+
 isc.OBSelectorLinkWidget.addProperties({
 
   // ** {{{ setSelectorValueFromGrid }}} **
@@ -95,7 +108,7 @@ isc.OBSelectorLinkWidget.addProperties({
       }
     }]);
 
-    this.selectorGrid = isc.ListGrid.create({
+    this.selectorGrid = isc.OBClassicGrid.create({
       selector: this,
       dataProperties: {
         useClientFiltering: false,
@@ -164,7 +177,7 @@ isc.OBSelectorLinkWidget.addProperties({
     });
 
     // create the popup window it self
-    this.selectorWindow = isc.Window.create({
+    this.selectorWindow = isc.OBClassicWindow.create({
       title: this.title,
       selector: this,
       autoSize: false,
@@ -196,7 +209,7 @@ isc.OBSelectorLinkWidget.addProperties({
         styleName: isc.OBSelectorWidget.styling.modalPopupButtonGroupStyle,
         height: isc.OBSelectorWidget.styling.modalPopupButtonGroupHeight,
         defaultLayoutAlign: isc.OBSelectorWidget.styling.modalPopupButtonGroupAlign,
-        members: [isc.LayoutSpacer.create({}), isc.IButton.create({
+        members: [isc.LayoutSpacer.create({}), isc.OBClassicIButton.create({
           selector: this,
           title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
           endRow: false,
@@ -207,7 +220,7 @@ isc.OBSelectorLinkWidget.addProperties({
           click: this.setSelectorValueFromGrid
         }), isc.LayoutSpacer.create({
           width: isc.OBSelectorWidget.styling.modalPopupButtonSeparatorWidth
-        }), isc.IButton.create({
+        }), isc.OBClassicIButton.create({
           selector: this,
           title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
           endRow: false,

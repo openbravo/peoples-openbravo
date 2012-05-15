@@ -117,7 +117,7 @@ public class StaticResourceComponent extends BaseComponent {
         result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
             + getContextUrl()
             + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
-            + KernelConstants.SKIN_CLASSIC + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
+            + KernelConstants.SKIN_DEFAULT + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
             + "'></link>\");\n");
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
@@ -161,9 +161,7 @@ public class StaticResourceComponent extends BaseComponent {
             KernelConstants.MODE_PARAMETER_300);
 
     final String skinParam;
-    if (classicMode) {
-      skinParam = KernelConstants.SKIN_CLASSIC;
-    } else if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+    if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
       skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
     } else {
       skinParam = KernelConstants.SKIN_DEFAULT;
@@ -234,7 +232,8 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
 
-    sb.append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
+    sb
+        .append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
 
     for (int i = 0; i < cntDynamicScripts; i++) {
       // add extra exception handling code otherwise exceptions occuring in

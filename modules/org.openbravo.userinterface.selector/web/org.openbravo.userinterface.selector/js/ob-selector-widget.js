@@ -29,6 +29,19 @@
 // the columns in the picklist etc. 
 isc.ClassFactory.defineClass('OBSelectorWidget', isc.DynamicForm);
 
+// Three class definitions just for generic styling purposes
+if (!isc.OBClassicWindow) {
+  isc.ClassFactory.defineClass('OBClassicWindow', isc.Window);
+}
+
+if (!isc.OBClassicGrid) {
+  isc.ClassFactory.defineClass('OBClassicGrid', isc.ListGrid);
+}
+
+if (!isc.OBClassicIButton) {
+  isc.ClassFactory.defineClass('OBClassicIButton', isc.IButton);
+}
+
 // These class properties can be overridden in dependent modules by
 // for example doing this in a js file:
 // isc.OBSelectorWidget.styling.filterEditorClearIconHeight = 100;
@@ -37,11 +50,11 @@ isc.ClassFactory.defineClass('OBSelectorWidget', isc.DynamicForm);
 // componentprovider.
 if (!isc.Page.isRTL()) {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton.png'
+    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton.png'
   });
 } else {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton-RTL.png'
+    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton-RTL.png'
   });
 }
 
@@ -58,20 +71,20 @@ isc.OBSelectorWidget.addClassProperties({
 
     // ** {{{ filterEditorIcon properties }}} **
     // filterEditorIcon is shown in the popup grid next to each field.
-    filterEditorClearIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/filterClear.png',
+    filterEditorClearIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/filterClear.png',
     filterEditorClearIconWidth: 15,
     filterEditorClearIconHeight: 15,
     filterEditorClearIconHSpace: 0,
 
     // ** {{{ fieldPicker properties }}} **
     // fieldPicker icon is shown next to the field in the form
-    //fieldPickerIconSrc: '[SKINIMG]../../org.openbravo.userinterface.selector/images/selectorButton.png', //Set before to allow RTL operation
+    //fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/selector/selectorButton.png', //Set before to allow RTL operation
     fieldPickerIconWidth: 27,
     fieldPickerIconHeight: 17,
     fieldPickerIconHSpace: 0,
 
-    // ** {{{ ListGrid properties }}} **
-    // ListGrid shown inside the modal popup after clicking the field picker
+    // ** {{{ OBClassicGrid properties }}} **
+    // OBClassicGrid shown inside the modal popup after clicking the field picker
     // icon.
     listGridRelativeWidth: '100%',
     listGridRelativeHeight: '100%',
@@ -82,7 +95,7 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupRelativeHeight: '85%',
 
     // modal popup top left icon
-    modalPopupHeaderIconSrc: '[SKINIMG]../../smartclient/images/button/icons/iconSearch.png',
+    modalPopupHeaderIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconSearch.png',
     modalPopupHeaderIconWidth: 16,
     modalPopupHeaderIconHeight: 16,
 
@@ -93,12 +106,12 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupButtonSeparatorWidth: 20,
 
     // modal popup bottom Ok button
-    modalPopupOkButtonSrc: '[SKINIMG]../../smartclient/images/button/icons/iconOk.png',
+    modalPopupOkButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconOk.png',
     modalPopupOkButtonAlign: 'center',
     modalPopupOkButtonWidth: 115,
 
     // modal popup bottom Cancel button
-    modalPopupCancelButtonSrc: '[SKINIMG]../../smartclient/images/button/icons/iconCancel.png',
+    modalPopupCancelButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/icons/iconCancel.png',
     modalPopupCancelButtonAlign: 'center',
     modalPopupCancelButtonWidth: 115,
 
@@ -504,7 +517,8 @@ isc.OBSelectorWidget.addProperties({
     };
 
     for (i = 0; i < gridFields.length; i++) {
-      var gridField = gridFields[i], type;
+      var gridField = gridFields[i],
+          type;
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
           required: false
@@ -526,7 +540,7 @@ isc.OBSelectorWidget.addProperties({
 
       if (type && type.filterEditorType && !gridField.filterEditorType) {
         gridField.filterEditorType = type.filterEditorType;
-        
+
         if (gridField.filterEditorType === 'OBMiniDateRangeItem') {
           gridField.filterEditorType = 'OBDateItem';
         }
@@ -812,7 +826,7 @@ isc.OBSelectorWidget.addProperties({
 
       OB.Utilities.applyDefaultValues(this.selectorGridFields, this.defaultSelectorGridField);
 
-      this.selectorGrid = isc.ListGrid.create({
+      this.selectorGrid = isc.OBClassicGrid.create({
 
         selector: this,
         // pointer back to the
@@ -910,7 +924,7 @@ isc.OBSelectorWidget.addProperties({
 
       OB.TestRegistry.register(baseTestRegistryName + 'selectorGrid', this.selectorGrid);
 
-      var okButton = isc.IButton.create({
+      var okButton = isc.OBClassicIButton.create({
         selector: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
         endRow: false,
@@ -920,7 +934,7 @@ isc.OBSelectorWidget.addProperties({
         icon: isc.OBSelectorWidget.styling.modalPopupOkButtonSrc,
         click: this.setSelectorValueFromGrid
       });
-      var cancelButton = isc.IButton.create({
+      var cancelButton = isc.OBClassicIButton.create({
         selector: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         endRow: false,
@@ -934,7 +948,7 @@ isc.OBSelectorWidget.addProperties({
       });
 
       // create the popup window it self
-      this.selectorWindow = isc.Window.create({
+      this.selectorWindow = isc.OBClassicWindow.create({
         title: this.title,
         selector: this,
         autoSize: false,

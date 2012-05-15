@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,6 +112,16 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     componentResource.setType(ComponentResourceType.Static);
     componentResource.setPath(path);
     componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
+    return componentResource;
+  }
+
+  protected ComponentResource createStyleSheetResource(String path,
+      boolean includeAlsoInClassicMode, boolean includeInNewUIMode) {
+    final ComponentResource componentResource = new ComponentResource();
+    componentResource.setType(ComponentResourceType.Stylesheet);
+    componentResource.setPath(path);
+    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
+    componentResource.setIncludeInNewUIMode(includeInNewUIMode);
     return componentResource;
   }
 
