@@ -240,7 +240,11 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         if (this.line) {
           this.receipt.setPrice(this.line, this.getNumber()); 
           this.receipt.trigger('scan');
-        }        
+        }
+      } else if (cmd === 'dto' && OB.POS.modelterminal.hasPermission('order.discount')) {
+        if (this.line) {
+          this.receipt.trigger('discount', this.line, this.getNumber());
+        }             
       } else if (cmd.substring(0, 5) === 'paym:') {
         // payment
         me.receipt.addPayment(new OB.MODEL.PaymentLine(

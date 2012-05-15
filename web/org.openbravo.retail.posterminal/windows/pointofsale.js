@@ -2,7 +2,7 @@
 
 
 define(['builder', 'i18n',
-        'data/datamaster', 'data/dataordersave', 'data/dataordertaxes',
+        'data/datamaster', 'data/dataordersave', 'data/dataordertaxes', 'data/dataorderdiscount',
         'model/terminal', 'model/order',
         'components/commonbuttons',
         'components/hwmanager', 
@@ -28,6 +28,7 @@ define(['builder', 'i18n',
           {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
         ]},    
                
+        {kind: OB.DATA.OrderDiscount},
         {kind: OB.DATA.OrderTaxes},
         {kind: OB.DATA.OrderSave},
         
