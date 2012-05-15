@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  * Modification july 2010 (c) openbravo SLU, based on contribution made by iferca
@@ -178,8 +178,7 @@ public class CallProcess {
       // call the SP
       try {
         // first get a connection
-        final Connection connection = OBDal.getInstance().getConnection();
-        // connection.createStatement().execute("CALL M_InOut_Create0(?)");
+        final Connection connection = OBDal.getInstance().getConnection(false);
 
         final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
         final PreparedStatement ps;
