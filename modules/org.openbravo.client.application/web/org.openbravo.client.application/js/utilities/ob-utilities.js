@@ -155,6 +155,14 @@ OB.Utilities.createDialog = function (title, focusOnOKButton, properties) {
   return dialog;
 };
 
+OB.Utilities.uploadFinished = function (target, data) {
+  var origButton = window[target];
+  OB.Utilities.currentUploader = null;
+  if (origButton && origButton.callback) {
+    origButton.callback(data);
+  }
+};
+OB.Utilities.currentUploader = null;
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.
 OB.Utilities.createLoadingLayout = function () {
