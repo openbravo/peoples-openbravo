@@ -18,7 +18,11 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 
 /**
  * An HQL Query builder.
@@ -28,40 +32,95 @@ import org.openbravo.dal.core.OBContext;
 public class SimpleQueryBuilder {
 
   private String hql;
+  private String client;
+  private String org;
 
-  public SimpleQueryBuilder(String hql) {
+  public SimpleQueryBuilder(String hql, String client, String org) {
     this.hql = hql;
+    this.client = client;
+    this.org = org;
 
     // :orgCriteria
     // :clientCriteria
     // :activeCriteria
   }
 
+  private static String getOrgFilter(Collection<String> orgs) {
+
+    StringBuilder orgfilter = new StringBuilder();
+    if (orgs.isEmpty()) {
+      orgfilter.append(" (1=1) ");
+    } else {
+      orgfilter.append(" ($$$$organization.id in (");
+      boolean comma = false;
+      for (String s : orgs) {
+        if (comma) {
+          orgfilter.append(", ");
+        } else {
+          comma = true;
+        }
+        orgfilter.append("'");
+        orgfilter.append(s);
+        orgfilter.append("'");
+      }
+      orgfilter.append(")) ");
+    }
+    return orgfilter.toString();
+  }
+
+  private static class NaturalOrganizationCriteria implements PartBuilder {
+
+    private String client;
+    private String org;
+
+    public NaturalOrganizationCriteria(String client, String org) {
+      this.client = client;
+      this.org = org;
+    }
+
+    public String getPart() {
+      OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(client);
+      return getOrgFilter(osp.getNaturalTree(org));
+    }
+  }
+
+  private static class ChildOrganizationCriteria implements PartBuilder {
+
+    private String client;
+    private String org;
+
+    public ChildOrganizationCriteria(String client, String org) {
+      this.client = client;
+      this.org = org;
+    }
+
+    public String getPart() {
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client);
+      return getOrgFilter(osp.getChildTree(org, true));
+    }
+  }
+
+  private static class ParentOrganizationCriteria implements PartBuilder {
+
+    private String client;
+    private String org;
+
+    public ParentOrganizationCriteria(String client, String org) {
+      this.client = client;
+      this.org = org;
+    }
+
+    public String getPart() {
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(client);
+      return getOrgFilter(osp.getParentTree(org, true));
+    }
+  }
+
   private static class OrganizationCriteria implements PartBuilder {
     public String getPart() {
-  
-      StringBuilder orgfilter = new StringBuilder();
-  
-      final String[] orgs = OBContext.getOBContext().getReadableOrganizations();
-  
-      if (orgs.length == 0) {
-        orgfilter.append(" (1=1) ");
-      } else {
-        orgfilter.append(" ($$$$organization.id in (");
-        boolean comma = false;
-        for (String s : orgs) {
-          if (comma) {
-            orgfilter.append(", ");
-          } else {
-            comma = true;
-          }
-          orgfilter.append("'");
-          orgfilter.append(s);
-          orgfilter.append("'");
-        }
-        orgfilter.append(")) ");
-      }
-      return orgfilter.toString();
+      return getOrgFilter(Arrays.asList(OBContext.getOBContext().getReadableOrganizations()));
     }
   }
 
@@ -104,6 +163,14 @@ public class SimpleQueryBuilder {
     }
   }
 
+  private static class ReadableClientCriteria implements PartBuilder {
+    private PartBuilder client = new ClientCriteria();
+    private PartBuilder active = new ActiveCriteria();
+
+    public String getPart() {
+      return " (" + client.getPart() + " and " + active.getPart() + ") ";
+    }
+  }
   private static class ActiveCriteria implements PartBuilder {
     public String getPart() {
       return " ($$$$active = 'Y') ";
@@ -127,9 +194,16 @@ public class SimpleQueryBuilder {
     String newhql = hql;
 
     newhql = replaceAll(newhql, "$clientCriteria", new ClientCriteria());
+
     newhql = replaceAll(newhql, "$orgCriteria", new OrganizationCriteria());
+    newhql = replaceAll(newhql, "$naturalOrgCriteria", new NaturalOrganizationCriteria(client, org));
+    newhql = replaceAll(newhql, "$parentOrgCriteria", new ParentOrganizationCriteria(client, org));
+    newhql = replaceAll(newhql, "$childOrgCriteria", new ChildOrganizationCriteria(client, org));
     newhql = replaceAll(newhql, "$activeCriteria", new ActiveCriteria());
+
     newhql = replaceAll(newhql, "$readableCriteria", new ReadableCriteria());
+    newhql = replaceAll(newhql, "$readableClientCriteria", new ReadableClientCriteria());
+
     newhql = replaceAll(newhql, "$roleId", new RoleId());
     newhql = replaceAll(newhql, "$userId", new UserId());
 

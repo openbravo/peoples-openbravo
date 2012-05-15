@@ -36,7 +36,8 @@ public class ProcessHQLQuery implements JSONProcess {
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"));
+    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(jsonsent.getString("query"),
+        jsonsent.optString("client"), jsonsent.optString("organization"));
 
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(querybuilder.getHQLQuery());

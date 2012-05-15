@@ -78,8 +78,10 @@ define(['i18n'], function () {
   };
 
   // Query object
-  OB.DS.Query = function (query) {
+  OB.DS.Query = function (query, client, org) {
     this.query = query;
+    this.client = client;
+    this.org = org;
   };
 
   OB.DS.Query.prototype.exec = function (params, callback, username, password) {
@@ -123,6 +125,14 @@ define(['i18n'], function () {
       }
       data.parameters = p;
     }
+    
+    if (this.client) { 
+      data.client = this.client;
+    }
+    
+    if (this.org) { 
+      data.organization = this.org;
+    }   
     
     serviceJSON(data, callback, username, password);
   };

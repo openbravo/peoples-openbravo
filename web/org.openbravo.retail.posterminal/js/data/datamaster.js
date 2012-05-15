@@ -33,7 +33,9 @@ define(['utilities', 'datasource'], function () {
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'select bp as BusinessPartner, loc as BusinessPartnerLocation ' + 
       'from BusinessPartner bp, BusinessPartnerLocation loc ' + 
-      'where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableCriteria'));
+      'where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableClientCriteria and bp.$naturalOrgCriteria',
+      OB.POS.modelterminal.get('terminal').client, 
+      OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {};     
   };
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);
@@ -45,7 +47,9 @@ define(['utilities', 'datasource'], function () {
       new OB.DS.Query(
       'select p as product, img.bindaryData as img ' + 
       'from Product p left outer join p.image img ' + 
-      'where p.$readableCriteria and p.obposCatalog = true order by p.obposLine, p.name'),
+      'where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.obposLine, p.name', 
+      OB.POS.modelterminal.get('terminal').client, 
+      OB.POS.modelterminal.get('terminal').organization),
       new OB.DS.Query(
       'from PricingProductPrice where priceListVersion in ' + 
       '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
