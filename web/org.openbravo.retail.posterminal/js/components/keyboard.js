@@ -5,6 +5,10 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
+  var parseNumber = function (s) {
+    return OB.DEC.number(parseFloat(s, 10));
+  };  
+  
   var BtnAction = function (kb) {    
     var Btn = function (context) {
       this.context = context;
@@ -56,6 +60,51 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   OB.COMP.Keyboard = function (context) {    
     var me = this;
     this._id = 'keyboard';  
+    
+    this.status = '';
+    this.commands = {};    
+    
+    this.addCommand('qty', {              
+      'action': function (txt) {
+        if (this.line) {
+          this.receipt.setUnit(this.line, parseNumber(txt)); 
+          this.receipt.trigger('scan');
+        }                
+      }
+    });
+    this.addCommand('price', {              
+      'permission': 'order.changePrice',
+      'action': function (txt) {
+        if (this.line) {
+          this.receipt.setPrice(this.line, parseNumber(txt)); 
+          this.receipt.trigger('scan');
+        }               
+      }
+    });    
+    this.addCommand('dto', {              
+      'permission': 'order.discount',
+      'action': function (txt) {
+        if (this.line) {
+           this.receipt.trigger('discount', this.line,parseNumber(txt));
+        }               
+      }
+    });    
+    this.addCommand('code', {
+      'action': function (txt) {
+        var me = this;
+        this.products.ds.find({
+          priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
+          product: { product: {uPCEAN: txt}}
+        }, function (data) {
+          if (data) {      
+            me.receipt.addProduct(me.line, new Backbone.Model(data));
+            me.receipt.trigger('scan');
+          } else {
+            alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt])); // 'UPC/EAN code not found'
+          }
+        });        
+      }
+    });
     
     this.component = B(
       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -192,7 +241,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': String.fromCharCode(13)}, content: [
+                  {kind: BtnAction(this), attr: {'command': 'OK'}, content: [
                     {kind: B.KindJQuery('i'), attr:{'class': 'icon-ok'}}                                                                                      
                   ]}                                                                            
                 ]}     
@@ -220,6 +269,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     }, this);  
     
     this.on('command', function(cmd) {
+      var txt;
       var me = this;      
       if (cmd === '-') {
         if (this.line) {
@@ -231,42 +281,34 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           this.receipt.addUnit(this.line, this.getNumber());    
           this.receipt.trigger('scan');
         }
-      } else if (cmd === 'qty') {
-        if (this.line) {
-          this.receipt.setUnit(this.line, this.getNumber()); 
-          this.receipt.trigger('scan');
+      } else if (this.editbox.text() && cmd === String.fromCharCode(13) ) {
+        // Barcode read using an scanner or typed in the keyboard...
+        this.execCommand(this.commands.code, this.getString());
+      } else if (cmd === 'OK') {
+        
+        // Accepting a command
+        txt = this.editbox.text();
+        this.editbox.empty(); 
+        
+        if (txt && this.status === '') {
+          // It is a barcode
+          this.execCommand(this.commands.code, txt);
         }
-      } else if (cmd === 'price' && OB.POS.modelterminal.hasPermission('order.changePrice')) {
-        if (this.line) {
-          this.receipt.setPrice(this.line, this.getNumber()); 
-          this.receipt.trigger('scan');
-        }
-      } else if (cmd === 'dto' && OB.POS.modelterminal.hasPermission('order.discount')) {
-        if (this.line) {
-          this.receipt.trigger('discount', this.line, this.getNumber());
-        }             
-      } else if (cmd.substring(0, 5) === 'paym:') {
-        // payment
-        me.receipt.addPayment(new OB.MODEL.PaymentLine(
-          {
-            'kind': cmd.substring(5), 
-            'amount': this.getNumber()
+        
+      } else {
+        
+        // It is a command
+        if (this.commands[cmd]) {
+          txt = this.editbox.text();
+          this.editbox.empty();
+          
+          if (txt && this.status === '') { // Short cut: type + action
+            this.execCommand(this.commands[cmd], txt);
+          } else { // Set status 
+            this.status = cmd;
           }
-        ));
-      } else if (cmd === String.fromCharCode(13)) {
-        var code = this.getString();
-        this.products.ds.find({
-          priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
-          product: { product: {uPCEAN: code}}
-        }, function (data) {
-          if (data) {      
-            me.receipt.addProduct(me.line, new Backbone.Model(data));
-            me.receipt.trigger('scan');
-          } else {
-            alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code])); // 'UPC/EAN code not found'
-          }
-        });
-      }         
+        }        
+      }
     }, this);       
 
     $(window).keypress(function(e) {
@@ -274,6 +316,12 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     });     
   }; 
   _.extend(OB.COMP.Keyboard.prototype, Backbone.Events);
+  
+  OB.COMP.Keyboard.prototype.execCommand = function (cmddefinition, txt) {
+      if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
+        cmddefinition.action.call(this, txt);
+      }    
+  };
   
   OB.COMP.Keyboard.prototype.attr = function (attrs) { 
     var attr,i, max, value, content;
@@ -283,9 +331,14 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         value = attrs[attr];
         content = [];
         for (i = 0, max = value.length; i < max; i++) {
+          // add the command
+          if (value[i].definition) {
+            this.addCommand(value[i].command, value[i].definition);
+          }
+          // add the button
           content.push({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-              {kind: BtnAction(this), attr: {'command': value[i].command, 'permission': value[i].permission}, content: [value[i].label]}
+              {kind: BtnAction(this), attr: {'command': value[i].command, 'permission': (value[i].definition ? value[i].definition.permission : null)}, content: [value[i].label]}
             ]}          
           ]});
         }
@@ -295,9 +348,14 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       }
     }          
   };
-
+  
+  OB.COMP.Keyboard.prototype.addCommand = function(cmd, definition) {
+    this.commands[cmd] = definition;
+  };
+  
   OB.COMP.Keyboard.prototype.clear = function () {
-      this.editbox.empty();      
+      this.editbox.empty();  
+      this.status = '';
   };
   
   OB.COMP.Keyboard.prototype.show = function (toolbar) {
@@ -319,7 +377,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   };
   
   OB.COMP.Keyboard.prototype.getNumber = function () {
-    var i = OB.DEC.number(parseFloat(this.editbox.text(), 10));
+    var i = parseNumber(this.editbox.text());
     this.editbox.empty();
     return i;
   };
@@ -345,5 +403,20 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       this.trigger('command', key);
     }
   }; 
-    
+  
+  // Method of the function...
+  OB.COMP.Keyboard.getPayment = function (payment) {
+    return ({
+      'permission': payment,
+      'action': function (txt) {
+        this.receipt.addPayment(new OB.MODEL.PaymentLine(
+          {
+            'kind': payment, 
+            'amount': parseNumber(txt)
+          }));
+      }
+    });
+  };    
+  
+  
 });
