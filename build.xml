@@ -381,7 +381,6 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatus v="RB51"/>
