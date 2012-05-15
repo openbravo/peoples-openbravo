@@ -386,13 +386,19 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return legal entity (with or without accounting) organization or null if not found
    */
   public Organization getLegalEntity(final Organization org) {
-    for (final String orgId : getParentList(org.getId(), true)) {
-      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-      if (parentOrg.getOrganizationType().isLegalEntity()) {
-        return parentOrg;
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()) {
+          return parentOrg;
+        }
       }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return null;
   }
 
   /**
@@ -403,14 +409,20 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return legal entity (with or without accounting) organization or null if not found
    */
   public Organization getLegalEntityOrBusinessUnit(final Organization org) {
-    for (final String orgId : getParentList(org.getId(), true)) {
-      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-      if (parentOrg.getOrganizationType().isLegalEntity()
-          || parentOrg.getOrganizationType().isBusinessUnit()) {
-        return parentOrg;
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()
+            || parentOrg.getOrganizationType().isBusinessUnit()) {
+          return parentOrg;
+        }
       }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return null;
   }
 
   /**
