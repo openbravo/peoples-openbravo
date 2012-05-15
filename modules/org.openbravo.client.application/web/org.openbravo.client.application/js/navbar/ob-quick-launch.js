@@ -104,6 +104,8 @@ isc.OBQuickLaunch.addProperties({
 
     if (valueField.pickList) {
       valueField.pickList.deselectAllRecords();
+      valueField.pickList.clearLastHilite();
+      valueField.pickList.scrollRecordIntoView(0);
     }
     valueField.setValue(null);
     valueField.setElementValue('', null);
