@@ -143,8 +143,8 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (requestETag != null && eTag.equals(requestETag)) {
       response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED, request
-          .getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
+      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
+          request.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
       return;
     }
 

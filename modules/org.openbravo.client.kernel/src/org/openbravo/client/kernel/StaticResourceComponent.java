@@ -232,8 +232,7 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
 
-    sb
-        .append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
+    sb.append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
 
     for (int i = 0; i < cntDynamicScripts; i++) {
       // add extra exception handling code otherwise exceptions occuring in
