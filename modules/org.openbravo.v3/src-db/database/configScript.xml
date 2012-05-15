@@ -1725,11 +1725,19 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
+    <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="9AF59D622AA74B64A0903BB3ABCCCC20">
+      <oldValue><![CDATA[Y]]></oldValue>
+      <newValue><![CDATA[N]]></newValue>
+    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="9DADE14ACAF441DEB4E2B7966FB704B1">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="AFCAC02426F149D0B1F71C6923057A5E">
+      <oldValue><![CDATA[Y]]></oldValue>
+      <newValue><![CDATA[N]]></newValue>
+    </columnDataChange>
+    <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="BBC32E30B77E4EBCA3A8837AD4D2F01C">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
