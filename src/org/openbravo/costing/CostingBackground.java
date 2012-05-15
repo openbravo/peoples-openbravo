@@ -57,49 +57,59 @@ public class CostingBackground extends DalBaseProcess {
     result.setType("Success");
     result.setTitle(OBMessageUtils.messageBD("Success"));
 
+    List<MaterialTransaction> trxs = getTransactionsBatch();
+    int counter = 0, total = trxs.size(), batch = 0;
+    while (total > 0) {
+      for (MaterialTransaction transaction : trxs) {
+        batch++;
+        counter++;
+        try {
+          log4j.debug("Start transaction process: " + transaction.getId());
+          CostingServer transactionCost = new CostingServer(transaction);
+          transactionCost.process();
+          log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
+        } catch (OBException e) {
+          String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
+          log4j.error(e.getMessage(), e);
+          logger.logln(resultMsg);
+          result.setType("Error");
+          result.setTitle(OBMessageUtils.messageBD("Error"));
+          result.setMessage(resultMsg);
+          bundle.setResult(result);
+          return;
+        } catch (Exception e) {
+          result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext()
+              .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+          log4j.error(result.getMessage(), e);
+          logger.logln(result.getMessage());
+          bundle.setResult(result);
+          return;
+        }
+
+        // If cost has been calculated successfully do a commit.
+        SessionHandler.getInstance().commitAndStart();
+      }
+      trxs = getTransactionsBatch();
+      total = trxs.size();
+    }
+    logger.logln(OBMessageUtils.messageBD("Success"));
+    bundle.setResult(result);
+  }
+
+  private List<MaterialTransaction> getTransactionsBatch() {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("   and pr." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-    where.append("   and pr." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
+    trxQry.setMaxResult(1000);
     trxQry.setNamedParameter("now", new Date());
-    List<MaterialTransaction> trxs = trxQry.list();
-    int counter = 0, total = trxs.size();
-    for (MaterialTransaction transaction : trxs) {
-      counter++;
-      try {
-        log4j.debug("Start transaction process: " + transaction.getId());
-        CostingServer transactionCost = new CostingServer(transaction);
-        transactionCost.process();
-        log4j.debug("Transaction processed: " + counter + "/" + total);
-      } catch (OBException e) {
-        String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
-        log4j.error(e.getMessage(), e);
-        logger.logln(resultMsg);
-        result.setType("Error");
-        result.setTitle(OBMessageUtils.messageBD("Error"));
-        result.setMessage(resultMsg);
-        bundle.setResult(result);
-        return;
-      } catch (Exception e) {
-        result = OBMessageUtils.translateError(bundle.getConnection(),
-            bundle.getContext().toVars(), OBContext.getOBContext().getLanguage().getLanguage(),
-            e.getMessage());
-        log4j.error(result.getMessage(), e);
-        logger.logln(result.getMessage());
-        bundle.setResult(result);
-        return;
-      }
 
-      // If cost has been calculated successfully do a commit.
-      SessionHandler.getInstance().commitAndStart();
-    }
-    logger.logln(OBMessageUtils.messageBD("Success"));
-    bundle.setResult(result);
+    return trxQry.list();
   }
 }
