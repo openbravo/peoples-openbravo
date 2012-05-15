@@ -405,7 +405,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       var documentseq = localStorage.getItem('Document_Sequence') || '0';
       documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5); 
       localStorage.setItem('Document_Sequence', documentseq);
-      order.set('documentNo', 'POS-' + documentseq);
+      order.set('documentNo', OB.POS.modelterminal.get('terminal').searchKey + '/' + documentseq);
       order.set('bp', new Backbone.Model(OB.POS.modelterminal.get('businesspartner')));
       order.set('bploc', new Backbone.Model(OB.POS.modelterminal.get('bplocation')));
       return order;
