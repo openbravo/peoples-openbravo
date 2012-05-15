@@ -118,9 +118,9 @@ define(['builder', 'i18n',
               {kind: OB.COMP.TabPayment }                
             ]},
             {kind: OB.COMP.Keyboard, attr: {toolbarpayment: [ 
-              {command:'paym:payment.cash', label: OB.I18N.getLabel('OBPOS_KbCash')},
-              {command:'paym:payment.card', label: OB.I18N.getLabel('OBPOS_KbCard')},
-              {command:'paym:payment.voucher', label: OB.I18N.getLabel('OBPOS_KbVoucher')},
+              {command:'paym:payment.cash', permission: 'payment.cash', label: OB.I18N.getLabel('OBPOS_KbCash')},
+              {command:'paym:payment.card', permission: 'payment.card', label: OB.I18N.getLabel('OBPOS_KbCard')},
+              {command:'paym:payment.voucher', permission: 'payment.voucher', label: OB.I18N.getLabel('OBPOS_KbVoucher')},
               {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
               {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
               {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}

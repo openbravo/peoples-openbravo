@@ -24,6 +24,7 @@ define(['utilities'], function () {
     'OBPOS_AddUnits': 'Added %0 x %1',
     'OBPOS_RemoveUnits': 'Removed %0 x %1',
     'OBPOS_SetUnits': 'Set %0 x %1',
+    'OBPOS_SetPrice': 'Set price %0 to %1',
     'OBPOS_SetBP': 'Assigned customer %0',
     'OBPOS_ResetBP': 'Removed customer',
     'OBPOS_LblUndo': 'Undo',

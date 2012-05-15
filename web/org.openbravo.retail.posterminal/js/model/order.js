@@ -188,17 +188,19 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
-      this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), 'rem');
+      this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), 
+          OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('product')._identifier]));
     },
     
     addUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
-      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), 'add');
+      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), 
+          OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('product')._identifier]));
     },
     
-    setUnit: function (line, qty, action) {
+    setUnit: function (line, qty, text) {
       
       if (OB.DEC.isNumber(qty)) {     
         var oldqty = line.get('qty');      
@@ -210,7 +212,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
           this.calculateNet();
           // sets the undo action
           this.set('undo', {
-            action: action ? action : 'set',
+            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('product')._identifier]),
             oldqty: oldqty,
             line: line,
             undo: function () {
@@ -227,6 +229,33 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       }      
     },
     
+    setPrice: function (line, price) {
+      
+      if (OB.DEC.isNumber(price)) {     
+        var oldprice = line.get('price');      
+        if (OB.DEC.compare(price) > 0) {
+          var me = this;
+          // sets the new price
+          line.set('price', price);
+          line.calculateNet();
+          this.calculateNet();
+          // sets the undo action
+          this.set('undo', {
+            text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('product')._identifier]),
+            oldprice: oldprice,
+            line: line,
+            undo: function () {
+              line.set('price', oldprice);
+              line.calculateNet();
+              me.calculateNet();
+              me.set('undo', null);
+            }
+          });          
+        }  
+        this.adjustPayment();
+      }      
+    },
+    
     deleteLine:function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
@@ -235,7 +264,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.calculateNet();
       // set the undo action
       this.set('undo', {
-        action: 'deleteline',
+        text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('product')._identifier]),
         line: line,
         undo: function() {
           me.get('lines').add(line, {at: index});
@@ -280,7 +309,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.calculateNet();
       // set the undo action
       this.set('undo', {
-        action: 'addline',
+        text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('product')._identifier]),
         line: newline,
         undo: function() {
           me.get('lines').remove(newline);
@@ -299,7 +328,9 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('bploc', bploc);
       // set the undo action
       this.set('undo', {
-        action: bp ? 'setbp' : 'resetbp',
+        text: bp 
+            ? OB.I18N.getLabel('OBPOS_SetBP', [bp.get('_identifier')]) 
+            : OB.I18N.getLabel('OBPOS_ResetBP'),
         bp: bp,
         undo: function() {
           me.set('bp', oldbp);

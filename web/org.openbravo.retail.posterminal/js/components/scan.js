@@ -56,21 +56,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       if (undoaction) {
         msgwelcome.hide();
         msgaction.show();
-        if (undoaction.action === 'deleteline') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_DeleteLine', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
-        } else if (undoaction.action === 'addline') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_AddLine', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
-        } else if (undoaction.action === 'add') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_AddUnits', [undoaction.line.get('qty') - undoaction.oldqty, undoaction.line.get('product').get('product')._identifier]));
-        } else if (undoaction.action === 'rem') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_RemoveUnits', [undoaction.oldqty - undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
-        } else if (undoaction.action === 'set') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_SetUnits', [undoaction.line.get('qty'), undoaction.line.get('product').get('product')._identifier]));
-        } else if (undoaction.action === 'setbp') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_SetBP', [undoaction.bp.get('_identifier')]));
-        } else if (undoaction.action === 'resetbp') {
-          txtaction.text(OB.I18N.getLabel('OBPOS_ResetBP'));
-        }
+        txtaction.text(undoaction.text);
         undoclick = undoaction.undo;        
       } else {
         msgaction.hide();

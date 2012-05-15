@@ -20,7 +20,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       var cmd = attr.command;      
       if (attr.command === '---') {
         this.command = false;
-      } else if (cmd.substring(0, 5) === 'paym:' && !OB.POS.modelterminal.hasPermission(cmd.substring(5))) {
+      } else if (attr.permission && !OB.POS.modelterminal.hasPermission(attr.permission)) {
         this.command = false;
       } else { 
         this.command = attr.command;
@@ -182,12 +182,12 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': 'price'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
+                  {kind: BtnAction(this), attr: {'command': 'price', 'permission': 'order.changePrice'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
                 ]}     
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': 'dto'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
+                  {kind: BtnAction(this), attr: {'command': 'dto', 'permission': 'order.discount'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
                 ]}     
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -236,6 +236,11 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           this.receipt.setUnit(this.line, this.getNumber()); 
           this.receipt.trigger('scan');
         }
+      } else if (cmd === 'price' && OB.POS.modelterminal.hasPermission('order.changePrice')) {
+        if (this.line) {
+          this.receipt.setPrice(this.line, this.getNumber()); 
+          this.receipt.trigger('scan');
+        }        
       } else if (cmd.substring(0, 5) === 'paym:') {
         // payment
         me.receipt.addPayment(new OB.MODEL.PaymentLine(
@@ -276,7 +281,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         for (i = 0, max = value.length; i < max; i++) {
           content.push({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-              {kind: BtnAction(this), attr: {'command': value[i].command}, content: [value[i].label]}
+              {kind: BtnAction(this), attr: {'command': value[i].command, 'permission': value[i].permission}, content: [value[i].label]}
             ]}          
           ]});
         }
