@@ -130,9 +130,8 @@
    	<Sql>
    		<![CDATA[
        INSERT INTO AD_Alert (AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
-                      Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID, Record_Id, Referencekey_ID,
-                      status)
-      		VALUES (get_uuid(), '0', '0', 'Y', NOW(), '0', NOW(), '0', ?, ?, ?, ?, 'NEW')
+                      Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID, Record_Id, Referencekey_ID)
+      		VALUES (get_uuid(), '0', '0', 'Y', NOW(), '0', NOW(), '0', ?, ?, ?, ?)
       ]]>
    	</Sql>
    	<Parameter name="description" />
