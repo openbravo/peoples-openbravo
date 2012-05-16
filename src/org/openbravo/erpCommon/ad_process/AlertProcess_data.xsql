@@ -67,7 +67,7 @@
             FROM AD_ALERT
            WHERE AD_ALERTRULE_ID = ?
              AND REFERENCEKEY_ID = ?
-             AND STATUS != 'SOLVED'
+             AND COALESCE(STATUS, 'NEW') != 'SOLVED'
       ]]></Sql>
       <Parameter name="alertRule"/>
       <Parameter name="ref"/>      
@@ -135,7 +135,7 @@
                UPDATED   = NOW(),
                UPDATEDBY = 0
          WHERE AD_ALERTRULE_ID = ?
-           AND STATUS != 'SOLVED'
+           AND COALESCE(STATUS, 'NEW') != 'SOLVED'
            AND NOT EXISTS 
                    (SELECT 1 FROM (SELECT '' AS AD_REFERENCEKEY_ID FROM DUAL) A WHERE 1=1
                               AND A.REFERENCEKEY_ID = AD_ALERT.REFERENCEKEY_ID)
