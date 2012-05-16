@@ -36,7 +36,8 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               e.preventDefault();
               kb.keyPressed(me.command);  
             });                
-          }}).$el;             
+          }}).$el;   
+        kb.addButton(this.command, this.button);
       } else {
         this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}}).$el;        
       }
@@ -62,7 +63,8 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     this._id = 'keyboard';  
     
     this.status = '';
-    this.commands = {};    
+    this.commands = {}; 
+    this.buttons = {};
     
     this.addCommand('qty', {              
       'action': function (txt) {
@@ -287,25 +289,28 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       } else if (cmd === 'OK') {
         
         // Accepting a command
-        txt = this.editbox.text();
-        this.editbox.empty(); 
+        txt = this.getString();
         
         if (txt && this.status === '') {
           // It is a barcode
           this.execCommand(this.commands.code, txt);
+        } else if (txt && this.status !=='') {
+          this.execCommand(this.commands[this.status], txt);         
+          this.setStatus('');
         }
         
       } else {
         
         // It is a command
         if (this.commands[cmd]) {
-          txt = this.editbox.text();
-          this.editbox.empty();
+          txt = this.getString();
           
           if (txt && this.status === '') { // Short cut: type + action
             this.execCommand(this.commands[cmd], txt);
-          } else { // Set status 
-            this.status = cmd;
+          } else if (this.status === cmd) { // Reset status 
+            this.setStatus('');     
+          } else {
+            this.setStatus(cmd);   
           }
         }        
       }
@@ -316,6 +321,16 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     });     
   }; 
   _.extend(OB.COMP.Keyboard.prototype, Backbone.Events);
+  
+  OB.COMP.Keyboard.prototype.setStatus = function (newstatus) {
+    if (this.buttons[this.status]) {
+      this.buttons[this.status].removeClass('btnactive');
+    }
+    this.status = newstatus;
+    if (this.buttons[this.status]) {
+      this.buttons[this.status].addClass('btnactive');
+    }         
+  };
   
   OB.COMP.Keyboard.prototype.execCommand = function (cmddefinition, txt) {
       if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
@@ -353,9 +368,17 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     this.commands[cmd] = definition;
   };
   
+  OB.COMP.Keyboard.prototype.addButton = function(cmd, btn) {
+    if (this.buttons[cmd]) {
+      this.buttons[cmd] = this.buttons[cmd].add(btn);
+    } else {
+      this.buttons[cmd] = btn;
+    }    
+  };  
+  
   OB.COMP.Keyboard.prototype.clear = function () {
       this.editbox.empty();  
-      this.status = '';
+      this.setStatus(''); 
   };
   
   OB.COMP.Keyboard.prototype.show = function (toolbar) {
@@ -416,7 +439,5 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           }));
       }
     });
-  };    
-  
-  
+  };     
 });

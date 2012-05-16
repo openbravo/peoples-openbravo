@@ -58,7 +58,10 @@ if(POSUtils.isModuleInDevelopment()) {
   } 	
   a.btnkeyboard:active {
     background-color: #cccccc;
-  } 
+  }
+  a.btnactive {
+    background-color: #ccccff;
+  }
   
   div.btnkeyboard {
     display: block;
