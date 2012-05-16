@@ -331,7 +331,7 @@
     <Sql>
       <![CDATA[
       select ad_tab.ad_tab_id as tabid, ad_column.ad_column_id as columnid, ad_window.name as windowname, ad_tab.name as tabname,
-             ad_field.name fieldname,ad_column.name as columnname, ad_field.ad_module_id as moduleid, ad_module.name as modulename
+             ad_field.name as fieldname,ad_column.name as columnname, ad_field.ad_module_id as moduleid, ad_module.name as modulename
       from ad_window, ad_tab, ad_field, ad_column, ad_module
       where ad_field.ad_column_id = ad_column.ad_column_id
       and ad_field.ad_module_id = ad_module.ad_module_id
