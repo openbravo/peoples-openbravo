@@ -44,9 +44,10 @@ define(['utilities'], function () {
     'OBPOS_LineDiscount': 'Discount',
     'OBPOS_LineTotal': 'Total',
     
-    'OBPOS_KbQuantity': 'Quantity',
-    'OBPOS_KbPrice': 'Price',
-    'OBPOS_KbDiscount': 'Discount',
+    'OBPOS_KbQuantity': 'QUANTITY',
+    'OBPOS_KbPrice': 'PRICE',
+    'OBPOS_KbDiscount': 'DISCOUNT',
+    'OBPOS_KbCode': 'UPC/EAN',
     'OBPOS_KbCash': 'Cash',
     'OBPOS_KbCard': 'Card',
     'OBPOS_KbVoucher': 'Voucher',

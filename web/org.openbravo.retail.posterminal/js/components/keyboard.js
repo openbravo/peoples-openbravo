@@ -66,7 +66,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     this.commands = {}; 
     this.buttons = {};
     
-    this.addCommand('qty', {              
+    this.addCommand('line:qty', {              
       'action': function (txt) {
         if (this.line) {
           this.receipt.setUnit(this.line, parseNumber(txt)); 
@@ -74,7 +74,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         }                
       }
     });
-    this.addCommand('price', {              
+    this.addCommand('line:price', {              
       'permission': 'order.changePrice',
       'action': function (txt) {
         if (this.line) {
@@ -83,7 +83,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         }               
       }
     });    
-    this.addCommand('dto', {              
+    this.addCommand('line:dto', {              
       'permission': 'order.discount',
       'action': function (txt) {
         if (this.line) {
@@ -114,7 +114,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           {kind: B.KindJQuery('div'), id: 'toolbarempty', attr: {'style': 'display:block;'}, content: [                                                                            
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
+                {kind: BtnAction(this), attr: {'command': 'code'}, content: [OB.I18N.getLabel('OBPOS_KbCode')]}
               ]}          
             ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -150,7 +150,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
             {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [ 
               {kind: B.KindJQuery('div'), attr: {'style': 'margin:5px'}, content: [ 
                 {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width: 100%; height: 40px;'}, content: [ 
-                  {kind: B.KindJQuery('pre'), content: [ 
+                  {kind: B.KindJQuery('pre'), attr: {'style': 'font-size:150%;'}, content: [ 
                     ' ', {kind: B.KindJQuery('span'), id: 'editbox'}
                   ]}
                 ]}
@@ -228,17 +228,17 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
               ]},                                                                              
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': 'qty'}, content: [OB.I18N.getLabel('OBPOS_KbQuantity')]}                                                                            
+                  {kind: BtnAction(this), attr: {'command': 'line:qty'}, content: [OB.I18N.getLabel('OBPOS_KbQuantity')]}                                                                            
                 ]}     
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': 'price', 'permission': 'order.changePrice'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
+                  {kind: BtnAction(this), attr: {'command': 'line:price', 'permission': 'order.changePrice'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}                                                                            
                 ]}     
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: BtnAction(this), attr: {'command': 'dto', 'permission': 'order.discount'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
+                  {kind: BtnAction(this), attr: {'command': 'line:dto', 'permission': 'order.discount'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}                                                                            
                 ]}     
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -301,8 +301,8 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         
       } else {
         
-        // It is a command
-        if (this.commands[cmd]) {
+        // do nothing if it is a line command and no line is selected, or if does not exists the command.
+        if ((cmd.substring(0, 5) !== 'line:' || this.line) && this.commands[cmd]) {
           txt = this.getString();
           
           if (txt && this.status === '') { // Short cut: type + action
@@ -311,7 +311,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
             this.setStatus('');     
           } else {
             this.setStatus(cmd);   
-          }
+          }       
         }        
       }
     }, this);       

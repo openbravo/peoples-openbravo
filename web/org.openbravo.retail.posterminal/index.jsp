@@ -49,6 +49,7 @@ if(POSUtils.isModuleInDevelopment()) {
     display: block;
 
     width: 100%;
+    font-size: 110%;
     text-align: center;
     padding: 11px 0px 11px 0px;
     text-decoration: none;
