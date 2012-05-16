@@ -56,12 +56,14 @@ public class ApplicationDynamicComponent extends BaseTemplateComponent {
     Set<Entity> accessibleEntities = new HashSet<Entity>();
     for (Entity entity : entities) {
       String tableId = entity.getTableId();
-      Table table = OBDal.getInstance().get(Table.class, tableId);
-      if ("800018".equals(table.getId()) || "203".equals(table.getId())) {
+      if ("800018".equals(tableId) || "203".equals(tableId)) {
         // Special cases, may not link to its window/poWindow
+        // It is safer not to try to remove them
         // See getTabId@ReferencedLink.java
+        accessibleEntities.add(entity);
         continue;
       }
+      Table table = OBDal.getInstance().get(Table.class, tableId);
       Window window = table.getWindow();
       Window poWindow = table.getPOWindow();
       if (windowAccessible(windowAccessList, window)
