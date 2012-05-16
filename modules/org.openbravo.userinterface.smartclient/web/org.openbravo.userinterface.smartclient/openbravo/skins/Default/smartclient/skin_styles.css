@@ -58,7 +58,6 @@ overwritten by _base.scss.
 /*============================================================
 	1) General
 ============================================================*/
-/* line 69, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .pageBackground {
   background: #fafafa;
   color: black;
@@ -67,32 +66,27 @@ overwritten by _base.scss.
 }
 
 /* default text */
-/* line 79, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .normal {
   color: black;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 87, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .defaultBorder {
   border: 1px solid #ababab;
 }
 
 /* drag outline */
-/* line 92, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dragOutline {
   border: 1px dashed #f90f0b;
 }
 
 /* drop indicator */
-/* line 97, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dropBorder {
   background-color: gray;
 }
 
 /* hover canvas  */
-/* line 104, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .canvasHover,
 .gridHover,
 .formHover {
@@ -105,7 +99,6 @@ overwritten by _base.scss.
 }
 
 /* group label */
-/* line 116, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .groupLabel {
   color: black;
   font-family: Arial, Verdana, sans-serif;
@@ -115,7 +108,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 129, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .richTextEditorBorder {
   border-top: 3px solid #e0e0e0;
   border-bottom: 4px solid #e0e0e0;
@@ -134,7 +126,6 @@ overwritten by _base.scss.
 		listBar.labelStyle
 		listGrid.headerBaseStyle (not in this skin)
 ============================================================*/
-/* line 165, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .button,
 .buttonOver,
 .buttonFocused,
@@ -168,7 +159,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 208, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRounded,
 .buttonRoundedOver,
 .buttonRoundedFocused,
@@ -206,7 +196,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 238, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRounded {
   border: 1px solid #ababab;
   -webkit-box-shadow: inset white 0 -1px 1px, inset white -1px 0 1px, inset white 1px 0 1px;
@@ -215,7 +204,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 250, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedDisabled {
   background-color: #e8e8e8;
   background-image: url("./images/cssButton/button_Disabled_stretch.png");
@@ -234,7 +222,6 @@ overwritten by _base.scss.
   border-top: 1px solid #bfbfbf;
 }
 
-/* line 270, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonDisabled {
   background-color: #e8e8e8;
   background-image: url("./images/cssButton/button_Disabled_stretch.png");
@@ -253,7 +240,6 @@ overwritten by _base.scss.
   border-top: 1px solid #bfbfbf;
 }
 
-/* line 291, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonDisabled,
 .buttonSelectedDisabled {
   color: #ababab;
@@ -261,14 +247,12 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 298, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedDisabled,
 .buttonRoundedSelectedDisabled {
   color: #ababab;
   font-weight: normal;
 }
 
-/* line 307, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonFocused,
 .buttonFocusedOver,
 .buttonSelectedFocused,
@@ -278,7 +262,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 316, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedFocused,
 .buttonRoundedFocusedOver,
 .buttonRoundedSelectedFocused,
@@ -287,7 +270,6 @@ overwritten by _base.scss.
   border: 1px solid #ababab;
 }
 
-/* line 323, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonOver,
 .buttonFocusedOver,
 .buttonSelectedFocused,
@@ -307,7 +289,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 355, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedOver,
 .buttonRoundedFocusedOver,
 .buttonRoundedSelectedFocused,
@@ -329,7 +310,6 @@ overwritten by _base.scss.
   border: 1px solid #858585;
 }
 
-/* line 394, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonDown,
 .buttonFocusedDown,
 .buttonSelectedDown,
@@ -349,7 +329,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 438, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedDown,
 .buttonRoundedFocusedDown,
 .buttonRoundedSelectedDown,
@@ -371,7 +350,6 @@ overwritten by _base.scss.
   border: 1px solid #597db1;
 }
 
-/* line 484, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonSelected,
 .buttonSelectedFocused,
 .buttonSelectedOver,
@@ -392,7 +370,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 517, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonRoundedSelected,
 .buttonRoundedSelectedFocused,
 .buttonRoundedSelectedOver,
@@ -416,7 +393,6 @@ overwritten by _base.scss.
 }
 
 /* ImgButton */
-/* line 559, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .imgButton,
 .imgButtonOver,
 .imgButtonSelected,
@@ -429,13 +405,11 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 566, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .imgButtonDisabled {
   color: #666666;
 }
 
 /* StretchImgButton */
-/* line 578, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .stretchImgButton,
 .stretchImgButtonSelected,
 .stretchImgButtonSelectedOver,
@@ -448,12 +422,10 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 585, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .stretchImgButtonOver {
   font-weight: normal;
 }
 
-/* line 590, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .stretchImgButtonSelectedDisabled,
 .stretchImgButtonDisabled {
   color: #ababab;
@@ -461,7 +433,6 @@ overwritten by _base.scss.
 }
 
 /* Button Title */
-/* line 609, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonTitle,
 .buttonTitleOver,
 .buttonTitleDown,
@@ -481,7 +452,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 618, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .buttonTitleDisabled,
 .buttonTitleSelectedDisabled {
   color: #ababab;
@@ -491,7 +461,6 @@ overwritten by _base.scss.
 /*============================================================
     3) Menus 
 ============================================================*/
-/* line 628, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuMain {
   background-color: white;
   background-image: url("./images/Menu/menu_background.png");
@@ -507,17 +476,14 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#fafafa', endColorstr='white')";
 }
 
-/* line 645, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuTable {
-  border: 1px solid #c78f8f;
+  border: 1px solid #8fa7c7;
 }
 
-/* line 649, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeMenuBody {
   background: white;
 }
 
-/* line 675, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menu,
 .menuSelected,
 .menuOver,
@@ -548,7 +514,6 @@ overwritten by _base.scss.
   padding-top: 2px;
 }
 
-/* line 709, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuOver,
 .menuOverDark,
 .menuSelectedOver,
@@ -567,7 +532,7 @@ overwritten by _base.scss.
 .treeMenuSelectedOverDark,
 .treeMenuSelectedSelected,
 .treeMenuSelectedSelectedOver {
-  background-color: #fdc4c4;
+  background-color: #c4ddfd;
   background-image: url("./images/ListGrid/row_Over.png");
   background-repeat: repeat-x;
   background-attachment: scroll;
@@ -582,7 +547,6 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#c4ddfd', endColorstr='#cce5ff')";
 }
 
-/* line 736, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuTitleField,
 .menuTitleFieldDark,
 .menuTitleFieldSelected,
@@ -595,7 +559,6 @@ overwritten by _base.scss.
   padding-left: 4px;
 }
 
-/* line 748, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuIconField,
 .menuIconFieldDark,
 .menuIconFieldOver,
@@ -609,7 +572,6 @@ overwritten by _base.scss.
   padding-right: 4px;
 }
 
-/* line 756, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuDisabled,
 .menuTitleFieldDisabled,
 .menuIconFieldDisabled {
@@ -617,7 +579,6 @@ overwritten by _base.scss.
 }
 
 /* menu header buttons */
-/* line 771, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuButton,
 .menuButtonOver,
 .menuButtonDown,
@@ -649,7 +610,6 @@ overwritten by _base.scss.
   padding-right: 4px;
 }
 
-/* line 815, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuButtonOver {
   background-color: #b4d4fd;
   background-image: url("./images/cssButton/button_Over_stretch.png");
@@ -664,7 +624,6 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='#b7d7f5')";
 }
 
-/* line 847, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuButtonDown,
 .menuButtonFocusedDown,
 .menuButtonFocusedOver,
@@ -685,7 +644,6 @@ overwritten by _base.scss.
   border: 1px solid #ababab;
 }
 
-/* line 888, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .menuButtonDisabled,
 .menuButtonSelectedDisabled {
   color: #ababab;
@@ -708,7 +666,6 @@ overwritten by _base.scss.
 		dialog.hiliteHeaderStyle - dialogHeaderHilite
 		dialog.headerLabelDefaults.styleName - dialogHeaderText
 ============================================================*/
-/* line 911, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .windowBackground,
 .dialogBackground {
   background: #f7f7f7;
@@ -746,7 +703,6 @@ overwritten by _base.scss.
   box-shadow: inset #fcfcfc 0 1px 0, inset #ededed 0 -1px 0, inset #ededed 1px 0 0, inset #ededed -1px 0 0;
 }
 
-/* line 1051, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .windowBody,
 .dialogBody {
   background-color: white;
@@ -756,13 +712,11 @@ overwritten by _base.scss.
   box-shadow: 0 1px #ededed, 0 -1px #ededed;
 }
 
-/* line 1067, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .windowHeader,
 .dialogHeader {
   padding: 0;
 }
 
-/* line 1077, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .windowHeaderText,
 .dialogHeaderText {
   color: #4d4d4d;
@@ -774,7 +728,6 @@ overwritten by _base.scss.
   padding-right: 2px;
 }
 
-/* line 1091, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .windowStatusBar {
   border-bottom: 1px solid white;
   border-left: 1px solid #999999;
@@ -785,7 +738,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1105, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .modalMask {
   background-color: black;
 }
@@ -793,17 +745,14 @@ overwritten by _base.scss.
 /*============================================================
     5) Layout
 ============================================================*/
-/* line 1113, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .layoutDropLine {
   background-color: #ebebeb;
 }
 
-/* line 1117, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .layoutPlaceHolder {
   border: 1px solid black;
 }
 
-/* line 1121, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSplitbar {
   background: #fdc4c4;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d1d1d1), color-stop(20%, #d1d1d1), color-stop(20%, #f5f5f5), color-stop(40%, #f5f5f5), color-stop(40%, #ebebeb), color-stop(60%, #ebebeb), color-stop(60%, #dedede), color-stop(80%, #dedede), color-stop(80%, #bfbfbf), color-stop(100%, #bfbfbf));
@@ -816,12 +765,10 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#d1d1d1', endColorstr='#bfbfbf')";
 }
 
-/* line 1139, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSplitbarDown {
   border: 1px solid gray;
 }
 
-/* line 1143, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vSplitbar {
   background: #ebebeb;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #d1d1d1), color-stop(20%, #d1d1d1), color-stop(20%, #f5f5f5), color-stop(40%, #f5f5f5), color-stop(40%, #ebebeb), color-stop(60%, #ebebeb), color-stop(60%, #dedede), color-stop(80%, #dedede), color-stop(80%, #bfbfbf), color-stop(100%, #bfbfbf));
@@ -834,7 +781,6 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#d1d1d1', endColorstr='#bfbfbf')";
 }
 
-/* line 1161, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vSplitbarDown {
   border: 1px solid gray;
 }
@@ -842,7 +788,6 @@ overwritten by _base.scss.
 /*============================================================
     6) TabSet and tab titles
 ============================================================*/
-/* line 1177, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabSetContainer {
   background-color: white;
   border: 1px solid #bfbfbf;
@@ -851,12 +796,10 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1191, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabBaseline {
   z-index: 10000000;
 }
 
-/* line 1202, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tab,
 .tabOver,
 .tabSelected,
@@ -869,7 +812,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1224, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabTitle,
 .tabTitleDown,
 .tabTitleOver,
@@ -892,27 +834,23 @@ overwritten by _base.scss.
   padding-bottom: 1px;
 }
 
-/* line 1234, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabTitleOver,
 .vtabTitleOver {
-  color: #8a1e15;
+  color: #15428b;
 }
 
-/* line 1239, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabTitleSelected,
 .vtabTitleSelected {
   color: black;
   font-weight: bold;
 }
 
-/* line 1245, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabTitleSelectedOver,
 .vtabTitleSelectedOver {
-  color: #8a1e15;
+  color: #15428b;
   font-weight: bold;
 }
 
-/* line 1253, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabTitleDisabled,
 .tabTitleSelectedDisabled,
 .vtabTitleDisabled,
@@ -924,7 +862,6 @@ overwritten by _base.scss.
 /*============================================================
     7) SectionStack
 ============================================================*/
-/* line 1262, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionStack {
   border-bottom: 1px solid #ababab;
   border-left: 1px solid #ababab;
@@ -932,17 +869,16 @@ overwritten by _base.scss.
 }
 
 /* SectionStack headers - image based */
-/* line 1281, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .imgSectionHeaderTitleclosed,
 .imgSectionHeaderTitleopened,
 .imgSectionHeaderTitleOverclosed,
 .imgSectionHeaderTitleOveropened {
   border-left: 5px;
+  color: black;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 1290, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .imgSectionHeaderTitleDisabledopened,
 .imgSectionHeaderTitleDisabledclosed {
   border-left: 5px;
@@ -951,7 +887,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1300, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionHeaderTitleopened,
 .sectionHeaderTitleclosed {
   color: white;
@@ -959,7 +894,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1308, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionHeaderTitleDisabledopened,
 .sectionHeaderTitleDisabledclosed {
   color: gray;
@@ -968,7 +902,6 @@ overwritten by _base.scss.
 }
 
 /* SectionStack headers - css based */
-/* line 1317, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionHeaderopened,
 .sectionHeaderclosed {
   color: black;
@@ -977,7 +910,6 @@ overwritten by _base.scss.
   padding: 2px;
 }
 
-/* line 1326, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionHeaderopened {
   background-color: #d9d9d9;
   background-image: url(./images/SectionHeader/header_opened_stretch.png);
@@ -993,7 +925,6 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f7f7f7', endColorstr='#d9d9d9')";
 }
 
-/* line 1371, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sectionHeaderclosed {
   background-color: #d9d9d9;
   background-image: url(./images/SectionHeader/header_closed_stretch.png);
@@ -1009,12 +940,10 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f5f5f5', endColorstr='#d9d9d9')";
 }
 
-/* line 1419, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellopened {
   background-color: #FF0000;
 }
 
-/* line 1423, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellclosed {
   background-color: #FF00AA;
 }
@@ -1023,7 +952,6 @@ overwritten by _base.scss.
     8) Forms
 ============================================================*/
 /* general form styles */
-/* line 1438, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formCell,
 .formCellFocused,
 .formCellDisabled,
@@ -1034,7 +962,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1483, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -1079,37 +1006,31 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1491, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .comboBoxItemPendingText {
-  color: #cc000e;
+  color: #0066cc;
 }
 
-/* line 1496, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formTitle,
 .formTitleFocused {
   color: #003168;
 }
 
-/* line 1500, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formTitleDisabled {
   color: #ababab;
 }
 
-/* line 1505, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formCellError,
 .formTitleError {
   color: #692023;
   font-weight: bold;
 }
 
-/* line 1510, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .formHint {
   color: #684547;
   padding: 3px;
 }
 
 /* Allow for nested forms to lie flush against the left-hand edge of the containing form */
-/* line 1518, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .nestedFormContainer,
 .nestedFormContainerFocused,
 .nestedFormContainerDisabled {
@@ -1117,7 +1038,6 @@ overwritten by _base.scss.
 }
 
 /* headerItem */
-/* line 1525, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerItem,
 .headerItemDisabled,
 .headerItemError {
@@ -1128,7 +1048,6 @@ overwritten by _base.scss.
 }
 
 /* text-based items common props */
-/* line 1544, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .textItem,
 .textItemFocused,
 .textItemDisabled,
@@ -1145,7 +1064,6 @@ overwritten by _base.scss.
   padding: 2px;
 }
 
-/* line 1551, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .textItem {
   border-bottom: 1px solid #dedede;
   border-left: 1px solid #dedede;
@@ -1153,7 +1071,6 @@ overwritten by _base.scss.
   border-top: 1px solid #ababab;
 }
 
-/* line 1561, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .textItemDisabled,
 .selectItemTextDisabled {
   background-color: white;
@@ -1161,21 +1078,18 @@ overwritten by _base.scss.
   color: #ababab;
 }
 
-/* line 1568, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .textItemHint,
 .selectItemTextHint {
-  color: #692023;
+  color: #204269;
 }
 
 /* selectItem */
-/* line 1573, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .selectItemTextFocused {
   border: 1px solid #ad5a58;
   color: black;
   -moz-outline-offset: -1;
 }
 
-/* line 1580, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .textItemFocused,
 .selectItemTextFocused {
   color: black;
@@ -1186,7 +1100,6 @@ overwritten by _base.scss.
   -moz-outline-offset: -1;
 }
 
-/* line 1594, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .selectItemText,
 .selectItemTextError,
 .selectItemTextFocused,
@@ -1194,7 +1107,6 @@ overwritten by _base.scss.
   border-right: 0;
 }
 
-/* line 1601, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .selectItemPickerIcon,
 .selectItemPickerIconFocused,
 .selectItemPickerIconDisabled,
@@ -1202,13 +1114,11 @@ overwritten by _base.scss.
   padding: 0px;
 }
 
-/* line 1605, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .pickListMenuBody {
   background-color: white;
-  border: 1px solid #c78f8f;
+  border: 1px solid #8fa7c7;
 }
 
-/* line 1613, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .pickListCell,
 .pickListCellDark,
 .tallPickListCell,
@@ -1216,7 +1126,6 @@ overwritten by _base.scss.
   color: black;
 }
 
-/* line 1618, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .pickListCellSelected,
 .pickListCellSelectedDark {
   background-color: #fdc4c4;
@@ -1234,14 +1143,12 @@ overwritten by _base.scss.
   color: black;
 }
 
-/* line 1639, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tallPickListCellSelected,
 .tallPickListCellSelectedDark {
   background: #fdb4b4;
   color: black;
 }
 
-/* line 1645, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .pickListCellDisabled,
 .tallPickListCellDisabled {
   background-color: #bfbfbf;
@@ -1249,7 +1156,6 @@ overwritten by _base.scss.
 }
 
 /* checkbox and radioButton */
-/* line 1654, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .labelAnchor,
 .labelAnchorDisabled,
 .labelAnchorError,
@@ -1259,14 +1165,12 @@ overwritten by _base.scss.
   text-decoration: none;
 }
 
-/* line 1660, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .labelAnchorDisabled {
   color: #ababab;
   font-family: Arial, Verdana, sans-serif;
 }
 
 /* ColorChooser */
-/* line 1667, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colorChooserCell,
 .colorChooserCellOver {
   background-color: #f0f0f0;
@@ -1276,13 +1180,11 @@ overwritten by _base.scss.
   border-top: 1px solid #f0f0f0;
 }
 
-/* line 1677, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colorChooserCellOver {
   border: 1px solid black;
 }
 
 /* FilterBuilder */
-/* line 1682, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .bracketBorders {
   border-bottom: 1px solid #b8324d;
   border-left: 1px solid #b8324d;
@@ -1293,7 +1195,6 @@ overwritten by _base.scss.
      DateChooser
 ============================================================*/
 /* Defaults for all days and controls */
-/* line 1729, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserButton,
 .dateChooserButtonOver,
 .dateChooserButtonDown,
@@ -1336,7 +1237,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 1743, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserNavButton,
 .dateChooserNavButtonOver,
 .dateChooserNavButtonDown,
@@ -1358,7 +1258,6 @@ overwritten by _base.scss.
 }
 
 /* year/month buttons */
-/* line 1790, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserNavButton,
 .dateChooserNavButtonOver,
 .dateChooserNavButtonDown,
@@ -1371,7 +1270,6 @@ overwritten by _base.scss.
 }
 
 /* for all buttons, plus weekday headers (dateChooserButton) */
-/* line 1816, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserButton,
 .dateChooserButtonOver,
 .dateChooserButtonDown,
@@ -1394,14 +1292,12 @@ overwritten by _base.scss.
   font-weight: bold;
 }
 
-/* line 1822, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserButtonOver,
 .dateChooserButtonDown {
   color: #477ccd;
   cursor: pointer;
 }
 
-/* line 1832, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekendButton,
 .dateChooserWeekendButtonOver,
 .dateChooserWeekendButtonDown,
@@ -1411,7 +1307,6 @@ overwritten by _base.scss.
   background-color: #d6e8ff;
 }
 
-/* line 1841, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserNavButton,
 .dateChooserNavButtonOver,
 .dateChooserNavButtonDown,
@@ -1422,14 +1317,12 @@ overwritten by _base.scss.
   padding: 2px;
 }
 
-/* line 1847, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserNavButtonOver,
 .dateChooserNavButtonDown {
   color: #477ccd;
 }
 
 /* Today, Cancel buttons */
-/* line 1854, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserBottomButton,
 .dateChooserBottomButtonOver,
 .dateChooserBottomButtonDown {
@@ -1440,13 +1333,11 @@ overwritten by _base.scss.
   font-weight: bold;
 }
 
-/* line 1864, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserBottomButtonOver {
   color: #477ccd;
 }
 
 /* weekday and weekend cells */
-/* line 1882, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekday,
 .dateChooserWeekdayOver,
 .dateChooserWeekdayDown,
@@ -1467,13 +1358,11 @@ overwritten by _base.scss.
   cursor: pointer;
 }
 
-/* line 1890, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekdayDisabled,
 .dateChooserWeekendDisabled {
   color: #bfbfbf;
 }
 
-/* line 1897, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekend,
 .dateChooserWeekendOver,
 .dateChooserWeekendSelected,
@@ -1482,13 +1371,11 @@ overwritten by _base.scss.
   border: 2px solid #d6e8ff;
 }
 
-/* line 1903, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekdayOver,
 .dateChooserWeekendOver {
   border: 2px solid #75acff;
 }
 
-/* line 1914, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekdaySelected,
 .dateChooserWeekdaySelectedOver,
 .dateChooserWeekdayDown,
@@ -1503,14 +1390,12 @@ overwritten by _base.scss.
   font-weight: bold;
 }
 
-/* line 1922, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserWeekdayDown,
 .dateChooserWeekendDown {
   font-weight: normal;
 }
 
 /* year and month pop-up menus */
-/* line 1928, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserYearMenu,
 .dateChooserMonthMenu {
   background-color: white;
@@ -1519,7 +1404,6 @@ overwritten by _base.scss.
 
 /* CSS3 Mode
    Canvas border around calendar */
-/* line 1935, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dateChooserBorder {
   border: 1px solid #8fa7c7;
   -webkit-border-radius: 5px;
@@ -1533,7 +1417,6 @@ overwritten by _base.scss.
 	9) Slider & Rangebar
 ============================================================*/
 /* slider and rangebar labels */
-/* line 1950, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sliderTitle,
 .sliderRange,
 .sliderValue,
@@ -1545,34 +1428,29 @@ overwritten by _base.scss.
   font-size: 10px;
 }
 
-/* line 1959, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sliderTitle,
 .rangebarTitle {
   color: #4d4d4d;
   font-weight: bold;
 }
 
-/* line 1965, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sliderRange,
 .rangebarRange {
   color: black;
 }
 
 /* CSS3 Mode */
-/* line 1970, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSliderTrack {
   background: #f5f5f5;
   border: 1px solid #d4d4d4;
 }
 
-/* line 1979, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vSliderTrack {
   background: #f5f5f5;
   border: 1px solid #d4d4d4;
 }
 
 /* CSS3 Mode */
-/* line 1990, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSliderTrackDisabled,
 .vSliderTrackDisabled {
   background: white;
@@ -1580,7 +1458,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 1997, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSliderThumbdown,
 .hSliderThumb {
   background: #e0e0e0;
@@ -1604,7 +1481,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 2030, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vSliderThumbdown,
 .vSliderThumb {
   background: #e0e0e0;
@@ -1628,7 +1504,6 @@ overwritten by _base.scss.
 }
 
 /* CSS3 Mode */
-/* line 2065, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hSliderThumbDisabled,
 .vSliderThumbDisabled {
   background: #e8e8e8;
@@ -1651,7 +1526,6 @@ overwritten by _base.scss.
   box-shadow: inset 0 1px 1px white;
 }
 
-/* line 2093, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vSliderThumbDisabled {
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #fafafa), color-stop(50%, #e3e3e3), color-stop(54%, #f0f0f0), color-stop(99%, #fafafa));
   background-image: -webkit-linear-gradient(left, #fafafa 0%, #e3e3e3 50%, #f0f0f0 54%, #fafafa 99%);
@@ -1675,13 +1549,11 @@ overwritten by _base.scss.
 /*============================================================
 	10) DetailViewer
 ============================================================*/
-/* line 2124, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .detailBlock {
   border-left: 1px solid #ababab;
   border-top: 1px solid #ababab;
 }
 
-/* line 2133, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .detail,
 .detailLabel,
 .detailHeader {
@@ -1693,7 +1565,6 @@ overwritten by _base.scss.
   font-size: 11px;
 }
 
-/* line 2146, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .detailLabel {
   background-color: #fafafa;
   color: #4d4d4d;
@@ -1701,7 +1572,6 @@ overwritten by _base.scss.
   text-align: right;
 }
 
-/* line 2153, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .detailHeader {
   background-color: #ffbdc0;
   color: #4d4d4d;
@@ -1719,12 +1589,10 @@ overwritten by _base.scss.
 		headerBarStyle - headerBar
 		bodyStyleName - gridBody
 ============================================================*/
-/* line 2174, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .listGrid {
   border: 1px solid #ababab;
 }
 
-/* line 2178, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerBar {
   background-color: #c9b6b6;
   background-image: url(./images/ListGrid/header.png);
@@ -1741,17 +1609,14 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fafafa', endColorstr='#c9b6b6')";
 }
 
-/* line 2196, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .gridBody {
   background-color: white;
 }
 
-/* line 2200, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .alternateGridBody {
   background-color: white;
 }
 
-/* line 2206, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .loadingDataMessage,
 .offlineMessage,
 .emptyMessage {
@@ -1761,7 +1626,6 @@ overwritten by _base.scss.
   padding: 11px;
 }
 
-/* line 2215, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .gridDragTracker {
   border: 1px dotted gray;
   color: black;
@@ -1770,13 +1634,11 @@ overwritten by _base.scss.
   padding: 1px;
 }
 
-/* line 2225, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .dragLine {
   border-bottom: 2px dotted #ff7a75;
 }
 
 /* for filterEditor */
-/* line 2233, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .recordEditorCell {
   background-color: #fafafa;
   color: black;
@@ -1792,7 +1654,6 @@ overwritten by _base.scss.
 
 ============================================================*/
 /* ListGrid column header buttons */
-/* line 2251, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButton {
   background: #fafafa;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(24%, #f7f7f7), color-stop(62%, #e8e8e8), color-stop(71%, #e8e8e8), color-stop(100%, #e8e8e8));
@@ -1811,7 +1672,6 @@ overwritten by _base.scss.
   padding-right: 3px;
 }
 
-/* line 2289, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButtonSelected {
   background: #f0f6ff;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f8ff), color-stop(100%, #a2ccf6));
@@ -1830,7 +1690,6 @@ overwritten by _base.scss.
   padding-right: 3px;
 }
 
-/* line 2324, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButtonDisabled,
 .headerButtonSelectedDisabled {
   background-color: white;
@@ -1838,7 +1697,6 @@ overwritten by _base.scss.
   border-right: 1px solid #cccccc;
 }
 
-/* line 2335, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButtonOver,
 .headerButtonDown,
 .headerButtonSelectedOver,
@@ -1849,7 +1707,6 @@ overwritten by _base.scss.
   border-right: 1px solid #cccccc;
 }
 
-/* line 2345, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButtonOver,
 .headerButtonDown {
   background: #a2ccf6;
@@ -1866,7 +1723,6 @@ overwritten by _base.scss.
   padding-right: 3px;
 }
 
-/* line 2361, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerButtonSelectedOver,
 .headerButtonSelectedDown {
   background: #f0f8ff;
@@ -1883,7 +1739,6 @@ overwritten by _base.scss.
   padding-right: 3px;
 }
 
-/* line 2385, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sorterButton,
 .sorterButtonSelected,
 .sorterButtonDisabled,
@@ -1896,7 +1751,6 @@ overwritten by _base.scss.
   border-left: 1px solid #fafafa;
 }
 
-/* line 2393, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sorterButtonOver,
 .sorterButtonDown,
 .sorterButtonSelectedOver,
@@ -1905,7 +1759,6 @@ overwritten by _base.scss.
 }
 
 /* ListGrid column header titles */
-/* line 2405, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerTitle,
 .headerTitleOver,
 .headerTitleDown,
@@ -1921,7 +1774,6 @@ overwritten by _base.scss.
   padding-right: 4px;
 }
 
-/* line 2421, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerTitleDown,
 .headerTitleSelected,
 .headerTitleSelectedOver,
@@ -1930,7 +1782,6 @@ overwritten by _base.scss.
   color: black;
 }
 
-/* line 2426, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .headerTitleDisabled,
 .headerTitleSelectedDisabled {
   color: #ababab;
@@ -1943,7 +1794,6 @@ overwritten by _base.scss.
 /*------------------------------------------------------------
 		listGrid.baseStyle
 ------------------------------------------------------------*/
-/* line 2486, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cell,
 .cellDark,
 .cellOver,
@@ -2000,7 +1850,6 @@ overwritten by _base.scss.
   text-overflow: ellipsis;
 }
 
-/* line 2499, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .specialCol {
   background-color: #fafafa;
   color: black;
@@ -2009,14 +1858,12 @@ overwritten by _base.scss.
   text-overflow: ellipsis;
 }
 
-/* line 2524, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellDark,
 .recordSummaryCell,
 .recordSummaryCellDark {
   background-color: #fafafa;
 }
 
-/* line 2529, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .gridSummaryCell,
 .gridSummaryCellDisabled {
   background-color: #f0f0f0;
@@ -2024,13 +1871,11 @@ overwritten by _base.scss.
   border-top: 1px solid gray;
 }
 
-/* line 2537, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tallCellDark {
   background-color: #fafafa;
   border-top: 1px solid #fafafa;
 }
 
-/* line 2546, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellOver,
 .cellOverDark,
 .specialColOver,
@@ -2051,70 +1896,63 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#c4ddfd', endColorstr='#cce5ff')";
 }
 
-/* line 2570, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tallCellOver,
 .tallCellOverDark {
   background-color: #dbedff;
   border-top: 1px solid #e8e8e8;
 }
 
-/* line 2579, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellSelected,
 .cellSelectedDark,
 .specialColSelected,
 .recordSummaryCellSelected,
 .recordSummaryCellSelectedDark {
-  background: #ffd6d6;
+  background: #d6e8ff;
   border-bottom: 1px dotted #e9a89f;
   border-top: 1px dotted #e9a89f;
 }
 
-/* line 2588, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tallCellSelected,
 .tallCellSelectedDark {
-  background: #ffd6d6;
-  border-bottom: 1px dotted #e9a89f;
-  border-top: 1px dotted #e9a89f;
+  background: #d6e8ff;
+  border-bottom: 1px dotted #9fb7e9;
+  border-top: 1px dotted #9fb7e9;
 }
 
-/* line 2600, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellSelectedOver,
 .cellSelectedOverDark,
 .specialColSelectedOver,
 .recordSummaryCellSelectedOver,
 .recordSummaryCellSelectedOverDark {
-  background-color: #fdc4c4;
-  background-image: url(images/ListGrid/row_Over_Selected.png);
+  border-bottom: 1px solid #ababab;
+  border-top: 1px solid #b8cfef;
+  background-color: #c4ddfd;
+  background-image: url(./images/ListGrid/row_Selected_Over.png);
   background-repeat: repeat-x;
-  background-position: bottom left;
   background-attachment: scroll;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fdc4c4), color-stop(4%, #fdc4c4), color-stop(4%, #fdeded), color-stop(100%, #fdc4c4));
-  background-image: -webkit-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -moz-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -o-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -ms-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fdeded', endColorstr='#fdc4c4');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fdeded', endColorstr='#fdc4c4')";
-  border-bottom: 1px dotted #e9a89f;
-  border-top: 1px dotted #e9a89f;
+  background-position: bottom left;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c4ddfd), color-stop(9%, #f0f8ff), color-stop(14%, #e5f3ff), color-stop(86%, #cce5ff), color-stop(100%, #c4ddfd));
+  background-image: -webkit-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -moz-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -o-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -ms-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd')";
 }
 
-/* line 2623, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tallCellSelectedOver,
 .tallCellSelectedOverDark {
-  background-color: #f6d1d0;
-  border-bottom: 1px dotted #e9a89f;
-  border-top: 1px dotted #e9a89f;
+  background-color: #d0dff6;
+  border-bottom: 1px dotted #9fb7e9;
+  border-top: 1px dotted #9fb7e9;
 }
 
-/* line 2632, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .gridSummaryCell,
 .gridSummaryCellDisabled {
   font-weight: bold;
 }
 
-/* line 2644, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cellDisabled,
 .cellDisabledDark,
 .specialColDisabled,
@@ -2129,10 +1967,9 @@ overwritten by _base.scss.
 }
 
 /* for grouping */
-/* line 2650, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .groupNode {
-  border-bottom: 1px solid #c78f8f;
-  color: #a43937;
+  border-bottom: 1px solid #8fa7c7;
+  color: #3765a4;
   font-family: Arial, Verdana, sans-serif;
   font-weight: bold;
 }
@@ -2141,7 +1978,6 @@ overwritten by _base.scss.
 /*------------------------------------------------------------
 		treeGrid.baseStyle
 ------------------------------------------------------------*/
-/* line 2682, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCell,
 .treeCellDark,
 .treeCellOver,
@@ -2163,20 +1999,16 @@ overwritten by _base.scss.
 .treeTallCellDisabled,
 .treeTallCellDisabledDark {
   color: black;
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   text-overflow: ellipsis;
 }
 
-/* line 2707, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCellDark,
 .treeTallCellDark {
   background-color: #fafafa;
 }
 
-/* line 2712, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCellOver,
 .treeCellOverDark {
   background-color: #c4ddfd;
@@ -2194,49 +2026,43 @@ overwritten by _base.scss.
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd')";
 }
 
-/* line 2736, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeTallCellOver,
 .treeTallCellOverDark {
   background-color: #e8e8e8;
 }
 
-/* line 2741, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCellSelected,
 .treeCellSelectedDark {
-  background: #ffd6d6;
+  background: #d6e8ff;
 }
 
-/* line 2746, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeTallCellSelected,
 .treeTallCellSelectedDark {
   background-color: #ffd6d6;
 }
 
-/* line 2751, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCellSelectedOver,
 .treeCellSelectedOverDark {
-  background-color: #fdc4c4;
-  background-image: url(images/ListGrid/row_Over_Selected.png);
+  background-color: #c4ddfd;
+  background-image: url(./images/ListGrid/row_Selected_Over.png);
   background-repeat: repeat-x;
-  background-position: bottom left;
   background-attachment: scroll;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fdc4c4), color-stop(4%, #fdc4c4), color-stop(4%, #fdeded), color-stop(100%, #fdc4c4));
-  background-image: -webkit-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -moz-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -o-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: -ms-linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  background-image: linear-gradient(top, #fdc4c4 0%, #fdc4c4 4%, #fdeded 4%, #fdc4c4 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fdeded', endColorstr='#fdc4c4');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fdeded', endColorstr='#fdc4c4')";
+  background-position: bottom left;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c4ddfd), color-stop(9%, #f0f8ff), color-stop(14%, #e5f3ff), color-stop(86%, #cce5ff), color-stop(100%, #c4ddfd));
+  background-image: -webkit-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -moz-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -o-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -ms-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#edf4fd', endColorstr='#c4ddfd');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#edf4fd', endColorstr='#c4ddfd')";
 }
 
-/* line 2770, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeTallCellSelectedOver,
 .treeTallCellSelectedOverDark {
-  background-color: #f6d1d0;
+  background-color: #d0dff6;
 }
 
-/* line 2777, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .treeCellDisabled,
 .treeCellDisabledDark,
 .treeTallCellDisabled,
@@ -2246,14 +2072,12 @@ overwritten by _base.scss.
 }
 
 /* Field builders (Formula/Summary) */
-/* line 2783, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sampleOutput {
   border: 2px solid #d6d6d6;
   padding: 3px;
 }
 
 /* Multi-sort - sort-index appearing next to sort-arrows in field headers */
-/* line 2789, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .sortNumeral {
   font-size: 7px;
 }
@@ -2261,7 +2085,6 @@ overwritten by _base.scss.
 /*============================================================
 	12) ToolStrip
 ============================================================*/
-/* line 2796, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .toolStrip {
   background-color: #fee7e7;
   background-image: url(images/ToolStrip/background.png);
@@ -2279,7 +2102,6 @@ overwritten by _base.scss.
   box-shadow: #fffafa 0 1px 0 inset;
 }
 
-/* line 2815, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .toolStripVertical {
   background-color: white;
   background-image: url(images/ToolStrip/background_vertical.png);
@@ -2289,7 +2111,6 @@ overwritten by _base.scss.
 /*============================================================
    12a) ToolStripGroup and IconButton
 ==============================================================*/
-/* line 2833, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .toolStripGroup,
 .toolStripGroupOver,
 .toolStripGroupSelected,
@@ -2315,7 +2136,6 @@ overwritten by _base.scss.
   border-radius: 3px;
 }
 
-/* line 2855, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .toolStripGroupTitle,
 .toolStripGroupTitleOver,
 .toolStripGroupTitleSelected,
@@ -2343,7 +2163,6 @@ overwritten by _base.scss.
   padding: 3px;
 }
 
-/* line 2883, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .iconButton,
 .iconButtonOver,
 .iconButtonFocused,
@@ -2371,7 +2190,6 @@ overwritten by _base.scss.
   color: #4d4d4d;
 }
 
-/* line 2900, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .iconButtonOver,
 .iconButtonSelectedOver,
 .iconButtonFocusedOver,
@@ -2380,7 +2198,6 @@ overwritten by _base.scss.
   border: 1px solid #b5a7a6;
 }
 
-/* line 2912, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .iconButtonSelected,
 .iconButtonSelectedFocused,
 .iconButtonSelectedDown,
@@ -2390,7 +2207,6 @@ overwritten by _base.scss.
   background-color: #fdaaaa;
 }
 
-/* line 2918, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .iconButtonDisabled {
   color: #ababab;
 }
@@ -2398,7 +2214,6 @@ overwritten by _base.scss.
 /*============================================================
 	13) Tools
 ============================================================*/
-/* line 2925, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .resizeThumb {
   background-color: #009999;
 }
@@ -2406,12 +2221,10 @@ overwritten by _base.scss.
 /*============================================================
    14) TileGrid
 ==============================================================*/
-/* line 2933, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tileGrid {
   border: 1px solid gray;
 }
 
-/* line 2942, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tileValue,
 .tileValueDown,
 .tileValueSelected,
@@ -2422,22 +2235,18 @@ overwritten by _base.scss.
   text-overflow: ellipsis;
 }
 
-/* line 2947, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tileValueOver {
   color: black;
 }
 
-/* line 2951, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tileValueSelected {
   color: black;
 }
 
-/* line 2955, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tileValueSelectedOver {
   color: black;
 }
 
-/* line 2962, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .simpleTile,
 .simpleTileOver,
 .simpleTileSelected,
@@ -2446,12 +2255,10 @@ overwritten by _base.scss.
   padding: 3px;
 }
 
-/* line 2967, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .simpleTile {
   border: 1px solid transparent;
 }
 
-/* line 2971, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .simpleTileOver {
   background-color: #fafafa;
   background-image: url(images/TileGrid/tileOver.png);
@@ -2466,7 +2273,6 @@ overwritten by _base.scss.
   border: 1px solid #cfcfcf;
 }
 
-/* line 2986, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .simpleTileSelected,
 .simpleTileSelectedOver {
   background-color: #fafafa;
@@ -2518,7 +2324,6 @@ overwritten by _base.scss.
     border: 1px solid #ffff00;
 }*/
 /* CSS3 Mode */
-/* line 3037, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vScrollThumb {
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f5f5f5), color-stop(50%, #e8e8e9), color-stop(50%, #d7d9da), color-stop(82%, #caccce), color-stop(100%, #c0c2c4));
   background-image: -webkit-linear-gradient(left, #f5f5f5 0%, #e8e8e9 50%, #d7d9da 50%, #caccce 82%, #c0c2c4 100%);
@@ -2540,7 +2345,6 @@ overwritten by _base.scss.
   margin-right: 1px;
 }
 
-/* line 3094, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .vScrollThumbOver {
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #e3f4fc), color-stop(20%, #d5eefb), color-stop(50%, #d5eefb), color-stop(50%, #a7daf6), color-stop(80%, #a7daf6), color-stop(90%, #a4d5ef), color-stop(100%, #9ccae2));
   background-image: -webkit-linear-gradient(left, #e3f4fc 0%, #d5eefb 20%, #d5eefb 50%, #a7daf6 50%, #a7daf6 80%, #a4d5ef 90%, #9ccae2 100%);
@@ -2562,7 +2366,6 @@ overwritten by _base.scss.
   margin-right: 1px;
 }
 
-/* line 3130, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hScrollThumb {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(42%, #eaeaeb), color-stop(50%, #d6d6d7), color-stop(75%, #cbcbcd), color-stop(92%, #bebec1), color-stop(100%, #bebec1));
   background-image: -webkit-linear-gradient(top, #f5f5f5 0%, #eaeaeb 42%, #d6d6d7 50%, #cbcbcd 75%, #bebec1 92%, #bebec1 100%);
@@ -2584,7 +2387,6 @@ overwritten by _base.scss.
   margin-bottom: 1px;
 }
 
-/* line 3186, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .hScrollThumbOver {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e3f4fc), color-stop(20%, #d5eefb), color-stop(50%, #d5eefb), color-stop(50%, #a7daf6), color-stop(80%, #a7daf6), color-stop(90%, #a4d5ef), color-stop(100%, #9ccae2));
   background-image: -webkit-linear-gradient(top, #e3f4fc 0%, #d5eefb 20%, #d5eefb 50%, #a7daf6 50%, #a7daf6 80%, #a4d5ef 90%, #9ccae2 100%);
@@ -2621,7 +2423,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 ============================================================*/
 /* styles for simple css-styled tabs*/
 /* left */
-/* line 3241, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeft {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #d4d4d4), color-stop(19%, #d6d6d6), color-stop(57%, #e8e8e8), color-stop(71%, #ebebeb), color-stop(100%, #ebebeb));
@@ -2653,7 +2454,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3242, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftOver {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f0f0f0), color-stop(10%, #f0f0f0), color-stop(57%, #e3e3e3), color-stop(100%, #e3e3e3));
@@ -2680,13 +2480,12 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -webkit-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   -moz-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3243, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelected {
   background-color: #f7f7f7;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #e8e8e8), color-stop(9%, #e8e8e8), color-stop(18%, #ededed), color-stop(32%, #f2f2f2), color-stop(68%, #fcfcfc), color-stop(100%, #fcfcfc));
@@ -2695,11 +2494,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   background-image: -o-linear-gradient(left, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: -ms-linear-gradient(left, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: linear-gradient(left, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white')";
-  border-left: 1px solid #be9797;
-  border-bottom: 1px solid #be9797;
-  border-top: 1px solid #be9797;
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white')";
+  border-left: 1px solid #97a8be;
+  border-bottom: 1px solid #97a8be;
+  border-top: 1px solid #97a8be;
   -moz-border-radius-bottomleft: 5px;
   -webkit-border-bottom-left-radius: 5px;
   -ms-border-bottom-left-radius: 5px;
@@ -2720,7 +2519,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3244, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelectedOver {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -2744,14 +2542,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3245, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelectedDown {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -2775,14 +2572,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3246, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLefttFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -2794,7 +2590,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3247, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelectedFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -2806,7 +2601,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3248, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelectedFocusedOver {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -2818,7 +2612,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3249, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftDown {
   background-color: #f7f7f7;
   border-left: 1px solid #ababab;
@@ -2834,14 +2627,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #153e8a;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3250, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftSelectedDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -2871,7 +2663,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3251, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonLeftDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -2902,7 +2693,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* right */
-/* line 3254, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRight {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #d4d4d4), color-stop(19%, #d6d6d6), color-stop(57%, #e8e8e8), color-stop(71%, #ebebeb), color-stop(100%, #ebebeb));
@@ -2934,7 +2724,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3255, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightOver {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #f0f0f0), color-stop(10%, #f0f0f0), color-stop(57%, #e3e3e3), color-stop(100%, #e3e3e3));
@@ -2961,13 +2750,12 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -webkit-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   -moz-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3256, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelected {
   background-color: #f7f7f7;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #e8e8e8), color-stop(9%, #e8e8e8), color-stop(18%, #ededed), color-stop(32%, #f2f2f2), color-stop(68%, #fcfcfc), color-stop(100%, #fcfcfc));
@@ -2976,11 +2764,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   background-image: -o-linear-gradient(right, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: -ms-linear-gradient(right, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: linear-gradient(right, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white')";
-  border-right: 1px solid #be9797;
-  border-bottom: 1px solid #be9797;
-  border-top: 1px solid #be9797;
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white')";
+  border-right: 1px solid #97a8be;
+  border-bottom: 1px solid #97a8be;
+  border-top: 1px solid #97a8be;
   -moz-border-radius-bottomright: 5px;
   -webkit-border-bottom-right-radius: 5px;
   -ms-border-bottom-right-radius: 5px;
@@ -3001,7 +2789,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3257, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelectedOver {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3025,14 +2812,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-right-radius: 5px;
   -o-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3258, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelectedDown {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3056,14 +2842,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-right-radius: 5px;
   -o-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3259, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightFocused {
   background-color: #d6d6d6;
   border-right: 1px solid gray;
@@ -3075,7 +2860,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3260, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelectedFocused {
   background-color: #d6d6d6;
   border-right: 1px solid gray;
@@ -3087,7 +2871,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3261, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelectedFocusedOver {
   background-color: #d6d6d6;
   border-right: 1px solid gray;
@@ -3099,7 +2882,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3262, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightDown {
   background-color: #f7f7f7;
   border-right: 1px solid #ababab;
@@ -3115,14 +2897,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-right-radius: 5px;
   -o-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
-  color: #8a1e15;
+  color: #153e8a;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3263, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightSelectedDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3152,7 +2933,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3264, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonRightDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3183,7 +2963,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* top */
-/* line 3267, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTop {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d4d4d4), color-stop(19%, #d6d6d6), color-stop(57%, #e8e8e8), color-stop(71%, #ebebeb), color-stop(100%, #ebebeb));
@@ -3215,7 +2994,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3268, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopOver {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(10%, #f0f0f0), color-stop(57%, #e3e3e3), color-stop(100%, #e3e3e3));
@@ -3242,13 +3020,12 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -webkit-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   -moz-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3269, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelected {
   background-color: #f7f7f7;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e8e8e8), color-stop(9%, #e8e8e8), color-stop(18%, #ededed), color-stop(32%, #f2f2f2), color-stop(68%, #fcfcfc), color-stop(100%, #fcfcfc));
@@ -3257,11 +3034,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   background-image: -o-linear-gradient(top, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: -ms-linear-gradient(top, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: linear-gradient(top, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white')";
-  border-left: 1px solid #be9797;
-  border-right: 1px solid #be9797;
-  border-top: 1px solid #be9797;
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white')";
+  border-left: 1px solid #97a8be;
+  border-right: 1px solid #97a8be;
+  border-top: 1px solid #97a8be;
   -moz-border-radius-topright: 5px;
   -webkit-border-top-right-radius: 5px;
   -ms-border-top-right-radius: 5px;
@@ -3282,7 +3059,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3270, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelectedOver {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3306,14 +3082,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3271, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelectedDown {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3337,14 +3112,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3272, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3356,7 +3130,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3273, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelectedFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3368,7 +3141,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3274, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelectedFocusedOver {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3380,7 +3152,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3275, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopDown {
   background-color: #f7f7f7;
   border-left: 1px solid #ababab;
@@ -3396,14 +3167,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-top-left-radius: 5px;
   -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #8a1e15;
+  color: #153e8a;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 0 7px 1px 7px;
 }
 
-/* line 3276, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopSelectedDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3433,7 +3203,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 0 7px 1px 7px;
 }
 
-/* line 3277, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonTopDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3464,7 +3233,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* bottom */
-/* line 3280, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottom {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #d4d4d4), color-stop(19%, #d6d6d6), color-stop(57%, #e8e8e8), color-stop(71%, #ebebeb), color-stop(100%, #ebebeb));
@@ -3497,7 +3265,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding-top: 1px;
 }
 
-/* line 3281, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomOver {
   background-color: #e0e0e0;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f0f0f0), color-stop(10%, #f0f0f0), color-stop(57%, #e3e3e3), color-stop(100%, #e3e3e3));
@@ -3524,14 +3291,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -webkit-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   -moz-box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
   box-shadow: 0 1px 1px white inset, 1px 0 1px white inset, -1px 0 1px white inset;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   padding: 0 7px 1px 7px;
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3282, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelected {
   background-color: #f7f7f7;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #e8e8e8), color-stop(9%, #e8e8e8), color-stop(18%, #ededed), color-stop(32%, #f2f2f2), color-stop(68%, #fcfcfc), color-stop(100%, #fcfcfc));
@@ -3540,11 +3306,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   background-image: -o-linear-gradient(bottom, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: -ms-linear-gradient(bottom, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
   background-image: linear-gradient(bottom, #e8e8e8 0%, #e8e8e8 9%, #ededed 18%, #f2f2f2 32%, #fcfcfc 68%, #fcfcfc 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fff0f1', endColorstr='white')";
-  border-left: 1px solid #be9797;
-  border-right: 1px solid #be9797;
-  border-bottom: 1px solid #be9797;
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#f0f8ff', endColorstr='white')";
+  border-left: 1px solid #97a8be;
+  border-right: 1px solid #97a8be;
+  border-bottom: 1px solid #97a8be;
   -moz-border-radius-bottomright: 5px;
   -webkit-border-bottom-right-radius: 5px;
   -ms-border-bottom-right-radius: 5px;
@@ -3566,7 +3332,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3283, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelectedOver {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3590,7 +3355,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-bottom-left-radius: 5px;
   -o-border-bottom-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
@@ -3598,7 +3363,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3284, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelectedDown {
   background-color: #e3e3e3;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f0f0f0), color-stop(4%, #f0f0f0), color-stop(4%, #e3e3e3), color-stop(23%, #f2f2f2), color-stop(32%, #f5f5f5), color-stop(68%, #fafafa), color-stop(100%, #ffffff));
@@ -3622,7 +3386,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-bottom-left-radius: 5px;
   -o-border-bottom-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  color: #8a1e15;
+  color: #15428b;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
@@ -3630,7 +3394,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3285, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3643,7 +3406,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3286, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelectedFocused {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3656,7 +3418,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3287, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelectedFocusedOver {
   background-color: #d6d6d6;
   border-left: 1px solid gray;
@@ -3669,7 +3430,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3288, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomDown {
   background-color: #f7f7f7;
   border-left: 1px solid #ababab;
@@ -3685,7 +3445,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-border-bottom-left-radius: 5px;
   -o-border-bottom-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  color: #8a1e15;
+  color: #153e8a;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
@@ -3693,7 +3453,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3289, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomSelectedDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3724,7 +3483,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   padding: 1px 7px 1px 7px;
 }
 
-/* line 3290, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .tabButtonBottomDisabled {
   background-color: #f2f2f2;
   background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f5f5f5), color-stop(33%, #f0f0f0), color-stop(100%, #ededed));
@@ -3773,7 +3531,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 		reportHeaderBar.button.baseStyle - rowHeaderLabel
 		reportHeaderBar.button.baseStyle - colHeaderLabel
 ============================================================*/
-/* line 3312, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCell {
   background-color: white;
   border-bottom: 1px solid #ababab;
@@ -3786,7 +3543,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   text-overflow: ellipsis;
 }
 
-/* line 3328, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCellDark {
   background-color: #f0f0f0;
   border-bottom: 1px solid #ababab;
@@ -3799,7 +3555,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   text-overflow: ellipsis;
 }
 
-/* line 3344, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCellDisabled {
   background-color: white;
   border-bottom: 1px solid white;
@@ -3813,149 +3568,163 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* partial styles */
-/* line 3361, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCellOver {
-  background-color: #efb9b8;
   border-bottom: 1px solid #ababab;
-  border-left: 1px solid #efb9b8;
+  border-left: 1px solid #b8cfef;
   border-right: 1px solid #ababab;
-  border-top: 1px solid #efb9b8;
+  border-top: 1px solid #b8cfef;
+  background-color: #c4ddfd;
+  background-image: url(./images/ListGrid/row_Over.png);
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+  background-position: bottom left;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c4ddfd), color-stop(9%, #f0f8ff), color-stop(14%, #e5f3ff), color-stop(86%, #cce5ff), color-stop(100%, #c4ddfd));
+  background-image: -webkit-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -moz-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -o-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -ms-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd')";
 }
 
-/* line 3371, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCellSelected {
-  background-color: #FFE781;
+  background: #d6e8ff;
   border-bottom: 1px solid #ababab;
-  border-left: 1px solid #FFE781;
+  border-left: 1px solid #b8cfef;
   border-right: 1px solid #ababab;
-  border-top: 1px solid #FFE781;
+  border-top: 1px solid #b8cfef;
 }
 
-/* line 3381, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .cubeCellSelectedOver {
-  background-color: #efb9b8;
   border-bottom: 1px solid #ababab;
-  border-left: 1px solid #efb9b8;
+  border-left: 1px solid #b8cfef;
   border-right: 1px solid #ababab;
-  border-top: 1px solid #efb9b8;
+  border-top: 1px solid #b8cfef;
+  background-color: #c4ddfd;
+  background-image: url(./images/ListGrid/row_Selected_Over.png);
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+  background-position: bottom left;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c4ddfd), color-stop(9%, #f0f8ff), color-stop(14%, #e5f3ff), color-stop(86%, #cce5ff), color-stop(100%, #c4ddfd));
+  background-image: -webkit-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -moz-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -o-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: -ms-linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  background-image: linear-gradient(top, #c4ddfd 0%, #f0f8ff 9%, #e5f3ff 14%, #cce5ff 86%, #c4ddfd 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#cce5ff', endColorstr='#c4ddfd')";
 }
 
 /* row headers */
-/* line 3392, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeader {
-  background-color: #8a565c;
+  background-color: #56728a;
   background-image: url(images/CubeGrid/rowHeader.gif);
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #8a565c), color-stop(50%, #ae7578), color-stop(100%, #8a565c));
-  background-image: -webkit-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -moz-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -o-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -ms-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578')";
-  border-bottom: 1px solid #692023;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #56728a), color-stop(50%, #7590ae), color-stop(100%, #56728a));
+  background-image: -webkit-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -moz-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -o-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -ms-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae')";
+  border-bottom: 1px solid #204269;
   border-left: 1px solid white;
-  border-right: 1px solid #692023;
+  border-right: 1px solid #204269;
   border-top: 1px solid white;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3417, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderOver {
-  background-color: #9f6568;
+  background-color: #65819f;
   background-image: url(images/CubeGrid/rowHeaderOver.gif);
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #8a565c), color-stop(50%, #ae7578), color-stop(100%, #8a565c));
-  background-image: -webkit-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -moz-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -o-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -ms-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578')";
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #56728a), color-stop(50%, #7590ae), color-stop(100%, #56728a));
+  background-image: -webkit-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -moz-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -o-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -ms-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #692023;
+  border-left: 1px solid #204269;
   border-right: 1px solid white;
-  border-top: 1px solid #692023;
+  border-top: 1px solid #204269;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3442, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderDown {
-  background-color: #9f6568;
+  background-color: #65819f;
   background-image: url("images/CubeGrid/rowHeaderOver.gif");
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #8a565c), color-stop(50%, #ae7578), color-stop(100%, #8a565c));
-  background-image: -webkit-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -moz-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -o-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: -ms-linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  background-image: linear-gradient(left, #8a565c 0%, #ae7578 50%, #8a565c 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#8a565c', endColorstr='#ae7578')";
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #56728a), color-stop(50%, #7590ae), color-stop(100%, #56728a));
+  background-image: -webkit-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -moz-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -o-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: -ms-linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  background-image: linear-gradient(left, #56728a 0%, #7590ae 50%, #56728a 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#56728a', endColorstr='#7590ae')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #692023;
+  border-left: 1px solid #204269;
   border-right: 1px solid white;
-  border-top: 1px solid #692023;
+  border-top: 1px solid #204269;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3467, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderDisabled {
-  background-color: #9f6568;
+  background-color: #65819f;
   border: 1px solid gray;
   color: gray;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3478, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderSelected,
 .rowHeaderSelectedDown {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/rowHeaderSelected.gif");
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #912a1d), color-stop(50%, #d45e62), color-stop(100%, #91281d));
-  background-image: -webkit-linear-gradient(left, #912a1d 0%, #d45e62 50%, #91281d 100%);
-  background-image: -moz-linear-gradient(left, #912a1d 0%, #d45e62 50%, #91281d 100%);
-  background-image: -o-linear-gradient(left, #912a1d 0%, #d45e62 50%, #91281d 100%);
-  background-image: -ms-linear-gradient(left, #912a1d 0%, #d45e62 50%, #91281d 100%);
-  background-image: linear-gradient(left, #912a1d 0%, #d45e62 50%, #91281d 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#912a1d', endColorstr='#91281d');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#912a1d', endColorstr='#91281d')";
-  border-bottom: 1px solid #fff0f1;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #1d4191), color-stop(50%, #5e95d4), color-stop(100%, #1d4391));
+  background-image: -webkit-linear-gradient(left, #1d4191 0%, #5e95d4 50%, #1d4391 100%);
+  background-image: -moz-linear-gradient(left, #1d4191 0%, #5e95d4 50%, #1d4391 100%);
+  background-image: -o-linear-gradient(left, #1d4191 0%, #5e95d4 50%, #1d4391 100%);
+  background-image: -ms-linear-gradient(left, #1d4191 0%, #5e95d4 50%, #1d4391 100%);
+  background-image: linear-gradient(left, #1d4191 0%, #5e95d4 50%, #1d4391 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#1d4191', endColorstr='#1d4391');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#1d4191', endColorstr='#1d4391')";
+  border-bottom: 1px solid #f0f8ff;
   border-left: 1px solid #000099;
-  border-right: 1px solid #fff0f1;
+  border-right: 1px solid #f0f8ff;
   border-top: 1px solid #000099;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3503, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderSelectedOver {
-  background-color: #d45e62;
+  background-color: #5e95d4;
   background-image: url("images/CubeGrid/rowHeaderSelectedOver.gif");
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #d45e62), color-stop(50%, #91281d), color-stop(100%, #d45e62));
-  background-image: -webkit-linear-gradient(left, #d45e62 0%, #91281d 50%, #d45e62 100%);
-  background-image: -moz-linear-gradient(left, #d45e62 0%, #91281d 50%, #d45e62 100%);
-  background-image: -o-linear-gradient(left, #d45e62 0%, #91281d 50%, #d45e62 100%);
-  background-image: -ms-linear-gradient(left, #d45e62 0%, #91281d 50%, #d45e62 100%);
-  background-image: linear-gradient(left, #d45e62 0%, #91281d 50%, #d45e62 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#d45e62', endColorstr='#91281d');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#d45e62', endColorstr='#91281d')";
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #5e95d4), color-stop(50%, #1d4391), color-stop(100%, #5e95d4));
+  background-image: -webkit-linear-gradient(left, #5e95d4 0%, #1d4391 50%, #5e95d4 100%);
+  background-image: -moz-linear-gradient(left, #5e95d4 0%, #1d4391 50%, #5e95d4 100%);
+  background-image: -o-linear-gradient(left, #5e95d4 0%, #1d4391 50%, #5e95d4 100%);
+  background-image: -ms-linear-gradient(left, #5e95d4 0%, #1d4391 50%, #5e95d4 100%);
+  background-image: linear-gradient(left, #5e95d4 0%, #1d4391 50%, #5e95d4 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startColorstr='#5e95d4', endColorstr='#1d4391');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#5e95d4', endColorstr='#1d4391')";
   border: 1px solid white;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3523, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderSelectedDisabled {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   border: 1px solid gray;
   color: gray;
   font-family: Arial, Verdana, sans-serif;
@@ -3963,21 +3732,20 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* row label */
-/* line 3534, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabel {
-  background-color: #792025;
+  background-color: #204b79;
   background-image: url("images/CubeGrid/rowHeaderLabel.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(2%, #973f44), color-stop(98%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
-  border-bottom: 1px solid #380e00;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(2%, #3f6a97), color-stop(98%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
+  border-bottom: 1px solid #000a38;
   border-left: 1px solid white;
-  border-right: 1px solid #380e00;
+  border-right: 1px solid #000a38;
   border-top: 1px solid white;
   color: white;
   font-family: Arial, Verdana, sans-serif;
@@ -3985,51 +3753,48 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3561, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelOver {
-  background-color: #792025;
+  background-color: #204b79;
   background-image: url("images/CubeGrid/rowHeaderLabel.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(2%, #973f44), color-stop(98%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(2%, #3f6a97), color-stop(98%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #380e00;
+  border-left: 1px solid #000a38;
   border-right: 1px solid white;
-  border-top: 1px solid #380e00;
+  border-top: 1px solid #000a38;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
 }
 
-/* line 3588, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelDown {
-  background-color: #792025;
+  background-color: #204b79;
   background-image: url("images/CubeGrid/rowHeaderLabelDown.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(2%, #973f44), color-stop(98%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 98%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(2%, #3f6a97), color-stop(98%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 98%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #380e00;
+  border-left: 1px solid #000a38;
   border-right: 1px solid white;
-  border-top: 1px solid #380e00;
+  border-top: 1px solid #000a38;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
 }
 
-/* line 3615, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelDisabled {
   background-color: gray;
   border: 1px solid gray;
@@ -4039,10 +3804,9 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3627, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelSelected,
 .rowHeaderLabelSelectedDown {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/rowHeaderDown.gif");
   border-bottom: 1px solid #545454;
   border-left: 1px solid black;
@@ -4054,9 +3818,8 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3646, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelSelectedOver {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/rowHeaderDown.gif");
   border-bottom: 1px solid white;
   border-left: 1px solid white;
@@ -4068,7 +3831,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3665, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .rowHeaderLabelSelectedDisabled {
   background-color: gray;
   border: 1px solid gray;
@@ -4079,72 +3841,68 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* column headers */
-/* line 3677, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeader {
-  background-color: #9f6568;
+  background-color: #65819f;
   background-image: url("images/CubeGrid/colHeader.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7b474c), color-stop(2%, #bb8185), color-stop(98%, #bb8185), color-stop(100%, #7b474c));
-  background-image: -webkit-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -moz-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -o-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -ms-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#bb8185', endColorstr='#7b474c');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#bb8185', endColorstr='#7b474c')";
-  border-bottom: 1px solid #692023;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #47637b), color-stop(2%, #819ebb), color-stop(98%, #819ebb), color-stop(100%, #47637b));
+  background-image: -webkit-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -moz-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -o-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -ms-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#819ebb', endColorstr='#47637b');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#819ebb', endColorstr='#47637b')";
+  border-bottom: 1px solid #204269;
   border-left: 1px solid white;
-  border-right: 1px solid #692023;
+  border-right: 1px solid #204269;
   border-top: 1px solid white;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3703, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderOver {
-  background-color: #9f6568;
+  background-color: #65819f;
   background-image: url("images/CubeGrid/colHeaderOver.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c0878a), color-stop(2%, #814b50), color-stop(98%, #814b50), color-stop(100%, #c0878a));
-  background-image: -webkit-linear-gradient(top, #c0878a 0%, #814b50 2%, #814b50 98%, #c0878a 100%);
-  background-image: -moz-linear-gradient(top, #c0878a 0%, #814b50 2%, #814b50 98%, #c0878a 100%);
-  background-image: -o-linear-gradient(top, #c0878a 0%, #814b50 2%, #814b50 98%, #c0878a 100%);
-  background-image: -ms-linear-gradient(top, #c0878a 0%, #814b50 2%, #814b50 98%, #c0878a 100%);
-  background-image: linear-gradient(top, #c0878a 0%, #814b50 2%, #814b50 98%, #c0878a 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#c0878a', endColorstr='#814b50');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#c0878a', endColorstr='#814b50')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #87a2c0), color-stop(2%, #4b6781), color-stop(98%, #4b6781), color-stop(100%, #87a2c0));
+  background-image: -webkit-linear-gradient(top, #87a2c0 0%, #4b6781 2%, #4b6781 98%, #87a2c0 100%);
+  background-image: -moz-linear-gradient(top, #87a2c0 0%, #4b6781 2%, #4b6781 98%, #87a2c0 100%);
+  background-image: -o-linear-gradient(top, #87a2c0 0%, #4b6781 2%, #4b6781 98%, #87a2c0 100%);
+  background-image: -ms-linear-gradient(top, #87a2c0 0%, #4b6781 2%, #4b6781 98%, #87a2c0 100%);
+  background-image: linear-gradient(top, #87a2c0 0%, #4b6781 2%, #4b6781 98%, #87a2c0 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#87a2c0', endColorstr='#4b6781');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#87a2c0', endColorstr='#4b6781')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #692023;
+  border-left: 1px solid #204269;
   border-right: 1px solid white;
-  border-top: 1px solid #692023;
+  border-top: 1px solid #204269;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3729, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderDown {
-  background-color: #9f6568;
+  background-color: #65819f;
   background-image: url("images/CubeGrid/colHeader.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7b474c), color-stop(2%, #bb8185), color-stop(98%, #bb8185), color-stop(100%, #7b474c));
-  background-image: -webkit-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -moz-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -o-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: -ms-linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  background-image: linear-gradient(top, #7b474c 0%, #bb8185 2%, #bb8185 98%, #7b474c 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#bb8185', endColorstr='#7b474c');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#bb8185', endColorstr='#7b474c')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #47637b), color-stop(2%, #819ebb), color-stop(98%, #819ebb), color-stop(100%, #47637b));
+  background-image: -webkit-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -moz-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -o-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: -ms-linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  background-image: linear-gradient(top, #47637b 0%, #819ebb 2%, #819ebb 98%, #47637b 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#819ebb', endColorstr='#47637b');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#819ebb', endColorstr='#47637b')";
   border-bottom: 1px solid white;
-  border-left: 1px solid #692023;
+  border-left: 1px solid #204269;
   border-right: 1px solid white;
-  border-top: 1px solid #692023;
+  border-top: 1px solid #204269;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 3755, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderDisabled {
-  background-color: #9f6568;
+  background-color: #65819f;
   border-bottom: 1px solid gray;
   border-left: 1px solid gray;
   border-right: 1px solid gray;
@@ -4154,22 +3912,21 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 3771, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderSelected,
 .colHeaderSelectedDown {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/colHeaderSelected.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #932b1f), color-stop(2%, #cf595b), color-stop(98%, #cf595b), color-stop(100%, #932b1f));
-  background-image: -webkit-linear-gradient(top, #932b1f 0%, #cf595b 2%, #cf595b 98%, #932b1f 100%);
-  background-image: -moz-linear-gradient(top, #932b1f 0%, #cf595b 2%, #cf595b 98%, #932b1f 100%);
-  background-image: -o-linear-gradient(top, #932b1f 0%, #cf595b 2%, #cf595b 98%, #932b1f 100%);
-  background-image: -ms-linear-gradient(top, #932b1f 0%, #cf595b 2%, #cf595b 98%, #932b1f 100%);
-  background-image: linear-gradient(top, #932b1f 0%, #cf595b 2%, #cf595b 98%, #932b1f 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#932b1f', endColorstr='#cf595b');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#932b1f', endColorstr='#cf595b')";
-  border-bottom: 1px solid #fff0f1;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1f4693), color-stop(2%, #598ecf), color-stop(98%, #598ecf), color-stop(100%, #1f4693));
+  background-image: -webkit-linear-gradient(top, #1f4693 0%, #598ecf 2%, #598ecf 98%, #1f4693 100%);
+  background-image: -moz-linear-gradient(top, #1f4693 0%, #598ecf 2%, #598ecf 98%, #1f4693 100%);
+  background-image: -o-linear-gradient(top, #1f4693 0%, #598ecf 2%, #598ecf 98%, #1f4693 100%);
+  background-image: -ms-linear-gradient(top, #1f4693 0%, #598ecf 2%, #598ecf 98%, #1f4693 100%);
+  background-image: linear-gradient(top, #1f4693 0%, #598ecf 2%, #598ecf 98%, #1f4693 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#1f4693', endColorstr='#598ecf');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#1f4693', endColorstr='#598ecf')";
+  border-bottom: 1px solid #f0f8ff;
   border-left: 1px solid #000099;
-  border-right: 1px solid #fff0f1;
+  border-right: 1px solid #f0f8ff;
   border-top: 1px solid #000099;
   color: white;
   font-family: Arial, Verdana, sans-serif;
@@ -4177,18 +3934,17 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3798, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderSelectedOver {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/colHeaderSelectedOver.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d35f63), color-stop(4%, #972d21), color-stop(5%, #9a2f23), color-stop(95%, #9a2f23), color-stop(96%, #972d21), color-stop(100%, #d35f63));
-  background-image: -webkit-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -moz-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -o-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -ms-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#9a2f23');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#9a2f23')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5f95d3), color-stop(4%, #214897), color-stop(5%, #234b9a), color-stop(95%, #234b9a), color-stop(96%, #214897), color-stop(100%, #5f95d3));
+  background-image: -webkit-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -moz-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -o-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -ms-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#234b9a');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#234b9a')";
   border: 1px solid white;
   color: white;
   font-family: Arial, Verdana, sans-serif;
@@ -4196,9 +3952,8 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3822, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderSelectedDisabled {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   border: 1px solid gray;
   color: gray;
   font-family: Arial, Verdana, sans-serif;
@@ -4207,18 +3962,17 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* column label */
-/* line 3834, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabel {
-  background-color: #792025;
+  background-color: #204b79;
   background-image: url("images/CubeGrid/colHeaderLabel.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(2%, #973f44), color-stop(50%, #973f44), color-stop(98%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 50%, #973f44 98%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 50%, #973f44 98%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 50%, #973f44 98%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 50%, #973f44 98%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 2%, #973f44 50%, #973f44 98%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(2%, #3f6a97), color-stop(50%, #3f6a97), color-stop(98%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 50%, #3f6a97 98%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 50%, #3f6a97 98%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 50%, #3f6a97 98%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 50%, #3f6a97 98%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 2%, #3f6a97 50%, #3f6a97 98%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
   border-bottom: 1px solid #545454;
   border-left: 1px solid white;
   border-right: 1px solid #545454;
@@ -4229,30 +3983,28 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3863, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabelOver,
 .colHeaderLabelDown {
-  background-color: #792025;
+  background-color: #204b79;
   background-image: url("images/CubeGrid/colHeaderLabelDown.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(50%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(50%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
   border-bottom: 1px solid #545454;
-  border-left: 1px solid #380e00;
+  border-left: 1px solid #000a38;
   border-right: 1px solid #545454;
-  border-top: 1px solid #380e00;
+  border-top: 1px solid #000a38;
   color: white;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
 }
 
-/* line 3889, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabelDisabled {
   background-color: gray;
   border: 1px solid gray;
@@ -4262,19 +4014,18 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3901, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabelSelected,
 .colHeaderLabelSelectedDown {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/colHeaderLabelDown.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7c2226), color-stop(50%, #973f44), color-stop(100%, #7c2226));
-  background-image: -webkit-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -moz-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -o-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: -ms-linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  background-image: linear-gradient(top, #7c2226 0%, #973f44 50%, #7c2226 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#7c2226', endColorstr='#973f44')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #224e7c), color-stop(50%, #3f6a97), color-stop(100%, #224e7c));
+  background-image: -webkit-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -moz-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -o-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: -ms-linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  background-image: linear-gradient(top, #224e7c 0%, #3f6a97 50%, #224e7c 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#224e7c', endColorstr='#3f6a97')";
   border-bottom: 1px solid #545454;
   border-left: 1px solid black;
   border-right: 1px solid #545454;
@@ -4285,9 +4036,8 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3927, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabelSelectedOver {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/colHeaderDown.gif");
   border-bottom: 1px solid #545454;
   border-left: 1px solid white;
@@ -4299,7 +4049,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 3946, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .colHeaderLabelSelectedDisabled {
   background-color: gray;
   border-bottom: 1px solid gray;
@@ -4313,7 +4062,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* inner header */
-/* line 3963, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeader {
   background-color: #cccccc;
   background-image: url("images/CubeGrid/innerHeader.gif");
@@ -4334,7 +4082,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 3995, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderOver {
   background-color: #cccccc;
   background-image: url("images/CubeGrid/innerHeader.gif");
@@ -4355,7 +4102,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4027, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderDown {
   background-color: #cccccc;
   background-image: url("images/CubeGrid/innerHeader.gif");
@@ -4376,7 +4122,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4059, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderDisabled {
   background-color: #cccccc;
   border-bottom: 1px solid gray;
@@ -4388,22 +4133,21 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4075, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderSelected,
 .innerHeaderSelectedDown {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/innerHeaderSelected.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #912a1d), color-stop(4%, #cf595d), color-stop(96%, #cf595d), color-stop(100%, #912a1d));
-  background-image: -webkit-linear-gradient(top, #912a1d 0%, #cf595d 4%, #cf595d 96%, #912a1d 100%);
-  background-image: -moz-linear-gradient(top, #912a1d 0%, #cf595d 4%, #cf595d 96%, #912a1d 100%);
-  background-image: -o-linear-gradient(top, #912a1d 0%, #cf595d 4%, #cf595d 96%, #912a1d 100%);
-  background-image: -ms-linear-gradient(top, #912a1d 0%, #cf595d 4%, #cf595d 96%, #912a1d 100%);
-  background-image: linear-gradient(top, #912a1d 0%, #cf595d 4%, #cf595d 96%, #912a1d 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#cf595d');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#cf595d')";
-  border-bottom: 1px solid #fff0f1;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1d4191), color-stop(4%, #5990cf), color-stop(96%, #5990cf), color-stop(100%, #1d4191));
+  background-image: -webkit-linear-gradient(top, #1d4191 0%, #5990cf 4%, #5990cf 96%, #1d4191 100%);
+  background-image: -moz-linear-gradient(top, #1d4191 0%, #5990cf 4%, #5990cf 96%, #1d4191 100%);
+  background-image: -o-linear-gradient(top, #1d4191 0%, #5990cf 4%, #5990cf 96%, #1d4191 100%);
+  background-image: -ms-linear-gradient(top, #1d4191 0%, #5990cf 4%, #5990cf 96%, #1d4191 100%);
+  background-image: linear-gradient(top, #1d4191 0%, #5990cf 4%, #5990cf 96%, #1d4191 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#5990cf');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#5990cf')";
+  border-bottom: 1px solid #f0f8ff;
   border-left: 1px solid #000099;
-  border-right: 1px solid #fff0f1;
+  border-right: 1px solid #f0f8ff;
   border-top: 1px solid #000099;
   color: white;
   font-family: Arial, Verdana, sans-serif;
@@ -4411,18 +4155,17 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 4102, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderSelectedOver {
-  background-color: #b33d41;
+  background-color: #3d74b3;
   background-image: url("images/CubeGrid/innerHeaderSelectedOver.gif");
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d35f63), color-stop(4%, #972d21), color-stop(5%, #9a2f23), color-stop(95%, #9a2f23), color-stop(96%, #972d21), color-stop(100%, #d35f63));
-  background-image: -webkit-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -moz-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -o-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: -ms-linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  background-image: linear-gradient(top, #d35f63 0%, #972d21 4%, #9a2f23 5%, #9a2f23 95%, #972d21 96%, #d35f63 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#9a2f23');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#d35f63', endColorstr='#9a2f23')";
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5f95d3), color-stop(4%, #214897), color-stop(5%, #234b9a), color-stop(95%, #234b9a), color-stop(96%, #214897), color-stop(100%, #5f95d3));
+  background-image: -webkit-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -moz-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -o-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: -ms-linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  background-image: linear-gradient(top, #5f95d3 0%, #214897 4%, #234b9a 5%, #234b9a 95%, #214897 96%, #5f95d3 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#234b9a');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#5f95d3', endColorstr='#234b9a')";
   border-bottom: 1px solid white;
   border-left: 1px solid white;
   border-right: 1px solid white;
@@ -4433,7 +4176,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 4131, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .innerHeaderSelectedDisabled {
   background-color: #cccccc;
   border: 1px solid gray;
@@ -4449,12 +4191,10 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 		barStyle - chartBar
 		others are currently fixed
 ============================================================*/
-/* line 4148, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chart {
   background-color: #cccccc;
 }
 
-/* line 4152, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartTitle {
   color: black;
   font-family: Arial, Verdana, sans-serif;
@@ -4463,7 +4203,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   text-align: center;
 }
 
-/* line 4162, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartAxisTitle {
   color: #0000ff;
   font-family: Arial, Verdana, sans-serif;
@@ -4471,14 +4210,12 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 
-/* line 4171, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartValueTitle {
   color: black;
   font-family: Arial, Verdana, sans-serif;
   font-size: 11px;
 }
 
-/* line 4179, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartTotal {
   background-color: linen;
   color: black;
@@ -4486,7 +4223,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 12px;
 }
 
-/* line 4188, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartBody {
   background-color: #dedede;
   border-left: 1px solid black;
@@ -4494,7 +4230,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   border-top: 1px dashed #0000FF;
 }
 
-/* line 4197, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartBar1 {
   background-color: #FF0000;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #990000), color-stop(100%, #ff0000));
@@ -4507,7 +4242,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#990000', endColorstr='red')";
 }
 
-/* line 4203, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartBar2 {
   background-color: #0000FF;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #000099), color-stop(100%, #0000ff));
@@ -4520,7 +4254,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#000099', endColorstr='blue')";
 }
 
-/* line 4209, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .chartBar3 {
   background-color: #0000ff;
   background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #009900), color-stop(100%, #0000ff));
@@ -4539,7 +4272,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
         - ListGrid header cells
         - SectionStack headers
 ============================================================*/
-/* line 4222, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .printHeader {
   border: 1px solid black;
   font-family: Arial, Verdana, sans-serif;
@@ -4550,7 +4282,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /*============================================================
 	Calendar
 ============================================================*/
-/* line 4237, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calendar,
 .calendarDisabled,
 .calendarWorkday,
@@ -4563,17 +4294,14 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4250, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calendarDisabled {
   background-color: #fafafa;
 }
 
-/* line 4254, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calendarWorkday {
   background-color: white;
 }
 
-/* line 4259, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calendarOver,
 .calendarOverDark {
   background-color: #ecc0c5;
@@ -4584,7 +4312,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4272, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calendarCellSelected {
   background-color: #cccccc;
   border-bottom: 1px solid #ababab;
@@ -4594,7 +4321,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4285, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .labelColumn {
   background-color: #fafafa;
   border-bottom: 1px solid #ababab;
@@ -4606,7 +4332,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 
 /* ----month---- */
 /* calMonthDayHeader and Body */
-/* line 4301, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthDayHeader,
 .calMonthDayHeaderDark {
   background-color: #fafafa;
@@ -4617,7 +4342,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4315, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthDayHeaderOver,
 .calMonthDayHeaderOverDark {
   background-color: #ecc0c5;
@@ -4628,7 +4352,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4329, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthDayBody,
 .calMonthDayBodyDark {
   background-color: white;
@@ -4639,7 +4362,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4343, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthDayBodyOver,
 .calMonthDayBodyOverDark {
   background-color: #ecc0c5;
@@ -4650,7 +4372,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4357, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthDayBodyDisabled,
 .calMonthDayBodyDisabledOver {
   background-color: #fafafa;
@@ -4662,7 +4383,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* calMonthOtherDayHeader and Body */
-/* line 4372, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthOtherDayHeader,
 .calMonthOtherDayHeaderDark {
   background-color: #ababab;
@@ -4673,7 +4393,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4386, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthOtherDayHeaderOver,
 .calMonthOtherDayHeaderOverDark {
   background-color: #ecc0c5;
@@ -4684,7 +4403,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4402, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthOtherDayBody,
 .calMonthOtherDayBodyDark,
 .calMonthOtherDayBodyDisabled,
@@ -4697,7 +4415,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
-/* line 4416, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthOtherDayBodyOver,
 .calMonthOtherDayBodyOverDark {
   background-color: #ecc0c5;
@@ -4709,7 +4426,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* calMonthOtherDayBlank */
-/* line 4433, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .calMonthOtherDayBlank,
 .calMonthOtherDayBlankDark,
 .calMonthOtherDayBlankOver,
@@ -4723,32 +4439,27 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 
 /* calMonthEventLink */
-/* line 4447, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 a.calMonthEventLink:link {
   color: #0000FF;
   text-decoration: none;
 }
 
-/* line 4452, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 a.calMonthEventLink:visited {
   color: #0000FF;
   text-decoration: none;
 }
 
-/* line 4457, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 a.calMonthEventLink:hover {
   color: #0000FF;
   text-decoration: underline;
 }
 
-/* line 4462, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 a.calMonthEventLink:active {
   color: #0000FF;
   text-decoration: none;
 }
 
 /* ----event window---- */
-/* line 4468, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .eventWindow {
   background-color: #fff0f1;
   border: 1px solid #f6d1d0;
@@ -4756,7 +4467,6 @@ a.calMonthEventLink:active {
   font-size: 9px;
 }
 
-/* line 4477, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .eventWindowHeader {
   background-color: #f6d1d0;
   color: #4d4d4d;
@@ -4764,7 +4474,6 @@ a.calMonthEventLink:active {
   font-size: 9px;
 }
 
-/* line 4486, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .eventWindowBody {
   background-color: #fff0f1;
   color: black;
@@ -4773,7 +4482,6 @@ a.calMonthEventLink:active {
   padding: 3px;
 }
 
-/* line 4496, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .eventWindowResizer {
   border-bottom: 1px solid white;
   border-top: 1px solid white;
@@ -4790,7 +4498,6 @@ a.calMonthEventLink:active {
         propertySheet.HeaderItemDefaults.textBoxStyle - propSheetHeading
         propertySheet.SectionHeaderItemDefaults.cellStyle - propSheetSectionItemCell
 ============================================================*/
-/* line 4517, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetValue,
 .propSheetValueFocused,
 .propSheetDisabled {
@@ -4802,7 +4509,6 @@ a.calMonthEventLink:active {
   padding: 0px;
 }
 
-/* line 4532, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetTitle,
 .propSheetTitleFocused,
 .propSheetTitleDisabled {
@@ -4815,7 +4521,6 @@ a.calMonthEventLink:active {
   padding-right: 4px;
 }
 
-/* line 4549, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetTitleError,
 .propSheetValueError {
   background-color: #f2d4cf;
@@ -4824,7 +4529,6 @@ a.calMonthEventLink:active {
   font-size: 11px;
 }
 
-/* line 4559, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetField,
 .propSheetFieldDisabled {
   background-color: white;
@@ -4838,7 +4542,6 @@ a.calMonthEventLink:active {
   padding-right: 4px;
 }
 
-/* line 4576, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetHeading,
 .propSheetHeadingDisabled {
   background-color: #cccccc;
@@ -4850,7 +4553,6 @@ a.calMonthEventLink:active {
   padding: 4px;
 }
 
-/* line 4590, ../_internalSource/EnterpriseSeries/sass/_base.scss */
 .propSheetSelectControl,
 .propSheetSelectControlFocused,
 .propSheetSelectControlDisabled {

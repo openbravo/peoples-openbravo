@@ -13,7 +13,7 @@ with (theWindow) {
 // Specify skin directory
 //----------------------------------------
     // must be relative to your application file or isomorphicDir
-    // isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/")
+    // isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/");
     isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/Default/smartclient/");
     theWindow.isc_css3Mode = false;
 
@@ -21,7 +21,7 @@ with (theWindow) {
 //----------------------------------------
 // Load skin style sheet(s)
 //----------------------------------------
-    // isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
+    // isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow);
 
 
     // The boolean value useCSS3 will be determined by checking browser if it is
@@ -277,6 +277,19 @@ with (theWindow) {
                 tallBaseStyle:"treeTallCell"
             });
         }
+        
+        if (isc.MultiSortPanel) {
+            isc.MultiSortPanel.changeDefaults("levelUpButtonDefaults", {
+                src: "[SKINIMG]TransferIcons/up.png",
+                height: 22,
+                width: 24
+            });
+            isc.MultiSortPanel.changeDefaults("levelDownButtonDefaults", {
+                src: "[SKINIMG]TransferIcons/down.png",
+                height: 22,
+                width: 24
+            });
+        }
 
         if (isc.TabSet) {
             isc.TabSet.addProperties({
@@ -494,7 +507,7 @@ with (theWindow) {
         if (isc.DateItem) {
             isc.DateItem.addProperties({
                 height:22,
-                pickerIconHeight:16,
+                pickerIconHeight:14,
                 pickerIconSrc:"[SKIN]/DynamicForm/date_control.png",
                 pickerIconWidth:16
             });
@@ -532,7 +545,7 @@ with (theWindow) {
         if (isc.PopUpTextAreaItem) {
             isc.PopUpTextAreaItem.addProperties({
                 popUpIconHeight:16,
-                popUpIconSrc:"[SKIN]/DynamicForm/text_control.png",
+                popUpIconSrc:"[SKIN]/DynamicForm/text_control.gif",
                 popUpIconWidth:16
             });
         }
@@ -613,11 +626,13 @@ with (theWindow) {
             isc.overwriteClass("ToolStripMenuButton", "MenuButton").addProperties({
                 autoFit:true,
                 baseStyle:"toolbarButton",
+                titleStyle:"buttonTitle",
                 height:22,
                 labelVPad:0,
                 showDown:true,
                 showRollOver:true,
-                showTitle:false
+                showTitle:false,
+                buttonHPad:7
             });
         }
 
@@ -626,12 +641,14 @@ with (theWindow) {
             isc.overwriteClass("ToolStripButton", "Button").addProperties({
                 autoFit:true,
                 baseStyle:"toolbarButton",
+                titleStyle:"buttonTitle",
                 height:22,
                 labelVPad:0,
                 showTitle:false,
                 showRollOver:true,
                 showDown:true,
-                title:null
+                title:null,
+                buttonHPad:6
             });
         }
 
@@ -639,6 +656,13 @@ with (theWindow) {
             isc.RichTextEditor.addProperties({
                 showEdges:false,
                 styleName:"richTextEditorBorder"
+            });
+        }
+        
+        if (isc.EdgedCanvas) {
+            isc.EdgedCanvas.addProperties({
+                edgeSize:6,
+                edgeImage: "[SKINIMG]edges/edge.png"
             });
         }
 
@@ -749,7 +773,7 @@ with (theWindow) {
         showCustomScrollbars:true,
         scrollbarSize:16,
 		cornerSize: 16
-    })
+    });
     isc.ScrollThumb.addProperties({
         capSize:2,
         vSrc:"[SKIN]vthumb.png",
@@ -760,7 +784,7 @@ with (theWindow) {
 		showRollOver: true,
 		//showDown: true,
         backgroundColor:"transparent"
-    })
+    });
     isc.Scrollbar.addProperties({
         btnSize:18,
         showRollOver:true,
@@ -771,7 +795,7 @@ with (theWindow) {
         backgroundColor:"#FFFFFF",
         vSrc:"[SKIN]vscroll.png",
         hSrc:"[SKIN]hscroll.png"
-    })
+    });
 
 
 //----------------------------------------
@@ -838,7 +862,7 @@ with (theWindow) {
         //hSrc:"[SKIN]hsplit.gif",
         capSize:10,
         showGrip:true
-    })
+    });
 
     // ImgSplitbar renders as resizebar with resize grip only
     isc.ImgSplitbar.addProperties({
@@ -847,7 +871,7 @@ with (theWindow) {
         //hSrc:"[SKIN]hgrip.png",
         //showDown:true,
         //styleName:"splitbar"
-    })
+    });
 
     isc.Snapbar.addProperties({
         vSrc:"[SKIN]vsplit.png",
@@ -868,7 +892,7 @@ with (theWindow) {
         gripBreadth:3,
         gripLength:20
         //capSize:8
-    })
+    });
 
     isc.Layout.addProperties({
         resizeBarSize:5,
@@ -876,7 +900,7 @@ with (theWindow) {
         // shows interactive (closed/open) grip images
         // Other options include the Splitbar, StretchImgSplitbar or ImgSplitbar
         resizeBarClass:"Snapbar"
-    })
+    });
 
 
 //----------------------------------------
@@ -886,7 +910,7 @@ with (theWindow) {
         isc.SectionItem.addProperties({
             sectionHeaderClass:"ImgSectionHeader",
             height:26
-        })
+        });
     }
     if (isc.SectionStack) {
 
@@ -894,7 +918,7 @@ with (theWindow) {
             backgroundColor:null,
             sectionHeaderClass:"ImgSectionHeader",
             headerHeight:26
-        })
+        });
         isc.ImgSectionHeader.changeDefaults("backgroundDefaults", {
             showRollOver:false,
             showDown:false,
@@ -907,11 +931,11 @@ with (theWindow) {
             titleStyle:"imgSectionHeaderTitle",
             baseStyle:"imgSectionHeader",
             backgroundColor:"transparent"
-        })
+        });
         isc.SectionHeader.addProperties({
             icon:"[SKIN]SectionHeader/opener.png",
 			iconSize: 16
-        })
+        });
     }
 
 
@@ -938,7 +962,7 @@ with (theWindow) {
             ],
             breadth:24,
             length : 300
-        })
+        });
     }
 
 
@@ -968,7 +992,7 @@ with (theWindow) {
         });
         isc.TabSet.changeDefaults("paneContainerDefaults", {
             showEdges:false
-        })
+        });
         isc.TabBar.addProperties({
             membersMargin:1,
 
@@ -990,7 +1014,7 @@ with (theWindow) {
             baseLineThickness:3,
             baseLineCapSize:4*/
 
-        })
+        });
     }
     if (isc.ImgTab) {
         isc.ImgTab.addProperties({
@@ -1001,7 +1025,7 @@ with (theWindow) {
             showDisabled:true,
             showDisabledIcon:false,
             titleStyle:"tabTitle"
-        })
+        });
     }
 
 
@@ -1039,57 +1063,57 @@ with (theWindow) {
 
             showShadow:false,
             shadowDepth:5
-        })
+        });
 
         isc.Window.changeDefaults("headerDefaults", {
             layoutMargin:0,
             height:20
-        })
+        });
         isc.Window.changeDefaults("resizerDefaults", {
             src:"[SKIN]/Window/resizer.png"
-        })
+        });
 
         isc.Window.changeDefaults("headerIconDefaults", {
             width:15,
             height:15,
             src:"[SKIN]/Window/headerIcon.png"
-        })
+        });
         isc.Window.changeDefaults("restoreButtonDefaults", {
              src:"[SKIN]/headerIcons/cascade.png",
              showRollOver:true,
              showDown:false,
              width:15,
              height:15
-        })
+        });
         isc.Window.changeDefaults("closeButtonDefaults", {
              src:"[SKIN]/headerIcons/close.png",
              showRollOver:true,
              showDown:false,
              width:15,
              height:15
-        })
+        });
         isc.Window.changeDefaults("maximizeButtonDefaults", {
              src:"[SKIN]/headerIcons/maximize.png",
              showRollOver:true,
              width:15,
              height:15
-        })
+        });
         isc.Window.changeDefaults("minimizeButtonDefaults", {
              src:"[SKIN]/headerIcons/minimize.png",
              showRollOver:true,
              showDown:false,
              width:15,
              height:15
-        })
+        });
         isc.Window.changeDefaults("toolbarDefaults", {
             buttonConstructor: "IButton"
-        })
+        });
 
 
         if (isc.ColorPicker) {
             isc.ColorPicker.addProperties({
                 layoutMargin:0
-            })
+            });
         }
 
 //----------------------------------------
@@ -1099,20 +1123,20 @@ with (theWindow) {
             isc.Dialog.addProperties({
                 bodyColor:"transparent",
                 hiliteBodyColor:"transparent"
-            })
+            });
             // even though Dialog inherits from Window, we need a separate changeDefaults block
             // because Dialog defines its own toolbarDefaults
             isc.Dialog.changeDefaults("toolbarDefaults", {
                 buttonConstructor: "IButton",
                 height:42, // 10px margins + 22px button
                 membersMargin:10
-            })
+            });
             if (isc.Dialog.Warn && isc.Dialog.Warn.toolbarDefaults) {
                 isc.addProperties(isc.Dialog.Warn.toolbarDefaults, {
                     buttonConstructor: "IButton",
                     height:42,
                     membersMargin:10
-                })
+                });
             }
         }
 
@@ -1131,14 +1155,14 @@ with (theWindow) {
         showShadow:false,
         shadowDepth:6,
         shadowOffset:5
-    }
+    };
     if (isc.ButtonTable) {
         isc.ButtonTable.addProperties({
             backgroundColor:"#FFFFFF"
-        })
+        });
     }
     if (isc.FormItem) {
-        isc.FormItem.changeDefaults("pickerDefaults", isc.__pickerDefaults)
+        isc.FormItem.changeDefaults("pickerDefaults", isc.__pickerDefaults);
         isc.FormItem.addProperties({
             defaultIconSrc:"[SKIN]/DynamicForm/default_formItem_icon.png"
         });
@@ -1153,7 +1177,7 @@ with (theWindow) {
             valueIconHeight:13,
             showValueIconOver:false,
             showValueIconFocused:false
-        })
+        });
     }
     if(isc.RelationItem) {
         isc.RelationItem.changeDefaults("removeButtonDefaults", {
@@ -1212,12 +1236,12 @@ with (theWindow) {
     if (isc.MultiFilePicker) {
         isc.MultiFilePicker.addProperties({
             backgroundColor:"#C7C7C7"
-        })
+        });
     }
     if (isc.RelationPicker) {
         isc.RelationPicker.addProperties({
             backgroundColor:"#C7C7C7"
-        })
+        });
     }
 
     // Native FILE INPUT items are rendered differently in Safari from other browsers
@@ -1297,7 +1321,7 @@ with (theWindow) {
         isc.addProperties(isc.Hover.hoverCanvasDefaults, {
             showShadow:false,
             shadowDepth:5
-        })
+        });
     }
 
 
@@ -1350,24 +1374,24 @@ with (theWindow) {
             expansionFieldImageHeight : 16,
             checkboxFieldImageWidth : 13,
             checkboxFieldImageHeight : 13
-        })
+        });
         isc.ListGrid.changeDefaults("sorterDefaults", {
             // baseStyle / titleStyle is auto-assigned from headerBaseStyle
             showFocused:false,
             src:"[SKIN]ListGrid/header.png",
             baseStyle:"sorterButton"
-        })
+        });
         isc.ListGrid.changeDefaults("headerButtonDefaults", {
             showRollOver:true,
             showDown:false,
             showFocused:false,
             baseStyle:"headerButton"
-        })
+        });
         isc.ListGrid.changeDefaults("headerMenuButtonDefaults", {
             showDown:false,
             showTitle:true,
             src:"[SKIN]ListGrid/header.png"
-        })
+        });
         isc.ListGrid.changeDefaults("summaryRowDefaults", {
             bodyBackgroundColor:null,
             bodyStyleName:"summaryRowBody"
@@ -1382,10 +1406,10 @@ with (theWindow) {
             openerImage:"[SKIN]opener.png",
             sortAscendingImage:{src:"[SKINIMG]ListGrid/sort_ascending.png", width:9, height:6},
             sortDescendingImage:{src:"[SKINIMG]ListGrid/sort_descending.png", width:9, height:6}
-        })
+        });
     }
 
-    if(isc.MultiSortPanel) {
+    if (isc.MultiSortPanel) {
         isc.MultiSortPanel.changeDefaults("levelUpButtonDefaults", {
 			src: "[SKINIMG]TransferIcons/up.png",
             height: 22,
@@ -1469,7 +1493,7 @@ with (theWindow) {
         isc.DateItem.addProperties({
             height:22,
             pickerIconWidth:16,
-            pickerIconHeight:16,
+            pickerIconHeight:14,
             pickerIconSrc:"[SKIN]/DynamicForm/date_control.png"
         })
     }
@@ -1477,7 +1501,7 @@ with (theWindow) {
         isc.SpinnerItem.addProperties({
             textBoxStyle:"selectItemText",
             height:22
-        })
+        });
         isc.SpinnerItem.INCREASE_ICON = isc.addProperties(isc.SpinnerItem.INCREASE_ICON, {
             width:16,
             height:11,
@@ -1486,7 +1510,7 @@ with (theWindow) {
             showDown:true,
             imgOnly:true,
             src:"[SKIN]/DynamicForm/spinner_control_increase.png"
-        })
+        });
         isc.SpinnerItem.DECREASE_ICON = isc.addProperties(isc.SpinnerItem.DECREASE_ICON, {
             width:16,
             height:11,
@@ -1495,7 +1519,7 @@ with (theWindow) {
             showDown:true,
             imgOnly:true,
             src:"[SKIN]/DynamicForm/spinner_control_decrease.png"
-        })
+        });
     }
 
 
@@ -1556,7 +1580,7 @@ with (theWindow) {
         isc.EdgedCanvas.addProperties({
             edgeSize:6,
             edgeImage: "[SKINIMG]edges/edge.png"
-        })
+        });
     }
 
 
@@ -1571,7 +1595,7 @@ with (theWindow) {
             trackCapSize:2,
             thumbSrc:"thumb.png",
             trackSrc:"track.png"
-        })
+        });
     }
 
 //----------------------------------------
@@ -1582,7 +1606,7 @@ with (theWindow) {
             valuesShowRollOver: true,
             styleName:null,
             showEdges:true
-        })
+        });
     }
 
 // ----------------------------------------
@@ -1671,7 +1695,6 @@ with (theWindow) {
 isc.Page.checkBrowserAndRedirect("[SKIN]/unsupported_browser.html");
 
     } // end useCSS3 else block
-
 }   // end with()
 }   // end loadSkin()
 
