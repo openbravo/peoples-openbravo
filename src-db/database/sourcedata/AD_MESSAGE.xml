@@ -18004,7 +18004,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <VALUE><![CDATA[OBPS_TO_EXPIRE_TRIAL]]></VALUE>
-<!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTEXT><![CDATA[This instance is registered with a Trial License for Evaluation. This Trial License will expire in @days@ days, before it expires you should buy a a Basic or Professional Subcription and activate it via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
+<!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTEXT><![CDATA[This instance is registered with a Trial License for Evaluation. This Trial License will expire in @days@ days, before it expires you should buy a a Basic or Professional Subscription and activate it via the Instance Activation window (administrators only). <a href="http://wiki.openbravo.com/wiki/Instance_Activation" target="_blank">Learn more</a>]]></MSGTEXT>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--9124D4EE7DE048D2A19201A1E779B9A7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9124D4EE7DE048D2A19201A1E779B9A7--></AD_MESSAGE>
