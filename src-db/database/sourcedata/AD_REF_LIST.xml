@@ -1562,6 +1562,7 @@
 <!--245-->  <NAME><![CDATA[Sunday]]></NAME>
 <!--245-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--245-->  <SEQNO><![CDATA[70]]></SEQNO>
 <!--245--></AD_REF_LIST>
 
 <!--246--><AD_REF_LIST>
@@ -1573,6 +1574,7 @@
 <!--246-->  <NAME><![CDATA[Monday]]></NAME>
 <!--246-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--246-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--246--></AD_REF_LIST>
 
 <!--247--><AD_REF_LIST>
@@ -1584,6 +1586,7 @@
 <!--247-->  <NAME><![CDATA[Tuesday]]></NAME>
 <!--247-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--247-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--247--></AD_REF_LIST>
 
 <!--248--><AD_REF_LIST>
@@ -1595,6 +1598,7 @@
 <!--248-->  <NAME><![CDATA[Wednesday]]></NAME>
 <!--248-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--248-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--248--></AD_REF_LIST>
 
 <!--249--><AD_REF_LIST>
@@ -1606,6 +1610,7 @@
 <!--249-->  <NAME><![CDATA[Thursday]]></NAME>
 <!--249-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--249-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--249--></AD_REF_LIST>
 
 <!--250--><AD_REF_LIST>
@@ -1617,6 +1622,7 @@
 <!--250-->  <NAME><![CDATA[Friday]]></NAME>
 <!--250-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--250-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--250-->  <SEQNO><![CDATA[50]]></SEQNO>
 <!--250--></AD_REF_LIST>
 
 <!--251--><AD_REF_LIST>
@@ -1628,6 +1634,7 @@
 <!--251-->  <NAME><![CDATA[Saturday]]></NAME>
 <!--251-->  <AD_REFERENCE_ID><![CDATA[167]]></AD_REFERENCE_ID>
 <!--251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--251-->  <SEQNO><![CDATA[60]]></SEQNO>
 <!--251--></AD_REF_LIST>
 
 <!--252--><AD_REF_LIST>
