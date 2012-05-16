@@ -20,14 +20,16 @@
 
 <SqlClass name="SessionLoginData" package="org.openbravo.erpCommon.security">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        select * from ad_session
-      </Sql>
-      <Field name="supportContact" value=""/>
-   </SqlMethod>
    
+  <SqlMethod name="activeSessions" type="preparedStatement" return="multiple">
+    <Sql><![CDATA[
+        SELECT AD_SESSION_ID, SERVER_URL
+          FROM AD_SESSION
+         WHERE SESSION_ACTIVE = 'Y'
+    ]]></Sql>
+      <Field name="supportContact" value=""/>
+  </SqlMethod>
+
     <SqlMethod name="deactivate" type="preparedStatement" return="rowCount">
     <Sql><![CDATA[
         UPDATE AD_Session
@@ -46,15 +48,7 @@
     ]]></Sql>
     <Parameter name="adSessionId"/>
   </SqlMethod>
-  
-  <SqlMethod name="activeSessions" type="preparedStatement" return="multiple">
-    <Sql><![CDATA[
-        SELECT AD_SESSION_ID, SERVER_URL
-          FROM AD_SESSION
-         WHERE SESSION_ACTIVE = 'Y'
-    ]]></Sql>
-  </SqlMethod>
-  
+
   <SqlMethod name="selectSupportContact" type="preparedStatement" return="string">
     <Sql><![CDATA[
         SELECT SUPPORT_CONTACT
