@@ -293,7 +293,7 @@ public class CostingRuleProcess implements Process {
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient(org.getClient());
     closeInv.setOrganization(org);
-    closeInv.setName(OBMessageUtils.messageBD("@CostCloseInventory@") + " " + rule.getIdentifier());
+    closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory") + " " + rule.getIdentifier());
     closeInv.setWarehouse(wh);
     closeInv.setMovementDate(new Date());
     cri.setCloseInventory(closeInv);
@@ -301,7 +301,7 @@ public class CostingRuleProcess implements Process {
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient(org.getClient());
     initInv.setOrganization(org);
-    initInv.setName(OBMessageUtils.messageBD("@CostInitInventory@") + " " + rule.getIdentifier());
+    initInv.setName(OBMessageUtils.messageBD("CostInitInventory") + " " + rule.getIdentifier());
     initInv.setWarehouse(wh);
     initInv.setMovementDate(new Date());
     cri.setInitInventory(initInv);
