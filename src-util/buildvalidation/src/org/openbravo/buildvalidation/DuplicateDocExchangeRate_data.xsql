@@ -129,11 +129,11 @@
       INSERT INTO AD_Alert (
         AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated, UpdatedBy,
-        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID, status
+        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID
       ) VALUES (
         get_uuid(), ?, '0', 'Y',
         NOW(), '0', NOW(), '0',
-        ?, ?, ?, ?, 'NEW')
+        ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="client"/>
