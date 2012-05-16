@@ -91,7 +91,7 @@ public class CostingBackground extends DalBaseProcess {
       }
       OBDal.getInstance().getSession().clear();
       trxs = getTransactionsBatch();
-      total = trxs.size();
+      total += trxs.size();
     }
     logger.logln(OBMessageUtils.messageBD("Success"));
     bundle.setResult(result);
