@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -333,21 +333,9 @@
                   )
                   ;
               END LOOP;
-            ELSE
-              SELECT MIN(M_PRICELIST_ID)
-              INTO v_PriceListPO
-              FROM M_PRICELIST
-              WHERE ISSOPRICELIST='N'
-                AND ISACTIVE='Y'
-                AND AD_CLIENT_ID=v_AD_Client_ID;
             END IF;
           END IF;
         END LOOP;
-        IF v_PriceListPO IS NOT NULL THEN
-          UPDATE C_PROJECT_VENDOR
-            SET m_pricelist_id=v_PriceListPO
-          WHERE c_project_id=v_Record_ID;
-        END IF;
 
         /*In order to update the price list of the current project,
           project must be a service project and Create Temporary Price List option must be checked*/
