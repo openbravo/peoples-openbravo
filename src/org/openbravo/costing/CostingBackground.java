@@ -89,6 +89,7 @@ public class CostingBackground extends DalBaseProcess {
         // If cost has been calculated successfully do a commit.
         SessionHandler.getInstance().commitAndStart();
       }
+      OBDal.getInstance().getSession().clear();
       trxs = getTransactionsBatch();
       total = trxs.size();
     }
