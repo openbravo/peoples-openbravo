@@ -210,6 +210,10 @@ BEGIN
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_WIP.cost, 0)
           WHERE M_PRODUCTIONLINE_ID = Cur_WIP.M_PRODUCTIONLINE_ID;
+          UPDATE m_transaction
+          SET transactioncost = ABS(COALESCE(cur_wip.cost, 0)),
+              iscostcalculated = 'Y'
+          WHERE m_productionline_id = cur_wip.m_productionline_id;
         END LOOP;
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
@@ -423,6 +427,10 @@ BEGIN
             UPDATE M_PRODUCTIONLINE
             SET CALCCOST = ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4)
             WHERE M_PRODUCTIONLINE_ID = Cur_ProductionLine.M_ProductionLine_ID;
+            UPDATE m_transaction
+            SET transactioncost = v_cost,
+                iscostcalculated = 'Y'
+            WHERE m_productionline_id = cur_productionline.m_productionline_id;
 
             v_ResultStr := 'M_Costing';
             --Check if the product has any cost previously calculated.
