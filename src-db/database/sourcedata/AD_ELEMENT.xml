@@ -13649,7 +13649,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800171-->  <NAME><![CDATA[Cost Type]]></NAME>
 <!--800171-->  <PRINTNAME><![CDATA[Costtype]]></PRINTNAME>
 <!--800171-->  <DESCRIPTION><![CDATA[A distinct cost characteristic used for processes.]]></DESCRIPTION>
-<!--800171-->  <HELP><![CDATA[Different types of cost]]></HELP>
+<!--800171-->  <HELP><![CDATA[Different types of cost.]]></HELP>
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800171-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800171--></AD_ELEMENT>
@@ -13701,7 +13701,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800175-->  <COLUMNNAME><![CDATA[Coststd]]></COLUMNNAME>
 <!--800175-->  <NAME><![CDATA[Standard Cost]]></NAME>
 <!--800175-->  <PRINTNAME><![CDATA[Cost Standar]]></PRINTNAME>
-<!--800175-->  <HELP><![CDATA[The value of the standard cost]]></HELP>
+<!--800175-->  <HELP><![CDATA[The value of the standard cost used by the legacy engine]]></HELP>
 <!--800175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800175-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800175--></AD_ELEMENT>
@@ -28035,7 +28035,7 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--B651D62716A3B629E040007F01004BB7-->  <COLUMNNAME><![CDATA[M_Costing_Algorithm_ID]]></COLUMNNAME>
 <!--B651D62716A3B629E040007F01004BB7-->  <NAME><![CDATA[Costing Algorithm]]></NAME>
 <!--B651D62716A3B629E040007F01004BB7-->  <PRINTNAME><![CDATA[M_Costing_Algorithm_ID]]></PRINTNAME>
-<!--B651D62716A3B629E040007F01004BB7-->  <HELP><![CDATA[Identifies a Costing Algorithm]]></HELP>
+<!--B651D62716A3B629E040007F01004BB7-->  <HELP><![CDATA[Identifies a Costing Algorithm. Core distribution includes Average and Standard costing methods. Additional methods can be added using Extension Modules.]]></HELP>
 <!--B651D62716A3B629E040007F01004BB7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B651D62716A3B629E040007F01004BB7-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--B651D62716A3B629E040007F01004BB7--></AD_ELEMENT>
@@ -28137,7 +28137,7 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--B928FFF690840124E040007F01004E03-->  <COLUMNNAME><![CDATA[M_Costing_Rule_ID]]></COLUMNNAME>
 <!--B928FFF690840124E040007F01004E03-->  <NAME><![CDATA[Costing Rule]]></NAME>
 <!--B928FFF690840124E040007F01004E03-->  <PRINTNAME><![CDATA[Costing Rule]]></PRINTNAME>
-<!--B928FFF690840124E040007F01004E03-->  <HELP><![CDATA[Identifies a costing rule to apply to cost calculation. The dimension rule defines the algorithm to be used and the dimensions that have to be considered.]]></HELP>
+<!--B928FFF690840124E040007F01004E03-->  <HELP><![CDATA[Identifies a costing rule for cost calculation. The costing rule defines the algorithm to be used, the date is valid from and if warehouses are used as a cost dimension.]]></HELP>
 <!--B928FFF690840124E040007F01004E03-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B928FFF690840124E040007F01004E03-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--B928FFF690840124E040007F01004E03--></AD_ELEMENT>

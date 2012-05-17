@@ -7238,7 +7238,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800057-->  <NAME><![CDATA[Costing]]></NAME>
 <!--800057-->  <DESCRIPTION><![CDATA[Define cost information for this specific product.]]></DESCRIPTION>
-<!--800057-->  <HELP><![CDATA[Costing tab collects and summarize item cost related information as a result of items movements.]]></HELP>
+<!--800057-->  <HELP><![CDATA[Costing tab collects and summarize item cost related information as a result of items movements. The costs are valid during a fixed date range, it is used by Average and Standard algorithms.]]></HELP>
 <!--800057-->  <AD_TABLE_ID><![CDATA[800043]]></AD_TABLE_ID>
 <!--800057-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--800057-->  <SEQNO><![CDATA[40]]></SEQNO>
