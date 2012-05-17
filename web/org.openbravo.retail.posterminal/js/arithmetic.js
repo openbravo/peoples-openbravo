@@ -36,7 +36,7 @@ define([], function (B) {
   }; 
   
   OB.DEC.div = function (a, b) {
-    return toNumber(toBigDecimal(a).divide(toBigDecimal(b)));
+    return toNumber(toBigDecimal(a).divide(toBigDecimal(b), scale, roundingmode));
   };  
   
   OB.DEC.compare = function (a) {

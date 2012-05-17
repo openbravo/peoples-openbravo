@@ -65,7 +65,7 @@ define(['builder', 'i18n',
   
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                                                                                                                                     
-            {kind: B.KindJQuery('div'), attr: {'class': 'span5'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
                                                                             
               {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [                                                                           
                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
@@ -112,7 +112,7 @@ define(['builder', 'i18n',
               ]}  
             ]},          
   
-            {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
                 {kind: OB.COMP.TabScan },               
                 {kind: OB.COMP.TabBrowse },                

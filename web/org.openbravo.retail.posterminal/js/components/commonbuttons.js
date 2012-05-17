@@ -104,7 +104,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.component = B(this.createView(), this.options);      
       this.setElement(this.component.$el);
     },
-    getView: function () {
+    createView: function () {
       return ({kind: B.KindJQuery('div')});
     }
   });  
