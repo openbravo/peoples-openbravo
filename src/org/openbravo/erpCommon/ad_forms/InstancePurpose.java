@@ -19,8 +19,6 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -98,7 +96,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
     Form instanceActivationForm = OBDal.getInstance().get(Form.class, instanceActivationId);
     if (instanceActivationForm != null) {
       newTabTitle = instanceActivationForm.getIdentifier();
-      newTabTitle = escapeHtml(newTabTitle);
+      newTabTitle = org.apache.commons.lang.StringEscapeUtils.escapeHtml(newTabTitle);
     } else {
       newTabTitle = "Instance Activation";
     }

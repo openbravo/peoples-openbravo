@@ -19,8 +19,6 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -289,7 +287,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     Window heartBeatConf_win = OBDal.getInstance().get(Window.class, heartBeatConf_win_id);
     if (heartBeatConf_win != null) {
       newTabTitle = heartBeatConf_win.getIdentifier();
-      newTabTitle = escapeHtml(newTabTitle);
+      newTabTitle = org.apache.commons.lang.StringEscapeUtils.escapeHtml(newTabTitle);
     } else {
       newTabTitle = "Heartbeat Configuration";
     }
