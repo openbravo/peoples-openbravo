@@ -9,7 +9,7 @@ require.config({
   }
 });
 
-require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
+require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
   
   var modelterminal = new OB.MODEL.Terminal();
   
@@ -18,7 +18,9 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
   
   // alert all errors
   window.onerror = function (e) {
-    alert(e);
+    if (typeof(e) === 'string') {
+      OB.UTIL.showError(e);
+    }
   };
   
   // global components.
@@ -58,11 +60,11 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
     
-    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/windows/pointofsale");
+    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/js/windows/pointofsale");
     
     require([webwindowname], function (webwindow) { // load window...
       var c = _.extend({}, Backbone.Events);
-      $("#containerwindow").empty().append(B(webwindow(), c).$el);   
+      $("#containerwindow").empty().append((new webwindow(c)).$el);   
       c.trigger('domready'); 
     });
   });    
@@ -77,7 +79,7 @@ require(['builder', 'loginwindow', 'utilitiesui', 'arithmetic', 'datasource', 'm
     }
     
     var c = _.extend({}, Backbone.Events);
-    $("#containerwindow").empty().append(B(login(), c).$el);   
+    $("#containerwindow").empty().append((new login(c)).$el);   
     c.trigger('domready'); 
   });
   
