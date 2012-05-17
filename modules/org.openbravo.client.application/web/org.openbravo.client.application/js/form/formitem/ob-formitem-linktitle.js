@@ -22,7 +22,7 @@
 // is implemented in the OBViewForm.getTitleHTML.
 isc.ClassFactory.defineInterface('OBLinkTitleItem');
 
-isc.OBLinkTitleItem.addProperties({
+isc.OBLinkTitleItem.addInterfaceProperties({
   operator: 'iContains',
   showLinkIcon: true,
 

@@ -19,7 +19,7 @@
 
 
 isc.OBTabBarButtonMain.addProperties({
-  src: '',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/blank/blank.gif',
   showSelectedIcon: true,
   showRollOverIcon: true,
   align: 'right',
@@ -69,7 +69,7 @@ isc.OBTabBarMain.addProperties({
 
 
 isc.OBTabBarButtonChild.addProperties({
-  src: '',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/blank/blank.gif',
   showSelectedIcon: true,
   showRollOverIcon: true,
   align: 'right',
