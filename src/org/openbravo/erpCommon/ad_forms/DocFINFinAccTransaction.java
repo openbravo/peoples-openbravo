@@ -524,8 +524,11 @@ public class DocFINFinAccTransaction extends AcctServer {
           isReceipt ? convertedAmount.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     }
+    DocLine_FINFinAccTransaction line = new DocLine_FINFinAccTransaction(DocumentType,
+        transaction.getId(), "");
+    line.m_description = transaction.getFinPayment().getDescription();
     fact.createLine(
-        null,
+        line,
         getAccountUponDepositWithdrawal(conn, transaction.getFinPayment().getPaymentMethod(),
             transaction.getAccount(), as, transaction.getFinPayment().isReceipt()), C_Currency_ID,
         transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
