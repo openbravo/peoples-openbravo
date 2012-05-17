@@ -909,7 +909,7 @@ OB.ViewFormProperties = {
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, i, valueMap = {},
+    var isDate, isTime, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -962,10 +962,11 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       this.setValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
-      if (isDate) {
+      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
+      isTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'time';
+      if (isTime) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
-      } else if (columnValue.hasDateDefault) {
+      } else if (isDate || columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {
 
