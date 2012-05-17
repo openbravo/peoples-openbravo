@@ -85,6 +85,7 @@ public class ActivationKey {
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
+  private Date lastUpdateTimestamp;
   private String errorMessage = "";
   private String messageType = "Error";
   private Properties instanceProperties;
@@ -246,6 +247,7 @@ public class ActivationKey {
         org.openbravo.model.ad.system.System.class, "0");
     ak.loadInfo(sys.getActivationKey());
     ak.loadRestrictions();
+    ak.lastUpdateTimestamp = sys.getUpdated();
     return ak;
   }
 
@@ -263,6 +265,7 @@ public class ActivationKey {
       org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
           org.openbravo.model.ad.system.System.class, "0");
       strPublicKey = sys.getInstanceKey();
+      lastUpdateTimestamp = sys.getUpdated();
       String activationKey = sys.getActivationKey();
       loadInfo(activationKey);
       loadRestrictions();
@@ -1113,6 +1116,13 @@ public class ActivationKey {
         && !trial
         && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
       refreshLicense(24 * 60);
+    } else {
+      // Reload from DB if it was modified from outside
+      if (lastUpdateTimestamp == null
+          || !lastUpdateTimestamp.equals(OBDal.getInstance()
+              .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
+        instance = ActivationKey.reload();
+      }
     }
   }
 

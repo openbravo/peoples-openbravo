@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.List;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -77,6 +79,8 @@ public class ActivationTask extends DalInitializingTask {
           msg.getMessage());
 
       if (success) {
+        // Setting updated to force license reload
+        OBDal.getInstance().get(System.class, "0").setUpdated(new Date());
         log.info(msgTxt);
       } else {
         throw new BuildException(msgTxt);
