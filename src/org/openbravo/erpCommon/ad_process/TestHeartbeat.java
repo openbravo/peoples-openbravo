@@ -290,7 +290,6 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     if (heartBeatConf_win != null) {
       newTabTitle = heartBeatConf_win.getIdentifier();
       newTabTitle = escapeHtml(newTabTitle);
-
     } else {
       newTabTitle = "Heartbeat Configuration";
     }
