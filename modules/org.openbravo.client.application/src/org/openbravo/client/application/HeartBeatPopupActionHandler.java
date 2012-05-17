@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -121,7 +121,7 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
       result.put("showSuccessUpgrade", isUpgrading && usingAprm && !exportConfigScript);
       result.put("showInstancePurpose",
           showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.InstancePurpose);
-      result.put("showHeartBeat",
+      result.put("showHeartbeat",
           showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.HeartBeat);
       result.put("showRegistration",
           showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.Registration);
