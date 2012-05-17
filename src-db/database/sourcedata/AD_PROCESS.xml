@@ -5696,7 +5696,7 @@ This process:<br/>
 <!--A269DCA4DE114E438695B66E166999B4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A269DCA4DE114E438695B66E166999B4-->  <VALUE><![CDATA[CostingRuleProcess]]></VALUE>
 <!--A269DCA4DE114E438695B66E166999B4-->  <NAME><![CDATA[Validate Costing Rule]]></NAME>
-<!--A269DCA4DE114E438695B66E166999B4-->  <HELP><![CDATA[Validate and initialize the Costing Rule]]></HELP>
+<!--A269DCA4DE114E438695B66E166999B4-->  <HELP><![CDATA[Validate and initialize the Costing Rule. It automatically creates and process the Close and Opening Physical inventories to overwrite an existing Costing Rule. If the instance is using the legacy engine costs it is mandatory to run the Cost Migration Process in advance with System Administrator role.]]></HELP>
 <!--A269DCA4DE114E438695B66E166999B4-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--A269DCA4DE114E438695B66E166999B4-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--A269DCA4DE114E438695B66E166999B4-->  <ISREPORT><![CDATA[N]]></ISREPORT>
