@@ -19,7 +19,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       }, this);         
     },    
     shownEvent: function (e) {      
-      this.options.keyboard.show('toolbarempty');
+      this.options.keyboard.show('toolbarscan');
     }       
   });  
   

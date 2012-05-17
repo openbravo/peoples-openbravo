@@ -17,8 +17,13 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         var me = this;
         var cmd = attr.command;      
         if (attr.command === '---') {
+          // It is the null command
+          this.command = false;
+        } else if (!cmd.match(/^([0-9]|\.|[a-z])$/) && cmd !== 'OK' && cmd !== 'del' && cmd !== String.fromCharCode(13) && !kb.commands[cmd]) {
+          // is not a key and does not exists the command
           this.command = false;
         } else if (attr.permission && !OB.POS.modelterminal.hasPermission(attr.permission)) {
+          // does not have permissions.
           this.command = false;
         } else { 
           this.command = attr.command;
@@ -46,104 +51,18 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   };
 
   OB.COMP.Keyboard = Backbone.View.extend({ 
-    
-    
+ 
     _id: 'keyboard',
     status: '',
-    commands:{},
+    commands: {},
     buttons: {},
     initialize: function () {
       
-      var me = this;
-      
-      this.addCommand('line:qty', {              
-        'action': function (txt) {
-          if (this.line) {
-            this.receipt.setUnit(this.line, parseNumber(txt)); 
-            this.receipt.trigger('scan');
-          }                
-        }
-      });
-      this.addCommand('line:price', {              
-        'permission': 'order.changePrice',
-        'action': function (txt) {
-          if (this.line) {
-            this.receipt.setPrice(this.line, parseNumber(txt)); 
-            this.receipt.trigger('scan');
-          }               
-        }
-      });    
-      this.addCommand('line:dto', {              
-        'permission': 'order.discount',
-        'action': function (txt) {
-          if (this.line) {
-             this.receipt.trigger('discount', this.line,parseNumber(txt));
-          }               
-        }
-      });    
-      this.addCommand('code', {
-        'action': function (txt) {
-          var me = this;
-          this.products.ds.find({
-            priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
-            product: { product: {uPCEAN: txt}}
-          }, function (data) {
-            if (data) {      
-              me.receipt.addProduct(me.line, new Backbone.Model(data));
-              me.receipt.trigger('scan');
-            } else {
-              alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt])); // 'UPC/EAN code not found'
-            }
-          });        
-        }
-      });   
-      
-      this.products = this.options.DataProductPrice;
-      this.receipt = this.options.modelorder;
-      this.line = null;
-      
-      this.receipt.get('lines').on('selected', function (line) {
-        this.line = line;
-        this.clear();
-      }, this);        
-      
+      var me = this;   
+     
       this.component = B(
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-          {kind: B.KindJQuery('div'), id: 'toolbarcontainer', attr: {'class': 'span4'}, content: [          
-            {kind: B.KindJQuery('div'), id: 'toolbarempty', attr: {'style': 'display:block;'}, content: [                                                                            
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': 'code'}, content: [OB.I18N.getLabel('OBPOS_KbCode')]}
-                ]}          
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-                ]}          
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-                ]}          
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-                ]}          
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-                ]}          
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                  {kind: BtnAction(this), attr: {'command': '---'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-                ]}          
-              ]}               
-            ]}          
-          ]},   
-          
+          {kind: B.KindJQuery('div'), id: 'toolbarcontainer', attr: {'class': 'span4'}},             
           {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [ 
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [ 
@@ -256,24 +175,12 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       
       this.editbox =  this.component.context.editbox.$el; 
       this.toolbarcontainer = this.component.context.toolbarcontainer.$el;
-      this.toolbars = {
-          toolbarempty : this.component.context.toolbarempty.$el
-      };
+      this.toolbars = {};
       
       this.on('command', function(cmd) {
         var txt;
         var me = this;      
-        if (cmd === '-') {
-          if (this.line) {
-            this.receipt.removeUnit(this.line, this.getNumber());     
-            this.receipt.trigger('scan');
-          }
-        } else if (cmd === '+') {
-          if (this.line) {
-            this.receipt.addUnit(this.line, this.getNumber());    
-            this.receipt.trigger('scan');
-          }
-        } else if (this.editbox.text() && cmd === String.fromCharCode(13) ) {
+        if (this.editbox.text() && cmd === String.fromCharCode(13) ) {
           // Barcode read using an scanner or typed in the keyboard...
           this.execCommand(this.commands.code, this.getString());
         } else if (cmd === 'OK') {
@@ -288,27 +195,27 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
             this.execCommand(this.commands[this.status], txt);         
             this.setStatus('');
           }
-          
-        } else {
-          
-          // do nothing if it is a line command and no line is selected, or if does not exists the command.
-          if ((cmd.substring(0, 5) !== 'line:' || this.line) && this.commands[cmd]) {
+        } else if ((cmd.substring(0, 5) !== 'line:' || this.line) && this.commands[cmd]) {
             txt = this.getString();
-            
-            if (txt && this.status === '') { // Short cut: type + action
-              this.execCommand(this.commands[cmd], txt);
-            } else if (this.status === cmd) { // Reset status 
-              this.setStatus('');     
+            if (this.commands[cmd].stateless) {
+              // Stateless commands: add, subs, ...
+              this.execStatelessCommand(this.commands[cmd], txt);
             } else {
-              this.setStatus(cmd);   
-            }       
-          }        
+              // Statefull commands: quantity, price, discounts, payments ...
+              if (txt && this.status === '') { // Short cut: type + action
+                this.execCommand(this.commands[cmd], txt);
+              } else if (this.status === cmd) { // Reset status 
+                this.setStatus('');     
+              } else {
+                this.setStatus(cmd);   
+              }
+            }
         }
       }, this);       
   
       $(window).keypress(function(e) {
         me.keyPressed(String.fromCharCode(e.which));
-      });        
+      });  
     },
     
     setStatus: function (newstatus) {
@@ -322,9 +229,13 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     },    
 
     execCommand: function (cmddefinition, txt) {
-        if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
-          cmddefinition.action.call(this, txt);
-        }    
+      if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
+        cmddefinition.action.call(this, txt);
+      }    
+    },
+
+    execStatelessCommand: function (cmddefinition, txt) {
+      cmddefinition.action.call(this, txt);  
     },
     
     addCommand: function(cmd, definition) {
@@ -398,7 +309,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
           value = attrs[attr];
           content = [];
           for (i = 0, max = value.length; i < max; i++) {
-            // add the command
+            // add the command if provided
             if (value[i].definition) {
               this.addCommand(value[i].command, value[i].definition);
             }
@@ -416,9 +327,104 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       }          
     }    
   });
+  
+  OB.COMP.KeyboardOrder = OB.COMP.Keyboard.extend({   
+    initialize: function () {      
+      this.addCommand('line:qty', {              
+        'action': function (txt) {
+          if (this.line) {
+            this.receipt.setUnit(this.line, parseNumber(txt)); 
+            this.receipt.trigger('scan');
+          }                
+        }
+      });
+      this.addCommand('line:price', {              
+        'permission': 'order.changePrice',
+        'action': function (txt) {
+          if (this.line) {
+            this.receipt.setPrice(this.line, parseNumber(txt)); 
+            this.receipt.trigger('scan');
+          }               
+        }
+      });    
+      this.addCommand('line:dto', {              
+        'permission': 'order.discount',
+        'action': function (txt) {
+          if (this.line) {
+             this.receipt.trigger('discount', this.line, parseNumber(txt));
+          }               
+        }
+      });    
+      this.addCommand('code', {
+        'action': function (txt) {
+          var me = this;
+          this.products.ds.find({
+            priceListVersion: OB.POS.modelterminal.get('pricelistversion').id,
+            product: { product: {uPCEAN: txt}}
+          }, function (data) {
+            if (data) {      
+              me.receipt.addProduct(me.line, new Backbone.Model(data));
+              me.receipt.trigger('scan');
+            } else {
+              alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt])); // 'UPC/EAN code not found'
+            }
+          });        
+        }
+      });     
+      this.addCommand('+', {
+        'stateless': true,
+        'action': function (txt) {
+          if (this.line) {
+            this.receipt.addUnit(this.line, parseNumber(txt));    
+            this.receipt.trigger('scan');
+          }          
+        }
+      });      
+      this.addCommand('-', {
+        'stateless': true,
+        'action': function (txt) {
+          if (this.line) {
+            this.receipt.removeUnit(this.line, parseNumber(txt));    
+            this.receipt.trigger('scan');
+          }          
+        }
+      });
+          
+      this.products = this.options.DataProductPrice;
+      this.receipt = this.options.modelorder;
+      this.line = null;
+      
+      this.receipt.get('lines').on('selected', function (line) {
+        this.line = line;
+        this.clear();
+      }, this);     
+      
+      OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
+      
+      // Toolbars at the end...
+      this.attr({
+        toolbarpayment: [ 
+          {command:'payment.cash', definition: OB.COMP.KeyboardOrder.getPayment('payment.cash'), label: OB.I18N.getLabel('OBPOS_KbCash')},
+          {command:'payment.card', definition: OB.COMP.KeyboardOrder.getPayment('payment.card'), label: OB.I18N.getLabel('OBPOS_KbCard')},
+          {command:'payment.voucher', definition: OB.COMP.KeyboardOrder.getPayment('payment.voucher'), label: OB.I18N.getLabel('OBPOS_KbVoucher')},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
+        ],
+        toolbarscan: [ 
+          {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
+        ]                
+      });     
+    }
+  });
 
   // Method of the function...
-  OB.COMP.Keyboard.getPayment = function (payment) {
+  OB.COMP.KeyboardOrder.getPayment = function (payment) {
     return ({
       'permission': payment,
       'action': function (txt) {
@@ -430,5 +436,14 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       }
     });
   }; 
+
+  
+  OB.COMP.KeyboardCash = OB.COMP.Keyboard.extend({   
+    initialize: function () {            
+      OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
+      
+    }
+  });
+  
   
 });

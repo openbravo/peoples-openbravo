@@ -11,10 +11,16 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     className: 'btnlink',
     attributes: {'href': '#'},
     initialize: function () {
-      this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
-      this.$el.append($('<span>' + this.label + '</span>'));      
+      if (this.icon) {
+        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
+      }
+      this.$el.append($('<span>' + this.label + '</span>'));     
+      if (this.iconright) {
+        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
+      }      
     },
     icon: '',
+    iconright: '',
     label: '',
     events: {
       'click': 'clickEvent' // attach the click event as part of the element

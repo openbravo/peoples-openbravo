@@ -63,10 +63,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
   
   // Sales.Order Model.
   OB.MODEL.Order = Backbone.Model.extend({
-    constructor: function (context) {
-      this._id = 'modelorder';    
-      Backbone.Model.prototype.constructor.call(this);
-    },    
+    _id: 'modelorder',   
     initialize : function () {
       this.set('client', null);
       this.set('organization', null); 

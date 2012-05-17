@@ -94,7 +94,15 @@ define(['utilities'], function () {
     'OBPOS_LblBrowse': 'BROWSE',
     'OBPOS_LblSearch': 'SEARCH',
     'OBPOS_LblScan': 'SCAN',
-    'OBPOS_LblEdit': 'EDIT'
+    'OBPOS_LblEdit': 'EDIT',
+      
+    // Close cash window
+    'OBPOS_LblCountCash': 'Count Cash',
+    'OBPOS_LblPendingReceipts': 'Pending Receipts',
+    
+    'OBPOS_LblNextStep': 'Next ',
+    'OBPOS_LblPrevStep': ' Previous',
+    'OBPOS_LblCancel': 'Cancel'
   };
   
   

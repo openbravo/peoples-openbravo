@@ -68,12 +68,23 @@ if(POSUtils.isModuleInDevelopment()) {
     display: block;
 
     width: 100%;
+    font-size: 110%;
     text-align: center;
     padding: 11px 0px 11px 0px;
     text-decoration: none;
     background-color: darkgray;
     color: black;  
   }
+  
+  div.btnlink {
+    display: inline-block;
+    padding: 12px 15px 12px 15px;   
+    text-decoration: none;
+    background-color: darkgray;
+    color: white;   
+    margin:5px; 
+    float:left;     
+  }    
     
 	a.btnlink {
 	  display: inline-block;
