@@ -55,7 +55,7 @@ public class DisabledModules {
    * Reloads information about disabled elements reading from database.
    */
   public static synchronized void reload() {
-    log4j.info("Loading disabled modules...");
+    log4j.debug("Loading disabled modules...");
     disabledModules = new ArrayList<String>();
     disabledWindows = new ArrayList<String>();
     disabledTabs = new ArrayList<String>();

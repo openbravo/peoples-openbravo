@@ -1140,6 +1140,23 @@ export.database: exports database structure and data to xml files.
       <ant dir="${base.src.core}" target="clean" inheritAll="true" inheritRefs="true" />
       <ant dir="${base.src.trl}" target="clean" inheritAll="true" inheritRefs="true" />
       <ant dir="${base.src.wad}" target="clean" inheritAll="true" inheritRefs="true" />
-    </target>
+  </target>
+  
+  <target name="activate.instance" depends="init"
+          description="Activates the instance with the provided public key">
+   <taskdef name="activateInstace" classname="org.openbravo.erpCommon.obps.ActivationTask">
+     <classpath refid="project.class.path" />
+   </taskdef>
+   <property name="purpose" value="" />
+   <property name="publicKey" value="" />
+   <property name="publicKeyFile" value="" />
+    
+   <activateInstace purpose="${purpose}"
+                    publicKey="${publicKey}"
+                    publicKeyFile="${publicKeyFile}"
+                    userId="0" 
+                    adminMode="true" 
+                    propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
   
 </project>

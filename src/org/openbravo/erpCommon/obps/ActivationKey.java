@@ -527,8 +527,18 @@ public class ActivationKey {
 
     try {
       // read restriction file from context directory
-      String restrictionsFilePath = DalContextListener.getServletContext().getRealPath(
-          "src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
+      String restrictionsFilePath = null;
+      if (DalContextListener.getServletContext() != null) {
+        // Taking restrictions from Tomcat context
+        restrictionsFilePath = DalContextListener.getServletContext().getRealPath(
+            "src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
+      } else {
+        // Not in Tomcat context, taking restrictions from sources
+        restrictionsFilePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("source.path")
+            + "/src/org/openbravo/erpCommon/obps/licenseRestrictions";
+      }
+
       File restrictionsFile = new File(restrictionsFilePath);
       log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
 

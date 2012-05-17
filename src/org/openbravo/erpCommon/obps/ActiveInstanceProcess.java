@@ -68,6 +68,7 @@ public class ActiveInstanceProcess implements Process {
     boolean localActivation = localActivationKey != null && !localActivationKey.isEmpty();
 
     if (!localActivation) {
+      log.info("Connecting to butler to get activation...");
       String instanceNo = (String) bundle.getParams().get("instanceNo");
       if (!HttpsUtils.isInternetAvailable()) {
         msg.setType("Error");
@@ -90,6 +91,7 @@ public class ActiveInstanceProcess implements Process {
       if (localActivation) {
         activationKey = localActivationKey;
       } else {
+        log.info("Activation obtained from butler, activating instance...");
         activationKey = result[1];
       }
 
