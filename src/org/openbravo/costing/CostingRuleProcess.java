@@ -41,7 +41,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -126,6 +125,7 @@ public class CostingRuleProcess implements Process {
       }
 
       rule.setValidated(true);
+      CostingStatus.getInstance().setMigrated();
       OBDal.getInstance().save(rule);
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
@@ -153,27 +153,18 @@ public class CostingRuleProcess implements Process {
   }
 
   private void migrationCheck() {
-    if (isCostingMigrationNeeded() && isPendingMigration()) {
+    if (isCostingMigrationNeeded() && !CostingStatus.getInstance().isMigrated()) {
       throw new OBException("@CostMigrationNotDone@");
     }
   }
 
-  public boolean isCostingMigrationNeeded() {
+  private boolean isCostingMigrationNeeded() {
     OBQuery<org.openbravo.model.materialmgmt.cost.Costing> costingQry = OBDal.getInstance()
         .createQuery(org.openbravo.model.materialmgmt.cost.Costing.class, "");
     costingQry.setFilterOnReadableClients(false);
     costingQry.setFilterOnReadableOrganization(false);
 
     return costingQry.count() > 0;
-  }
-
-  private boolean isPendingMigration() {
-    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
-        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
-    prefQry.setFilterOnReadableClients(false);
-    prefQry.setFilterOnReadableOrganization(false);
-
-    return prefQry.count() == 0;
   }
 
   private boolean existsPreviousRule(CostingRule rule) {

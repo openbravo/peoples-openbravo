@@ -85,7 +85,7 @@ public class CostingMigrationProcess implements Process {
     try {
       OBContext.setAdminMode(false);
 
-      if (isMigrated()) {
+      if (CostingStatus.getInstance().isMigrated()) {
         throw new OBException("@CostMigratedInstance@");
       } else {
         if (isCostingMigrationNotNeeded()) {
@@ -111,8 +111,8 @@ public class CostingMigrationProcess implements Process {
           rule.setValidated(true);
           OBDal.getInstance().save(rule);
         }
+        CostingStatus.getInstance().setMigrated();
         deleteMigrationFirstPhaseCompletedPreference();
-        createCostMigratedPreference();
       }
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
@@ -368,15 +368,6 @@ public class CostingMigrationProcess implements Process {
     costingQry.setFilterOnReadableOrganization(false);
 
     return costingQry.count() == 0;
-  }
-
-  private boolean isMigrated() {
-    OBQuery<Preference> prefQry = OBDal.getInstance().createQuery(Preference.class,
-        Preference.PROPERTY_ATTRIBUTE + " = 'CostingMigrationDone'");
-    prefQry.setFilterOnReadableClients(false);
-    prefQry.setFilterOnReadableOrganization(false);
-
-    return prefQry.count() > 0;
   }
 
   private boolean isMigrationFirstPhaseCompleted() {
@@ -763,13 +754,6 @@ public class CostingMigrationProcess implements Process {
    */
   private void createMigrationFirstPhaseCompletedPreference() {
     createPreference("CostingMigrationFirstPhaseCompleted", null);
-  }
-
-  /**
-   * Create a preference to be able to determine that the migration has been completed.
-   */
-  private void createCostMigratedPreference() {
-    createPreference("CostingMigrationDone", null);
   }
 
   private void createPreference(String attribute, String value) {
