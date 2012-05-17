@@ -135,17 +135,18 @@ public class SelectorComponent extends BaseTemplateComponent {
   }
 
   private static String getPropertyOrDataSourceField(SelectorField selectorField) {
+    final String result;
     if (selectorField.getProperty() != null) {
-      return selectorField.getProperty();
+      result = selectorField.getProperty();
+    } else if (selectorField.getDisplayColumnAlias() != null) {
+      result = selectorField.getDisplayColumnAlias();
+    } else if (selectorField.getObserdsDatasourceField() != null) {
+      result = selectorField.getObserdsDatasourceField().getName();
+    } else {
+      throw new IllegalStateException("Selectorfield " + selectorField
+          + " has a null datasource and a null property");
     }
-    if (selectorField.getDisplayColumnAlias() != null) {
-      return selectorField.getDisplayColumnAlias();
-    }
-    if (selectorField.getObserdsDatasourceField() != null) {
-      return selectorField.getObserdsDatasourceField().getName();
-    }
-    throw new IllegalStateException("Selectorfield " + selectorField
-        + " has a null datasource and a null property");
+    return result.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
   }
 
   public static String getAdditionalProperties(Selector selector, boolean onlyDisplayField) {
@@ -284,8 +285,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public String getValueField() {
     if (getSelector().getValuefield() != null) {
-      String valueField = getPropertyOrDataSourceField(getSelector().getValuefield());
-      valueField = valueField.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
+      final String valueField = getPropertyOrDataSourceField(getSelector().getValuefield());
       if (!getSelector().isCustomQuery()) {
         final DomainType domainType = getDomainType(getSelector().getValuefield());
         if (domainType instanceof ForeignKeyDomainType) {
@@ -320,7 +320,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       // and which has a field defined
       if (dataSource.getTable() == null && !dataSource.getOBSERDSDatasourceFieldList().isEmpty()) {
         final DatasourceField dsField = dataSource.getOBSERDSDatasourceFieldList().get(0);
-        return dsField.getName();
+        return dsField.getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
     }
 

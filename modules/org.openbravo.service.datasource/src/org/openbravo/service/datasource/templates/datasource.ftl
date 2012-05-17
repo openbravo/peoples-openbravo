@@ -99,7 +99,7 @@ the following is not needed, is covered in the form fields/grid fields
 </#macro>
 
 <#macro generateReferenceField property subPropName>
-    {name: '${property.name?js_string}.${subPropName}'
+    {name: '${property.name?js_string}$${subPropName}'
     <#--
     , type: 'text', hidden: true
     <#if property.mandatory>
