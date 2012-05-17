@@ -307,7 +307,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('setValueMap', [field, map]);
   },
 
-  processColumnValue: function (rowNum, columnName, columnValue, editValues) {
+  processColumnValue: function (rowNum, columnName, columnValue) {
     var field;
     if (!columnValue) {
       return;
@@ -326,7 +326,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     var context = response && response.clientContext,
         rowNum = context && context.rowNum,
         grid = context && context.grid,
-        columnValues, prop, value, editValues, undef;
+        columnValues, prop, value, undef;
 
 
     if (rowNum === undef || !data || !data.columnValues) {
@@ -334,11 +334,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     columnValues = data.columnValues;
-    editValues = grid.getEditValues(rowNum);
 
     for (prop in columnValues) {
       if (columnValues.hasOwnProperty(prop)) {
-        grid.processColumnValue(rowNum, prop, columnValues[prop], editValues);
+        grid.processColumnValue(rowNum, prop, columnValues[prop]);
       }
     }
   },

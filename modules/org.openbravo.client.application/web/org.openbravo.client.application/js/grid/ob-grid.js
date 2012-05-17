@@ -121,6 +121,10 @@ isc.OBGrid.addProperties({
     return response;
   },
 
+  isEditing: function() {
+    return this.getEditForm();
+  },
+  
   focusInFirstFilterEditor: function () {
     if (this.getFilterEditor()) { // there is a filter editor
       var object = this.getFilterEditor().getEditForm(),

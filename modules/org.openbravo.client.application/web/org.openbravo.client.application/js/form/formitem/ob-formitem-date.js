@@ -260,8 +260,8 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       //  the grid does not save the value before making the FIC call, so the value has to 
       //  be saved explicitly
       //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
-      if (this.grid && this.grid.getEditRow()) {
-        this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();
+      if (this.grid && this.grid.isEditing()) {
+        this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
       }
       this.textField._textChanged = false;
     }

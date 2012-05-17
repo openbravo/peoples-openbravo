@@ -26,8 +26,8 @@ isc.OBEncryptedItem.addProperties({
   changed: function (form, item, value) {
     this.Super('changed', arguments);
     this.form.setValue(item.name + '_cleartext', value);
-    if (this.grid.getEditRow() !== null) {
-      this.grid.getEditValues(this.grid.getEditRow())[item.name + '_cleartext'] = value;
+    if (this.grid.isEditing()) {
+      this.grid.setEditValue(this.grid.getEditRow(), item.name + '_cleartext', value, true, true);
     }
   }
 });
