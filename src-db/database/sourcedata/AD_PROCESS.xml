@@ -5546,6 +5546,12 @@ This process:<br/>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <VALUE><![CDATA[Costing Migration Process]]></VALUE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <NAME><![CDATA[Costing Migration Process]]></NAME>
+<!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <HELP><![CDATA[The costing migration process initializes the costing engine creating a new costing rule using the average algorithm for each legal entity of the instance. The migration is done in 3 steps:
+<br>1st. Closing and Opening inventories are created for each organization and warehouse with stocked products. The opening inventories are left in draft status. The unit cost is set based on the legacy costs.
+<br>2nd. Users review the opening inventories to set proper quantities and cost and process the inventories.
+<br>3rd. Once all the opening inventories are processed the migration process is launched again to validate all the costing rules.
+
+<br><br>When the process is finished it is recommended to schedule the Costing Background process to automatically calculate the cost of all material transactions.]]></HELP>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--64B3FF29AC174F4B94538BD0A3CE1CD3-->  <ISREPORT><![CDATA[N]]></ISREPORT>
