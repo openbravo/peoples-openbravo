@@ -214,6 +214,18 @@ BEGIN
           SET transactioncost = ABS(COALESCE(cur_wip.cost, 0)),
               iscostcalculated = 'Y'
           WHERE m_productionline_id = cur_wip.m_productionline_id;
+          DELETE FROM m_transaction_cost
+          WHERE m_transaction_id IN (SELECT m_transaction_id FROM m_transaction
+                                     WHERE m_productionline_id = cur_wip.m_productionline_id);
+          INSERT INTO m_transaction_cost (
+            m_transaction_cost_id, ad_client_id, ad_org_id, isactive,
+            created, createdby, updated, updatedby,
+            m_transaction_id, cost, costdate
+          ) SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
+                now(), p_user_id, now(), p_user_id,
+                m_transaction_id, ABS(COALESCE(cur_wip.cost, 0)), trxprocessdate
+            FROM m_transaction
+            WHERE m_productionline_id = cur_wip.m_productionline_id;
         END LOOP;
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
@@ -431,6 +443,18 @@ BEGIN
             SET transactioncost = v_cost,
                 iscostcalculated = 'Y'
             WHERE m_productionline_id = cur_productionline.m_productionline_id;
+            DELETE FROM m_transaction_cost
+            WHERE m_transaction_id IN (SELECT m_transaction_id FROM m_transaction
+                                       WHERE m_productionline_id = cur_productionline.m_productionline_id);
+            INSERT INTO m_transaction_cost (
+              m_transaction_cost_id, ad_client_id, ad_org_id, isactive,
+              created, createdby, updated, updatedby,
+              m_transaction_id, cost, costdate
+            ) SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
+                  now(), p_user_id, now(), p_user_id,
+                  m_transaction_id, v_cost, trxprocessdate
+              FROM m_transaction
+              WHERE m_productionline_id = cur_productionline.m_productionline_id;
 
             v_ResultStr := 'M_Costing';
             --Check if the product has any cost previously calculated.
