@@ -90,8 +90,7 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
-
-          checkLicenseAndGo(res, vars, strUserAuth, sessionId, doRedirect);
+          checkLicenseAndGo(res, vars, strUserAuth, strUser, sessionId, doRedirect);
 
         } catch (AuthenticationException e) {
 
@@ -117,7 +116,7 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth, String sessionId, boolean doRedirect) throws IOException,
+      String strUserAuth, String username, String sessionId, boolean redirect) throws IOException,
       ServletException {
     OBContext.setAdminMode();
     try {
@@ -138,10 +137,14 @@ public class LoginHandler extends HttpBaseServlet {
         action = "../security/Login_FS.html";
       }
 
+      boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
+
+      boolean doRedirect = redirect || forceNamedUserLogin;
+
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      switch (ak.checkOPSLimitations(sessionId)) {
+      switch (ak.checkOPSLimitations(sessionId, username, forceNamedUserLogin)) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED",
             vars.getLanguage());
@@ -199,6 +202,15 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(myPool, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
         updateDBSession(sessionId, false, "IOBPS");
         goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html", doRedirect);
+        return;
+      case CONCURRENT_NAMED_USER:
+        msg = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER", vars.getLanguage());
+        title = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
+        log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
+        goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html",
+            doRedirect);
+
+        return;
       case NO_RESTRICTION:
         break;
       }
@@ -329,6 +341,9 @@ public class LoginHandler extends HttpBaseServlet {
         jsonMsg.put("messageTitle", title);
         jsonMsg.put("messageText", msg);
 
+        if ("Confirmation".equals(msgType)) {
+          jsonMsg.put("command", "FORCE_NAMED_USER");
+        }
         response.setContentType("application/json;charset=UTF-8");
         final PrintWriter out = response.getWriter();
         out.print(jsonMsg.toString());

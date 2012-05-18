@@ -129,7 +129,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER
   }
 
   public enum CommercialModuleStatus {
@@ -766,6 +766,55 @@ public class ActivationKey {
     return result;
   }
 
+  public LicenseRestriction checkOPSLimitations(String currentSession, String username,
+      boolean forceNamedUserLogin) {
+    LicenseRestriction result = checkOPSLimitations(currentSession);
+
+    if (result != LicenseRestriction.NO_RESTRICTION || !shouldCheckNamedUsersConcurrency(username)) {
+      return result;
+    }
+
+    if (forceNamedUserLogin) {
+      // Forcing log in even there are other sessions for same user: disabling the other sessions
+      disableOtherSessionsOfUser(currentSession, username);
+    } else {
+      // Checking named users concurrency if no restriction
+      OBContext.setAdminMode();
+      int activeSessions = 0;
+      try {
+        activeSessions = getActiveSessionsForNamedUser(currentSession, username);
+        log4j.debug("Active sessions for " + username + " user: " + activeSessions);
+        if (activeSessions > 0) {
+          // Before raising concurrent users error, clean the session with ping timeout and try it
+          // again
+          if (deactivateTimeOutSessions(currentSession)) {
+            activeSessions = getActiveSessionsForNamedUser(currentSession, username);
+            log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
+          }
+        }
+      } catch (Exception e) {
+        log4j.error("Error checking sessions", e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      if (activeSessions > 0) {
+        result = LicenseRestriction.CONCURRENT_NAMED_USER;
+      }
+    }
+
+    return result;
+  }
+
+  private boolean shouldCheckNamedUsersConcurrency(String username) {
+    // TODO: Implement this based on property and license type...
+    if (StringUtils.isEmpty(username)) {
+      System.out.println("empty username...");
+      return false;
+    }
+    System.out.println(username);
+    return true;
+  }
+
   /**
    * Checks if heartbeat is active and a beat has been sent during last days.
    * 
@@ -839,6 +888,40 @@ public class ActivationKey {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }
     return obCriteria.count();
+  }
+
+  private int getActiveSessionsForNamedUser(String currentSession, String username) {
+    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Restrictions.eq(Session.PROPERTY_USERNAME, username));
+    if (currentSession != null && !currentSession.equals("")) {
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
+    }
+    return obCriteria.count();
+  }
+
+  private void disableOtherSessionsOfUser(String currentSession, String username) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+      obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
+      obCriteria.add(Restrictions.eq(Session.PROPERTY_USERNAME, username));
+      if (currentSession != null && !currentSession.equals("")) {
+        obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
+      }
+
+      for (Session session : obCriteria.list()) {
+        session.setSessionActive(false);
+        session.setLoginStatus("CNU");
+        log.info("Disabled session " + session.getId() + " for user " + username
+            + " becaue of concurrent sessions with same user");
+      }
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log.error("Error deactivating concurrent named users sessions", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public String toString(ConnectionProvider conn, String lang) {
