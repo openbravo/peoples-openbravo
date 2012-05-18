@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,8 +52,10 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       String strPriceActual = vars.getNumericParameter("inppriceactual");
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strDiscount = vars.getNumericParameter("inpdiscount");
+      String strMPricelistId = vars.getStringParameter("inpmPricelistId");
       try {
-        printPage(response, vars, strQty, strPriceActual, strDiscount, strPriceList, strChanged);
+        printPage(response, vars, strQty, strPriceActual, strDiscount, strPriceList, strChanged,
+            strMPricelistId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -63,8 +65,8 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strQty,
-      String strPriceActual, String strDiscount, String strPriceList, String strChanged)
-      throws IOException, ServletException {
+      String strPriceActual, String strDiscount, String strPriceList, String strChanged,
+      String strMPricelistId) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -81,8 +83,12 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       BigDecimal qty, LineNetAmt, priceActual, discount, priceList;
 
       String strRequisition = vars.getStringParameter("inpmRequisitionId");
-      SLRequisitionLineAmtData[] data = SLRequisitionLineAmtData.select(this, strRequisition);
-
+      SLRequisitionLineAmtData[] data = null;
+      if ("".equals(strMPricelistId) || strMPricelistId == null) {
+        data = SLRequisitionLineAmtData.select(this, strRequisition);
+      } else {
+        data = SLRequisitionLineAmtData.selectPriceListLine(this, strMPricelistId);
+      }
       Integer stdPrecision = null;
       Integer pricePrecision = null;
 
@@ -118,6 +124,8 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
         if (!strDiscount.equals(discount.toString())) {
           resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
         }
+        resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+
       } else if (strChanged.equals("inpdiscount")) { // calculate std and
         // actual
         BigDecimal discount1 = null;
