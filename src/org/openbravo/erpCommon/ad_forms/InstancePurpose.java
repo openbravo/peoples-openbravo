@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -96,7 +97,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
     Form instanceActivationForm = OBDal.getInstance().get(Form.class, instanceActivationId);
     if (instanceActivationForm != null) {
       newTabTitle = instanceActivationForm.getIdentifier();
-      newTabTitle = org.apache.commons.lang.StringEscapeUtils.escapeHtml(newTabTitle);
+      newTabTitle = StringEscapeUtils.escapeHtml(newTabTitle);
     } else {
       newTabTitle = "Instance Activation";
     }
