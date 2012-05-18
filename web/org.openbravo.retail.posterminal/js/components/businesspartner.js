@@ -1,30 +1,20 @@
-/*global define */
+/*global define, Backbone */
 
 define(['builder', 'utilities',  'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  // Order list
-  OB.COMP.BusinessPartner = function (context) {
-  
-    var me = this;
-    this.context = context;
-    
-    this.renderTitle = function (receipt) {
-      return B(
-        {kind: B.KindJQuery('strong'), content: [                                                                                        
-          receipt.get('bp') ? receipt.get('bp').get('_identifier') : ''
-        ]}            
-      );
-    };    
-    
-    this.bp = B({kind: B.KindJQuery('span')});      
-    this.$el = this.bp.$el;
-
-    this.receipt =  context.modelorder;   
-    this.receipt.on('clear change:bp change:bploc', function () {
-      this.bp.$el.empty().append(this.renderTitle(this.receipt).$el);
-    }, this);
-  };  
+  OB.COMP.BusinessPartner = Backbone.View.extend({
+      tagName: 'a',
+      className: 'btnlink btnlink-small btnlink-gray',
+      attributes: {'href': '#modalcustomer', 'data-toggle': 'modal', 'style': 'font-size: 110%'},     
+      initialize: function () {
+            
+        this.receipt =  this.options.modelorder;   
+        this.receipt.on('clear change:bp change:bploc', function () {
+          this.$el.text(this.receipt.get('bp') ? this.receipt.get('bp').get('_identifier') : '');
+        }, this);   
+      }
+  });
 });    

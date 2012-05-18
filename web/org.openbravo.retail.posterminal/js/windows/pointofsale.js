@@ -67,47 +67,41 @@ define(['builder', 'i18n',
                                                                                                                                     
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
                                                                             
-              {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [                                                                           
-                {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                             
-                      {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [   
-                          {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#'}, content: [                                                                                                                                
-                            {kind: OB.COMP.OrderDetails}
-                          ]},                                                                                                                          
-                          {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalcustomer', 'data-toggle': 'modal'}, content: [                                                                                                                                
-                            {kind: OB.COMP.BusinessPartner}
-                          ]},
-                          {kind: B.KindJQuery('div'), attr: {'style': 'float:right'}, content: [                                                                                                                                
-                            {kind: B.KindJQuery('a'), attr: {'class': 'btnlink btnlink-small btnlink-gray', 'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [                                                                                                                                
-                              {kind: OB.COMP.ReceiptsCounter}
-                            ]}
-                          ]},                        
-                          {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}} 
-                      ]}
-                    ]}                                                              
-                  ]},
-                  {kind: OB.COMP.OrderView, attr: {
-                    renderLine: function (model) {
-                      return (
-                        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                            model.get('product').get('product')._identifier                                                                
-                          ]},                                                                                      
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                            model.printQty()                                                                                                                                                          
-                          ]},                                                                                      
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                            model.printPrice()                                                             
-                          ]},                                                                                      
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                            model.printNet()
-                          ]},
-                          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+              {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [ 
+                {kind: B.KindJQuery('div'), attr: {'style': 'position: relative;background-color: #ffffff; color: black;'}, content: [                                                                                                                                       
+                  {kind: OB.COMP.ReceiptsCounter},                       
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [  
+                    {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                      {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                                                             
+                        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [                                                                                                                                              
+                            {kind: OB.COMP.OrderDetails},    
+                            {kind: OB.COMP.BusinessPartner},        
+                            {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}} 
                         ]}
-                      );         
-                    }                 
-                  }}                    
+                      ]}                                                              
+                    ]},
+                    {kind: OB.COMP.OrderView, attr: {
+                      renderLine: function (model) {
+                        return (
+                          {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                              model.get('product').get('product')._identifier                                                                
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                              model.printQty()                                                                                                                                                          
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                              model.printPrice()                                                             
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                              model.printNet()
+                            ]},
+                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                          ]}
+                        );         
+                      }                 
+                    }}                    
+                  ]}                                                              
                 ]}                                                              
               ]}  
             ]},          
