@@ -320,3 +320,14 @@
   background-color: #E8E8E8;
 }
 
+
+/* Fix for IE9 + HTML5 to avoid weird horizontal scroll */
+.pickListMenuBody {
+  background-color: white;
+  background-repeat: repeat-x ;
+  background-position: bottom left;
+  background-image: url(./images/selector-widget/pickers/border.png);
+  border-width: 0px 1px 0px 1px;
+  border-style: solid;
+  border-color: #8fa7c7;
+}
