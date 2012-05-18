@@ -2157,10 +2157,10 @@ isc.OBViewGrid.addProperties({
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
           this.setEditValue(rowNum, 'actionAfterFicReturn', {
-              target: this,
-              method: this.saveEditedValues,
-              parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
-            }, true, true);
+            target: this,
+            method: this.saveEditedValues,
+            parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
+          }, true, true);
           return;
         }
       }
