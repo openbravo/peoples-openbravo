@@ -184,6 +184,9 @@ login.trial.delay.increment=0
 login.trial.delay.max=0
 login.trial.user.lock=0
 
+# Prevents concurrent sessions for same user.
+login.limit.user.session=false
+
 ##########
 # Others #
 ##########

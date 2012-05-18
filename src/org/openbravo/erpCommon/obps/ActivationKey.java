@@ -98,6 +98,7 @@ public class ActivationKey {
   private boolean subscriptionConvertedProperty = false;
   private boolean subscriptionActuallyConverted = false;
   private LicenseClass licenseClass;
+  private LicenseType licenseType;
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
   private List<String> goldenExcludedArtifacts;
@@ -107,6 +108,7 @@ public class ActivationKey {
   private Date startDate;
   private Date endDate;
   private boolean limitedWsAccess = true;
+  private boolean limitNamedUsers = false;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -162,6 +164,19 @@ public class ActivationKey {
     private String code;
 
     private LicenseClass(String code) {
+      this.code = code;
+    }
+
+    public String getCode() {
+      return code;
+    }
+  }
+
+  public enum LicenseType {
+    CONCURRENT_USERS("USR"), ON_DEMAND("DMD");
+    private String code;
+
+    private LicenseType(String code) {
       this.code = code;
     }
 
@@ -296,10 +311,12 @@ public class ActivationKey {
     trial = false;
     golden = false;
     licenseClass = LicenseClass.COMMUNITY;
+    licenseType = null;
     startDate = null;
     endDate = null;
     pendingTime = null;
     limitedWsAccess = false;
+    limitNamedUsers = false;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -374,6 +391,16 @@ public class ActivationKey {
     } else {
       log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
       licenseClass = LicenseClass.BASIC;
+    }
+
+    String pLicenseType = getProperty("lincensetype");
+    if ("DMD".equals(pLicenseType)) {
+      licenseType = LicenseType.ON_DEMAND;
+    } else if ("USR".equals(pLicenseType)) {
+      licenseType = LicenseType.CONCURRENT_USERS;
+    } else {
+      log4j.warn("Unknown license type:" + pLicenseType + ". Using Concurrent Users!.");
+      licenseType = LicenseType.CONCURRENT_USERS;
     }
 
     // Check for dates to know if the instance is active
@@ -523,6 +550,14 @@ public class ActivationKey {
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
     goldenExcludedArtifacts = new ArrayList<String>();
+
+    if (isActive() && licenseType == LicenseType.ON_DEMAND) {
+      limitNamedUsers = true;
+    } else {
+      limitNamedUsers = OBPropertiesProvider.getInstance().getBooleanProperty(
+          "login.limit.user.session");
+    }
+
     if (isActive() && licenseClass == LicenseClass.STD && !golden) {
       // Don't read restrictions for Standard instances
       return;
@@ -721,7 +756,7 @@ public class ActivationKey {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
     }
 
-    if (getProperty("lincensetype").equals("USR")) {
+    if (licenseType == LicenseType.CONCURRENT_USERS) {
       Long softUsers = null;
       if (getProperty("limituserswarn") != null) {
         softUsers = new Long(getProperty("limituserswarn"));
@@ -770,7 +805,9 @@ public class ActivationKey {
       boolean forceNamedUserLogin) {
     LicenseRestriction result = checkOPSLimitations(currentSession);
 
-    if (result != LicenseRestriction.NO_RESTRICTION || !shouldCheckNamedUsersConcurrency(username)) {
+    boolean checkNamedUserLimitation = StringUtils.isNotEmpty(username) && limitNamedUsers;
+
+    if (result != LicenseRestriction.NO_RESTRICTION || !checkNamedUserLimitation) {
       return result;
     }
 
@@ -803,16 +840,6 @@ public class ActivationKey {
     }
 
     return result;
-  }
-
-  private boolean shouldCheckNamedUsersConcurrency(String username) {
-    // TODO: Implement this based on property and license type...
-    if (StringUtils.isEmpty(username)) {
-      System.out.println("empty username...");
-      return false;
-    }
-    System.out.println(username);
-    return true;
   }
 
   /**
@@ -995,7 +1022,7 @@ public class ActivationKey {
   }
 
   public String getLicenseExplanation(ConnectionProvider conn, String lang) {
-    if (getProperty("lincensetype").equals("USR")) {
+    if (licenseType == LicenseType.CONCURRENT_USERS) {
       return getProperty("limitusers") + " " + Utility.messageBD(conn, "OPSConcurrentUsers", lang);
 
     } else {
