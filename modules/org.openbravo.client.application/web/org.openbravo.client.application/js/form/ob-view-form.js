@@ -600,9 +600,9 @@ OB.ViewFormProperties = {
     // store grid editing information which can be used when the fic returns
     // this is needed as after the fic return the edit row may have changed.
     var gridEditInformation = this.view.viewGrid.getEditForm() ? {
-        grid: this.view.viewGrid,
-        editRow: this.view.viewGrid.getEditRow()
-      } : null;
+      grid: this.view.viewGrid,
+      editRow: this.view.viewGrid.getEditRow()
+    } : null;
 
     this.inFicCall = true;
 
@@ -704,8 +704,8 @@ OB.ViewFormProperties = {
         calloutMessages = data.calloutMessages,
         auxInputs = data.auxiliaryInputValues,
         prop, value, i, j, dynamicCols = data.dynamicCols,
-        sessionAttributes = data.sessionAttributes, editValues,
-        item, section, retHiddenInputs = data.hiddenInputs;
+        sessionAttributes = data.sessionAttributes,
+        editValues, item, section, retHiddenInputs = data.hiddenInputs;
 
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && gridEditInformation && this.grid.getEditRow() !== gridEditInformation.editRow) {
@@ -909,7 +909,7 @@ OB.ViewFormProperties = {
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, isTime, i, valueMap = {},
+    var isDate, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -962,11 +962,10 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       this.setValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
-      isTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'time';
-      if (isTime) {
+      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
+      if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
-      } else if (isDate || columnValue.hasDateDefault) {
+      } else if (columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {
 
@@ -1097,9 +1096,9 @@ OB.ViewFormProperties = {
       textValue = OB.Utilities.Number.OBMaskedToOBPlain(textValue, type.decSeparator, type.groupSeparator);
       textValue = textValue.replace(type.decSeparator, '.');
     }
-    
+
     this.setValue(fldName + '_textualValue', textValue);
-    
+
     if (gridEditInformation) {
       gridEditInformation.grid.setEditValue(gridEditInformation.editRow, fldName + '_textualValue', textValue, true, true);
     } else if (this.grid && this.grid.isEditing()) {
@@ -1233,9 +1232,9 @@ OB.ViewFormProperties = {
     // store grid editing information which can be used when the fic returns
     // this is needed as after the fic return the edit row may have changed.
     var gridEditInformation = this.view.viewGrid.isEditing() ? {
-        grid: this.view.viewGrid,
-        editRow: this.view.viewGrid.getEditRow()
-      } : null;
+      grid: this.view.viewGrid,
+      editRow: this.view.viewGrid.getEditRow()
+    } : null;
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
 
