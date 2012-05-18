@@ -63,6 +63,7 @@ import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -163,6 +164,8 @@ public abstract class AcctServer {
   public static final String STATUS_Error = "E";
   /** Document Status */
   public static final String STATUS_InvalidCost = "C";
+  /** Document Status */
+  public static final String STATUS_NotCalculatedCost = "NC";
   /** Document Status */
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
@@ -1894,8 +1897,13 @@ public abstract class AcctServer {
     else if (strStatus.equals(STATUS_DocumentLocked)) {
       strTitle = "@OtherPostingProcessActive@";
       messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_NotCalculatedCost)) {
+      if (parameters.isEmpty()) {
+        strTitle = "@NotCalculatedCost@";
+      } else {
+        strTitle = "@NotCalculatedCostWithTransaction@";
+      }
     } else if (strStatus.equals(STATUS_InvalidCost)) {
-      strTitle = "@InvalidCost@";
       if (parameters.isEmpty()) {
         strTitle = "@InvalidCost@";
       } else {
@@ -1956,6 +1964,13 @@ public abstract class AcctServer {
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("Product", strProduct);
     parameters.put("Date", strDate);
+    return parameters;
+  }
+
+  public Map<String, String> getNotCalculatedCostParameters(MaterialTransaction trx) {
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("trx", trx.getIdentifier());
+    parameters.put("product", trx.getProduct().getIdentifier());
     return parameters;
   }
 

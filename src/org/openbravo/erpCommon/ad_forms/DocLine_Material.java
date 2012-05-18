@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
@@ -69,6 +70,10 @@ public class DocLine_Material extends DocLine {
     this.transaction = transaction;
   }
 
+  public MaterialTransaction getTransaction() {
+    return transaction;
+  }
+
   /**
    * Get Total Product Costs. If exists a transaction retrieves the cost from it, otherwise calls
    * the
@@ -86,6 +91,11 @@ public class DocLine_Material extends DocLine {
     if (transaction != null && transaction.getTransactionCost() != null) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
       return transaction.getTransactionCost().multiply(sign).toString();
+    } else if (transaction != null && CostingStatus.getInstance().isMigrated()) {
+      return "";
+    } else if (CostingStatus.getInstance().isMigrated()) {
+      // TODO: Return Standard cost (not stockable item type products)
+      return "";
     }
     return p_productInfo.getProductCosts(date, "", as, conn, con);
   } // getProductCosts

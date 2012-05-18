@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingServer;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -182,9 +183,15 @@ public class DocProduction extends AcctServer {
         // CostingRule not found exception. Ignore it.
         log4j.debug("CostingRule not found to retrieve organization's currency");
       }
+      if (CostingStatus.getInstance().isMigrated() && line.getTransaction() != null
+          && !line.getTransaction().isCostCalculated()) {
+        Map<String, String> parameters = getNotCalculatedCostParameters(line.getTransaction());
+        setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
-      if (BigDecimal.ZERO.compareTo(dCosts) == 0
+      if (BigDecimal.ZERO.compareTo(dCosts) == 0 && !CostingStatus.getInstance().isMigrated()
           && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
         Map<String, String> parameters = getInvalidCostParameters(
             OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
