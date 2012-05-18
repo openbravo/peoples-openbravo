@@ -84,7 +84,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
 
       String strRequisition = vars.getStringParameter("inpmRequisitionId");
       SLRequisitionLineAmtData[] data = null;
-      if ("".equals(strMPricelistId) || strMPricelistId == null) {
+      if ("".equals(strMPricelistId)) {
         data = SLRequisitionLineAmtData.select(this, strRequisition);
       } else {
         data = SLRequisitionLineAmtData.selectPriceListLine(this, strMPricelistId);
