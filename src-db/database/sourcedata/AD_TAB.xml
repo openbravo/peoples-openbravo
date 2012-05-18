@@ -12528,9 +12528,9 @@ The corresponding tables have then the following setting:
 <!--402881A832FC397A0132FC55A71F001E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--402881A832FC397A0132FC55A71F001E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--402881A832FC397A0132FC55A71F001E-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--402881A832FC397A0132FC55A71F001E-->  <NAME><![CDATA[Archived Payment Out Plan Details]]></NAME>
-<!--402881A832FC397A0132FC55A71F001E-->  <DESCRIPTION><![CDATA[List of payment out made details against a particular invoice based on the payment out plan]]></DESCRIPTION>
-<!--402881A832FC397A0132FC55A71F001E-->  <HELP><![CDATA[List of payment out made details against a particular invoice based on the payment out plan]]></HELP>
+<!--402881A832FC397A0132FC55A71F001E-->  <NAME><![CDATA[Archived Payment Plan Details]]></NAME>
+<!--402881A832FC397A0132FC55A71F001E-->  <DESCRIPTION><![CDATA[List of payment made details against a particular invoice based on the payment plan]]></DESCRIPTION>
+<!--402881A832FC397A0132FC55A71F001E-->  <HELP><![CDATA[List of payment made details against a particular invoice based on the payment plan]]></HELP>
 <!--402881A832FC397A0132FC55A71F001E-->  <AD_TABLE_ID><![CDATA[542D9D78E5D8452CA4977210B7BE7FA1]]></AD_TABLE_ID>
 <!--402881A832FC397A0132FC55A71F001E-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--402881A832FC397A0132FC55A71F001E-->  <SEQNO><![CDATA[39]]></SEQNO>
@@ -12556,9 +12556,9 @@ The corresponding tables have then the following setting:
 <!--402881A832FC85E30132FC8BF00A000D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--402881A832FC85E30132FC8BF00A000D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--402881A832FC85E30132FC8BF00A000D-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--402881A832FC85E30132FC8BF00A000D-->  <NAME><![CDATA[Archived Payment In Plan]]></NAME>
-<!--402881A832FC85E30132FC8BF00A000D-->  <DESCRIPTION><![CDATA[List of scheduled payments in expected against a particular invoice and archived payment in plan associated with that invoice.]]></DESCRIPTION>
-<!--402881A832FC85E30132FC8BF00A000D-->  <HELP><![CDATA[List of scheduled payments in expected against a particular invoice and archived payment in plan associated with that invoice.]]></HELP>
+<!--402881A832FC85E30132FC8BF00A000D-->  <NAME><![CDATA[Archived Payment Plan]]></NAME>
+<!--402881A832FC85E30132FC8BF00A000D-->  <DESCRIPTION><![CDATA[List of scheduled payments expected against a particular invoice and archived payment plan associated with that invoice.]]></DESCRIPTION>
+<!--402881A832FC85E30132FC8BF00A000D-->  <HELP><![CDATA[List of scheduled payments expected against a particular invoice and archived payment plan associated with that invoice.]]></HELP>
 <!--402881A832FC85E30132FC8BF00A000D-->  <AD_TABLE_ID><![CDATA[8C391E83D9A74F738D4D67E09329B745]]></AD_TABLE_ID>
 <!--402881A832FC85E30132FC8BF00A000D-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--402881A832FC85E30132FC8BF00A000D-->  <SEQNO><![CDATA[55]]></SEQNO>
@@ -12584,9 +12584,9 @@ The corresponding tables have then the following setting:
 <!--402881A832FC85E30132FC8FA8E60025-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--402881A832FC85E30132FC8FA8E60025-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--402881A832FC85E30132FC8FA8E60025-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--402881A832FC85E30132FC8FA8E60025-->  <NAME><![CDATA[Archived Payment In Plan Details]]></NAME>
-<!--402881A832FC85E30132FC8FA8E60025-->  <DESCRIPTION><![CDATA[List of payment in made details against a particular invoice based on the archived payment in plan..]]></DESCRIPTION>
-<!--402881A832FC85E30132FC8FA8E60025-->  <HELP><![CDATA[List of payment in made details against a particular invoice based on the archived payment in plan..]]></HELP>
+<!--402881A832FC85E30132FC8FA8E60025-->  <NAME><![CDATA[Archived Payment Plan Details]]></NAME>
+<!--402881A832FC85E30132FC8FA8E60025-->  <DESCRIPTION><![CDATA[List of payment made details against a particular invoice based on the archived payment plan.]]></DESCRIPTION>
+<!--402881A832FC85E30132FC8FA8E60025-->  <HELP><![CDATA[List of payment made details against a particular invoice based on the archived payment plan.]]></HELP>
 <!--402881A832FC85E30132FC8FA8E60025-->  <AD_TABLE_ID><![CDATA[542D9D78E5D8452CA4977210B7BE7FA1]]></AD_TABLE_ID>
 <!--402881A832FC85E30132FC8FA8E60025-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--402881A832FC85E30132FC8FA8E60025-->  <SEQNO><![CDATA[56]]></SEQNO>
@@ -12612,9 +12612,9 @@ The corresponding tables have then the following setting:
 <!--4028E61132F1F5830132F25470980063-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--4028E61132F1F5830132F25470980063-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4028E61132F1F5830132F25470980063-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--4028E61132F1F5830132F25470980063-->  <NAME><![CDATA[Archived Payment Out Plan]]></NAME>
-<!--4028E61132F1F5830132F25470980063-->  <DESCRIPTION><![CDATA[Original list of scheduled payments in expected against a particular invoice and payment in plan associated with that invoice.]]></DESCRIPTION>
-<!--4028E61132F1F5830132F25470980063-->  <HELP><![CDATA[List of originally scheduled payments in expected against a particular invoice and payment in plan associated with that invoice.]]></HELP>
+<!--4028E61132F1F5830132F25470980063-->  <NAME><![CDATA[Archived Payment Plan]]></NAME>
+<!--4028E61132F1F5830132F25470980063-->  <DESCRIPTION><![CDATA[Original list of scheduled payments expected against a particular invoice and payment plan associated with that invoice.]]></DESCRIPTION>
+<!--4028E61132F1F5830132F25470980063-->  <HELP><![CDATA[List of originally scheduled payments expected against a particular invoice and payment plan associated with that invoice.]]></HELP>
 <!--4028E61132F1F5830132F25470980063-->  <AD_TABLE_ID><![CDATA[8C391E83D9A74F738D4D67E09329B745]]></AD_TABLE_ID>
 <!--4028E61132F1F5830132F25470980063-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--4028E61132F1F5830132F25470980063-->  <SEQNO><![CDATA[38]]></SEQNO>

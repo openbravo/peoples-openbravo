@@ -1035,7 +1035,7 @@ function closeProcessPayment() {
 
             <!-- Line 1 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPDocNo" class="LabelText">Payment Out Document No.</span><span name="lblR" id="lblRDocNo" class="LabelText">Payment In Document No.</span></td>
+              <td class="TitleCell"><span id="lblPDocNo" class="LabelText">Payment Document No.</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid required TextBox_TwoCells_width" type="text" name="inpDocNumber" value="" id="paramDocNumber"></input></td>
               <td class="TitleCell"><span class="LabelText">Document Type</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width" type="text" name="inpDocType" value="" id="paramDocType"></input></td>
@@ -1111,7 +1111,7 @@ function closeProcessPayment() {
             
             <!-- Line 6 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
+              <td class="TitleCell"><span id="lblPExpectedPaym" class="LabelText">Expected Payment</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid required TextBox_OneCell_width number" readonly type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input></td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" id="lblExpectedConverted">Expected Converted</span></td>
@@ -1122,7 +1122,7 @@ function closeProcessPayment() {
 
             <!-- Line 7 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPActualPaym"class="LabelText">Actual Payment Out</span><span name="lblR" id="lblRActualPaym" class="LabelText">Actual Payment In</span></td>
+              <td class="TitleCell"><span id="lblPActualPaym"class="LabelText">Actual Payment</span></td>
               <td class="TextBox_btn_ContentCell">
                   <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                     <tr>
@@ -1199,7 +1199,7 @@ function closeProcessPayment() {
             
             <!-- Line 8 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPPaymDate" class="LabelText">Payment Out Date</span><span name="lblR" id="lblRPaymDate"class="LabelText">Payment In Date</span></td>
+              <td class="TitleCell"><span id="lblPPaymDate" class="LabelText">Payment Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
@@ -1254,8 +1254,8 @@ function closeProcessPayment() {
             <!-- Text -->
             <tr>
                 <td colspan="6" class="LabelText" style="font-weight: bold;">
-                    <span name="lblP" id="lblPText">Select additional purchase invoices, purchase orders or gl items that you want to add to this payment out</span>
-                    <span name="lblR" id="lblRText">Select additional sales invoices, sales orders or gl items that you want to add to this payment in</span>
+                    <span name="lblP" id="lblPText">Select additional purchase invoices, purchase orders or gl items that you want to add to this payment</span>
+                    <span name="lblR" id="lblRText">Select additional sales invoices, sales orders or gl items that you want to add to this payment</span>
                 </td>
             </tr>
             
@@ -1742,7 +1742,7 @@ function closeProcessPayment() {
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span name="lblP" id="lblPPayment">Payment Out</span><span name="lblR" id="lblRPayment">Payment In</span></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span id="lblPPayment">Payment</span></th>
                       </tr>
                     </thead>
                     <tbody id="sectionGrid">
