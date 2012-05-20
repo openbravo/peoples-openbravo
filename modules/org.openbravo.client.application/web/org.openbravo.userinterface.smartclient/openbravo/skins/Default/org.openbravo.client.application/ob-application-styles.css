@@ -72,6 +72,18 @@ body {
   line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
+/* menuMain changes to avoid UI defects due to the CSS3 attributes introduced by SmartClient 8.3d 03-May-2012 */
+.menuMain {
+  background: #FFFFFF url(../../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/smartclient/images/Menu/menu_background.png) repeat-y scroll;
+  filter: none;
+  -ms-filter: none;
+}
+.menuMainRTL {
+  background: #FFFFFF url(../../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/smartclient/images/Menu/menu_background_rtl.png) repeat-y right scroll;
+  filter: none;
+  -ms-filter: none;
+}
+
 /*============================================================
  Top Layout
  ============================================================*/
