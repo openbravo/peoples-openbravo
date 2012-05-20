@@ -5708,9 +5708,9 @@ table.Login_ToolBar_bg {
   overflow: auto;
   height: 88px;
   bottom: 0;
-  left: 80px;
+  left: 80px; /*~RTL   right: 80px; */
   margin-bottom: 72px;
-  margin-right: 64px;
+  margin-right: 64px; /*~RTL   margin-left: 64px; */
 
 }
 
