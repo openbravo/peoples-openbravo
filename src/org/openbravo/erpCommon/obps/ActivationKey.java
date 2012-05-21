@@ -1536,6 +1536,12 @@ public class ActivationKey {
   public JSONObject getExpirationMessage(String lang) {
     JSONObject result = new JSONObject();
     try {
+      if (outOfPlatform) {
+        result.put("type", "Error");
+        result.put("text", "OBPS_ON_DEMAND_OFF_PLATFORM_LOGIN");
+        return result;
+      }
+
       // Community or professional without expiration
       if (pendingTime == null || subscriptionActuallyConverted) {
         return result;
