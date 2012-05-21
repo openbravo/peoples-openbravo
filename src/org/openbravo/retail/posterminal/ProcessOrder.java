@@ -55,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -104,6 +105,8 @@ public class ProcessOrder implements JSONProcess {
     order.setWarehouse(OBDal.getInstance().get(Warehouse.class, jsonorder.getString("warehouse")));
     order.setSalesRepresentative(OBDal.getInstance().get(User.class,
         jsonorder.getString("salesRepresentative")));
+    order.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+        jsonorder.getString("posTerminal")));
 
     order.setSalesTransaction(true);
     order.setDocumentStatus("DR");

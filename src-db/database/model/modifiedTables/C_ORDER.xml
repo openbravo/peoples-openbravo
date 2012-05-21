@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE C_ORDER">
+    <table name="C_ORDER" primaryKey="C_ORDER_KEY">
+      <column name="EM_OBPOS_APPLICATIONS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
+        <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+    </table>
+  </database>
