@@ -31,7 +31,7 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
 
       this.component = B(
         {kind: B.KindJQuery('div'), content: [
-          'Supper trooper'      
+          'xxxxxxxxxxxxx'      
         ]}
       );   
       this.$el.append(this.component.$el);

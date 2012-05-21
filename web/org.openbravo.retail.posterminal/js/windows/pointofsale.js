@@ -4,6 +4,7 @@ define(['builder', 'i18n',
         'data/datamaster', 'data/dataordersave', 'data/dataordertaxes', 'data/dataorderdiscount',
         'model/terminal', 'model/order',
         'components/commonbuttons', 'components/hwmanager', 
+        'windows/posbuttons',
         'components/modalreceipts', 'components/modalbps',
         'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
         'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
@@ -37,13 +38,23 @@ define(['builder', 'i18n',
           {kind: OB.COMP.ModalReceipts},      
   
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [ 
-              
-              {kind: OB.COMP.ButtonNew},
-              {kind: OB.COMP.ButtonDelete},
-              {kind: OB.COMP.ButtonPrint},
-                              
+            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                              
               {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
+                {kind: B.KindJQuery('li'), content: [
+                  {kind: OB.COMP.ButtonNew}                                                        
+                ]},
+                {kind: B.KindJQuery('li'), content: [
+                  {kind: OB.COMP.ButtonDelete}                                                        
+                ]},
+                {kind: B.KindJQuery('li'), content: [
+                  {kind: OB.COMP.ButtonPrint}                                                        
+                ]},
+                {kind: B.KindJQuery('li'), content: [
+                  {kind: OB.COMP.MenuButton.extend({icon: 'icon-th-large icon-white', label: OB.I18N.getLabel('OBPOS_LblMenu')}), content: [
+                    {kind: OB.COMP.MenuItem.extend({href:'../..', label:'Openbravo Workspace'})}, 
+                    {kind: OB.COMP.MenuItem.extend({href:'?window=org.openbravo.retail.posterminal/js/windows/closecash', label:'Close cash'})}
+                  ]}                                                        
+                ]},
                 {kind: B.KindJQuery('li'), content: [
                   {kind: OB.COMP.ButtonTabPayment}                                                        
                 ]},

@@ -29,36 +29,55 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       e.preventDefault();
     }       
   });
-  
-  OB.COMP.ButtonNew = OB.COMP.Button.extend({
-    icon: 'icon-asterisk icon-white',
-    label: OB.I18N.getLabel('OBPOS_LblNew'),
-    clickEvent: function (e) {
-      e.preventDefault();
-      this.options.modelorderlist.addNewOrder();
-    }       
-  });  
-  
-  OB.COMP.ButtonDelete = OB.COMP.Button.extend({
-    icon: 'icon-trash  icon-white',
-    label: OB.I18N.getLabel('OBPOS_LblDelete'),
-    clickEvent: function (e) {
-      e.preventDefault();
-      if (window.confirm(OB.I18N.getLabel('OBPOS_MsgConfirmDelete'))) {
-        this.options.modelorderlist.deleteCurrent();
+ 
+  // Menu Button
+  OB.COMP.MenuButton = Backbone.View.extend({
+    tagName: 'div',
+    className: 'dropdown',
+    attributes: {'style': 'display:inline-block;'},
+    initialize: function () {
+      this.button = $('<a href=\"#\" class=\"btnlink\" data-toggle=\"dropdown\"></a>'); 
+      
+      // The button
+      this.$el.append(this.button);      
+      if (this.icon) {
+        this.button.append($('<i class=\"' + this.icon + '\"></i>'));
       }
-    }       
+      this.button.append($('<span>' + this.label + ' </span>'));     
+      if (this.iconright) {
+        this.button.append($('<i class=\"' + this.iconright + '\"></i>'));
+      }  
+      this.button.append($('<span class=\"caret\"></span>'));
+      
+      this.menu = $('<ul class=\"dropdown-menu\"></ul>');     
+      this.$el.append(this.menu);
+    },    
+    append: function (child) {
+      if (child.render) {
+        this.menu.append(child.render().$el); // it is a backbone view.
+      } else if (child.$el) {
+        this.menu.append(child.$el);
+      }      
+    },
+    icon: '',
+    iconright: '',
+    label: ''    
+  });  
+    
+  OB.COMP.MenuSeparator = Backbone.View.extend({
+    tagName: 'li',
+    className: 'divider'
   });
   
-  OB.COMP.ButtonPrint = OB.COMP.Button.extend({
-    icon: 'icon-print  icon-white',
-    label: OB.I18N.getLabel('OBPOS_LblPrint'),
-    clickEvent: function (e) {
-      e.preventDefault();
-      this.options.modelorder.trigger('print');
-    }       
-  });   
-  
+  OB.COMP.MenuItem = Backbone.View.extend({
+    tagName: 'li',
+    initialize: function () {
+      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).append($('<span/>').text(this.label)));
+    },
+    href: '',
+    label: ''
+  });     
+
   // Generic Tab Button
   OB.COMP.ButtonTab = Backbone.View.extend({
     tagName: 'a',

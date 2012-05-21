@@ -94,7 +94,7 @@ if(POSUtils.isModuleInDevelopment()) {
     color: white;
     cursor: pointer;      
     margin:5px; 
-    float:left;     
+  
 	}	 
   a.btnlink:active {
     background-color: #cccccc;
