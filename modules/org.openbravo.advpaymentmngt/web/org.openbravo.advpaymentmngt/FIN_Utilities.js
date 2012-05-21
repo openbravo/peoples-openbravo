@@ -509,8 +509,14 @@ function distributeAmount(_amount) {
     for (i = 0; i < total; i++) {
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-      if (compare(outstandingAmount, '>', amount)) {
-        outstandingAmount = amount;
+      if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+        if (compare(abs(outstandingAmount), '>', abs(amount))) {
+          outstandingAmount = amount;
+        }
+      } else {
+        if (compare(outstandingAmount, '>', amount)) {
+          outstandingAmount = amount;
+        }
       }
       if (compare(amount, '==', 0)) {
         frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";
