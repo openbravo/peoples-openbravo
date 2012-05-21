@@ -27,6 +27,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
@@ -139,12 +140,15 @@ public class LoginHandler extends HttpBaseServlet {
 
       boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
-      boolean doRedirect = redirect || forceNamedUserLogin;
+      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
+          forceNamedUserLogin);
+      boolean doRedirect = redirect
+          || (limitation == LicenseRestriction.NO_RESTRICTION && forceNamedUserLogin);
 
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      switch (ak.checkOPSLimitations(sessionId, username, forceNamedUserLogin)) {
+      switch (limitation) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED",
             vars.getLanguage());
