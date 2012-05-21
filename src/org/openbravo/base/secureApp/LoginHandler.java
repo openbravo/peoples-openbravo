@@ -211,6 +211,12 @@ public class LoginHandler extends HttpBaseServlet {
             doRedirect);
 
         return;
+      case ON_DEMAND_OFF_PLATFORM:
+        msg = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
+        title = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
+        log4j.warn("On demand off platform");
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
       case NO_RESTRICTION:
         break;
       }

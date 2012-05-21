@@ -193,6 +193,10 @@ public class ActiveInstanceProcess implements Process {
     content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
     content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
 
+    if (ActivationKey.getInstance().isOffPlatform()) {
+      content += "&offPlatform=true";
+    }
+
     URL url = new URL(BUTLER_URL);
     try {
       String result = HttpsUtils.sendSecure(url, content);

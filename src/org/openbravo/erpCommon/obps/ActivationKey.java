@@ -138,7 +138,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM
   }
 
   public enum CommercialModuleStatus {
@@ -864,6 +864,11 @@ public class ActivationKey {
 
     if (getExpiredInstalledModules().size() > 0) {
       result = LicenseRestriction.MODULE_EXPIRED;
+    }
+
+    if (licenseType == LicenseType.ON_DEMAND && outOfPlatform
+        && !"true".equals(getProperty("limited.on.demand"))) {
+      result = LicenseRestriction.ON_DEMAND_OFF_PLATFORM;
     }
 
     return result;
@@ -1753,5 +1758,9 @@ public class ActivationKey {
     long pendingMs = lastDayOfPeriod - today.getTime()
         - (exceededInLastDays.size() * MILLSECS_PER_DAY);
     return (int) (pendingMs / MILLSECS_PER_DAY);
+  }
+
+  public boolean isOffPlatform() {
+    return outOfPlatform;
   }
 }
