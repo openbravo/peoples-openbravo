@@ -19,14 +19,18 @@
 
 package org.openbravo.erpCommon.obps;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -80,6 +84,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
   private final static String OB_PUBLIC_KEY2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeivfuzeE+hdv7mXEyOWTpGglsT1J+UHcp9RrHydgLgccPdQ5EjqtKVSc/jzzJV5g+9XaSxz9pK5TuzzdN4fJHPCnuO0EiwWI2dxS/t1Boo+gGageGZyFRMhMsULU4902gzmw1qugEskUSKONJcR65H06HYRn2fTgVbGvEhFMASwIDAQAB";
+  private final static String ON_DEMAND_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCfHx5q0Bs45Eg2x1V6ASx86ZWNh8jniPprH5xonuJ5ATVSDQ/UGsz1d0v/3WkWXaj98OwUPJt5/iSe7l5DAZ7I2C22y3CQx8pNiBfi4FK+HtRM4pOhK5YQXV2vNV5hTPgsjrOrjdPXZ+SQbDqUIGSNhwBVmrczNO9THDN+eQCSQIDAQAB";;
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
@@ -109,6 +114,8 @@ public class ActivationKey {
   private Date endDate;
   private boolean limitedWsAccess = true;
   private boolean limitNamedUsers = false;
+  private boolean outOfPlatform = false;
+  private Long maxUsers;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -211,6 +218,8 @@ public class ActivationKey {
   private final static long WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30L;
   private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
       * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
+  private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
+  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:8181/checkOnDemand";
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -317,6 +326,8 @@ public class ActivationKey {
     pendingTime = null;
     limitedWsAccess = false;
     limitNamedUsers = false;
+    outOfPlatform = false;
+    maxUsers = null;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -403,6 +414,25 @@ public class ActivationKey {
       licenseType = LicenseType.CONCURRENT_USERS;
     }
 
+    if (licenseType == LicenseType.ON_DEMAND) {
+      if (!checkInOnDemandPlatform()) {
+        outOfPlatform = true;
+        String limitusers = getProperty("limitusers");
+        maxUsers = StringUtils.isEmpty(limitusers) ? 0L : new Long(limitusers);
+        if (maxUsers == 0L) {
+          maxUsers = OUT_OF_PLATFORM_DEMAND_MAX_USERS;
+        }
+        log.warn("On Demand license ouf of platform limiting to " + maxUsers + " concurrent users");
+      } else {
+        maxUsers = 0L;
+      }
+    }
+
+    if (licenseType == LicenseType.CONCURRENT_USERS) {
+      String limitusers = getProperty("limitusers");
+      maxUsers = StringUtils.isEmpty(limitusers) ? 0L : new Long(limitusers);
+    }
+
     // Check for dates to know if the instance is active
     subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
 
@@ -461,6 +491,48 @@ public class ActivationKey {
     }
 
     checkDates();
+  }
+
+  private boolean checkInOnDemandPlatform() {
+    InputStream is = null;
+    BufferedReader in = null;
+    try {
+      URL url = new URL(ON_DEMAND_PLATFORM_CHECK_URL);
+      URLConnection conn = url.openConnection();
+      is = conn.getInputStream();
+      in = new BufferedReader(new InputStreamReader(is));
+      String l = in.readLine();
+      PublicKey pk = getPublicKey(ON_DEMAND_PUBLIC_KEY);
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      decrypt(l.getBytes(), pk, bos, ON_DEMAND_PUBLIC_KEY);
+      String s = new String(bos.toByteArray());
+      if ("OK".equals(s)) {
+        return true;
+      }
+      in.close();
+      is.close();
+      conn.getInputStream().close();
+
+      return false;
+    } catch (Exception e) {
+      log.error("Error verifying on On Demand platform.", e);
+      return false;
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException e) {
+          log.error("Error verifying on On Demand platform.", e);
+        }
+      }
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          log.error("Error verifying on On Demand platform.", e);
+        }
+      }
+    }
   }
 
   private void checkDates() {
@@ -756,41 +828,37 @@ public class ActivationKey {
       return LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE;
     }
 
-    if (licenseType == LicenseType.CONCURRENT_USERS) {
-      Long softUsers = null;
-      if (getProperty("limituserswarn") != null) {
-        softUsers = new Long(getProperty("limituserswarn"));
+    Long softUsers = null;
+    if (getProperty("limituserswarn") != null) {
+      softUsers = new Long(getProperty("limituserswarn"));
+    }
+
+    // maxUsers==0 is unlimited concurrent users
+    if (maxUsers != 0) {
+      OBContext.setAdminMode();
+      int activeSessions = 0;
+      try {
+        activeSessions = getActiveSessions(currentSession);
+        log4j.debug("Active sessions: " + activeSessions);
+        if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
+          // Before raising concurrent users error, clean the session with ping timeout and try it
+          // again
+          if (deactivateTimeOutSessions(currentSession)) {
+            activeSessions = getActiveSessions(currentSession);
+            log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
+          }
+        }
+      } catch (Exception e) {
+        log4j.error("Error checking sessions", e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      if (activeSessions >= maxUsers) {
+        return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
       }
 
-      Long maxUsers = new Long(getProperty("limitusers"));
-
-      // maxUsers==0 is unlimited concurrent users
-      if (maxUsers != 0) {
-        OBContext.setAdminMode();
-        int activeSessions = 0;
-        try {
-          activeSessions = getActiveSessions(currentSession);
-          log4j.debug("Active sessions: " + activeSessions);
-          if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
-            // Before raising concurrent users error, clean the session with ping timeout and try it
-            // again
-            if (deactivateTimeOutSessions(currentSession)) {
-              activeSessions = getActiveSessions(currentSession);
-              log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
-            }
-          }
-        } catch (Exception e) {
-          log4j.error("Error checking sessions", e);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-        if (activeSessions >= maxUsers) {
-          return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
-        }
-
-        if (softUsers != null && activeSessions >= softUsers) {
-          result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
-        }
+      if (softUsers != null && activeSessions >= softUsers) {
+        result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
       }
     }
 
@@ -986,16 +1054,17 @@ public class ActivationKey {
                     : outputFormat.format(endDate))).append("</td></tr>");
       }
 
-      sb.append("<tr><td>")
-          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
-          .append("</td><td>")
-          .append(
-              (getProperty("limitusers") == null || getProperty("limitusers").equals("0")) ? Utility
-                  .messageBD(conn, "OPSUnlimitedUsers", lang) : getProperty("limitusers"))
-          .append("</td></tr>");
-      if (getProperty("limituserswarn") != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
-            .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
+      if (licenseType != LicenseType.ON_DEMAND || outOfPlatform) {
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
+            .append("</td><td>")
+            .append(
+                (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
+                    lang) : maxUsers).append("</td></tr>");
+        if (getProperty("limituserswarn") != null) {
+          sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
+              .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
+        }
       }
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
@@ -1227,6 +1296,16 @@ public class ActivationKey {
         && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
       refreshLicense(24 * 60);
     } else {
+      if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
+        outOfPlatform = !checkInOnDemandPlatform();
+        if (outOfPlatform) {
+          log.warn("Still working out of On Demand platform");
+        } else {
+          log.info("Now working on On Demand platform");
+          maxUsers = 0L;
+        }
+      }
+
       // Reload from DB if it was modified from outside
       if (lastUpdateTimestamp == null
           || !lastUpdateTimestamp.equals(OBDal.getInstance()
