@@ -38,7 +38,7 @@
         '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CONVERTED, '' AS PERIOD, '' AS C_INVOICELINE_ID,'' AS M_INOUTLINE_ID, '' AS M_PRODUCT_ID,
         '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME, '' AS CLASSNAME,
-        '' AS ACCTDATECOLUMN, '' AS TABLENAME, '' AS ACCTCLASSNAME, '' as ISREVERSAL
+        '' AS ACCTDATECOLUMN, '' AS TABLENAME, '' AS ACCTCLASSNAME, '' as ISREVERSAL, '' as ISRETURN
         FROM C_INVOICE a, ad_org WHERE a.AD_CLIENT_ID=?
         AND ad_org.ad_org_id=a.ad_org_id
         AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
@@ -73,7 +73,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DocBaseType, GL_Category_ID, IsReversal FROM C_DocType WHERE C_DocType_ID=?
+        SELECT DocBaseType, GL_Category_ID, IsReversal, IsReturn FROM C_DocType WHERE C_DocType_ID=?
      ]]>
      </Sql>
      <Parameter name="docType"/>

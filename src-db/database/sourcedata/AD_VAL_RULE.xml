@@ -173,7 +173,7 @@ OR (@AD_Reference_ID@ = '28' and AD_Reference.ParentReference_ID='17')]]></CODE>
 <!--124-->  <NAME><![CDATA[C_DocType AR/AP Invoices and Credit Memos]]></NAME>
 <!--124-->  <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
 <!--124-->  <TYPE><![CDATA[S]]></TYPE>
-<!--124-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND C_DocType.IsSOTrx='@IsSOTrx@' AND (AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1' OR COALESCE(@AD_Org_ID@,'-1')='-1')]]></CODE>
+<!--124-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC','ARI_RM') AND C_DocType.IsSOTrx='@IsSOTrx@' AND (AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1' OR COALESCE(@AD_Org_ID@,'-1')='-1')]]></CODE>
 <!--124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--124--></AD_VAL_RULE>
 
@@ -726,7 +726,7 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--173-->  <NAME><![CDATA[C_DocType Invoices and Credit Memos]]></NAME>
 <!--173-->  <DESCRIPTION><![CDATA[Document Type AR/AP Invoice and Credit Memos]]></DESCRIPTION>
 <!--173-->  <TYPE><![CDATA[S]]></TYPE>
-<!--173-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--173-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC','ARI_RM') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
 <!--173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--173--></AD_VAL_RULE>
 
@@ -1158,7 +1158,7 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1002100001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100001-->  <NAME><![CDATA[DocBaseType - Invoices]]></NAME>
 <!--1002100001-->  <TYPE><![CDATA[S]]></TYPE>
-<!--1002100001-->  <CODE><![CDATA[C_DOCTYPE.DOCBASETYPE IN ('ARI', 'ARC', 'API', 'APC') AND C_DOCTYPE.ISSOTRX = (SELECT ISSOTRX FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
+<!--1002100001-->  <CODE><![CDATA[C_DOCTYPE.DOCBASETYPE IN ('ARI', 'ARC', 'API', 'APC','ARI_RM') AND C_DOCTYPE.ISSOTRX = (SELECT ISSOTRX FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
 <!--1002100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100001--></AD_VAL_RULE>
 

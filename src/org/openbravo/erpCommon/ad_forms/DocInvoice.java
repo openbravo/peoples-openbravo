@@ -275,9 +275,10 @@ public class DocInvoice extends AcctServer {
 
     /** @todo Assumes TaxIncluded = N */
 
-    // ARI, ARF
+    // ARI, ARF, ARI_RM
     if (DocumentType.equals(AcctServer.DOCTYPE_ARInvoice)
-        || DocumentType.equals(AcctServer.DOCTYPE_ARProForma)) {
+        || DocumentType.equals(AcctServer.DOCTYPE_ARProForma)
+        || DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
       log4jDocInvoice.debug("Point 1");
       // Receivables DR
       if (m_payments == null || m_payments.length == 0)
@@ -357,19 +358,24 @@ public class DocInvoice extends AcctServer {
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
-        for (int i = 0; i < p_lines.length; i++)
-          if (IsReversal.equals("Y"))
-            fact.createLine(
-                p_lines[i],
-                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
-                this.C_Currency_ID, p_lines[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          else
-            fact.createLine(
-                p_lines[i],
-                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
-                this.C_Currency_ID, "", p_lines[i].getAmount(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
+        for (int i = 0; i < p_lines.length; i++) {
+          Account account = ((DocLine_Invoice) p_lines[i]).getAccount(
+              ProductInfo.ACCTTYPE_P_Revenue, as, conn);
+          if (DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
+            Account accountReturnMaterial = ((DocLine_Invoice) p_lines[i]).getAccount(
+                ProductInfo.ACCTTYPE_P_RevenueReturn, as, conn);
+            if (accountReturnMaterial != null) {
+              account = accountReturnMaterial;
+            }
+          }
+          if (IsReversal.equals("Y")) {
+            fact.createLine(p_lines[i], account, this.C_Currency_ID, p_lines[i].getAmount(), "",
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          } else {
+            fact.createLine(p_lines[i], account, this.C_Currency_ID, "", p_lines[i].getAmount(),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          }
+        }
       }
       // Set Locations
       FactLine[] fLines = fact.getLines();

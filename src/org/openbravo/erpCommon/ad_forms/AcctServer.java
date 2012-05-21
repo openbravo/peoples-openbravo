@@ -111,6 +111,7 @@ public abstract class AcctServer {
   public String GL_Category_ID = "";
   public String Record_ID = "";
   public String IsReversal = "";
+  public String IsReturn = "";
   /** No Currency in Document Indicator */
   protected static final String NO_CURRENCY = "-1";
   // This is just for the initialization of the accounting
@@ -193,6 +194,8 @@ public abstract class AcctServer {
 
   /** AR Invoices */
   public static final String DOCTYPE_ARInvoice = "ARI";
+  /** Return Material Sales Invoice */
+  public static final String DOCTYPE_RMSalesInvoice = "ARI_RM";
   /** AR Credit Memo */
   public static final String DOCTYPE_ARCredit = "ARC";
   /** AR Receipt */
@@ -955,6 +958,7 @@ public abstract class AcctServer {
         DocumentType = data[0].docbasetype;
         GL_Category_ID = data[0].glCategoryId;
         IsReversal = data[0].isreversal;
+        IsReturn = data[0].isreturn;
       }
       // We have a document Type, but no GL info - search for DocType
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
@@ -963,6 +967,7 @@ public abstract class AcctServer {
         if (data != null && data.length != 0) {
           GL_Category_ID = data[0].glCategoryId;
           IsReversal = data[0].isreversal;
+          IsReturn = data[0].isreturn;
         }
       }
       if (DocumentType != null && DocumentType.equals(""))

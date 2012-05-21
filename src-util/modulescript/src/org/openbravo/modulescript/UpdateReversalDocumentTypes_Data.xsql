@@ -41,7 +41,7 @@
       <![CDATA[
         update c_invoice i set docstatus='VO'
         where docstatus = 'CO'
-          and c_doctype_id in (select coalesce(c_doctype_reversed_id, c_doctype_id) from c_doctype where docbasetype in ('API','ARI','APC','ARC'))
+          and c_doctype_id in (select coalesce(c_doctype_reversed_id, c_doctype_id) from c_doctype where docbasetype in ('API','ARI','APC','ARC','ARI_RM'))
           and exists (select 1 from c_invoice_reverse r where r.c_invoice_id=i.c_invoice_id)
           and not exists (select 1 from c_debt_payment dp where dp.c_invoice_id=i.c_invoice_id)
           and not exists (select 1 from fin_payment_schedule ps where ps.c_invoice_id=i.c_invoice_id)

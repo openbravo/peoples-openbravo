@@ -73,6 +73,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="P_REVENUE_RETURN_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="P_COGS_RETURN_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -88,6 +96,9 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_COGS_ACCT">
         <reference local="P_COGS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_COGS_RETURN">
+        <reference local="P_COGS_RETURN_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_EXPENSE_ACCT">
         <reference local="P_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
@@ -99,6 +110,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_REVENUE_ACCT">
         <reference local="P_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_REVENUE_RT">
+        <reference local="P_REVENUE_RETURN_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_ACCT_P_TRADEDISCOUN1">
         <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>

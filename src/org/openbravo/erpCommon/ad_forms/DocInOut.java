@@ -171,18 +171,30 @@ public class DocInOut extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
-    // Sales
+    // Sales or Return from Customer
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
+      Boolean matReturn = IsReturn.equals("Y");
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
-        Account cogsAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn);
+        Account cogsAccount = null;
+        if (matReturn) {
+          cogsAccount = line.getAccount(ProductInfo.ACCTTYPE_P_CogsReturn, as, conn);
+        }
+        if (cogsAccount == null) {
+          cogsAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn);
+        }
         if (cogsAccount == null) {
           Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
           org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
               .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                   as.m_C_AcctSchema_ID);
-          log4j.error("No Account COGS for product: " + product.getName()
-              + " in accounting schema: " + schema.getName());
+          if (matReturn) {
+            log4j.error("No Account COGS Return for product: " + product.getName()
+                + " in accounting schema: " + schema.getName());
+          } else {
+            log4j.error("No Account COGS for product: " + product.getName()
+                + " in accounting schema: " + schema.getName());
+          }
         }
         Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
         if (assetAccount == null) {
@@ -194,9 +206,15 @@ public class DocInOut extends AcctServer {
               + " in accounting schema: " + schema.getName());
         }
         String costs = line.getProductCosts(DateAcct, as, conn, con);
-        log4jDocInOut.debug("(MatShipment) - DR account: "
-            + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
-        log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
+        if (matReturn) {
+          log4jDocInOut.debug("(MatShipmentReturn) - DR account: "
+              + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
+          log4jDocInOut.debug("(MatShipmentReturn) - DR costs: " + costs);
+        } else {
+          log4jDocInOut.debug("(MatShipment) - DR account: "
+              + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
+          log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
+        }
         BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
             RoundingMode.HALF_UP);
         String strCosts = b_Costs.toString();
@@ -217,9 +235,15 @@ public class DocInOut extends AcctServer {
           dr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn); // to
         }
         // Loc
-        log4jDocInOut.debug("(MatShipment) - CR account: "
-            + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
-        log4jDocInOut.debug("(MatShipment) - CR costs: " + strCosts);
+        if (matReturn) {
+          log4jDocInOut.debug("(MatShipmentReturn) - CR account: "
+              + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+          log4jDocInOut.debug("(MatShipmentReturn) - CR costs: " + strCosts);
+        } else {
+          log4jDocInOut.debug("(MatShipment) - CR account: "
+              + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
+          log4jDocInOut.debug("(MatShipment) - CR costs: " + strCosts);
+        }
         // Inventory CR
         cr = fact.createLine(line, assetAccount, costCurrencyId, "", strCosts, Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, conn);
