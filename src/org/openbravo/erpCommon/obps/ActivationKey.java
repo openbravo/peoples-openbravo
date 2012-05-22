@@ -876,18 +876,21 @@ public class ActivationKey {
 
   public LicenseRestriction checkOPSLimitations(String currentSession, String username,
       boolean forceNamedUserLogin) {
+    if (forceNamedUserLogin) {
+      // Forcing log in even there are other sessions for same user: disabling the other sessions
+      disableOtherSessionsOfUser(currentSession, username);
+    }
+
     LicenseRestriction result = checkOPSLimitations(currentSession);
 
     boolean checkNamedUserLimitation = StringUtils.isNotEmpty(username) && limitNamedUsers;
 
-    if (result != LicenseRestriction.NO_RESTRICTION || !checkNamedUserLimitation) {
+    if ((result != LicenseRestriction.NO_RESTRICTION && result != LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)
+        || !checkNamedUserLimitation) {
       return result;
     }
 
-    if (forceNamedUserLogin) {
-      // Forcing log in even there are other sessions for same user: disabling the other sessions
-      disableOtherSessionsOfUser(currentSession, username);
-    } else {
+    if (!forceNamedUserLogin) {
       // Checking named users concurrency if no restriction
       OBContext.setAdminMode();
       int activeSessions = 0;
