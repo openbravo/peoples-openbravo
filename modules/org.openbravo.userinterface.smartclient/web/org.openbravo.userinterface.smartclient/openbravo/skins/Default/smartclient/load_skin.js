@@ -15,7 +15,7 @@ with (theWindow) {
     // must be relative to your application file or isomorphicDir
     // isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/");
     isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/Default/smartclient/");
-    theWindow.isc_css3Mode = false;
+    isc.Browser.useCSS3 = false;
 
 
 //----------------------------------------
@@ -23,17 +23,7 @@ with (theWindow) {
 //----------------------------------------
     // isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow);
 
-
-    // The boolean value useCSS3 will be determined by checking browser if it is
-    // CSS3 compliant.
-    var useCSS3 = false, isc_css3Mode = theWindow.isc_css3Mode;
-    if (isc_css3Mode == "on") {
-        useCSS3 = true;
-    } else if (isc_css3Mode == "partialSupport" || isc_css3Mode === undefined) {
-        useCSS3 = (isc.Browser.isWebKit || isc.Browser.isFirefox || isc.Browser.isIE9);
-    } else if (isc_css3Mode == "supported") {
-        useCSS3 = ((isc.Browser.isWebKit || isc.Browser.isFirefox) && !isc.Browser.isIE9);
-    }
+    var useCSS3 = isc.Browser.useCSS3;
 
     if (useCSS3) {
 
@@ -233,7 +223,7 @@ with (theWindow) {
             isc.ListGrid.addProperties({
                 alternateRecordStyles:true,
                 alternateBodyStyleName:null,
-                backgroundColor:"#e7e7e7",
+                backgroundColor:null,
                 cellHeight:22,
                 checkboxFieldImageHeight:13,
                 checkboxFieldImageWidth:13,
@@ -625,14 +615,12 @@ with (theWindow) {
             
             isc.overwriteClass("ToolStripMenuButton", "MenuButton").addProperties({
                 autoFit:true,
-                baseStyle:"toolbarButton",
-                titleStyle:"buttonTitle",
+                baseStyle:"toolbarButton buttonTitle",
                 height:22,
                 labelVPad:0,
                 showDown:true,
                 showRollOver:true,
-                showTitle:false,
-                buttonHPad:7
+                showTitle:false
             });
         }
 
@@ -640,15 +628,13 @@ with (theWindow) {
             
             isc.overwriteClass("ToolStripButton", "Button").addProperties({
                 autoFit:true,
-                baseStyle:"toolbarButton",
-                titleStyle:"buttonTitle",
+                baseStyle:"toolbarButton buttonTitle",
                 height:22,
                 labelVPad:0,
                 showTitle:false,
                 showRollOver:true,
                 showDown:true,
-                title:null,
-                buttonHPad:6
+                title:null
             });
         }
 

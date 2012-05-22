@@ -666,8 +666,7 @@ overwritten by _base.scss.
 		dialog.hiliteHeaderStyle - dialogHeaderHilite
 		dialog.headerLabelDefaults.styleName - dialogHeaderText
 ============================================================*/
-.windowBackground,
-.dialogBackground {
+.windowBackground {
   background: #f7f7f7;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f7f7f7), color-stop(1%, #f7f7f7), color-stop(1%, #f2f2f2), color-stop(15%, #e0e0e0), color-stop(100%, #e0e0e0));
   background-image: -webkit-linear-gradient(top, #f7f7f7 0%, #f7f7f7 1%, #f2f2f2 1%, #e0e0e0 15%, #e0e0e0 100%);
@@ -1692,9 +1691,22 @@ overwritten by _base.scss.
 
 .headerButtonDisabled,
 .headerButtonSelectedDisabled {
-  background-color: white;
-  border-left: 1px solid #fafafa;
-  border-right: 1px solid #cccccc;
+  backgournd: #fef6f6;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fafafa), color-stop(24%, #f7f7f7), color-stop(100%, #e6e6e6));
+  background-image: -webkit-linear-gradient(top, #fafafa 0%, #f7f7f7 24%, #e6e6e6 100%);
+  background-image: -moz-linear-gradient(top, #fafafa 0%, #f7f7f7 24%, #e6e6e6 100%);
+  background-image: -o-linear-gradient(top, #fafafa 0%, #f7f7f7 24%, #e6e6e6 100%);
+  background-image: -ms-linear-gradient(top, #fafafa 0%, #f7f7f7 24%, #e6e6e6 100%);
+  background-image: linear-gradient(top, #fafafa 0%, #f7f7f7 24%, #e6e6e6 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#fafafa', endColorstr='#e6e6e6');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#fafafa', endColorstr='#e6e6e6')";
+  border-bottom: 1px solid #c1c8d2;
+  border-left: 1px solid #f6f7f9;
+  border-right: 1px solid #c1c8d2;
+  color: #ababab;
+  font-size: 11px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .headerButtonOver,
@@ -1747,7 +1759,6 @@ overwritten by _base.scss.
 .sorterButtonDown,
 .sorterButtonSelectedOver,
 .sorterButtonSelectedDown {
-  background-color: white;
   border-left: 1px solid #fafafa;
 }
 
@@ -1968,8 +1979,8 @@ overwritten by _base.scss.
 
 /* for grouping */
 .groupNode {
-  border-bottom: 1px solid #8fa7c7;
-  color: #3765a4;
+  border-bottom: 1px solid #8299b8;
+  color: #3764a3;
   font-family: Arial, Verdana, sans-serif;
   font-weight: bold;
 }
