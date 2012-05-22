@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.Date;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -151,6 +152,10 @@ public class DateUIDefinition extends UIDefinition {
 
   @Override
   public String getCellAlign() {
-    return "left";
+    if (!OBContext.getOBContext().isRTL()) {
+      return "left";
+    } else {
+      return "right";
+    }
   }
 }
