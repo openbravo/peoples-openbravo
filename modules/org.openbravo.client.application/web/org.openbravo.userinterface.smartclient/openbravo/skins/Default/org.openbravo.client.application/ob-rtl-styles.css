@@ -159,6 +159,7 @@
 .OBGridLinkCellSelectedDark,
 .OBGridLinkCellSelectedOverDark {
   border-width: 0px 0px 1px 1px;
+  padding: 0px 3px 1px 0px;
 }
 
 
