@@ -1541,7 +1541,8 @@ public class ActivationKey {
     try {
       if (outOfPlatform) {
         result.put("type", "Error");
-        result.put("text", "OBPS_ON_DEMAND_OFF_PLATFORM_LOGIN");
+        result.put("text", Utility.messageBD(new DalConnectionProvider(false),
+            "OBPS_ON_DEMAND_OFF_PLATFORM_LOGIN", lang, false));
         return result;
       }
 
