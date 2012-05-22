@@ -259,15 +259,26 @@ $('#logoutaction').click(function (e) {
   OB.POS.logout();
 });
 
-(function () { // Fix focus captured by location bar in android browser
-  var focuskeeper = $('<input style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');
-  $("body").append(focuskeeper);
-	focuskeeper.on('blur', function () {
-	    focuskeeper.focus();;
+
+// Hack focus captured by location bar in android browser.
+(function () {      
+	var locationwarning = true;
+	var focuskeeper = $('<input style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');  
+	$("body").append(focuskeeper);
+	$("body").focusin(function() {
+	  locationwarning = false;
 	});
-	focuskeeper.focus();
-}())
- 
+	$("body").focusout(function() {
+	  locationwarning = true;
+	}); 
+	
+	window.fixFocus = function () {
+		if (locationwarning) {
+		  focuskeeper.focus();
+		}	  
+	}
+}());
+        
 </script>
 
 </body>
