@@ -53,10 +53,11 @@ define(['utilities', 'datasource'], function () {
       new OB.DS.Query(
       'from PricingProductPrice where priceListVersion in ' + 
       '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
-      'where ppl.organization.id = :org and ppl.salesPriceList = true  and ppl.$readableCriteria and ppl.id = plv.priceList.id  and ' + 
-      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))')
-    );
-    this.loadparams = {product: {}, productprice: {'org': OB.POS.modelterminal.get('terminal').organization }};
+      'where ppl.salesPriceList = true  and ppl.$readableClientCriteria and ppl.$naturalOrgCriteria and ppl.id = plv.priceList.id  and ' + 
+      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))',
+      OB.POS.modelterminal.get('terminal').client, 
+      OB.POS.modelterminal.get('terminal').organization));
+    this.loadparams = {product: {}, productprice: {}};
   };
  _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
  
