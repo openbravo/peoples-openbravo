@@ -89,8 +89,8 @@ function fetch2() {
   var ti1 = Date.now();
 
   db.transaction(function (tx) {
-    _.each(data, function (item) {
-      tx.executeSql(q, [item.id, item.name], dbSuccess, dbError);
+    _.each(data.data, function (item) {
+      tx.executeSql(q, [item.id, item._identifier], dbSuccess, dbError);
     });
   }, dbError, function () {
     alert('20K inserts in: ' + (Date.now() - ti1) + 'ms');
