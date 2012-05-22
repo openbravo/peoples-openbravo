@@ -263,7 +263,7 @@ $('#logoutaction').click(function (e) {
 // Hack focus captured by location bar in android browser.
 (function () {      
 	var locationwarning = true;
-	var focuskeeper = $('<input style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');  
+	var focuskeeper = $('<input id="focuskeeper" style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');  
 	$("body").append(focuskeeper);
 	$("body").focusin(function() {
 	  locationwarning = false;
@@ -273,9 +273,13 @@ $('#logoutaction').click(function (e) {
 	}); 
 	
 	window.fixFocus = function () {
+	  
 		if (locationwarning) {
 		  focuskeeper.focus();
-		}	  
+		}	 
+		var t = document.activeElement.tagName;
+		var id = document.activeElement.id;
+		return (id === 'focuskeeper' || (t !=='INPUT' && t !=='SELECT' && t !=='TEXTAREA')); // process key
 	}
 }());
         
