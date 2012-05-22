@@ -91,6 +91,8 @@ define(['utilities'], function () {
     'OBPOS_LblDelete': ' DELETE',
     'OBPOS_LblPrint': ' PRINT',
     'OBPOS_LblMenu': ' MENU',
+    'OBPOS_LblOpenbravoWorkspace': 'Openbravo Workspace',
+    'OBPOS_LblCloseCash': 'Close Cash',
     'OBPOS_LblPay': ' PAY',    
     'OBPOS_LblBrowse': 'BROWSE',
     'OBPOS_LblSearch': 'SEARCH',
