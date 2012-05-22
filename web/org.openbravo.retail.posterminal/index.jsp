@@ -208,9 +208,6 @@ if(POSUtils.isModuleInDevelopment()) {
 </head>
 
 <body style="padding-top: 20px;background-color: darkgray; background: url(img/BACKGROUND-PNG24.png) top left">
-
-
-
 <div id="container" class="container">
   <div id="topsection" class="section">
     <div class="row">
@@ -261,6 +258,16 @@ $('#logoutaction').click(function (e) {
   e.preventDefault();
   OB.POS.logout();
 });
+
+(function () { // Fix focus captured by location bar in android browser
+  var focuskeeper = $('<input style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');
+  $("body").append(focuskeeper);
+	focuskeeper.on('blur', function () {
+	    focuskeeper.focus();;
+	});
+	focuskeeper.focus();
+}())
+ 
 </script>
 
 </body>
