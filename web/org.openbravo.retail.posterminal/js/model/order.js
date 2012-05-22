@@ -410,14 +410,11 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
   }); 
   
   OB.MODEL.OrderList = Backbone.Collection.extend({
+    _id: 'modelorderlist',
     model: OB.MODEL.Order,
     
-    constructor: function (context) {
-      this._id = 'modelorderlist';
-      this.modelorder = context.modelorder;     
-      Backbone.Collection.prototype.constructor.call(this);
-    }, 
     initialize : function () {
+      this.modelorder = this.options.modelorder;     
       this.current = null;
     },  
     
