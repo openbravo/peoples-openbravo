@@ -76,8 +76,8 @@ define(['utilities'], function () {
     'OBPOS_WeightZero': 'No weight on the scale.',
     
     'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',
-    'OBPOS_MsgHardwareServerNotAvailable': 'Hardware server is not available.',
-    'OBPOS_MsgScaleServerNotAvailable': 'Scale server is not available.',
+    'OBPOS_MsgHardwareServerNotAvailable': 'Printer and display are not available.',
+    'OBPOS_MsgScaleServerNotAvailable': 'Scale is not available.',
     'OBPOS_MsgTemplateNotAvailable': 'Template is not available.',
     'OBPOS_MsgHardwareServerNotDefined': 'Hardware server URL is not defined.',
     
