@@ -105,7 +105,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
             {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
-              {kind: B.KindHTML('<span>&times;</span>')}
+              {kind: B.KindHTML('<span style=\"font-size: 200%;\">&times;</span>')}
             ]},
             {kind: B.KindJQuery('h3'), content: [this.header]}
           ]}      
