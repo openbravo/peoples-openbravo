@@ -1,6 +1,6 @@
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -12,7 +12,7 @@
 var isc = window.isc ? window.isc : {};if(window.isc&&!window.isc.module_Core){isc.module_Core=1;isc._moduleStart=isc._Core_start=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc._moduleEnd&&(!isc.Log||(isc.Log && isc.Log.logIsDebugEnabled('loadTime')))){isc._pTM={ message:'Core load/parse time: ' + (isc._moduleStart-isc._moduleEnd) + 'ms', category:'loadTime'};
 if(isc.Log && isc.Log.logDebug)isc.Log.logDebug(isc._pTM.message,'loadTime')
 else if(isc._preLog)isc._preLog[isc._preLog.length]=isc._pTM
-else isc._preLog=[isc._pTM]}isc.definingFramework=true;var isc=window.isc?window.isc:{};isc.$a=new Date().getTime();isc.version="SNAPSHOT_v8.3d_2012-05-22/LGPL Deployment";isc.versionNumber="SNAPSHOT_v8.3d_2012-05-22";isc.buildDate="2012-05-22";isc.expirationDate="";isc.licenseType="LGPL";isc.licenseCompany="Isomorphic Software";isc.licenseSerialNumber="ISC_LGPL_NIGHTLY";isc.licensingPage="http://smartclient.com/product/";isc.$b={SCServer:{present:"false",name:"SmartClient Server",serverOnly:true,isPro:true},Drawing:{present:"true",name:"Drawing Module"},PluginBridges:{present:"true",name:"PluginBridges Module"},RichTextEditor:{present:"true",name:"RichTextEditor Module"},Calendar:{present:"true",name:"Calendar Module"},Analytics:{present:"false",name:"Analytics Module"},Charts:{present:"false",name:"Charts Module"},Tools:{present:"${includeTools}",name:"Portal and Tools Module"},NetworkPerformance:{present:"false",name:"Network Performance Module"},FileLoader:{present:"false",name:"Network Performance Module"},RealtimeMessaging:{present:"false",name:"RealtimeMessaging Module"},serverCriteria:{present:"false",name:"Server Advanced Filtering",serverOnly:true,isFeature:true},customSQL:{present:"false",name:"SQL Templating",serverOnly:true,isFeature:true},chaining:{present:"false",name:"Transaction Chaining",serverOnly:true,isFeature:true},batchDSGenerator:{present:"false",name:"Batch DS-Generator",serverOnly:true,isFeature:true},batchUploader:{present:"false",name:"Batch Uploader",serverOnly:true,isFeature:true},transactions:{present:"false",name:"Automatic Transaction Management",serverOnly:true,isFeature:true}};isc.canonicalizeModules=function(_1){if(!_1)return null;if(isc.isA.String(_1)){if(_1.indexOf(",")!=-1){_1=_1.split(",");var _2=/^\s+/,_3=/\s+$/;for(var i=0;i<_1.length;i++){_1[i]=_1[i].replace(_2,"").replace(_3,"")}}else _1=[_1]}
+else isc._preLog=[isc._pTM]}isc.definingFramework=true;var isc=window.isc?window.isc:{};isc.$a=new Date().getTime();isc.version="SNAPSHOT_v8.3d_2012-05-23/LGPL Deployment";isc.versionNumber="SNAPSHOT_v8.3d_2012-05-23";isc.buildDate="2012-05-23";isc.expirationDate="";isc.licenseType="LGPL";isc.licenseCompany="Isomorphic Software";isc.licenseSerialNumber="ISC_LGPL_NIGHTLY";isc.licensingPage="http://smartclient.com/product/";isc.$b={SCServer:{present:"false",name:"SmartClient Server",serverOnly:true,isPro:true},Drawing:{present:"true",name:"Drawing Module"},PluginBridges:{present:"true",name:"PluginBridges Module"},RichTextEditor:{present:"true",name:"RichTextEditor Module"},Calendar:{present:"true",name:"Calendar Module"},Analytics:{present:"false",name:"Analytics Module"},Charts:{present:"false",name:"Charts Module"},Tools:{present:"${includeTools}",name:"Portal and Tools Module"},NetworkPerformance:{present:"false",name:"Network Performance Module"},FileLoader:{present:"false",name:"Network Performance Module"},RealtimeMessaging:{present:"false",name:"RealtimeMessaging Module"},serverCriteria:{present:"false",name:"Server Advanced Filtering",serverOnly:true,isFeature:true},customSQL:{present:"false",name:"SQL Templating",serverOnly:true,isFeature:true},chaining:{present:"false",name:"Transaction Chaining",serverOnly:true,isFeature:true},batchDSGenerator:{present:"false",name:"Batch DS-Generator",serverOnly:true,isFeature:true},batchUploader:{present:"false",name:"Batch Uploader",serverOnly:true,isFeature:true},transactions:{present:"false",name:"Automatic Transaction Management",serverOnly:true,isFeature:true}};isc.canonicalizeModules=function(_1){if(!_1)return null;if(isc.isA.String(_1)){if(_1.indexOf(",")!=-1){_1=_1.split(",");var _2=/^\s+/,_3=/\s+$/;for(var i=0;i<_1.length;i++){_1[i]=_1[i].replace(_2,"").replace(_3,"")}}else _1=[_1]}
 return _1};isc.hasOptionalModules=function(_1){if(!_1)return true;_1=isc.canonicalizeModules(_1);for(var i=0;i<_1.length;i++)if(!isc.hasOptionalModule(_1[i]))return false;return true};isc.getMissingModules=function(_1){var _2=[];_1=isc.canonicalizeModules(_1);for(var i=0;i<_1.length;i++){var _4=_1[i];if(!isc.hasOptionalModule(_4))_2.add(isc.$b[_4])}
 return _2};isc.hasOptionalModule=function(_1){var v=isc.$b[_1];if(!v){if(isc.Log)isc.Log.logWarn("isc.hasOptionalModule - unknown module: "+_1);return false}
 return v.present=="true"||v.present.charAt(0)=="$"};isc.getOptionalModule=function(_1){return isc.$b[_1]};isc.$d=window.isc_useSimpleNames;if(isc.$d==null)isc.$d=true;if(window.OpenAjax){isc.$e=isc.versionNumber.replace(/[a-zA-Z_]+/,".0");OpenAjax.registerLibrary("SmartClient","http://smartclient.com/SmartClient",isc.$e,{namespacedMode:!isc.$d,iscVersion:isc.version,buildDate:isc.buildDate,licenseType:isc.licenseType,licenseCompany:isc.licenseCompany,licenseSerialNumber:isc.licenseSerialNumber});OpenAjax.registerGlobals("SmartClient",["isc"])}
@@ -2091,7 +2091,7 @@ isc.A=isc.Canvas;isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasse
 );isc.B._maxIndex=isc.C+3;isc.Canvas.$r3();isc.A=isc.Canvas.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A._isA_Canvas=true;isc.A.autoDraw=true;isc.A.allowContentAndChildren=true;isc.A.htmlPosition="afterBegin";isc.A.position=null;isc.A.left=0;isc.A.top=0;isc.A.defaultWidth=100;isc.A.defaultHeight=100;isc.A.minWidth=10;isc.A.maxWidth=10000;isc.A.minHeight=10;isc.A.maxHeight=10000;isc.A.zIndex=isc.Canvas.AUTO;isc.A.autoShowParent=false;isc.A.visibility=isc.Canvas.INHERIT;isc.A.styleName="normal";isc.A.contents=isc.nbsp;isc.A.backgroundRepeat=isc.Canvas.REPEAT;isc.A.mozOutlineOffset="-1px";isc.A.appImgDir="";isc.A.skinImgDir="images/";isc.A.cursor=isc.Canvas.DEFAULT;isc.A.disabledCursor=isc.Canvas.DEFAULT;isc.A.noDropCursor=isc.Canvas.NOT_ALLOWED;isc.A.$r6=(isc.Browser.isMoz&&isc.Browser.geckoVersion<20081201);isc.A.overflow=isc.Canvas.VISIBLE;isc.A.alwaysShowVScrollbar=false;isc.A.showCustomScrollbars=!((isc.Browser.isOpera||isc.Browser.isIE&&isc.Browser.version>4)||(isc.Browser.isUnix&&isc.Browser.isMoz&&isc.Browser.geckoVersion>=20020826&&isc.Browser.geckoVersion<=20031007));isc.A.scrollbarSize=16;isc.A.scrollbarConstructor="Scrollbar";isc.A.scrollLeft=0;isc.A.scrollTop=0;isc.A.scrollDelta=20;isc.A.$r7="unset";isc.A.enabled="unset";isc.A.redrawOnDisable=false;isc.A.$li=true;isc.A.$lh=true;isc.A.$r8=true;isc.A.$r9=true;isc.A.$lj=true;isc.A._redrawWithParent=true;isc.A.showFocusOutline=true;isc.A._useNativeTabIndex=(isc.Browser.isIE&&isc.Browser.version>=5)||isc.Browser.isSafari||(isc.Browser.isMoz&&isc.Browser.geckoVersion>=20051111);isc.A._useFocusProxy=(isc.Browser.isMoz&&isc.Browser.geckoVersion<20051111)||isc.Browser.isOpera;isc.A.contextMenuProperties={autoDraw:false,width:200,showIcons:true};isc.A.menuConstructor="Menu";isc.A.clippedCorners=["TL","TR","BL","BR"];isc.A.cornerClipColor="FFFFFF";isc.A.cornerClipImage="[SKIN]corner.gif";isc.A.cornerClipSize=10;isc.A.$sa={_generated:true,overflow:"hidden",$li:false,$lh:false,autoDraw:false,skinImgDir:"images/corners/",draw:function(){this.Super("draw",arguments)}};isc.A.dragOutlineStyle="dragOutline";isc.A.dragStartDistance=5;isc.A.canDragScroll=true;isc.A.dragScrollDelay=100;isc.A.dragScrollThreshold="10%";isc.A.minDragScrollIncrement=1;isc.A.maxDragScrollIncrement="5%";isc.A.dragIntersectStyle=isc.EventHandler.INTERSECT_WITH_MOUSE;isc.A.dragRepositionCursor=isc.Canvas.MOVE;isc.A.dragScrollType="any";isc.A.hoverDelay=300;isc.A.showHover=true;isc.A.edgeMarginSize=5;isc.A.edgeCursorMap={"T":"n-resize","L":"w-resize","B":"s-resize","R":"e-resize","TL":"nw-resize","TR":"ne-resize","BL":"sw-resize","BR":"se-resize"};isc.A.dragAppearance=isc.EventHandler.OUTLINE;isc.A.dropTypes=isc.Canvas.ANYTHING;isc.A.mouseStillDownInitialDelay=400;isc.A.mouseStillDownDelay=100;isc.A.doubleClickDelay=250;isc.A.refreshVariable="refresh";isc.A.$mu=(isc.Browser.isMoz&&(!isc.Browser.isUnix||isc.Browser.geckoVersion>20031007));isc.A.useClipDiv=(isc.Browser.isMoz||isc.Browser.isSafari||isc.Browser.isOpera);isc.A.manageChildOverflow=true;isc.A.$sb={};isc.A.percentBox="visible";isc.A.$sc="viewport";isc.A.snapHGap=20;isc.A.snapVGap=20;isc.A.snapHDirection=isc.Canvas.AFTER;isc.A.snapVDirection=isc.Canvas.AFTER;isc.A.snapAxis=isc.Canvas.BOTH;isc.A.snapOnDrop=true;isc.B.push(isc.A.getDragAppearance=function isc_Canvas_getDragAppearance(_1){if(_1==isc.EH.DRAG_RESIZE&&this.dragResizeAppearance!=null)
 return this.dragResizeAppearance;if(_1==isc.EH.DRAG_REPOSITION&&this.dragRepositionAppearance!=null)
 return this.dragRepositionAppearance;return this.dragAppearance}
-);isc.B._maxIndex=isc.C+1;isc.A=isc.Canvas.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$pa="resize";isc.A.$sd="draw";isc.A.$se="hidden";isc.A.$sf="redraw";isc.A.$sg="undefined";isc.A.$sh="draws";isc.A.$si="drawing";isc.A.$sj="redraws";isc.A.$sk="autoDraw";isc.A.$px="beforeBegin";isc.A.$pv="afterBegin";isc.A.$py="beforeEnd";isc.A.$pw="afterEnd";isc.A.$sl=">";isc.A.$sm="'";isc.A.$sn='"';isc.A.$so="initWidget";isc.A.$sp="html";isc.A.$sq="&nbsp;";isc.A.$sr="initial draw";isc.A.$ss="parentDrawn";isc.A.notifyAncestorsOnReflow=true;isc.A.$st="eventProxy";isc.A.reuseDOMIDs=false;isc.A.$su="canvas";isc.A.$sv="canvas_clipDiv";isc.A.clipHandleIsFocusHandle=true;isc.A.$p2="MARGIN-LEFT:";isc.A.$sw="MARGIN-RIGHT:";isc.A.$p3="MARGIN-TOP:";isc.A.$sx="MARGIN-BOTTOM:";isc.A.$sy="MARGIN:";isc.A.$sz="</div>";isc.A.$s0="</div></div>";isc.A.$s1=[];isc.A.isBorderBox=(isc.Browser.isMoz||isc.Browser.isBorderBox);isc.A.$s2="isc.EH.focusInCanvas(";isc.A.$s3="if(event.target!=this)return;isc.EH.focusInCanvas(";isc.A.$s4="if(window.isc)isc.EH.blurFocusCanvas(";isc.A.$s5=",true);";isc.A.$s6="autoChild:";isc.A.$s7="spacer:";isc.A.$s8=["<DIV ID='",null,"'style='position:absolute;width:1px;height:1px;overflow:hidden;left:",null,"px;top:",null,"px;'>&nbsp;</DIV>"];isc.A.$s9="scrollSizeDiv";isc.A.$ta="enforceScrollSize";isc.A.$tb="-1px";isc.A.useClientRectAPI=(isc.Browser.isIE&&isc.Browser.version>=9)||(isc.Browser.isMoz&&isc.Browser.geckoVersion>20071109);isc.A.useBoxObjectAPI=false;isc.A.useBoxObjectAPISelectively=true;isc.A.$tc="0px";isc.A.$td="left";isc.A.$te="top";isc.A.$tf="right";isc.A.$tg="bottom";isc.A.$th="center";isc.A.$ti="childMoved";isc.A.$tj="height";isc.A.$tk="width";isc.A.$td="left";isc.A.$te="top";isc.A.$tl="$tm";isc.A.$tn="%";isc.A.$to="*";isc.A.$tp={height:"_percent_height",width:"_percent_width",left:"_percent_left",top:"_percent_top"};isc.A.$tq={height:"minHeight",width:"minWidth"};isc.A.$tr={height:"maxHeight",width:"maxWidth"};isc.A.$ts="resized";isc.A.$tt="childResized";isc.A.momentumScrolling=true;isc.A.momentumScrollTime=1500;isc.A.momentumScrollAcceleration="smoothStart";isc.A.hoopSelectorDefaults={_constructor:"Canvas",keepInParentRect:true,redrawOnResize:false,overflow:"hidden",border:"1px solid blue",opacity:10,backgroundColor:"blue"};isc.A.hoopSelectAxis="both";isc.A.shouldSetNoDropTracker=isc.Browser.isOpera;isc.A.noDropTracker="[SKIN]/shared/no_drop.png";isc.A.adjustOverflowWhileDirty=true;isc.A.$tu={hidden:true,visible:true,scroll:true,auto:true,"clip-v":true,"clip-h":true,ignore:true};isc.A.$tv="sizing";isc.A.$tw="overflow";isc.A.$ty="px";isc.A.$p4="none";isc.A.$tz="relative";isc.A.$t0="disabled";isc.A.$p4="none";isc.A.$t1="styleName";isc.A.$t2="eventpart";isc.A.$hq="count";isc.A.$t3=["edgeImage","edgeColor","customEdges","shownEdges","edgeSize","edgeTop","edgeBottom","edgeLeft","edgeRight","edgeOffset","edgeOffsetTop","edgeOffsetBottom","edgeOffsetLeft","edgeOffsetRight","canDragResize","canDragReposition"];isc.A.shadowDepth=4;isc.A.dragResizeFromShadow=true;isc.A.$t4="shadow";isc.A.isGroup=false;isc.A.groupBorderCSS="2px solid black";isc.A.groupLabelPadding=10;isc.A.showGroupLabel=true;isc.A.groupLabelStyleName="groupLabel";isc.A.groupLabelDefaults={_constructor:"Label",overflow:"visible",height:1,width:1,wrap:false,vAlign:"center",align:"center"};isc.B.push(isc.A.init=function isc_Canvas_init(_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13){if(isc.$dd)arguments.$de=this;if(!isc.Canvas.$t5){if(this.getDocumentBody(true)==null){isc.logWarn("Canvas created in a page outside the BODY tag. This is not supported. "+"Isomorphic Software requires the tag to be present and all widgets be created "+"and drawn inside it. Canvas details follow:\n"+isc.Log.echo(this))}
+);isc.B._maxIndex=isc.C+1;isc.A=isc.Canvas.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$pa="resize";isc.A.$sd="draw";isc.A.$se="hidden";isc.A.$sf="redraw";isc.A.$sg="undefined";isc.A.$sh="draws";isc.A.$si="drawing";isc.A.$sj="redraws";isc.A.$sk="autoDraw";isc.A.$px="beforeBegin";isc.A.$pv="afterBegin";isc.A.$py="beforeEnd";isc.A.$pw="afterEnd";isc.A.$sl=">";isc.A.$sm="'";isc.A.$sn='"';isc.A.$so="initWidget";isc.A.iFrameHeightAdjustment=0;isc.A.$sp="html";isc.A.$sq="&nbsp;";isc.A.$sr="initial draw";isc.A.$ss="parentDrawn";isc.A.notifyAncestorsOnReflow=true;isc.A.$st="eventProxy";isc.A.reuseDOMIDs=false;isc.A.$su="canvas";isc.A.$sv="canvas_clipDiv";isc.A.clipHandleIsFocusHandle=true;isc.A.$p2="MARGIN-LEFT:";isc.A.$sw="MARGIN-RIGHT:";isc.A.$p3="MARGIN-TOP:";isc.A.$sx="MARGIN-BOTTOM:";isc.A.$sy="MARGIN:";isc.A.$sz="</div>";isc.A.$s0="</div></div>";isc.A.$s1=[];isc.A.isBorderBox=(isc.Browser.isMoz||isc.Browser.isBorderBox);isc.A.$s2="isc.EH.focusInCanvas(";isc.A.$s3="if(event.target!=this)return;isc.EH.focusInCanvas(";isc.A.$s4="if(window.isc)isc.EH.blurFocusCanvas(";isc.A.$s5=",true);";isc.A.$s6="autoChild:";isc.A.$s7="spacer:";isc.A.$s8=["<DIV ID='",null,"'style='position:absolute;width:1px;height:1px;overflow:hidden;left:",null,"px;top:",null,"px;'>&nbsp;</DIV>"];isc.A.$s9="scrollSizeDiv";isc.A.$ta="enforceScrollSize";isc.A.$tb="-1px";isc.A.useClientRectAPI=(isc.Browser.isIE&&isc.Browser.version>=9)||(isc.Browser.isMoz&&isc.Browser.geckoVersion>20071109);isc.A.useBoxObjectAPI=false;isc.A.useBoxObjectAPISelectively=true;isc.A.$tc="0px";isc.A.$td="left";isc.A.$te="top";isc.A.$tf="right";isc.A.$tg="bottom";isc.A.$th="center";isc.A.$ti="childMoved";isc.A.$tj="height";isc.A.$tk="width";isc.A.$td="left";isc.A.$te="top";isc.A.$tl="$tm";isc.A.$tn="%";isc.A.$to="*";isc.A.$tp={height:"_percent_height",width:"_percent_width",left:"_percent_left",top:"_percent_top"};isc.A.$tq={height:"minHeight",width:"minWidth"};isc.A.$tr={height:"maxHeight",width:"maxWidth"};isc.A.$ts="resized";isc.A.$tt="childResized";isc.A.momentumScrolling=true;isc.A.momentumScrollTime=1500;isc.A.momentumScrollAcceleration="smoothStart";isc.A.hoopSelectorDefaults={_constructor:"Canvas",keepInParentRect:true,redrawOnResize:false,overflow:"hidden",border:"1px solid blue",opacity:10,backgroundColor:"blue"};isc.A.hoopSelectAxis="both";isc.A.shouldSetNoDropTracker=isc.Browser.isOpera;isc.A.noDropTracker="[SKIN]/shared/no_drop.png";isc.A.adjustOverflowWhileDirty=true;isc.A.$tu={hidden:true,visible:true,scroll:true,auto:true,"clip-v":true,"clip-h":true,ignore:true};isc.A.$tv="sizing";isc.A.$tw="overflow";isc.A.$ty="px";isc.A.$p4="none";isc.A.$tz="relative";isc.A.$t0="disabled";isc.A.$p4="none";isc.A.$t1="styleName";isc.A.$t2="eventpart";isc.A.$hq="count";isc.A.$t3=["edgeImage","edgeColor","customEdges","shownEdges","edgeSize","edgeTop","edgeBottom","edgeLeft","edgeRight","edgeOffset","edgeOffsetTop","edgeOffsetBottom","edgeOffsetLeft","edgeOffsetRight","canDragResize","canDragReposition"];isc.A.shadowDepth=4;isc.A.dragResizeFromShadow=true;isc.A.$t4="shadow";isc.A.isGroup=false;isc.A.groupBorderCSS="2px solid black";isc.A.groupLabelPadding=10;isc.A.showGroupLabel=true;isc.A.groupLabelStyleName="groupLabel";isc.A.groupLabelDefaults={_constructor:"Label",overflow:"visible",height:1,width:1,wrap:false,vAlign:"center",align:"center"};isc.B.push(isc.A.init=function isc_Canvas_init(_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13){if(isc.$dd)arguments.$de=this;if(!isc.Canvas.$t5){if(this.getDocumentBody(true)==null){isc.logWarn("Canvas created in a page outside the BODY tag. This is not supported. "+"Isomorphic Software requires the tag to be present and all widgets be created "+"and drawn inside it. Canvas details follow:\n"+isc.Log.echo(this))}
 isc.Canvas.$t5=true}
 this.ns.ClassFactory.addGlobalID(this);this._canvasList(true);if(this.position==null){this.position=this.htmlElement!=null?isc.Canvas.RELATIVE:isc.Canvas.ABSOLUTE}
 if(this.className!=null&&this.logIsInfoEnabled(this.$t1)){this.logInfo("'className' property specified. This property has been deprecated in "+"favor of 'styleName' as of SmartClient 5.5.",this.$t1)}
@@ -2127,7 +2127,7 @@ if(this.peers){for(var i=0;i<this.peers.length;i++){this.peers[i].clearIDs()}}}
 ,isc.A.getInnerHTML=function isc_Canvas_getInnerHTML(){var _1;if(!this.containsIFrame())_1=this.getContents();else{var _2=this.getContentsURL();_2=isc.Page.getURL(_2);if(isc.rpc)_2=isc.rpc.addParamsToURL(_2,this.contentsURLParams);isc.EventHandler.registerMaskableItem(this,true);_1=this.getIFrameHTML(_2)}
 return _1}
 ,isc.A.getIFrameHTML=function isc_Canvas_getIFrameHTML(_1){return"<iframe height='100%' width='100%' scrolling='"+(this.overflow==isc.Canvas.HIDDEN?"no'":"auto'")+(isc.Browser.isSafari?" id="+this.$ui("iframe"):"")+" frameborder='0'"+" src=\""+_1+"\"></iframe>"}
-,isc.A.$uj=function isc_Canvas__sizeIFrame(){var _1=this.getDrawnState();if(_1!=isc.Canvas.COMPLETE&&_1!=isc.Canvas.HANDLE_DRAWN)return;var _2=this.getHandle(),_3=_2?_2.firstChild:null;if(_3==null)return;_3.style.height=(this.getInnerContentHeight()-2)+isc.px}
+,isc.A.$uj=function isc_Canvas__sizeIFrame(){var _1=this.getDrawnState();if(_1!=isc.Canvas.COMPLETE&&_1!=isc.Canvas.HANDLE_DRAWN)return;var _2=this.getHandle(),_3=_2?_2.firstChild:null;if(_3==null)return;_3.style.height=(this.getInnerContentHeight()-this.iFrameHeightAdjustment)+isc.px}
 ,isc.A.$uk=function isc_Canvas__getInnerHTML(_1){if(isc.$dd)arguments.$de=this;var _2=this.getInnerHTML(_1);if(this.$ul){var _3=this.$ul.join(isc.emptyString);_2=(_2==null||_2==isc.nbsp?_3:_2+_3)}
 return _2}
 ,isc.A.readyToDraw=function isc_Canvas_readyToDraw(){var _1=this.getDrawnState();if(this.getDrawnState()!=isc.Canvas.UNDRAWN){var _1=this.getDrawnState();this.logWarn("draw() called on widget with current drawn state: "+_1+(_1==isc.Canvas.COMPLETE?", use redraw() instead.":", ignoring.")+this.getStackTrace(),"drawing");return false}
@@ -2491,7 +2491,8 @@ if(!_1&&this.$xu!=null)return this.$xu;var _2=0,_3=this.getClipHandle();if(_3==n
 if(this.allowNativeContentPositioning){this.$qf=true;if(isc.Browser.isSafari||(isc.Browser.isMoz&&((_3.scrollWidth||_3.offsetWidth)<=parseInt(_3.style.width))))
 {_2=isc.Element.getScrollWidth(this.getHandle())}else{_2=isc.Element.getScrollWidth(_3)}
 delete this.$qf}else{var _4=this.children,_5=_4&&_4.length>0,_6=0;if(!_5||this.allowContentAndChildren){if(isc.Browser.isSafari&&this.overflow==isc.Canvas.VISIBLE){_2=this.getHandle().scrollWidth;if(this.useClipDiv&&this.padding==null){_2+=isc.Element.$ro(this.styleName)}}else{_6=(_3.scrollWidth||_3.offsetWidth);if(_6!=null&&_6!=this.$sg){_2=_6;if(isc.Browser.isOpera){_2-=(this.getLeftBorderSize()+this.getLeftPadding())}
-if(isc.Browser.isMoz)_2-=this.$xv();if(isc.Browser.isMoz&&this.getScrollingMechanism()==isc.Canvas.NESTED_DIV)
+if(isc.Browser.isMoz&&!this.isRTL()){_2-=this.$xv()}
+if(isc.Browser.isMoz&&this.getScrollingMechanism()==isc.Canvas.NESTED_DIV)
 {var _7=this.getHandle().offsetLeft;if(_7<0)_7=-_7;_2-=_7}}
 if(isc.Browser.isSafari||(isc.Browser.isMoz&&_2<=parseInt(_3.style.width)))
 {var _8=this.getHandle(),_9=_8.scrollWidth||_8.offsetWidth;if(_9>_2)_2=_9}}}
@@ -2510,9 +2511,9 @@ delete this.$qd}else{var _4=(this.children&&this.children.length>0);if(!_4||this
 if(_4){var _8=this.$x0(this.children);if(_8>_2){_2=_8}
 if(this.$uz!=null){var _9=this.$uz[1];_2=Math.max(_2,_9)}}}
 this.$xy=_2;return _2}
-,isc.A.$xz=function isc_Canvas__offscreenChildrenHeight(){if(!isc.isAn.Array(this.children))return 0;var _1=0;for(var i=0;i<this.children.length;i++){var _3=this.children[i],_4=(_3.position==isc.Canvas.ABSOLUTE?_3.getTop():_3.getOffsetTop());if(_4<_1)_1=_4}
+);isc.evalBoundary;isc.B.push(isc.A.$xz=function isc_Canvas__offscreenChildrenHeight(){if(!isc.isAn.Array(this.children))return 0;var _1=0;for(var i=0;i<this.children.length;i++){var _3=this.children[i],_4=(_3.position==isc.Canvas.ABSOLUTE?_3.getTop():_3.getOffsetTop());if(_4<_1)_1=_4}
 return-_1}
-);isc.evalBoundary;isc.B.push(isc.A.$xv=function isc_Canvas__offscreenChildrenWidth(){if(!isc.isAn.Array(this.children))return 0;if(!this.useClipDiv)return 0;var _1=0;for(var i=0;i<this.children.length;i++){var _3=this.children[i],_4=(_3.position==isc.Canvas.ABSOLUTE?_3.getLeft():_3.getOffsetLeft());if(_4<_1)_1=_4}
+,isc.A.$xv=function isc_Canvas__offscreenChildrenWidth(){if(!isc.isAn.Array(this.children))return 0;if(!this.useClipDiv)return 0;var _1=0;for(var i=0;i<this.children.length;i++){var _3=this.children[i],_4=(_3.position==isc.Canvas.ABSOLUTE?_3.getLeft():_3.getOffsetLeft());if(_4<_1)_1=_4}
 return-_1}
 ,isc.A.$x0=function isc_Canvas__getHeightSpan(_1,_2){var _3=0,_4=0,_5=this.overflow==isc.Canvas.VISIBLE||this.overflow==isc.Canvas.CLIP_H;for(var i=0;i<_1.length;i++){var _7=_1[i];if(!_7.isDrawn()&&!_7.$xx)continue;if(_2&&_7.visibility==isc.Canvas.HIDDEN)continue;var _8=_7.position!=isc.Canvas.RELATIVE,_9=_7.getVisibleHeight(),_10=(_8?_7.getTop():_7.getOffsetTop());if(!_5&&_8)_9-=_7.getBottomMargin();if(_9+_10>_4)_4=_9+_10;if(_10<_3)_3=Math.max(0,_10)}
 return _4-_3}
@@ -2802,8 +2803,8 @@ if(_8.snapAxis==isc.Canvas.VERTICAL||_8.snapAxis==isc.Canvas.BOTH)
 y-=_9;y=_8.getVSnapPosition(y)+_8.getVSnapOrigin(_7);y+=_9}}
 this.setPageRect(x,y)}
 ,isc.A.getVSnapOrigin=function isc_Canvas_getVSnapOrigin(_1){return this.VSnapOrigin?this.VSnapOrigin:0}
-,isc.A.getHSnapOrigin=function isc_Canvas_getHSnapOrigin(_1){return this.HSnapOrigin?this.HSnapOrigin:0}
-);isc.evalBoundary;isc.B.push(isc.A.placeNextTo=function isc_Canvas_placeNextTo(_1,_2,_3,_4){var _5=_1.getPeerRect(),_6=this.getPeerRect(),_7=isc.Canvas.$yv(_6[2],_6[3],_5,_2,_3,_4);this.setPageRect(_7[0],_7[1])}
+);isc.evalBoundary;isc.B.push(isc.A.getHSnapOrigin=function isc_Canvas_getHSnapOrigin(_1){return this.HSnapOrigin?this.HSnapOrigin:0}
+,isc.A.placeNextTo=function isc_Canvas_placeNextTo(_1,_2,_3,_4){var _5=_1.getPeerRect(),_6=this.getPeerRect(),_7=isc.Canvas.$yv(_6[2],_6[3],_5,_2,_3,_4);this.setPageRect(_7[0],_7[1])}
 ,isc.A.showNextTo=function isc_Canvas_showNextTo(_1,_2,_3){if(_2==null)_2="right";if(_3==null)_3=false;this.placeNextTo(_1,_2,_3);this.animateShow("fade")}
 ,isc.A.placeNear=function isc_Canvas_placeNear(_1,_2){if(isc.isAn.Array(_1)){_2=_1[1];_1=_1[0]}else if(isc.isAn.Object(_1)){_2=_1.top;_1=_1.left}
 var _3=this.getPeerRect(),_4=isc.Canvas.$yv(_3[2],_3[3],{left:_1,top:_2});this.setPageRect(_4[0],_4[1])}
@@ -3239,10 +3240,10 @@ this.opacityChanged(_1,_2)}
 ,isc.A.$1n=function isc_Canvas__setPeersOpacity(_1,_2,_3){if(!this.peers)return;for(var i=0;i<this.peers.length;i++){if(this.peers[i].$r9){this.peers[i].setOpacity(_1,_2,_3)}else if(this.peers[i]==this.edgedCanvas&&this.edgeOpacity){var _5=Math.round(this.opacity*(this.edgeOpacity*.01));this.peers[i].setOpacity(_5,_2,_3)}}}
 ,isc.A.setPrompt=function isc_Canvas_setPrompt(_1){this.prompt=_1;this.updateHover()}
 ,isc.A.setCursor=function isc_Canvas_setCursor(_1){if(_1&&_1!=this.cursor){this.cursor=_1;this.$m4()}}
-,isc.A.$1o=function isc_Canvas__applyCursor(_1){if(this.isDrawn()){if((isc.Browser.isMoz||(isc.Browser.isStrict&&isc.Browser.isSafari))&&_1=="hand")_1=isc.Canvas.HAND;this.$1p=_1;this.getStyleHandle().cursor=_1;if(this.useClipDiv)this.getHandle().style.cursor=_1;if(this.$mv){for(var i=0;i<this.$mv.length;i++){this.$mv[i].$1o(_1)}}
+);isc.evalBoundary;isc.B.push(isc.A.$1o=function isc_Canvas__applyCursor(_1){if(this.isDrawn()){if((isc.Browser.isMoz||(isc.Browser.isStrict&&isc.Browser.isSafari))&&_1=="hand")_1=isc.Canvas.HAND;this.$1p=_1;this.getStyleHandle().cursor=_1;if(this.useClipDiv)this.getHandle().style.cursor=_1;if(this.$mv){for(var i=0;i<this.$mv.length;i++){this.$mv[i].$1o(_1)}}
 if(this.ns.EH.$1q&&(this==this.ns.EH.getTarget())){this.ns.EH.$1q.setCursor(_1)}}
 if(isc.Browser.isOpera&&isc.EH.lastEvent.target==this)this.markForRedraw()}
-);isc.evalBoundary;isc.B.push(isc.A.$m4=function isc_Canvas__updateCursor(){var _1=this.getCurrentCursor();if(this.$1p==_1)return;this.$1o(_1)}
+,isc.A.$m4=function isc_Canvas__updateCursor(){var _1=this.getCurrentCursor();if(this.$1p==_1)return;this.$1o(_1)}
 ,isc.A.getCurrentCursor=function isc_Canvas_getCurrentCursor(){var _1=this.cursor;if(isc.EH.dragging&&this.$zn&&(isc.EH.dragMoveTarget!=this)){_1=this.noDropCursor}else if(this.isDisabled())_1=this.disabledCursor;else{var _2;if(this.canDragResize&&this.edgeCursorMap){var _3=this.getEventEdge();if(_3&&this.edgeCursorMap[_3]){_1=this.edgeCursorMap[_3];_2=true}}
 if(!_2&&this.canDragReposition&&this.dragRepositionCursor){_1=this.dragRepositionCursor}}
 return _1}
@@ -3596,7 +3597,14 @@ _2[_15]=[];this.$827(_1,_2[_15],_18,isc.DataSource?isc.DataSource.get(_19.type):
 if(!_4||_4.logWarn==null){if(_4)_6+=" [target:"+isc.Log.echo(_4)+"]";this.logWarn(_6)}else{_4.logWarn(_6)}}
 return}}
 return _1}
-);isc.B._maxIndex=isc.C+11;isc.A=isc.Canvas.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.showComplexFields=true;isc.A.exportIncludeSummaries=true;isc.A.ignoreEmptyCriteria=true;isc.A.dragRecategorize=false;isc.A.duplicateDragMessage="Duplicates not allowed";isc.A.showOfflineMessage=true;isc.A.offlineMessage="This data not available while offline";isc.A.offlineMessageStyle="offlineMessage";isc.A.offlineSaveMessage="Data cannot be saved because you are not online";isc.A.addDropValues=true;isc.A.fieldIdProperty="name";isc.A.dataArity="multiple";isc.A.autoTrackSelection=true;isc.A.$3w={date:true,DateItem:true};isc.A.$3x="false;";isc.A.$3y="false";isc.A.styleOpposite="cellHiliteOpposite";isc.A.hiliteIcons=["[SKINIMG]/Dialog/notify.png","[SKINIMG]/Dialog/warn.png","[SKINIMG]/actions/approve.png"];isc.A.hiliteIconPosition="before";isc.A.hiliteIconSize=12;isc.A.hiliteIconLeftPadding=2;isc.A.hiliteIconRightPadding=2;isc.A.hiliteProperty="_hilite";isc.A.hiliteMarker="$3z";isc.A.$30=0;isc.A.$31=[];isc.A.dragDataAction=isc.Canvas.MOVE;isc.A.dragTrackerStyle="gridDragTracker";isc.A.canExport=true;isc.A.canPrint=true;isc.A.panelControls=["action:edit","action:editNew","action:sort","action:export","action:print"];isc.A.dbcProperties=["autoFetchData","autoFetchTextMatchStyle","autoFetchAsFilter","dataSource"];isc.A.badFormulaResultValue=".";isc.A.missingSummaryFieldValue="-";isc.A.canAddFormulaFields=false;isc.A.addFormulaFieldText="Add formula column...";isc.A.editFormulaFieldText="Edit formula...";isc.A.removeFormulaFieldText="Remove formula";isc.A.canAddSummaryFields=false;isc.A.addSummaryFieldText="Add summary column...";isc.A.editSummaryFieldText="Edit summary format...";isc.A.removeSummaryFieldText="Remove summary column..";isc.A.formulaFieldNamePrefix="formulaField";isc.A.summaryFieldNamePrefix="summaryField";isc.A.uniqueFieldNamePrefix="field";isc.A.exportDataChunkSize=50;isc.A.emptyExportMessage="You are attempting to export an empty dataset";isc.A.unknownErrorMessage="Invalid value";isc.A.$32=["isInteger","isFloat","isBoolean","isString"];isc.A.$33="partial";isc.A.$34={};isc.A.$35=null;isc.B.push(isc.A.setProgressiveLoading=function isc_Canvas_setProgressiveLoading(_1){this.progressiveLoading=_1;if(isc.ResultSet&&isc.isA.ResultSet(this.data))this.data.progressiveLoading=_1}
+,isc.A.getFloatValueAsString=function isc_c_Canvas_getFloatValueAsString(_1,_2,_3,_4){if(!isc.isA.Number(_1)){if(_4){return null}
+_1=isc.DataSource.$858("float")}
+if(!isc.isA.Number(_2)||_2<0){_2=null}
+if(!isc.isA.Number(_3)||_3<0){_3=null}
+if(_2!=null&&_3!=null){if(_2<_3){_3=_2}
+_2=null}
+if(_3!=null){return _1.toFixed(_3)}else if(_2!=null){var _5=Math.pow(10,_2);var _6=Math.round(_1*_5)/_5;return isc.DataSource.$859(_6,"float")}else{return isc.DataSource.$859(_1,"float")}}
+);isc.B._maxIndex=isc.C+12;isc.A=isc.Canvas.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.showComplexFields=true;isc.A.exportIncludeSummaries=true;isc.A.ignoreEmptyCriteria=true;isc.A.dragRecategorize=false;isc.A.duplicateDragMessage="Duplicates not allowed";isc.A.showOfflineMessage=true;isc.A.offlineMessage="This data not available while offline";isc.A.offlineMessageStyle="offlineMessage";isc.A.offlineSaveMessage="Data cannot be saved because you are not online";isc.A.addDropValues=true;isc.A.fieldIdProperty="name";isc.A.dataArity="multiple";isc.A.autoTrackSelection=true;isc.A.$3w={date:true,DateItem:true};isc.A.$3x="false;";isc.A.$3y="false";isc.A.styleOpposite="cellHiliteOpposite";isc.A.hiliteIcons=["[SKINIMG]/Dialog/notify.png","[SKINIMG]/Dialog/warn.png","[SKINIMG]/actions/approve.png"];isc.A.hiliteIconPosition="before";isc.A.hiliteIconSize=12;isc.A.hiliteIconLeftPadding=2;isc.A.hiliteIconRightPadding=2;isc.A.hiliteProperty="_hilite";isc.A.hiliteMarker="$3z";isc.A.$30=0;isc.A.$31=[];isc.A.dragDataAction=isc.Canvas.MOVE;isc.A.dragTrackerStyle="gridDragTracker";isc.A.canExport=true;isc.A.canPrint=true;isc.A.panelControls=["action:edit","action:editNew","action:sort","action:export","action:print"];isc.A.dbcProperties=["autoFetchData","autoFetchTextMatchStyle","autoFetchAsFilter","dataSource"];isc.A.badFormulaResultValue=".";isc.A.missingSummaryFieldValue="-";isc.A.canAddFormulaFields=false;isc.A.addFormulaFieldText="Add formula column...";isc.A.editFormulaFieldText="Edit formula...";isc.A.removeFormulaFieldText="Remove formula";isc.A.canAddSummaryFields=false;isc.A.addSummaryFieldText="Add summary column...";isc.A.editSummaryFieldText="Edit summary format...";isc.A.removeSummaryFieldText="Remove summary column..";isc.A.formulaFieldNamePrefix="formulaField";isc.A.summaryFieldNamePrefix="summaryField";isc.A.uniqueFieldNamePrefix="field";isc.A.exportDataChunkSize=50;isc.A.emptyExportMessage="You are attempting to export an empty dataset";isc.A.unknownErrorMessage="Invalid value";isc.A.$32=["isInteger","isFloat","isBoolean","isString"];isc.A.$33="partial";isc.A.$34={};isc.A.$35=null;isc.B.push(isc.A.setProgressiveLoading=function isc_Canvas_setProgressiveLoading(_1){this.progressiveLoading=_1;if(isc.ResultSet&&isc.isA.ResultSet(this.data))this.data.progressiveLoading=_1}
 ,isc.A.setValuesManager=function isc_Canvas_setValuesManager(_1){if(_1)_1.addMember(this)}
 ,isc.A.initializeValuesManager=function isc_Canvas_initializeValuesManager(){var _1=this.valuesManager;delete this.valuesManager;if(_1!=null){if(isc.ValuesManager==null){this.logWarn("Widget initialized with specified 'valuesManager' property but "+"ValuesManager class is not loaded. This functionality requires the "+"Forms module.");return}
 if(isc.isA.ValuesManager(_1)){_1.addMember(this)}else if(isc.isA.ValuesManager(window[_1])){window[_1].addMember(this)}else if(isc.isA.String(_1)){isc.ValuesManager.create({ID:_1,dataSource:this.dataSource,members:[this]})}else{this.logWarn("Widget initialized with invalid 'valuesManager' property:"+isc.Log.echo(_1)+", clearing this property out")}}}
@@ -4466,7 +4474,7 @@ isc.Page.logInfo("SmartClient Core ("+isc.version+" "+isc.buildDate+") initializ
 isc._moduleEnd=isc._Core_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Core module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Core'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -4477,7 +4485,7 @@ isc._moduleEnd=isc._Core_end=(isc.timestamp?isc.timestamp():new Date().getTime()
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5755,7 +5763,7 @@ this.updateUI();if(_2&&this.paneChanged!=null)this.paneChanged(_1)}
 );isc.B._maxIndex=isc.C+34;isc.SplitPane.registerStringMethods({paneChanged:"pane"});isc._moduleEnd=isc._Foundation_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Foundation module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Foundation'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5766,7 +5774,7 @@ this.updateUI();if(_2&&this.paneChanged!=null)this.paneChanged(_1)}
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -6356,7 +6364,7 @@ if(this.convertToMethod("keyPress"))return this.keyPress(_1,_2)}
 );isc.B._maxIndex=isc.C+1;isc.TabSet.registerDupProperties("tabs",["pane"]);isc._moduleEnd=isc._Containers_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Containers module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Containers'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -6367,7 +6375,7 @@ if(this.convertToMethod("keyPress"))return this.keyPress(_1,_2)}
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -6714,8 +6722,9 @@ return _3}
 ,isc.A.downloadFile=function isc_DetailViewer_downloadFile(_1,_2){isc.DS.get(this.dataSource).downloadFile(_1,_2.name)}
 ,isc.A.$29a=function isc_DetailViewer__formatDataType(_1,_2,_3){if(isc.isA.Date(_3)){if(this.$29b(_2)){var _4=isc.SimpleType.inheritsFrom(_2.type,"time");_3=isc.Time.toTime(_3,this.$29c(_2),_4)}else{if(isc.SimpleType.inheritsFrom(_2.type,"date")&&!isc.SimpleType.inheritsFrom(_2.type,"datetime"))
 {_3=_3.toShortDate(this.$29d(_2),false)}else{_3=_3.toNormalDate(this.$29d(_2))}}}
-if(_2.$15j!=null){_3=_2.$15d.normalDisplayFormatter(_3,_2,this,_1)}
-return isc.iscToLocaleString(_3)}
+if(isc.isA.Number(_3)&&_2.type=="float"&&(_2.decimalPrecision!=null||_2.decimalPad!=null))
+{return isc.Canvas.getFloatValueAsString(_3,_2.decimalPrecision,_2.decimalPad)}else{if(_2.$15j!=null){_3=_2.$15d.normalDisplayFormatter(_3,_2,this,_1)}
+return isc.iscToLocaleString(_3)}}
 ,isc.A.$29b=function isc_DetailViewer__formatAsTime(_1){if(_1==null)return false;if(_1.dateFormatter==null&&_1.timeFormatter!=null)return true;if(_1.timeFormatter==null&&_1.dateFormatter!=null)return false;return isc.SimpleType.inheritsFrom(_1.type,"time")}
 ,isc.A.$29d=function isc_DetailViewer__getDateFormatter(_1){if(_1.dateFormatter)return _1.dateFormatter;if(_1.displayFormat!=null&&isc.SimpleType.inheritsFrom(_1.type,"date")){return _1.displayFormat}
 if(this.datetimeFormatter!=null&&isc.SimpleType.inheritsFrom(_1.type,"datetime")){return this.datetimeFormatter}
@@ -7444,7 +7453,7 @@ if(this.datetimeFormatter!=null&&isc.SimpleType.inheritsFrom(_1.type,"datetime")
 return this.dateFormatter}
 ,isc.A.$51m=function isc_ListGrid__getDateInputFormat(_1){var _2;if(_1)_2=_1.inputFormat
 if(!_2)_2=this.dateInputFormat;return _2}
-,isc.A.$51n=function isc_ListGrid__formatNumberCellValue(_1,_2,_3,_4,_5,_6){if(isc.isA.Number(_1)){var _7=(_2.numberFormatter||_2.formatter||_3.numberFormatter);return _1.toFormattedString(_7)}
+,isc.A.$51n=function isc_ListGrid__formatNumberCellValue(_1,_2,_3,_4,_5,_6){if(isc.isA.Number(_1)){if(_2.type=="float"&&(_2.decimalPrecision!=null||_2.decimalPad!=null)){return isc.Canvas.getFloatValueAsString(_1,_2.decimalPrecision,_2.decimalPad)}else{var _7=(_2.numberFormatter||_2.formatter||_3.numberFormatter);return _1.toFormattedString(_7)}}
 return _1}
 ,isc.A.$29c=function isc_ListGrid__getTimeFormatter(_1){if(_1!=null){if(_1.timeFormatter!=null)return _1.timeFormatter;if(_1.displayFormat!=null&&isc.SimpleType.inheritsFrom(_1.type,"time")){return _1.displayFormat}}
 return this.timeFormatter}
@@ -8856,7 +8865,9 @@ if(this.listEndEditAction=="stop"||(this.listEndEditAction=="next"&&_9<_14))
 {return _13?[_1,_2]:null}
 return null}}
 );isc.evalBoundary;isc.B.push(isc.A.$54e=function isc_ListGrid__canFocusInEditor(_1,_2){var _3=this.getFieldName(_2),_4=this.$63;if(_4==null){this.makeEditForm(_1,_2);_4=this.$63}
-var _5=_4?_4.getItem(_3):null;if(_5)return _5.$mm();var _6=this.getField(_3);if(_6.canFocus!=null)return _6.canFocus;var _7=this.getEditorType(_6,this.getEditedRecord(_1));_7=isc.FormItemFactory.getItemClassName(_6,_7,null,true);var _8=_7=isc.FormItemFactory.getItemClass(_7);return _8?_8.getPrototype().$mm():false}
+var _5=_4?_4.getItem(_3):null;if(_5)return _5.$mm();var _6=this.getField(_3);if(_6.canFocus!=null)return _6.canFocus;var _7=this.getEditorType(_6,this.getEditedRecord(_1));_7=isc.FormItemFactory.getItemClassName(_6,_7,null,true);var _8=_7=isc.FormItemFactory.getItemClass(_7);if(_8){var _9=_8.getPrototype(),_10=_9.canFocus;if(_10!=null)return _10;if(isc.isA.CanvasItem(_9)){return true}
+return _9.$mm()}
+return false}
 ,isc.A.setNewEditCell=function isc_ListGrid_setNewEditCell(_1,_2){this.$572=[_1,_2]}
 ,isc.A.getNewEditCell=function isc_ListGrid_getNewEditCell(){if(this.canEditCell(this.$572[0],this.$572[1]))return this.$572;return null}
 ,isc.A.clearNewEditCell=function isc_ListGrid_clearNewEditCell(){this.$572=null}
@@ -10822,7 +10833,7 @@ this.clearEditorData();this.reportGrid.deselectAllRecords();this.reportGrid.sele
 );isc.B._maxIndex=isc.C+17;isc._moduleEnd=isc._Grids_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Grids module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Grids'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -10833,7 +10844,7 @@ this.clearEditorData();this.reportGrid.deselectAllRecords();this.reportGrid.sele
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -12228,7 +12239,7 @@ return _2}
 ,isc.A.resetValue=function isc_FormItem_resetValue(){var _1=this.form.$20v[this.getFieldName()];this.setValue(_1)}
 ,isc.A.shouldSubmitValue=function isc_FormItem_shouldSubmitValue(){return this.form.$21z()}
 ,isc.A.setCanEdit=function isc_FormItem_setCanEdit(_1){var _2=!this.isReadOnly();this.canEdit=_1;var _3=!this.isReadOnly();if(_2!=_3)this.updateCanEdit()}
-,isc.A.getCanEdit=function isc_FormItem_getCanEdit(){return this.isReadOnly()}
+,isc.A.getCanEdit=function isc_FormItem_getCanEdit(){return!this.isReadOnly()}
 ,isc.A.updateCanEdit=function isc_FormItem_updateCanEdit(){if(this.isDisabled())return;var _1=this.isReadOnly();this.setElementReadOnly(_1);this.$296();this.$29w();this.updateState()}
 ,isc.A.setElementReadOnly=function isc_FormItem_setElementReadOnly(_1){if(this.hasDataElement())this.redraw()}
 ,isc.A.$297=function isc_FormItem__setElementReadOnly(_1){if(this.hasDataElement()){var _2=this.getDataElement();if(_2){if(!_1&&!_2.readOnly){_2.disabled=_1}else{_2.readOnly=_1}
@@ -12979,7 +12990,13 @@ this.$32y[i]=c}else{while(i<j){if(this.$32x[i])this.$32y[i]=this.maskPromptChar;
 break}}}}
 ,isc.A.$324=function isc_TextItem__shiftMaskBufferRight(_1){for(var i=_1,c=this.maskPromptChar;i<this.$32l;i++){var _4=this.$32x[i];if(_4){if(_4.casing){c=this.$323(c,_4.casing)}
 var j=this.$32z(i);var t=this.$32y[i];this.$32y[i]=c;if(j<this.$32l&&this.$32x[j].filter.test(t)){c=t}else{break}}}}
-);isc.B._maxIndex=isc.C+41;isc.ClassFactory.defineClass("BlurbItem","FormItem");isc.A=isc.BlurbItem.getPrototype();isc.A.shouldSaveValue=false;isc.A.height=null;isc.A.showTitle=false;isc.A.colSpan="*";isc.A.startRow=true;isc.A.endRow=true;isc.A.textBoxStyle="staticTextItem";isc.A.emptyDisplayValue="&nbsp;";isc.ClassFactory.defineClass("ButtonItem","CanvasItem");isc.A=isc.ButtonItem.getPrototype();isc.A.canFocus=true;isc.A.shouldSaveValue=false;isc.A.height=null;isc.A.width=null;isc.A.titleStyle=null;isc.A.showTitle=false;isc.A.startRow=true;isc.A.endRow=true;isc.A.buttonConstructor=isc.Button;isc.A.autoFit=true;isc.A.buttonDefaults={getTitle:function(){return this.canvasItem.getTitle()}};isc.A.autoDestroy=true;isc.A=isc.ButtonItem.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$327={width:true,height:true,icon:true};isc.B.push(isc.A.getTitleHTML=function isc_ButtonItem_getTitleHTML(){return this.getTitle()}
+);isc.B._maxIndex=isc.C+41;isc.ClassFactory.defineClass("FloatItem","TextItem");isc.A=isc.FloatItem.getPrototype();isc.A.$87t=false;isc.A=isc.FloatItem.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.B.push(isc.A.mapValueToDisplay=function isc_FloatItem_mapValueToDisplay(_1){if(!this.$87t){var _2=null;if(isc.isA.String(_1)){var _3=window.parseFloat(_1);if(!window.isNaN(_3)&&_3==_1){_2=_3}}else if(isc.isA.Number(_1)){_2=_1}
+if(_2!=null&&(this.decimalPrecision!=null||this.decimalPad!=null))
+{return isc.Canvas.getFloatValueAsString(_2,this.decimalPrecision,this.decimalPad)}}
+return this.Super("mapValueToDisplay",arguments)}
+,isc.A.editorEnter=function isc_FloatItem_editorEnter(_1,_2,_3){this.$87t=true;var _4=this.mapValueToDisplay(_3);this.setElementValue(_4,_3);this.Super("editorEnter",arguments)}
+,isc.A.editorExit=function isc_FloatItem_editorExit(_1,_2,_3){this.$87t=false;var _4=this.mapValueToDisplay(_3);this.setElementValue(_4,_3);this.Super("editorExit",arguments)}
+);isc.B._maxIndex=isc.C+3;isc.ClassFactory.defineClass("BlurbItem","FormItem");isc.A=isc.BlurbItem.getPrototype();isc.A.shouldSaveValue=false;isc.A.height=null;isc.A.showTitle=false;isc.A.colSpan="*";isc.A.startRow=true;isc.A.endRow=true;isc.A.textBoxStyle="staticTextItem";isc.A.emptyDisplayValue="&nbsp;";isc.ClassFactory.defineClass("ButtonItem","CanvasItem");isc.A=isc.ButtonItem.getPrototype();isc.A.canFocus=true;isc.A.shouldSaveValue=false;isc.A.height=null;isc.A.width=null;isc.A.titleStyle=null;isc.A.showTitle=false;isc.A.startRow=true;isc.A.endRow=true;isc.A.buttonConstructor=isc.Button;isc.A.autoFit=true;isc.A.buttonDefaults={getTitle:function(){return this.canvasItem.getTitle()}};isc.A.autoDestroy=true;isc.A=isc.ButtonItem.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$327={width:true,height:true,icon:true};isc.B.push(isc.A.getTitleHTML=function isc_ButtonItem_getTitleHTML(){return this.getTitle()}
 ,isc.A.setTitle=function isc_ButtonItem_setTitle(_1){this.title=_1;if(this.canvas)this.canvas.setTitle(_1)}
 ,isc.A.$31y=function isc_ButtonItem__createCanvas(){var _1={canFocus:this.$mm(),disabled:this.isDisabled(),width:this.width};if(this.height!=null)_1.height=this.height;if(this.icon)_1.icon=this.icon;if(this.titleStyle)_1.titleStyle=this.titleStyle;if(this.baseStyle)_1.baseStyle=this.baseStyle;if(this.autoFit!=null)_1.autoFit=this.autoFit;this.canvas=this.button=this.createAutoChild("button",_1,this.buttonConstructor);this.Super("$31y",arguments)}
 ,isc.A.$311=function isc_ButtonItem__setCanvasSize(_1,_2,_3,_4){if(_1==null&&_2==null)return;return this.invokeSuper(isc.ButtonItem,"$311",_1,_2,_3,_4)}
@@ -14638,7 +14655,7 @@ return true}
 isc._moduleEnd=isc._Forms_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Forms module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Forms'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -14649,7 +14666,7 @@ isc._moduleEnd=isc._Forms_end=(isc.timestamp?isc.timestamp():new Date().getTime(
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -18487,7 +18504,7 @@ var _9=isc.Tree.create({modelType:"parent",childrenProperty:"fields",titleProper
 isc._moduleEnd=isc._DataBinding_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('DataBinding module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'DataBinding'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -18498,7 +18515,7 @@ isc._moduleEnd=isc._DataBinding_end=(isc.timestamp?isc.timestamp():new Date().ge
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -18999,7 +19016,7 @@ var _1=this.bodies[1].getScrollTop();var _2=this.eventHeight;var _3=this.bodies[
 );isc.B._maxIndex=isc.C+56;isc.Calendar.registerStringMethods({getDayBodyHTML:"date,events,calendar,rowNum,colNum",getDayHeaderHTML:"date,events,calendar,rowNum,colNum",dayBodyClick:"date,events,calendar,rowNum,colNum",dayHeaderClick:"date,events,calendar,rowNum,colNum",eventClick:"event,viewName",eventChanged:"event",eventMoved:"newDate,event",eventResized:"newDate,event",backgroundClick:"startDate,endDate",backgroundMouseUp:"startDate"});isc.A=isc.DaySchedule;isc.A.$41s=[{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""},{label:"",day1:"",day2:"",day3:"",day4:"",day5:"",day6:"",day7:""}];isc.AutoTest.customizeCalendar();isc.ClassFactory.defineClass("Timeline","Calendar");isc.A=isc.Timeline.getPrototype();isc.A.showTimelineView=true;isc.A.showDayView=false;isc.A.showWeekView=false;isc.A.showMonthView=false;isc.A.showControlBar=false;isc.A.labelColumnWidth=75;isc._moduleEnd=isc._Calendar_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Calendar module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Calendar'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -19010,7 +19027,7 @@ var _1=this.bodies[1].getScrollTop();var _2=this.eventHeight;var _3=this.bodies[
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -19082,7 +19099,7 @@ _1.append("</object>");return _1.toString()}
 );isc.B._maxIndex=isc.C+3;isc._moduleEnd=isc._PluginBridges_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('PluginBridges module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'PluginBridges'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -19093,7 +19110,7 @@ _1.append("</object>");return _1.toString()}
 
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -19316,7 +19333,7 @@ var _1=this.canvas.getValue();return this.$203(_1)}
 );isc.B._maxIndex=isc.C+6;isc._moduleEnd=isc._RichTextEditor_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('RichTextEditor module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'RichTextEditor'.");}
 /*
  * Isomorphic SmartClient
- * Version SNAPSHOT_v8.3d_2012-05-22 (2012-05-22)
+ * Version SNAPSHOT_v8.3d_2012-05-23 (2012-05-23)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
