@@ -1254,7 +1254,7 @@ OB.ViewFormProperties = {
       }
       if (preserveGridEditing) {
         me.view.isEditingGrid = true;
-        this.view.toolBar.updateButtonState(true);
+        me.view.toolBar.updateButtonState(true);
       }
     });
     this.view.toolBar.updateButtonState(true);
