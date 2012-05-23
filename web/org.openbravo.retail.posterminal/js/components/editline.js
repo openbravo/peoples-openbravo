@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #7da7d9; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [                             
           {kind: B.KindJQuery('div'), id: 'msgedit', attr: {'class': 'row-fluid', 'style': 'display: none;'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), attr: {style: 'padding: 10px; width:100%'}, content: [                                                                                
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                             
@@ -81,8 +81,8 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                 ]}                                                                                                                                      
               ]}                                                                                                                                      
             ]},                             
-            {kind: B.KindJQuery('div'), attr: {'class': 'span4;', 'style': ' padding:20px;'}, content: [
-              {kind: B.KindJQuery('div'), id: 'editlineimage'}
+            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding:20px;'}, id: 'editlineimage'}
             ]}                                                      
           ]},
           {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px; display: none;'}, content: [
