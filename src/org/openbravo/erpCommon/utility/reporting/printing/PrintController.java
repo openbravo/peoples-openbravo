@@ -769,7 +769,7 @@ public class PrintController extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("New email id: " + newEmailId);
 
-      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), vars.getOrg(),
+      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
           vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
           recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
           report.getBPartnerId(),
