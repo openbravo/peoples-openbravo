@@ -26,14 +26,14 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
         {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [    
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [    
+            {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [    
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [    
                 {kind: B.KindJQuery('div'), content: [    
                   {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
                 ]}                  
               ]}                   
             ]},                                                               
-            {kind: B.KindJQuery('div'), attr: {'class': 'span3'}, content: [ 
+            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [ 
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'}, content: [    
                 {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
                   {kind: B.KindJQuery('i'), attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
