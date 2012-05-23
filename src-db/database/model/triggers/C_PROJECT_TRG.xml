@@ -111,15 +111,17 @@ BEGIN
       )
       ;
     ELSIF (UPDATING) THEN
-     SELECT COUNT(*) INTO v_Count FROM C_PROJECTPHASE WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
-     IF(v_Count > 0) THEN
-      UPDATE C_PROJECTPHASE
-      SET AD_ORG_ID = :new.AD_ORG_ID
-      WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
-     END IF;
+     IF (:new.AD_ORG_ID <> :old.AD_ORG_ID) THEN
+       SELECT COUNT(*) INTO v_Count FROM C_PROJECTPHASE WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+       IF(v_Count > 0) THEN
+        UPDATE C_PROJECTPHASE
+        SET AD_ORG_ID = :new.AD_ORG_ID
+        WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+       END IF;
      
-     UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
-     WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+       UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+       WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+      END IF;
     END IF;
     -- Summary Nodes first
 EXCEPTION
