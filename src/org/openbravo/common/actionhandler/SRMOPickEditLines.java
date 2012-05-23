@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,7 +96,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
   }
 
   private boolean cleanOrderLines(Order order) {
-    if (order.getOrderLineList().isEmpty()) {
+    if (order == null) {
+      // nothing selected in pick and edit lines
+      return false;
+    } else if (order.getOrderLineList().isEmpty()) {
       // nothing to delete.
       return true;
     }
@@ -123,6 +126,9 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
+      if ("null".equals(selectedLine.getString("returned"))) {
+        continue;
+      }
       OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
       newOrderLine.setSalesOrder(order);
       newOrderLine.setOrganization(order.getOrganization());
