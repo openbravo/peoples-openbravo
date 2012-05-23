@@ -52,6 +52,7 @@
 var sc_JsDateFormat = null;
 </script>
 <script language="JavaScript" type="text/javascript">
+var APRMMatchStatementIds;
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -103,6 +104,7 @@ isc.OBSelectorLinkWidget.addProperties({
 
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
+    APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpTransactionDate_" + bankStatementLineId).innerHTML = "";
@@ -114,6 +116,9 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
     sendActionToServer("UNMATCH");
   }
+  else {
+    APRMMatchStatementIds[bankStatementLineId]=true;
+  }
   return true;
 }
 </script>
@@ -123,6 +128,7 @@ function closeThisPage() {
     return true;
 }
 function submitThisPage(strCommand) {
+  APRMMatchStatementIds = null;
   if (validate(strCommand)) {
     submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
     return true;
@@ -179,6 +185,11 @@ function openAddTransaction(bankStatementLineId){
             }else{
               initialize_MessageBox('messageBoxID');
             }
+            for (var i in APRMMatchStatementIds) { 
+                if(data.grid.indexOf('inpCheckBox_'+i)){
+                  document.getElementById('inpCheckBox_'+i).checked=APRMMatchStatementIds[i];
+                }
+             } 
             showWarning();
           } else {
             document.getElementById('sectionGrid').innerHTML = '';
@@ -256,6 +267,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
       } else initialize_MessageBox('messageBoxID');
   }
   function onLoadDo(){
+    APRMMatchStatementIds = new Object();
     this.windowTables = new Array(
               new windowTableId('client_top_popup', 'buttonProcess'),
               new windowTableId('client_middle', 'buttonProcess'),

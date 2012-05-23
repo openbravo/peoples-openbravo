@@ -1160,9 +1160,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FIN_BankStatementLine.class);
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
-    obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
 
-    return (obc.list().size() > 0);
+    return (obc.list().size() > 1);
   }
 
   /**
