@@ -1126,6 +1126,15 @@ isc.OBToolbar.addProperties({
   refreshCustomButtons: function (noSetSession) {
     var selectedRecords, multipleSelectedRowIds, allProperties, i;
 
+    var currentTabCalled = false,
+        me = this,
+        requestParams;
+
+    var buttons = this.getRightMembers(),
+        buttonContexts = [],
+        currentContext, buttonsByContext = [],
+        length, iButtonContext, callbackHandler;
+
     function doRefresh(buttons, currentValues, hideAllButtons, noneOrMultipleRecordsSelected, me) {
       var i, length = me.rightMembers.length;
       for (i = 0; i < length; i++) { // To disable any button previous defined keyboard shortcut
@@ -1152,106 +1161,98 @@ isc.OBToolbar.addProperties({
       }
     }
 
-    var buttons = this.getRightMembers(),
-        buttonContexts = [],
-        currentContext, buttonsByContext = [],
-        length, iButtonContext, callbackHandler;
-
     if (buttons.length === 0) {
       if (!noSetSession && this.view.viewGrid && this.view.viewGrid.getSelectedRecord()) {
         this.view.setContextInfo();
       }
-      return;
-    }
-    length = buttons.length;
-    for (i = 0; i < length; i++) {
-      if (!currentContext || currentContext !== buttons[i].contextView) {
-        // Adding new context
-        currentContext = buttons[i].contextView;
-        buttonContexts.push(currentContext);
-        buttonsByContext[currentContext] = [];
-      }
-      buttonsByContext[currentContext].push(buttons[i]);
-    }
-
-    // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
-    callbackHandler = function (currentContext, me) {
-      return function (response, data, request) {
-        var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
-        var sessionAttributes = data.sessionAttributes,
-            auxInputs = data.auxiliaryInputValues,
-            attachmentExists = data.attachmentExists,
-            prop;
-        if (sessionAttributes) {
-          currentContext.viewForm.sessionAttributes = sessionAttributes;
+    } else {
+      length = buttons.length;
+      for (i = 0; i < length; i++) {
+        if (!currentContext || currentContext !== buttons[i].contextView) {
+          // Adding new context
+          currentContext = buttons[i].contextView;
+          buttonContexts.push(currentContext);
+          buttonsByContext[currentContext] = [];
         }
+        buttonsByContext[currentContext].push(buttons[i]);
+      }
 
-        if (auxInputs) {
-          this.auxInputs = {};
-          for (prop in auxInputs) {
-            if (auxInputs.hasOwnProperty(prop)) {
-              currentContext.viewForm.setValue(prop, auxInputs[prop].value);
-              currentContext.viewForm.auxInputs[prop] = auxInputs[prop].value;
+      // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
+      callbackHandler = function (currentContext, me) {
+        return function (response, data, request) {
+          var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
+          var sessionAttributes = data.sessionAttributes,
+              auxInputs = data.auxiliaryInputValues,
+              attachmentExists = data.attachmentExists,
+              prop;
+          if (sessionAttributes) {
+            currentContext.viewForm.sessionAttributes = sessionAttributes;
+          }
+
+          if (auxInputs) {
+            this.auxInputs = {};
+            for (prop in auxInputs) {
+              if (auxInputs.hasOwnProperty(prop)) {
+                currentContext.viewForm.setValue(prop, auxInputs[prop].value);
+                currentContext.viewForm.auxInputs[prop] = auxInputs[prop].value;
+              }
             }
           }
-        }
-        currentContext.viewForm.view.attachmentExists = attachmentExists;
-        doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
-      };
-    };
-
-    var currentTabCalled = false,
-        me = this,
-        requestParams;
-    length = buttonContexts.length;
-    for (iButtonContext = 0; iButtonContext < length; iButtonContext++) {
-      currentContext = buttonContexts[iButtonContext];
-
-      selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
-      var numOfSelRecords = 0,
-          theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
-          isNew = currentContext.viewForm.isNew,
-          hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
-          currentValues = currentContext.getCurrentValues();
-
-      if (!hideAllButtons && (this.view.isEditingGrid || this.view.isShowingForm)) {
-        hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
-      }
-      if (hideAllButtons) {
-        this.hideShowRightMembers(false, noSetSession);
-      }
-
-      if (currentContext.viewGrid.getSelectedRecords()) {
-        numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
-      }
-
-      var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
-
-      if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons && currentContext.ID === this.view.ID) {
-        if (this.view.tabId === currentContext.tabId) {
-          currentTabCalled = true;
-        }
-        // Call FIC to obtain possible session attributes and set them in form
-        requestParams = {
-          MODE: 'SETSESSION',
-          PARENT_ID: currentContext.getParentId(),
-          TAB_ID: currentContext.tabId,
-          ROW_ID: currentValues.id
+          currentContext.viewForm.view.attachmentExists = attachmentExists;
+          doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
         };
-        multipleSelectedRowIds = [];
-        if (selectedRecords.size() > 1) {
-          for (i = 0; i < selectedRecords.size(); i++) {
-            multipleSelectedRowIds[i] = selectedRecords[i].id;
-          }
-          requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+      };
+
+
+      length = buttonContexts.length;
+      for (iButtonContext = 0; iButtonContext < length; iButtonContext++) {
+        currentContext = buttonContexts[iButtonContext];
+
+        selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
+        var numOfSelRecords = 0,
+            theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
+            isNew = currentContext.viewForm.isNew,
+            hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
+            currentValues = currentContext.getCurrentValues();
+
+        if (!hideAllButtons && (this.view.isEditingGrid || this.view.isShowingForm)) {
+          hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
         }
-        allProperties = currentContext.getContextInfo(false, true, false, true);
-        OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
-      } else {
-        doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1, this);
+        if (hideAllButtons) {
+          this.hideShowRightMembers(false, noSetSession);
+        }
+
+        if (currentContext.viewGrid.getSelectedRecords()) {
+          numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
+        }
+
+        var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
+
+        if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons && currentContext.ID === this.view.ID) {
+          if (this.view.tabId === currentContext.tabId) {
+            currentTabCalled = true;
+          }
+          // Call FIC to obtain possible session attributes and set them in form
+          requestParams = {
+            MODE: 'SETSESSION',
+            PARENT_ID: currentContext.getParentId(),
+            TAB_ID: currentContext.tabId,
+            ROW_ID: currentValues.id
+          };
+          multipleSelectedRowIds = [];
+          if (selectedRecords.size() > 1) {
+            for (i = 0; i < selectedRecords.size(); i++) {
+              multipleSelectedRowIds[i] = selectedRecords[i].id;
+            }
+            requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+          }
+          allProperties = currentContext.getContextInfo(false, true, false, true);
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
+        } else {
+          doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1, this);
+        }
       }
     }
-
     if (!currentTabCalled && !noSetSession && !this.view.isShowingForm && !this.view.viewForm.isNew && this.view.viewGrid.getSelectedRecords().size() !== 0) {
       selectedRecords = this.view.viewGrid.getSelectedRecords();
       //The call to the FIC for the current tab was not done (probably because it doesn't have buttons, or the buttons do not depend on session vars/aux ins.
