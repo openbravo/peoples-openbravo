@@ -1,4 +1,4 @@
-/*global require,$, _, Backbone, confirm, OB */
+/*global require,$, _, Backbone, window, confirm, OB */
 
 require.config({
   paths: {
@@ -26,9 +26,13 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   // global components.
   OB.POS = {
       modelterminal: modelterminal,
-  
+      paramWindow: OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/js/windows/pointofsale",
+      paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
+      hrefWindow: function (windowname) {
+        return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);       
+      },
       logout: function (callback) {
-        if (confirm('Are you sure that you want to logout from the application?')) {
+        if (window.confirm('Are you sure that you want to logout from the application?')) {
           $.ajax({
             url: '../../org.openbravo.service.retail.posterminal.jsonrest/logout?auth=false',
             contentType: 'application/json;charset=utf-8',
@@ -60,7 +64,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);  
     
-    var webwindowname = "../../" + (OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/js/windows/pointofsale");
+    var webwindowname = "../../" + OB.POS.paramWindow;
     
     require([webwindowname], function (webwindow) { // load window...
       var c = _.extend({}, Backbone.Events);

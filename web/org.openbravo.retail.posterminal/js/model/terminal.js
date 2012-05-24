@@ -62,7 +62,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       // Starting app
       var me = this;
       var params = {
-          terminal:OB.UTIL.getParameterByName("terminal") || "POS-1"
+          terminal: OB.POS.paramTerminal
       };
   
       new OB.DS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec(
