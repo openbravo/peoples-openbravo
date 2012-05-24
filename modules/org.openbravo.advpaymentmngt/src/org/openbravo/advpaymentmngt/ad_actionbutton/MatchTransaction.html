@@ -104,6 +104,7 @@ isc.OBSelectorLinkWidget.addProperties({
 
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
+    matchTransactionCounter++;
     APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
@@ -118,6 +119,7 @@ function unMatchLine(bankStatementLineId, isChecked) {
   }
   else {
     APRMMatchStatementIds[bankStatementLineId]=true;
+    document.frmMain.buttonProcess.disabled = false;
   }
   return true;
 }
@@ -189,7 +191,14 @@ function openAddTransaction(bankStatementLineId){
                 if(data.grid.indexOf('inpCheckBox_'+i)){
                   document.getElementById('inpCheckBox_'+i).checked=APRMMatchStatementIds[i];
                 }
-             } 
+            }
+            matchTransactionCounter--;
+            if (matchTransactionCounter === 0){
+                  document.frmMain.buttonProcess.disabled = false;
+            }
+            else if (matchTransactionCounter < 0){
+                matchTransactionCounter = 0;
+            }
             showWarning();
           } else {
             document.getElementById('sectionGrid').innerHTML = '';
@@ -223,6 +232,15 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
         var data = eval(strText);
         if (data.forceLoadGrid) {
           loadGrid();
+        }
+        else{
+          matchTransactionCounter--;
+          if (matchTransactionCounter === 0){
+              document.frmMain.buttonProcess.disabled = false;
+          }
+          else if (matchTransactionCounter < 0){
+              matchTransactionCounter = 0;
+          }
         }
       }
     } catch (e) {
@@ -267,6 +285,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
       } else initialize_MessageBox('messageBoxID');
   }
   function onLoadDo(){
+    matchTransactionCounter = 0;
     APRMMatchStatementIds = new Object();
     this.windowTables = new Array(
               new windowTableId('client_top_popup', 'buttonProcess'),
