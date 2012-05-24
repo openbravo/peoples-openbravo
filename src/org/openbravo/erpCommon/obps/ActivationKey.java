@@ -511,9 +511,6 @@ public class ActivationKey {
       if (qry.equals(s)) {
         return true;
       }
-      in.close();
-      is.close();
-      conn.getInputStream().close();
 
       return false;
     } catch (Exception e) {
