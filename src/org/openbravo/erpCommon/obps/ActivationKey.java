@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
@@ -219,7 +220,7 @@ public class ActivationKey {
   private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
       * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
   private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
-  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:8181/checkOnDemand";
+  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:8181/checkOnDemand?qry=";
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -497,7 +498,8 @@ public class ActivationKey {
     InputStream is = null;
     BufferedReader in = null;
     try {
-      URL url = new URL(ON_DEMAND_PLATFORM_CHECK_URL);
+      String qry = UUID.randomUUID().toString();
+      URL url = new URL(ON_DEMAND_PLATFORM_CHECK_URL + qry);
       URLConnection conn = url.openConnection();
       is = conn.getInputStream();
       in = new BufferedReader(new InputStreamReader(is));
@@ -506,7 +508,7 @@ public class ActivationKey {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       decrypt(l.getBytes(), pk, bos, ON_DEMAND_PUBLIC_KEY);
       String s = new String(bos.toByteArray());
-      if ("OK".equals(s)) {
+      if (qry.equals(s)) {
         return true;
       }
       in.close();
