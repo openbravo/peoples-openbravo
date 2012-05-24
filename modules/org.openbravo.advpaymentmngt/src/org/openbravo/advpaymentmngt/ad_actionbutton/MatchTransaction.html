@@ -53,7 +53,7 @@ var sc_JsDateFormat = null;
 </script>
 <script language="JavaScript" type="text/javascript">
 var APRMMatchStatementIds;
-var matchTransactionCounter;
+var matchingTransaction;
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -106,7 +106,8 @@ isc.OBSelectorLinkWidget.addProperties({
 
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
-    matchTransactionCounter++;
+    matchingTransaction = true ;
+    document.frmMain.buttonProcess.disabled = true;
     APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
@@ -197,15 +198,9 @@ function openAddTransaction(bankStatementLineId){
                   }
                 }
             }
-            matchTransactionCounter--;
-            if (matchTransactionCounter === 0){
-                  document.frmMain.buttonProcess.disabled = false;
-            }
-            else if (matchTransactionCounter < 0){
-                if (document.frmMain.buttonProcess.disabled === true){
-                    document.frmMain.buttonProcess.disabled = false;
-                }
-                matchTransactionCounter++;
+            if (matchingTransaction === true){
+                matchingTransaction = false;
+                document.frmMain.buttonProcess.disabled = false;
             }
             showWarning();
           } else {
@@ -242,12 +237,9 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
           loadGrid();
         }
         else{
-          matchTransactionCounter--;
-          if (matchTransactionCounter === 0){
+          if (matchingTransaction === true){
+              matchingTransaction = false;
               document.frmMain.buttonProcess.disabled = false;
-          }
-          else if (matchTransactionCounter < 0){
-              matchTransactionCounter++;
           }
         }
       }
@@ -293,7 +285,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
       } else initialize_MessageBox('messageBoxID');
   }
   function onLoadDo(){
-    matchTransactionCounter = 0;
+    matchingTransaction = false;
     APRMMatchStatementIds = new Object();
     this.windowTables = new Array(
               new windowTableId('client_top_popup', 'buttonProcess'),
