@@ -218,7 +218,9 @@ function buttonOK_click() {
     var target, command, shouldContinue = true;
     if (result.showMessage) {
       shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
-      document.getElementById('password').value = '';
+      if (!shouldContinue) {
+        document.getElementById('password').value = '';
+      }
     }
 
     if (shouldContinue) {

@@ -211,6 +211,7 @@ public class LoginHandler extends HttpBaseServlet {
         msg = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER", vars.getLanguage());
         title = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
         log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
+        vars.clearSession(true);
         goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html",
             doRedirect);
 
