@@ -20,7 +20,7 @@ define(['builder', 'i18n',
                   ]}                                                             
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [   
-                  {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text'}}                                                                              
+                  {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'value': 'Openbravo'}}                                                                              
                 ]}
               ]},                                                                          
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -30,7 +30,7 @@ define(['builder', 'i18n',
                   ]}                                                                  
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [   
-                  {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password'}, init: function () {
+                  {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password', 'value': 'openbravo'}, init: function () {
                     this.$el.keyup(function (e) {
                         if(event.keyCode === 13){
                             $("#loginaction").click();
