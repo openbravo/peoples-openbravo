@@ -68,10 +68,8 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
 
   private boolean cleanInOutLines(ShipmentInOut inOut) {
     if (inOut == null) {
-      // nothing selected in pick and edit lines
       return false;
-    }
-    if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
+    } else if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
       if (inOut.getOrderReference() == null) {
         setRefNo = true;
       }

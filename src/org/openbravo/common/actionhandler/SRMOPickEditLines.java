@@ -97,7 +97,6 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
   private boolean cleanOrderLines(Order order) {
     if (order == null) {
-      // nothing selected in pick and edit lines
       return false;
     } else if (order.getOrderLineList().isEmpty()) {
       // nothing to delete.
