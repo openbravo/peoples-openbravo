@@ -53,6 +53,7 @@ var sc_JsDateFormat = null;
 </script>
 <script language="JavaScript" type="text/javascript">
 var APRMMatchStatementIds;
+var matchTransactionCounter;
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -82,6 +83,7 @@ function transactionFind(selected) {
 }
 
 function openSelector(bslId) {
+  document.frmMain.buttonProcess.disabled = false;
   document.frmMain.inpFinBankStatementLineId.value = bslId;
   if(bslId) {
       sc_FIN_FinAcc_Transaction_ID.bslId = bslId;
@@ -138,6 +140,7 @@ function submitThisPage(strCommand) {
   return true;
 }
 function openAddTransaction(bankStatementLineId){
+  document.frmMain.buttonProcess.disabled = false;
   document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
   openServletNewWindow('DEFAULT', false, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', 'ADDTRANSACTION', '2EED9BC16DB34D2B80BA40A21564BECF', false,600, 900, null, null, false, true, true);
   return true;
@@ -189,7 +192,9 @@ function openAddTransaction(bankStatementLineId){
             }
             for (var i in APRMMatchStatementIds) { 
                 if(data.grid.indexOf('inpCheckBox_'+i)){
-                  document.getElementById('inpCheckBox_'+i).checked=APRMMatchStatementIds[i];
+                  if (document.getElementById('inpCheckBox_'+i).checked !== true){
+                    document.getElementById('inpCheckBox_'+i).checked=APRMMatchStatementIds[i];
+                  }
                 }
             }
             matchTransactionCounter--;
@@ -197,7 +202,10 @@ function openAddTransaction(bankStatementLineId){
                   document.frmMain.buttonProcess.disabled = false;
             }
             else if (matchTransactionCounter < 0){
-                matchTransactionCounter = 0;
+                if (document.frmMain.buttonProcess.disabled === true){
+                    document.frmMain.buttonProcess.disabled = false;
+                }
+                matchTransactionCounter++;
             }
             showWarning();
           } else {
@@ -239,7 +247,7 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
               document.frmMain.buttonProcess.disabled = false;
           }
           else if (matchTransactionCounter < 0){
-              matchTransactionCounter = 0;
+              matchTransactionCounter++;
           }
         }
       }
