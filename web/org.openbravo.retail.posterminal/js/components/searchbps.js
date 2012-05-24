@@ -1,6 +1,6 @@
 /*global define, Backbone */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
+define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -29,7 +29,8 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [    
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [    
                 {kind: B.KindJQuery('div'), content: [    
-                  {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}}           
+                  {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}},
+                  {kind: OB.COMP.ClearButton}
                 ]}                  
               ]}                   
             ]},                                                               

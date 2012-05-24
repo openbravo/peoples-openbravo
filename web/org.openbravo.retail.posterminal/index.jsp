@@ -64,6 +64,18 @@ if(POSUtils.isModuleInDevelopment()) {
     background-color: #ccccff;
   }
   
+  a.btnclear {
+    padding:5px;
+		font-size: 30px;
+		font-weight: bold;
+		line-height: 18px;
+		color: black;
+		text-shadow: 0 1px 0 white;
+		opacity: 0.2;  
+    cursor: pointer;  
+    text-decoration: none;
+  }
+  
   div.btnkeyboard {
     display: block;
 

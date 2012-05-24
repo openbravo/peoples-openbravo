@@ -4,7 +4,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-
+  
   // Generic Button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'a',
@@ -96,6 +96,23 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       // custom bootstrap event, no need to prevent default
     }       
   });
+  
+  // Clears the text of the previous field
+  OB.COMP.ClearButton = Backbone.View.extend({
+    tagName: 'a',
+    className: 'btnclear',
+    attributes: {'href': '#'},
+    initialize: function () {
+      this.$el.append($('<span>&times;</span>'));     
+    },
+    events: {
+      'click': 'clickEvent' // attach the click event as part of the element
+    },
+    clickEvent: function (e) {
+      e.preventDefault();
+      this.$el.prev().val('');
+    }       
+  });  
     
   OB.COMP.Modal = Backbone.View.extend({
     tagName: 'div',
@@ -104,7 +121,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     initialize: function () {
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [ 
+            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'style':'padding:5px;', 'data-dismiss': 'modal'}, content: [ 
               {kind: B.KindHTML('<span style=\"font-size: 200%;\">&times;</span>')}
             ]},
             {kind: B.KindJQuery('h3'), content: [this.header]}
