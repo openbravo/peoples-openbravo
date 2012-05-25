@@ -543,18 +543,6 @@ public class DocFINReconciliation extends AcctServer {
         }
       }
       String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-          Record_ID);
-      OBCriteria<FIN_FinancialAccountAccounting> obCriteria = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccountAccounting.class);
-      obCriteria.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT,
-          reconciliation.getAccount()));
-      obCriteria.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA
-          + ".id", as.m_C_AcctSchema_ID));
-      obCriteria.setFilterOnReadableClients(false);
-      obCriteria.setFilterOnReadableOrganization(false);
-      List<FIN_FinancialAccountAccounting> accounts = obCriteria.list();
-
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
         FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
