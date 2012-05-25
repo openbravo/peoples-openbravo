@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -250,7 +250,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
               || limitation == LicenseRestriction.MODULE_EXPIRED
               || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-              || limitation == LicenseRestriction.HB_NOT_ACTIVE || !correctSystemStatus) {
+              || limitation == LicenseRestriction.HB_NOT_ACTIVE
+              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM || !correctSystemStatus) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {

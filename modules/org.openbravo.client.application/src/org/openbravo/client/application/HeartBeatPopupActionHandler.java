@@ -119,6 +119,10 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
       result.put("showAPRM", isUpgrading && !usingAprm);
       result.put("showExportScripts", isUpgrading && exportConfigScript);
       result.put("showSuccessUpgrade", isUpgrading && usingAprm && !exportConfigScript);
+      result
+          .put(
+              "showOnDemandOffPlatform",
+              showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.OutOfDemandPlatform);
       result.put("showInstancePurpose",
           showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.InstancePurpose);
       result.put("showHeartbeat",

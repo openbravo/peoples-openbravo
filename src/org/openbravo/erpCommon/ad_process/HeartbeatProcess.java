@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
@@ -666,7 +667,7 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    HeartBeat, Registration, None, InstancePurpose;
+    HeartBeat, Registration, None, InstancePurpose, OutOfDemandPlatform;
   }
 
   /**
@@ -686,6 +687,9 @@ public class HeartbeatProcess implements Process {
   public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
       ConnectionProvider connectionProvider) throws ServletException {
     if (vars.getRole() != null && vars.getRole().equals("0")) {
+      if (ActivationKey.getInstance().checkOPSLimitations(null) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
+        return HeartBeatOrRegistration.OutOfDemandPlatform;
+      }
       // Check if the instance purpose is set.
       if (isShowInstancePurposeRequired()) {
         return HeartBeatOrRegistration.InstancePurpose;
