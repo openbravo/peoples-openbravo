@@ -117,10 +117,6 @@ BEGIN
     END IF;
   END IF;
 
-  UPDATE c_invoice
-  SET grandtotal = grandtotal + taxamountnew
-  WHERE c_invoice_id = v_invoiceid;
-
     END C_INVOICETAX_TRG2
 ]]></body>
     </trigger>

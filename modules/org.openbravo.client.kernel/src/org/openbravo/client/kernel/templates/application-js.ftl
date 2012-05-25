@@ -56,6 +56,7 @@ var OB = {
     },
 
     Constants : {
+        WINTITLE : 'Openbravo',
         IDENTIFIER : '_identifier',
         ID : 'id',
         FIELDSEPARATOR : '$',
