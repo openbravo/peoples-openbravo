@@ -71,7 +71,7 @@ isc.OBTabSetMain.addProperties({
     }
 
     // update the document title
-    document.title = 'Openbravo - ' + tab.title;
+    document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {

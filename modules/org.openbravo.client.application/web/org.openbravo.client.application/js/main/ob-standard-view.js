@@ -1319,7 +1319,7 @@ isc.OBStandardView.addProperties({
     // added check on tab as initially it is not set
     if (this.isRootView && tab) {
       // update the document title
-      document.title = 'Openbravo - ' + tab.title;
+      document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
     }
   },
 
