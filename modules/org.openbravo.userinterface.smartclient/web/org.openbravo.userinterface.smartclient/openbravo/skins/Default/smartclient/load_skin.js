@@ -412,7 +412,7 @@ with (theWindow) {
                 height:42, // 10px margins + 22px button
                 membersMargin:10
             });
-
+            
             if (isc.Dialog.Warn && isc.Dialog.Warn.toolbarDefaults) {
                 isc.addProperties(isc.Dialog.Warn.toolbarDefaults, {
                     buttonConstructor:"IButton",
@@ -420,6 +420,7 @@ with (theWindow) {
                     membersMargin:10
                 });
             }
+            
         }
 
         // Dynamic form skinning
@@ -539,6 +540,12 @@ with (theWindow) {
                 popUpIconWidth:16
             });
         }
+        if (isc.ButtonItem && isc.IButton) {isc.ButtonItem.addProperties({
+            showFocused:true,
+            showFocusAsOver:false,
+            buttonConstructor:isc.IButton,
+            height:22
+        })}
 
         if (isc.ToolbarItem && isc.IAutoFitButton) {
             isc.ToolbarItem.addProperties({
@@ -597,25 +604,20 @@ with (theWindow) {
                 styleName:"dateChooserBorder"
             });
         }
-
+        
         if (isc.ToolStrip) {
             isc.ToolStrip.addProperties({
                 defaultLayoutAlign:"center",
                 height:30
             });
 
-            isc.ToolStripResizer.addProperties({
-                backgroundColor:"#f6f6f6"
-            });
-
             isc.ToolStrip.changeDefaults("formWrapperDefaults",{cellPadding:3});
         }
-
         if (isc.ToolStripMenuButton) {
             
             isc.overwriteClass("ToolStripMenuButton", "MenuButton").addProperties({
                 autoFit:true,
-                baseStyle:"toolbarButton buttonTitle",
+                baseStyle:"toolStripButton",
                 height:22,
                 labelVPad:0,
                 showDown:true,
@@ -628,7 +630,7 @@ with (theWindow) {
             
             isc.overwriteClass("ToolStripButton", "Button").addProperties({
                 autoFit:true,
-                baseStyle:"toolbarButton buttonTitle",
+                baseStyle:"toolStripButton",
                 height:22,
                 labelVPad:0,
                 showTitle:false,
@@ -1596,7 +1598,7 @@ with (theWindow) {
     }
 
 // ----------------------------------------
-// 19) CubeGrid
+// 19)  CubeGrid
 //----------------------------------------
     if (isc.CubeGrid) {
         isc.CubeGrid.addProperties({
