@@ -201,11 +201,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="GROSSPRICE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="GROSS_UNIT_PRICE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="TAXINCLUSIVE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="LINE_GROSS_AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>

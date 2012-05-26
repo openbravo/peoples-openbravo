@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION C_TAX_NET_FROM_GROSS">
+    <function name="C_TAX_NET_FROM_GROSS" type="NUMERIC">
+      <parameter name="p_tax_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_taxincludedamt" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_alternatetaxbaseamt" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_stdprecision" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_totaltaxamt" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[-- Logistice
+  v_ResultStr VARCHAR(2000):=''; 
+  v_LineNetAmount NUMBER;
+  
+  v_UnitTax NUMBER;
+  V_count NUMBER;
+  FINISH_PROCESS BOOLEAN:=false;
+  BEGIN --BODY
+
+  v_UnitTax := tax_from_net_amount(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
+
+    v_LineNetAmount:= Round (p_taxincludedamt*p_taxincludedamt  /(p_taxincludedamt+v_UnitTax),p_stdprecision ) ;
+
+   
+   RETURN v_LineNetAmount;
+   
+EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  RAISE;
+END C_TAX_NET_FROM_GROSS
+]]></body>
+    </function>
+  </database>

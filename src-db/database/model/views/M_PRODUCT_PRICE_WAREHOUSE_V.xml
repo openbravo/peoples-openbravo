@@ -16,9 +16,27 @@ END AS qty_reserved,
 CASE
 WHEN p.producttype <> 'I' OR p.isstocked = 'N' THEN 0
 ELSE COALESCE(pwq.qtyordered, 0)
-END AS qty_ordered, pp.pricelist, pp.pricestd, pp.pricelimit
+END AS qty_ordered, 
+CASE
+WHEN pl.istaxincluded = 'Y' THEN NULL
+ELSE pp.pricelist
+END AS pricelist, 
+CASE
+WHEN pl.istaxincluded = 'Y' THEN NULL
+ELSE pp.pricestd
+END AS pricestd, 
+CASE
+WHEN pl.istaxincluded = 'Y' THEN NULL
+ELSE pp.pricelimit
+END AS pricelimit, 
+CASE
+WHEN pl.istaxincluded = 'N' THEN NULL
+ELSE pp.pricegross
+END AS pricegross
 FROM m_productprice pp
+JOIN m_pricelist_version pv ON pp.m_pricelist_version_id = pv.m_pricelist_version_id
+JOIN m_pricelist pl ON pv.m_pricelist_id = pl.m_pricelist_id
 LEFT JOIN m_warehouse w ON pp.ad_client_id = w.ad_client_id
 LEFT JOIN m_product p ON p.m_product_id = pp.m_product_id
-LEFT JOIN m_product_warehouse_qtys_v pwq ON pwq.m_product_id = pp.m_product_id AND pwq.m_warehouse_id = w.m_warehouse_id]]></view>
+LEFT JOIN m_product_warehouse_qtys_v pwq ON pwq.m_product_id = pp.m_product_id]]></view>
   </database>

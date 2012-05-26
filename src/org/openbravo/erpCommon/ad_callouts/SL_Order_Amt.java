@@ -21,6 +21,8 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,6 +33,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.common.businessObject.TaxCalculator;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -69,7 +72,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
-      String strTaxInclusive = vars.getNumericParameter("inptaxinclusive");
+      String strTaxInclusive = vars.getNumericParameter("inpgrossUnitPrice");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
@@ -100,6 +103,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     String Issotrx = SLOrderStockData.isSotrx(this, strCOrderId);
     String strStockNoAttribute;
     String strStockAttribute;
+
     if (data1 != null && data1.length > 0) {
       strStockSecurity = data1[0].stock;
       strEnforceAttribute = data1[0].enforceAttribute;
@@ -112,8 +116,9 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt;
+    // Call StoreProcedure
 
+    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt;
     stockSecurity = new BigDecimal(strStockSecurity);
     qtyOrdered = (strQtyOrdered.equals("") ? ZERO : new BigDecimal(strQtyOrdered));
     priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
@@ -234,7 +239,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       // ordered qty multiply with gross price
       BigDecimal taxPrice = new BigDecimal(strTaxInclusive.trim()).multiply(new BigDecimal(
           strQtyOrdered.trim()));
-      resultado.append("new Array(\"inpgrossprice\", " + taxPrice.toString() + "),");
+      resultado.append("new Array(\"inplineGrossAmount\", " + taxPrice.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
       BigDecimal discount1 = null;
       if (priceList.compareTo(BigDecimal.ZERO) != 0)
@@ -250,8 +255,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
             12, BigDecimal.ROUND_HALF_EVEN));
         priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
-            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd
-                .toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
+            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         if (priceStd.scale() > PricePrecision)
           priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
         if (priceActual.scale() > PricePrecision)
@@ -270,8 +275,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             resultStock = stockNoAttribute.subtract(qtyOrdered);
             if (stockSecurity.compareTo(resultStock) > 0) {
               resultado.append("new Array('MESSAGE', \""
-                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
-                      .getLanguage())) + "\"),");
+                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
+                      vars.getLanguage())) + "\"),");
             }
           } else {
             if (!strAttribute.equals("") && strAttribute != null) {
@@ -281,8 +286,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
               resultStock = stockAttribute.subtract(qtyOrdered);
               if (stockSecurity.compareTo(resultStock) > 0) {
                 resultado.append("new Array('MESSAGE', \""
-                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
-                        .getLanguage())) + "\"),");
+                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
+                        vars.getLanguage())) + "\"),");
               }
             }
           }
@@ -330,28 +335,42 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       } else {
         taxInclusivePrice = generator.taxCalculationFromOrder(strCOrderId, unitPrice);
         BigDecimal taxInclusive = unitPrice.add(taxInclusivePrice);
-        resultado.append("new Array(\"inpgrossprice\",\""
+        resultado.append("new Array(\"inplineGrossAmount\",\""
             + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
-        resultado.append("new Array(\"inptaxinclusivelistprice\",\"" + taxInclusive + "\"),");
-        resultado.append("new Array(\"inptaxinclusive\", \"" + taxInclusive + "\"),");
+        resultado.append("new Array(\"inpgrossUnitPrice\", \"" + taxInclusive + "\"),");
       }
 
     }
 
     // if taxinclusive field is changed then modify net unit price and gross price
-    if (strChanged.equals("inptaxinclusive")) {
+    if (strChanged.equals("inpgrossUnitPrice")) {
       // SL_InclusiveTaxPrice_Generator generator;
       BigDecimal priceInclusive = new BigDecimal(strTaxInclusive.trim());
-      TaxCalculator generator;
-      generator = new TaxCalculator(strTaxId);
-      priceActual = priceInclusive.subtract(generator.taxCalculationFromOrder(strCOrderId,
-          priceInclusive));
+
+      // TaxCalculator generator;
+      // generator = new TaxCalculator(strTaxId);
+      // priceActual =
+      // priceInclusive.subtract(generator.taxCalculationFromOrder(strCOrderId,priceInclusive));
+
+      final List parameters = new ArrayList();
+      parameters.add(new String(strTaxId));
+      parameters.add(new BigDecimal(strTaxInclusive.trim()));
+
+      // TODO: Alternate Base Amount
+      parameters.add(new BigDecimal("0.0"));
+      parameters.add(new BigDecimal(strPrecision));
+      parameters.add(new BigDecimal("0.0"));
+
+      final String procedureName = "c_tax_net_from_gross";
+      final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+          procedureName, parameters, null);
+
       BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyOrdered.trim()));
-      resultado.append("new Array(\"inpgrossprice\",\"" + grossPrice + "\"),");
-      resultado.append("new Array(\"inppriceactual\",\"" + priceActual + "\"),");
-      resultado.append("new Array(\"inppricelist\",\"" + priceActual + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + priceActual + "\"),");
-      resultado.append("new Array(\"inppricestd\",\"" + priceActual + "\"),");
+      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
+      resultado.append("new Array(\"inppriceactual\",\"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricelist\",\"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricestd\",\"" + lineUnitAmount + "\"),");
     }
 
     // if net unit price changed then modify tax inclusive unit price
