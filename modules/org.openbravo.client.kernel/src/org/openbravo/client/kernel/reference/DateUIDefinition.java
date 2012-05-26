@@ -24,7 +24,6 @@ import java.util.Date;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -152,10 +151,6 @@ public class DateUIDefinition extends UIDefinition {
 
   @Override
   public String getCellAlign() {
-    if (!OBContext.getOBContext().isRTL()) {
-      return "left";
-    } else {
-      return "right";
-    }
+    return "left";
   }
 }
