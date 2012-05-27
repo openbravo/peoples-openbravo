@@ -22,7 +22,7 @@ define(['builder', 'i18n',
               {kind: B.KindJQuery('div'), attr: {'class': 'row login-user-container'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'login-user-button'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'login-user-button-bottom'}, content: [
-                    {kind: B.KindJQuery('span'), attr: {'class': 'login-user-button-bottom-icon'}, content: [' ']},
+                    {kind: B.KindJQuery('span'), attr: {'class': 'login-user-button-bottom-icon', 'style': 'color: transparent;'}, content: ['.']},
                     {kind: B.KindJQuery('span'), attr: {'class': 'login-user-button-bottom-text'}, content: ['Openbravo']}
                   ]}
                 ], init: function () {
@@ -51,8 +51,8 @@ define(['builder', 'i18n',
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [' ']},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [' ']},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
                     {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: ['Log In'],
                       init: function () {
@@ -69,7 +69,7 @@ define(['builder', 'i18n',
                       }
                     }
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [' ']},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'class': 'login-clock-container'}, content: [ 
                       {kind: B.KindJQuery('div'), id: 'clock', attr: {'class': 'login-clock-time'}},
