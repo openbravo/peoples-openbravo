@@ -17913,7 +17913,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--8BF7A60954494D62872B1A3896BE0C58-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8BF7A60954494D62872B1A3896BE0C58-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8BF7A60954494D62872B1A3896BE0C58-->  <VALUE><![CDATA[OffDemandPlatform]]></VALUE>
-<!--8BF7A60954494D62872B1A3896BE0C58-->  <MSGTEXT><![CDATA[You are using Openbravo On Demand instance off the On Demand platform. Now only System Administrators can login the system to set instance purpose and refresh instance information via the Instance Activation window.  <a href="http://wiki.openbravo.com/wiki/Instance_Activation#Instance_refresh" target="_blank">Learn more</a>]]></MSGTEXT>
+<!--8BF7A60954494D62872B1A3896BE0C58-->  <MSGTEXT><![CDATA[You are using Openbravo On Demand instance off the On Demand platform. Now only System Administrators can login the system to set instance purpose and refresh instance information via the Instance Activation window.  <a href='http://wiki.openbravo.com/wiki/Instance_Activation#Instance_refresh' target='_blank'>Learn more</a>]]></MSGTEXT>
 <!--8BF7A60954494D62872B1A3896BE0C58-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--8BF7A60954494D62872B1A3896BE0C58-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8BF7A60954494D62872B1A3896BE0C58--></AD_MESSAGE>
