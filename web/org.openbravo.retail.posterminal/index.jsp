@@ -216,6 +216,24 @@ if(POSUtils.isModuleInDevelopment()) {
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
+
+div.pos-clock-container {
+  position:absolute;
+  bottom: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+div.pos-clock-time {
+  font-size:300%;
+  margin: 10px;
+}
+
+div.pos-clock-date {
+  font-size:125%;
+  margin: 10px;
+}
+
 	</style>
 
   <style type="text/css">

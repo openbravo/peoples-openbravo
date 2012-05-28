@@ -1,6 +1,6 @@
 /*global define, $ */
 
-define(['builder', 'i18n', 
+define(['builder', 'i18n', 'components/clock',
         'components/commonbuttons', 'components/hwmanager', 'components/keyboard'
        ], function (B) {
   
@@ -71,21 +71,7 @@ define(['builder', 'i18n',
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'class': 'login-clock-container'}, content: [ 
-                      {kind: B.KindJQuery('div'), id: 'clock', attr: {'class': 'login-clock-time'}},
-                      {kind: B.KindJQuery('div'), id: 'date', attr: {'class': 'login-clock-date'}}
-                    ], init: function () {
-                        var clock = this.context.clock.$el;
-                        var date = this.context.date.$el;
-                        var updateclock = function () {
-                          var d = new Date();
-                          clock.text(OB.I18N.formatHour(d));
-                          date.text(OB.I18N.formatDate(d));
-                        };
-                        updateclock();
-                        setInterval(updateclock, 1000);
-                      }
-                    }
+                    {kind: OB.COMP.Clock, attr: {'containerClassName': 'login-clock-container', 'clockClassName': 'login-clock-time', 'dateClassName': 'login-clock-date'}}
                   ]}
                 ]}
               ]}
