@@ -457,9 +457,10 @@ isc.OBGrid.addProperties({
     if (!this.isOpenDirectModeLeaf && !this.view.isShowingForm && (this.view.messageBar && !this.view.messageBar.isVisible())) {
       showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowSingleRecordFilterMsg');
       showMessage = showMessageProperty !== 'N' && showMessageProperty !== '"N"';
-
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_SingleRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowSingleRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
-      this.view.messageBar.hasFilterMessage = true;
+      if (showMessage) {
+        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_SingleRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowSingleRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+        this.view.messageBar.hasFilterMessage = true;
+      }
     } else if (this.isOpenDirectModeLeaf && this.view.messageBar.hasFilterMessage) {
       // remove grid message if it was set previously when in direct open
       this.view.messageBar.hasFilterMessage = false;
