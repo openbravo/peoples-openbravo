@@ -20456,6 +20456,23 @@ In the last 30 days this instance has exceeded the limit of web service calls al
 <!--F6E3C4F8AAD64A07A3BC1937B053689E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F6E3C4F8AAD64A07A3BC1937B053689E--></AD_MESSAGE>
 
+<!--F6E64CAFA7E44E88A350335CDCA9F318--><AD_MESSAGE>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <AD_MESSAGE_ID><![CDATA[F6E64CAFA7E44E88A350335CDCA9F318]]></AD_MESSAGE_ID>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <VALUE><![CDATA[ErrorLocalChanges]]></VALUE>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <MSGTEXT><![CDATA[Local changes have been found in your database. This probably means that you have created or changed some elements in the Application Dictionary (such as windows, fields, menu entries, or messages), and that you have not exported them. If you don't export them before updating your environment or installing modules, your changes will be replaced.
+
+Please use the following command to export your changes:
+
+<i>ant export.database</i>
+
+To find out more about this command, and why you should use it, you can read <a href=http://wiki.openbravo.com/wiki/Update_Tips target=blank_>this</a> page in the Openbravo wiki.]]></MSGTEXT>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--F6E64CAFA7E44E88A350335CDCA9F318-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F6E64CAFA7E44E88A350335CDCA9F318--></AD_MESSAGE>
+
 <!--F6FCD10C8D0349F48C4F7EF4BF591996--><AD_MESSAGE>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <AD_MESSAGE_ID><![CDATA[F6FCD10C8D0349F48C4F7EF4BF591996]]></AD_MESSAGE_ID>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
