@@ -14,7 +14,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
         {kind: OB.COMP.ListReceipts, attr: {
           renderLine: function (model) {
             return (
-              {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                                                                                                        
+              {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                                                                                                        
                 {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [ 
                    OB.I18N.formatHour(model.get('orderDate'))
                 ]},                                                                                      

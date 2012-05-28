@@ -21,7 +21,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
             {kind: OB.COMP.ListCategories, attr:{
               renderLine:function (model) {
                 return (
-                  {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                  {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                       {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
                     ]},                                                                                      
@@ -47,7 +47,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
             {kind: OB.COMP.ListProducts, attr: {
               renderLine: function (model) {
                 return (
-                  {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                  {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
                     {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
                       {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
                     ]},                                                                                      

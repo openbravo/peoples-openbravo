@@ -231,24 +231,6 @@ if(POSUtils.isModuleInDevelopment()) {
     text-decoration: none;
     border-bottom: 1px solid #cccccc;       
   }
-      	 
-	a.btnselect {
-	  display: block;
-	  position: relative;
-    padding: 8px 10px 8px 10px;
-	  text-decoration: none;
-    color: black;
-    cursor: pointer;  
-    border-bottom: 1px solid #cccccc;   
-	}
-	a.btnselect:active {
-	  background-color: #cccccc;
-  }
-  
-  li.selected > a {
-    background-color : #049cdb;
-    color: #ffffff;
-  }
 
 .image-wrap {
    position: relative;

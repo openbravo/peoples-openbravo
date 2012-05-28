@@ -14,7 +14,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
         {kind: OB.COMP.SearchBP, attr: {
           renderLine: function (model) {
             return (
-              {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+              {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
                 {kind: B.KindJQuery('div'), content: [ 
                   model.get('BusinessPartner')._identifier
                 ]},                                                                                                                                                                     

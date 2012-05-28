@@ -42,7 +42,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
-        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                              
+        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                              
           {kind: B.KindJQuery('div'), content: [ 
             model.get('category')._identifier                                                                                                                                               
           ]}                                                                                   

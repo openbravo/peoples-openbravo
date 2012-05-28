@@ -41,7 +41,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
-        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
           {kind: B.KindJQuery('div'), content: [ 
             model.get('documentNo')
           ]}                                                                           

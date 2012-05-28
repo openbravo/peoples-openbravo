@@ -110,7 +110,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
-        {kind: B.KindJQuery('button'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
           {kind: B.KindJQuery('div'), content: [ 
             model.get('product')._identifier
           ]}                                                                      

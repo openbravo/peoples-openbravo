@@ -94,7 +94,7 @@ define(['builder', 'i18n',
                     {kind: OB.COMP.OrderView, attr: {
                       renderLine: function (model) {
                         return (
-                          {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+                          {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
                             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
                               model.get('product').get('product')._identifier                                                                
                             ]},                                                                                      

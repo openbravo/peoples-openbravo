@@ -60,7 +60,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
-        {kind: B.KindJQuery('a'), attr: {'href': '#', 'class': 'btnselect'}, content: [
+        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
           {kind: B.KindJQuery('div'), content: [ 
             model.get('productidentifier')                                                                
           ]}                                                                  

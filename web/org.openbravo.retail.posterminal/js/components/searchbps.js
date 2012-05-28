@@ -79,7 +79,7 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = function (model) {
       return (
-        {kind: B.KindJQuery('div'), attr: {'href': '#', 'class': 'btnselect'}, content: [                                                                                   
+        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
           {kind: B.KindJQuery('div'), content: [ 
             model.get('BusinessPartner')._identifier
           ]}
