@@ -267,13 +267,18 @@ public class ActivationKey {
    * Reloads ActivationKey instance from information in DB.
    */
   public static synchronized ActivationKey reload() {
-    ActivationKey ak = getInstance();
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
-    ak.loadInfo(sys.getActivationKey());
-    ak.loadRestrictions();
-    ak.lastUpdateTimestamp = sys.getUpdated();
-    return ak;
+    OBContext.setAdminMode();
+    try {
+      ActivationKey ak = getInstance();
+      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.System.class, "0");
+      ak.loadInfo(sys.getActivationKey());
+      ak.loadRestrictions();
+      ak.lastUpdateTimestamp = sys.getUpdated();
+      return ak;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
