@@ -220,7 +220,7 @@ public class ActivationKey {
   private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
       * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
   private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
-  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:8181/checkOnDemand?qry=";
+  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
   private static ActivationKey instance = new ActivationKey();
 
