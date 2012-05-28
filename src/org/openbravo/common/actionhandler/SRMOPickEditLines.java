@@ -43,6 +43,9 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
+import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -73,6 +76,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       }
 
     } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       log.error(e.getMessage(), e);
 
@@ -121,7 +125,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     }
     final String strOrderId = jsonRequest.getString("inpcOrderId");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
-    boolean isSOTrx = order.isSalesTransaction().booleanValue();
+    boolean isSOTrx = order.isSalesTransaction();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -138,11 +142,15 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
           selectedLine.getString("goodsShipmentLine"));
+      Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
+      AttributeSetInstance asi = OBDal.getInstance().get(AttributeSetInstance.class,
+          selectedLine.get("attributeSetValue"));
+      UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("uOM"));
 
       newOrderLine.setGoodsShipmentLine(shipmentLine);
-      newOrderLine.setProduct(shipmentLine.getProduct());
-      newOrderLine.setAttributeSetValue(shipmentLine.getAttributeSetValue());
-      newOrderLine.setUOM(shipmentLine.getUOM());
+      newOrderLine.setProduct(product);
+      newOrderLine.setAttributeSetValue(asi);
+      newOrderLine.setUOM(uom);
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned"));
       newOrderLine.setOrderedQuantity(qtyReturned.negate());
@@ -151,8 +159,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       if (selectedLine.get("orderNo").equals(null)) {
         if (selectedLine.get("unitPrice").equals(null)) {
-          prices = getPrices(strOrderId, shipmentLine.getProduct().getId(),
-              newOrderLine.getOrderDate(), isSOTrx);
+          prices = getPrices(strOrderId, product.getId(), newOrderLine.getOrderDate(), isSOTrx);
           newOrderLine.setUnitPrice((BigDecimal) prices.get("unitPrice"));
           newOrderLine.setListPrice((BigDecimal) prices.get("listPrice"));
           newOrderLine.setPriceLimit((BigDecimal) prices.get("priceLimit"));
@@ -167,7 +174,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         // tax
         List<Object> parameters = new ArrayList<Object>();
 
-        parameters.add(shipmentLine.getProduct().getId());
+        parameters.add(product.getId());
         parameters.add(order.getOrderDate());
         parameters.add(order.getOrganization().getId());
         parameters.add(order.getWarehouse().getId());
