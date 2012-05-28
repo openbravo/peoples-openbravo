@@ -172,11 +172,12 @@ public class InitialOrgSetup {
     }
 
     log4j.debug("createOrganization() - Creating users.");
-    obResult = insertUser((strOrgUser == null || strOrgUser.equals("")) ? org.getName() + "Org"
-        : strOrgUser, strPassword);
-    if (!obResult.getType().equals(OKTYPE))
-      return obResult;
-    logEvent("@AD_User_ID@ = " + strOrgUser + " / " + strOrgUser + NEW_LINE);
+    if ((strOrgUser != null && !strOrgUser.equals(""))) {
+      obResult = insertUser(strOrgUser, strPassword);
+      if (!obResult.getType().equals(OKTYPE))
+        return obResult;
+      logEvent("@AD_User_ID@ = " + strOrgUser + " / " + strOrgUser + NEW_LINE);
+    }
     appendHeader("@CreateOrgSuccess@");
     obResult.setType(ERRORTYPE);
 
