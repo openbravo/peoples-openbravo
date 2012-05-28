@@ -12,11 +12,10 @@ define(['builder', 'i18n',
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  OB.COMP.ButtonTest = OB.COMP.Button.extend({
+  OB.COMP.ButtonTest = OB.COMP.ToolbarButton.extend({
     icon: 'icon-leaf icon-white',
     label: ' **Leaf**',
     clickEvent: function (e) {
-      e.preventDefault();
       alert('pressed');
     }       
   });    

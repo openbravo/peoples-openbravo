@@ -31,6 +31,25 @@ if(POSUtils.isModuleInDevelopment()) {
      <script src="js/libs/less/less-1.3.0.min.js"></script>    
 
 	<style type="text/css">
+	
+	/* Let's get this party started */
+	::-webkit-scrollbar {
+	    width: 32px;
+	}
+	 
+	/* Track */
+	::-webkit-scrollbar-track {
+	    background: #dddddd; 
+	}
+	 
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+	    background: #888888; 
+	}
+	::-webkit-scrollbar-thumb:window-inactive {
+	    background: #666666; 
+	}
+	
 	 ul,ol {
 	   margin-bottom: 0px;
 	 }
@@ -47,7 +66,6 @@ if(POSUtils.isModuleInDevelopment()) {
 	
   a.btnkeyboard {
     display: block;
-
     width: 100%;
     font-size: 110%;
     text-align: center;
@@ -56,25 +74,78 @@ if(POSUtils.isModuleInDevelopment()) {
     background-color: #e2e2e2;
     color: black;
     cursor: pointer;      
-  } 	
+  }
   a.btnkeyboard:active {
     background-color: #cccccc;
-  }
-  a.btnactive {
+  }  
+  button.btnkeyboard {
+    display: block;
+    width: 100%;
+    border:none;
+    font-size: 110%;
+    text-align: center;
+    padding: 11px 0px 11px 0px;
+    text-decoration: none;
+    background-color: #e2e2e2;
+    color: black;
+    cursor: pointer;      
+  }     
+  button.btnkeyboard:active {
+    background-color: #cccccc;
+  }      
+  button.btnactive {
     background-color: #ccccff;
+  }  
+  button.btnlink {
+    display: inline-block;
+    border: none;
+    padding: 12px 15px 12px 15px;   
+    text-decoration: none;
+    background-color: #6cb33f;
+    color: white;
+    cursor: pointer;      
+    margin:5px; 
+  
+  }  
+  button.btnlink:active {
+    background-color: #cccccc;
+  } 
+  button.btnclear {
+    border: none;
+    padding: 5px 5px 5px 5px;   
+    text-decoration: none;
+    background-color: white;    
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 18px;
+    color: gray;
+    cursor: pointer;  
+  }
+  button.btnclear:active {
+    background-color: #cccccc;
+  }
+         
+  button.btnselect {
+    display: block;
+    width: 100%;
+    background-color: #ffffff;
+    position: relative;
+    border: none;
+    padding: 8px 10px 8px 10px;
+    text-decoration: none;
+    text-align: left;
+    color: black;
+    cursor: pointer;  
+    border-bottom: 1px solid #cccccc;   
+  }
+  button.btnselect:active {
+    background-color: #cccccc;
   }
   
-  a.btnclear {
-    padding:5px;
-		font-size: 30px;
-		font-weight: bold;
-		line-height: 18px;
-		color: black;
-		text-shadow: 0 1px 0 white;
-		opacity: 0.2;  
-    cursor: pointer;  
-    text-decoration: none;
-  }
+  li.selected > button {
+    background-color : #049cdb;
+    color: #ffffff;
+  }  
   
   div.btnkeyboard {
     display: block;

@@ -1,15 +1,16 @@
 /*global define,$,_,Backbone */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/commonbuttons', 'components/table'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
   var parseNumber = function (s) {
     return OB.DEC.number(parseFloat(s, 10));
-  };  
+  };
   
-  var BtnAction = function (kb) {    
+  var BtnAction = function (kb) {      
+    
     return Backbone.View.extend({
       tagName: 'div',
       attributes: {'style': 'margin: 5px;'},
@@ -30,21 +31,20 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
         }
         
         if (this.command) {
-          this.button = B({kind: B.KindJQuery('a'), id: 'button', attr: {'href': '#', 'class': 'btnkeyboard'}, init: function () {           
-              this.$el.click(function(e) {          
-                e.preventDefault();
-                kb.keyPressed(me.command);  
-              });                
-            }}).$el;   
-          kb.addButton(this.command, this.button);
-        } else {
-          this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}}).$el;        
+          this.button = new OB.COMP.Button();
+          this.button.$el.addClass('btnkeyboard');
+          this.button.clickEvent = function (e) {
+            kb.keyPressed(me.command);
+          };
+          kb.addButton(this.command, this.button.$el);
+        } else {      
+          this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}});        
         }
-        this.$el.append(this.button);   
+        this.$el.append(this.button.$el);   
       },
       append: function (child) {
         if (child.$el) {
-          this.button.append(child.$el);
+          this.button.$el.append(child.$el);
         }        
       }
     });   

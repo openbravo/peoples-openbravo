@@ -28,9 +28,7 @@ define(['builder', 'i18n', 'components/clock',
                 ], init: function () {
                   this.$el.click(function (e) {
                     e.preventDefault();
-                    var u = $('#username').val('Openbravo');
-                    var p = $('#password').val('');
-                     OB.POS.modelterminal.load(u, 'openbravo');
+                     OB.POS.modelterminal.load('Openbravo', 'openbravo');
                   });
                 }}
               ]}

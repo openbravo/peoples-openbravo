@@ -280,9 +280,9 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       if (p.get('product').obposScale) {
         OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
-            OB.UTIL.showError(data.exception.message);
+            alert(data.exception.message);
           } else if (data.result === 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WeightZero'));
+            alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
             me.createLine(p, data.result);
           }

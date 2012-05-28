@@ -1,16 +1,43 @@
-/*global window, define, $, Backbone */
+/*global window, define, $, Backbone, _ */
 
 define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
   
-  // Generic Button
+  // Base button
   OB.COMP.Button = Backbone.View.extend({
-    tagName: 'a',
-    className: 'btnlink',
-    attributes: {'href': '#'},
+    tagName: 'button',
     initialize: function () {
+      this.content();   
+      this.$el.click(_.bind(this._clickEvent, this));
+      // new googleuiFastButton(this.el, this._clickEvent);     
+    },
+    _clickEvent: function (e) {
+      this.clickEvent(e);
+    },
+    content: function () {
+    },
+    clickEvent: function (e) {
+    }      
+  });
+  
+  // Clears the text of the previous field
+  OB.COMP.ClearButton = OB.COMP.Button.extend({
+    content: function () {
+      this.$el.addClass('btnclear');
+      this.$el.html('&times;');     
+    },
+    clickEvent: function (e) {
+      // clears the text of the previous field.
+      this.$el.prev().val('');
+    }       
+  });    
+  
+  // Toolbar Button
+  OB.COMP.ToolbarButton = OB.COMP.Button.extend({
+    content: function () {
+      this.$el.addClass('btnlink');
       if (this.icon) {
         this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
       }
@@ -21,13 +48,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     icon: '',
     iconright: '',
-    label: '',
-    events: {
-      'click': 'clickEvent' // attach the click event as part of the element
-    },
-    clickEvent: function (e) {
-      e.preventDefault();
-    }       
+    label: ''      
   });
  
   // Menu Button
@@ -96,24 +117,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       // custom bootstrap event, no need to prevent default
     }       
   });
-  
-  // Clears the text of the previous field
-  OB.COMP.ClearButton = Backbone.View.extend({
-    tagName: 'a',
-    className: 'btnclear',
-    attributes: {'href': '#'},
-    initialize: function () {
-      this.$el.append($('<span>&times;</span>'));     
-    },
-    events: {
-      'click': 'clickEvent' // attach the click event as part of the element
-    },
-    clickEvent: function (e) {
-      e.preventDefault();
-      this.$el.prev().val('');
-    }       
-  });  
-    
+     
   OB.COMP.Modal = Backbone.View.extend({
     tagName: 'div',
     className: 'modal hide fade',
