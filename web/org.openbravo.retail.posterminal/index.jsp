@@ -339,9 +339,10 @@ div.pos-clock-date {
     span.login-user-button-bottom-icon {
       display: inline-block;
       width: 20px;
+      color: transparent;
       background-image: url('img/login-not-connected.png');
       background-repeat: no-repeat;
-      background-position: 5px 3px;
+      background-position: 2px 2px;
     }
 
     span.login-user-button-bottom-text {
