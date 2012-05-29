@@ -32,7 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.common.businessObject.TaxCalculator;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -72,13 +74,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
-      String strTaxInclusive = vars.getNumericParameter("inpgrossUnitPrice");
+      String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strCOrderlineId, strProduct, strUOM,
             strAttribute, strTabId, strQty, strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId,
-            strTaxInclusive);
+            strGrossUnitPrice);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -90,7 +92,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
       String strPriceList, String strCOrderId, String strCOrderlineId, String strProduct,
       String strUOM, String strAttribute, String strTabId, String strQty, String strPriceStd,
-      String cancelPriceAd, String strLineNetAmt, String strTaxId, String strTaxInclusive)
+      String cancelPriceAd, String strLineNetAmt, String strTaxId, String strGrossUnitPrice)
       throws IOException, ServletException {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -115,8 +117,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
-
-    // Call StoreProcedure
 
     BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt;
     stockSecurity = new BigDecimal(strStockSecurity);
@@ -237,9 +237,9 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
       }
       // ordered qty multiply with gross price
-      BigDecimal taxPrice = new BigDecimal(strTaxInclusive.trim()).multiply(new BigDecimal(
+      BigDecimal grossAmount = new BigDecimal(strGrossUnitPrice.trim()).multiply(new BigDecimal(
           strQtyOrdered.trim()));
-      resultado.append("new Array(\"inplineGrossAmount\", " + taxPrice.toString() + "),");
+      resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
       BigDecimal discount1 = null;
       if (priceList.compareTo(BigDecimal.ZERO) != 0)
@@ -318,43 +318,32 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
     // if taxRate field is changed
     if (strChanged.equals("inpcTaxId")) {
-      BigDecimal taxInclusivePrice = new BigDecimal(0);
+      BigDecimal grossUnitPrice = new BigDecimal(0);
       BigDecimal unitPrice = new BigDecimal(0);
-      taxInclusivePrice = new BigDecimal(strTaxInclusive.trim());
+      grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       unitPrice = new BigDecimal(strPriceActual.trim());
       TaxCalculator generator;
       generator = new TaxCalculator(strTaxId);
-      if (TaxCalculator.isPriceTaxInclusive(strCOrderId)) {
-        unitPrice = taxInclusivePrice.subtract(generator.taxCalculationFromOrder(strCOrderId,
-            taxInclusivePrice));
+      if (isPriceTaxInclusive(strCOrderId)) {
+        // todo
+        unitPrice = grossUnitPrice.subtract(generator.taxCalculationFromOrder(strCOrderId,
+            grossUnitPrice));
         resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
 
-      } else {
-        taxInclusivePrice = generator.taxCalculationFromOrder(strCOrderId, unitPrice);
-        BigDecimal taxInclusive = unitPrice.add(taxInclusivePrice);
-        resultado.append("new Array(\"inplineGrossAmount\",\""
-            + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
-        resultado.append("new Array(\"inpgrossUnitPrice\", \"" + taxInclusive + "\"),");
       }
 
     }
 
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
-      // SL_InclusiveTaxPrice_Generator generator;
-      BigDecimal priceInclusive = new BigDecimal(strTaxInclusive.trim());
-
-      // TaxCalculator generator;
-      // generator = new TaxCalculator(strTaxId);
-      // priceActual =
-      // priceInclusive.subtract(generator.taxCalculationFromOrder(strCOrderId,priceInclusive));
+      BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
 
       final List parameters = new ArrayList();
       parameters.add(new String(strTaxId));
-      parameters.add(new BigDecimal(strTaxInclusive.trim()));
+      parameters.add(new BigDecimal(strGrossUnitPrice.trim()));
 
       // TODO: Alternate Base Amount
       parameters.add(new BigDecimal("0.0"));
@@ -401,5 +390,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private boolean isPriceTaxInclusive(String orderId) {
+    if (OBDal.getInstance().get(Order.class, orderId).getPriceList().isPriceIncludesTax())
+      return true;
+    else
+      return false;
+
   }
 }
