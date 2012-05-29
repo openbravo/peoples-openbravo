@@ -11,7 +11,7 @@ define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), attr: {'style': 'position: relative; background: darkgray; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {kind: OB.COMP.Clock},
+          {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px;'}, content: [
               {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [

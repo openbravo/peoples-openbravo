@@ -11,8 +11,8 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     initialize: function () {
       this.component = B(
         {kind: B.KindJQuery('div'), content: [
-          {kind: B.KindJQuery('div'), id: 'clock'},
-          {kind: B.KindJQuery('div'), id: 'date'}
+          {kind: B.KindJQuery('div'), attr: {'class': 'clock-time'}, id: 'clock'},
+          {kind: B.KindJQuery('div'),  attr: {'class': 'clock-date'}, id: 'date'}
         ]});
       this.$el.append(this.component.$el);
       
@@ -28,14 +28,8 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       setInterval(updateclock, 1000);
     },
     attr: function (attributes) {
-      if (attributes.containerClassName) {
-        this.$el.attr('class', attributes.containerClassName);
-      }
-      if (attributes.clockClassName) {
-        this.$clock.attr('class', attributes.clockClassName);
-      }
-      if (attributes.dateClassName) {
-        this.$date.attr('class', attributes.dateClassName);
+      if (attributes.className) {
+        this.$el.attr('class', attributes.className);
       }
     }
   });

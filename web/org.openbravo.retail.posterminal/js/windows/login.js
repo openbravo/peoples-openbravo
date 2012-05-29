@@ -104,7 +104,7 @@ define(['builder', 'i18n', 'components/clock',
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [
-                    {kind: OB.COMP.Clock, attr: {'containerClassName': 'login-clock-container', 'clockClassName': 'login-clock-time', 'dateClassName': 'login-clock-date'}}
+                    {kind: OB.COMP.Clock, attr: {'className': 'login-clock'}}
                   ]}
                 ]}
               ]}

@@ -240,19 +240,19 @@
   border-radius: 6px;
 }
 
-div.pos-clock-container {
+div.pos-clock {
   position:absolute;
   bottom: 0px;
   right: 0px;
   text-align: center;
 }
 
-div.pos-clock-time {
+div.clock-time {
   font-size:300%;
   margin: 10px;
 }
 
-div.pos-clock-date {
+div.clock-date {
   font-size:125%;
   margin: 10px;
 }

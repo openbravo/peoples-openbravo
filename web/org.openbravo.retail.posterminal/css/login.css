@@ -87,17 +87,8 @@
       color: #72B446;
     }
 
-    div.login-clock-container {
+    div.login-clock {
       margin: 40px 0px 0px -40px;
       text-align: center;
       color: white;
-    }
-
-    div.login-clock-time {
-      font-size: 300%;
-    }
-
-    div.login-clock-date {
-      font-size: 125%;
-      margin: 10px 0px 0px 0px;
     }
