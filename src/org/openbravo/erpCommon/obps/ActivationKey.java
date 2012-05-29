@@ -267,18 +267,13 @@ public class ActivationKey {
    * Reloads ActivationKey instance from information in DB.
    */
   public static synchronized ActivationKey reload() {
-    OBContext.setAdminMode();
-    try {
-      ActivationKey ak = getInstance();
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      ak.loadInfo(sys.getActivationKey());
-      ak.loadRestrictions();
-      ak.lastUpdateTimestamp = sys.getUpdated();
-      return ak;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    ActivationKey ak = getInstance();
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    ak.loadInfo(sys.getActivationKey());
+    ak.loadRestrictions();
+    ak.lastUpdateTimestamp = sys.getUpdated();
+    return ak;
   }
 
   /**
@@ -1317,12 +1312,18 @@ public class ActivationKey {
           maxUsers = 0L;
         }
       }
-
-      // Reload from DB if it was modified from outside
-      if (lastUpdateTimestamp == null
-          || !lastUpdateTimestamp.equals(OBDal.getInstance()
-              .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
-        instance = ActivationKey.reload();
+      OBContext.setAdminMode();
+      try {
+        // Reload from DB if it was modified from outside
+        if (lastUpdateTimestamp == null
+            || !lastUpdateTimestamp.equals(OBDal.getInstance()
+                .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
+          instance = ActivationKey.reload();
+        }
+      } catch (Exception e) {
+        log.error("Error checking if activation key should be refreshed", e);
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
   }
