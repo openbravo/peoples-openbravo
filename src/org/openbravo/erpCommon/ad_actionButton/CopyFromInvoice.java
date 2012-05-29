@@ -22,19 +22,28 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromInvoice extends HttpSecureAppServlet {
@@ -167,6 +176,54 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
               priceactual = data[i].priceactual;
               linenetamt = data[i].linenetamt;
             }
+
+            // Checking, why is not possible to get a tax
+            BigDecimal linenetamtBD = new BigDecimal(linenetamt);
+            if ("".equals(strCTaxID)
+                && !linenetamtBD.equals(BigDecimal.ZERO.setScale(linenetamtBD.scale()))) {
+              if (!"".equals(data[i].accountId)) {
+                GLItem glItem = OBDal.getInstance().get(GLItem.class, data[i].accountId);
+
+                OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
+                    glItem.getTaxCategory()));
+                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+                List<TaxRate> taxRates = obcriteria.list();
+                if (taxRates.size() == 0) {
+                  throw new OBException(String.format(
+                      Utility.messageBD(this, "NotExistTaxRateForTaxCategory", vars.getLanguage()),
+                      glItem.getTaxCategory().getIdentifier(), glItem.getIdentifier()));
+                } else {
+                  Location location = OBDal.getInstance().get(Location.class,
+                      dataInvoice[0].cBpartnerLocationId);
+                  throw new OBException(String.format(
+                      Utility.messageBD(this, "NotExistTaxRateForTaxZone", vars.getLanguage()),
+                      glItem.getIdentifier(), glItem.getTaxCategory().getIdentifier(),
+                      location.getIdentifier()));
+                }
+              } else if (!"".equals(data[i].productId)) {
+                Product product = OBDal.getInstance().get(Product.class, data[i].productId);
+
+                OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
+                    product.getTaxCategory()));
+                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+                List<TaxRate> taxRates = obcriteria.list();
+                if (taxRates.size() == 0) {
+                  throw new OBException(String.format(
+                      Utility.messageBD(this, "NotExistTaxRateForTaxCategory", vars.getLanguage()),
+                      product.getTaxCategory().getIdentifier(), product.getIdentifier()));
+                } else {
+                  Location location = OBDal.getInstance().get(Location.class,
+                      dataInvoice[0].cBpartnerLocationId);
+                  throw new OBException(String.format(
+                      Utility.messageBD(this, "NotExistTaxRateForTaxZone", vars.getLanguage()),
+                      product.getIdentifier(), product.getTaxCategory().getIdentifier(),
+                      location.getIdentifier()));
+                }
+              }
+            }
+
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
                 dataInvoice[0].adOrgId, vars.getUser(), pricelist, priceactual, pricelimit,
                 linenetamt, strCTaxID, data[i].cInvoicelineId);
@@ -181,6 +238,16 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         }
       }
       releaseCommitConnection(conn);
+    } catch (OBException obe) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {
+      }
+      myError = new OBError();
+      myError.setType("Error");
+      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myError.setMessage(obe.getMessage());
+      return myError;
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
