@@ -259,7 +259,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
       analyzeResponse(tab, columnValues);
       long t10 = System.currentTimeMillis();
-      log.info("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
+      log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
           + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
