@@ -172,8 +172,11 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
               return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
           }
         }
-        if (CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, strOrgId) == 0)
-          return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+        if (CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, strOrgId) == 0) {
+          String strAllPeriodsErr = Utility.messageBD(this, "AllPeriodsPermanentClosed",
+              vars.getLanguage());
+          return Utility.translateError(this, vars, vars.getLanguage(), strAllPeriodsErr);
+        }
       }
 
       releaseCommitConnection(conn);
