@@ -1,4 +1,4 @@
-/*global define, $ */
+/*global define, $, Backbone, console */
 
 define(['builder', 'i18n', 'components/clock',
         'components/commonbuttons', 'components/hwmanager', 'components/keyboard'
@@ -24,7 +24,7 @@ define(['builder', 'i18n', 'components/clock',
 
       this.$bottomIcon = this.component.context.bottomIcon.$el;
       this.$bottomText = this.component.context.bottomText.$el;
-      this.$user;
+      // this.$user;
       this.$defaultPassword = 'openbravo';
       var me = this;
       this.$el.click(function (e) {
