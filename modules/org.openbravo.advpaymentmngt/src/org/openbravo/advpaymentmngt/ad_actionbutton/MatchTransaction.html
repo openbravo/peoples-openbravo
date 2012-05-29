@@ -53,7 +53,7 @@ var sc_JsDateFormat = null;
 </script>
 <script language="JavaScript" type="text/javascript">
 var APRMMatchStatementIds;
-var matchingTransaction;
+var serverWorking=false;
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -83,7 +83,6 @@ function transactionFind(selected) {
 }
 
 function openSelector(bslId) {
-  document.frmMain.buttonProcess.disabled = false;
   document.frmMain.inpFinBankStatementLineId.value = bslId;
   if(bslId) {
       sc_FIN_FinAcc_Transaction_ID.bslId = bslId;
@@ -104,10 +103,20 @@ isc.OBSelectorLinkWidget.addProperties({
   bslId: ''
  });
 
+function disableChecks(){
+var items = document.frmMain.getElementsByTagName("input");
+  for(var i=0; i<items.length; i++){
+    if(items[i].name === 'inpBankStatementLineId'){
+      if(items[i].checked){
+        items[i].disabled=true;
+      }
+    }
+  }
+}
+
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
-    matchingTransaction = true ;
-    document.frmMain.buttonProcess.disabled = true;
+    disableChecks();
     APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
@@ -122,7 +131,6 @@ function unMatchLine(bankStatementLineId, isChecked) {
   }
   else {
     APRMMatchStatementIds[bankStatementLineId]=true;
-    document.frmMain.buttonProcess.disabled = false;
   }
   return true;
 }
@@ -133,15 +141,16 @@ function closeThisPage() {
     return true;
 }
 function submitThisPage(strCommand) {
-  APRMMatchStatementIds = null;
-  if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
+  //if server is working the button should be disabled
+  if(serverWorking == false){
+    APRMMatchStatementIds = null;
+    if (validate(strCommand)) {
+      submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
+    }
     return true;
   }
-  return true;
 }
 function openAddTransaction(bankStatementLineId){
-  document.frmMain.buttonProcess.disabled = false;
   document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
   openServletNewWindow('DEFAULT', false, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', 'ADDTRANSACTION', '2EED9BC16DB34D2B80BA40A21564BECF', false,600, 900, null, null, false, true, true);
   return true;
@@ -152,6 +161,8 @@ function openAddTransaction(bankStatementLineId){
       try {
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
         var paramXMLReq = null;
+        serverWorking = true;
+        document.frmMain.buttonProcess.disabled = true;
         return submitXmlHttpRequest(callBackGrid, document.frmMain, "GRID", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -163,6 +174,8 @@ function openAddTransaction(bankStatementLineId){
       if (getReadyStateHandler(XMLHttpRequestObj)) {
         try {
           if (XMLHttpRequestObj.responseText) {
+            serverWorking = false;
+            document.frmMain.buttonProcess.disabled = false;
             strText = XMLHttpRequestObj.responseText;
             var data = eval(strText);
             var grid = data.grid;
@@ -198,10 +211,6 @@ function openAddTransaction(bankStatementLineId){
                   }
                 }
             }
-            if (matchingTransaction === true){
-                matchingTransaction = false;
-                document.frmMain.buttonProcess.disabled = false;
-            }
             showWarning();
           } else {
             document.getElementById('sectionGrid').innerHTML = '';
@@ -220,6 +229,8 @@ function openAddTransaction(bankStatementLineId){
         try {
           var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
           var paramXMLReq = null;
+          serverWorking = true;
+          document.frmMain.buttonProcess.disabled = true;
           return submitXmlHttpRequest(dummyCallBack, document.frmMain, action, url, false, null, paramXMLReq);
         } catch (e) {
           alert(e);
@@ -231,16 +242,12 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
       if (XMLHttpRequestObj.responseText) {
+        serverWorking = false;
+        document.frmMain.buttonProcess.disabled = false;
         strText = XMLHttpRequestObj.responseText;
         var data = eval(strText);
         if (data.forceLoadGrid) {
           loadGrid();
-        }
-        else{
-          if (matchingTransaction === true){
-              matchingTransaction = false;
-              document.frmMain.buttonProcess.disabled = false;
-          }
         }
       }
     } catch (e) {
@@ -253,6 +260,8 @@ function splitRow() {
   try {
     var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
     var paramXMLReq = null;
+    serverWorking=true;
+    document.frmMain.buttonProcess.disabled = true;
     return submitXmlHttpRequest(splitCallback, document.frmMain, "SPLIT", url, false, null, paramXMLReq);
   } catch (e) {
     alert(e);
@@ -264,6 +273,8 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
     if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
         if (XMLHttpRequestObj.responseText) {
+          serverWorking=false;
+          document.frmMain.buttonProcess.disabled = false;
           strText = XMLHttpRequestObj.responseText;
           var data = eval(strText);
           if (data.showJSMessage) {
@@ -285,7 +296,6 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
       } else initialize_MessageBox('messageBoxID');
   }
   function onLoadDo(){
-    matchingTransaction = false;
     APRMMatchStatementIds = new Object();
     this.windowTables = new Array(
               new windowTableId('client_top_popup', 'buttonProcess'),
