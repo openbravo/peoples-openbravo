@@ -581,7 +581,7 @@ public class PaymentReportDao {
           strOrg, strcBPartnerIdIN, strFinancialAccountId, strDocumentDateFrom, strDocumentDateTo,
           strPaymentDateFrom, strPaymentDateTo, strAmountFrom, strAmountTo, strcBPGroupIdIN,
           strcProjectIdIN, strfinPaymSt, strcCurrency, strPaymType, strGroupCrit, strOrdCrit,
-          strcNoBusinessPartner);
+          strcNoBusinessPartner, strDueDateFrom, strDueDateTo);
 
       transactionData = FieldProviderFactory.getFieldProviderArray(transactionsList);
       int totalTransElements = transactionsList.size();
@@ -1511,7 +1511,8 @@ public class PaymentReportDao {
       String strDocumentDateFrom, String strDocumentDateTo, String strPaymentDateFrom,
       String strPaymentDateTo, String strAmountFrom, String strAmountTo, String strcBPGroupIdIN,
       String strcProjectIdIN, String strfinPaymSt, String strcCurrency, String strPaymType,
-      String strGroupCrit, String strOrdCrit, String strcNoBusinessPartner) {
+      String strGroupCrit, String strOrdCrit, String strcNoBusinessPartner, String strDueDateFrom,
+      String strDueDateTo) {
     Organization[] organizations;
     if (strInclSubOrg.equalsIgnoreCase("include")) {
       Set<String> orgChildTree = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -1589,7 +1590,7 @@ public class PaymentReportDao {
             .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId)));
       }
 
-      // Document Date & Payment Date
+      // Document Date, Payment Date & Due Date
       if (!strDocumentDateFrom.equals("")) {
         obCriteriaTrans.add(Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DATEACCT,
             FIN_Utility.getDate(strDocumentDateFrom)));
@@ -1605,6 +1606,14 @@ public class PaymentReportDao {
       if (!strPaymentDateTo.equals("")) {
         obCriteriaTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_DATEACCT,
             FIN_Utility.getDate(strPaymentDateTo)));
+      }
+      if (!strDueDateFrom.equals("")) {
+        obCriteriaTrans.add(Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DATEACCT,
+            FIN_Utility.getDate(strDueDateFrom)));
+      }
+      if (!strDueDateTo.equals("")) {
+        obCriteriaTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_DATEACCT,
+            FIN_Utility.getDate(strDueDateFrom)));
       }
 
       // Amount
