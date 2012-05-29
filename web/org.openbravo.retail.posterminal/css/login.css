@@ -8,7 +8,7 @@
       width: 400px;
       height: 80px;
       float: left;
-      background-image: url('img/CompanyLogo.png');
+      background-image: url('../img/CompanyLogo.png');
       background-repeat:  no-repeat;
     }
 
@@ -16,7 +16,7 @@
       width: 80px;
       height: 80px;
       float: right;
-      background-image: url('img/OBLogo.png');
+      background-image: url('../img/OBLogo.png');
       background-repeat:  no-repeat;
     }
 
@@ -29,7 +29,7 @@
       float: left;
       width: 100px;
       height: 100px;
-      background-image: url('img/anonymous-icon.png');
+      background-image: url('../img/anonymous-icon.png');
       background-size: 100% 100%;
       margin: 0px 7px 7px 0px;
       cursor: pointer;
@@ -48,7 +48,7 @@
       display: inline-block;
       width: 20px;
       color: transparent;
-      background-image: url('img/login-not-connected.png');
+      background-image: url('../img/login-not-connected.png');
       background-repeat: no-repeat;
       background-position: 2px 2px;
     }
