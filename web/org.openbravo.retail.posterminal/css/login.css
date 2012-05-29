@@ -1,0 +1,103 @@
+   /* Styles for login window */
+
+    div.login-header-row {
+      height: 90px;
+    }
+
+    div.login-header-company {
+      width: 400px;
+      height: 80px;
+      float: left;
+      background-image: url('img/CompanyLogo.png');
+      background-repeat:  no-repeat;
+    }
+
+    div.login-header-ob {
+      width: 80px;
+      height: 80px;
+      float: right;
+      background-image: url('img/OBLogo.png');
+      background-repeat:  no-repeat;
+    }
+
+    div.login-user-container {
+      height: 79%;
+      overflow: auto;
+    }
+
+    div.login-user-button {
+      float: left;
+      width: 100px;
+      height: 100px;
+      background-image: url('img/anonymous-icon.png');
+      background-size: 100% 100%;
+      margin: 0px 7px 7px 0px;
+      cursor: pointer;
+    }
+
+    div.login-user-button-bottom {
+      width: 100px;
+      height: 18px;
+      background-color: white;
+      opacity: 0.88;
+      margin: 82px 0px 0px 0px;
+      overflow: hidden;
+    }
+
+    span.login-user-button-bottom-icon {
+      display: inline-block;
+      width: 20px;
+      color: transparent;
+      background-image: url('img/login-not-connected.png');
+      background-repeat: no-repeat;
+      background-position: 2px 2px;
+    }
+
+    span.login-user-button-bottom-text {
+      font-weight: bold;
+    }
+
+    div.login-inputs-container {
+      height: 207px;
+      background-color: #6CB33F;
+    }
+
+    div.login-inputs-screenlocked {
+      text-align: right;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      margin: 10px 0px 0px -10px;
+    }
+
+    div.login-inputs-userpassword {
+      padding: 0px 0px 0px 20px;
+    }
+
+    a.login-inputs-button {
+      display: inline-block;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 9px 20px 12px 20px;
+      text-decoration: none;
+      margin-top: 40px;
+      margin-left: 20%;
+      float: left;
+      background-color: white;
+      color: #72B446;
+    }
+
+    div.login-clock-container {
+      margin: 40px 0px 0px -40px;
+      text-align: center;
+      color: white;
+    }
+
+    div.login-clock-time {
+      font-size: 300%;
+    }
+
+    div.login-clock-date {
+      font-size: 125%;
+      margin: 10px 0px 0px 0px;
+    }

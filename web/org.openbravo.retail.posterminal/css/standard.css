@@ -1,0 +1,253 @@
+  
+  ::-webkit-scrollbar {
+      width: 32px;
+  }  
+  /* Track */
+  ::-webkit-scrollbar-track {
+      background: #dddddd; 
+  }  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+      background: #888888; 
+  }
+  ::-webkit-scrollbar-thumb:window-inactive {
+      background: #666666; 
+  }
+  
+   ul,ol {
+     margin-bottom: 0px;
+   }
+   
+  .btnlink-toolbar:after {
+    clear: both;
+  } 
+  
+  a.btn-dropdown {
+    color: white;
+    cursor: pointer;  
+    text-decoration: none;    
+  }
+  
+  a.btnkeyboard {
+    display: block;
+    width: 100%;
+    font-size: 110%;
+    text-align: center;
+    padding: 11px 0px 11px 0px;
+    text-decoration: none;
+    background-color: #e2e2e2;
+    color: black;
+    cursor: pointer;      
+  }
+  a.btnkeyboard:active {
+    background-color: #cccccc;
+  }  
+  button.btnkeyboard {
+    display: block;
+    width: 100%;
+    border:none;
+    font-size: 110%;
+    text-align: center;
+    padding: 11px 0px 11px 0px;
+    text-decoration: none;
+    background-color: #e2e2e2;
+    color: black;
+    cursor: pointer;      
+  }     
+  button.btnkeyboard:active {
+    background-color: #cccccc;
+  }      
+  button.btnactive {
+    background-color: #ccccff;
+  }  
+  button.btnlink {
+    display: inline-block;
+    border: none;
+    padding: 12px 15px 12px 15px;   
+    text-decoration: none;
+    background-color: #6cb33f;
+    color: white;
+    cursor: pointer;      
+    margin:5px; 
+  
+  }  
+  button.btnlink:active {
+    background-color: #cccccc;
+  } 
+  button.btnclear {
+    border: none;
+    padding: 5px 5px 5px 5px;   
+    text-decoration: none;
+    background-color: white;    
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 18px;
+    color: gray;
+    cursor: pointer;  
+  }
+  button.btnclear:active {
+    background-color: #cccccc;
+  }
+         
+  button.btnselect {
+    display: block;
+    width: 100%;
+    background-color: #ffffff;
+    position: relative;
+    border: none;
+    padding: 8px 10px 8px 10px;
+    text-decoration: none;
+    text-align: left;
+    color: black;
+    cursor: pointer;  
+    border-bottom: 1px solid #cccccc;   
+  }
+  button.btnselect:active {
+    background-color: #cccccc;
+  }
+  
+  li.selected > button {
+    background-color : #049cdb;
+    color: #ffffff;
+  }  
+  
+  div.btnkeyboard {
+    display: block;
+
+    width: 100%;
+    font-size: 110%;
+    text-align: center;
+    padding: 11px 0px 11px 0px;
+    text-decoration: none;
+    background-color: darkgray;
+    color: black;  
+  }
+  
+  div.btnlink {
+    display: inline-block;
+    padding: 12px 15px 12px 15px;   
+    text-decoration: none;
+    background-color: darkgray;
+    color: white;   
+    margin:5px; 
+    float:left;     
+  }    
+    
+  a.btnlink {
+    display: inline-block;
+    padding: 12px 15px 12px 15px;   
+    text-decoration: none;
+    background-color: #6cb33f;
+    color: white;
+    cursor: pointer;      
+    margin:5px; 
+  
+  }  
+  a.btnlink:active {
+    background-color: #cccccc;
+  }  
+  
+  a.btnlink-small {
+    padding: 5px 15px 5px 15px;    
+  } 
+  
+  a.btnlink-orange {
+    background-color: orange;
+    color: black;  
+  }
+  a.btnlink-lightblue {
+    background-color: lightblue;
+    color: black;  
+  }   
+  a.btnlink-lightpink {
+    background-color: lightpink;
+    color: black;  
+  } 
+  a.btnlink-lightgreen {
+    background-color: lightgreen;
+    color: black;  
+  } 
+  a.btnlink-wheat {
+    background-color: wheat;
+    color: black;  
+  }  
+  a.btnlink-gray {
+    background-color: #e2e2e2;
+    color: black;    
+  }   
+  
+  ul.nav-pos:after {
+    clear: both;
+  }  
+  
+  ul.nav-pos > li {
+    float: left;
+  }
+  
+  ul.nav-pos > li.active > a {
+    background-color: #7da7d9;
+  }
+  
+  div.btnselect {
+    display: block;
+    position: relative;
+    padding: 8px 10px 8px 10px;
+    text-decoration: none;
+    border-bottom: 1px solid #cccccc;       
+  }
+
+.image-wrap {
+   position: relative;
+   display: inline-block;
+   max-width: 100%; 
+  vertical-align: bottom;
+  
+}
+.image-wrap:after {
+  content: ' ';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border: solid 1px #cccccc;
+
+/*   -wekbit-box-shadow: inset 0 0 1px rgba(255,255,255,.4), inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.3); */
+/*   -moz-box-shadow: inset 0 0 1px rgba(255,255,255,.4), inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.3); */
+/*   box-shadow: inset 0 0 1px rgba(255,255,255,.4), inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.3); */
+
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+}
+
+.image-wrap div {
+
+  vertical-align: bottom;
+
+/*   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.4); */
+/*   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.4); */
+/*   box-shadow: 0 1px 2px rgba(0,0,0,.4); */
+
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+div.pos-clock-container {
+  position:absolute;
+  bottom: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+div.pos-clock-time {
+  font-size:300%;
+  margin: 10px;
+}
+
+div.pos-clock-date {
+  font-size:125%;
+  margin: 10px;
+}
+
