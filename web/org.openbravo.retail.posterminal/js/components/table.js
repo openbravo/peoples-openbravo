@@ -79,14 +79,30 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     this.tinfo = this.component.context.info.$el;
   };
   
+  OB.COMP.TableView.prototype.renderLineModel = function (model) {
+    var b;
+    if (this.renderLine.prototype.initialize) { // it is a backbone view
+      b = (new this.renderLine({model: model})).render();
+    } else {
+      // old fashioned render
+      b = B(this.renderLine(model));
+      b.$el.click(function (e) {
+        model.trigger('selected', model);
+        model.trigger('click', model);
+        b.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it    
+      });
+    }
+    return b;
+  }; 
+ 
   OB.COMP.TableView.prototype.attr = function (attr) {
     this.style = attr.style; // none, "edit", "list"        
     this.renderHeader = attr.renderHeader;
     this.renderLine = attr.renderLine;
     this.renderEmpty = attr.renderEmpty;
     this.collection = attr.collection;
-    this.selected = null;      
-    
+    this.selected = null;     
+       
     if (this.renderHeader) {      
       this.theader.append(B(this.renderHeader()).$el);  
     }   
@@ -111,16 +127,11 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       
       var me = this; var mimi = this;
       var tr = B({kind: B.KindJQuery('li')}).$el;
-      tr.append(B(this.renderLine(model)).$el);
-      tr.click(function (e) {
-        e.preventDefault();
-        model.trigger('selected', model);
-        model.trigger('click', model);
-        me.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
-      });
+      tr.append(this.renderLineModel(model).$el);
+      // tr.click(stdClickEvent);
       
       model.on('change', function() {
-        tr.empty().append(B(this.renderLine(model)).$el);
+        tr.empty().append(this.renderLineModel(model).$el);
       }, this);
       
       model.on('selected', function() {

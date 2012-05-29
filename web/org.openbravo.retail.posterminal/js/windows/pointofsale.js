@@ -92,25 +92,28 @@ define(['builder', 'i18n',
                       ]}                                                              
                     ]},
                     {kind: OB.COMP.OrderView, attr: {
-                      renderLine: function (model) {
-                        return (
-                          {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                              model.get('product').get('product')._identifier                                                                
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                              model.printQty()                                                                                                                                                          
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                              model.printPrice()                                                             
-                            ]},                                                                                      
-                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                              model.printNet()
-                            ]},
-                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                          ]}
-                        );         
-                      }                 
+                      renderLine: OB.COMP.SelectButton.extend({
+                        render: function() {
+                          this.$el.append(B(
+                            {kind: B.KindJQuery('div'), content: [
+                              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                                this.model.get('product').get('product')._identifier                                                                
+                              ]},                                                                                      
+                              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                                this.model.printQty()                                                                                                                                                          
+                              ]},                                                                                      
+                              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                                this.model.printPrice()                                                             
+                              ]},                                                                                      
+                              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                                this.model.printNet()
+                              ]},
+                              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                            ]}
+                          ).$el);
+                          return this;
+                        }
+                      })                       
                     }}                    
                   ]}                                                              
                 ]}                                                              

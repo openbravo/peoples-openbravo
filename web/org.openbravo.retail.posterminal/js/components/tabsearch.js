@@ -20,25 +20,28 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
           {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
             {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                                                       
               {kind: OB.COMP.SearchProduct, attr: {
-                renderLine: function (model) {
-                  return (
-                    {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
-                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
-                        {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                      ]},                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
-                        model.get('product')._identifier
-                      ]},                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
-                        {kind: B.KindJQuery('strong'), content: [ 
-                           model.get('price') ?                       
-                          OB.I18N.formatCurrency(model.get('price').listPrice) : ''                                                                                                                             
-                        ]}                                                                                                                                                                                                                                 
-                      ]},                                                                                      
-                      {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                    ]}
-                  );                    
-                }                                                  
+                renderLine: OB.COMP.SelectButton.extend({
+                  render: function() {
+                    this.$el.append(B(
+                      {kind: B.KindJQuery('div'), content: [
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+                          {kind: OB.UTIL.Thumbnail, attr: {img: this.model.get('img')}}
+                        ]},
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [ 
+                          this.model.get('product')._identifier
+                        ]},                                                                                      
+                        {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
+                          {kind: B.KindJQuery('strong'), content: [ 
+                             this.model.get('price') ?                       
+                            OB.I18N.formatCurrency(this.model.get('price').listPrice) : ''                                                                                                                             
+                          ]}                                                                                                                                                                                                                                 
+                        ]},                                                                                      
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                      ]}
+                    ).$el);
+                    return this;
+                  }
+                })
               }} 
             ]}        
           ]}                                                                      

@@ -24,14 +24,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
           {kind: B.KindJQuery('div'), attr: {'style':  'border-bottom: 1px solid #cccccc;'}},                                                                        
           {kind: B.KindJQuery('div'), content: [ 
             {kind: OB.COMP.TableView, id: 'tableview', attr: {
-              collection: this.receiptlist,
-              renderEmpty: function () {
-                return (
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
-                    OB.I18N.getLabel('OBPOS_SearchNoResults')
-                  ]}
-                );        
-              }
+              collection: this.receiptlist
             }}
           ]}                   
         ]}                   
@@ -39,15 +32,14 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     );
     this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = function (model) {
-      return (
-        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
-          {kind: B.KindJQuery('div'), content: [ 
-            model.get('documentNo')
-          ]}                                                                           
-        ]}
-      );
-    };
+    this.tableview.renderLine = OB.COMP.SelectButton.extend({
+      render: function() {
+        this.$el.append(B(                                                                               
+          this.model.get('documentNo')                                                                         
+        ).$el);
+        return this;
+      }
+    });   
   };
   
   OB.COMP.ListReceipts.prototype.attr = function (attrs) {

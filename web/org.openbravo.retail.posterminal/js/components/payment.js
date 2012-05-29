@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons', 'model/order'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -47,29 +47,33 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order'], function (
                         {kind: B.KindJQuery('div')}
                       );         
                     },
-                    renderLine: function (model) {
-                      return (
-                        {kind: B.KindJQuery('div'), attr: {'class': 'btnselect', 'style': 'color:white; '}, content: [
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                            model.printKind()                                                                
-                          ]},                                                                                      
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%; text-align:right;'}, content: [ 
-                            model.printAmount()                                                                                                                                                     
-                          ]},                                                                                      
-                          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                            {kind: B.KindJQuery('a'), attr: {'href': '#'}, content: [ 
-                              {kind: B.KindJQuery('i'), attr: {'class': 'icon-remove icon-white'}}
-                            ], init: function () {
-                              this.$el.click(function(e) {
-                                e.preventDefault();
-                                me.receipt.removePayment(model);                 
-                              });
-                            }}                                                         
-                          ]},
-                          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-                        ]}
-                      );         
-                    }          
+                    renderLine: OB.COMP.SelectPanel.extend({
+                      render: function () {
+                        var model = this.model;
+                        this.$el.append(B(
+                          {kind: B.KindJQuery('div'), attr: {'style': 'color:white; '}, content: [
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
+                              this.model.printKind()                                                                
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%; text-align:right;'}, content: [ 
+                              this.model.printAmount()                                                                                                                                                     
+                            ]},                                                                                      
+                            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+                              {kind: B.KindJQuery('a'), attr: {'href': '#'}, content: [ 
+                                {kind: B.KindJQuery('i'), attr: {'class': 'icon-remove icon-white'}}
+                              ], init: function () {
+                                this.$el.click(function(e) {
+                                  e.preventDefault();
+                                  me.receipt.removePayment(model);                 
+                                });
+                              }}                                                         
+                            ]},
+                            {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                          ]}                            
+                        ).$el);
+                        return this;
+                      }
+                    })         
                   }}
                 ]}        
               ]}                                                                                          

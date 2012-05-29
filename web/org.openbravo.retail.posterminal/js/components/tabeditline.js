@@ -8,12 +8,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
   OB.COMP.ButtonTabEditLine = OB.COMP.ButtonTab.extend({
     tabpanel: '#edition',
     label: OB.I18N.getLabel('OBPOS_LblEdit'),
-    initialize: function () {
-      OB.COMP.ButtonTab.prototype.initialize.call(this); // super.initialize();
-      
+    render: function () {    
       this.options.modelorder.get('lines').on('click', function () {
         this.$el.tab('show');
-      }, this);          
+      }, this);  
+      return this;
     },    
     shownEvent: function (e) {      
       this.options.keyboard.show('toolbarscan');

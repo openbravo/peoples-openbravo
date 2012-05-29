@@ -40,15 +40,14 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     );
     this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = function (model) {
-      return (
-        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                              
-          {kind: B.KindJQuery('div'), content: [ 
-            model.get('category')._identifier                                                                                                                                               
-          ]}                                                                                   
-        ]}
-      );               
-    };     
+    this.tableview.renderLine = OB.COMP.SelectButton.extend({
+      render: function() {
+        this.$el.append(B(                                                                        
+          this.model.get('category')._identifier                                                                                
+        ).$el);
+        return this;
+      }
+    });    
 
     // Exec
     this.categories.exec();

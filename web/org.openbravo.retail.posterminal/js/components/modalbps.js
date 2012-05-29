@@ -12,19 +12,22 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     getContentView: function () {
       return (
         {kind: OB.COMP.SearchBP, attr: {
-          renderLine: function (model) {
-            return (
-              {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
-                {kind: B.KindJQuery('div'), content: [ 
-                  model.get('BusinessPartner')._identifier
-                ]},                                                                                                                                                                     
-                {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
-                  model.get('BusinessPartnerLocation')._identifier
-                ]},                                                                                                                                                                     
-                {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-              ]}
-            );                    
-          }
+          renderLine: OB.COMP.SelectButton.extend({
+            render: function() {
+              this.$el.append(B(
+                {kind: B.KindJQuery('div'), content: [                                                                                   
+                  {kind: B.KindJQuery('div'), content: [ 
+                    this.model.get('BusinessPartner')._identifier
+                  ]},                                                                                                                                                                     
+                  {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [ 
+                    this.model.get('BusinessPartnerLocation')._identifier
+                  ]},                                                                                                                                                                     
+                  {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+                ]}
+              ).$el);
+              return this;
+            }
+          })               
         }}   
       );
     }    

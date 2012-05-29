@@ -8,15 +8,14 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
   OB.COMP.ButtonTabScan = OB.COMP.ButtonTab.extend({
     tabpanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
-    initialize: function () {
-      OB.COMP.ButtonTab.prototype.initialize.call(this); // super.initialize();
-      
+    render: function () {   
       this.options.modelorder.on('clear scan', function() {
         this.$el.tab('show');                         
       }, this);   
       this.options.SearchBPs.bps.on('click', function (model, index) {
         this.$el.tab('show');
-      }, this);         
+      }, this);   
+      return this;
     },    
     shownEvent: function (e) {      
       this.options.keyboard.show('toolbarscan');

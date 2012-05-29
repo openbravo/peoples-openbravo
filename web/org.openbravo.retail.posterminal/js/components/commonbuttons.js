@@ -15,8 +15,6 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     _clickEvent: function (e) {
       this.clickEvent(e);
     },
-    content: function () {
-    },
     clickEvent: function (e) {
     }      
   });
@@ -52,20 +50,28 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     label: ''      
   });
   
-//  
-//  // Toolbar Button
-//  OB.COMP.SelectButton = OB.COMP.Button.extend({
-//    content: function () {
-//      this.$el.addClass('btnlink');
-//      if (this.icon) {
-//        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
-//      }
-//      this.$el.append($('<span>' + this.label + '</span>'));     
-//      if (this.iconright) {
-//        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
-//      }      
-//    }    
-//  });  
+  // Select Div
+  OB.COMP.SelectPanel = Backbone.View.extend({
+    tagName: 'div',
+    className: 'btnselect',
+    initialize: function () {
+      this.model = this.options.model;  
+    }
+  });    
+  
+  // Select Button
+  OB.COMP.SelectButton = OB.COMP.Button.extend({
+    className: 'btnselect',
+    initialize: function () { 
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
+      this.model = this.options.model;  
+    },    
+    clickEvent: function (e) {
+      this.model.trigger('selected', this.model);
+      this.model.trigger('click', this.model);
+      this.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it          
+    }
+  });  
  
   // Menu Button
   OB.COMP.MenuButton = Backbone.View.extend({
@@ -142,7 +148,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
             {kind: B.KindJQuery('a'), attr: {'class': 'close', 'style':'padding:5px;', 'data-dismiss': 'modal'}, content: [ 
-              {kind: B.KindHTML('<span style=\"font-size: 200%;\">&times;</span>')}
+              {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
             ]},
             {kind: B.KindJQuery('h3'), content: [this.header]}
           ]}      

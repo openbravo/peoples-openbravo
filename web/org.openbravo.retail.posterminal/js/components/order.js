@@ -58,15 +58,14 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.$el = this.component.$el;
     this.totalnet = this.component.context.totalnet.$el;
     this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = function (model) {
-      return (
-        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
-          {kind: B.KindJQuery('div'), content: [ 
-            model.get('productidentifier')                                                                
-          ]}                                                                  
-        ]}
-      );         
-    }; 
+    this.tableview.renderLine = OB.COMP.SelectButton.extend({
+      render: function() {
+        this.$el.append(B(
+          this.model.get('productidentifier')                                                                
+        ).$el);
+        return this;
+      }
+    });    
       
     // Initial total display...
     this.totalnet.text(this.receipt.printTotal());   

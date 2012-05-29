@@ -76,17 +76,16 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
     );
     this.$el = this.component.$el;
     this.bpname = this.component.context.bpname.$el;
-    this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = function (model) {
-      return (
-        {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [                                                                                   
-          {kind: B.KindJQuery('div'), content: [ 
-            model.get('BusinessPartner')._identifier
-          ]}
-        ]}
-      );                    
-    };           
-  };
+    this.tableview = this.component.context.tableview;      
+    this.tableview.renderLine = OB.COMP.SelectButton.extend({
+      render: function() {
+        this.$el.append(B(
+          this.model.get('BusinessPartner')._identifier
+        ).$el);
+        return this;
+      }
+    });   
+  };  
   
   OB.COMP.SearchBP.prototype.attr = function (attrs) {
     this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
