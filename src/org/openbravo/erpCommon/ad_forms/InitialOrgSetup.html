@@ -52,13 +52,13 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
   var frm = document.frmMain;
-  if ((frm.inpCurrency.value==null || frm.inpCurrency.value=="") && frm.inpCreateAccounting.checked==true) {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrganization.value==null || frm.inpOrganization.value=="") {setWindowElementFocus(frm.inpOrganization); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrgType.value==null || frm.inpOrgType.value=="") {setWindowElementFocus(frm.inpOrgType); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpParentOrg.value==null || frm.inpParentOrg.value=="") {setWindowElementFocus(frm.inpParentOrg); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && (frm.inpPassword.value==null || frm.inpPassword.value=="")) {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && (frm.inpConfirmPassword.value==null || frm.inpConfirmPassword.value=="")) {setWindowElementFocus(frm.inpConfirmPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && (frm.inpConfirmPassword.value!=frm.inpPassword.value)) {setWindowElementFocus(frm.inpConfirmPassword);  showJSMessage(20); setProcessingMode('window',false); return false; }
+  if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && frm.inpConfirmPassword.value!=frm.inpPassword.value) {setWindowElementFocus(frm.inpConfirmPassword);  showJSMessage(20); setProcessingMode('window',false); return false; }
+  if ((frm.inpCurrency.value==null || frm.inpCurrency.value=="") && frm.inpCreateAccounting.checked==true) {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
   return true;
 }
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,8 +171,8 @@ public class InitialOrgSetup {
           e);
     }
 
-    log4j.debug("createOrganization() - Creating users.");
-    if ((strOrgUser != null && !strOrgUser.equals(""))) {
+    if (!"".equals(strOrgUser)) {
+      log4j.debug("createOrganization() - Creating users.");
       obResult = insertUser(strOrgUser, strPassword);
       if (!obResult.getType().equals(OKTYPE))
         return obResult;
@@ -564,17 +564,20 @@ public class InitialOrgSetup {
               + strOrgName, err);
     }
 
-    log4j.debug("checkDuplicated() - Checking user name");
-    try {
-      if (InitialSetupUtility.existsUserName(strOrgUser)) {
-        return logErrorAndRollback("@DuplicateOrgUser@",
-            "createOrganization() - ERROR - User name already existed in database: " + strOrgUser,
-            null);
+    if (!"".equals(strOrgUser)) { // It is an optional field
+      log4j.debug("checkDuplicated() - Checking user name");
+      try {
+        if (InitialSetupUtility.existsUserName(strOrgUser)) {
+          return logErrorAndRollback(
+              "@DuplicateOrgUser@",
+              "createOrganization() - ERROR - User name already existed in database: " + strOrgUser,
+              null);
+        }
+      } catch (final Exception err) {
+        return logErrorAndRollback("@DuplicateOrgUser@?",
+            "createOrganization() - ERROR - Checking if user name already existed in database: "
+                + strOrgUser, err);
       }
-    } catch (final Exception err) {
-      return logErrorAndRollback("@DuplicateOrgUser@?",
-          "createOrganization() - ERROR - Checking if user name already existed in database: "
-              + strOrgUser, err);
     }
     obResult.setType(OKTYPE);
     return obResult;
