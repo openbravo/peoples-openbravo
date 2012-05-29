@@ -8,8 +8,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   // Base button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
-    initialize: function () {
-      this.content();   
+    initialize: function () { 
       this.$el.click(_.bind(this._clickEvent, this));
       // new googleuiFastButton(this.el, this._clickEvent);     
     },
@@ -24,9 +23,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   
   // Clears the text of the previous field
   OB.COMP.ClearButton = OB.COMP.Button.extend({
-    content: function () {
+    render: function () {
       this.$el.addClass('btnclear');
-      this.$el.html('&times;');     
+      this.$el.html('&times;');
+      return this;
     },
     clickEvent: function (e) {
       // clears the text of the previous field.
@@ -36,7 +36,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
   
   // Toolbar Button
   OB.COMP.ToolbarButton = OB.COMP.Button.extend({
-    content: function () {
+    render: function () {
       this.$el.addClass('btnlink');
       if (this.icon) {
         this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
@@ -44,12 +44,28 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       this.$el.append($('<span>' + this.label + '</span>'));     
       if (this.iconright) {
         this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }      
+      }
+      return this;
     },
     icon: '',
     iconright: '',
     label: ''      
   });
+  
+//  
+//  // Toolbar Button
+//  OB.COMP.SelectButton = OB.COMP.Button.extend({
+//    content: function () {
+//      this.$el.addClass('btnlink');
+//      if (this.icon) {
+//        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
+//      }
+//      this.$el.append($('<span>' + this.label + '</span>'));     
+//      if (this.iconright) {
+//        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
+//      }      
+//    }    
+//  });  
  
   // Menu Button
   OB.COMP.MenuButton = Backbone.View.extend({

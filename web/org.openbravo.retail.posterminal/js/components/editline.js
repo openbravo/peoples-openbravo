@@ -108,65 +108,6 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     this.receipt = context.modelorder;
     this.line = null;
     
-//    this.renderLine = function (line) {
-//      return (
-//          
-//          
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LineDescription')
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), id: 'editlinename'}
-//                  ]}                
-//                ]},      
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LineQuantity')
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), id: 'editlineqty'}
-//                  ]}                
-//                ]},                                                             
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LinePrice')                                                                       
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), id: 'editlineprice'}
-//                  ]}                
-//                ]},                                                             
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LineValue')
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), content: [                                
-//                    ]}                
-//                  ]}                
-//                ]},                                                             
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LineDiscount')
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), content: [                                
-//                    ]}                
-//                  ]}                
-//                ]},                                                             
-//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-//                    OB.I18N.getLabel('OBPOS_LineTotal')
-//                  ]},  
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-//                    {kind: B.KindJQuery('strong'), id: 'editlinenet'}
-//                  ]}                
-//                ]}          
-//          
-//          
-//      );
-//    };
-    
     this.receipt.get('lines').on('selected', function (line) {
       if (this.line) {
         this.line.off('change', this.renderLine);

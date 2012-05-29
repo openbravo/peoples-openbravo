@@ -162,7 +162,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: BtnAction(this), attr: {'command': 'OK'}, content: [
-                      {kind: B.KindJQuery('i'), attr:{'class': 'icon-ok'}}                                                                                      
+                      {kind: B.KindJQuery('i'), attr:{'class': 'icon-arrow-left'}}                                                                                      
                     ]}                                                                            
                   ]}     
                 ]}                    
