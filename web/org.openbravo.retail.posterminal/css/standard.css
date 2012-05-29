@@ -1,3 +1,9 @@
+  body {
+    font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;  
+  }
+  input, button, select, textarea {
+	  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;  
+	}
   
   ::-webkit-scrollbar {
       width: 32px;
