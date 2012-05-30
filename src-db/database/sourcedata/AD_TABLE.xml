@@ -7303,6 +7303,7 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800207-->  <CLASSNAME><![CDATA[OperationMachine]]></CLASSNAME>
 <!--800207-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800207-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800207-->  <AD_WINDOW_ID><![CDATA[800051]]></AD_WINDOW_ID>
 <!--800207-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800207-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--800207-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>

@@ -325,6 +325,19 @@ export.database: exports database structure and data to xml files.
      </sequential>
   </macrodef>
   
+  <macrodef name="updatesystemstatuswhennot">
+    <attribute name="v" default="NOT SET"/>
+    <attribute name="previous" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' where system_status!='@{previous}' ;
+                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
+         </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
+  
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
   <target name="init" depends="code.rev">
@@ -383,7 +396,7 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
-    <updatesystemstatus v="RB51"/>
+    <updatesystemstatuswhennot v="RB51" previous="RB12"/>
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -1140,6 +1153,23 @@ export.database: exports database structure and data to xml files.
       <ant dir="${base.src.core}" target="clean" inheritAll="true" inheritRefs="true" />
       <ant dir="${base.src.trl}" target="clean" inheritAll="true" inheritRefs="true" />
       <ant dir="${base.src.wad}" target="clean" inheritAll="true" inheritRefs="true" />
-    </target>
+  </target>
+  
+  <target name="activate.instance" depends="init"
+          description="Activates the instance with the provided public key">
+   <taskdef name="activateInstace" classname="org.openbravo.erpCommon.obps.ActivationTask">
+     <classpath refid="project.class.path" />
+   </taskdef>
+   <property name="purpose" value="" />
+   <property name="publicKey" value="" />
+   <property name="publicKeyFile" value="" />
+    
+   <activateInstace purpose="${purpose}"
+                    publicKey="${publicKey}"
+                    publicKeyFile="${publicKeyFile}"
+                    userId="0" 
+                    adminMode="true" 
+                    propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
   
 </project>

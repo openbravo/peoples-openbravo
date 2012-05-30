@@ -61,7 +61,7 @@
       <foreign-key foreignTable="AD_ORG" name="APRM_PENDING_PAYINV_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_PAYMENT" name="APRM_PENDING_PAYINV_PAYMENT">
+      <foreign-key foreignTable="FIN_PAYMENT" name="APRM_PENDING_PAYINV_PAYMENT" onDelete="cascade">
         <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
       <check name="APRM_PENDINGPAYINV_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

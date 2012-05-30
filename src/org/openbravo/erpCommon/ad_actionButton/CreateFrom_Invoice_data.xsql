@@ -63,8 +63,8 @@
     </Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="language"/>
-    <Parameter name="language"/>
     <Parameter name="piId"/>
+    <Parameter name="language"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>

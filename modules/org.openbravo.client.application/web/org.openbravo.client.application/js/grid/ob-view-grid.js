@@ -40,10 +40,6 @@ if (!isc.Browser.isIE) {
 // ListGrid.
 isc.OBViewGrid.addProperties({
 
-  // ** {{{ reverseRTLAlign }}} **
-  // It should not reverse fields because the aligments are specified in the backend.
-  reverseRTLAlign: false,
-
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form

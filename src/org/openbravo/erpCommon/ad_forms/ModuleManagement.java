@@ -19,22 +19,31 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.model.Database;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,12 +52,16 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
+import org.openbravo.ddlutils.util.OBDataset;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
@@ -78,6 +91,7 @@ import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
 import org.openbravo.services.webservice.WebService3Impl;
 import org.openbravo.services.webservice.WebService3ImplServiceLocator;
+import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -1080,6 +1094,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
           + "_MODULE&inpcRecordId=" + inpcRecordId);
+      return;
+    }
+
+    boolean localChanges = verifyLocalChanges();
+    if (localChanges) {
+      final PrintWriter out = response.getWriter();
+      final String discardlc[] = {};
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_LocalChanges", discardlc)
+          .createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("welcome", Replace.replace(
+          Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage()), "\\n", "<br/>"));
+      out.println(xmlDocument.print());
+      out.close();
       return;
     }
 
@@ -2570,4 +2601,62 @@ public class ModuleManagement extends HttpSecureAppServlet {
     vars.setMessage("ModuleManagement|message", err);
     OBDal.getInstance().rollbackAndClose();
   }
+
+  /**
+   * Checks if there are local changes in the application
+   */
+  private boolean verifyLocalChanges() {
+    long t1 = System.currentTimeMillis();
+    Connection connection = OBDal.getInstance().getConnection();
+    PreparedStatement ps = null;
+    try {
+      ps = connection.prepareStatement("SELECT ad_db_modified('N') FROM DUAL");
+      ps.execute();
+      ResultSet rs = ps.getResultSet();
+      rs.next();
+      String answer = rs.getString(1);
+      if (answer.equalsIgnoreCase("Y")) {
+        return true;
+      }
+    } catch (Exception e) {
+      log4j.error("Couldn't verify local changes");
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+        // won't happen
+      }
+    }
+    List<File> modelFiles = new ArrayList<File>();
+    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path");
+    File sources = new File(sourcePath);
+    File model = new File(sources, "src-db/database/model/tables");
+    if (model.exists()) {
+      modelFiles.add(model);
+    }
+    for (File moduleFile : (new File(sources, "modules").listFiles())) {
+      File mmodel = new File(moduleFile, "src-db/database/model/tables");
+      if (mmodel.exists()) {
+        modelFiles.add(mmodel);
+      }
+    }
+    Database db = DatabaseUtils.readDatabase(modelFiles.toArray(new File[1]));
+
+    Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    String driver = obProp.getProperty("bbdd.driver");
+    String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE") ? obProp
+        .getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid") : obProp
+        .getProperty("bbdd.url");
+    String user = obProp.getProperty("bbdd.user");
+    String password = obProp.getProperty("bbdd.password");
+    BasicDataSource datasource = DBSMOBUtil.getDataSource(driver, url, user, password);
+    final Platform platform = PlatformFactory.createNewPlatformInstance(datasource);
+
+    OBDataset ad = new OBDataset(platform, db, "AD");
+    boolean datachange = ad.hasChanged(connection, log4j);
+    return datachange;
+
+  }
+
 }

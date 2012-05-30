@@ -254,7 +254,6 @@ isc.OBLinkedItemLayout.addProperties({
       clientOnly: true
     });
     this.linkedItemListGrid = isc.OBGrid.create({
-      reverseRTLAlign: false,
       width: '50%',
       height: 300,
       baseStyle: 'OBGridLinkCell',
@@ -304,7 +303,6 @@ isc.OBLinkedItemLayout.addProperties({
       testData: []
     });
     this.linkedItemCategoryListGrid = isc.OBGrid.create({
-      reverseRTLAlign: false,
       width: '50%',
       autoFetchData: true,
       height: 300,

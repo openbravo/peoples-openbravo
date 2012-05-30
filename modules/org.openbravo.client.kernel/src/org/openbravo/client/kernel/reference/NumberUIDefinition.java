@@ -27,7 +27,6 @@ import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -151,15 +150,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
   public String getFormat() {
     return "generalQtyEdition";
-  }
-
-  @Override
-  public String getCellAlign() {
-    if (!OBContext.getOBContext().isRTL()) {
-      return "right";
-    } else {
-      return "left";
-    }
   }
 
   @Override
