@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -94,7 +95,7 @@ public class CostingRuleProcess implements Process {
       if (existsPreviousRule) {
         createCostingRuleInits(rule, childOrgs);
         // Set valid from date
-        Date startingDate = new Date();
+        Date startingDate = DateUtils.truncate(new Date(), Calendar.SECOND);
         rule.setStartingDate(startingDate);
         log4j.debug("setting starting date " + startingDate);
         OBDal.getInstance().flush();
@@ -106,7 +107,7 @@ public class CostingRuleProcess implements Process {
             MaterialTransaction trx = getInventoryLineTransaction(icl);
             // Remove 1 second from transaction date to ensure that cost is calculated with previous
             // costing rule.
-            trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
+            trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
             BigDecimal trxCost = CostingUtils.getTransactionCost(trx, startingDate, true);
             Currency cur = new CostingServer(trx).getCostCurrency();
             BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), cur
@@ -284,7 +285,7 @@ public class CostingRuleProcess implements Process {
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient(org.getClient());
     closeInv.setOrganization(org);
-    closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory") + " " + rule.getIdentifier());
+    closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory"));
     closeInv.setWarehouse(wh);
     closeInv.setMovementDate(new Date());
     cri.setCloseInventory(closeInv);
@@ -292,7 +293,7 @@ public class CostingRuleProcess implements Process {
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient(org.getClient());
     initInv.setOrganization(org);
-    initInv.setName(OBMessageUtils.messageBD("CostInitInventory") + " " + rule.getIdentifier());
+    initInv.setName(OBMessageUtils.messageBD("CostInitInventory"));
     initInv.setWarehouse(wh);
     initInv.setMovementDate(new Date());
     cri.setInitInventory(initInv);
