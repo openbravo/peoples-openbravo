@@ -148,6 +148,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    } else {
+      where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
     }
     where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
     OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
