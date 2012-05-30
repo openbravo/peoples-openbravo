@@ -59,7 +59,7 @@ public class CostingBackground extends DalBaseProcess {
 
     List<MaterialTransaction> trxs = getTransactionsBatch();
     int counter = 0, total = trxs.size(), batch = 0;
-    while (total > 0) {
+    while (trxs.size() > 0) {
       batch++;
       for (MaterialTransaction transaction : trxs) {
         counter++;
