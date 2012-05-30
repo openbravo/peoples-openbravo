@@ -132,7 +132,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     cost.setCostType("AVA");
     cost.setManual(false);
-    cost.setPermanent(false);
+    cost.setPermanent(true);
     cost.setProduction(false);
     cost.setWarehouse((Warehouse) costDimensions.get(CostDimension.Warehouse));
     OBDal.getInstance().save(cost);
