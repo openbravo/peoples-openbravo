@@ -18,15 +18,15 @@ WHEN p.producttype <> 'I' OR p.isstocked = 'N' THEN 0
 ELSE COALESCE(pwq.qtyordered, 0)
 END AS qty_ordered, 
 CASE
-WHEN pl.istaxincluded = 'Y' THEN NULL
+WHEN pl.istaxincluded = 'Y' THEN 0
 ELSE pp.pricelist
 END AS pricelist, 
 CASE
-WHEN pl.istaxincluded = 'Y' THEN NULL
+WHEN pl.istaxincluded = 'Y' THEN 0
 ELSE pp.pricestd
 END AS pricestd, 
 CASE
-WHEN pl.istaxincluded = 'Y' THEN NULL
+WHEN pl.istaxincluded = 'Y' THEN 0
 ELSE pp.pricelimit
 END AS pricelimit, 
 CASE

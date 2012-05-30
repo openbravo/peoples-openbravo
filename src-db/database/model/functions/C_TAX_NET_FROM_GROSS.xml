@@ -25,7 +25,7 @@
   FINISH_PROCESS BOOLEAN:=false;
   BEGIN --BODY
 
-  v_UnitTax := tax_from_net_amount(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
+  v_UnitTax := c_tax_from_net_amt(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
 
     v_LineNetAmount:= Round (p_taxincludedamt*p_taxincludedamt  /(p_taxincludedamt+v_UnitTax),p_stdprecision ) ;
 

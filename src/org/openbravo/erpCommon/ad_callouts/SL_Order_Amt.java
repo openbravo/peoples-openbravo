@@ -372,8 +372,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal taxInclusive = priceActual.add(tax);
       resultado.append("new Array(\"inpgrossprice\",\""
           + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
-      resultado.append("new Array(\"inptaxinclusivelistprice\",\"" + taxInclusive + "\"),");
-      resultado.append("new Array(\"inptaxinclusive\",\"" + taxInclusive + "\"),");
       log4j.debug("Net unit price results: " + resultado.toString());
 
     }
@@ -385,6 +383,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
+    log4j.info("Callout for field changed: " + strChanged + " is " + resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
