@@ -184,6 +184,57 @@ public class CostingUtils {
   }
 
   /**
+   * Calls {@link #hasStandardCostDefinition(Product, Date, HashMap, boolean)} setting the
+   * recheckWithoutDimensions flag to true.
+   */
+  public static boolean hasStandardCostDefinition(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    return hasStandardCostDefinition(product, org, date, costDimensions, true);
+  }
+
+  /**
+   * Check the existence of a standard cost definition of a product on the given date and cost
+   * dimensions.
+   * 
+   * @param product
+   *          The Product to get its Standard Cost
+   * @param date
+   *          The Date to get the Standard Cost
+   * @param costDimensions
+   *          The cost dimensions to get the Standard Cost if it is defined by some of them.
+   * @param recheckWithoutDimensions
+   *          boolean flag to force a recall the method to get the Standard Cost at client level if
+   *          no cost is found in the given cost dimensions.
+   * @return the Standard Cost. Null when no definition is found.
+   */
+  public static boolean hasStandardCostDefinition(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions) {
+    // Get cost from M_Costing for given date.
+    OBCriteria<Costing> obcCosting = OBDal.getInstance().createCriteria(Costing.class);
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
+    obcCosting.add(Restrictions.le(Costing.PROPERTY_STARTINGDATE, date));
+    obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "STA"));
+    obcCosting.add(Restrictions.isNotNull(Costing.PROPERTY_COST));
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
+          costDimensions.get(CostDimension.Warehouse)));
+    }
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, org));
+    obcCosting.setFilterOnReadableOrganization(false);
+    if (obcCosting.count() > 0) {
+      if (obcCosting.count() > 1) {
+        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
+            + " for product: " + product.getName() + " (" + product.getId() + ")");
+      }
+      return true;
+    } else if (recheckWithoutDimensions) {
+      return hasStandardCostDefinition(product, org, date, getEmptyDimensions(), false);
+    }
+    return false;
+  }
+
+  /**
    * @return The costDimensions HashMap with null values for the dimensions.
    */
   public static HashMap<CostDimension, BaseOBObject> getEmptyDimensions() {
