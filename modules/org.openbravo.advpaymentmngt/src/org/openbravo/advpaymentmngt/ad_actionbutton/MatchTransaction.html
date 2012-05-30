@@ -54,6 +54,7 @@ var sc_JsDateFormat = null;
 <script language="JavaScript" type="text/javascript">
 var APRMMatchStatementIds;
 var serverWorking=false;
+var checkToEnable=[];
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -103,12 +104,20 @@ isc.OBSelectorLinkWidget.addProperties({
   bslId: ''
  });
 
+function enableChecks(){
+  for(var i=0; i<checksToEnable.length; i++){
+    document.getElementById(checksToEnable[i]).disabled=false;
+  }
+}
+
 function disableChecks(){
-var items = document.frmMain.getElementsByTagName("input");
+  var items = document.frmMain.getElementsByTagName("input");
+  checksToEnable = [];
   for(var i=0; i<items.length; i++){
     if(items[i].name === 'inpBankStatementLineId'){
       if(items[i].checked){
         items[i].disabled=true;
+        checksToEnable.push(items[i].id);
       }
     }
   }
@@ -248,6 +257,8 @@ function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
         var data = eval(strText);
         if (data.forceLoadGrid) {
           loadGrid();
+        }else{
+          enableChecks();
         }
       }
     } catch (e) {
