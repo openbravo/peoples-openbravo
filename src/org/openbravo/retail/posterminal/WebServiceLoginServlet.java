@@ -45,7 +45,7 @@ public class WebServiceLoginServlet extends WebServiceAbstractServlet {
 
     if (OBContext.getOBContext() != null) {
       log.warn("Already logged in.");
-      throw new InvalidContentException();
+      throw new InvalidContentException("Already logged in.");
     }
 
     // do the login action
@@ -53,7 +53,7 @@ public class WebServiceLoginServlet extends WebServiceAbstractServlet {
     String userId = authManager.webServiceAuthenticate(request);
     if (userId == null) {
       log.warn("Authentication failed.");
-      throw new OBSecurityException();
+      throw new OBSecurityException("Authentication failed.");
     }
 
     // Set the session

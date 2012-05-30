@@ -33,18 +33,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
       },
       logout: function (callback) {
         if (window.confirm('Are you sure that you want to logout from the application?')) {
-          $.ajax({
-            url: '../../org.openbravo.service.retail.posterminal.jsonrest/logout?auth=false',
-            contentType: 'application/json;charset=utf-8',
-            dataType: 'json',
-            type: 'GET',
-            success: function (data, textStatus, jqXHR) {
-              modelterminal.load();  
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              modelterminal.load();  
-            }
-          });
+          modelterminal.logout();
         }
       }
   };
@@ -55,7 +44,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 
   modelterminal.on('ready', function () {
     // We are Logged !!!
-    
+    $(window).off('keypress');
     $('#logoutaction').css('visibility', 'visible');
     
     // Set Hardware..
@@ -73,19 +62,21 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     });
   });    
   
-  modelterminal.on('fail', function (exception) {
-    // We are not logged...     
+  modelterminal.on('loginsuccess', function () {
+    modelterminal.load();
+  }); 
+  
+  modelterminal.on('logout', function () {
+
+    // Logged out. go to login window
+    modelterminal.off('loginfail');
+    $(window).off('keypress');
     $('#logoutaction').css('visibility', 'hidden');
-    
-    if (exception.status === 401 && exception.username) {
-      // The user tried to log in
-      alert('Invalid user name or password.\nPlease try again.');
-    }
     
     var c = _.extend({}, Backbone.Events);
     $("#containerwindow").empty().append((new login(c)).$el);   
     c.trigger('domready'); 
-  });
+  });  
   
   $(document).ready(function () {
     // Entry Point

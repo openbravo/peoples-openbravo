@@ -33,7 +33,7 @@ define(['builder', 'i18n', 'components/clock',
             p = me.$defaultPassword;
         $('#username').val(u);
         $('#password').val(p);
-        OB.POS.modelterminal.load(u, p);
+        OB.POS.modelterminal.login(u, p);
       });
     },
     append: function (child) {
@@ -89,6 +89,13 @@ define(['builder', 'i18n', 'components/clock',
                   {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
                     {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: ['Log In'],
                       init: function () {
+  
+                        OB.POS.modelterminal.on('loginfail', function (status) {
+                          alert('Invalid user name or password.\nPlease try again.');
+                          $('#password').val('');
+                          $('#username').focus();
+                        });
+                        
                         this.$el.click(function (e) {
                           e.preventDefault();
                           var u = $('#username').val();
@@ -96,7 +103,7 @@ define(['builder', 'i18n', 'components/clock',
                           if (!u || !p) {
                             alert('Please enter your username and password');
                           } else {
-                            OB.POS.modelterminal.load(u, p);
+                            OB.POS.modelterminal.login(u, p);
                           }
                         });
                       }

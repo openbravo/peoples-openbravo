@@ -48,12 +48,61 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       pricelistversion: null
     },
     
-    load: function (user, password) {
+    login: function (user, password) {
+      var me = this;
+      this.set('terminal', null);
+      this.set('context', null);
+      this.set('permissions', null);
+      this.set('bplocation', null);
+      this.set('location', null);
+      this.set('pricelist', null);
+      this.set('pricelistversion', null);      
+      $.ajax({
+        url: '../../org.openbravo.service.retail.posterminal.login',
+        data: {l: user, p: password},
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'json',
+        type: 'GET',
+        success: function (data, textStatus, jqXHR) {
+          me.triggerLoginSuccess();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {            
+          me.triggerLoginFail(jqXHR.status);  
+        }
+      });       
+    },
+    
+    logout: function () {
+      var me = this;
+      this.set('terminal', null);
+      this.set('context', null);
+      this.set('permissions', null);
+      this.set('bplocation', null);
+      this.set('location', null);
+      this.set('pricelist', null);
+      this.set('pricelistversion', null);
+      
+      $.ajax({
+        url: '../../org.openbravo.service.retail.posterminal.logout',
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'json',
+        type: 'GET',
+        success: function (data, textStatus, jqXHR) {
+          me.triggerLogout();  
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          me.triggerLogout();  
+        }
+      });      
+    },
+    
+    load: function () {
       
       // reset all application state.
       $(window).off('keypress');
       this.set('terminal', null);
       this.set('context', null);
+      this.set('permissions', null);      
       this.set('bplocation', null);
       this.set('location', null);
       this.set('pricelist', null);
@@ -69,7 +118,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         params,
         function (data) {
           if (data.exception) {
-            me.triggerFail(data.exception);
+            me.logout();
           } else if (data[0]) {
             me.set('terminal', data[0]);
             me.loadContext();
@@ -83,9 +132,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           } else {
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
           }
-        },
-        user,
-        password
+        }
       );        
     },
     
@@ -194,8 +241,16 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       }     
     },
     
-    triggerFail: function (exception) {
-      this.trigger('fail', exception);
+    triggerLogout: function () {
+      this.trigger('logout');
+    },
+    
+    triggerLoginSuccess: function () {
+      this.trigger('loginsuccess');
+    },
+    
+    triggerLoginFail: function (e) {
+      this.trigger('loginfail', e);
     },
     
     hasPermission: function (p) {

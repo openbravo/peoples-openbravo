@@ -7,17 +7,10 @@ define(['i18n'], function () {
   
   OB.DS.MAXSIZE = 100;
   
-  var serviceJSON = function (dataparams, callback, username, password) {
-    
-    var url = '../../org.openbravo.service.retail.posterminal.jsonrest/?auth=false';  
-    if (username && password) {
-      url += '&l=' + encodeURIComponent(username) + '&p=' + encodeURIComponent(password);
-    }
-
-    // console.log(url + '\n' + JSON.stringify(data));
-    
+  var serviceJSON = function (dataparams, callback) {
+        
     $.ajax({
-      url: url,
+      url: '../../org.openbravo.service.retail.posterminal.jsonrest/?auth=false',
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'POST',
@@ -49,8 +42,7 @@ define(['i18n'], function () {
         callback({
           exception: {
             message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-            status: jqXHR.status,
-            username: username
+            status: jqXHR.status
           }
         });
       }
@@ -62,7 +54,7 @@ define(['i18n'], function () {
     this.process = process;
   };  
   
-  OB.DS.Process.prototype.exec = function  (params, callback, username, password) {
+  OB.DS.Process.prototype.exec = function  (params, callback) {
     var attr;
     var data = {
       className: this.process
@@ -74,7 +66,7 @@ define(['i18n'], function () {
       }
     }  
     
-    serviceJSON(data, callback, username, password);
+    serviceJSON(data, callback);
   };
 
   // Query object
@@ -84,7 +76,7 @@ define(['i18n'], function () {
     this.org = org;
   };
 
-  OB.DS.Query.prototype.exec = function (params, callback, username, password) {
+  OB.DS.Query.prototype.exec = function (params, callback) {
     var p, i;
 
     var data = {
@@ -134,7 +126,7 @@ define(['i18n'], function () {
       data.organization = this.org;
     }   
     
-    serviceJSON(data, callback, username, password);
+    serviceJSON(data, callback);
   };
 
   function check(elem, filter) {
