@@ -202,14 +202,13 @@ public class CostingServer {
             .getGoodsShipmentLine().getShipmentReceipt();
         if (inout.isSalesTransaction()) {
           // Shipment
-          if (inout.getDocumentType().isReturn()) {
-            log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
-            return ShipmentReturn;
-          } else if (inout.getDocumentStatus().equals("VO")
-              && transaction.getGoodsShipmentLine().getMovementQuantity()
-                  .compareTo(BigDecimal.ZERO) < 0) {
+          if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getCanceledInoutLine() != null) {
             log4j.debug("Void shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ShipmentVoid;
+          } else if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ShipmentReturn;
           } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
               .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Negative Shipment: " + transaction.getGoodsShipmentLine().getIdentifier());
@@ -220,14 +219,13 @@ public class CostingServer {
           }
         } else {
           // Receipt
-          if (inout.getDocumentType().isReturn()) {
-            log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
-            return ReceiptReturn;
-          } else if (inout.getDocumentStatus().equals("VO")
-              && transaction.getGoodsShipmentLine().getMovementQuantity()
-                  .compareTo(BigDecimal.ZERO) < 0) {
+          if (inout.getDocumentStatus().equals("VO")
+              && transaction.getGoodsShipmentLine().getCanceledInoutLine() != null) {
             log4j.debug("Void receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
             return ReceiptVoid;
+          } else if (inout.getDocumentType().isReturn()) {
+            log4j.debug("Reversal Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
+            return ReceiptReturn;
           } else if (transaction.getGoodsShipmentLine().getMovementQuantity()
               .compareTo(BigDecimal.ZERO) < 0) {
             log4j.debug("Negative Receipt: " + transaction.getGoodsShipmentLine().getIdentifier());
