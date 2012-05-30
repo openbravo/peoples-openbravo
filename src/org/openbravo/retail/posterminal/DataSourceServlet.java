@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.structure.BaseOBObject;
@@ -23,6 +24,7 @@ import org.openbravo.service.json.DataToJsonConverter;
 public class DataSourceServlet extends BaseKernelServlet {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger log = Logger.getLogger(DataSourceServlet.class);
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -34,7 +36,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     final DataToJsonConverter converter = new DataToJsonConverter();
 
     response.setContentType("application/json");
-    out.print("{data: [");
+    out.println("{\"data\": [");
     out.flush();
 
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery("Product", "order by name");
@@ -45,20 +47,21 @@ public class DataSourceServlet extends BaseKernelServlet {
         if (idx > 0) {
           out.print(",");
         }
+
         final BaseOBObject obj = (BaseOBObject) results.get(0);
         out.println(converter.toJsonObject(obj, DataResolvingMode.SHORT).toString());
         idx++;
-        if (idx % 1000 == 0) {
-          System.out.println(idx); // TODO: Remove
+        if (idx % 100 == 0) {
           out.flush();
+          OBDal.getInstance().getSession().clear();
         }
-        OBDal.getInstance().getSession().evict(obj);
       }
     } finally {
       results.close();
+      OBDal.getInstance().getSession().clear(); // always clear the session (eg. result < 100 rows)
     }
     out.print("]}");
     out.close();
-    System.out.println("total: " + (System.currentTimeMillis() - t1) + "ms");
+    log.debug("total fetch time: " + (System.currentTimeMillis() - t1) + "ms");
   }
 }
