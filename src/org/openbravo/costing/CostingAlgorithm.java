@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -460,9 +461,11 @@ public abstract class CostingAlgorithm {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
-    productionLines.remove(transaction.getProductionLine());
+    List<ProductionLine> parts = new ArrayList<ProductionLine>();
+    parts.addAll(productionLines);
+    parts.remove(transaction.getProductionLine());
     BigDecimal totalCost = BigDecimal.ZERO;
-    for (ProductionLine prodLine : productionLines) {
+    for (ProductionLine prodLine : parts) {
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
       // Calculate transaction cost if it is not calculated yet.
