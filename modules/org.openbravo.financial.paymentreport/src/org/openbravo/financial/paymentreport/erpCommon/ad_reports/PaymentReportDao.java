@@ -269,7 +269,7 @@ public class PaymentReportDao {
       if (!strPaymentDateFrom.isEmpty()) {
         hsqlScript.append(" and ((pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(" > ?)  or (pay.");
+        hsqlScript.append(" >= ?)  or (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(" is null and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
