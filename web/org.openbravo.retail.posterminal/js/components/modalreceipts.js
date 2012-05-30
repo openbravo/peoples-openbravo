@@ -27,7 +27,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
                   ]}, 
                   {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [ 
                     {kind: B.KindJQuery('strong'), content: [ 
-                       this.model.printNet()                                                                                                                             
+                       this.model.printGross()                                                                                                                             
                     ]}                                                                                                                                                                                                                                 
                   ]},              
                   {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     

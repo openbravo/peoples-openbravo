@@ -76,7 +76,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                     OB.I18N.getLabel('OBPOS_LineTotal')
                   ]},  
                   {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [                                
-                    {kind: B.KindJQuery('strong'), id: 'editlinenet'}
+                    {kind: B.KindJQuery('strong'), id: 'editlinegross'}
                   ]}                
                 ]}                                                                                                                                      
               ]}                                                                                                                                      
@@ -100,7 +100,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     this.editlinename = this.component.context.editlinename.$el;
     this.editlineqty = this.component.context.editlineqty.$el;
     this.editlineprice = this.component.context.editlineprice.$el;
-    this.editlinenet = this.component.context.editlinenet.$el;
+    this.editlinegross = this.component.context.editlinegross.$el;
     
     // Set Model
     
@@ -133,7 +133,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       this.editlinename.text(this.line.get('product').get('product')._identifier);
       this.editlineqty.text(this.line.printQty());
       this.editlineprice.text(this.line.printPrice());
-      this.editlinenet.text(this.line.printNet());
+      this.editlinegross.text(this.line.printGross());
     } else {
       this.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.msgedit.hide();
@@ -142,7 +142,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       this.editlinename.empty();
       this.editlineqty.empty();
       this.editlineprice.empty();
-      this.editlinenet.empty();
+      this.editlinegross.empty();
     }    
   };
 }); 

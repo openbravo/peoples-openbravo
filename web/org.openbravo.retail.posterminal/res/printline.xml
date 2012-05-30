@@ -11,7 +11,7 @@
            <text align="right" length="20"><%= line.printPrice() %></text>
         <% } else { %>
            <text align="right" length="10"><%= line.printPrice() %></text>        
-           <text align="right" length="10"><%= line.printNet() %></text>        
+           <text align="right" length="10"><%= line.printGross() %></text>        
         <% } %>
         </line>
     </display>

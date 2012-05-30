@@ -106,7 +106,7 @@ define(['builder', 'i18n',
                                 this.model.printPrice()                                                             
                               ]},                                                                                      
                               {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                                this.model.printNet()
+                                this.model.printGross()
                               ]},
                               {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
                             ]}

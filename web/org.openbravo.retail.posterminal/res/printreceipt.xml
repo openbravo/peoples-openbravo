@@ -41,7 +41,7 @@
 
             <text align ="right" length="10"><%= lines.at(i).printPrice() %></text>
             <text align ="right" length="5">x<%= lines.at(i).printQty() %></text>
-            <text align ="right" length="10"><%= lines.at(i).printNet() %></text>
+            <text align ="right" length="10"><%= lines.at(i).printGross() %></text>
         </line>  
     <%
      } 
@@ -52,7 +52,7 @@
         <line></line>
         <line size="1">
             <text align ="left" length="16" bold="true">Total.</text>
-            <text align ="right" length="20" bold="true"><%= order.printNet() %></text>
+            <text align ="right" length="20" bold="true"><%= order.printGross() %></text>
         </line>    
         
         
@@ -61,7 +61,7 @@
     <display>
         <line>
             <text align="left" length="10">Total.</text>
-            <text align="right" length="10"><%= order.printNet() %></text>
+            <text align="right" length="10"><%= order.printGross() %></text>
         </line>
         <line>
            <text align="center" length="20">Thank you.</text>

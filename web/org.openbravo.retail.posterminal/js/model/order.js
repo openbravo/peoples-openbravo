@@ -13,7 +13,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       uOM: null,
       qty: OB.DEC.Zero,
       price: OB.DEC.Zero,
-      net: OB.DEC.Zero
+      gross: OB.DEC.Zero
     },
     
     printQty: function () {
@@ -24,16 +24,16 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       return OB.I18N.formatCurrency(this.get('price'));
     },
     
-    calculateNet: function () {
-      this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+    calculateGross: function () {
+      this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
     },
     
-    getNet: function () {
-      return this.get('net');
+    getGross: function () {
+      return this.get('gross');
     },
     
-    printNet: function () {
-      return OB.I18N.formatCurrency(this.getNet());
+    printGross: function () {
+      return OB.I18N.formatCurrency(this.getGross());
     }     
   });
   
@@ -82,30 +82,30 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('payments', new OB.MODEL.PaymentLineCol());       
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
-      this.set('net', OB.DEC.Zero);
+      this.set('gross', OB.DEC.Zero);
     },
     
     getTotal: function () {
-      return this.getNet();
+      return this.getGross();
     },  
     
     printTotal: function () {
       return OB.I18N.formatCurrency(this.getTotal());      
     },   
     
-    calculateNet: function () {
-      var net = this.get('lines').reduce(function (memo, e) { 
-        return OB.DEC.add(memo, e.getNet()); 
+    calculateGross: function () {
+      var gross = this.get('lines').reduce(function (memo, e) { 
+        return OB.DEC.add(memo, e.getGross()); 
       }, OB.DEC.Zero );
-      this.set('net', net);
+      this.set('gross', gross);
     },    
     
-    getNet: function () {
-      return this.get('net');
+    getGross: function () {
+      return this.get('gross');
     },
     
-    printNet: function () {
-      return OB.I18N.formatCurrency(this.getNet());      
+    printGross: function () {
+      return OB.I18N.formatCurrency(this.getGross());      
     },
     
     getPayment: function () {
@@ -150,7 +150,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.get('payments').reset();  
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
-      this.set('net', OB.DEC.Zero);      
+      this.set('gross', OB.DEC.Zero);      
       this.trigger('change');      
       this.trigger('clear');            
     },
@@ -179,7 +179,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       }, this);      
       this.set('payment', _order.get('payment'));
       this.set('change', _order.get('change'));
-      this.set('net', _order.get('net'));
+      this.set('gross', _order.get('gross'));
       this.trigger('change');
       this.trigger('clear'); 
     },
@@ -208,8 +208,8 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
           var me = this;
           // sets the new quantity
           line.set('qty', qty);
-          line.calculateNet();
-          this.calculateNet();
+          line.calculateGross();
+          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('product')._identifier]),
@@ -217,8 +217,8 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
             line: line,
             undo: function () {
               line.set('qty', oldqty);
-              line.calculateNet();
-              me.calculateNet();
+              line.calculateGross();
+              me.calculateGross();
               me.set('undo', null);
             }
           });        
@@ -237,8 +237,8 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
           var me = this;
           // sets the new price
           line.set('price', price);
-          line.calculateNet();
-          this.calculateNet();
+          line.calculateGross();
+          this.calculateGross();
           // sets the undo action
           this.set('undo', {
             text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('product')._identifier]),
@@ -246,8 +246,8 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
             line: line,
             undo: function () {
               line.set('price', oldprice);
-              line.calculateNet();
-              me.calculateNet();
+              line.calculateGross();
+              me.calculateGross();
               me.set('undo', null);
             }
           });          
@@ -261,14 +261,14 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       var index = this.get('lines').indexOf(line);
       // remove the line
       this.get('lines').remove(line);
-      this.calculateNet();
+      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('product')._identifier]),
         line: line,
         undo: function() {
           me.get('lines').add(line, {at: index});
-          me.calculateNet();
+          me.calculateGross();
           me.set('undo', null);
         }
       });  
@@ -302,18 +302,18 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('price').listPrice)
       });
-      newline.calculateNet();
+      newline.calculateGross();
  
       // add the created line
       this.get('lines').add(newline);
-      this.calculateNet();
+      this.calculateGross();
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('product')._identifier]),
         line: newline,
         undo: function() {
           me.get('lines').remove(newline);
-          me.calculateNet();
+          me.calculateGross();
           me.set('undo', null);
         }
       }); 

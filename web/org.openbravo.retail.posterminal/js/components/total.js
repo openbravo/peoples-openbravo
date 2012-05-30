@@ -19,7 +19,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
     // Set Model
     this.receipt =  context.modelorder;
     
-    this.receipt.on('change:net', function() {
+    this.receipt.on('change:gross', function() {
       this.totalgross.text(this.receipt.printTotal());      
     }, this);
     

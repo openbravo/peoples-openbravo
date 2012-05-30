@@ -14,7 +14,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
     var payments = this.receipt.get('payments');
     var lines = this.receipt.get('lines');
     
-    this.receipt.on('change:payment change:change change:net', function() {
+    this.receipt.on('change:payment change:change change:gross', function() {
       this.updatePending();     
     }, this);      
     

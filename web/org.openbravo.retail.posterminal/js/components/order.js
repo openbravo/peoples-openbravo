@@ -12,8 +12,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.receipt =  context.modelorder;
     var lines = this.receipt.get('lines');
     
-    this.receipt.on('change:net', function() {
-      this.totalnet.text(this.receipt.printTotal());   
+    this.receipt.on('change:gross', function() {
+      this.totalgross.text(this.receipt.printTotal());   
     }, this);    
 
     this.component = B(
@@ -47,7 +47,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
                 OB.I18N.getLabel('OBPOS_ReceiptTotal')
               ]},                                                                                                                                                                           
               {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                {kind: B.KindJQuery('strong'), id: 'totalnet'}                                                                                     
+                {kind: B.KindJQuery('strong'), id: 'totalgross'}                                                                                     
               ]},
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                   
             ]}
@@ -56,7 +56,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
       ]}                                                               
     );
     this.$el = this.component.$el;
-    this.totalnet = this.component.context.totalnet.$el;
+    this.totalgross = this.component.context.totalgross.$el;
     this.tableview = this.component.context.tableview;       
     this.tableview.renderLine = OB.COMP.SelectButton.extend({
       render: function() {
@@ -68,7 +68,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     });    
       
     // Initial total display...
-    this.totalnet.text(this.receipt.printTotal());   
+    this.totalgross.text(this.receipt.printTotal());   
     
   };
   
