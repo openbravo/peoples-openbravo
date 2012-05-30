@@ -18,11 +18,8 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Writer;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,15 +28,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.service.web.BaseWebServiceServlet;
-import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
-import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.service.web.WebServiceUtil;
 
 /**
@@ -47,53 +38,12 @@ import org.openbravo.service.web.WebServiceUtil;
  * 
  * @author adrianromero
  */
-public class TerminalServlet extends BaseWebServiceServlet {
+public class TerminalServlet extends WebServiceAuthenticatedServlet {
 
   private static final Logger log = Logger.getLogger(TerminalServlet.class);
   private static final long serialVersionUID = 1L;
 
   private static String SERVLET_PATH = "org.openbravo.service.retail.posterminal.jsonrest";
-
-  @Override
-  public void init(ServletConfig config) throws ServletException {
-    // if (config.getInitParameter(JsonConstants.JSON_REST_URL_NAME_PARAM) != null) {
-    // servletPathPart = config.getInitParameter(JsonConstants.JSON_REST_URL_NAME_PARAM);
-    // }
-    super.init(config);
-  }
-
-  protected void doService(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    try {
-      callServiceInSuper(request, response);
-      response.setStatus(200);
-    } catch (final InvalidRequestException e) {
-      SessionHandler.getInstance().setDoRollback(true);
-      response.setStatus(400);
-      log.error(e.getMessage(), e);
-      writeResult(response, JsonUtils.convertExceptionToJson(e));
-    } catch (final InvalidContentException e) {
-      SessionHandler.getInstance().setDoRollback(true);
-      response.setStatus(409);
-      log.error(e.getMessage(), e);
-      writeResult(response, JsonUtils.convertExceptionToJson(e));
-    } catch (final ResourceNotFoundException e) {
-      SessionHandler.getInstance().setDoRollback(true);
-      response.setStatus(404);
-      log.error(e.getMessage(), e);
-      writeResult(response, JsonUtils.convertExceptionToJson(e));
-    } catch (final OBSecurityException e) {
-      SessionHandler.getInstance().setDoRollback(true);
-      response.setStatus(401);
-      log.error(e.getMessage(), e);
-      writeResult(response, JsonUtils.convertExceptionToJson(e));
-    } catch (final Throwable t) {
-      SessionHandler.getInstance().setDoRollback(true);
-      response.setStatus(500);
-      log.error(t.getMessage(), t);
-      writeResult(response, JsonUtils.convertExceptionToJson(t));
-    }
-  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -105,20 +55,6 @@ public class TerminalServlet extends BaseWebServiceServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     doGetOrPost(request, response, getRequestContent(request));
-  }
-
-  @Override
-  public void doDelete(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-        "Method not supported: DELETE")));
-  }
-
-  @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    writeResult(response,
-        JsonUtils.convertExceptionToJson(new InvalidRequestException("Method not supported: PUT")));
   }
 
   private void doGetOrPost(HttpServletRequest request, HttpServletResponse response, String content)
@@ -133,7 +69,7 @@ public class TerminalServlet extends BaseWebServiceServlet {
       try {
         JSONObject jsonResult = execThingArray(request, response, getContentAsJSON(content));
         writeResult(response, jsonResult.toString());
-      } catch (Exception e) {
+      } catch (JSONException e) {
         log.error(e.getMessage(), e);
         writeResult(response, JsonUtils.convertExceptionToJson(e));
       }
@@ -228,47 +164,5 @@ public class TerminalServlet extends BaseWebServiceServlet {
     }
 
     return pathParts;
-  }
-
-  private void writeResult(HttpServletResponse response, String result) throws IOException {
-    response.setContentType("application/json;charset=UTF-8");
-    response.setHeader("Content-Type", "application/json;charset=UTF-8");
-
-    final Writer w = response.getWriter();
-    w.write(result);
-    w.close();
-  }
-
-  private String getRequestContent(HttpServletRequest request) throws IOException {
-    final BufferedReader reader = request.getReader();
-    if (reader == null) {
-      return "";
-    }
-    String line;
-    final StringBuilder sb = new StringBuilder();
-    while ((line = reader.readLine()) != null) {
-      if (sb.length() > 0) {
-        sb.append("\n");
-      }
-      sb.append(line);
-    }
-    log.debug("REQUEST CONTENT>>>>");
-    log.debug(sb.toString());
-    return sb.toString();
-  }
-
-  private Object getContentAsJSON(String content) throws JSONException {
-    Check.isNotNull(content, "Content must be set");
-    if (content.trim().startsWith("[")) {
-      return new JSONArray(content);
-    } else {
-      return new JSONObject(content);
-    }
-  }
-
-  private String getJSONResult(String result) throws JSONException {
-    final JSONObject jsonResult = new JSONObject();
-    jsonResult.put("result", result);
-    return jsonResult.toString();
   }
 }
