@@ -157,7 +157,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       // Price
       HashMap<String, BigDecimal> prices = null;
 
-      if (selectedLine.get("orderNo").equals(null)) {
+      if (shipmentLine == null || shipmentLine.getSalesOrderLine() == null) {
         if (selectedLine.get("unitPrice").equals(null)) {
           prices = getPrices(strOrderId, product.getId(), newOrderLine.getOrderDate(), isSOTrx);
           newOrderLine.setUnitPrice((BigDecimal) prices.get("unitPrice"));
@@ -172,23 +172,25 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           newOrderLine.setStandardPrice(price);
         }
         // tax
-        List<Object> parameters = new ArrayList<Object>();
+        String taxId = selectedLine.getString("tax");
+        if (taxId == null) {
+          List<Object> parameters = new ArrayList<Object>();
 
-        parameters.add(product.getId());
-        parameters.add(order.getOrderDate());
-        parameters.add(order.getOrganization().getId());
-        parameters.add(order.getWarehouse().getId());
-        parameters.add(order.getPartnerAddress().getId());
-        parameters.add(order.getInvoiceAddress().getId());
-        if (order.getProject() != null) {
-          parameters.add(order.getProject().getId());
-        } else {
-          parameters.add(null);
+          parameters.add(product.getId());
+          parameters.add(order.getOrderDate());
+          parameters.add(order.getOrganization().getId());
+          parameters.add(order.getWarehouse().getId());
+          parameters.add(order.getPartnerAddress().getId());
+          parameters.add(order.getInvoiceAddress().getId());
+          if (order.getProject() != null) {
+            parameters.add(order.getProject().getId());
+          } else {
+            parameters.add(null);
+          }
+          parameters.add("Y");
+
+          taxId = (String) CallStoredProcedure.getInstance().call("C_Gettax", parameters, null);
         }
-        parameters.add("Y");
-
-        String taxId = (String) CallStoredProcedure.getInstance()
-            .call("C_Gettax", parameters, null);
         TaxRate tax = OBDal.getInstance().get(TaxRate.class, taxId);
 
         newOrderLine.setTax(tax);
