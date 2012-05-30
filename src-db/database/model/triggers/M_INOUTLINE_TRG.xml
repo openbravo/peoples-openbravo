@@ -167,10 +167,12 @@ BEGIN
 
 
  -- Do not allow different product than the one in the related orderline.
- IF ((UPDATING OR INSERTING) AND :new.C_OrderLine_ID is not null) THEN
-   SELECT m_product_id INTO v_OrderProduct FROM C_OrderLine WHERE C_OrderLine_ID = :new.C_OrderLine_ID;
-   IF (v_OrderProduct <> :new.M_Product_ID) THEN
-     RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByOrder@');
+ IF ((UPDATING OR INSERTING)) THEN
+   IF (:new.C_OrderLine_ID is not null) THEN
+     SELECT m_product_id INTO v_OrderProduct FROM C_OrderLine WHERE C_OrderLine_ID = :new.C_OrderLine_ID;
+     IF (v_OrderProduct <> :new.M_Product_ID) THEN
+       RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByOrder@');
+     END IF;
    END IF;
  END IF;
 
