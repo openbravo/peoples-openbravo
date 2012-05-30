@@ -181,9 +181,9 @@ public class DocMovement extends AcctServer {
         // CostingRule not found exception. Ignore it.
         log4j.debug("CostingRule not found to retrieve organization's currency");
       }
-      if (CostingStatus.getInstance().isMigrated() && line.getTransaction() != null
-          && !line.getTransaction().isCostCalculated()) {
-        Map<String, String> parameters = getNotCalculatedCostParameters(line.getTransaction());
+      if (CostingStatus.getInstance().isMigrated() && line.transaction != null
+          && !line.transaction.isCostCalculated()) {
+        Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
       }

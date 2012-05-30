@@ -18,11 +18,22 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.text.ParseException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.costing.CostingAlgorithm.CostDimension;
+import org.openbravo.costing.CostingUtils;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.plm.Product;
 
 public class ProductInfo {
   static Logger log4jProductInfo = Logger.getLogger(ProductInfo.class);
@@ -274,6 +285,46 @@ public class ProductInfo {
       log4jProductInfo.warn(e);
     }
     return cost;
+  }
+
+  /**
+   * Calculates the total cost of a product in the currency of the organizations Legal Entity. Used
+   * for products that are not stocked items. For stocked items get the cost from the corresponding
+   * material transaction record.
+   * 
+   * @param date
+   *          The date of the document being posted.
+   * @param _qty
+   *          The product quantity of the document, when empty existing {@link #m_qty} is used.
+   * @param org
+   *          Organization of the document.
+   * @param wh
+   *          Warehouse of the document.
+   * @return String representing the total cost of the product.
+   * @throws OBException
+   *           When the Product does not have a standard cost defined for the given date on the
+   *           organization's Legal Entity
+   */
+  public String getProductDefaultCosts(String date, BigDecimal _qty, Organization org, Warehouse wh)
+      throws OBException {
+    BigDecimal qty = null;
+    Product product = OBDal.getInstance().get(Product.class, m_M_Product_ID);
+    if (_qty == null || "".equals(_qty)) {
+      qty = new BigDecimal(m_qty);
+    } else {
+      qty = _qty;
+    }
+    try {
+      HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
+      costDimensions.put(CostDimension.Warehouse, wh);
+      BigDecimal cost = CostingUtils.getStandardCost(product, org, OBDateUtils.getDate(date),
+          costDimensions);
+      return cost.multiply(qty).toString();
+    } catch (ParseException e) {
+      // Do nothing
+    }
+    // No cost found
+    return "";
   }
 
   /** Product Revenue Acct */
