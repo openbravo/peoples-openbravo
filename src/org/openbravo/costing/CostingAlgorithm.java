@@ -59,14 +59,8 @@ public abstract class CostingAlgorithm {
    * Organization. If this is null it uses the currency defined for the Client. <li>Transaction
    * Type, it calculates its type. </list>
    * 
-   * @param _transaction
-   *          MaterialTransaction to calculate its cost.
-   * @param costingRule
-   * @param currency
-   * @param organization
-   * @param _costDimensions
-   *          Dimension values to calculate the cost based on them. A null value means that the
-   *          dimension is not used.
+   * @param costingServer
+   *          CostingServer instance calculating the cost of the transaction.
    */
   public void init(CostingServer costingServer) {
     transaction = costingServer.getTransaction();
