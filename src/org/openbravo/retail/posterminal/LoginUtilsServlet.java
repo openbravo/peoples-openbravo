@@ -21,6 +21,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
 
   private static final long serialVersionUID = 1L;
 
+  @SuppressWarnings("unchecked")
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
