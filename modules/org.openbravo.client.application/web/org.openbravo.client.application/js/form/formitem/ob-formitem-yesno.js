@@ -55,5 +55,15 @@ isc.OBYesNoItem.addProperties({
   },
   formatPickListValue: function (value, record, field, rowNum, colNum) {
     return OB.Utilities.getYesNoDisplayValue(value);
+  }, 
+  
+  getCriterion: function() {
+	  var criterion = this.Super('getCriterion', arguments);
+	  if (criterion && criterion.value && (criterion.value === 'Yes' || criterion.value === 'yes')) {
+		  criterion.value = true;
+	  } else if (criterion && criterion.value && (criterion.value === 'No' || criterion.value === 'no')) {
+		  criterion.value = false;
+	  }
+	  return criterion;
   }
 });
