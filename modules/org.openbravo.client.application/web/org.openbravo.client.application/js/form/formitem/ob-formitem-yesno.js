@@ -59,9 +59,9 @@ isc.OBYesNoItem.addProperties({
   
   getCriterion: function() {
 	  var criterion = this.Super('getCriterion', arguments);
-	  if (criterion && criterion.value && (criterion.value === 'Yes' || criterion.value === 'yes')) {
+	  if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_Yes) {
 		  criterion.value = true;
-	  } else if (criterion && criterion.value && (criterion.value === 'No' || criterion.value === 'no')) {
+	  } else if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_No) {
 		  criterion.value = false;
 	  }
 	  return criterion;
