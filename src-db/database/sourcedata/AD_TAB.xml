@@ -14250,7 +14250,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLWHERECLAUSE><![CDATA[COALESCE(e.returnOrder.id, @Order.id@) = @Order.id@
 AND CASE WHEN e.salesTransaction = true THEN 'true' ELSE 'false' END = @Order.salesTransaction@
-AND @Order.businessPartner@ = e.goodsShipmentLine.shipmentReceipt.businessPartner.id]]></HQLWHERECLAUSE>
+AND @Order.businessPartner@ = e.businessPartner.id]]></HQLWHERECLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, movementDate desc, orderNo, product.name]]></HQLORDERBYCLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLFILTERCLAUSE><![CDATA[e.movementDate >= (now() - 90) OR e.obSelected=true]]></HQLFILTERCLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>

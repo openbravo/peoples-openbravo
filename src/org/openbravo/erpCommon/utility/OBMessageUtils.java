@@ -167,6 +167,21 @@ public class OBMessageUtils {
   /**
    * Parse the text searching @ parameters to translate.
    * 
+   * @param text
+   *          String with the text to translate.
+   * @param replaceMap
+   *          optional Map containing replacement values for the tokens
+   * @return String translated.
+   */
+  public static String parseTranslation(String text, Map<String, String> map) {
+    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    final String language = OBContext.getOBContext().getLanguage().getLanguage();
+    return parseTranslation(new DalConnectionProvider(false), vars, map, language, text);
+  }
+
+  /**
+   * Parse the text searching @ parameters to translate.
+   * 
    * @param conn
    *          Handler for the database connection.
    * @param vars
