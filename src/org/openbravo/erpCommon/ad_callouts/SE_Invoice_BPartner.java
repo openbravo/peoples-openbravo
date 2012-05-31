@@ -155,12 +155,14 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
               + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1)
+          if (i < tdv.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
-      } else
+      } else {
         resultado.append("null");
+      }
       resultado.append("\n),");
       resultado.append("new Array(\"inpsalesrepId\", ");
       FieldProvider[] tld = null;
@@ -206,12 +208,29 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcBpartnerContactId\", ");
       if (tdv != null && tdv.length > 0) {
         resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1)
+        if (strContact.isEmpty()) {
+          // If a contactID has not been specified, the first one is selected
+          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
+          if (tdv.length > 1) {
             resultado.append(",\n");
+          }
+          for (int i = 1; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
+            if (i < tdv.length - 1) {
+              resultado.append(",\n");
+            }
+          }
+        } else {
+          for (int i = 0; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+                + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
+            if (i < tdv.length - 1) {
+              resultado.append(",\n");
+            }
+          }
         }
         resultado.append("\n)");
       } else
@@ -233,13 +252,31 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpadUserId\", ");
       if (tdv != null && tdv.length > 0) {
         resultado.append("new Array(");
-        for (int i = 0; i < tdv.length; i++) {
-          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-              + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
-          if (i < tdv.length - 1)
+
+        if (strContact.isEmpty()) {
+          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
+          if (tdv.length > 1) {
             resultado.append(",\n");
+          }
+          for (int i = 1; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
+            if (i < tdv.length - 1) {
+              resultado.append(",\n");
+            }
+          }
+        } else {
+          for (int i = 0; i < tdv.length; i++) {
+            resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+                + (tdv[i].getField("id").equalsIgnoreCase(strContact) ? "true" : "false") + "\")");
+            if (i < tdv.length - 1) {
+              resultado.append(",\n");
+            }
+          }
         }
+
         resultado.append("\n)");
       } else
         resultado.append("null");

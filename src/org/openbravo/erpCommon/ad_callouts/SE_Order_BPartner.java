@@ -121,7 +121,6 @@ public class SE_Order_BPartner extends SimpleCallout {
     if (!strLocation.isEmpty()) {
       if (tdv != null && tdv.length > 0) {
         info.addSelect("inpcBpartnerLocationId");
-
         for (int i = 0; i < tdv.length; i++) {
           info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
               .getField("id").equalsIgnoreCase(strLocation));
@@ -324,11 +323,19 @@ public class SE_Order_BPartner extends SimpleCallout {
     if (tdv != null && tdv.length > 0) {
       info.addSelect("inpadUserId");
 
-      for (int i = 0; i < tdv.length; i++) {
-        info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i].getField("id")
-            .equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
+      String contactID = info.vars.getStringParameter("inpcBpartnerId_CON");
+      if (contactID.isEmpty()) {
+        // If a contactID has not been specified, the first one is selected
+        info.addSelectResult(tdv[0].getField("id"), tdv[0].getField("name"), true);
+        for (int i = 1; i < tdv.length; i++) {
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), false);
+        }
+      } else {
+        for (int i = 0; i < tdv.length; i++) {
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
+              .getField("id").equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
+        }
       }
-
       info.endSelect();
 
     } else {
