@@ -12,7 +12,7 @@ define(['builder', 'i18n', 'components/clock',
     className: 'login-user-button',
     initialize: function () {
       this.component = B(
-        {kind: B.KindJQuery('div'), id: 'paco', attr: {'class': 'login-user-button-bottom'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'class': 'login-user-button-bottom'}, content: [
           {kind: B.KindJQuery('span'), id: 'bottomIcon', attr: {'class': 'login-user-button-bottom-icon'}, content: ['.']},
           {kind: B.KindJQuery('span'), id: 'bottomText', attr: {'class': 'login-user-button-bottom-text'}}
         ]
@@ -129,9 +129,13 @@ define(['builder', 'i18n', 'components/clock',
                 connected.push(v.connected);
               });
               var content = {}, i,
-                  target = me.context.loginUserContainer.$el;
-              target[0].innerHTML = '';
+                  target = me.context.loginUserContainer.$el,
+                  isFirstTime = true;
               for (i=0; i<name.length; i++) {
+                if (isFirstTime) {
+                  target[0].innerHTML = '';
+                  isFirstTime = false;
+                }
                 content = B({kind: OB.COMP.LoginUserButton, attr: {'user': userName[i], 'userImage': image[i], 'userConnected': connected[i]}, content: [name[i]]}).$el;
                 target.append(content);
               }
