@@ -55,12 +55,9 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
       // * Has a "Business Partner" which is "Employee" and "Sales Representative"
       final String hqlUser = "select distinct user.name, user.username, user.id "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, ADSession session, "
-          + "OBPOS_POS_Access posAccess, BusinessPartner bpartner "
-          + "where user.username != '' and user.active = true and "
+          + "OBPOS_POS_Access posAccess " + "where user.username != '' and user.active = true and "
           + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
-          + "userRoles.role.id = posAccess.role.id and "
-          + "user.businessPartner.id = bpartner.id and " + "bpartner.employee = 'Y' and "
-          + "bpartner.isSalesRepresentative = 'Y' " + "order by user.name";
+          + "userRoles.role.id = posAccess.role.id " + "order by user.name";
       Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
 
       int queryCount = 0;
