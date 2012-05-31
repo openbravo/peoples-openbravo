@@ -35,16 +35,16 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     JSONObject item;
     try {
       // Get the organization of the current terminal
-      final String hqlOrg = "select terminal.organization.id, terminal.name "
+      final String hqlOrg = "select terminal.organization.id "
           + "from OBPOS_Applications terminal "
           + "where terminal.searchKey = :theTerminalSearchKey";
       Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
       qryOrg.setParameter("theTerminalSearchKey", terminalName);
+      qryOrg.setMaxResults(1);
 
       String strOrg = "0";
-      for (Object qryOrgObject : qryOrg.list()) {
-        final Object[] qryOrgObjectItem = (Object[]) qryOrgObject;
-        strOrg = qryOrgObjectItem[0].toString();
+      if (qryOrg.uniqueResult() != null) {
+        strOrg = qryOrg.list().get(0).toString();
       }
 
       // Set<String> orgChildTree =
