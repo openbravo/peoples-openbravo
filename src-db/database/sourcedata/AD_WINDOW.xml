@@ -330,7 +330,7 @@
 <!--122-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--122-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--122-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--122-->  <NAME><![CDATA[Country Region and City]]></NAME>
+<!--122-->  <NAME><![CDATA[Country and Region]]></NAME>
 <!--122-->  <DESCRIPTION><![CDATA[Define countries with regions and cities to be used in the application.]]></DESCRIPTION>
 <!--122-->  <HELP><![CDATA[Countries and regions are basic settings to share within Openbravo.]]></HELP>
 <!--122-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
