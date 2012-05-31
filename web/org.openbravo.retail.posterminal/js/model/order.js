@@ -47,10 +47,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
     defaults : {
       'amount': OB.DEC.Zero,
       'paid': OB.DEC.Zero // amount - change...      
-    },
-    printKind: function () {
-      return OB.I18N.getLabel('OBPOS_PayKind:' + this.get('kind'));
-    },     
+    },    
     printAmount: function () {
       return OB.I18N.formatCurrency(this.get('amount'));
     }

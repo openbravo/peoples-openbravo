@@ -48,9 +48,6 @@ define(['utilities'], function () {
     'OBPOS_KbPrice': 'PRICE',
     'OBPOS_KbDiscount': 'DISCOUNT',
     'OBPOS_KbCode': 'UPC/EAN',
-    'OBPOS_KbCash': 'Cash',
-    'OBPOS_KbCard': 'Card',
-    'OBPOS_KbVoucher': 'Voucher',
     'OBPOS_KbUPCEANCodeNotFound': 'UPC/EAN code not found: %0',
 
     'OBPOS_ReceiptNew': 'New Receipt',
@@ -70,9 +67,6 @@ define(['utilities'], function () {
     'OBPOS_PaymentsOverpayment': ' overpayment. ',
     'OBPOS_LblDone': 'Done',
     
-    'OBPOS_PayKind:payment.cash': 'Cash',
-    'OBPOS_PayKind:payment.voucher': 'Voucher',
-    'OBPOS_PayKind:payment.card': 'Card',
     'OBPOS_WeightZero': 'No weight on the scale.',
     
     'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',

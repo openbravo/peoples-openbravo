@@ -51,6 +51,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     login: function (user, password) {
       var me = this;
       this.set('terminal', null);
+      this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);
       this.set('bplocation', null);
@@ -75,6 +76,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     logout: function () {
       var me = this;
       this.set('terminal', null);
+      this.set('payments', null);      
       this.set('context', null);
       this.set('permissions', null);
       this.set('bplocation', null);
@@ -101,6 +103,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       // reset all application state.
       $(window).off('keypress');
       this.set('terminal', null);
+      this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);      
       this.set('bplocation', null);
@@ -121,6 +124,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
             me.logout();
           } else if (data[0]) {
             me.set('terminal', data[0]);
+            me.loadPayments();
             me.loadContext();
             me.loadPermissions();
             me.loadBP();
@@ -134,6 +138,18 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           }
         }
       );        
+    },
+    
+    loadPayments: function () {
+      var me = this;
+      new OB.DS.Query(
+          'from OBPOS_App_Payment where obposApplications.id = :pos and $readableCriteria').exec({ pos: this.get('terminal').id }
+      , function (data) {
+        if (data) {                  
+          me.set('payments', data);
+          me.triggerReady();
+        }
+      });       
     },
     
     loadContext: function () {
@@ -236,7 +252,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     },   
     
     triggerReady: function () {
-      if (this.get('pricelistversion') && this.get('currency') && this.get('businesspartner') && this.get('context') && this.get('permissions')) {
+      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('businesspartner') && this.get('context') && this.get('permissions')) {
         this.trigger('ready');
       }     
     },

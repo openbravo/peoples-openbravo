@@ -1,6 +1,7 @@
 /*global define,$,_,Backbone */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/commonbuttons', 'components/table'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/commonbuttons', 'components/table',
+        'components/toolbarpayment'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -303,32 +304,45 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       }
     },
     
+    addToolbar: function (name, value) {
+      var i, max, content;
+      content = [];
+      for (i = 0, max = value.length; i < max; i++) {
+        // add the command if provided
+        if (value[i].definition) {
+          this.addCommand(value[i].command, value[i].definition);
+        }
+        // add the button
+        content.push({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+            {kind: BtnAction(this), attr: {'command': value[i].command, 'permission': (value[i].definition ? value[i].definition.permission : null)}, content: [value[i].label]}
+          ]}          
+        ]});
+      }
+      while (i < 6) {
+        content.push({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
+            {kind: BtnAction(this), attr: {'command': '---'}, content: [ {kind: B.KindHTML('<span>&nbsp;</span>')} ]}
+          ]}          
+        ]});        
+        // content.push({command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}});
+        i++;
+      }
+
+      this.toolbars[name] = B({kind: B.KindJQuery('div'), attr:{'style': 'display:none;'}, content: content}).$el;        
+      this.toolbarcontainer.append(this.toolbars[name]);      
+    },
+    
     attr: function (attrs) { 
-      var attr,i, max, value, content;
-      
+      var attr;    
       for (attr in attrs) {
         if (attrs.hasOwnProperty(attr)) {
-          value = attrs[attr];
-          content = [];
-          for (i = 0, max = value.length; i < max; i++) {
-            // add the command if provided
-            if (value[i].definition) {
-              this.addCommand(value[i].command, value[i].definition);
-            }
-            // add the button
-            content.push({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [                                                                                                 
-                {kind: BtnAction(this), attr: {'command': value[i].command, 'permission': (value[i].definition ? value[i].definition.permission : null)}, content: [value[i].label]}
-              ]}          
-            ]});
-          }
-  
-          this.toolbars[attr] = B({kind: B.KindJQuery('div'), attr:{'style': 'display:none;'},content: content}).$el;        
-          this.toolbarcontainer.append(this.toolbars[attr]);
+          this.addToolbar(attr, attrs[attr]);
         }
       }          
     }    
   });
+  
   
   OB.COMP.KeyboardOrder = OB.COMP.Keyboard.extend({   
     initialize: function () {      
@@ -404,40 +418,13 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
       
       // Toolbars at the end...
-      this.attr({
-        toolbarpayment: [ 
-          {command:'payment.cash', definition: OB.COMP.KeyboardOrder.getPayment('payment.cash'), label: OB.I18N.getLabel('OBPOS_KbCash')},
-          {command:'payment.card', definition: OB.COMP.KeyboardOrder.getPayment('payment.card'), label: OB.I18N.getLabel('OBPOS_KbCard')},
-          {command:'payment.voucher', definition: OB.COMP.KeyboardOrder.getPayment('payment.voucher'), label: OB.I18N.getLabel('OBPOS_KbVoucher')},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
-        ],
-        toolbarscan: [ 
-          {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-          {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
-        ]                
-      });     
+      this.addToolbar('toolbarpayment', new OB.COMP.ToolbarPayment(this.options).toolbar);
+      this.addToolbar('toolbarscan', [
+        {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')}                                   
+      ]);    
     }
   });
 
-  // Method of the function...
-  OB.COMP.KeyboardOrder.getPayment = function (payment) {
-    return ({
-      'permission': payment,
-      'action': function (txt) {
-        this.receipt.addPayment(new OB.MODEL.PaymentLine(
-          {
-            'kind': payment, 
-            'amount': parseNumber(txt)
-          }));
-      }
-    });
-  }; 
 
   
   OB.COMP.KeyboardCash = OB.COMP.Keyboard.extend({   

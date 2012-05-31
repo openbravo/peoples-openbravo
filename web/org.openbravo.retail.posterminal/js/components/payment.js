@@ -53,7 +53,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
                         this.$el.append(B(
                           {kind: B.KindJQuery('div'), attr: {'style': 'color:white; '}, content: [
                             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [ 
-                              this.model.printKind()                                                                
+                              this.model.get('name')                                                                
                             ]},                                                                                      
                             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%; text-align:right;'}, content: [ 
                               this.model.printAmount()                                                                                                                                                     

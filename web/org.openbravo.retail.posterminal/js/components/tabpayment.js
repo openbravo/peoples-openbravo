@@ -40,7 +40,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
             {amount:0.50, classcolor: 'btnlink-orange'},
             {amount:0.20, classcolor: 'btnlink-gray'},
             {amount:0.10, classcolor: 'btnlink-lightblue'},
-            {amount:0.05, classcolor: 'btnlink-lightpink'}
+            {paymenttype: 'payment.cash', amount:0.05, classcolor: 'btnlink-lightpink'}
           ]}}                                                                      
         ]}
       );
