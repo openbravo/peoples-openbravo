@@ -31,19 +31,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     createView: function () {
       return (
         {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
-          {kind: OB.COMP.PaymentCoins
-//            , attr: {'cashcoins': [
-//            {paymenttype: 'payment.cash', amount:50, classcolor: 'btnlink-lightblue'},
-//            {paymenttype: 'payment.cash', amount:20, classcolor: 'btnlink-lightpink'},
-//            {paymenttype: 'payment.cash', amount:10, classcolor: 'btnlink-lightgreen'},
-//            {paymenttype: 'payment.cash', amount:5, classcolor: 'btnlink-wheat'},
-//            {paymenttype: 'payment.cash', amount:1, classcolor: 'btnlink-lightgreen'},
-//            {paymenttype: 'payment.cash', amount:0.50, classcolor: 'btnlink-orange'},
-//            {paymenttype: 'payment.cash', amount:0.20, classcolor: 'btnlink-gray'},
-//            {paymenttype: 'payment.cash', amount:0.10, classcolor: 'btnlink-lightblue'},
-//            {paymenttype: 'payment.cash', amount:0.05, classcolor: 'btnlink-lightpink'}
-//          ]}
-          }                                                                      
+          {kind: OB.COMP.PaymentCoins}                                                                      
         ]}
       );
     }   
