@@ -48,7 +48,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       pricelistversion: null
     },
     
-    login: function (user, password) {
+    login: function (user, password, mode) {
       var me = this;
       this.set('terminal', null);
       this.set('payments', null);
@@ -68,7 +68,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           me.triggerLoginSuccess();
         },
         error: function (jqXHR, textStatus, errorThrown) {            
-          me.triggerLoginFail(jqXHR.status);  
+          me.triggerLoginFail(jqXHR.status, mode);
         }
       });       
     },
@@ -270,8 +270,12 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       this.trigger('loginsuccess');
     },
     
-    triggerLoginFail: function (e) {
-      this.trigger('loginfail', e);
+    triggerLoginFail: function (e, mode) {
+      if (mode === 'userImgPress') {
+        this.trigger('loginUserImgPressfail', e);
+      } else {
+        this.trigger('loginfail', e);
+      }
     },
     
     hasPermission: function (p) {

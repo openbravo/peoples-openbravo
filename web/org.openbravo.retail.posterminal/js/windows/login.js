@@ -29,7 +29,7 @@ define(['builder', 'i18n', 'components/clock',
             p = me.$defaultPassword;
         $('#username').val(u);
         $('#password').val(p);
-        OB.POS.modelterminal.login(u, p);
+        OB.POS.modelterminal.login(u, p, 'userImgPress');
       });
     },
     append: function (child) {
@@ -90,6 +90,11 @@ define(['builder', 'i18n', 'components/clock',
                           alert('Invalid user name or password.\nPlease try again.');
                           $('#password').val('');
                           $('#username').focus();
+                        });
+                        OB.POS.modelterminal.on('loginUserImgPressfail', function (status) {
+                          //If the user image press (try to login with default password) fails, then no alert is shown and the focus goes directly to the password input
+                          $('#password').val('');
+                          $('#password').focus();
                         });
                         
                         this.$el.click(function (e) {
