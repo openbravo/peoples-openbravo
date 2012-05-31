@@ -145,8 +145,13 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       new OB.DS.Query(
           'from OBPOS_App_Payment where obposApplications.id = :pos and $readableCriteria').exec({ pos: this.get('terminal').id }
       , function (data) {
-        if (data) {                  
+        if (data) { 
+          var i, max;
           me.set('payments', data);
+          me.paymentnames = {};
+          for (i = 0, max = data.length; i < max; i++) {
+            me.paymentnames[data[i].searchKey] = data[i]._identifier;
+          }
           me.triggerReady();
         }
       });       
@@ -270,7 +275,11 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     },
     
     hasPermission: function (p) {
-      return OB.POS.modelterminal.get('context').role.clientAdmin || this.get('permissions')[p];
+      return this.get('context').role.clientAdmin || this.get('permissions')[p];
+    },
+    
+    getPaymentName: function (key) {
+      return this.paymentnames[key];
     }
   });
   

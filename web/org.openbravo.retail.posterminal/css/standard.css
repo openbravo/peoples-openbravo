@@ -80,6 +80,34 @@
   button.btnlink:active {
     background-color: #cccccc;
   } 
+  button.btnlink-small {
+    padding: 5px 15px 5px 15px;    
+  } 
+  button.btnlink-orange {
+    background-color: orange;
+    color: black;  
+  }
+  button.btnlink-lightblue {
+    background-color: lightblue;
+    color: black;  
+  }   
+  button.btnlink-lightpink {
+    background-color: lightpink;
+    color: black;  
+  } 
+  button.btnlink-lightgreen {
+    background-color: lightgreen;
+    color: black;  
+  } 
+  button.btnlink-wheat {
+    background-color: wheat;
+    color: black;  
+  }  
+  button.btnlink-gray {
+    background-color: #e2e2e2;
+    color: black;    
+  }   
+      
   button.btnclear {
     border: none;
     padding: 5px 5px 5px 5px;   

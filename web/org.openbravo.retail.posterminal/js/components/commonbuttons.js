@@ -19,6 +19,23 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }      
   });
   
+  OB.COMP.PaymentButton = OB.COMP.Button.extend({
+    className: 'btnlink btnlink-small',
+    attributes: {'style': 'width:70px; text-align:right;'},
+    paymenttype: 'payment.cash',
+    amount: 10,
+    label: null,
+    classcolor: 'btnlink-orange',
+    render: function() {
+      this.$el.addClass(this.classcolor);
+      this.$el.text(this.label || OB.I18N.formatCurrency(this.amount));
+      return this;
+    },
+    clickEvent: function (e) {
+      this.options.modelorder.addPayment(new OB.MODEL.PaymentLine({'kind': this.paymenttype, 'amount': OB.DEC.number(this.amount)}));
+    }   
+  });
+  
   // Clears the text of the previous field
   OB.COMP.ClearButton = OB.COMP.Button.extend({
     render: function () {

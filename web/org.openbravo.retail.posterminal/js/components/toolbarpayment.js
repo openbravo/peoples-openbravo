@@ -28,7 +28,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
     
     for (i = 0, max = payments.length; i < max; i++) {
       this.toolbar.push({command: payments[i].searchKey, definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier), label: payments[i]._identifier}); 
-    }    
+    }
   };  
 });
 
