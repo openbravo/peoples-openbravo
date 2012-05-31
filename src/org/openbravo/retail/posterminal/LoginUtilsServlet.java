@@ -94,8 +94,9 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
             + "session.loginStatus = 'S'";
         Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
         qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
+        qrySession.setMaxResults(1);
         String sessionData = "false";
-        if (!qrySession.list().isEmpty()) {
+        if (qrySession.uniqueResult() != null) {
           sessionData = "true";
         }
         item.put("connected", sessionData);
