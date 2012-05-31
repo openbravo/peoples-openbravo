@@ -146,6 +146,17 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
         String strDefaultTaxId = (String) CallStoredProcedure.getInstance().call("C_Gettax",
             parameters, null);
+        if (strDefaultTaxId == null || strDefaultTaxId.equals("")) {
+          OBDal.getInstance().rollbackAndClose();
+          Map<String, String> errorParameters = new HashMap<String, String>();
+          errorParameters.put("product", product.getName());
+          String message = OBMessageUtils.messageBD("InsertOrphanNoTaxFoundForProduct");
+          msg.setMessage(OBMessageUtils.parseTranslation(message, errorParameters));
+          msg.setTitle(OBMessageUtils.messageBD("Error"));
+          msg.setType("Error");
+          bundle.setResult(msg);
+          return;
+        }
         tax = OBDal.getInstance().get(TaxRate.class, strDefaultTaxId);
       } else {
         tax = OBDal.getInstance().get(TaxRate.class, strTaxId);
