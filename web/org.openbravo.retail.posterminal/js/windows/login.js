@@ -71,12 +71,12 @@ define(['builder', 'i18n', 'components/clock',
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'placeholder': 'User'}}
+                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'placeholder': 'User', 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'password', 'type': 'password', 'placeholder': 'Password'}}
+                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'password', 'type': 'password', 'placeholder': 'Password', 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
