@@ -8,8 +8,9 @@
       width: 400px;
       height: 80px;
       float: left;
-      background-image: url('../img/CompanyLogo.png');
+      background-image: url('../../../utility/ShowImageLogo?logo=yourcompanylogin');
       background-repeat:  no-repeat;
+      background-position: 0px 12px;
     }
 
     div.login-header-ob {
@@ -39,7 +40,7 @@
       width: 100px;
       height: 18px;
       background-color: white;
-      opacity: 0.88;
+      opacity: 1;
       margin: 82px 0px 0px 0px;
       overflow: hidden;
     }
