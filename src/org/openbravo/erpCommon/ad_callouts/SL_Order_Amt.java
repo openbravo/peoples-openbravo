@@ -322,12 +322,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal unitPrice = new BigDecimal(0);
       grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       unitPrice = new BigDecimal(strPriceActual.trim());
-      TaxCalculator generator;
-      generator = new TaxCalculator(strTaxId);
       if (isPriceTaxInclusive(strCOrderId)) {
         // todo
-        unitPrice = grossUnitPrice.subtract(generator.taxCalculationFromOrder(strCOrderId,
-            grossUnitPrice));
+        unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision,
+            new BigDecimal(0.0));
         resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
@@ -341,18 +339,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inpgrossUnitPrice")) {
       BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
 
-      final List parameters = new ArrayList();
-      parameters.add(new String(strTaxId));
-      parameters.add(new BigDecimal(strGrossUnitPrice.trim()));
-
-      // TODO: Alternate Base Amount
-      parameters.add(new BigDecimal("0.0"));
-      parameters.add(new BigDecimal(strPrecision));
-      parameters.add(new BigDecimal("0.0"));
-
-      final String procedureName = "c_tax_net_from_gross";
-      final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
-          procedureName, parameters, null);
+      final BigDecimal lineUnitAmount = calculateNetFromGross(strTaxId, strGrossUnitPrice,
+          strPrecision, new BigDecimal(0.0));
 
       BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyOrdered.trim()));
       resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
@@ -389,6 +377,24 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
+      String strPrecision, BigDecimal alternateAmount) {
+    final List parameters = new ArrayList();
+    parameters.add(new String(strTaxId));
+    parameters.add(new BigDecimal(strGrossUnitPrice.trim()));
+
+    // TODO: Alternate Base Amount
+    parameters.add(alternateAmount);
+    parameters.add(new BigDecimal(strPrecision));
+    // Initial value of zero
+    parameters.add(new BigDecimal("0.0"));
+
+    final String procedureName = "c_tax_net_from_gross";
+    final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+        procedureName, parameters, null);
+    return lineUnitAmount;
   }
 
   private boolean isPriceTaxInclusive(String orderId) {
