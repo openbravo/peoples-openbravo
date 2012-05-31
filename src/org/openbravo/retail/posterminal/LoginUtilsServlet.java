@@ -28,7 +28,6 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     OBContext.setOBContext("0", "0", "0", "0");
 
     final String terminalName = request.getParameter("terminalName");
-    System.out.println(terminalName);
 
     JSONObject result = new JSONObject();
     JSONObject resp = new JSONObject();
@@ -37,9 +36,10 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     try {
       // Get the organization of the current terminal
       final String hqlOrg = "select terminal.organization.id, terminal.name "
-          + "from OBPOS_Applications terminal " + "where terminal.searchKey = '" + terminalName
-          + "'";
+          + "from OBPOS_Applications terminal "
+          + "where terminal.searchKey = :theTerminalSearchKey";
       Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
+      qryOrg.setParameter("theTerminalSearchKey", terminalName);
 
       String strOrg = "0";
       for (Object qryOrgObject : qryOrg.list()) {
@@ -50,12 +50,17 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
       // Set<String> orgChildTree =
       // OBContext.getOBContext().getOrganizationStructureProvider().getChildTree(strOrg, true);
 
-      // Get the user name and uesrname list
+      // Get the user name and uesrname list with the following criteria
+      // * Belongs to a "Role" with anything inside "POS Access"
+      // * Has a "Business Partner" which is "Employee" and "Sales Representative"
       final String hqlUser = "select distinct user.name, user.username, user.id "
-          + "from ADUser user, ADUserRoles userRoles, ADRole role, ADSession session, OBPOS_POS_Access posAccess "
+          + "from ADUser user, ADUserRoles userRoles, ADRole role, ADSession session, "
+          + "OBPOS_POS_Access posAccess, BusinessPartner bpartner "
           + "where user.username != '' and user.active = true and "
           + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
-          + "userRoles.role.id = posAccess.role.id " + "order by user.name";
+          + "userRoles.role.id = posAccess.role.id and "
+          + "user.businessPartner.id = bpartner.id and " + "bpartner.employee = 'Y' and "
+          + "bpartner.isSalesRepresentative = 'Y' " + "order by user.name";
       Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
 
       int queryCount = 0;
@@ -70,8 +75,9 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         // Get the image for the current user
         String hqlImage = "select image.mimetype, image.bindaryData "
             + "from ADImage image, ADUser user "
-            + "where user.obposImage = image.id and user.id = '" + qryUserObjectItem[2] + "'";
+            + "where user.obposImage = image.id and user.id = :theUserId";
         Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
+        qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
         // qryImage.setParameter("orgList", orgChildTree);
         String imageData = "none";
         for (Object qryImageObject : qryImage.list()) {
@@ -82,15 +88,15 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
               + org.apache.commons.codec.binary.Base64
                   .encodeBase64String((byte[]) qryImageObjectItem[1]);
         }
-        System.out.println(imageData);
         item.put("image", imageData);
 
         // Get the session status for the current user
-        String hqlSession = "select distinct session.username, session.sessionActive, session.loginStatus "
-            + "from ADSession session where session.username = '"
-            + qryUserObjectItem[1].toString()
-            + "' and session.sessionActive = 'Y' and session.loginStatus = 'S'";
+        String hqlSession = "select distinct session.username, session.sessionActive "
+            + "from ADSession session "
+            + "where session.username = :theUsername and session.sessionActive = 'Y' and "
+            + "session.loginStatus = 'S'";
         Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
+        qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
         String sessionData = "false";
         if (!qrySession.list().isEmpty()) {
           sessionData = "true";
