@@ -665,6 +665,15 @@ isc.OBStandardView.addProperties({
       this.lastFocusedItem = null;
     }
 
+    // Enable the shortcuts of the form and grid view
+    // See issue 20651 (https://issues.openbravo.com/view.php?id=20651)
+    if (this.viewForm && this.viewForm.enableShortcuts) {
+      this.viewForm.enableShortcuts();
+    }
+    if (this.viewGrid && this.viewGrid.enableShortcuts) {
+      this.viewGrid.enableShortcuts();
+    }
+
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
       object = this.viewForm.getFocusItem();
       functionName = 'focusInItem';

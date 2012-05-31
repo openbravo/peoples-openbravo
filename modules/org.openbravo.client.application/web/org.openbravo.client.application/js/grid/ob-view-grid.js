@@ -377,7 +377,7 @@ isc.OBViewGrid.addProperties({
   draw: function () {
     var drawnBefore = this.isDrawn(),
         i, form, item, items, length;
-
+    this.enableShortcuts();
     this.Super('draw', arguments);
 
     // set the focus in the filter editor
