@@ -89,9 +89,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
                       ], init: function () {
                            this.$el.click(function (e) {
                              e.preventDefault();
-                             me.receipt.trigger('taxes');
-                             me.receipt.trigger('closed');    
-                             me.modelorderlist.deleteCurrent();
+                             me.receipt.trigger('taxes', me.modelorderlist);
                            });
                         }
                       }                   
