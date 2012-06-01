@@ -178,6 +178,7 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
+    long t = System.currentTimeMillis();
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = createSetQueryService(parameters);
     queryService.setEntityName(entityName);
@@ -187,13 +188,20 @@ public class DefaultJsonDataService implements JsonDataService {
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     final ScrollableResults scrollableResults = queryService.scroll();
+    int i = 0;
     while (scrollableResults.next()) {
       final Object result = scrollableResults.get()[0];
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
           DataResolvingMode.FULL);
       writer.write(json);
-      OBDal.getInstance().getSession().evict(result);
+      i++;
+      // Clear session every 1000 records to prevent huge memory consumption in case of big loops
+      if (i % 1000 == 0) {
+        OBDal.getInstance().getSession().clear();
+        log.debug("clearing in record " + i + " elapsed time " + (System.currentTimeMillis() - t));
+      }
     }
+    log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 
   private DataEntityQueryService createSetQueryService(Map<String, String> parameters) {
