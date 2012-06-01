@@ -137,6 +137,10 @@
         <default/>
         <onCreateDefault><![CDATA[AMOUNT]]></onCreateDefault>
       </column>
+      <column name="FIN_REV_PAYMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -166,6 +170,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="FIN_PAYMENT_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENT_REVERSED">
+        <reference local="FIN_REV_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
       <check name="FIN_PAYMENT_BP_CREDIT_CHECK"><![CDATA[((C_BPARTNER_ID IS NULL) AND (COALESCE(GENERATED_CREDIT, 0) = 0)) OR (C_BPARTNER_ID IS NOT NULL)]]></check>
       <check name="FIN_PAYMENT_CREATE_ALGORIT_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>
