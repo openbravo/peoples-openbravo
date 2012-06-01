@@ -1,6 +1,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     JSONObject item;
     try {
       // Get the organization of the current terminal
-      final String hqlOrg = "select terminal.organization.id "
+      final String hqlOrg = "select terminal.organization.id, terminal.organization.client.id "
           + "from OBPOS_Applications terminal "
           + "where terminal.searchKey = :theTerminalSearchKey";
       Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
@@ -44,23 +45,27 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
       qryOrg.setMaxResults(1);
 
       String strOrg = "0";
+      String strClient = "0";
       if (qryOrg.uniqueResult() != null) {
-        strOrg = qryOrg.list().get(0).toString();
+        final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
+        strOrg = orgResult[0].toString();
+        strClient = orgResult[1].toString();
       }
 
-      // Set<String> orgChildTree =
-      // OBContext.getOBContext().getOrganizationStructureProvider().getChildTree(strOrg, true);
+      Set<String> orgNaturalTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(strClient).getNaturalTree(strOrg);
 
       // Get the user name and uesrname list with the following criteria
       // * Belongs to a "Role" with anything inside "POS Access"
-      // * Has a "Business Partner" which is "Employee" and "Sales Representative"
+      // * Is in the same natural organization tree than the current "POS Terminal"
       final String hqlUser = "select distinct user.name, user.username, user.id "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, ADSession session, "
           + "OBPOS_POS_Access posAccess " + "where user.username != '' and user.active = true and "
+          + "userRoles.role.organization.id in :orgList and "
           + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
           + "userRoles.role.id = posAccess.role.id " + "order by user.name";
       Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
-
+      qryUser.setParameterList("orgList", orgNaturalTree);
       int queryCount = 0;
 
       for (Object qryUserObject : qryUser.list()) {
@@ -76,7 +81,6 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
             + "where user.obposImage = image.id and user.id = :theUserId";
         Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
         qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
-        // qryImage.setParameter("orgList", orgChildTree);
         String imageData = "none";
         for (Object qryImageObject : qryImage.list()) {
           final Object[] qryImageObjectItem = (Object[]) qryImageObject;
