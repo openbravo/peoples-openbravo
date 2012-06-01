@@ -59,7 +59,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
       // * Belongs to a "Role" with anything inside "POS Access"
       // * Is in the same natural organization tree than the current "POS Terminal"
       final String hqlUser = "select distinct user.name, user.username, user.id "
-          + "from ADUser user, ADUserRoles userRoles, ADRole role, ADSession session, "
+          + "from ADUser user, ADUserRoles userRoles, ADRole role, "
           + "OBPOS_POS_Access posAccess " + "where user.username != '' and user.active = true and "
           + "userRoles.role.organization.id in :orgList and "
           + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
