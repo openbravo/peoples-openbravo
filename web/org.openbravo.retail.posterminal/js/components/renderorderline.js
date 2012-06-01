@@ -1,6 +1,6 @@
 /*global define, $ */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n'], function (B) {
+define(['builder', 'utilities', 'components/commonbuttons', 'arithmetic', 'i18n'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};

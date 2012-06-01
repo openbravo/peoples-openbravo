@@ -74,6 +74,8 @@ define(['utilities'], function () {
     'OBPOS_MsgScaleServerNotAvailable': 'Scale is not available.',
     'OBPOS_MsgTemplateNotAvailable': 'Template is not available.',
     'OBPOS_MsgHardwareServerNotDefined': 'Hardware server URL is not defined.',
+    'OBPOS_MsgPaymentAmountError': 'Payment amount not valid.\nContact your administrator.',
+    'OBPOS_MsgPaymentTypeError': 'Payment type not valid.\nContact your administrator.',
     
     
     // Point of sale window

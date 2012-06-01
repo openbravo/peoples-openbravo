@@ -1,6 +1,7 @@
 /*global define, Backbone */
 
-define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order', 'model/terminal'], function (B) {
+define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order', 'model/terminal',
+        'components/renderbusinesspartner'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -66,7 +67,8 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
                         OB.I18N.getLabel('OBPOS_SearchNoResults')
                       ]}
                     );            
-                  }            
+                  },
+                  renderLine: OB.COMP.RenderBusinessPartner
                 }}
               ]}                   
             ]}                   
@@ -76,19 +78,6 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
     );
     this.$el = this.component.$el;
     this.bpname = this.component.context.bpname.$el;
-    this.tableview = this.component.context.tableview;      
-    this.tableview.renderLine = OB.COMP.SelectButton.extend({
-      render: function() {
-        this.$el.append(B(
-          this.model.get('BusinessPartner')._identifier
-        ).$el);
-        return this;
-      }
-    });   
-  };  
-  
-  OB.COMP.SearchBP.prototype.attr = function (attrs) {
-    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
-  };  
-  
+    this.tableview = this.component.context.tableview;        
+  }; 
 }); 

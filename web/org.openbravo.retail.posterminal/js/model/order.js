@@ -272,7 +272,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.adjustPayment();
     },
     
-    addProduct: function (line, p) {
+    addProduct: function (p) {
       var me = this;
       if (p.get('product').obposScale) {
         OB.POS.hwserver.getWeight(function (data) {
@@ -284,11 +284,17 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
             me.createLine(p, data.result);
           }
         });        
-      } else if (line && line.get('product').get('product').id === p.get('product').id) {
-        this.addUnit(line);
-      } else {
-        this.createLine(p, 1);
-      }      
+      } else {       
+        var line = this.get('lines').find( function (l) {
+          return l.get('product').get('product').id === p.get('product').id;
+        });
+        if (line) {
+          this.addUnit(line);
+          line.trigger('selected', line);
+        } else {
+          this.createLine(p, 1);
+        }
+      }   
     },
     
     createLine: function (p, units) {
@@ -382,8 +388,14 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       var i, max, p;
       
       if (!OB.DEC.isNumber(payment.get('amount')) || OB.DEC.compare(this.getPending()) <= 0) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
+      
+      if (!OB.POS.modelterminal.hasPayment(payment.get('kind'))) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentTypeError'));
+        return;
+      }      
      
       var payments = this.get('payments');
    

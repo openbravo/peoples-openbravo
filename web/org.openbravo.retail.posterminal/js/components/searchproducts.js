@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'model/order', 'model/terminal'], function (B) {
+define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'components/renderproduct', 'model/order', 'model/terminal'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -12,17 +12,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
 
     this.receipt = context.modelorder;
     
-    this.line = null;  
-    
-    this.receipt.get('lines').on('selected', function (line) {
-      this.line = line;
-    }, this);    
-    
     this.categories = new OB.MODEL.Collection(context.DataCategory);   
     this.products = new OB.MODEL.Collection(context.DataProductPrice);
 
     this.products.on('click', function (model) {
-      this.receipt.addProduct(this.line, model);
+      this.receipt.addProduct(model);
     }, this);
     
     this.receipt.on('clear', function() {
@@ -57,7 +51,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
                             model.get('category')._identifier                                                                                
                         ]}
                       );                  
-                    }              
+                    }          
                   }}   
                 ]}                   
               ]}                   
@@ -96,7 +90,8 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
                         OB.I18N.getLabel('OBPOS_SearchNoResults')
                       ]}
                     );            
-                  }       
+                  },
+                  renderLine: OB.COMP.RenderProduct
                 }}
               ]}                   
             ]}                   
@@ -108,18 +103,6 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     this.productname = this.component.context.productname.$el;
     this.productcategory = this.component.context.productcategory.$el;
     this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = OB.COMP.SelectButton.extend({
-      render: function() {
-        this.$el.append(B(
-          this.model.get('product')._identifier
-        ).$el);
-        return this;
-      }
-    });  
     this.categories.exec({});    
-  };
-  
-  OB.COMP.SearchProduct.prototype.attr = function (attrs) {
-    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
   };
 }); 

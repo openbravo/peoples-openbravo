@@ -10,16 +10,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     var me = this;
     
     this._id = 'ListProducts';   
-    this.receipt = context.modelorder;
-    this.line = null;   
-    this.receipt.get('lines').on('selected', function (line) {
-      this.line = line;
-    }, this);    
-    
+    this.receipt = context.modelorder;    
     this.products = new OB.MODEL.Collection(context.DataProductPrice);
   
     this.products.on('click', function (model) {
-      this.receipt.addProduct(this.line, model);
+      this.receipt.addProduct(model);
     }, this);      
      
     this.component = B(                                           

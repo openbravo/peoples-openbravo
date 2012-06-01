@@ -284,7 +284,12 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     getPaymentName: function (key) {
       return this.paymentnames[key];
+    },
+    
+    hasPayment: function (key) {
+      return this.paymentnames[key];
     }
+    
   });
   
 });

@@ -379,7 +379,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
             product: { product: {uPCEAN: txt}}
           }, function (data) {
             if (data) {      
-              me.receipt.addProduct(me.line, new Backbone.Model(data));
+              me.receipt.addProduct(new Backbone.Model(data));
               me.receipt.trigger('scan');
             } else {
               alert(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt])); // 'UPC/EAN code not found'
