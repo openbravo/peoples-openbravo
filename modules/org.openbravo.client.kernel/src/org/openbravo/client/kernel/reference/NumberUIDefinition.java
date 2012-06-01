@@ -162,7 +162,12 @@ public abstract class NumberUIDefinition extends UIDefinition {
     valueStr = valueStr.replace(
         variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "").replace(
         variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1), ".");
-    return new BigDecimal(valueStr);
+    try {
+      return new BigDecimal(valueStr);
+    } catch (Exception e) {
+      return null;
+    }
+
   }
 
   @Override
