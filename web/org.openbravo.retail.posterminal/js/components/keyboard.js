@@ -1,7 +1,7 @@
 /*global define,$,_,Backbone */
 
 define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/commonbuttons', 'components/table',
-        'components/toolbarpayment'], function (B) {
+        'components/toolbarpayment', 'components/toolbarscan'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -419,9 +419,7 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       
       // Toolbars at the end...
       this.addToolbar('toolbarpayment', new OB.COMP.ToolbarPayment(this.options).toolbar);
-      this.addToolbar('toolbarscan', [
-        {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')}                                   
-      ]);    
+      this.addToolbar('toolbarscan', new OB.COMP.ToolbarScan(this.options).toolbar);    
     }
   });
 

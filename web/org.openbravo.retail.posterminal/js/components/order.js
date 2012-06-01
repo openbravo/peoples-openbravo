@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/table', 'components/renderorderline'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -27,7 +27,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
                  OB.I18N.getLabel('OBPOS_ReceiptNew')
               ]}
             );          
-          }
+          },
+          renderLine: OB.COMP.RenderOrderLine
         }},
         {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled'}, content: [                                                                                        
           {kind: B.KindJQuery('li'), content: [                                                                                        
@@ -57,22 +58,10 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     );
     this.$el = this.component.$el;
     this.totalgross = this.component.context.totalgross.$el;
-    this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = OB.COMP.SelectButton.extend({
-      render: function() {
-        this.$el.append(B(
-          this.model.get('productidentifier')                                                                
-        ).$el);
-        return this;
-      }
-    });    
+    this.tableview = this.component.context.tableview;        
       
     // Initial total display...
     this.totalgross.text(this.receipt.printTotal());   
     
-  };
-  
-  OB.COMP.OrderView.prototype.attr = function (attrs) {
-    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
-  };  
+  }; 
 });    

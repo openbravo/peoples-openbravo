@@ -1,6 +1,7 @@
 /*global define */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table'], function (B) {
+define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table',
+        'components/rendercategory'], function (B) {
   
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -34,26 +35,15 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
                 OB.I18N.getLabel('OBPOS_SearchNoResults')
               ]}
             );            
-          }        
+          },
+          renderLine: OB.COMP.RenderCategory
         }}
       ]}         
     );
     this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;       
-    this.tableview.renderLine = OB.COMP.SelectButton.extend({
-      render: function() {
-        this.$el.append(B(                                                                        
-          this.model.get('category')._identifier                                                                                
-        ).$el);
-        return this;
-      }
-    });    
-
+  
     // Exec
     this.categories.exec();
   };
-  
-  OB.COMP.ListCategories.prototype.attr = function (attrs) {
-    this.tableview.renderLine = attrs.renderLine || this.tableview.renderLine;      
-  };  
 });
