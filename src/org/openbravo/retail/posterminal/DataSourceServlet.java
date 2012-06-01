@@ -82,6 +82,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   private void getData(HttpServletRequest request, HttpServletResponse response, String entity)
       throws IOException {
 
+    response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
+
     int idx = 0;
     final long t1 = System.currentTimeMillis();
     final PrintWriter out = response.getWriter();
@@ -89,7 +91,6 @@ public class DataSourceServlet extends BaseKernelServlet {
 
     // {"response": {"startRow": 0, "endRow": 10, "data": [], "status": 0}}
 
-    response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
     out.println("{\"response\": {\"data\": [");
     out.flush();
 
@@ -132,7 +133,9 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
 
         final BaseOBObject obj = (BaseOBObject) results.get(0);
-        out.println(converter.toJsonObject(obj, DataResolvingMode.FULL).toString());
+        final String jsonObj = converter.toJsonObject(obj, DataResolvingMode.FULL).toString();
+        // log.debug(jsonObj);
+        out.println(jsonObj);
         idx++;
         if (idx % 100 == 0) {
           out.flush();

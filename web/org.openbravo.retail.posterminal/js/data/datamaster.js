@@ -1,6 +1,8 @@
-/*global define,_*/
+/*global define,_,$*/
 
 define(['utilities', 'datasource'], function () {
+
+  var db, dbSize, dbSuccess, dbError, fetchTaxes;
 
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
@@ -80,5 +82,60 @@ define(['utilities', 'datasource'], function () {
         'from FinancialMgmtTaxRate where $readableCriteria'));
     this.loadparams = {};
   };
-  _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);  
+  _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);
+
+  // Offline based on WebSQL
+
+  if(!window.openDatabase) {
+    window.console.error("Your browser doesn't support WebSQL");
+    return;
+  }
+
+  dbSuccess = function () {};
+
+  dbError = function () {
+    window.console.error(arguments);
+  };
+
+  dbSize = 10 * 1024 * 1024; // 10MB
+
+  // Open database
+  db = window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize);
+
+  // TODO: handle schema changes with changeVersion
+  db.transaction(function (tx) {
+    tx.executeSql('DROP TABLE IF EXISTS c_tax', null, dbSuccess, dbError);
+  });
+
+  fetchTaxes = function () {
+    $.ajax({
+      url: '../../org.openbravo.retail.posterminal.datasource/FinancialMgmtTaxRate',
+      dataType: 'json',
+      cache: false,
+
+      error: function (jqXHR, textStatus, errorThrown) {
+        window.console.log(arguments);
+      },
+
+      success: function (data, textStatus, jqXHR) {
+        var q = "INSERT INTO c_tax(c_tax_id, name, c_taxcategory_id, c_bp_taxcategory_id, rate) VALUES (?,?,?,?,?)";
+        db.transaction(function (tx) {
+          _.each(data.response.data, function (item) {
+            tx.executeSql(q, [item.id, item.name, item.taxCategory, item.businessPartnerTaxCategory, item.rate], dbSuccess, dbError);
+          });
+        }, dbError, dbSuccess);
+      },
+
+      complete: function (jqXHR, textStatus) {
+        window.console.log('complete loading taxes');
+      }
+    });
+  };
+
+  db.transaction(function (tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS c_tax(c_tax_id TEXT PRIMARY KEY, name TEXT, c_taxcategory_id TEXT, c_bp_taxcategory_id TEXT, rate NUMERIC)',
+      null, dbSuccess, dbError);
+  }, dbError, fetchTaxes);
+
+  OB.DATA.OfflineDB = db;
 });
