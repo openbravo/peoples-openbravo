@@ -17,7 +17,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
          lines = r.get('lines'),
          len = lines.length,
          db = OB.DATA.OfflineDB,
-         sql = 'select * from c_tax where c_taxcategory_id = ? and c_bp_taxcategory_id ' + (bpTaxCategory === null ? ' is null ' : ' = ? ') + ' order by idx';
+         sql = 'select * from c_tax where c_taxcategory_id = ? and c_bp_taxcategory_id ' + (bpTaxCategory === null ? ' is null ' : ' = ? ') + ' order by idx',
+         taxes = {};
 
      db.readTransaction(function (tx) {
        _.each(lines.models, function (element, index, list) {
@@ -29,24 +30,35 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
          }
 
          tx.executeSql(sql, params, function (tr, result) {
-           var taxRate, rate, taxAmt, netPrice;
+           var taxRate, rate, taxAmt, net, taxId;
 
            if(result.rows.length < 1) {
              window.console.error('No applicable tax found for product: ' + product.get('product').id);
              return;
            }
+
            taxRate = result.rows.item(0);
-           rate = taxRate.rate;
-           taxAmt = OB.DEC.mul(OB.DEC.div(rate, 100), element.get('price'));
-           netPrice = OB.DEC.sub(element.get('price'), taxAmt);
-           element.set('taxId', taxRate.c_tax_id);
-           element.set('net', OB.DEC.mul(netPrice, element.get('qty')));
+           rate = OB.DEC.div(taxRate.rate, 100);
+           net = OB.DEC.div(element.get('gross'), OB.DEC.add(1, rate));
+           taxId = taxRate.c_tax_id;
+
+           element.set('taxId', taxId);
+           element.set('net', net);
            element.set('netPrice', netPrice);
+
+           if(taxes[taxId]) {
+             taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, net);
+           } else {
+             taxes[taxId] = {};
+             taxes[taxId].name = taxRate.name;
+             taxes[taxId].amount = net;
+           }
          }, function(tr, err) {
            window.console.error(arguments);
          });
        });
      }, function () {}, function () {
+       r.set('taxes', taxes);
        r.trigger('closed');
        modelorderlist.deleteCurrent();
      });
