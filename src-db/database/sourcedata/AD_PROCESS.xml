@@ -1040,7 +1040,8 @@
 <!--167-->  <VALUE><![CDATA[C_Period_Process]]></VALUE>
 <!--167-->  <NAME><![CDATA[Open/Close All]]></NAME>
 <!--167-->  <DESCRIPTION><![CDATA[Open/Close all Base Document Types]]></DESCRIPTION>
-<!--167-->  <HELP><![CDATA[Open/Close all Base Document Types]]></HELP>
+<!--167-->  <HELP><![CDATA[Open/Close all Base Document Types.
+NOTE: You will not be able to close the fiscal year if you close all its periods permanently. Maybe you should close it before changing the last period from closed to permanently closed.]]></HELP>
 <!--167-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--167-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--167-->  <PROCEDURENAME><![CDATA[C_Period_Process]]></PROCEDURENAME>
