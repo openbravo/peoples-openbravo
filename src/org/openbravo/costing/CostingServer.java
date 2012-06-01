@@ -140,6 +140,7 @@ public class CostingServer {
     where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
     where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
         + " is null then 0 else 1 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+    where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
     crQry.setFilterOnReadableOrganization(false);
