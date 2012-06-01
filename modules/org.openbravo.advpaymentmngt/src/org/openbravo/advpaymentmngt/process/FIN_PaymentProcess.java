@@ -33,8 +33,10 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -71,7 +73,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     try {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
-
+      // This parameter is used inside this class
+      String isReversedPayment = (String) bundle.getParams().get("isReversedPayment");
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, recordID);
@@ -188,10 +191,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               .concat("...").toString() : description.toString();
           payment.setDescription(truncateDescription);
 
-          if (paymentAmount.compareTo(payment.getAmount()) != 0)
+          if (paymentAmount.compareTo(payment.getAmount()) != 0) {
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
-          if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0)
+          }
+          if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
             updateUsedCredit(payment);
+          }
 
           payment.setWriteoffAmount(paymentWriteOfAmount);
           payment.setProcessed(true);
@@ -347,6 +352,175 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
 
         // ***********************
+        // Reverse Payment
+        // ***********************
+      } else if (strAction.equals("RV")) {
+        FIN_Payment reversedPayment = (FIN_Payment) DalUtil.copy(payment, false);
+        final String paymentDate = (String) bundle.getParams().get("paymentdate");
+        OBContext.setAdminMode();
+        try {
+          if (BigDecimal.ZERO.compareTo(payment.getGeneratedCredit()) != 0
+              && BigDecimal.ZERO.compareTo(payment.getUsedCredit()) != 0) {
+            throw new OBException("@APRM_CreditConsumed@");
+          } else if (BigDecimal.ZERO.compareTo(payment.getGeneratedCredit()) != 0
+              && BigDecimal.ZERO.compareTo(payment.getUsedCredit()) == 0) {
+            reversedPayment.setUsedCredit(payment.getGeneratedCredit());
+            reversedPayment.setGeneratedCredit(BigDecimal.ZERO);
+          } else {
+            reversedPayment.setUsedCredit(BigDecimal.ZERO);
+            reversedPayment.setGeneratedCredit(BigDecimal.ZERO);
+          }
+          reversedPayment.setDocumentNo("*R*"
+              + FIN_Utility.getDocumentNo(payment.getDocumentType(), "FIN_Payment"));
+          reversedPayment.setPaymentDate(FIN_Utility.getDate(paymentDate));
+          reversedPayment.setDescription("");
+          reversedPayment.setProcessed(false);
+          reversedPayment.setPosted("N");
+          reversedPayment.setProcessNow(false);
+          reversedPayment.setAPRMProcessPayment("P");
+          reversedPayment.setStatus("RPAP");
+          // Amounts
+          reversedPayment.setAmount(payment.getAmount().negate());
+          reversedPayment.setWriteoffAmount(payment.getWriteoffAmount().negate());
+          reversedPayment.setFinancialTransactionAmount(payment.getFinancialTransactionAmount()
+              .negate());
+          OBDal.getInstance().save(reversedPayment);
+
+          List<FIN_PaymentDetail> reversedDetails = new ArrayList<FIN_PaymentDetail>();
+
+          OBDal.getInstance().save(reversedPayment);
+          List<FIN_Payment_Credit> credits = payment.getFINPaymentCreditList();
+
+          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+            FIN_PaymentDetail reversedPaymentDetail = (FIN_PaymentDetail) DalUtil.copy(pd, false);
+            reversedPaymentDetail.setFinPayment(reversedPayment);
+            reversedPaymentDetail.setAmount(pd.getAmount().negate());
+            reversedPaymentDetail.setWriteoffAmount(pd.getWriteoffAmount().negate());
+            if (pd.isRefund()) {
+              reversedPaymentDetail.setPrepayment(true);
+              reversedPaymentDetail.setRefund(false);
+              reversedPayment.setGeneratedCredit(reversedPayment.getGeneratedCredit().add(
+                  pd.getAmount()));
+              credits = new ArrayList<FIN_Payment_Credit>();
+              OBDal.getInstance().save(reversedPayment);
+            } else if (pd.isPrepayment()
+                && pd.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) {
+              reversedPaymentDetail.setPrepayment(true);
+              reversedPaymentDetail.setRefund(true);
+            }
+            List<FIN_PaymentScheduleDetail> reversedSchedDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+            OBDal.getInstance().save(reversedPaymentDetail);
+            // Create or update PSD of orders and invoices to set the new outstanding amount
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              if (psd.getInvoicePaymentSchedule() != null || psd.getOrderPaymentSchedule() != null) {
+                OBCriteria<FIN_PaymentScheduleDetail> unpaidSchedDet = OBDal.getInstance()
+                    .createCriteria(FIN_PaymentScheduleDetail.class);
+                if (psd.getInvoicePaymentSchedule() != null)
+                  unpaidSchedDet.add(Restrictions.eq(
+                      FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
+                      psd.getInvoicePaymentSchedule()));
+                if (psd.getOrderPaymentSchedule() != null)
+                  unpaidSchedDet.add(Restrictions.eq(
+                      FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
+                      psd.getOrderPaymentSchedule()));
+                unpaidSchedDet.add(Restrictions
+                    .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+                List<FIN_PaymentScheduleDetail> openPSDs = unpaidSchedDet.list();
+                // If invoice/order not fully paid, update outstanding amount
+                if (openPSDs.size() > 0) {
+                  FIN_PaymentScheduleDetail openPSD = openPSDs.get(0);
+                  BigDecimal openAmount = openPSD.getAmount().add(psd.getAmount());
+                  if (openAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    OBDal.getInstance().remove(openPSD);
+                  } else {
+                    openPSD.setAmount(openAmount);
+                  }
+                } else {
+                  // If invoice is fully paid create a new schedule detail.
+                  FIN_PaymentScheduleDetail openPSD = (FIN_PaymentScheduleDetail) DalUtil.copy(psd,
+                      false);
+                  openPSD.setPaymentDetails(null);
+                  // Amounts
+                  openPSD.setWriteoffAmount(BigDecimal.ZERO);
+                  openPSD.setAmount(psd.getAmount());
+
+                  openPSD.setCanceled(false);
+                  OBDal.getInstance().save(openPSD);
+                }
+              }
+              FIN_PaymentScheduleDetail reversedPaymentSchedDetail = (FIN_PaymentScheduleDetail) DalUtil
+                  .copy(psd, false);
+              reversedPaymentSchedDetail.setPaymentDetails(reversedPaymentDetail);
+              // Amounts
+              reversedPaymentSchedDetail.setWriteoffAmount(psd.getWriteoffAmount().negate());
+              reversedPaymentSchedDetail.setAmount(psd.getAmount().negate());
+
+              List<FIN_OrigPaymentScheduleDetail> reversedOrigSchedDetails = new ArrayList<FIN_OrigPaymentScheduleDetail>();
+
+              for (FIN_OrigPaymentScheduleDetail opsd : psd.getFINOrigPaymentScheduleDetailList()) {
+                FIN_OrigPaymentScheduleDetail reversedOPSD = (FIN_OrigPaymentScheduleDetail) DalUtil
+                    .copy(opsd, false);
+                reversedOPSD.setAmount(opsd.getAmount().negate());
+                reversedOPSD.setPaymentScheduleDetail(reversedPaymentSchedDetail);
+                reversedOPSD.setWriteoffAmount(opsd.getWriteoffAmount().negate());
+                OBDal.getInstance().save(reversedOPSD);
+                reversedOrigSchedDetails.add(reversedOPSD);
+              }
+              reversedPaymentSchedDetail
+                  .setFINOrigPaymentScheduleDetailList(reversedOrigSchedDetails);
+              OBDal.getInstance().save(reversedPaymentSchedDetail);
+              reversedSchedDetails.add(reversedPaymentSchedDetail);
+            }
+            reversedPaymentDetail.setFINPaymentScheduleDetailList(reversedSchedDetails);
+            OBDal.getInstance().save(reversedPaymentDetail);
+            reversedDetails.add(reversedPaymentDetail);
+          }
+          reversedPayment.setFINPaymentDetailList(reversedDetails);
+          OBDal.getInstance().save(reversedPayment);
+
+          List<FIN_Payment_Credit> reversedCredits = new ArrayList<FIN_Payment_Credit>();
+          for (FIN_Payment_Credit pc : credits) {
+            FIN_Payment_Credit reversedPaymentCredit = (FIN_Payment_Credit) DalUtil.copy(pc, false);
+            reversedPaymentCredit.setAmount(pc.getAmount().negate());
+            reversedPaymentCredit.setCreditPaymentUsed(pc.getCreditPaymentUsed());
+            pc.getCreditPaymentUsed().setUsedCredit(
+                pc.getCreditPaymentUsed().getUsedCredit().add(pc.getAmount().negate()));
+            reversedPaymentCredit.setPayment(reversedPayment);
+            OBDal.getInstance().save(pc.getCreditPaymentUsed());
+            OBDal.getInstance().save(reversedPaymentCredit);
+            reversedCredits.add(reversedPaymentCredit);
+          }
+
+          reversedPayment.setFINPaymentCreditList(reversedCredits);
+          OBDal.getInstance().save(reversedPayment);
+
+          List<ConversionRateDoc> conversions = new ArrayList<ConversionRateDoc>();
+          for (ConversionRateDoc cr : payment.getCurrencyConversionRateDocList()) {
+            ConversionRateDoc reversedCR = (ConversionRateDoc) DalUtil.copy(cr, false);
+            reversedCR.setForeignAmount(cr.getForeignAmount().negate());
+            reversedCR.setPayment(reversedPayment);
+            OBDal.getInstance().save(reversedCR);
+            conversions.add(reversedCR);
+          }
+          reversedPayment.setCurrencyConversionRateDocList(conversions);
+          OBDal.getInstance().save(reversedPayment);
+
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+        HashMap<String, Object> parameterMap = new HashMap<String, Object>();
+        parameterMap.put("Fin_Payment_ID", reversedPayment.getId());
+        parameterMap.put("action", "P");
+        parameterMap.put("isReversedPayment", "Y");
+        bundle.setParams(parameterMap);
+        execute(bundle);
+        payment.setReversedPayment(reversedPayment);
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().flush();
+        return;
+
+        // ***********************
         // Reactivate Payment
         // ***********************
       } else if (strAction.equals("R")) {
@@ -356,6 +530,16 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
               + ": " + payment.getDocumentNo()));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
+        // Reversed Payment
+        if (payment.getReversedPayment() != null) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@APRM_PaymentReversed@"));
           bundle.setResult(msg);
           OBDal.getInstance().rollbackAndClose();
           return;
@@ -392,8 +576,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         payment.setAmount(BigDecimal.ZERO);
         payment.setFinancialTransactionAmount(BigDecimal.ZERO);
 
-        payment.setStatus("RPAP");
         payment.setDescription("");
+
+        payment.setStatus("RPAP");
         payment.setAPRMProcessPayment("P");
         OBDal.getInstance().save(payment);
         OBDal.getInstance().flush();
@@ -419,6 +604,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
           List<ConversionRateDoc> conversionRates = payment.getCurrencyConversionRateDocList();
           Set<String> invoiceDocNos = new HashSet<String>();
+          // Undo Reversed payment relationship
+          List<FIN_Payment> revPayments = new ArrayList<FIN_Payment>();
+          for (FIN_Payment reversedPayment : payment.getFINPaymentReversedPaymentList()) {
+            reversedPayment.setReversedPayment(null);
+            OBDal.getInstance().save(reversedPayment);
+          }
+          payment.setFINPaymentReversedPaymentList(revPayments);
+          OBDal.getInstance().save(payment);
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
             // If an original payment plan is defined, all the details are removed, before removing
             // the payment schedule details associated lines
@@ -489,14 +682,24 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   decreaseCustomerCredit(businessPartner, amount);
                 }
               }
-              FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
               removedPDS.add(paymentScheduleDetail);
-
+              FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
             }
             paymentDetail.getFINPaymentScheduleDetailList().removeAll(removedPDS);
             OBDal.getInstance().getSession().refresh(paymentDetail);
-            removedPD.add(paymentDetail);
-            removedPDIds.add(paymentDetail.getId());
+            // If there is any schedule detail with amount zero, those are deleted
+            for (FIN_PaymentScheduleDetail psd : removedPDS) {
+              if (BigDecimal.ZERO.compareTo(psd.getAmount()) == 0
+                  && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
+                paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
+                OBDal.getInstance().getSession().refresh(paymentDetail);
+                OBDal.getInstance().remove(psd);
+              }
+            }
+            if (paymentDetail.getFINPaymentScheduleDetailList().size() == 0) {
+              removedPD.add(paymentDetail);
+              removedPDIds.add(paymentDetail.getId());
+            }
             OBDal.getInstance().save(paymentDetail);
           }
           for (String pdToRm : removedPDIds) {
@@ -508,7 +711,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().save(payment);
 
           if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
+              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
             undoUsedCredit(payment, vars, invoiceDocNos);
           }
 
@@ -698,7 +901,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
 
-      if (!updateOriginalPaymentPlanInformation(payment)) {
+      // When payment is reversed, original payment plan is updated to reverse a particular original
+      // payment plan details (the ones related with payment which is reverted) so this step can be
+      // skipped
+      if (!"Y".equals(isReversedPayment) && !updateOriginalPaymentPlanInformation(payment)) {
         msg.setType("Error");
         msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
             "@CouldNotUpdateOriginalPaymentPlan@"));
