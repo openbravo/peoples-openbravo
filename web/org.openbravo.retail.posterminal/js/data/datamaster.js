@@ -118,22 +118,20 @@ define(['utilities', 'datasource'], function () {
       },
 
       success: function (data, textStatus, jqXHR) {
-        var q = "INSERT INTO c_tax(c_tax_id, name, c_taxcategory_id, c_bp_taxcategory_id, rate) VALUES (?,?,?,?,?)";
+        var q = 'INSERT INTO c_tax(c_tax_id, name, c_taxcategory_id, c_bp_taxcategory_id, rate, idx) VALUES (?,?,?,?,?,?)',
+            idx = 0;
         db.transaction(function (tx) {
           _.each(data.response.data, function (item) {
-            tx.executeSql(q, [item.id, item.name, item.taxCategory, item.businessPartnerTaxCategory, item.rate], dbSuccess, dbError);
+            tx.executeSql(q, [item.id, item.name, item.taxCategory, item.businessPartnerTaxCategory, item.rate, idx], dbSuccess, dbError);
+            idx++;
           });
         }, dbError, dbSuccess);
-      },
-
-      complete: function (jqXHR, textStatus) {
-        window.console.log('complete loading taxes');
       }
     });
   };
 
   db.transaction(function (tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS c_tax(c_tax_id TEXT PRIMARY KEY, name TEXT, c_taxcategory_id TEXT, c_bp_taxcategory_id TEXT, rate NUMERIC)',
+    tx.executeSql('CREATE TABLE IF NOT EXISTS c_tax(c_tax_id TEXT PRIMARY KEY, name TEXT, c_taxcategory_id TEXT, c_bp_taxcategory_id TEXT, rate NUMERIC, idx NUMERIC)',
       null, dbSuccess, dbError);
   }, dbError, fetchTaxes);
 
