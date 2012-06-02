@@ -323,7 +323,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       unitPrice = new BigDecimal(strPriceActual.trim());
       if (isPriceTaxInclusive(strCOrderId)) {
-        // todo
+        // todo - Alternate Amount
         unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision,
             new BigDecimal(0.0));
         resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
@@ -381,9 +381,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
   private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
       String strPrecision, BigDecimal alternateAmount) {
+    BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+    if (grossUnitPrice.compareTo(BigDecimal.ZERO) == 0)
+      return BigDecimal.ZERO;
     final List parameters = new ArrayList();
-    parameters.add(new String(strTaxId));
-    parameters.add(new BigDecimal(strGrossUnitPrice.trim()));
+    parameters.add(strTaxId);
+    parameters.add(grossUnitPrice);
 
     // TODO: Alternate Base Amount
     parameters.add(alternateAmount);
