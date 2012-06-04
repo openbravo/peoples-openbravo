@@ -249,12 +249,14 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         if (isDefultPriceList) {
           throw new OBException("NoDefaultPriceList");
         } else {
-          // If pl was the Business Partner's price list, there was no fit price list for it so take
+          // If pl was the Business Partner's price list, there was no fit price list for it so
+          // take
           // the default price list.
-          pl = getDefaultPriceList(o.getClient().getId(), o.getOrganization().getId(), isSalesPL);
-          earliestPlv = getEarliestPriceListVersion(pl, orderDate);
-          // There is no fit price list version.
-          if (earliestPlv == null) {
+          try {
+            pl = getDefaultPriceList(o.getClient().getId(), o.getOrganization().getId(), isSalesPL);
+            earliestPlv = getEarliestPriceListVersion(pl, orderDate);
+          } catch (Exception e) {
+            // There is no fit price list version.
             throw new OBException("NoDefaultPriceList");
           }
         }
@@ -267,19 +269,20 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         } else if (prices != null) {
           return prices;
         } else {
-          pl = getDefaultPriceList(o.getClient().getId(), o.getOrganization().getId(), isSalesPL);
-          earliestPlv = getEarliestPriceListVersion(pl, orderDate);
-          if (earliestPlv == null) {
+          try {
+            pl = getDefaultPriceList(o.getClient().getId(), o.getOrganization().getId(), isSalesPL);
+            earliestPlv = getEarliestPriceListVersion(pl, orderDate);
+          } catch (Exception e) {
             throw new OBException("NoDefaultPriceList");
+          }
+          prices = getProductPricesFromPLV(strProductId, earliestPlv);
+          if (prices == null) {
+            throw new OBException("NoProductInDefaultPriceList");
           } else {
-            prices = getProductPricesFromPLV(strProductId, earliestPlv);
-            if (prices == null) {
-              throw new OBException("NoProductInDefaultPriceList");
-            } else {
-              return prices;
-            }
+            return prices;
           }
         }
+
       }
       return null;
     } finally {
