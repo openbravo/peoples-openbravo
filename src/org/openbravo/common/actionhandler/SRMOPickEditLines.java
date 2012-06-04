@@ -38,6 +38,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
@@ -190,6 +191,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           parameters.add("Y");
 
           taxId = (String) CallStoredProcedure.getInstance().call("C_Gettax", parameters, null);
+          if (taxId == null || "".equals(taxId)) {
+            Map<String, String> errorParameters = new HashMap<String, String>();
+            errorParameters.put("product", product.getName());
+            String message = OBMessageUtils.messageBD("NoTaxFoundForProduct");
+            throw new OBException(OBMessageUtils.parseTranslation(message, errorParameters));
+          }
         }
         TaxRate tax = OBDal.getInstance().get(TaxRate.class, taxId);
 
