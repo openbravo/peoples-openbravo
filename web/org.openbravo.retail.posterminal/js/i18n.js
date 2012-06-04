@@ -76,6 +76,7 @@ define(['utilities'], function () {
     'OBPOS_MsgHardwareServerNotDefined': 'Hardware server URL is not defined.',
     'OBPOS_MsgPaymentAmountError': 'Payment amount not valid.\nContact your administrator.',
     'OBPOS_MsgPaymentTypeError': 'Payment type not valid.\nContact your administrator.',
+    'OBPOS_MsgPaymentAmountZero': 'Total is zero. No payment needed',
     
     
     // Point of sale window
@@ -126,6 +127,15 @@ define(['utilities'], function () {
       group: ',',
       currency: '$#'});    
   };    
+  
+  OB.I18N.formatRate = function (num) {
+    // Hardcoded to US Locale.
+    return OB.I18N.formatGeneralNumber(num * 100, {
+      decimals: 2,
+      decimal: '.',
+      group: ',',
+      currency: '#%'});    
+  };     
   
   OB.I18N.formatGeneralNumber = function (num, options) {
     var n = num.toFixed(options.decimals);

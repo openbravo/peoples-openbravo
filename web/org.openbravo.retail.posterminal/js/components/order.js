@@ -31,17 +31,17 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
           renderLine: OB.COMP.RenderOrderLine
         }},
         {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled'}, content: [                                                                                        
-          {kind: B.KindJQuery('li'), content: [                                                                                        
-            {kind: B.KindJQuery('div'), attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%; color:  #888888'}, content: [ 
-                OB.I18N.getLabel('OBPOS_ReceiptTaxes')
-              ]},                                                                                                                                                                           
-              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
-                OB.I18N.formatCurrency(0)
-              ]},
-              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
-            ]}
-          ]},
+//          {kind: B.KindJQuery('li'), content: [                                                                                        
+//            {kind: B.KindJQuery('div'), attr: {style: 'position: relative; padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+//              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%; color:  #888888'}, content: [ 
+//                OB.I18N.getLabel('OBPOS_ReceiptTaxes')
+//              ]},                                                                                                                                                                           
+//              {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [                                                                                        
+//                OB.I18N.formatCurrency(0)
+//              ]},
+//              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
+//            ]}
+//          ]},
           {kind: B.KindJQuery('li'), content: [                                                                                        
             {kind: B.KindJQuery('div'), attr: {style: 'position: relative; padding: 10px;'}, content: [
               {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%'}, content: [ 

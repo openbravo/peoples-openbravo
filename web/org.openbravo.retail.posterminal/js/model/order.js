@@ -387,11 +387,16 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
     addPayment: function(payment) {
       var i, max, p;
       
-      if (!OB.DEC.isNumber(payment.get('amount')) || OB.DEC.compare(this.getPending()) <= 0) {
-        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+      if (OB.DEC.compare(this.getPending()) === 0) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
         return;
       }
       
+      if (!OB.DEC.isNumber(payment.get('amount'))) {
+        alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        return;
+      }
+  
       if (!OB.POS.modelterminal.hasPayment(payment.get('kind'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentTypeError'));
         return;
