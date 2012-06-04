@@ -44,7 +44,6 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
 
            element.set('taxId', taxId);
            element.set('net', net);
-           element.set('netPrice', netPrice);
 
            if(taxes[taxId]) {
              taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, net);
