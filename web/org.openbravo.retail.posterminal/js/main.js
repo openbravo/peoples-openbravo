@@ -39,7 +39,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   };
   
   OB.Constants = {
-      FIELDSEPARATOR: '$'
+      FIELDSEPARATOR: '.'
   };
 
   modelterminal.on('ready', function () {
