@@ -139,9 +139,10 @@ public class ProcessOrder implements JSONProcess {
               .getString("id")));
       orderline.setUOM(OBDal.getInstance().get(UOM.class,
           orderlines.getJSONObject(i).getString("uOM")));
-      orderline.setUnitPrice(new BigDecimal(orderlines.getJSONObject(i).getString("price")));    
+      orderline.setUnitPrice(new BigDecimal(orderlines.getJSONObject(i).getString("pricenet")));
       orderline.setOrderedQuantity(new BigDecimal(orderlines.getJSONObject(i).getString("qty")));
-      orderline.setTax(OBDal.getInstance().get(TaxRate.class, "8142DAB7ACED4F23B5D1B4EF70AE1AE8")); // Exempt
+      orderline.setTax(OBDal.getInstance().get(TaxRate.class,
+          orderlines.getJSONObject(i).getString("taxId"))); // Exempt
       
       order.getOrderLineList().add(orderline);
     }
