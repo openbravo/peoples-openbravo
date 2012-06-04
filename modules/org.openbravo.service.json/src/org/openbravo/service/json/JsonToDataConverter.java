@@ -556,7 +556,9 @@ public class JsonToDataConverter {
       if (keyToObject.get(key) != null) {
         value = keyToObject.get(key);
       } else {
-        if (property.getReferencedProperty() != null) {
+        // if an id we should use the get method as it loads from the first level
+        // cache
+        if (property.getReferencedProperty() != null && !property.getReferencedProperty().isId()) {
           final OBQuery<BaseOBObject> qry = OBDal.getInstance().createQuery(entity.getName(),
               property.getReferencedProperty().getName() + "=:reference");
           qry.setNamedParameter("reference", referencedId);

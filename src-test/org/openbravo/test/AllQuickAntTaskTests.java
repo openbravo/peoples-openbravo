@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalFilterTest;
+import org.openbravo.test.dal.DalPerformanceProxyTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DalUtilTest;
@@ -72,6 +73,7 @@ public class AllQuickAntTaskTests {
     // suite.addTestSuite(DalPerformanceInventoryLineTest.class);
     // suite.addTestSuite(DalPerformanceProductTest.class);
     // suite.addTestSuite(DalQueryTest.class);
+    suite.addTestSuite(DalPerformanceProxyTest.class);
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DalFilterTest.class);
     suite.addTestSuite(DalUtilTest.class);
