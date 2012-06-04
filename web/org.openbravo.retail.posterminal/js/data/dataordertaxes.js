@@ -30,7 +30,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
          }
 
          tx.executeSql(sql, params, function (tr, result) {
-           var taxRate, rate, taxAmt, net, taxId;
+           var taxRate, rate, taxAmt, net, pricenet, amount, taxId;
 
            if(result.rows.length < 1) {
              window.console.error('No applicable tax found for product: ' + product.get('product').id);
@@ -39,18 +39,24 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
 
            taxRate = result.rows.item(0);
            rate = OB.DEC.div(taxRate.rate, 100);
+           pricenet = OB.DEC.div(element.get('price'), OB.DEC.add(1, rate));
            net = OB.DEC.div(element.get('gross'), OB.DEC.add(1, rate));
+           amount = OB.DEC.sub(element.get('gross'), net);
            taxId = taxRate.c_tax_id;
 
            element.set('taxId', taxId);
            element.set('net', net);
+           element.set('pricenet', pricenet);
 
            if(taxes[taxId]) {
-             taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, net);
+             taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
+             taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
            } else {
              taxes[taxId] = {};
              taxes[taxId].name = taxRate.name;
-             taxes[taxId].amount = net;
+             taxes[taxId].rate = rate;
+             taxes[taxId].net = net;
+             taxes[taxId].amount = amount;
            }
          }, function(tr, err) {
            window.console.error(arguments);
