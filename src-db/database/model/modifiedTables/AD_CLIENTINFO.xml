@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_CLIENTINFO">
+    <table name="AD_CLIENTINFO" primaryKey="AD_CLIENTINFO_KEY">
+      <column name="EM_OBPOS_COMPANY_LOGIN_IMAGE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+    </table>
+  </database>

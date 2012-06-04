@@ -56,7 +56,7 @@ define(['builder', 'i18n', 'components/clock',
         {kind: B.KindJQuery('section'), content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row login-header-row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'class': 'login-header-company'}},
+              {kind: B.KindJQuery('div'), id: 'loginHeaderCompany', attr: {'class': 'login-header-company'}},
               {kind: B.KindJQuery('div'), attr: {'class': 'login-header-ob'}}
             ]}
           ]},
@@ -138,19 +138,41 @@ define(['builder', 'i18n', 'components/clock',
                   isFirstTime = true;
               for (i=0; i<name.length; i++) {
                 if (isFirstTime) {
-                  target[0].innerHTML = '';
+                  target.html('');
                   isFirstTime = false;
                 }
                 content = B({kind: OB.COMP.LoginUserButton, attr: {'user': userName[i], 'userImage': image[i], 'userConnected': connected[i]}, content: [name[i]]}).$el;
                 target.append(content);
               }
-
+              return true;
+            }
+            function setCompanyLogo(jsonCompanyLogo) {
+              var logoUrl = [],
+              jsonCompanyLogo = jsonCompanyLogo.response[0].data;
+              $.each(jsonCompanyLogo, function(k,v){
+                logoUrl.push(v.logoUrl);
+              });
+              me.context.loginHeaderCompany.$el.css('background-image', 'url("' + logoUrl[0] + '")');
+              return true;
             }
             $.ajax({
               url: '../../org.openbravo.service.retail.posterminal.loginutils',
               contentType: 'application/json;charset=utf-8',
               dataType: 'json',
               data: {
+                command: 'companyLogo',
+                terminalName: OB.POS.paramTerminal
+              },
+              success: function (data, textStatus, jqXHR) {
+                setCompanyLogo(data);
+              }
+            });
+            $.ajax({
+              url: '../../org.openbravo.service.retail.posterminal.loginutils',
+              contentType: 'application/json;charset=utf-8',
+              dataType: 'json',
+              data: {
+                command: 'userImages',
                 terminalName: OB.POS.paramTerminal
               },
               success: function (data, textStatus, jqXHR) {
