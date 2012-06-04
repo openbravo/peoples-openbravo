@@ -48,7 +48,23 @@
     %>
         <line>
              <text>------------------------------------------</text>
-        </line>
+        </line>  
+    <% 
+     var taxes = order.get('taxes');
+     for (var t in taxes) { 
+    %>   
+        <line>
+            <text align ="left" length="25">Total net</text>
+            <text align ="right" length="10"><%= OB.I18N.formatCurrency(taxes[t].net) %></text>
+        </line>   
+        <line>
+            <text align ="left" length="15"><%= taxes[t].name %></text>
+            <text align ="right" length="10"><%= OB.I18N.formatRate(taxes[t].rate) %></text>
+            <text align ="right" length="10"><%= OB.I18N.formatCurrency(taxes[t].amount) %></text>           
+        </line>       
+    <%
+     } 
+    %>        
         <line></line>
         <line size="1">
             <text align ="left" length="16" bold="true">Total.</text>
