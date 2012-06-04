@@ -2216,6 +2216,9 @@ isc.OBViewGrid.addProperties({
       editForm.clearValues();
       // clear the errors so that they don't show up at the next row
       editForm.clearErrors();
+      // do not save the focus item to prevent wrong validations when creating a new row
+      // see issue 20537 (https://issues.openbravo.com/view.php?id=20537)
+      editForm.setFocusItem(null);
     }
 
     delete this._hidingInlineEditor;
