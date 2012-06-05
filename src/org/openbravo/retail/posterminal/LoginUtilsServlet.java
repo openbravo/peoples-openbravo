@@ -131,7 +131,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
           // Get the image for the current user
           String hqlImage = "select image.mimetype, image.bindaryData "
               + "from ADImage image, ADUser user "
-              + "where user.obposImage = image.id and user.id = :theUserId";
+              + "where user.image = image.id and user.id = :theUserId";
           Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
           qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
           String imageData = "none";

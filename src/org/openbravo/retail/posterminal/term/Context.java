@@ -17,7 +17,7 @@ public class Context extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "select u as user, img.bindaryData as img, r as role "
-        + "from ADUser u left outer join u.obposImage img, ADRole r "
+        + "from ADUser u left outer join u.image img, ADRole r "
         + "where u.id = $userId and u.$readableCriteria and r.id = $roleId and r.$readableCriteria";
   }
 }

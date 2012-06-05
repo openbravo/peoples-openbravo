@@ -5,5 +5,8 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_IMAGE" name="EM_OBPOS_CLIENTINFO_IMAGE">
+        <reference local="EM_OBPOS_COMPANY_LOGIN_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
     </table>
   </database>
