@@ -35,10 +35,13 @@ import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
+import org.junit.Assert;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
@@ -65,6 +68,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
 import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
@@ -131,6 +135,8 @@ import org.openbravo.test.base.BaseTest;
  * https://issues.openbravo.com/view.php?id=15218: error when closing transaction
  * 
  * https://issues.openbravo.com/view.php?id=18688: Ability to call database functions from HQL query
+ * 
+ * https://issues.openbravo.com/view.php?id=20611: OBCriteria doesn't support ScrollabeResults
  * 
  * @author mtaal
  * @author iperdomo
@@ -716,6 +722,12 @@ public class IssuesTest extends BaseTest {
     writableOrganizations.removeAll(writableOrganizations);
     Set<String> writableOrganizations2 = OBContext.getOBContext().getWritableOrganizations();
     assertFalse(writableOrganizations2.isEmpty());
+  }
+
+  public void test20611() {
+    OBCriteria<BusinessPartner> c = OBDal.getInstance().createCriteria(BusinessPartner.class);
+    ScrollableResults iterator = c.scroll(ScrollMode.FORWARD_ONLY);
+    Assert.assertTrue(iterator.next());
   }
 
   /**
