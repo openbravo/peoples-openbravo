@@ -27,11 +27,9 @@ import java.util.Map;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -50,12 +48,10 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
+  final static String ITEM = "I";
+
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
-    final String language = bundle.getContext().getLanguage();
-    final ConnectionProvider conProvider = bundle.getConnection();
-    final VariablesSecureApp vars = bundle.getContext().toVars();
-
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -72,31 +68,35 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     Product product = OBDal.getInstance().get(Product.class, strProductId);
     AttributeSetInstance asi = null;
-    if (strASIId.isEmpty()) {
-      asi = OBDal.getInstance().get(AttributeSetInstance.class, "0");
-    } else {
-      asi = OBDal.getInstance().get(AttributeSetInstance.class, strASIId);
+    if (product.isStocked() && ITEM.equals(product.getProductType())) {
+      asi = OBDal.getInstance()
+          .get(AttributeSetInstance.class, strASIId.isEmpty() ? "0" : strASIId);
     }
 
-    // Check attributesetinstance has been used with the product
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :asi");
-    OBQuery<MaterialTransaction> attrQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    attrQry.setNamedParameter("product", product);
-    attrQry.setNamedParameter("asi", asi);
-    if (attrQry.count() == 0) {
-      Map<String, String> parameters = new HashMap<String, String>();
-      parameters.put("product", product.getName());
-      parameters.put("attribute", asi.getDescription());
-      String message = OBMessageUtils.messageBD("WrongAttributeForProduct");
-      msg.setMessage(OBMessageUtils.parseTranslation(message, parameters));
-      msg.setTitle(OBMessageUtils.messageBD("Error"));
-      msg.setType("Error");
-      bundle.setResult(msg);
-      return;
+    if (asi != null) {
+      // Check attributesetinstance has been used with the product
+      StringBuffer where = new StringBuffer();
+      where.append(" as trx");
+      where.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+      where.append("   and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :asi");
+      OBQuery<MaterialTransaction> attrQry = OBDal.getInstance().createQuery(
+          MaterialTransaction.class, where.toString());
+      attrQry.setNamedParameter("product", product);
+      attrQry.setNamedParameter("asi", asi);
+      if (attrQry.count() == 0) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("product", product.getName());
+        parameters.put("attribute", asi.getDescription());
+        String message = OBMessageUtils.messageBD("WrongAttributeForProduct");
+        msg.setMessage(OBMessageUtils.parseTranslation(message, parameters));
+        msg.setTitle(OBMessageUtils.messageBD("Error"));
+        msg.setType("Error");
+        bundle.setResult(msg);
+        return;
+      }
+      if ("0".equals(asi.getId())) {
+        asi = null;
+      }
     }
 
     OBContext.setAdminMode(true);
@@ -165,9 +165,9 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
       newOrderLine.setTax(tax);
 
       if (strReturnReason.isEmpty()) {
-        newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class, strReturnReason));
-      } else {
         newOrderLine.setReturnReason(order.getReturnReason());
+      } else {
+        newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class, strReturnReason));
       }
 
       List<OrderLine> orderLines = order.getOrderLineList();
