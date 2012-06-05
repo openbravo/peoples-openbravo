@@ -89,7 +89,7 @@ define(['utilities'], function () {
     'OBPOS_LblPrint': ' PRINT',
     'OBPOS_LblMenu': ' MENU',
     'OBPOS_LblOpenbravoWorkspace': 'Openbravo Workspace',
-    'OBPOS_LblCloseCash': 'Close Cash',
+    'OBPOS_LblCloseCash': 'Cash up',
     'OBPOS_LblPay': ' PAY',    
     'OBPOS_LblBrowse': 'BROWSE',
     'OBPOS_LblSearch': 'SEARCH',

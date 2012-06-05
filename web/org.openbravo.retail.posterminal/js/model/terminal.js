@@ -117,7 +117,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           terminal: OB.POS.paramTerminal
       };
   
-      new OB.DS.Query('from OBPOS_Applications where $readableCriteria and searchKey = :terminal').exec(
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Terminal').exec(
         params,
         function (data) {
           if (data.exception) {
@@ -142,8 +142,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPayments: function () {
       var me = this;
-      new OB.DS.Query(
-          'from OBPOS_App_Payment where obposApplications.id = :pos and $readableCriteria').exec({ pos: this.get('terminal').id }
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Payments').exec({ pos: this.get('terminal').id }
       , function (data) {
         if (data) { 
           var i, max;
@@ -159,10 +158,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadContext: function () {
       var me = this;
-      new OB.DS.Query(
-          'select u as user, img.bindaryData as img, r as role ' + 
-          'from ADUser u left outer join u.obposImage img, ADRole r where u.id = $userId and u.$readableCriteria ' + 
-          'and r.id = $roleId and r.$readableCriteria').exec({}
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Context').exec({}
       , function (data) {
         if (data[0]) {         
           me.set('context', data[0]);
@@ -173,8 +169,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPermissions: function () {
       var me = this;
-      new OB.DS.Query(
-          'from OBPOS_POS_Access where role.id = $roleId and $readableCriteria').exec({}
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Permissions').exec({}
       , function (data) {
         var i, max, permissions = {};
         if (data) {                  
@@ -189,7 +184,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadBP: function () {
       var me = this;
-      new OB.DS.Query('from BusinessPartner where id = :bp and $readableCriteria)').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.BusinessPartner').exec({
         bp: this.get('terminal').businessPartner
       }, function (data) {
         if (data[0]) {
@@ -201,7 +196,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadBPLocation: function () {
       var me = this;
-      new OB.DS.Query('from BusinessPartnerLocation where id = :bploc and $readableCriteria)').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.BusinessPartnerLocation').exec({
         bploc: this.get('terminal').partnerAddress
       }, function (data) {
         if (data[0]) {
@@ -212,7 +207,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadLocation: function () {
       var me = this;
-      new OB.DS.Query('from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Location').exec({
         org: this.get('terminal').organization
       }, function (data) {
         if (data[0]) {
@@ -223,7 +218,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPriceList: function () {
       var me = this;    
-      new OB.DS.Query('from PricingPriceList where id =:pricelist and $readableCriteria').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.PriceList').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -234,7 +229,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPriceListVersion: function () {
       var me = this;
-      new OB.DS.Query('select plv.id AS id from PricingPriceListVersion AS plv where plv.$readableCriteria and plv.priceList.id =:pricelist and plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = :pricelist)').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -246,7 +241,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadCurrency: function () {
       var me = this;    
-      new OB.DS.Query('from Currency where id =:currency and $readableCriteria').exec({
+      new OB.DS.Source('org.openbravo.retail.posterminal.term.Currency').exec({
         currency: this.get('terminal').currency
       }, function (data) {
         if (data[0]) {

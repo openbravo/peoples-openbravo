@@ -1,24 +1,15 @@
 /*
- *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
- * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
- ************************************************************************
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
  */
 package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.WebServiceUtil;
@@ -48,7 +38,7 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    doGetOrPost(request, response, request.getParameter("content"));
+    doGetOrPost(request, response, null);
   }
 
   @Override
@@ -57,6 +47,7 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
     doGetOrPost(request, response, getRequestContent(request));
   }
 
+  @SuppressWarnings("unchecked")
   private void doGetOrPost(HttpServletRequest request, HttpServletResponse response, String content)
       throws IOException, ServletException {
 
@@ -64,83 +55,108 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
     if (pathparts == null) {
       return;
     }
+    try {
+      final Object jsonsent = getContentAsJSON((content == null && pathparts.length == 3) ? java.net.URLDecoder
+          .decode(pathparts[2], "UTF-8")
+          : content);
 
-    if (pathparts.length == 1 || "hql".equals(pathparts[1])) {
-      try {
-        JSONObject jsonResult = execThingArray(request, response, getContentAsJSON(content));
-        writeResult(response, jsonResult.toString());
-      } catch (JSONException e) {
-        log.error(e.getMessage(), e);
-        writeResult(response, JsonUtils.convertExceptionToJson(e));
+      response.setContentType("application/json");
+      response.setCharacterEncoding("UTF-8");
+
+      if (pathparts.length == 1 || "hql".equals(pathparts[1])) {
+        final Writer w = response.getWriter();
+        execThingArray(w, jsonsent);
+        w.close();
+      } else {
+        // Command it is a class name
+        try {
+          if (jsonsent instanceof JSONObject) {
+            final Class<JSONProcess> clazz = (Class<JSONProcess>) Class.forName(pathparts[1]);
+            final Writer w = response.getWriter();
+            w.write("{\"response\":{");
+            execClassName(w, clazz, (JSONObject) jsonsent);
+            w.write("}}");
+            w.close();
+          } else {
+            writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+                "Content is not a JSON object.")));
+          }
+        } catch (ClassNotFoundException e) {
+          log.error(e.getMessage(), e);
+          writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+              "Command class not found: " + pathparts[1])));
+        }
       }
-    } else if (pathparts.length == 2 || "logout".equals(pathparts[1])) {
-      request.getSession(true).invalidate();
-      try {      
-        writeResult(response, getJSONResult("success"));
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        writeResult(response, JsonUtils.convertExceptionToJson(e));
-      }      
-    } else {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Command not found: "
-              + pathparts[1])));
+    } catch (JSONException e) {
+      writeResult(response, JsonUtils.convertExceptionToJson(e));
     }
   }
 
-  private JSONObject execThingArray(HttpServletRequest request, HttpServletResponse response,
-      Object jsonContent) throws JSONException, ServletException {
-
-    // get all sentences to execute.
-    final JSONObject jsonResult = new JSONObject();
+  private void execThingArray(Writer w, Object jsonContent) throws IOException, ServletException {
 
     if (jsonContent instanceof JSONArray) {
-      final JSONArray jsonArray = (JSONArray) jsonContent;
-      final JSONArray jsonResponses = new JSONArray();
-      for (int i = 0; i < jsonArray.length(); i++) {
-        jsonResponses.put(execThing(jsonArray.getJSONObject(i)));
+      JSONArray jsonArray = (JSONArray) jsonContent;
+      w.write("{\"response\":{");
+      try {
+        w.write("\"responses\":[");
+        for (int i = 0; i < jsonArray.length(); i++) {
+          if (i > 0) {
+            w.write(',');
+          }
+          w.write('{');
+          execThing(w, jsonArray.getJSONObject(i));
+          w.write('}');
+        }
+        w.write("]");
+      } catch (JSONException e) {
+        w.write("],");
+        JSONRowConverter.addJSONExceptionFields(w, e);
       }
-      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponses);
+      w.write("}}");
     } else if (jsonContent instanceof JSONObject) {
-      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, execThing((JSONObject) jsonContent));
+      w.write("{\"response\":{");
+      execThing(w, (JSONObject) jsonContent);
+      w.write("}}");
     } else {
-      throw new JSONException("Expected JSON object or array.");
+      w.write(JsonUtils.convertExceptionToJson(new JSONException("Expected JSON object or array.")));
     }
-
-    return jsonResult;
   }
 
   @SuppressWarnings("unchecked")
-  private JSONObject execThing(JSONObject jsonsent) throws JSONException, ServletException {
+  private void execThing(Writer w, JSONObject jsonsent) throws IOException, ServletException {
+
+    // this is the response object
+    // JSONProcess writes the properties of the response object.
 
     if (jsonsent.has("className")) {
       try {
-        return execClassName((Class<JSONProcess>) Class.forName(jsonsent.getString("className")),
+        execClassName(w, (Class<JSONProcess>) Class.forName(jsonsent.getString("className")),
             jsonsent);
+      } catch (JSONException e) {
+        JSONRowConverter.addJSONExceptionFields(w, e);
       } catch (ClassNotFoundException e) {
-        throw new JSONException(e);
+        JSONRowConverter.addJSONExceptionFields(w, e);
       }
     } else if (jsonsent.has("query")) { // It is an HQL Query
-      return execClassName(ProcessHQLQuery.class, jsonsent);
+      execClassName(w, ProcessHQLQueryJSON.class, jsonsent);
     } else if (jsonsent.has("process")) { // It is a Process
-      return execClassName(ProcessProcedure.class, jsonsent);
+      execClassName(w, ProcessProcedure.class, jsonsent);
     } else {
-      throw new JSONException("Expected one of the following properties: \"query\" or \"process\".");
+      JSONRowConverter.addJSONExceptionFields(w, new JSONException(
+          "Expected one of the following properties: \"className\", \"query\" or \"process\"."));
     }
   }
 
-  private JSONObject execClassName(Class<? extends JSONProcess> process, JSONObject jsonsent)
-      throws JSONException,
-      ServletException {
+  private void execClassName(Writer w, Class<? extends JSONProcess> process, JSONObject jsonsent)
+      throws IOException, ServletException {
 
     try {
       JSONProcess proc = process.newInstance();
-      return proc.exec(jsonsent);
+      proc.exec(w, jsonsent);
     } catch (InstantiationException e) {
-      throw new JSONException(e);
+      JSONRowConverter.addJSONExceptionFields(w, e);
     } catch (IllegalAccessException e) {
-      throw new JSONException(e);
+      JSONRowConverter.addJSONExceptionFields(w, e);
     }
   }
 

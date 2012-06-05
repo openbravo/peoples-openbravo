@@ -61,7 +61,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class ProcessOrder implements JSONProcess {
+public class ProcessOrder extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -150,15 +150,15 @@ public class ProcessOrder implements JSONProcess {
     OBDal.getInstance().save(order);
     OBDal.getInstance().flush();
 
-    final JSONObject jsonResponse = bookOrder("C_Order Post", order.getId());
+    final JSONObject jsonOrder = bookOrder("C_Order Post", order.getId());
 
     OBDal.getInstance().commitAndClose();
 
-    // final JSONObject jsonResponse = new JSONObject();
-    //
-    // jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    // jsonResponse.put("result", "0");
-    // jsonResponse.put("data", jsonorder);
+    final JSONObject jsonResponse = new JSONObject();
+
+    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    jsonResponse.put("result", "0");
+    jsonResponse.put("data", jsonOrder);
 
     return jsonResponse;
   }

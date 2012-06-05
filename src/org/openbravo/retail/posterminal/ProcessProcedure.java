@@ -39,7 +39,7 @@ import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessProcedure implements JSONProcess {
+public class ProcessProcedure extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {

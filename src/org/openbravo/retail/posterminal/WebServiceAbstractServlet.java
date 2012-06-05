@@ -1,22 +1,11 @@
 /*
- *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
- * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
- ************************************************************************
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
  */
-
 package org.openbravo.retail.posterminal;
 
 import java.io.BufferedReader;
@@ -34,7 +23,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonConstants;
@@ -153,8 +141,9 @@ public abstract class WebServiceAbstractServlet extends HttpServlet {
   }
 
   protected Object getContentAsJSON(String content) throws JSONException {
-    Check.isNotNull(content, "Content must be set");
-    if (content.trim().startsWith("[")) {
+    if (content == null || content.equals("")) {
+      return new JSONObject();
+    } else if (content.trim().startsWith("[")) {
       return new JSONArray(content);
     } else {
       return new JSONObject(content);

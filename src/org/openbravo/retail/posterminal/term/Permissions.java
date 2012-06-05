@@ -6,16 +6,16 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-package org.openbravo.retail.posterminal;
+package org.openbravo.retail.posterminal.term;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public interface JSONProcess {
+public class Permissions extends ProcessHQLQuery {
 
-  public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException;
+  @Override
+  protected String getQuery(JSONObject jsonsent) throws JSONException {
+    return "from OBPOS_POS_Access where role.id = $roleId and $readableCriteria";
+  }
 }

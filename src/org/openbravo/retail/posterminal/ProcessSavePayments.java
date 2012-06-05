@@ -47,7 +47,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class ProcessSavePayments implements JSONProcess {
+public class ProcessSavePayments extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -111,6 +111,7 @@ public class ProcessSavePayments implements JSONProcess {
     List<Object> data = new ArrayList<Object>();
     data.add(payment);
 
-    return JSONRowConverter.buildResponse(data, null);
+    // return JSONRowConverter.buildResponse(data, null);
+    return null;
   }
 }

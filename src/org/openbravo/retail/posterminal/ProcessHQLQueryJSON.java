@@ -8,14 +8,13 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-public interface JSONProcess {
+public class ProcessHQLQueryJSON extends ProcessHQLQuery {
 
-  public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException;
+  @Override
+  protected String getQuery(JSONObject jsonsent) throws JSONException {
+    return jsonsent.getString("query");
+  }
 }

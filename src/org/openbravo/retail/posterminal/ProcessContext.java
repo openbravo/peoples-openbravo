@@ -27,7 +27,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessContext implements JSONProcess {
+public class ProcessContext extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {

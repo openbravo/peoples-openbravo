@@ -19,16 +19,27 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.sql.BatchUpdateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -40,6 +51,8 @@ import org.openbravo.service.json.JsonUtils;
  * @author adrianromero
  */
 public class JSONRowConverter {
+
+  private static final Logger log = Logger.getLogger(JSONRowConverter.class);
 
   private final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
       DataToJsonConverter.class);
@@ -126,29 +139,107 @@ public class JSONRowConverter {
     }
   }
 
-  public static JSONObject buildResponse(List<?> listdata, String[] aliases) throws JSONException {
+  public static void buildResponse(Writer w, Scroll listdata, String[] aliases)
+      throws IOException {
 
-    JSONRowConverter converter = new JSONRowConverter(aliases);
+    final JSONRowConverter converter = new JSONRowConverter(aliases);
 
     final int startRow = 0;
-    final JSONObject jsonResponse = new JSONObject();
-    final JSONArray jsonData = new JSONArray();
+    int rows = 0;
+    Throwable t = null;
 
-    for (Object o : listdata) {
-      jsonData.put(converter.convert(o));
+    try {
+      w.write("\"data\":[");
+      while (listdata.next()) {
+        if (rows > 0) {
+          w.write(',');
+        }
+        w.write(converter.convert(listdata.get()).toString());
+        rows++;
+      }
+    } catch (JSONException e) {
+      t = e;
+    } finally {
+      listdata.close();
+      w.write("],");
+      if (t == null) {
+        // Add success fields
+        w.write("\"");
+        w.write(JsonConstants.RESPONSE_STARTROW);
+        w.write("\":");
+        w.write(Integer.toString(startRow));
+        w.write(",\"");
+        w.write(JsonConstants.RESPONSE_ENDROW);
+        w.write("\":");
+        w.write(Integer.toString(rows > 0 ? rows + startRow - 1 : 0));
+        w.write(",\"");
+        if (rows == 0) {
+          w.write(JsonConstants.RESPONSE_TOTALROWS);
+          w.write("\":0,\"");
+        }
+        w.write(JsonConstants.RESPONSE_STATUS);
+        w.write("\":");
+        w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
+      } else {
+        JSONRowConverter.addJSONExceptionFields(w, t);
+      }
+    }
+  }
+
+  public static void addJSONExceptionFields(Writer w, Throwable throwable) {
+    Throwable localThrowable = throwable;
+    if (throwable.getCause() instanceof BatchUpdateException) {
+      final BatchUpdateException batchException = (BatchUpdateException) throwable.getCause();
+      localThrowable = batchException.getNextException();
     }
 
-    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (jsonData.length() > 0 ? jsonData.length()
-        + startRow - 1 : 0));
+    try {
+      w.write("\"");
+      w.write(JsonConstants.RESPONSE_STATUS);
+      w.write("\":");
+      w.write(Integer.toString(JsonConstants.RPCREQUEST_STATUS_FAILURE));
+      w.write(",");
 
-    if (jsonData.length() == 0) {
-      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+      try {
+        // get rid of the current transaction
+        OBDal.getInstance().rollbackAndClose();
+      } catch (Exception e) {
+        // ignored on purpose
+        log.error(e.getMessage(), e);
+      }
+
+      final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+      final OBError obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
+          .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
+
+      w.write("\"");
+      w.write(JsonConstants.RESPONSE_ERROR);
+      w.write("\":{");
+      if (localThrowable instanceof OBSecurityException) {
+        w.write("\"message\":\"OBUIAPP_ActionNotAllowed\",");
+        w.write("\"type\":\"user\"");
+      } else if (obError != null) {
+        w.write("\"message\":\"");
+        w.write(obError.getMessage());
+        w.write("\",\"messageType\":\"");
+        w.write(obError.getType());
+        w.write("\",\"title\":\"");
+        w.write(obError.getTitle());
+        w.write("\"");
+      } else {
+        w.write("\"message\":\"");
+        w.write(localThrowable.getMessage());
+        w.write("\",\"messageType\":\"");
+        w.write(localThrowable.getClass().getName());
+        w.write("\"");
+      }
+
+      w.write("},\"");
+      w.write(JsonConstants.RESPONSE_TOTALROWS);
+      w.write("\":0");
+
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
     }
-
-    jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    return jsonResponse;
   }
 }
