@@ -23,12 +23,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import junit.framework.Assert;
-
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.SessionImplementor;
+import org.junit.Assert;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -54,10 +53,18 @@ public class DalPerformanceCriteriaTest extends BaseTest {
   private static final int CNT = 1000;
 
   public void testPerformance() {
-    doTestCriteriaPerformance(new QueryTest1());
-    doTestCriteriaPerformance(new QueryTest2());
-    doTestCriteriaPerformance(new QueryTest3());
-    doTestCriteriaPerformance(new QueryTest4());
+    createManyBPs();
+
+    doTestCriteriaPerformance(new QueryTest1(false));
+    doTestCriteriaPerformance(new QueryTest2(false));
+    doTestCriteriaPerformance(new QueryTest3(false));
+    doTestCriteriaPerformance(new QueryTest4(false));
+    doTestCriteriaPerformance(new QueryTest5(false));
+    doTestCriteriaPerformance(new QueryTest1(true));
+    doTestCriteriaPerformance(new QueryTest2(true));
+    doTestCriteriaPerformance(new QueryTest3(true));
+    doTestCriteriaPerformance(new QueryTest4(true));
+    doTestCriteriaPerformance(new QueryTest5(true));
   }
 
   public void doTestCriteriaPerformance(QueryTest queryTest) {
@@ -68,7 +75,6 @@ public class DalPerformanceCriteriaTest extends BaseTest {
       // warmup
       queryTest.doCriteriaQry();
       // show sql
-      System.err.println(">>>>>>>>>>>>>>>>>>>");
       queryTest.doCriteriaQry();
       queryTest.doHqlQry();
     }
@@ -79,11 +85,15 @@ public class DalPerformanceCriteriaTest extends BaseTest {
     }
 
     long t1 = System.currentTimeMillis();
+    int v1 = -1;
     for (int i = 0; i < CNT; i++) {
-      Assert.assertTrue(0 < queryTest.doCriteriaQry());
+      int v2 = queryTest.doCriteriaQry();
+      Assert.assertTrue(i == 0 || v1 == v2);
+      v1 = v2;
+      OBDal.getInstance().getSession().clear();
     }
-    t1 = System.currentTimeMillis() - t1;
     OBDal.getInstance().commitAndClose();
+    t1 = System.currentTimeMillis() - t1;
 
     // warmup
     for (int i = 0; i < 10; i++) {
@@ -92,15 +102,18 @@ public class DalPerformanceCriteriaTest extends BaseTest {
 
     long t2 = System.currentTimeMillis();
     for (int i = 0; i < CNT; i++) {
-      Assert.assertTrue(0 < queryTest.doHqlQry());
+      int v2 = queryTest.doHqlQry();
+      // same output as previous criteria/hql queries
+      Assert.assertTrue(v1 == v2);
+      v1 = v2;
+      OBDal.getInstance().getSession().clear();
     }
-    t2 = System.currentTimeMillis() - t2;
     OBDal.getInstance().commitAndClose();
-    System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>");
-    System.err.println(queryTest.getId());
-    System.err.println("Count: " + CNT);
-    System.err.println("Criteria ms: " + t1);
-    System.err.println("Hql ms: " + t2);
+    t2 = System.currentTimeMillis() - t2;
+    int percentage = (int) ((100 * (t1 - t2)) / t2);
+    System.err.println("HQL is " + percentage + "% faster - (resultCount: " + v1 + ") - "
+        + (queryTest.isDoScroll() ? "SCROLL - Query: " : "Query: ") + queryTest.getId()
+        + " - HQL time: " + t1 + "ms");
   }
 
   private abstract class QueryTest {
@@ -109,6 +122,8 @@ public class DalPerformanceCriteriaTest extends BaseTest {
     public abstract int doHqlQry();
 
     public abstract String getId();
+
+    public abstract boolean isDoScroll();
 
   }
 
@@ -120,11 +135,25 @@ public class DalPerformanceCriteriaTest extends BaseTest {
   }
 
   private class QueryTest1 extends QueryTest {
+
     private String qryStr = "";
+    private boolean doScroll = false;
+
+    public QueryTest1(boolean doScroll) {
+      this.doScroll = doScroll;
+    }
 
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
       obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      if (doScroll) {
+        final ScrollableResults r = obc.scroll(ScrollMode.FORWARD_ONLY);
+        int cnt = 0;
+        while (r.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
       final List<Currency> cs = obc.list();
       return cs.size();
     }
@@ -133,21 +162,37 @@ public class DalPerformanceCriteriaTest extends BaseTest {
       final OBQuery<Currency> obq = OBDal.getInstance()
           .createQuery(Currency.class, "iSOCode='USD'");
       final List<Currency> cs = obq.list();
-      qryStr = "Currency: " + obq.getWhereAndOrderBy();
+      qryStr = "Currency with " + obq.getWhereAndOrderBy();
       return cs.size();
     }
 
     public String getId() {
       return qryStr;
     }
+
+    public boolean isDoScroll() {
+      return doScroll;
+    }
   }
 
   private class QueryTest2 extends QueryTest {
     private String qryStr;
+    private boolean doScroll = false;
+
+    public QueryTest2(boolean doScroll) {
+      this.doScroll = doScroll;
+    }
 
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      // obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      if (doScroll) {
+        final ScrollableResults r = obc.scroll(ScrollMode.FORWARD_ONLY);
+        int cnt = 0;
+        while (r.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
       final List<Currency> cs = obc.list();
       return cs.size();
     }
@@ -155,17 +200,26 @@ public class DalPerformanceCriteriaTest extends BaseTest {
     public int doHqlQry() {
       final OBQuery<Currency> obq = OBDal.getInstance().createQuery(Currency.class, "");
       final List<Currency> cs = obq.list();
-      qryStr = "Currency: " + obq.getWhereAndOrderBy();
+      qryStr = "Currency";
       return cs.size();
     }
 
     public String getId() {
       return qryStr;
     }
+
+    public boolean isDoScroll() {
+      return doScroll;
+    }
   }
 
   private class QueryTest3 extends QueryTest {
     private String qryStr;
+    private boolean doScroll = false;
+
+    public QueryTest3(boolean doScroll) {
+      this.doScroll = doScroll;
+    }
 
     public int doCriteriaQry() {
       final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
@@ -174,6 +228,14 @@ public class DalPerformanceCriteriaTest extends BaseTest {
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(10);
       obc.setFirstResult(0);
+      if (doScroll) {
+        final ScrollableResults r = obc.scroll(ScrollMode.FORWARD_ONLY);
+        int cnt = 0;
+        while (r.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
       final List<MaterialTransaction> cs = obc.list();
       return cs.size();
     }
@@ -184,21 +246,38 @@ public class DalPerformanceCriteriaTest extends BaseTest {
       obq.setMaxResult(10);
       obq.setFirstResult(0);
       final List<MaterialTransaction> cs = obq.list();
-      qryStr = "MaterialTransaction: " + obq.getWhereAndOrderBy();
+      qryStr = "MaterialTransaction with " + obq.getWhereAndOrderBy();
       return cs.size();
     }
 
     public String getId() {
       return qryStr;
     }
+
+    public boolean isDoScroll() {
+      return doScroll;
+    }
   }
 
   private class QueryTest4 extends QueryTest {
     private String qryStr;
+    private boolean doScroll = false;
+
+    public QueryTest4(boolean doScroll) {
+      this.doScroll = doScroll;
+    }
 
     public int doCriteriaQry() {
       OBCriteria<Table> c = OBDal.getInstance().createCriteria(Table.class);
       c.add(Restrictions.eq(Table.PROPERTY_ID, "100"));
+      if (doScroll) {
+        final ScrollableResults r = c.scroll(ScrollMode.FORWARD_ONLY);
+        int cnt = 0;
+        while (r.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
       final List<Table> cs = c.list();
       return cs.size();
     }
@@ -207,18 +286,86 @@ public class DalPerformanceCriteriaTest extends BaseTest {
       OBQuery<Table> q = OBDal.getInstance().createQuery(Table.class, "id = :id");
       q.setNamedParameter("id", "100");
       final List<Table> cs = q.list();
-      qryStr = "Table: " + q.getWhereAndOrderBy();
+      qryStr = "Table with id=100";
       return cs.size();
     }
 
     public String getId() {
       return qryStr;
     }
+
+    public boolean isDoScroll() {
+      return doScroll;
+    }
+  }
+
+  private class QueryTest5 extends QueryTest {
+    private String qryStr;
+    private boolean doScroll = false;
+
+    public QueryTest5(boolean doScroll) {
+      this.doScroll = doScroll;
+    }
+
+    public int doCriteriaQry() {
+      OBCriteria<BusinessPartner> c = OBDal.getInstance().createCriteria(BusinessPartner.class);
+      c.setFilterOnActive(false);
+      c.setFilterOnReadableClients(false);
+      c.setFilterOnReadableOrganization(false);
+      c.setMaxResults(1000);
+      if (doScroll) {
+        final ScrollableResults r = c.scroll(ScrollMode.FORWARD_ONLY);
+        int cnt = 0;
+        while (r.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
+      final List<BusinessPartner> cs = c.list();
+      return cs.size();
+    }
+
+    public int doHqlQry() {
+      OBQuery<BusinessPartner> q = OBDal.getInstance().createQuery(BusinessPartner.class, "");
+      q.setFilterOnActive(false);
+      q.setFilterOnReadableClients(false);
+      q.setFilterOnReadableOrganization(false);
+      q.setMaxResult(1000);
+      qryStr = "All BusinessPartners";
+      if (doScroll) {
+        int cnt = 0;
+        ScrollableResults scroller = q.scroll(ScrollMode.FORWARD_ONLY);
+        while (scroller.next()) {
+          cnt++;
+        }
+        return cnt;
+      }
+      final List<BusinessPartner> cs = q.list();
+      return cs.size();
+    }
+
+    public String getId() {
+      return qryStr;
+    }
+
+    public boolean isDoScroll() {
+      return doScroll;
+    }
   }
 
   private void createManyBPs() {
     try {
       setTestAdminContext();
+
+      final OBQuery<BusinessPartner> bps = OBDal.getInstance().createQuery(BusinessPartner.class,
+          "");
+      bps.setFilterOnActive(false);
+      bps.setFilterOnReadableClients(false);
+      bps.setFilterOnReadableOrganization(false);
+      System.err.println(bps.count());
+      if (bps.count() > 10000) {
+        return;
+      }
 
       OBDal.getInstance().commitAndClose();
 
@@ -238,7 +385,6 @@ public class DalPerformanceCriteriaTest extends BaseTest {
         OBDal.getInstance().save(bp);
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
-          System.err.println(i);
         }
         // this all works
         // OBDal.getInstance().refresh(bp);
