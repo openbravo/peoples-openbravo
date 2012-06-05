@@ -718,4 +718,19 @@ public class IssuesTest extends BaseTest {
     assertFalse(writableOrganizations2.isEmpty());
   }
 
+  /**
+   * Testing issue 0020659. Tests that if an invalid organization id is provided, getChildOrg
+   * returns an empty set instead of null.
+   */
+  public void test20659() {
+    setTestAdminContext();
+    String nonExistentOrg = "-123ZXY";
+
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
+    final Set<String> childOrg = osp.getChildOrg(nonExistentOrg);
+    assertTrue(childOrg.isEmpty());
+  }
+
 }
