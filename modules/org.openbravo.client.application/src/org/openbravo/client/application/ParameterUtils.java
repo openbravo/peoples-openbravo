@@ -19,7 +19,6 @@
 package org.openbravo.client.application;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -64,12 +63,12 @@ public class ParameterUtils {
 
   private static void setValue(ParameterValue parameterValue, String stringValue) {
     DomainType domainType = getParameterDomainType(parameterValue.getParameter());
-    final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     try {
       if (domainType.getClass().equals(StringDomainType.class)) {
         parameterValue.setValueString(stringValue);
       } else if (domainType.getClass().equals(DateDomainType.class)) {
-        Date date = xmlDateFormat.parse(stringValue);
+        DateDomainType dateDomainType = (DateDomainType) domainType;
+        Date date = (Date) dateDomainType.createFromString(stringValue);
         parameterValue.setValueDate(date);
       } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
           || domainType.getClass().equals(LongDomainType.class)) {
