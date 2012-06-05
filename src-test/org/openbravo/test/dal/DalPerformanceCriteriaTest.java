@@ -35,6 +35,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.currency.Currency;
@@ -50,16 +51,27 @@ import org.openbravo.test.base.BaseTest;
 
 public class DalPerformanceCriteriaTest extends BaseTest {
 
-  private static final int CNT = 10000;
+  private static final int CNT = 1000;
 
   public void testPerformance() {
     doTestCriteriaPerformance(new QueryTest1());
     doTestCriteriaPerformance(new QueryTest2());
     doTestCriteriaPerformance(new QueryTest3());
+    doTestCriteriaPerformance(new QueryTest4());
   }
 
   public void doTestCriteriaPerformance(QueryTest queryTest) {
     OBDal.getInstance().commitAndClose();
+
+    // usefull when printing
+    if (true) {
+      // warmup
+      queryTest.doCriteriaQry();
+      // show sql
+      System.err.println(">>>>>>>>>>>>>>>>>>>");
+      queryTest.doCriteriaQry();
+      queryTest.doHqlQry();
+    }
 
     // warmup
     for (int i = 0; i < 10; i++) {
@@ -168,9 +180,34 @@ public class DalPerformanceCriteriaTest extends BaseTest {
 
     public int doHqlQry() {
       final OBQuery<MaterialTransaction> obq = OBDal.getInstance().createQuery(
-          MaterialTransaction.class, " uOM <> null order by product");
+          MaterialTransaction.class, " uOM <> null order by product.name desc");
+      obq.setMaxResult(10);
+      obq.setFirstResult(0);
       final List<MaterialTransaction> cs = obq.list();
       qryStr = "MaterialTransaction: " + obq.getWhereAndOrderBy();
+      return cs.size();
+    }
+
+    public String getId() {
+      return qryStr;
+    }
+  }
+
+  private class QueryTest4 extends QueryTest {
+    private String qryStr;
+
+    public int doCriteriaQry() {
+      OBCriteria<Table> c = OBDal.getInstance().createCriteria(Table.class);
+      c.add(Restrictions.eq(Table.PROPERTY_ID, "100"));
+      final List<Table> cs = c.list();
+      return cs.size();
+    }
+
+    public int doHqlQry() {
+      OBQuery<Table> q = OBDal.getInstance().createQuery(Table.class, "id = :id");
+      q.setNamedParameter("id", "100");
+      final List<Table> cs = q.list();
+      qryStr = "Table: " + q.getWhereAndOrderBy();
       return cs.size();
     }
 
