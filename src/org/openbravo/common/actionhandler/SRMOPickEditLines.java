@@ -143,8 +143,11 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
           selectedLine.getString("goodsShipmentLine"));
       Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
-      AttributeSetInstance asi = OBDal.getInstance().get(AttributeSetInstance.class,
-          selectedLine.get("attributeSetValue"));
+      AttributeSetInstance asi = null;
+      String asiParam = selectedLine.getString("attributeSetValue");
+      if (!"null".equals(asiParam)) {
+        asi = OBDal.getInstance().get(AttributeSetInstance.class, asiParam);
+      }
       UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("uOM"));
 
       newOrderLine.setGoodsShipmentLine(shipmentLine);
