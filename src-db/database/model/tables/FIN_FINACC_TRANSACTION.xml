@@ -187,6 +187,11 @@
       <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENT_TRANSACTION">
         <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
+      <index name="FIN_FINACC_TRANSACTION_DAO" unique="false">
+        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+        <index-column name="FIN_RECONCILIATION_ID"/>
+        <index-column name="STATUS"/>
+      </index>
       <unique name="FIN_FINACC_TRANSACTION_UN">
         <unique-column name="FIN_PAYMENT_ID"/>
       </unique>
