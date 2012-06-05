@@ -117,7 +117,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           terminal: OB.POS.paramTerminal
       };
   
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Terminal').exec(
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Terminal').exec(
         params,
         function (data) {
           if (data.exception) {
@@ -142,7 +142,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPayments: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Payments').exec({ pos: this.get('terminal').id }
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Payments').exec({ pos: this.get('terminal').id }
       , function (data) {
         if (data) { 
           var i, max;
@@ -158,7 +158,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadContext: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Context').exec({}
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Context').exec({}
       , function (data) {
         if (data[0]) {         
           me.set('context', data[0]);
@@ -169,7 +169,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPermissions: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Permissions').exec({}
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Permissions').exec({}
       , function (data) {
         var i, max, permissions = {};
         if (data) {                  
@@ -184,7 +184,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadBP: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.BusinessPartner').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartner').exec({
         bp: this.get('terminal').businessPartner
       }, function (data) {
         if (data[0]) {
@@ -196,7 +196,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadBPLocation: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.BusinessPartnerLocation').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartnerLocation').exec({
         bploc: this.get('terminal').partnerAddress
       }, function (data) {
         if (data[0]) {
@@ -207,7 +207,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadLocation: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Location').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Location').exec({
         org: this.get('terminal').organization
       }, function (data) {
         if (data[0]) {
@@ -218,7 +218,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPriceList: function () {
       var me = this;    
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.PriceList').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceList').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -229,7 +229,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadPriceListVersion: function () {
       var me = this;
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -241,7 +241,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
     
     loadCurrency: function () {
       var me = this;    
-      new OB.DS.Source('org.openbravo.retail.posterminal.term.Currency').exec({
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.Currency').exec({
         currency: this.get('terminal').currency
       }, function (data) {
         if (data[0]) {

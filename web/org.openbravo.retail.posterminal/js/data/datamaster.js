@@ -33,9 +33,7 @@ define(['utilities', 'datasource'], function () {
     this._id = 'DataBPs';
     this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
-      'select bp as BusinessPartner, loc as BusinessPartnerLocation ' + 
-      'from BusinessPartner bp, BusinessPartnerLocation loc ' + 
-      'where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableClientCriteria and bp.$naturalOrgCriteria',
+      'org.openbravo.retail.posterminal.master.BusinessPartner',
       OB.POS.modelterminal.get('terminal').client, 
       OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {};     
@@ -47,16 +45,11 @@ define(['utilities', 'datasource'], function () {
     this.context = context;
     this.ds = new OB.DS.DataSourceProductPrice(
       new OB.DS.Query(
-      'select p as product, img.bindaryData as img ' + 
-      'from Product p left outer join p.image img ' + 
-      'where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.obposLine, p.name', 
+      'org.openbravo.retail.posterminal.master.Product', 
       OB.POS.modelterminal.get('terminal').client, 
       OB.POS.modelterminal.get('terminal').organization),
       new OB.DS.Query(
-      'from PricingProductPrice where priceListVersion in ' + 
-      '(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv ' + 
-      'where ppl.salesPriceList = true  and ppl.$readableClientCriteria and ppl.$naturalOrgCriteria and ppl.id = plv.priceList.id  and ' + 
-      'plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))',
+      'org.openbravo.retail.posterminal.master.ProductPrice',
       OB.POS.modelterminal.get('terminal').client, 
       OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {product: {}, productprice: {}};
@@ -67,10 +60,7 @@ define(['utilities', 'datasource'], function () {
     this._id = 'DataCategory';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
-        'select c as category, img.bindaryData as img ' + 
-        'from ProductCategory as c left outer join c.obposImage img ' +
-        'where c.$readableCriteria and c.oBPOSIsCatalog = true ' +
-        'order by c.oBPOSPOSLine, c.name'));
+        'org.openbravo.retail.posterminal.master.Category'));
     this.loadparams = {};
   };
   _.extend(OB.DATA.Category.prototype, OB.DATA.Base);
@@ -79,7 +69,7 @@ define(['utilities', 'datasource'], function () {
     this._id = 'DataTaxRate';
     this.context = context;    
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
-        'from FinancialMgmtTaxRate where $readableCriteria'));
+        'org.openbravo.retail.posterminal.master.TaxRate'));
     this.loadparams = {};
   };
   _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);

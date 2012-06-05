@@ -7,50 +7,7 @@ define(['i18n'], function () {
   
   OB.DS.MAXSIZE = 100;
   
-  var serviceJSON = function (dataparams, callback) {
-        
-    $.ajax({
-      url: '../../org.openbravo.service.retail.posterminal.jsonrest/',
-      contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'POST',
-      data: JSON.stringify(dataparams),
-      success: function (data, textStatus, jqXHR) {
-        processSuccess(data, callback);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        callback({
-          exception: {
-            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-            status: jqXHR.status
-          }
-        });
-      }
-    });    
-  };
-  
-  var serviceGET = function (source, dataparams, callback) {
-        
-    $.ajax({
-      url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
-      contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
-        processSuccess(data, callback);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        callback({
-          exception: {
-            message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-            status: jqXHR.status
-          }
-        });
-      }
-    });    
-  };
-  
-  var processSuccess = function (data, callback) {
+  var serviceSuccess = function (data, textStatus, jqXHR, callback) {
     if (data._entityname) {
       callback([data]);
     } else {
@@ -71,54 +28,57 @@ define(['i18n'], function () {
           }
         });
       }
-    }    
+    }
+  }; 
+  
+  var serviceError = function (jqXHR, textStatus, errorThrown, callback) {
+    callback({
+      exception: {
+        message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+        status: jqXHR.status
+      }
+    });
   };
   
-  var buildParams = function (params) {
-    var p, i;
-    p = {};
-    for (i in params) {
-      if (params.hasOwnProperty(i)) {
-        if (typeof params[i] === 'string') {
-          p[i] = {
-            value: params[i],
-            type: 'string'
-          };
-        } else if (typeof params[i] === 'number') {
-          if (params[i] === Math.round(params[i])) {
-            p[i] = {
-              value: params[i],
-              type: 'long'
-            };
-          } else {
-            p[i] = {
-              value: params[i],
-              type: 'bigdecimal'
-            };
-          }
-        } else if (typeof params[i] === 'boolean') {
-          p[i] = {
-            value: params[i],
-            type: 'boolean'
-          };
-        } else {
-          p[i] = params[i];
-        }
+  var servicePOST = function (source, dataparams, callback) {        
+    $.ajax({
+      url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source,
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'POST',
+      data: JSON.stringify(dataparams),
+      success: function (data, textStatus, jqXHR) {
+        serviceSuccess(data, textStatus, jqXHR, callback);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        serviceError(jqXHR, textStatus, errorThrown, callback);
       }
-    }
-    return p;    
-  };  
+    });    
+  };
   
+  var serviceGET = function (source, dataparams, callback) {        
+    $.ajax({
+      url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'GET',
+      success: function (data, textStatus, jqXHR) {
+        serviceSuccess(data, textStatus, jqXHR, callback);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        serviceError(jqXHR, textStatus, errorThrown, callback);
+      }
+    });    
+  };
+ 
   // Process object
-  OB.DS.Process = function (process) {
-    this.process = process;
+  OB.DS.Process = function (source) {
+    this.source = source;
   };  
   
   OB.DS.Process.prototype.exec = function  (params, callback) {
     var attr;
-    var data = {
-      className: this.process
-    };
+    var data = {};
     
     for (attr in params) {
       if (params.hasOwnProperty(attr)) {
@@ -126,51 +86,52 @@ define(['i18n'], function () {
       }
     }  
     
-    serviceJSON(data, callback);
-  };
-
-  
-  // Query object
-  OB.DS.Query = function (query, client, org) {
-    this.query = query;
-    this.client = client;
-    this.org = org;
-  };
-
-  OB.DS.Query.prototype.exec = function (params, callback) {
-
-    var data = {
-      query: this.query
-    };
-
-    if (params) {
-      data.parameters = buildParams(params);
-    }
-    
-    if (this.client) { 
-      data.client = this.client;
-    }
-    
-    if (this.org) { 
-      data.organization = this.org;
-    }   
-    
-    serviceJSON(data, callback);
+    servicePOST(this.source, data, callback);
   };
   
   // Source object
-  OB.DS.Source = function (source, client, org) {
+  OB.DS.Query = function (source, client, org) {
     this.source = source;
     this.client = client;
     this.org = org;
   };
 
-  OB.DS.Source.prototype.exec = function (params, callback) {
-
+  OB.DS.Query.prototype.exec = function (params, callback) {
+    var p, i;
     var data = {};
 
     if (params) {
-      data.parameters = buildParams(params);
+      p = {};
+      for (i in params) {
+        if (params.hasOwnProperty(i)) {
+          if (typeof params[i] === 'string') {
+            p[i] = {
+              value: params[i],
+              type: 'string'
+            };
+          } else if (typeof params[i] === 'number') {
+            if (params[i] === Math.round(params[i])) {
+              p[i] = {
+                value: params[i],
+                type: 'long'
+              };
+            } else {
+              p[i] = {
+                value: params[i],
+                type: 'bigdecimal'
+              };
+            }
+          } else if (typeof params[i] === 'boolean') {
+            p[i] = {
+              value: params[i],
+              type: 'boolean'
+            };
+          } else {
+            p[i] = params[i];
+          }
+        }
+      }      
+      data.parameters = p;
     }
     
     if (this.client) { 
