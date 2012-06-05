@@ -149,6 +149,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -178,6 +182,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="AD_USER_DEFAULT_M_WAREHOUSE">
         <reference local="DEFAULT_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_USER_IMAGE_KEY">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
