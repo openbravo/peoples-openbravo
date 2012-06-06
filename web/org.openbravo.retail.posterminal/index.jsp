@@ -30,6 +30,8 @@ if(POSUtils.isModuleInDevelopment()) {
      <link rel="stylesheet/less" href="js/libs/bootstrap/less/responsive.less">
      <script src="js/libs/less/less-1.3.0.min.js"></script>    
 
+     <link rel="shortcut icon" href="../../web/images/favicon.ico" />
+
 		<link rel="stylesheet" type="text/css" href="css/standard.css" />
 		<link rel="stylesheet" type="text/css" href="css/login.css" />
 </head>
