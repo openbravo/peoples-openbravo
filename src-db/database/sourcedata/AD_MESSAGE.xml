@@ -18545,7 +18545,7 @@ Do you want to propagate this value to all payment methods?]]></MSGTEXT>
 <!--A5C632E407314617A785DE0694514998-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A5C632E407314617A785DE0694514998-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A5C632E407314617A785DE0694514998-->  <VALUE><![CDATA[InsertOrphanNoTaxFoundForProduct]]></VALUE>
-<!--A5C632E407314617A785DE0694514998-->  <MSGTEXT><![CDATA[With current product configuration and order it is not possible to found a valid tax for product @product@. Please change the tax and product configuration or select a tax when inserting the new orphan line.]]></MSGTEXT>
+<!--A5C632E407314617A785DE0694514998-->  <MSGTEXT><![CDATA[With current product configuration and order it is not possible to find a valid tax for product @product@. Please change the tax and product configuration or select a tax when inserting the new orphan line.]]></MSGTEXT>
 <!--A5C632E407314617A785DE0694514998-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--A5C632E407314617A785DE0694514998-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A5C632E407314617A785DE0694514998--></AD_MESSAGE>
@@ -19694,7 +19694,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--D40805953F4042C293C2390B6B36034E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D40805953F4042C293C2390B6B36034E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D40805953F4042C293C2390B6B36034E-->  <VALUE><![CDATA[NoTaxFoundForProduct]]></VALUE>
-<!--D40805953F4042C293C2390B6B36034E-->  <MSGTEXT><![CDATA[With current product configuration and order it is not possible to found a valid tax for product @product@. Please change the tax and product configuration.]]></MSGTEXT>
+<!--D40805953F4042C293C2390B6B36034E-->  <MSGTEXT><![CDATA[With current product configuration and order it is not possible to find a valid tax for product @product@. Please change the tax and product configuration.]]></MSGTEXT>
 <!--D40805953F4042C293C2390B6B36034E-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--D40805953F4042C293C2390B6B36034E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D40805953F4042C293C2390B6B36034E--></AD_MESSAGE>
