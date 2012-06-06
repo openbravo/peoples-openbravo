@@ -11,9 +11,9 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_actionButton;
@@ -1532,14 +1532,20 @@ public class CreateFrom extends HttpSecureAppServlet {
             BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(
                 data[i].id));
             LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+
+            String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
+            BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
+                strTaxRate));
+            BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+                BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
               final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                   strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
-                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
-                  data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
-                  data[i].taxbaseamt);
+                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
+                  data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
+                  priceStd, LineNetAmt.toString());
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
