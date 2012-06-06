@@ -82,15 +82,15 @@ public class DalPerformanceProxyTest extends BaseTest {
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
           System.err.println(i);
-        }
-        // this all works
-        // note: this loads the category proxy
-        OBDal.getInstance().refresh(bp);
-        Assert.assertTrue(bp.getId() != null);
+          // this all works
+          // note: this loads the category proxy
+          OBDal.getInstance().refresh(bp);
+          Assert.assertTrue(bp.getId() != null);
 
-        // check that if really loading that still the proxy object is returned
-        Assert.assertTrue(category == OBDal.getInstance().get(Category.ENTITY_NAME,
-            TEST_BP_CATEGORY_ID));
+          // check that if really loading that still the proxy object is returned
+          Assert.assertTrue(category == OBDal.getInstance().get(Category.ENTITY_NAME,
+              TEST_BP_CATEGORY_ID));
+        }
       }
       OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
