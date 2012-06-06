@@ -57,8 +57,22 @@ if(POSUtils.isModuleInDevelopment()) {
             </div>
           </div>
           <div style="display: inline-block; font-weight: bold; float:right">
-            <span>Openbravo Point of Sale </span>
-            <a id="logoutaction" href="#" class=""><i class="icon-off icon-white"></i></a>
+            <span>Openbravo Point of Sale</span>&nbsp;
+            <a data-toggle="modal" id="logoutlink" href="#logoutModal" class=""><i class="icon-off icon-white"></i></a>
+            <div class="modal hide" id="logoutModal">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3 style="color: black;">You may still have pending unsaved changes.<br />What do you want to do?</h3>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <br />
+                <a href="#" class="btn btn-danger" id="logoutaction" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Logout and lose unsaved changes</a>
+                <br /><br /><br /><br />
+                <a href="#" class="btn btn-primary" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Lock terminal</a>
+                <br /><br /><br /><br />
+                <a href="#" class="btn" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Cancel</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

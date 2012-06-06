@@ -32,9 +32,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
         return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);       
       },
       logout: function (callback) {
-        if (window.confirm('Are you sure that you want to logout from the application?')) {
-          modelterminal.logout();
-        }
+        modelterminal.logout();
       }
   };
   
@@ -45,7 +43,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   modelterminal.on('ready', function () {
     // We are Logged !!!
     $(window).off('keypress');
-    $('#logoutaction').css('visibility', 'visible');
+    $('#logoutlink').css('visibility', 'visible');
     
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl, modelterminal.get('terminal').scaleurl);
@@ -71,7 +69,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     // Logged out. go to login window
     modelterminal.off('loginfail');
     $(window).off('keypress');
-    $('#logoutaction').css('visibility', 'hidden');
+    $('#logoutlink').css('visibility', 'hidden');
     
     var c = _.extend({}, Backbone.Events);
     $("#containerwindow").empty().append((new login(c)).$el);   
