@@ -13,6 +13,7 @@
 
   window.OB = window.OB || {};
   window.OB.Model = window.OB.Model || {};
+  window.OB.Collection = window.OB.Collection || {};
 
   window.OB.Model.TaxRate = TaxRate;
   window.OB.Collection.TaxRates = TaxRates;

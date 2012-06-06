@@ -13,6 +13,7 @@
 
   window.OB = window.OB || {};
   window.OB.Model = window.OB.Model || {};
+  window.OB.Collection = window.OB.Collection || {};
 
   window.OB.Model.Product = Product;
   window.OB.Collection.Products = Products;
