@@ -1,12 +1,12 @@
 /*global define, $ */
 
-define(['builder', 'i18n',
+define(['builder', 'i18n', 'data/datamaster',
         'components/commonbuttons', 'components/hwmanager', 
-        'model/daycash',
+        'model/daycash','model/terminal', 'model/order',
         'windows/closebuttons',
         'windows/closeinfo',
         'windows/closekeyboard',
-        'windows/tabpendingreceipts', 'windows/tabcountcash'
+        'windows/tabpendingreceipts', 'windows/tabcountcash', 'windows/tabpostprintclose', 'windows/closekeyboard', 'components/listpaymentmethod'
         ], function (B) {  
   
   OB = window.OB || {};
@@ -28,32 +28,25 @@ define(['builder', 'i18n',
         {kind: B.KindJQuery('section'), content: [
     
           {kind: OB.MODEL.DayCash},
+          {kind: OB.MODEL.Order},
+          {kind: OB.MODEL.OrderList},
+          {kind: OB.DATA.PaymentMethod},     
           
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [ 
-              
-              {kind: OB.COMP.ButtonPrev},
-              
-              {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [     
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabPendingReceipts}
-                ]},
-                {kind: B.KindJQuery('li'), content: [                                                  
-                  {kind: OB.COMP.ButtonTabCountCash} 
-                ]}   
-              ]},         
-              {kind: OB.COMP.CloseCashSteps},             
-              {kind: OB.COMP.ButtonNext}
+//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]} , 	
+//              {kind: OB.COMP.ButtonTabPendingReceipts},
+//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
+//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]} 
             ]}
           ]},
   
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [                                                                                                                                   
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
-                {kind: OB.COMP.TabPendingReceipts},
-                {kind: OB.COMP.TabCountCash}
-              ]}
-            ]},          
+               {kind: OB.COMP.PendingReceipts},
+               {kind: OB.COMP.CountCash},
+               {kind: OB.COMP.PostPrintClose}
+             ]},          
   
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), content: [
@@ -63,11 +56,7 @@ define(['builder', 'i18n',
             ]}        
           ]}
           
-        ], init: function () {
-          this.context.on('domready', function () {
-             $('a[href="#pendingreceipts"]').tab('show');
-          }, this);
-        }}
+        ]}
       );           
     }   
   });

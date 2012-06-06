@@ -10,7 +10,10 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
     _id: 'modeldaycash',
     defaults : {
       step: 0
-    }   
+    },
+    nextStep: function(){
+    	
+    }
     
   }); 
 
