@@ -7,7 +7,7 @@ ELSE 'N'
 END AS ob_selected, ol.c_orderline_id, ol.m_product_id, ol.c_uom_id, ol.m_attributesetinstance_id, (-1) * ol.qtyordered AS returned, (-1) * (ol.qtyordered - ol.qtydelivered) AS pendingqty, (-1) * iol.movementqty AS receivingqty, iol.m_condition_goods_id, iol.m_locator_id, o.documentno AS returnorderno, o.issotrx, ol.line
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id
-JOIN m_product p ON ol.m_product_id = p.m_product_id 
+JOIN m_product p ON ol.m_product_id = p.m_product_id
 JOIN c_doctype dt ON dt.c_doctype_id = o.c_doctypetarget_id AND dt.isreturn = 'Y'
 LEFT JOIN (SELECT il2.m_inoutline_id, il2.ad_client_id, il2.ad_org_id, il2.isactive, il2.created, il2.createdby, il2.updated, il2.updatedby, il2.line, il2.description, il2.m_inout_id, il2.c_orderline_id, il2.m_locator_id, il2.m_product_id, il2.c_uom_id, il2.movementqty, il2.isinvoiced, il2.m_attributesetinstance_id, il2.isdescription, il2.quantityorder, il2.m_product_uom_id, il2.m_condition_goods_id
 FROM m_inoutline il2
