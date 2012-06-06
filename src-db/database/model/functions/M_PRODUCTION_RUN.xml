@@ -388,6 +388,11 @@
                 ROLLBACK;
                 RAISE_APPLICATION_ERROR(-20000, v_Message);
               END IF;
+              IF (CUR_BOM.ProductionQty <= 0) THEN
+                v_Message := '@NegativeBOMProductionQty@';
+                ROLLBACK;
+                RAISE_APPLICATION_ERROR(-20000, v_Message);
+              END IF;
             END LOOP;
             IF(CUR_STOCK_ISOPEN) THEN
               CLOSE CUR_STOCK;
