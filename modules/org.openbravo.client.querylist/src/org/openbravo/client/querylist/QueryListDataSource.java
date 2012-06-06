@@ -212,7 +212,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
   private boolean isDate(String paramName, List<Parameter> parameterList) {
     Parameter parameterToCheck = null;
     for (Parameter p : parameterList) {
-      if (p.getName().equals(paramName)) {
+      if (p.getDBColumnName().equals(paramName)) {
         parameterToCheck = p;
         break;
       }
