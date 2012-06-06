@@ -27,6 +27,8 @@
 
   v_UnitTax := c_tax_from_net_amt(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
 
+  raise notice '% %' , 'Unit tax ' , v_UnitTax ;
+
     v_LineNetAmount:= Round (p_taxincludedamt*p_taxincludedamt  /(p_taxincludedamt+v_UnitTax),p_stdprecision ) ;
 
    
