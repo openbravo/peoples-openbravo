@@ -74,6 +74,17 @@ define(['utilities', 'datasource'], function () {
   };
   _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);
 
+  OB.DATA.PaymentMethod = function (context) {
+	    this._id = 'DataPaymentMethod';
+	    this.context = context;
+	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+	      'org.openbravo.retail.posterminal.master.Payments',
+	      OB.POS.modelterminal.get('terminal').client, 
+	      OB.POS.modelterminal.get('terminal').organization));
+	    this.loadparams = {};     
+	  };
+	  _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
+  
   // Offline based on WebSQL
 
   if(!window.openDatabase) {
