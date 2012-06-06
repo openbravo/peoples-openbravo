@@ -42,7 +42,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     JSONObject result = new JSONObject();
     JSONObject resp = new JSONObject();
     JSONArray data = new JSONArray();
-    JSONObject item = new JSONObject();
+    JSONObject item = null;
     try {
       if (command.equals("companyLogo")) {
         int queryCount = 1;
@@ -75,7 +75,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
               + org.apache.commons.codec.binary.Base64
                   .encodeBase64String((byte[]) qryCompanyImageObjectItem[1]);
         }
-
+        item = new JSONObject();
         item.put("logoUrl", companyImageData);
         data.put(item);
 
@@ -113,7 +113,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         final String hqlUser = "select distinct user.name, user.username, user.id "
             + "from ADUser user, ADUserRoles userRoles, ADRole role, "
             + "OBPOS_POS_Access posAccess "
-            + "where user.username != '' and user.active = true and "
+            + "where user.username != '' and user.password is not null and user.active = true and "
             + "userRoles.role.organization.id in :orgList and "
             + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
             + "userRoles.role.id = posAccess.role.id " + "order by user.name";
@@ -125,6 +125,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
           queryCount++;
           final Object[] qryUserObjectItem = (Object[]) qryUserObject;
 
+          item = new JSONObject();
           item.put("name", qryUserObjectItem[0]);
           item.put("userName", qryUserObjectItem[1]);
 
@@ -174,6 +175,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
       writeResult(response, JsonUtils.convertExceptionToJson(e));
     } finally {
       OBContext.restorePreviousMode();
+      OBContext.setOBContext((OBContext) null);
     }
   }
 }
