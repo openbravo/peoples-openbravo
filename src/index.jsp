@@ -30,15 +30,10 @@
 
 Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class); 
 
-HttpBaseServlet s = new HttpBaseServlet(); // required for ConnectionProvider
-s.init(getServletConfig());
-s.initialize(request, response);
-
-AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(s);
-    
-authManager.init(s);
+AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
 String userId = authManager.authenticate(request, response);
+
 if(userId == null){
   return;
 }
