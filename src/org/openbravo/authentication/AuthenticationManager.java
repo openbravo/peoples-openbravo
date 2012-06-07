@@ -70,10 +70,6 @@ public abstract class AuthenticationManager {
     AuthenticationManager authManager;
     String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
-    if (authClass == null || authClass.equals("")) {
-      // If not defined, load default
-      authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
-    }
     try {
       authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
           .newInstance();
@@ -144,8 +140,15 @@ public abstract class AuthenticationManager {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
+    // A restricted resource can define a custom login URL
+    // It just need to set an the attribute loginURL in the request
+    final String customLoginURL = (String) request.getAttribute("loginURL");
+
+    final String loginURL = localAdress
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
+
     if (userId == null && !response.isCommitted()) {
-      response.sendRedirect(localAdress + defaultServletUrl);
+      response.sendRedirect(loginURL);
       return null;
     }
 
