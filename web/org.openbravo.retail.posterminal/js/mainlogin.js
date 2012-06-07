@@ -45,7 +45,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 //  modelterminal.on('ready', function () {
 //    // We are Logged !!!
 //    $(window).off('keypress');
-//    $('#logoutaction').css('visibility', 'visible');
+//    $('#logoutDialogLogout').css('visibility', 'visible');
 //    
 //    // Set Hardware..
 //    OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl, modelterminal.get('terminal').scaleurl);
@@ -71,7 +71,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 //    // Logged out. go to login window
 //    modelterminal.off('loginfail');
 //    $(window).off('keypress');
-//    $('#logoutaction').css('visibility', 'hidden');
+//    $('#logoutDialogLogout').css('visibility', 'hidden');
 //    
 ////    var c = _.extend({}, Backbone.Events);
 ////    $("#containerwindow").empty().append((new login(c)).$el);   
@@ -88,7 +88,6 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     
     modelterminal.off('loginfail');
     $(window).off('keypress');
-    $('#logoutaction').css('visibility', 'hidden');
     
     var c = _.extend({}, Backbone.Events);
     $("#containerwindow").empty().append((new login(c)).$el);   

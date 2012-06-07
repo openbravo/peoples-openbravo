@@ -76,16 +76,16 @@ if(userId == null){
             <a data-toggle="modal" id="logoutlink" href="#logoutModal" class=""><i class="icon-off icon-white"></i></a>
             <div class="modal hide" id="logoutModal">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3 style="color: black;">You may still have pending unsaved changes.<br />What do you want to do?</h3>
+                <button type="button" class="close" data-dismiss="modal">X</button>
+                <h3 style="color: black;" id="logoutDialogTitle"></h3>
               </div>
               <div class="modal-body" style="text-align: center;">
                 <br />
-                <a href="#" class="btn btn-danger" id="logoutaction" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Logout and lose unsaved changes</a>
+                <a href="#" class="btn btn-danger" id="logoutDialogLogout" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
                 <br /><br /><br /><br />
-                <a href="#" class="btn btn-primary" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Lock terminal</a>
+                <a href="#" class="btn btn-primary" id="logoutDialogLock" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
                 <br /><br /><br /><br />
-                <a href="#" class="btn" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal">Cancel</a>
+                <a href="#" class="btn" id="logoutDialogCancel" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@ if(userId == null){
   <script data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 
   <script>
-    $('#logoutaction').click(function (e) {
+    $('#logoutDialogLogout').click(function (e) {
       e.preventDefault();
       OB.POS.logout();
     });

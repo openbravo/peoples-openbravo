@@ -113,6 +113,13 @@ define(['builder', 'i18n',
           
         ], init: function () {
           this.context.on('domready', function () {
+            //Set Logout Dialog texts
+            $("#logoutDialogTitle").html(OB.I18N.getLabel('OBPOS_LogoutDialogTitle'));
+            $("#logoutDialogLogout").html(OB.I18N.getLabel('OBPOS_LogoutDialogLogout'));
+            $("#logoutDialogLock").html(OB.I18N.getLabel('OBPOS_LogoutDialogLock'));
+            $("#logoutDialogCancel").html(OB.I18N.getLabel('OBPOS_LogoutDialogCancel'));
+
+            //Add initial empty order
             this.context.modelorderlist.addNewOrder();
           }, this);
         }}
