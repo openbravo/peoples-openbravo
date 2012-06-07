@@ -47,7 +47,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   closedIconSuffix: 'closed',
   openIconSuffix: 'open',
   selectionType: 'single',
-  
+
   fields: [{
     name: 'title',
     canHover: true,
@@ -255,7 +255,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     this.deselectAllRecords();
     this.selectRecord(record);
   },
-  
+
   // overridden to create context menu items specific 
   // for the clicked record
   cellContextClick: function (record, rowNum, colNum) {

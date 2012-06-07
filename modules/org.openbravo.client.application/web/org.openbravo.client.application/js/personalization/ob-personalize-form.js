@@ -699,7 +699,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       // close when returned
       me.doClose(true);
 
-      personalization = me.getStandardWindow().getClass().personalization;     
+      personalization = me.getStandardWindow().getClass().personalization;
       personalization[me.tabId] = null;
       if (me.getStandardWindow().getClass().personalization.forms) {
         me.getStandardWindow().getClass().personalization.forms[me.tabId] = null;
