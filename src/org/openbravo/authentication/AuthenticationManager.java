@@ -78,6 +78,7 @@ public abstract class AuthenticationManager {
       log4j
           .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       authManager = new DefaultAuthenticationManager(s);
+      authManager.init(s);
     }
     return authManager;
   }
