@@ -492,8 +492,8 @@ function documentTypeOnChange(value){
     }
   } else {
     document.getElementById('paramGLItemsAmt').innerHTML = document.frmMain.inpGLSumAmount.value;
-    document.frmMain.isFirstLoad.value = 'true';
     if (isTrue('isInGLItemMode')) {
+      document.frmMain.isFirstLoad.value = 'true';
       document.frmMain.isInGLItemMode.value='N';
       setGLItemMode(false);
     }
