@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.common.businessObject.TaxCalculator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.order.Order;
@@ -75,12 +74,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
       String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
+      String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strCOrderlineId, strProduct, strUOM,
             strAttribute, strTabId, strQty, strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId,
-            strGrossUnitPrice);
+            strGrossUnitPrice, strtaxbaseamt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -92,8 +92,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
       String strPriceList, String strCOrderId, String strCOrderlineId, String strProduct,
       String strUOM, String strAttribute, String strTabId, String strQty, String strPriceStd,
-      String cancelPriceAd, String strLineNetAmt, String strTaxId, String strGrossUnitPrice)
-      throws IOException, ServletException {
+      String cancelPriceAd, String strLineNetAmt, String strTaxId, String strGrossUnitPrice,
+      String strTaxBaseAmt) throws IOException, ServletException {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -118,7 +118,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt;
+    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt, taxBaseAmt;
     stockSecurity = new BigDecimal(strStockSecurity);
     qtyOrdered = (strQtyOrdered.equals("") ? ZERO : new BigDecimal(strQtyOrdered));
     priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
@@ -131,6 +131,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     priceStd = (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     LineNetAmt = (strLineNetAmt.equals("") ? ZERO : (new BigDecimal(strLineNetAmt))).setScale(
+        PricePrecision, BigDecimal.ROUND_HALF_UP);
+    taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     /*
      * if (enforcedLimit) { String strPriceVersion = ""; PriceListVersionComboData[] data1 =
@@ -177,6 +179,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         }
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
+        resultado.append("new Array(\"inptaxbaseamt\", " + priceActual.multiply(qtyOrdered) + "),");
+
       }
 
     }
@@ -306,16 +310,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             + Utility.messageBD(this, "UnderLimitPrice", vars.getLanguage()) + "\")");
     }
 
-    // Multiply
-    if ("Y".equals(cancelPriceAd)) {
-      LineNetAmt = qtyOrdered.multiply(priceStd);
-    } else {
-      if (!strChanged.equals("inplinenetamt")) {
-        LineNetAmt = qtyOrdered.multiply(priceActual);
-        if (LineNetAmt.scale() > StdPrecision)
-          LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-      }
-    }
     // if taxRate field is changed
     if (strChanged.equals("inpcTaxId")) {
       BigDecimal grossUnitPrice = new BigDecimal(0);
@@ -324,8 +318,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       unitPrice = new BigDecimal(strPriceActual.trim());
       if (isPriceTaxInclusive(strCOrderId)) {
         // todo - Alternate Amount
-        unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision,
-            new BigDecimal(0.0));
+        unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision, taxBaseAmt,
+            strQtyOrdered);
+        priceActual = unitPrice;
+        priceStd = unitPrice;
         resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
         resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
@@ -340,9 +336,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
 
       final BigDecimal lineUnitAmount = calculateNetFromGross(strTaxId, strGrossUnitPrice,
-          strPrecision, new BigDecimal(0.0));
+          strPrecision, taxBaseAmt, strQtyOrdered);
 
       BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyOrdered.trim()));
+      priceActual = lineUnitAmount;
+      priceStd = lineUnitAmount;
+
       resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
       resultado.append("new Array(\"inppriceactual\",\"" + lineUnitAmount + "\"),");
       resultado.append("new Array(\"inppricelist\",\"" + lineUnitAmount + "\"),");
@@ -354,20 +353,26 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inppriceactual")) {
       BigDecimal tax = new BigDecimal(0);
       priceActual = new BigDecimal(strPriceActual.trim());
-      TaxCalculator generator;
-      generator = new TaxCalculator(strTaxId);
-      tax = generator.taxCalculationFromOrder(strCOrderId, priceActual);
-      BigDecimal taxInclusive = priceActual.add(tax);
-      resultado.append("new Array(\"inpgrossprice\",\""
-          + taxInclusive.multiply(new BigDecimal(strQtyOrdered.trim())) + "\"),");
       log4j.debug("Net unit price results: " + resultado.toString());
 
     }
-    if (strChanged.equals("inplinenetamt"))
+    // Multiply
+    if ("Y".equals(cancelPriceAd)) {
+      LineNetAmt = qtyOrdered.multiply(priceStd);
+    } else {
+      if (!strChanged.equals("inplinenetamt")) {
+        LineNetAmt = qtyOrdered.multiply(priceActual);
+        if (LineNetAmt.scale() > StdPrecision)
+          LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+      }
+    }
+    if (strChanged.equals("inplinenetamt")) {
       resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+      resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + "),");
+    }
     if (!strChanged.equals("inplinenetamt") || priceActual.compareTo(BigDecimal.ZERO) == 0)
       resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
-    resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + ")");
+    resultado.append("new Array(\"dummy\", \"\" )");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
@@ -380,7 +385,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   }
 
   private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
-      String strPrecision, BigDecimal alternateAmount) {
+      String strPrecision, BigDecimal alternateAmount, String strQtyOrdered) {
     BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
     if (grossUnitPrice.compareTo(BigDecimal.ZERO) == 0)
       return BigDecimal.ZERO;
@@ -393,6 +398,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     parameters.add(new BigDecimal(strPrecision));
     // Initial value of zero
     parameters.add(new BigDecimal("0.0"));
+    parameters.add(new BigDecimal(strQtyOrdered));
 
     final String procedureName = "c_tax_net_from_gross";
     final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(

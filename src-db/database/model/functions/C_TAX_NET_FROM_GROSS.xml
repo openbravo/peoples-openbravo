@@ -16,6 +16,9 @@
       <parameter name="p_totaltaxamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_qty" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[-- Logistice
   v_ResultStr VARCHAR(2000):=''; 
   v_LineNetAmount NUMBER;
@@ -23,13 +26,23 @@
   v_UnitTax NUMBER;
   V_count NUMBER;
   FINISH_PROCESS BOOLEAN:=false;
+  v_baseamount VARCHAR(60) ;
+  v_rate NUMBER ; 
   BEGIN --BODY
 
-  v_UnitTax := c_tax_from_net_amt(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
+  select baseamount, rate from c_tax into v_baseamount, v_rate where c_tax_id = p_tax_id ;
+  raise notice '% %' , v_rate , v_baseamount ;
+  if ( v_baseamount = 'TBA' ) OR ( v_baseamount = 'TBATAX' ) then
+	
+      v_LineNetAmount := (p_taxincludedamt*p_qty - p_alternatetaxbaseamt*v_rate/100 )/p_qty ;
+  else
 
-  raise notice '% %' , 'Unit tax ' , v_UnitTax ;
+	v_UnitTax := c_tax_from_net_amt(p_tax_id, p_taxincludedamt,p_alternatetaxbaseamt , p_stdprecision , p_totaltaxamt  ) ;
 
-    v_LineNetAmount:= Round (p_taxincludedamt*p_taxincludedamt  /(p_taxincludedamt+v_UnitTax),p_stdprecision ) ;
+	raise notice '% %' , 'Unit tax ' , v_UnitTax ;
+
+	v_LineNetAmount:= Round (p_taxincludedamt*p_taxincludedamt  /(p_taxincludedamt+v_UnitTax),p_stdprecision ) ;
+  end if;
 
    
    RETURN v_LineNetAmount;
