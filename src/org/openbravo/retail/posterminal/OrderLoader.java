@@ -197,6 +197,7 @@ public class OrderLoader {
       fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder);
       line.setLineNo((long) ((i + 1) * 10));
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net")));
+      line.setInvoicedQuantity(lineReferences.get(i).getOrderedQuantity());
       line.setInvoice(invoice);
       line.setSalesOrderLine(lineReferences.get(i));
       invoice.getInvoiceLineList().add(line);
