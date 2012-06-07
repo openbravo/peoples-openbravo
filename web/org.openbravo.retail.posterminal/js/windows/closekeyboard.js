@@ -18,7 +18,15 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/keyboard'], fu
           {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
           {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
           {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
-        ]                
+        ],
+        toolbarcashcount: [ 
+	       {command:'---', label: OB.I18N.getLabel('OBPOS_KbCash')},
+	       {command:'---', label: OB.I18N.getLabel('OBPOS_KbCard')},
+	       {command:'---', label: OB.I18N.getLabel('OBPOS_KbVoucher')},
+	       {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+	       {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+	       {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
+	     ]     
       });  
       
       this.show('toolbarempty');

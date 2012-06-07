@@ -78,7 +78,7 @@ define(['utilities', 'datasource'], function () {
 	    this._id = 'DataPaymentMethod';
 	    this.context = context;
 	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
-	      'org.openbravo.retail.posterminal.master.Payments',
+	      'org.openbravo.retail.posterminal.term.Payments',
 	      OB.POS.modelterminal.get('terminal').client, 
 	      OB.POS.modelterminal.get('terminal').organization));
 	    this.loadparams = {};     
