@@ -65,6 +65,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('client', null);
       this.set('organization', null); 
       this.set('documentType', null);
+      this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('priceList', null);      
       this.set('currency', null);      
       this.set('warehouse',null);     
@@ -133,6 +134,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('client', null);
       this.set('organization', null);
       this.set('documentType', null);
+      this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('priceList', null);      
       this.set('currency', null);      
       this.set('warehouse',null);    
@@ -155,7 +157,8 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
     clearWith: function(_order) {
       this.set('client', _order.get('client'));
       this.set('organization', _order.get('organization'));
-      this.set('documentType', _order.get('documentType'));      
+      this.set('documentType', _order.get('documentType'));  
+      this.set('orderType', _order.get('orderType'));
       this.set('priceList', _order.get('priceList'));      
       this.set('currency', _order.get('currency'));      
       this.set('warehouse', _order.get('warehouse'));      
@@ -343,6 +346,11 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       });    
     },    
     
+    setOrderTypeReturn: function () {
+      this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);     
+      this.set('orderType', 1); // 0: Sales order, 1: Return order      
+    },
+    
     adjustPayment: function () {   
       var i, max, p;
       var payments = this.get('payments');   
@@ -420,7 +428,40 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       var payments = this.get('payments');
       payments.remove(payment);
       this.adjustPayment();     
-    }    
+    }, 
+    serializeToJSON: function () {
+      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+      
+      // remove not needed members
+      delete jsonorder.undo;
+      
+      _.forEach(jsonorder.lines, function (item) { 
+        delete item.product.img;
+      });      
+      
+      // convert returns     
+      if (jsonorder.orderType === 1) {
+        jsonorder.gross = -jsonorder.gross;  
+        jsonorder.change = -jsonorder.change;  
+        _.forEach(jsonorder.lines, function (item) { 
+          item.gross = -item.gross;
+          item.net = -item.net;
+          item.qty = -item.qty;
+        });   
+        _.forEach(jsonorder.payments, function (item) { 
+          item.amount = -item.amount;
+          item.paid = -item.paid;
+        });
+        _.forEach(jsonorder.taxes, function (item) { 
+          item.amount = -item.amount;
+          item.net = -item.net;
+        });                     
+      }
+      
+      console.dir(jsonorder);     
+      console.log(JSON.stringify(jsonorder));     
+      return JSON.stringify(jsonorder);       
+    }
   }); 
   
   OB.MODEL.OrderList = Backbone.Collection.extend({
@@ -442,6 +483,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
+      order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);

@@ -53,6 +53,7 @@ define(['utilities'], function () {
     'OBPOS_ReceiptNew': 'New Receipt',
     'OBPOS_ReceiptTaxes': 'Taxes',
     'OBPOS_ReceiptTotal': 'TOTAL',
+    'OBPOS_ToBeReturned': 'To be Returned',
     
     'OBPOS_LblCategories': 'Categories',
     'OBPOS_LblNoCategory': '(No category)',
@@ -89,6 +90,7 @@ define(['utilities'], function () {
     'OBPOS_LblPrint': ' PRINT',
     'OBPOS_LblMenu': ' MENU',
     'OBPOS_LblOpenbravoWorkspace': 'Openbravo Workspace',
+    'OBPOS_LblReturn': 'Return this receipt',
     'OBPOS_LblCloseCash': 'Cash up',
     'OBPOS_LblPay': ' PAY',    
     'OBPOS_LblBrowse': 'BROWSE',

@@ -12,6 +12,7 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
     this.taxrate = context.DataTaxRate;
     
     this.receipt.on('taxes', function (modelorderlist) {
+
      var r = this.receipt,
          bpTaxCategory = r.get('bp').get('taxCategory'),
          lines = r.get('lines'),

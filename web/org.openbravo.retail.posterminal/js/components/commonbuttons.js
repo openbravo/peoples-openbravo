@@ -136,8 +136,24 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     href: '',
     label: ''
-  });     
-
+  });  
+  
+  OB.COMP.MenuAction = Backbone.View.extend({
+    tagName: 'li',    
+    initialize: function () {
+      this.$anchor = $('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', '#').append($('<span/>').text(this.label));
+      this.$el.click(_.bind(this._clickEvent, this));
+      this.$el.append(this.$anchor);
+    },
+    _clickEvent: function (e) {
+      e.preventDefault();
+      this.clickEvent(e);
+    },
+    label: '',
+    clickEvent: function (e) {
+    }      
+  });   
+  
   // Generic Tab Button
   OB.COMP.ButtonTab = Backbone.View.extend({
     tagName: 'a',

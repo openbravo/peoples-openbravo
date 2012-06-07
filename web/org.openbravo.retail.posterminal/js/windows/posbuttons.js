@@ -31,4 +31,11 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
     }       
   }); 
   
+  OB.COMP.MenuReturn = OB.COMP.MenuAction.extend({
+    label: OB.I18N.getLabel('OBPOS_LblReturn'),
+    clickEvent: function (e) {
+      this.options.modelorder.setOrderTypeReturn();
+    }            
+  });
+  
 });    

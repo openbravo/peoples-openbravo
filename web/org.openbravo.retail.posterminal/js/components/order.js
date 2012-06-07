@@ -12,9 +12,9 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     this.receipt =  context.modelorder;
     var lines = this.receipt.get('lines');
     
-    this.receipt.on('change:gross', function() {
-      this.totalgross.text(this.receipt.printTotal());   
-    }, this);    
+    this.receipt.on('change:gross', this.renderTotal, this);    
+    
+    this.receipt.on('change:orderType', this.renderOrderType, this);        
 
     this.component = B(
       {kind: B.KindJQuery('div'), content: [                                                
@@ -42,6 +42,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
 //              {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                                                                                     
 //            ]}
 //          ]},
+
           {kind: B.KindJQuery('li'), content: [                                                                                        
             {kind: B.KindJQuery('div'), attr: {style: 'position: relative; padding: 10px;'}, content: [
               {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%'}, content: [ 
@@ -52,16 +53,38 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
               ]},
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}                   
             ]}
-          ]}               
+          ]},
+          {kind: B.KindJQuery('li'), content: [                                                                                        
+            {kind: B.KindJQuery('div'), id: 'ordertype', attr: {style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #888888'}}
+          ]}          
         ]} 
       ]}                                                               
     );
     this.$el = this.component.$el;
+    this.$ordertype = this.component.context.ordertype.$el;
     this.totalgross = this.component.context.totalgross.$el;
     this.tableview = this.component.context.tableview;        
       
     // Initial total display...
+    this.renderOrderType();
+    this.renderTotal();    
+  };
+  
+  OB.COMP.OrderView.prototype.renderOrderType = function () {
+    if (this.receipt.get('orderType') === 0) {
+      // Sales Order
+      this.$ordertype.hide();
+    } else if (this.receipt.get('orderType') === 1) {
+      // Return order
+      this.$ordertype.show();
+      this.$ordertype.text(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+    } else {
+      // Unknown
+      this.$ordertype.hide();
+    }
+  };
+  
+  OB.COMP.OrderView.prototype.renderTotal = function () {
     this.totalgross.text(this.receipt.printTotal());   
-    
-  }; 
+  };  
 });    

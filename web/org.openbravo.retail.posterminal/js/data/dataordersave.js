@@ -15,7 +15,7 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
       
       var docno = this.receipt.get('documentNo');
       this.proc.exec({
-        order: this.receipt.toJSON()
+        order: this.receipt.serializeToJSON()
       }, function (data, message) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
 //        console.log(JSON.stringify(data));
@@ -26,5 +26,5 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
     
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
   };
- 
+
  });
