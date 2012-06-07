@@ -468,6 +468,11 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(bankLines);
 
     OBContext.setAdminMode();
+    final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
+    final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
+    final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
+    final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
+    final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
     try {
       List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
       for (int i = 0; i < data.length; i++) {
@@ -547,11 +552,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
 
         if (transaction != null) {
-          final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
-          final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
-          final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
-          final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
-          final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
           FieldProviderFactory.setField(data[i], "disabled", "N");
           // Auto Matching or already matched
           FieldProviderFactory.setField(data[i], "checked",
@@ -654,8 +654,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
           .getFINReconciliationLineTempList();
       for (FIN_ReconciliationLineTemp oldtempLine : oldTempLines) {
         OBDal.getInstance().remove(oldtempLine);
-        OBDal.getInstance().flush();
       }
+      oldTempLines.clear();
+      OBDal.getInstance().flush();
       // Now copy info taken from the reconciliation when first opened
       List<FIN_ReconciliationLine_v> reconciledlines = reconciliation
           .getFINReconciliationLineVList();
@@ -700,8 +701,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
             .setMatched(reconciledLine.getBankStatementLine().getFinancialAccountTransaction() != null);
         lineTemp.setMatchlevel(reconciledLine.getBankStatementLine().getMatchingtype());
         OBDal.getInstance().save(lineTemp);
-        OBDal.getInstance().flush();
       }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
     } finally {
       OBContext.restorePreviousMode();
     }
