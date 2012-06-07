@@ -422,8 +422,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             isReceipt);
 
     FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
-        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
-    data = groupPerDocumentType(data, strDocumentType);
+        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null,
+        strSelectedPaymentDetails);
+    if (!"B".equals(strDocumentType)) {
+      data = groupPerDocumentType(data, strDocumentType);
+    }
     xmlDocument.setData("structure", (data == null) ? set() : data);
 
     response.setContentType("text/html; charset=UTF-8");

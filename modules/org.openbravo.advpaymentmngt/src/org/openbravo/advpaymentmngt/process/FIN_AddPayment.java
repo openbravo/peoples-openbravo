@@ -25,7 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 
@@ -509,6 +512,40 @@ public class FIN_AddPayment {
     return selectedBaseOBObjectAmounts;
   }
 
+  private static List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(Set<String> psdSet) {
+    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
+        FIN_PaymentScheduleDetail.class);
+    orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
+    orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
+    return orderedPSDs.list();
+  }
+
+  private static HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount,
+      Set<String> psdSet) {
+    BigDecimal remainingAmount = recordAmount;
+    HashMap<String, BigDecimal> recordsAmounts = new HashMap<String, BigDecimal>();
+    // PSD needs to be properly ordered to ensure negative amounts are processed first
+    List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdSet);
+    for (FIN_PaymentScheduleDetail paymentScheduleDetail : psds) {
+      BigDecimal outstandingAmount = paymentScheduleDetail.getAmount();
+      // Manage negative amounts
+      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
+          .compareTo(outstandingAmount) >= 0)
+          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
+              .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
+        recordsAmounts.put(paymentScheduleDetail.getId(), outstandingAmount);
+        remainingAmount = remainingAmount.subtract(outstandingAmount);
+      } else {
+        recordsAmounts.put(paymentScheduleDetail.getId(), remainingAmount);
+        if (psdSet.size() > 0) {
+          remainingAmount = BigDecimal.ZERO;
+        }
+      }
+
+    }
+    return recordsAmounts;
+  }
+
   /**
    * Builds a FieldProvider with a set of Payment Schedule Details based on the
    * selectedScheduledPaymentDetails and filteredScheduledPaymentDetails Lists. When the firstLoad
@@ -532,6 +569,22 @@ public class FIN_AddPayment {
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails,
       List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails, boolean firstLoad,
       FIN_PaymentProposal paymentProposal) throws ServletException {
+    return getShownScheduledPaymentDetails(vars, selectedScheduledPaymentDetails,
+        filteredScheduledPaymentDetails, firstLoad, paymentProposal, null);
+  }
+
+  public static FieldProvider[] getShownScheduledPaymentDetails(VariablesSecureApp vars,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails,
+      List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails, boolean firstLoad,
+      FIN_PaymentProposal paymentProposal, String strSelectedPaymentDetails)
+      throws ServletException {
+
+    String strSelectedRecords = "";
+    if (!"".equals(strSelectedPaymentDetails)) {
+      strSelectedRecords = strSelectedPaymentDetails;
+      strSelectedRecords = strSelectedRecords.replace("(", "");
+      strSelectedRecords = strSelectedRecords.replace(")", "");
+    }
     dao = new AdvPaymentMngtDao();
     final List<FIN_PaymentScheduleDetail> shownScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     shownScheduledPaymentDetails.addAll(selectedScheduledPaymentDetails);
@@ -548,6 +601,41 @@ public class FIN_AddPayment {
     try {
 
       for (int i = 0; i < data.length; i++) {
+        String selectedId = (selectedScheduledPaymentDetails
+            .contains(FIN_PaymentScheduleDetails[i])) ? FIN_PaymentScheduleDetails[i].getId() : "";
+        // If selectedId belongs to a grouping selection calculate whether it should be selected or
+        // not
+        if (!"".equals(selectedId) && !"".equals(strSelectedPaymentDetails)) {
+          StringTokenizer records = new StringTokenizer(strSelectedRecords, "'");
+          Set<String> recordSet = new LinkedHashSet<String>();
+          while (records.hasMoreTokens()) {
+            recordSet.add(records.nextToken());
+          }
+          if (recordSet.contains(selectedId)) {
+            FieldProviderFactory.setField(data[i], "finSelectedPaymentDetailId", selectedId);
+          } else {
+            String selectedRecord = FIN_PaymentScheduleDetails[i].getId();
+            // Find record which contains psdId
+            Set<String> psdIdSet = new LinkedHashSet<String>();
+            for (String record : recordSet) {
+              if (record.contains(selectedId)) {
+                selectedRecord = record;
+                StringTokenizer st = new StringTokenizer(record, ",");
+                while (st.hasMoreTokens()) {
+                  psdIdSet.add(st.nextToken());
+                }
+              }
+            }
+            String psdAmount = vars.getNumericParameter("inpPaymentAmount" + selectedRecord, "");
+
+            HashMap<String, BigDecimal> idsAmounts = calculateAmounts(new BigDecimal(psdAmount),
+                psdIdSet);
+            FieldProviderFactory.setField(data[i], "finSelectedPaymentDetailId", selectedId);
+            FieldProviderFactory.setField(data[i], "paymentAmount", idsAmounts.get(selectedId)
+                .toString());
+          }
+        }
+
         FieldProviderFactory
             .setField(data[i], "finSelectedPaymentDetailId", (selectedScheduledPaymentDetails
                 .contains(FIN_PaymentScheduleDetails[i])) ? FIN_PaymentScheduleDetails[i].getId()
@@ -676,7 +764,10 @@ public class FIN_AddPayment {
           strDifference = FIN_PaymentScheduleDetails[i].getAmount()
               .subtract(new BigDecimal(strPaymentAmt)).toString();
         }
-        FieldProviderFactory.setField(data[i], "paymentAmount", strPaymentAmt);
+        if (data[i].getField("paymentAmount") == null
+            || "".equals(data[i].getField("paymentAmount"))) {
+          FieldProviderFactory.setField(data[i], "paymentAmount", strPaymentAmt);
+        }
         FieldProviderFactory.setField(data[i], "difference", strDifference);
         FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
 
