@@ -1,7 +1,7 @@
 /*global define, $, _ */
 
 define([], function () {
-  
+
   var B;
 
   B = function (b, context) {
@@ -13,7 +13,7 @@ define([], function () {
     if (inst._id) {
       mycontext[inst._id] = inst;
     }
-    
+
     var i, max, child;
 
     // attributes
@@ -82,7 +82,7 @@ define([], function () {
         if (attrs.hasOwnProperty(attr)) {
           this.$el.attr(attr, attrs[attr]);
         }
-      }      
+      }
     };
 
     F.prototype.append = function (child) {

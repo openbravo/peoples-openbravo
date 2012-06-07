@@ -1,16 +1,16 @@
 /*global define,_ */
 
 define(['utilities', 'arithmetic', 'i18n'], function () {
-  
+
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
   OB.DATA.OrderTaxes = function(context) {
     this._id = 'logicOrderTaxes';
-      
+
     this.receipt =  context.modelorder;
     this.taxrate = context.DataTaxRate;
-    
+
     this.receipt.on('taxes', function (modelorderlist) {
 
      var r = this.receipt,
@@ -68,6 +68,6 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
        r.trigger('closed');
        modelorderlist.deleteCurrent();
      });
-    }, this);    
+    }, this);
   };
 });

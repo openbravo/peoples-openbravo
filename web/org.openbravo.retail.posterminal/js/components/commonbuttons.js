@@ -1,24 +1,24 @@
 /*global window, define, $, Backbone, _ */
 
 define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
-  
+
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-  
+
   // Base button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
-    initialize: function () { 
+    initialize: function () {
       this.$el.click(_.bind(this._clickEvent, this));
-      // new googleuiFastButton(this.el, this._clickEvent);     
+      // new googleuiFastButton(this.el, this._clickEvent);
     },
     _clickEvent: function (e) {
       this.clickEvent(e);
     },
     clickEvent: function (e) {
-    }      
+    }
   });
-  
+
   OB.COMP.PaymentButton = OB.COMP.Button.extend({
     className: 'btnlink btnlink-small',
     attributes: {'style': 'width:70px; text-align:right;'},
@@ -33,9 +33,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     clickEvent: function (e) {
       this.options.modelorder.addPayment(new OB.MODEL.PaymentLine({'kind': this.paymenttype, 'amount': OB.DEC.number(this.amount)}));
-    }   
+    }
   });
-  
+
   // Clears the text of the previous field
   OB.COMP.ClearButton = OB.COMP.Button.extend({
     render: function () {
@@ -46,9 +46,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     clickEvent: function (e) {
       // clears the text of the previous field.
       this.$el.prev().val('');
-    }       
-  });    
-  
+    }
+  });
+
   // Toolbar Button
   OB.COMP.ToolbarButton = OB.COMP.Button.extend({
     render: function () {
@@ -56,7 +56,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       if (this.icon) {
         this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
       }
-      this.$el.append($('<span>' + this.label + '</span>'));     
+      this.$el.append($('<span>' + this.label + '</span>'));
       if (this.iconright) {
         this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
       }
@@ -64,71 +64,71 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     icon: '',
     iconright: '',
-    label: ''      
+    label: ''
   });
-  
+
   // Select Div
   OB.COMP.SelectPanel = Backbone.View.extend({
     tagName: 'div',
     className: 'btnselect',
     initialize: function () {
-      this.model = this.options.model;  
+      this.model = this.options.model;
     }
-  });    
-  
+  });
+
   // Select Button
   OB.COMP.SelectButton = OB.COMP.Button.extend({
     className: 'btnselect',
-    initialize: function () { 
+    initialize: function () {
       OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
-      this.model = this.options.model;  
-    },    
+      this.model = this.options.model;
+    },
     clickEvent: function (e) {
       this.model.trigger('selected', this.model);
       this.model.trigger('click', this.model);
-      this.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it          
+      this.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
     }
-  });  
- 
+  });
+
   // Menu Button
   OB.COMP.MenuButton = Backbone.View.extend({
     tagName: 'div',
     className: 'dropdown',
     attributes: {'style': 'display:inline-block;'},
     initialize: function () {
-      this.button = $('<a href=\"#\" class=\"btnlink\" data-toggle=\"dropdown\"></a>'); 
-      
+      this.button = $('<a href=\"#\" class=\"btnlink\" data-toggle=\"dropdown\"></a>');
+
       // The button
-      this.$el.append(this.button);      
+      this.$el.append(this.button);
       if (this.icon) {
         this.button.append($('<i class=\"' + this.icon + '\"></i>'));
       }
-      this.button.append($('<span>' + this.label + ' </span>'));     
+      this.button.append($('<span>' + this.label + ' </span>'));
       if (this.iconright) {
         this.button.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }  
+      }
       this.button.append($('<span class=\"caret\"></span>'));
-      
-      this.menu = $('<ul class=\"dropdown-menu\"></ul>');     
+
+      this.menu = $('<ul class=\"dropdown-menu\"></ul>');
       this.$el.append(this.menu);
-    },    
+    },
     append: function (child) {
       if (child.render) {
         this.menu.append(child.render().$el); // it is a backbone view.
       } else if (child.$el) {
         this.menu.append(child.$el);
-      }      
+      }
     },
     icon: '',
     iconright: '',
-    label: ''    
-  });  
-    
+    label: ''
+  });
+
   OB.COMP.MenuSeparator = Backbone.View.extend({
     tagName: 'li',
     className: 'divider'
   });
-  
+
   OB.COMP.MenuItem = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
@@ -136,10 +136,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     href: '',
     label: ''
-  });  
-  
+  });
+
   OB.COMP.MenuAction = Backbone.View.extend({
-    tagName: 'li',    
+    tagName: 'li',
     initialize: function () {
       this.$anchor = $('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', '#').append($('<span/>').text(this.label));
       this.$el.click(_.bind(this._clickEvent, this));
@@ -151,9 +151,9 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     label: '',
     clickEvent: function (e) {
-    }      
-  });   
-  
+    }
+  });
+
   // Generic Tab Button
   OB.COMP.ButtonTab = Backbone.View.extend({
     tagName: 'a',
@@ -161,7 +161,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     attributes: {'data-toggle': 'tab'},
     initialize: function () {
       this.$el.attr('href', this.tabpanel);
-      this.$el.append($('<span>' + this.label + '</span>'));      
+      this.$el.append($('<span>' + this.label + '</span>'));
     },
     tabpanel: '#',
     label: '',
@@ -170,44 +170,44 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     },
     shownEvent: function (e) {
       // custom bootstrap event, no need to prevent default
-    }       
+    }
   });
-     
+
   OB.COMP.Modal = Backbone.View.extend({
     tagName: 'div',
     className: 'modal hide fade',
-    attributes: {'style': 'display: none;'},    
+    attributes: {'style': 'display: none;'},
     initialize: function () {
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'style':'padding:5px;', 'data-dismiss': 'modal'}, content: [ 
+            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'style':'padding:5px;', 'data-dismiss': 'modal'}, content: [
               {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
             ]},
             {kind: B.KindJQuery('h3'), content: [this.header]}
-          ]}      
+          ]}
       , this.options).$el);
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
             this.getContentView()
-          ]}   
-      , this.options).$el);                  
+          ]}
+      , this.options).$el);
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default
-    }    
-  });  
-  
+    }
+  });
+
   OB.COMP.CustomView = Backbone.View.extend({
     initialize: function () {
-      this.component = B(this.createView(), this.options);      
+      this.component = B(this.createView(), this.options);
       this.setElement(this.component.$el);
     },
     createView: function () {
       return ({kind: B.KindJQuery('div')});
     }
-  });  
+  });
 
-});    
+});

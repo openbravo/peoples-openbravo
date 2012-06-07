@@ -1,7 +1,7 @@
 /*global window, define, $, Backbone */
 
 define(['builder', 'utilities', 'i18n'], function (B) {
-  
+
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
@@ -15,7 +15,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
           {kind: B.KindJQuery('div'),  attr: {'class': 'clock-date'}, id: 'date'}
         ]});
       this.$el.append(this.component.$el);
-      
+
       this.$clock = this.component.context.clock.$el;
       this.$date = this.component.context.date.$el;
       var me = this;
@@ -33,5 +33,5 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       }
     }
   });
-});    
+});
 

@@ -1,33 +1,33 @@
 /*global define */
 
 define(['builder', 'utilities', 'i18n'], function (B) {
-  
+
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-  
+
   // Order list
   OB.COMP.ListView = function (tag) {
-    
-    var F = function (context) {     
+
+    var F = function (context) {
       this.component = B(
         {kind: B.KindJQuery(tag)}
       );
       this.$el = this.component.$el;
     };
-    
+
     F.prototype.attr = function (attr) {
       this.renderLine = attr.renderLine;
       this.renderHeader = attr.renderHeader;
-      this.header = this.renderHeader ? 1 : 0;    
+      this.header = this.renderHeader ? 1 : 0;
       this.collection = attr.collection;
-      
-      this.collection.on('change', function(model, prop) {          
+
+      this.collection.on('change', function(model, prop) {
         var index = this.collection.indexOf(model);
         this.$el.children().eq(index + this.header)
-          .replaceWith(B(this.renderLine(model)).$el);      
+          .replaceWith(B(this.renderLine(model)).$el);
       }, this);
-      
-      this.collection.on('add', function(model, prop, options) {     
+
+      this.collection.on('add', function(model, prop, options) {
         var index = options.index;
         var me = this;
         var tr = B(this.renderLine(model)).$el;
@@ -37,33 +37,33 @@ define(['builder', 'utilities', 'i18n'], function (B) {
           this.$el.children().eq(index + this.header).before(tr);
         }
       }, this);
-      
-      this.collection.on('remove', function (model, prop, options) {        
+
+      this.collection.on('remove', function (model, prop, options) {
         var index = options.index;
-        this.$el.children().eq(index + this.header).remove();         
+        this.$el.children().eq(index + this.header).remove();
       }, this);
-      
+
       this.collection.on('reset', function() {
         this.$el.empty();
         if (this.renderHeader) {
           this.$el.append(B(this.renderHeader()).$el);
         }
-      }, this);   
-      
+      }, this);
+
       // Init clear...
       this.$el.empty();
       if (this.renderHeader) {
         this.$el.append(B(this.renderHeader()).$el);
-      }    
-    };   
-    
+      }
+    };
+
     return F;
   };
 
-  
+
   // Table View
   OB.COMP.TableView = function (context) {
-  
+
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), id: 'header'},
@@ -75,10 +75,10 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     this.$el = this.component.$el;
     this.theader = this.component.context.header.$el;
     this.tbody = this.component.context.body.$el;
-    this.tempty = this.component.context.empty.$el;   
+    this.tempty = this.component.context.empty.$el;
     this.tinfo = this.component.context.info.$el;
   };
-  
+
   OB.COMP.TableView.prototype.renderLineModel = function (model) {
     var b;
     if (this.renderLine.prototype.initialize) { // it is a backbone view
@@ -89,51 +89,51 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       b.$el.click(function (e) {
         model.trigger('selected', model);
         model.trigger('click', model);
-        b.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it    
+        b.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
       });
     }
     return b;
-  }; 
- 
+  };
+
   OB.COMP.TableView.prototype.attr = function (attr) {
-    this.style = attr.style; // none, "edit", "list"        
+    this.style = attr.style; // none, "edit", "list"
     this.renderHeader = attr.renderHeader;
     this.renderLine = attr.renderLine;
     this.renderEmpty = attr.renderEmpty;
     this.collection = attr.collection;
-    this.selected = null;     
-       
-    if (this.renderHeader) {      
-      this.theader.append(B(this.renderHeader()).$el);  
-    }   
-    
+    this.selected = null;
+
+    if (this.renderHeader) {
+      this.theader.append(B(this.renderHeader()).$el);
+    }
+
     if (this.renderEmpty) {
       this.tempty.append(B(this.renderEmpty()).$el);
-    }    
-    
+    }
+
     this.collection.on('selected', function (model) {
       if (!model && this.style) {
         if (this.selected) {
           this.selected.removeClass('selected');
         }
         this.selected = null;
-      }        
+      }
     }, this);
-       
-    this.collection.on('add', function(model, prop, options) {     
-      
+
+    this.collection.on('add', function(model, prop, options) {
+
       this.tempty.hide();
       this.tbody.show();
-      
+
       var me = this; var mimi = this;
       var tr = B({kind: B.KindJQuery('li')}).$el;
       tr.append(this.renderLineModel(model).$el);
       // tr.click(stdClickEvent);
-      
+
       model.on('change', function() {
         tr.empty().append(this.renderLineModel(model).$el);
       }, this);
-      
+
       model.on('selected', function() {
         if (this.style) {
           if (this.selected) {
@@ -151,7 +151,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       } else {
         this.tbody.children().eq(index).before(tr);
       }
-      
+
       if (this.style === 'list') {
         if (!this.selected) {
           model.trigger('selected', model);
@@ -160,8 +160,8 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         model.trigger('selected', model);
       }
     }, this);
-    
-    this.collection.on('remove', function (model, prop, options) {        
+
+    this.collection.on('remove', function (model, prop, options) {
       var index = options.index;
       this.tbody.children().eq(index).remove();
 
@@ -173,23 +173,23 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         }
       } else {
         this.collection.at(index).trigger('selected', this.collection.at(index));
-      }  
-      
-      if (this.collection.length === 0) {             
+      }
+
+      if (this.collection.length === 0) {
         this.tbody.hide();
         this.tempty.show();
       }
     }, this);
-    
+
     this.collection.on('reset', function(a,b,c) {
-      
+
       this.tbody.hide();
       this.tempty.show();
-      
-      this.tbody.empty();  
+
+      this.tbody.empty();
       this.collection.trigger('selected');
-    }, this);   
-    
+    }, this);
+
     this.collection.on('info', function (info) {
       if (info) {
         this.tinfo.text(OB.I18N.getLabel(info));
@@ -200,4 +200,4 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     }, this);
   };
 
-}); 
+});

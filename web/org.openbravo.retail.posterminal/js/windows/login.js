@@ -3,7 +3,7 @@
 define(['builder', 'i18n', 'components/clock',
         'components/commonbuttons', 'components/hwmanager', 'components/keyboard'
        ], function (B) {
-  
+
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
@@ -49,7 +49,7 @@ define(['builder', 'i18n', 'components/clock',
       }
     }
   });
-  
+
   OB.COMP.Login = OB.COMP.CustomView.extend({
     createView: function () {
       return (
@@ -85,7 +85,7 @@ define(['builder', 'i18n', 'components/clock',
                   {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
                     {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: ['Log In'],
                       init: function () {
-  
+
                         OB.POS.modelterminal.on('loginfail', function (status) {
                           alert('Invalid user name or password.\nPlease try again.');
                           $('#password').val('');
@@ -96,7 +96,7 @@ define(['builder', 'i18n', 'components/clock',
                           $('#password').val('');
                           $('#password').focus();
                         });
-                        
+
                         this.$el.click(function (e) {
                           e.preventDefault();
                           var u = $('#username').val();

@@ -1,7 +1,7 @@
 /*global define */
 
 define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
-  
+
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
@@ -12,22 +12,22 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     this.loggeduser = loggeduser;
     this.loggeduserproperties = loggeduserproperties;
   };
-  
+
   OB.COMP.Terminal.prototype.setModel = function (terminal) {
     this.terminal = terminal;
-    
+
     this.terminal.on('change:context', function() {
       var ctx = this.terminal.get('context');
       if (ctx) {
         this.loggeduser.text(ctx.user._identifier);
         this.loggeduserproperties.empty();
-        this.loggeduserproperties.append(B(         
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [ 
+        this.loggeduserproperties.append(B(
+          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [
             {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
           ]}
-        ).$el);   
-        this.loggeduserproperties.append(B(         
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 70%;'}, content: [ 
+        ).$el);
+        this.loggeduserproperties.append(B(
+          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 70%;'}, content: [
             {kind: B.KindJQuery('div'), content: [
               {kind: B.KindJQuery('span'), content: [
                 OB.I18N.getLabel('OBPOS_User')
@@ -46,29 +46,29 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             ]}
           ]}
         ).$el);
-        this.loggeduserproperties.append(B(         
-          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}  
-        ).$el);        
+        this.loggeduserproperties.append(B(
+          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
+        ).$el);
       } else {
         this.loggeduser.text('');
-        this.loggeduserproperties.empty();        
+        this.loggeduserproperties.empty();
       }
-      
+
     },this);
 
-    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {    
-      var name = '';     
+    this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function () {
+      var name = '';
       var clientname = '';
       var orgname = '';
       var pricelistname = '';
       var currencyname = '';
       var locationname = '';
-      
+
       if (this.terminal.get('terminal')) {
         name = this.terminal.get('terminal')._identifier;
         clientname = this.terminal.get('terminal')['client' + OB.Constants.FIELDSEPARATOR + '_identifier'];
         orgname = this.terminal.get('terminal')['organization' + OB.Constants.FIELDSEPARATOR + '_identifier'];
-      }      
+      }
       if (this.terminal.get('pricelist')) {
         pricelistname = this.terminal.get('pricelist')._identifier;
         currencyname = this.terminal.get('pricelist')['currency' + OB.Constants.FIELDSEPARATOR + '_identifier'];
@@ -121,10 +121,10 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
               locationname
             ]}
           ]}
-        ]}          
+        ]}
       ).$el);
     }, this);
-        
+
   };
 
-});  
+});

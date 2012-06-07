@@ -1,16 +1,16 @@
 /*global define, $, Backbone */
 
 define(['datasource', 'utilities', 'utilitiesui'], function () {
-  
+
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
-  
+
   OB.MODEL.Collection = Backbone.Collection.extend({
     constructor: function (data) {
       this.ds = data.ds;
       Backbone.Collection.prototype.constructor.call(this);
     },
-    inithandler : function (init) { 
+    inithandler : function (init) {
        if (init) {
          init.call(this);
        }
@@ -32,12 +32,12 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         }
       });
     }
-  });  
+  });
 
   // Terminal model.
-  
+
   OB.MODEL.Terminal = Backbone.Model.extend({
-    
+
     defaults : {
       terminal: null,
       context: null,
@@ -47,7 +47,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       pricelist: null,
       pricelistversion: null
     },
-    
+
     login: function (user, password, mode) {
       var me = this;
       this.set('terminal', null);
@@ -57,7 +57,7 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       this.set('bplocation', null);
       this.set('location', null);
       this.set('pricelist', null);
-      this.set('pricelistversion', null);      
+      this.set('pricelistversion', null);
       $.ajax({
         url: '../../secureApp/LoginHandler.html',
         data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
@@ -74,53 +74,53 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         error: function (jqXHR, textStatus, errorThrown) {
           me.triggerLoginFail(jqXHR.status, mode);
         }
-      });       
+      });
     },
-    
+
     logout: function () {
       var me = this;
       this.set('terminal', null);
-      this.set('payments', null);      
+      this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);
       this.set('bplocation', null);
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
-      
+
       $.ajax({
         url: '../../org.openbravo.service.retail.posterminal.logout',
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         type: 'GET',
         success: function (data, textStatus, jqXHR) {
-          me.triggerLogout();  
+          me.triggerLogout();
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          me.triggerLogout();  
+          me.triggerLogout();
         }
-      });      
+      });
     },
-    
+
     load: function () {
-      
+
       // reset all application state.
       $(window).off('keypress');
       this.set('terminal', null);
       this.set('payments', null);
       this.set('context', null);
-      this.set('permissions', null);      
+      this.set('permissions', null);
       this.set('bplocation', null);
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
-      
+
       // Starting app
       var me = this;
       var params = {
           terminal: OB.POS.paramTerminal
       };
-  
+
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Terminal').exec(
         params,
         function (data) {
@@ -141,14 +141,14 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
           }
         }
-      );        
+      );
     },
-    
+
     loadPayments: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Payments').exec({ pos: this.get('terminal').id }
       , function (data) {
-        if (data) { 
+        if (data) {
           var i, max;
           me.set('payments', data);
           me.paymentnames = {};
@@ -157,35 +157,35 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           }
           me.triggerReady();
         }
-      });       
+      });
     },
-    
+
     loadContext: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Context').exec({}
       , function (data) {
-        if (data[0]) {         
+        if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
         }
-      });    
+      });
     },
-    
+
     loadPermissions: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Permissions').exec({}
       , function (data) {
         var i, max, permissions = {};
-        if (data) {                  
+        if (data) {
           for (i = 0, max = data.length; i < max; i++) {
             permissions[data[i]['obposPos' + OB.Constants.FIELDSEPARATOR + '_identifier']] = true;
           }
           me.set('permissions', permissions);
           me.triggerReady();
         }
-      });    
-    },    
-    
+      });
+    },
+
     loadBP: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartner').exec({
@@ -195,9 +195,9 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           me.set('businesspartner', data[0]);
           me.triggerReady();
         }
-      });    
+      });
     },
-    
+
     loadBPLocation: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartnerLocation').exec({
@@ -206,9 +206,9 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         if (data[0]) {
           me.set('bplocation', data[0]);
         }
-      });    
+      });
     },
-    
+
     loadLocation: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Location').exec({
@@ -217,20 +217,20 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         if (data[0]) {
           me.set('location', data[0]);
         }
-      });    
-    }, 
-    
+      });
+    },
+
     loadPriceList: function () {
-      var me = this;    
+      var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceList').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
           me.set('pricelist', data[0]);
         }
-      });    
+      });
     },
-    
+
     loadPriceListVersion: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
@@ -240,11 +240,11 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           me.set('pricelistversion', data[0]);
           me.triggerReady();
         }
-      });    
+      });
     },
-    
+
     loadCurrency: function () {
-      var me = this;    
+      var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Currency').exec({
         currency: this.get('terminal').currency
       }, function (data) {
@@ -252,23 +252,23 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
           me.set('currency', data[0]);
           me.triggerReady();
         }
-      });    
-    },   
-    
+      });
+    },
+
     triggerReady: function () {
       if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('businesspartner') && this.get('context') && this.get('permissions')) {
         this.trigger('ready');
-      }     
+      }
     },
-    
+
     triggerLogout: function () {
       this.trigger('logout');
     },
-    
+
     triggerLoginSuccess: function () {
       this.trigger('loginsuccess');
     },
-    
+
     triggerLoginFail: function (e, mode) {
       if (mode === 'userImgPress') {
         this.trigger('loginUserImgPressfail', e);
@@ -276,19 +276,19 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         this.trigger('loginfail', e);
       }
     },
-    
+
     hasPermission: function (p) {
       return this.get('context').role.clientAdmin || this.get('permissions')[p];
     },
-    
+
     getPaymentName: function (key) {
       return this.paymentnames[key];
     },
-    
+
     hasPayment: function (key) {
       return this.paymentnames[key];
     }
-    
+
   });
-  
+
 });

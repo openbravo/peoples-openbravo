@@ -4,9 +4,9 @@ define(['i18n'], function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
-  
+
   OB.DS.MAXSIZE = 100;
-  
+
   var serviceSuccess = function (data, textStatus, jqXHR, callback) {
     if (data._entityname) {
       callback([data]);
@@ -29,8 +29,8 @@ define(['i18n'], function () {
         });
       }
     }
-  }; 
-  
+  };
+
   var serviceError = function (jqXHR, textStatus, errorThrown, callback) {
     callback({
       exception: {
@@ -39,8 +39,8 @@ define(['i18n'], function () {
       }
     });
   };
-  
-  var servicePOST = function (source, dataparams, callback) {        
+
+  var servicePOST = function (source, dataparams, callback) {
     $.ajax({
       url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source,
       contentType: 'application/json;charset=utf-8',
@@ -53,10 +53,10 @@ define(['i18n'], function () {
       error: function (jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback);
       }
-    });    
+    });
   };
-  
-  var serviceGET = function (source, dataparams, callback) {        
+
+  var serviceGET = function (source, dataparams, callback) {
     $.ajax({
       url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
       contentType: 'application/json;charset=utf-8',
@@ -68,27 +68,27 @@ define(['i18n'], function () {
       error: function (jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback);
       }
-    });    
+    });
   };
- 
+
   // Process object
   OB.DS.Process = function (source) {
     this.source = source;
-  };  
-  
+  };
+
   OB.DS.Process.prototype.exec = function  (params, callback) {
     var attr;
     var data = {};
-    
+
     for (attr in params) {
       if (params.hasOwnProperty(attr)) {
         data[attr] = params[attr];
       }
-    }  
-    
+    }
+
     servicePOST(this.source, data, callback);
   };
-  
+
   // Source object
   OB.DS.Query = function (source, client, org) {
     this.source = source;
@@ -130,21 +130,21 @@ define(['i18n'], function () {
             p[i] = params[i];
           }
         }
-      }      
+      }
       data.parameters = p;
     }
-    
-    if (this.client) { 
+
+    if (this.client) {
       data.client = this.client;
     }
-    
-    if (this.org) { 
+
+    if (this.org) {
       data.organization = this.org;
-    }   
-    
+    }
+
     serviceGET(this.source, data, callback);
   };
-  
+
   function check(elem, filter) {
     var p;
 
@@ -211,10 +211,10 @@ define(['i18n'], function () {
       return {data: newdata, info: info};
     }
   }
-  
+
   // DataSource objects
   // OFFLINE GOES HERE
-  
+
   OB.DS.DataSource = function (query) {
     this.query = query;
     this.cache = null;
@@ -223,7 +223,7 @@ define(['i18n'], function () {
 
   OB.DS.DataSource.prototype.load = function (params) {
     this.cache = null;
-    
+
     // OFFLINE GOES HERE
     var me = this;
     this.query.exec(params, function (data) {
@@ -234,7 +234,7 @@ define(['i18n'], function () {
     });
   };
 
-  OB.DS.DataSource.prototype.find = function (filter, callback) {    
+  OB.DS.DataSource.prototype.find = function (filter, callback) {
     if (this.cache) {
       callback(findInData(this.cache, filter));
     } else {
@@ -255,9 +255,9 @@ define(['i18n'], function () {
       }, this);
     }
   };
-  
+
   // Datasource for product and prices...
-  
+
   OB.DS.DataSourceProductPrice = function (pquery, ppquery) {
     this.pquery = pquery;
     this.ppquery = ppquery;
@@ -265,24 +265,24 @@ define(['i18n'], function () {
     this.ppcache = null;
   };
   _.extend(OB.DS.DataSourceProductPrice.prototype, Backbone.Events);
-  
+
   OB.DS.DataSourceProductPrice.prototype.load = function (params) {
     this.pcache = null;
     this.ppcache = null;
-    
+
     // OFFLINE GOES HERE
     var me = this;
     me.pquery.exec(params.product, function (pdata) {
-      me.ppquery.exec(params.productprice, function (ppdata) {        
+      me.ppquery.exec(params.productprice, function (ppdata) {
         if (!pdata.exception && !ppdata.exception) {
           me.pcache = pdata;
           me.ppcache = ppdata;
         }
-        me.trigger('ready');        
+        me.trigger('ready');
       });
-    });    
+    });
   };
-  
+
   var findPrice = function (item, prices, priceListVersion) {
     if (item) {
       var price = findInData(prices, {'priceListVersion': priceListVersion, 'product': item.product.id});
@@ -294,10 +294,10 @@ define(['i18n'], function () {
       }
     } else {
       return null;
-    }    
+    }
   };
-  
-  OB.DS.DataSourceProductPrice.prototype.find = function (filter, callback) {    
+
+  OB.DS.DataSourceProductPrice.prototype.find = function (filter, callback) {
     if (this.pcache && this.ppcache) {
       callback(findPrice(findInData(this.pcache, filter.product), this.ppcache, filter.priceListVersion));
     } else {
@@ -309,13 +309,13 @@ define(['i18n'], function () {
 
   OB.DS.DataSourceProductPrice.prototype.exec = function (filter, callback) {
 
-    var filterfunction = function (cache) { 
+    var filterfunction = function (cache) {
       return function (item) {
         return findPrice(item, cache, filter.priceListVersion);
       };
     };
-    
-    if (this.pcache && this.ppcache) {     
+
+    if (this.pcache && this.ppcache) {
       var result1 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
       callback(result1.data, result1.info);
     } else {
@@ -332,7 +332,7 @@ define(['i18n'], function () {
     this.url = url;
     this.scaleurl = scaleurl;
   };
-  
+
   OB.DS.HWServer.prototype.getWeight = function (callback) {
     if (this.scaleurl) {
       var me = this;
@@ -359,7 +359,7 @@ define(['i18n'], function () {
     } else {
       callback({result: 1});
     }
-  };  
+  };
 
   OB.DS.HWServer.prototype.print = function (templatedata, params, callback) {
     if (this.url) {

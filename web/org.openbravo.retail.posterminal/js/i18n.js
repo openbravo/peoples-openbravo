@@ -1,12 +1,12 @@
 /*global define */
 
 define(['utilities'], function () {
-  
+
   // Mockup for OB.I18N
-  
+
   OB = window.OB || {};
   OB.I18N = window.OB.I18N || {};
-  
+
   // Hardcoded US labels.
   OB.I18N.labels = {
     'OBPOS_CompanyClient': 'Client: ',
@@ -16,7 +16,7 @@ define(['utilities'], function () {
     'OBPOS_CompanyLocation': 'Location: ',
     'OBPOS_User': 'User: ',
     'OBPOS_Role': 'Role: ',
-         
+
     'OBPOS_WelcomeMessage': 'Welcome to Openbravo POS',
     'OBPOS_NoLineSelected': 'There is no line selected',
     'OBPOS_DeleteLine': 'Deleted line %0 x %1',
@@ -28,14 +28,14 @@ define(['utilities'], function () {
     'OBPOS_SetBP': 'Assigned customer %0',
     'OBPOS_ResetBP': 'Removed customer',
     'OBPOS_LblUndo': 'Undo',
-    
+
     'OBPOS_DataMaxReached': 'It has been reached the maximum data to display.',
     'OBPOS_LblSuccess': 'SUCCESS',
     'OBPOS_LblError': 'ERROR!',
     'OBPOS_LblWarning': 'WARNING!',
-    
+
     'OBPOS_MsgReceiptSaved': 'Receipt no: %0 has been closed successfully.',
-    
+
     'OBPOS_ButtonDelete': 'Delete',
     'OBPOS_LineDescription': 'Description',
     'OBPOS_LineQuantity': 'Quantity',
@@ -43,7 +43,7 @@ define(['utilities'], function () {
     'OBPOS_LineValue': 'LineValue',
     'OBPOS_LineDiscount': 'Discount',
     'OBPOS_LineTotal': 'Total',
-    
+
     'OBPOS_KbQuantity': 'QUANTITY',
     'OBPOS_KbPrice': 'PRICE',
     'OBPOS_KbDiscount': 'DISCOUNT',
@@ -54,22 +54,22 @@ define(['utilities'], function () {
     'OBPOS_ReceiptTaxes': 'Taxes',
     'OBPOS_ReceiptTotal': 'TOTAL',
     'OBPOS_ToBeReturned': 'To be Returned',
-    
+
     'OBPOS_LblCategories': 'Categories',
     'OBPOS_LblNoCategory': '(No category)',
 
     'OBPOS_SearchNoResults': 'No results',
     'OBPOS_SearchAllCategories': '(All categories)',
     'OBPOS_SearchButtonSearch': ' Search',
-    
+
     'OBPOS_PaymentsEmpty': 'No payments',
     'OBPOS_PaymentsRemaining': ' remaining to pay. ',
     'OBPOS_PaymentsChange': ' change. ',
     'OBPOS_PaymentsOverpayment': ' overpayment. ',
     'OBPOS_LblDone': 'Done',
-    
+
     'OBPOS_WeightZero': 'No weight on the scale.',
-    
+
     'OBPOS_MsgApplicationServerNotAvailable': 'Application server is not available.',
     'OBPOS_MsgHardwareServerNotAvailable': 'Printer and display are not available.',
     'OBPOS_MsgScaleServerNotAvailable': 'Scale is not available.',
@@ -78,8 +78,8 @@ define(['utilities'], function () {
     'OBPOS_MsgPaymentAmountError': 'Payment amount not valid.\nContact your administrator.',
     'OBPOS_MsgPaymentTypeError': 'Payment type not valid.\nContact your administrator.',
     'OBPOS_MsgPaymentAmountZero': 'Total is zero. No payment needed',
-    
-    
+
+
     // Point of sale window
     'OBPOS_LogoutDialogTitle': 'You may still have pending unsaved changes.<br />What do you want to do?',
     'OBPOS_LogoutDialogLogout': 'Logout and lose unsaved changes',
@@ -89,7 +89,7 @@ define(['utilities'], function () {
     'OBPOS_MsgConfirmDelete': 'Do you really want to delete the current receipt?',
     'OBPOS_LblAssignCustomer': 'Assign a customer to this receipt',
     'OBPOS_LblAssignReceipt': 'Receipts',
-    
+
     'OBPOS_LblNew': ' NEW',
     'OBPOS_LblDelete': ' DELETE',
     'OBPOS_LblPrint': ' PRINT',
@@ -97,25 +97,25 @@ define(['utilities'], function () {
     'OBPOS_LblOpenbravoWorkspace': 'Openbravo Workspace',
     'OBPOS_LblReturn': 'Return this receipt',
     'OBPOS_LblCloseCash': 'Cash up',
-    'OBPOS_LblPay': ' PAY',    
+    'OBPOS_LblPay': ' PAY',
     'OBPOS_LblBrowse': 'BROWSE',
     'OBPOS_LblSearch': 'SEARCH',
     'OBPOS_LblScan': 'SCAN',
     'OBPOS_LblEdit': 'EDIT',
-      
+
     // Close cash window
     'OBPOS_LblCountCash': 'Count Cash',
     'OBPOS_LblPendingReceipts': 'Pending Receipts',
-    
+
     'OBPOS_LblNextStep': 'Next ',
     'OBPOS_LblPrevStep': ' Previous',
     'OBPOS_LblCancel': 'Cancel'
   };
-  
-  
+
+
   OB.I18N.getLabel = function(key, params, object, property) {
     if (!OB.I18N.labels[key]) {
-      return '** ' + key + ' **';      
+      return '** ' + key + ' **';
     }
     var label = OB.I18N.labels[key], i;
     if (params && params.length && params.length > 0) {
@@ -125,25 +125,25 @@ define(['utilities'], function () {
     }
     return label;
   };
-  
+
   OB.I18N.formatCurrency = function (num) {
     // Hardcoded to US Locale.
     return OB.I18N.formatGeneralNumber(num, {
       decimals: 2,
       decimal: '.',
       group: ',',
-      currency: '$#'});    
-  };    
-  
+      currency: '$#'});
+  };
+
   OB.I18N.formatRate = function (num) {
     // Hardcoded to US Locale.
     return OB.I18N.formatGeneralNumber(num * 100, {
       decimals: 2,
       decimal: '.',
       group: ',',
-      currency: '#%'});    
-  };     
-  
+      currency: '#%'});
+  };
+
   OB.I18N.formatGeneralNumber = function (num, options) {
     var n = num.toFixed(options.decimals);
     var x = n.split('.');
@@ -158,8 +158,8 @@ define(['utilities'], function () {
     } else {
       return x1 + x2;
     }
-  };  
-  
+  };
+
   OB.I18N.formatDate = function (d) {
     var curr_date = d.getDate();
     var curr_month = d.getMonth();
@@ -169,7 +169,7 @@ define(['utilities'], function () {
     var curr_sec = d.getSeconds();
     return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month, 2) + '/' + curr_year;
   };
-  
+
   OB.I18N.formatHour = function (d) {
     var curr_date = d.getDate();
     var curr_month = d.getMonth();
@@ -178,8 +178,8 @@ define(['utilities'], function () {
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
     return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min, 2);
-  };  
-  
+  };
+
 
 
 });
