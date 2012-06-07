@@ -524,7 +524,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Delete'),
       updateState: function () {
         // never allow delete when opened from the maintenance window
-        this.setDisabled(this.openedFromMaintenanceWindow || !this.view.form.view.getFormPersonalization(false) || !this.view.form.view.getFormPersonalization(false).canDelete);
+        this.setDisabled(this.view.openedFromMaintenanceWindow || (this.view.form && (!this.view.form.view.getFormPersonalization(false) || !this.view.form.view.getFormPersonalization(false).canDelete)));
       },
       keyboardShortcutId: 'ToolBar_Eliminate'
     };
@@ -589,7 +589,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   // save the new form layout to the server and updates the preview form
   save: function (callback) {
     var params, me = this,
-        newDataFields, formPers = this.form.view.getFormPersonalization();
+        newDataFields, formPers = (this.openedFromMaintenanceWindow ? this.personalizationData : this.form.view.getFormPersonalization());
 
     // if there is a personalization id then use that
     // this ensures that a specific record will be updated
@@ -644,7 +644,10 @@ isc.OBPersonalizeFormLayout.addProperties({
       // overwrite what we have
       me.personalizationData.form = newDataFields;
 
-      me.form.view.standardWindow.updateFormPersonalization(me.form.view, me.personalizationData);
+      if (!me.openedFromMaintenanceWindow) {
+        // called from normal window
+        me.form.view.standardWindow.updateFormPersonalization(me.form.view, me.personalizationData);
+      }
 
       me.initializing = true;
       me.isNew = false;
@@ -696,8 +699,11 @@ isc.OBPersonalizeFormLayout.addProperties({
       // close when returned
       me.doClose(true);
 
-      personalization = me.getStandardWindow().getClass().personalization;
+      personalization = me.getStandardWindow().getClass().personalization;     
       personalization[me.tabId] = null;
+      if (me.getStandardWindow().getClass().personalization.forms) {
+        me.getStandardWindow().getClass().personalization.forms[me.tabId] = null;
+      }
     });
   },
 
