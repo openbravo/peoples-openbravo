@@ -70,6 +70,10 @@ public abstract class AuthenticationManager {
     AuthenticationManager authManager;
     String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
+    if (authClass == null || authClass.equals("")) {
+      // If not defined, load default
+      authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
+    }
     try {
       authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
           .newInstance();
