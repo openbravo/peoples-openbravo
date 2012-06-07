@@ -20238,7 +20238,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--E8C906D6A45D45B18631B7631A1BD8BD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E8C906D6A45D45B18631B7631A1BD8BD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E8C906D6A45D45B18631B7631A1BD8BD-->  <VALUE><![CDATA[ModuleMustBeProvided]]></VALUE>
-<!--E8C906D6A45D45B18631B7631A1BD8BD-->  <MSGTEXT><![CDATA[An accounting module must be selected, and will be processed whith the rest of reference data]]></MSGTEXT>
+<!--E8C906D6A45D45B18631B7631A1BD8BD-->  <MSGTEXT><![CDATA[An accounting module must be selected, and will be processed with the rest of reference data]]></MSGTEXT>
 <!--E8C906D6A45D45B18631B7631A1BD8BD-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--E8C906D6A45D45B18631B7631A1BD8BD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E8C906D6A45D45B18631B7631A1BD8BD--></AD_MESSAGE>
