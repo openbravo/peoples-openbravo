@@ -496,8 +496,14 @@ function distributeAmount(_amount) {
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-    if (compare(outstandingAmount, '>', amount)) {
-      outstandingAmount = amount;
+    if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+      if (compare(abs(outstandingAmount), '>', abs(amount))) {
+        outstandingAmount = amount;
+      }
+    } else {
+      if (compare(outstandingAmount, '>', amount)) {
+        outstandingAmount = amount;
+      }
     }
     frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
     if (!chk.checked) {
