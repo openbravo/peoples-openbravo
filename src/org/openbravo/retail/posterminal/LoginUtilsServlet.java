@@ -34,7 +34,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    OBContext.setOBContext("0", "0", "0", "0");
+    OBContext.setAdminMode(false);
 
     final String terminalName = request.getParameter("terminalName");
     final String command = request.getParameter("command");

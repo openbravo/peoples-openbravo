@@ -1,4 +1,4 @@
-/*global require,$, _, Backbone, window, confirm, OB */
+/*global require,$, _, Backbone, window, confirm, OB, localStorage */
 
 require.config({
   paths: {
@@ -35,10 +35,6 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
         modelterminal.logout();
       }
   };
-  
-  OB.Constants = {
-      FIELDSEPARATOR: '$'
-  };
 
   modelterminal.on('ready', function () {
     // We are Logged !!!
@@ -71,9 +67,13 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'hidden');
     
-    var c = _.extend({}, Backbone.Events);
-    $("#containerwindow").empty().append((new login(c)).$el);   
-    c.trigger('domready'); 
+//    var c = _.extend({}, Backbone.Events);
+//    $("#containerwindow").empty().append((new login(c)).$el);   
+//    c.trigger('domready'); window.location=
+    
+    // Redirect to login window
+    localStorage.setItem('target-window', window.location.href);
+    window.location = window.location.pathname + 'login.jsp';
   });  
   
   $(document).ready(function () {

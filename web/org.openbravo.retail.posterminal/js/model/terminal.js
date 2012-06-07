@@ -59,15 +59,19 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       this.set('pricelist', null);
       this.set('pricelistversion', null);      
       $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.login',
-        data: {l: user, p: password},
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'json',
-        type: 'GET',
+        url: '../../secureApp/LoginHandler.html',
+        data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
+        type: 'POST',
         success: function (data, textStatus, jqXHR) {
-          me.triggerLoginSuccess();
+          var pos;
+          if(data && data.showMessage) {
+            me.triggerLoginFail(401, mode);
+            return;
+          }
+          pos = location.pathname.indexOf('login.jsp');
+          window.location = window.location.pathname.substring(0, pos);
         },
-        error: function (jqXHR, textStatus, errorThrown) {            
+        error: function (jqXHR, textStatus, errorThrown) {
           me.triggerLoginFail(jqXHR.status, mode);
         }
       });       

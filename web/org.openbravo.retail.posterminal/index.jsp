@@ -1,12 +1,27 @@
-<%@ page import="org.openbravo.retail.posterminal.POSUtils" %>
+<%@ page import="java.util.Properties" %>
+<%@ page import="org.openbravo.base.HttpBaseServlet" %>
+<%@ page import="org.openbravo.dal.core.OBContext"%>
+<%@ page import="org.openbravo.base.util.OBClassLoader" %>
+<%@ page import="org.openbravo.authentication.AuthenticationManager" %>
+<%@ page import="org.openbravo.client.kernel.KernelUtils" %>
+<%@ page import="org.openbravo.dal.core.OBContext" %>
+<%@ page import="org.openbravo.model.ad.module.Module" %>
+<%@ page import="org.apache.log4j.Logger" %>
 <%
-String manifest = "manifest=\"../../org.openbravo.client.kernel/OBPOS_Main/AppCacheManifest\"";
-if(POSUtils.isModuleInDevelopment()) {
-  manifest = "";
+Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class);
+
+request.setAttribute("loginURL", "/web/org.openbravo.retail.posterminal/login.jsp");
+
+AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
+
+String userId = authManager.authenticate(request, response);
+
+if(userId == null){
+  return;
 }
 %>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" <%=manifest%>>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Openbravo Point of Sale</title>
   <meta charset="utf-8">
@@ -85,6 +100,7 @@ if(POSUtils.isModuleInDevelopment()) {
   </div>
 
   <script src="../org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
+  <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/Application"></script>
 
   <script src="js/libs/jquery-1.7.2.js"></script>
   <script src="js/libs/underscore-1.3.3.js"></script>
