@@ -265,4 +265,15 @@ public class DalPerformanceExampleTest extends BaseTest {
       }
     }
   }
+
+  /**
+   * DML Style operations
+   */
+  public void testDML() {
+    // for example add an a to all categories
+    String hqlVersionedUpdate = "update BusinessPartnerCategory set name = CONCAT(name, 'a') where name <> null";
+    int updatedEntities = OBDal.getInstance().getSession().createQuery(hqlVersionedUpdate)
+        .executeUpdate();
+    System.err.println(updatedEntities);
+  }
 }
