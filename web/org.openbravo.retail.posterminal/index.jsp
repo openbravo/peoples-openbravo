@@ -73,7 +73,7 @@ if(userId == null){
           </div>
           <div style="display: inline-block; font-weight: bold; float:right">
             <span>Openbravo Point of Sale</span>&nbsp;
-            <a data-toggle="modal" id="logoutlink" href="#" class=""><i class="icon-off icon-white"></i></a>
+            <a data-toggle="modal" id="logoutlink" href="#logoutModal" class=""><i class="icon-off icon-white"></i></a>
             <div class="modal hide" id="logoutModal">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">X</button>
@@ -117,14 +117,7 @@ if(userId == null){
       e.preventDefault();
       OB.POS.logout();
     });
-    
-    $('#logoutlink').click(function (e) {
-      if (confirm('Are you sure that you want to logout from the application?')) {
-        e.preventDefault();
-        OB.POS.logout();
-      }
-    });    
- 
+
     // Hack focus captured by location bar in android browser.
     (function () {
       var locationwarning = true;
