@@ -231,6 +231,7 @@ public class OrderLoader {
     // Create invoice tax lines
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     Iterator<String> itKeys = taxes.keys();
+    int i = 0;
     while (itKeys.hasNext()) {
       String taxId = (String) itKeys.next();
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
@@ -241,6 +242,8 @@ public class OrderLoader {
       invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")));
       invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
       invoiceTax.setInvoice(invoice);
+      invoiceTax.setLineNo((long) ((i + 1) * 10));
+      i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
 
@@ -324,6 +327,7 @@ public class OrderLoader {
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
     Iterator<String> itKeys = taxes.keys();
+    int i = 0;
     while (itKeys.hasNext()) {
       String taxId = (String) itKeys.next();
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
@@ -334,6 +338,8 @@ public class OrderLoader {
       orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")));
       orderTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")));
       orderTax.setSalesOrder(order);
+      orderTax.setLineNo((long) ((i + 1) * 10));
+      i++;
       order.getOrderTaxList().add(orderTax);
     }
   }
