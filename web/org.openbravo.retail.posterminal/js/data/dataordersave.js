@@ -17,9 +17,11 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
       this.proc.exec({
         order: this.receipt.serializeToJSON()
       }, function (data, message) {
-        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-//        console.log(JSON.stringify(data));
-//        console.log(JSON.stringify(message));
+        if (data && data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
+        } else {  
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+        }
       });
 
     }, this);
