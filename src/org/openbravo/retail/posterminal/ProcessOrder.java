@@ -39,6 +39,10 @@ public class ProcessOrder extends JSONProcessSimple {
     if (jsonorder instanceof JSONObject) {
       array = new JSONArray();
       array.put(jsonorder);
+    } else if (jsonorder instanceof String) {
+      JSONObject obj = new JSONObject((String) jsonorder);
+      array = new JSONArray();
+      array.put(obj);
     } else if (jsonorder instanceof JSONArray) {
       array = (JSONArray) jsonorder;
     }

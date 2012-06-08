@@ -41,6 +41,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.model.ad.access.InvoiceLineTax;
+import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -201,6 +203,16 @@ public class OrderLoader {
       line.setInvoice(invoice);
       line.setSalesOrderLine(lineReferences.get(i));
       invoice.getInvoiceLineList().add(line);
+
+      InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);
+      tax.setLineNo((long) ((i + 1) * 10));
+      tax.setTax(line.getTax());
+      tax.setTaxableAmount(line.getLineNetAmount());
+      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
+      tax.setInvoice(invoice);
+      tax.setInvoiceLine(line);
+      line.getInvoiceLineTaxList().add(tax);
+      invoice.getInvoiceLineTaxList().add(tax);
     }
 
   }
@@ -223,7 +235,7 @@ public class OrderLoader {
     invoice.setPaymentMethod(order.getBusinessPartner().getPaymentMethod());
     invoice.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
     invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+    invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
     invoice.setTotalPaid(BigDecimal.ZERO);
     invoice.setOutstandingAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))));
     invoice.setDueAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))));
@@ -298,8 +310,18 @@ public class OrderLoader {
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
-
       order.getOrderLineList().add(orderline);
+
+      OrderLineTax tax = OBProvider.getInstance().get(OrderLineTax.class);
+      tax.setLineNo((long) ((i + 1) * 10));
+      tax.setTax(orderline.getTax());
+      tax.setTaxableAmount(orderline.getLineNetAmount());
+      tax.setTaxAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("taxAmount")));
+      tax.setSalesOrder(order);
+      tax.setSalesOrderLine(orderline);
+      orderline.getOrderLineTaxList().add(tax);
+      order.getOrderLineTaxList().add(tax);
+
     }
   }
 
@@ -317,7 +339,7 @@ public class OrderLoader {
     order.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
     order.setInvoiceTerms(order.getBusinessPartner().getInvoiceTerms());
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
-    order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
+    order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
 
     order.setSalesTransaction(true);
     order.setDocumentStatus("CO");
