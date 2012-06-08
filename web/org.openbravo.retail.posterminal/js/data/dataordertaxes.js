@@ -19,7 +19,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
          len = lines.length,
          db = OB.DATA.OfflineDB,
          sql = 'select * from c_tax where c_taxcategory_id = ? and c_bp_taxcategory_id ' + (bpTaxCategory === null ? ' is null ' : ' = ? ') + ' order by idx',
-         taxes = {};
+         taxes = {},
+         totalnet = OB.DEC.Zero;
 
      db.readTransaction(function (tx) {
        _.each(lines.models, function (element, index, list) {
@@ -46,8 +47,10 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
            taxId = taxRate.c_tax_id;
 
            element.set('taxId', taxId);
+           element.set('taxAmount', amount);
            element.set('net', net);
            element.set('pricenet', pricenet);
+           totalnet = OB.DEC.add(totalnet, net);
 
            if(taxes[taxId]) {
              taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
@@ -63,8 +66,11 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
            window.console.error(arguments);
          });
        });
+       
+       
      }, function () {}, function () {
        r.set('taxes', taxes);
+       r.set('net', totalnet);
        r.trigger('closed');
        modelorderlist.deleteCurrent();
      });
