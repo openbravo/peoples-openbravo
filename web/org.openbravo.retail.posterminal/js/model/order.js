@@ -1,4 +1,4 @@
-/*global define,Backbone,localStorage */
+/*global define,_,Backbone,localStorage */
 
 define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
 
@@ -458,8 +458,6 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
         });
       }
 
-      console.dir(jsonorder);
-      console.log(JSON.stringify(jsonorder));
       return jsonorder;
     }
   });
