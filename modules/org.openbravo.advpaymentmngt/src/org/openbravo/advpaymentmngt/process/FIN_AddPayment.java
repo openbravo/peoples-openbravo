@@ -580,7 +580,7 @@ public class FIN_AddPayment {
       throws ServletException {
 
     String strSelectedRecords = "";
-    if (!"".equals(strSelectedPaymentDetails)) {
+    if (!"".equals(strSelectedPaymentDetails) && strSelectedPaymentDetails != null) {
       strSelectedRecords = strSelectedPaymentDetails;
       strSelectedRecords = strSelectedRecords.replace("(", "");
       strSelectedRecords = strSelectedRecords.replace(")", "");
@@ -605,7 +605,8 @@ public class FIN_AddPayment {
             .contains(FIN_PaymentScheduleDetails[i])) ? FIN_PaymentScheduleDetails[i].getId() : "";
         // If selectedId belongs to a grouping selection calculate whether it should be selected or
         // not
-        if (!"".equals(selectedId) && !"".equals(strSelectedPaymentDetails)) {
+        if (!"".equals(selectedId) && !"".equals(strSelectedPaymentDetails)
+            && strSelectedPaymentDetails != null) {
           StringTokenizer records = new StringTokenizer(strSelectedRecords, "'");
           Set<String> recordSet = new LinkedHashSet<String>();
           while (records.hasMoreTokens()) {
