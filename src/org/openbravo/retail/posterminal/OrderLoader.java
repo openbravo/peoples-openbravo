@@ -69,6 +69,7 @@ public class OrderLoader {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
+  HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
@@ -189,6 +190,15 @@ public class OrderLoader {
     return docType;
   }
 
+  protected DocumentType getShipmentDocumentType(Organization org) {
+    if (shipmentDocTypes.get(DalUtil.getId(org)) != null) {
+      return shipmentDocTypes.get(DalUtil.getId(org));
+    }
+    final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_MatShipment);
+    shipmentDocTypes.put((String) DalUtil.getId(org), docType);
+    return docType;
+  }
+
   protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
 
@@ -285,6 +295,7 @@ public class OrderLoader {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     fillBobFromJSON(shpEntity, shipment, jsonorder);
 
+    shipment.setDocumentType(getShipmentDocumentType(order.getOrganization()));
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
     shipment.setSalesTransaction(true);
@@ -292,6 +303,7 @@ public class OrderLoader {
     shipment.setDocumentAction("--");
     shipment.setMovementType("C-");
     shipment.setProcessNow(false);
+    shipment.setProcessed(true);
     shipment.setSalesOrder(order);
 
   }
