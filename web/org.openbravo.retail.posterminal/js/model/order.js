@@ -460,7 +460,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
 
       console.dir(jsonorder);
       console.log(JSON.stringify(jsonorder));
-      return JSON.stringify(jsonorder);
+      return jsonorder;
     }
   });
 
