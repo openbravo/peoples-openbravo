@@ -50,7 +50,6 @@
       v_TaxBaseAmount:=p_LineNetAmt;
     ELSIF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
        v_TaxBaseAmount:=p_AlternateTaxBaseAmt;
-       --RAISE EXCEPTION 'BaseAmount % not supported',v_BaseAmount;
     END IF;
     IF (v_TaxBaseAmount IS NULL) THEN
       v_TaxBaseAmount:=0;
