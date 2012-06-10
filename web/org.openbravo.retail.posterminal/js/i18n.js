@@ -81,9 +81,9 @@ define(['utilities'], function () {
 
 
     // Point of sale window
-    'OBPOS_LogoutDialogTitle': 'You may still have pending unsaved changes.<br />What do you want to do?',
-    'OBPOS_LogoutDialogLogout': 'Logout and lose unsaved changes',
-    'OBPOS_LogoutDialogLock': 'Lock terminal',
+    'OBPOS_LogoutDialogText': 'You may have tickets pending which will be deleted when you log out.\nAre you sure you want to log out?',
+    'OBPOS_LogoutDialogLogout': 'Log Out',
+    'OBPOS_LogoutDialogLock': 'Lock Screen',
     'OBPOS_LogoutDialogCancel': 'Cancel',
 
     'OBPOS_MsgConfirmDelete': 'Do you really want to delete the current receipt?',

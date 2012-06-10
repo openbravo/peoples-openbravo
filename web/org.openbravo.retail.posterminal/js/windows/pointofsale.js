@@ -5,7 +5,7 @@ define(['builder', 'i18n',
         'model/terminal', 'model/order',
         'components/commonbuttons', 'components/hwmanager',
         'windows/posbuttons',
-        'components/modalreceipts', 'components/modalbps',
+        'components/modalreceipts', 'components/modalbps', 'components/modallogout',
         'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
         'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
         ], function (B) {
@@ -36,6 +36,7 @@ define(['builder', 'i18n',
 
           {kind: OB.COMP.ModalBPs},
           {kind: OB.COMP.ModalReceipts},
+          {kind: OB.COMP.ModalLogout},
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
@@ -113,12 +114,6 @@ define(['builder', 'i18n',
 
         ], init: function () {
           this.context.on('domready', function () {
-            //Set Logout Dialog texts
-            $("#logoutDialogTitle").html(OB.I18N.getLabel('OBPOS_LogoutDialogTitle'));
-            $("#logoutDialogLogout").html(OB.I18N.getLabel('OBPOS_LogoutDialogLogout'));
-            $("#logoutDialogLock").html(OB.I18N.getLabel('OBPOS_LogoutDialogLock'));
-            $("#logoutDialogCancel").html(OB.I18N.getLabel('OBPOS_LogoutDialogCancel'));
-
             //Add initial empty order
             this.context.modelorderlist.addNewOrder();
           }, this);

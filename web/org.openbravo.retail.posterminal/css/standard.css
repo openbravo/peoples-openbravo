@@ -285,3 +285,41 @@ div.clock-date {
   margin: 10px;
 }
 
+div.modal-logout {
+  background: #6cb33f;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+div.modal-logout-header {
+  border: none;
+}
+
+h3.modal-logout-header-text {
+  text-align: center;
+  font-size: 225%;
+  font-weight: bold;
+  padding-top: 10px;
+  color: white;
+}
+
+div.modal-logout-content-text {
+  text-align: center;
+  font-size: 120%;
+  padding-top: 10px;
+  line-height: 200%;
+  padding: 0px 0px 30px 0px;
+  color: white;
+}
+
+button.modal-logout-content-button {
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+  background-color: white;
+  color: #72B446;
+  padding: 8px 0px 10px 0px;
+  margin: 0px 20px 0px 20px;
+  width: 115px;
+}

@@ -73,21 +73,7 @@ if(userId == null){
           </div>
           <div style="display: inline-block; font-weight: bold; float:right">
             <span>Openbravo Point of Sale</span>&nbsp;
-            <a data-toggle="modal" id="logoutlink" href="#logoutModal" class=""><i class="icon-off icon-white"></i></a>
-            <div class="modal hide" id="logoutModal">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">X</button>
-                <h3 style="color: black;" id="logoutDialogTitle"></h3>
-              </div>
-              <div class="modal-body" style="text-align: center;">
-                <br />
-                <a href="#" class="btn btn-danger" id="logoutDialogLogout" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
-                <br /><br /><br /><br />
-                <a href="#" class="btn btn-primary" id="logoutDialogLock" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
-                <br /><br /><br /><br />
-                <a href="#" class="btn" id="logoutDialogCancel" style="height: 30px; width: 500px; font-size: 150%; padding-top: 10px;" data-dismiss="modal"></a>
-              </div>
-            </div>
+            <a data-toggle="modal" id="logoutlink" href="#logoutDialog" class=""><i class="icon-off icon-white"></i></a>
           </div>
         </div>
       </div>
