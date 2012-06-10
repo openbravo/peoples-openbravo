@@ -17,7 +17,6 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       theModal.addClass('modal-logout');
       theHeader.addClass('modal-logout-header');
       theHeaderText.addClass('modal-logout-header-text');
-      setTimeout(function() { theHeaderText.addClass('modal-logout-header-text'); }, 2000);
     },
     getContentView: function () {
       return (
