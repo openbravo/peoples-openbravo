@@ -87,6 +87,7 @@ if(userId == null){
 
   <script src="../org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
   <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/Application"></script>
+  <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/Labels"></script>
 
   <script src="js/libs/jquery-1.7.2.js"></script>
   <script src="js/libs/underscore-1.3.3.js"></script>
