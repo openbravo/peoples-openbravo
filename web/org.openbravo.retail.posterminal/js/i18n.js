@@ -182,7 +182,7 @@ define(['utilities'], function () {
     var curr_hour = d.getHours();
     var curr_min = d.getMinutes();
     var curr_sec = d.getSeconds();
-    return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month, 2) + '/' + curr_year;
+    return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month + 1, 2) + '/' + curr_year;
   };
 
   OB.I18N.formatHour = function (d) {
@@ -194,7 +194,4 @@ define(['utilities'], function () {
     var curr_sec = d.getSeconds();
     return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min, 2);
   };
-
-
-
 });
