@@ -147,7 +147,7 @@ define(['builder', 'i18n', 'components/clock',
               return true;
             }
             function setCompanyLogo(jsonCompanyLogo) {
-              var logoUrl = [],
+              var logoUrl = [];
               jsonCompanyLogo = jsonCompanyLogo.response[0].data;
               $.each(jsonCompanyLogo, function(k,v){
                 logoUrl.push(v.logoUrl);

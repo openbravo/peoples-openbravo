@@ -14,7 +14,7 @@ define([], function () {
       mycontext[inst._id] = inst;
     }
 
-    var i, max, child;
+    var i, j, max, child;
 
     // attributes
     if (b.attr && inst.attr) {
@@ -28,11 +28,11 @@ define([], function () {
         if (typeof (child) === 'string') {
           if (child.indexOf('\n') !== -1) { // To allow introduce carriage returns using "\n" in labels
             child = child.split('\n');
-            for (var i=0; i < child.length; i++) {
+            for (j = 0; j < child.length; j++) {
               inst.append(B({
-                kind: B.KindText(child[i])
+                kind: B.KindText(child[j])
               }, mycontext));
-              if (i < child.length-1) {
+              if (j < child.length-1) {
                 inst.append(B({
                   kind: B.KindHTML('<br />')
                 }, mycontext));

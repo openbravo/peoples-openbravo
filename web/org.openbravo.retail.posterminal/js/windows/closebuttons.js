@@ -82,7 +82,7 @@ _id: 'okbutton',
         this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
       }
       return this;
-    },
+    }
   });
   OB.COMP.ButtonEdit =OB.COMP.Button.extend({
 _id: 'editbutton',
@@ -106,7 +106,7 @@ _id: 'editbutton',
         this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
       }
       return this;
-    },
+    }
   });
 
 
