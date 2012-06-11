@@ -32,7 +32,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
               {kind: B.KindJQuery('span'), content: [
                 OB.I18N.getLabel('OBPOS_User')
               ]},
-              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
                 ctx.user._identifier
               ]}
             ]},
@@ -40,7 +40,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
               {kind: B.KindJQuery('span'), content: [
                 OB.I18N.getLabel('OBPOS_Role')
               ]},
-              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
                 ctx.role._identifier
               ]}
             ]}
@@ -85,7 +85,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('span'), content: [
               OB.I18N.getLabel('OBPOS_CompanyClient')
             ]},
-            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
               clientname
             ]}
           ]},
@@ -93,7 +93,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('span'), content: [
               OB.I18N.getLabel('OBPOS_CompanyOrg')
             ]},
-            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
               orgname
             ]}
           ]},
@@ -101,7 +101,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('span'), content: [
               OB.I18N.getLabel('OBPOS_CompanyPriceList')
             ]},
-            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
               pricelistname
             ]}
           ]},
@@ -109,7 +109,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('span'), content: [
               OB.I18N.getLabel('OBPOS_CompanyCurrency')
             ]},
-            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
               currencyname
             ]}
           ]},
@@ -117,7 +117,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('span'), content: [
               OB.I18N.getLabel('OBPOS_CompanyLocation')
             ]},
-            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold;'}, content: [
+            {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
               locationname
             ]}
           ]}

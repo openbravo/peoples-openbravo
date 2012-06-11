@@ -209,6 +209,15 @@
     background-color: #e2e2e2;
     color: black;    
   }   
+
+  .btn-icon-left {
+    margin: 2px 5px 0px 0px;
+  }
+
+  .btn-icon-right {
+    margin: 2px 0px 0px 5px;
+  }
+
   
   ul.nav-pos:after {
     clear: both;

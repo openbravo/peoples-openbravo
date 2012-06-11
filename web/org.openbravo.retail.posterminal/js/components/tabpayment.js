@@ -12,7 +12,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       this.$el.attr('href', '#payment');
       this.$el.append(B(
         {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width:100px;'}, content: [
-          {kind: B.KindJQuery('span'), attr: {'style': 'font-weight: bold'}, content: [
+          {kind: B.KindJQuery('span'), attr: {'style': 'font-weight: bold; margin: 0px 5px 0px 0px;'}, content: [
             {kind: OB.COMP.Total}
           ]},
           {kind: B.KindJQuery('span'), content: [

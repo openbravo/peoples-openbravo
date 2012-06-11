@@ -51,7 +51,7 @@ define(['builder', 'i18n',
                   {kind: OB.COMP.ButtonPrint}
                 ]},
                 {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.MenuButton.extend({icon: 'icon-th-large icon-white', label: OB.I18N.getLabel('OBPOS_LblMenu')}), content: [
+                  {kind: OB.COMP.MenuButton.extend({icon: 'icon-th-large icon-white btn-icon-left', label: OB.I18N.getLabel('OBPOS_LblMenu')}), content: [
                     {kind: OB.COMP.MenuReturn},
                     {kind: OB.COMP.MenuSeparator},
                     {kind: OB.COMP.MenuItem.extend({href:'../..', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},

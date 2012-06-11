@@ -6,8 +6,8 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.ButtonPrev = OB.COMP.ToolbarButton.extend({
-_id: 'closeprevbutton',
-    icon: 'icon-chevron-left icon-white',
+    _id: 'closeprevbutton',
+    icon: 'icon-chevron-left icon-white btn-icon-left',
     label: OB.I18N.getLabel('OBPOS_LblPrevStep'),
     clickEvent: function (e) {
     if(this.options.modeldaycash.defaults.step===2){
@@ -26,8 +26,8 @@ _id: 'closeprevbutton',
   });
 
   OB.COMP.ButtonNext = OB.COMP.ToolbarButton.extend({
-_id: 'closenextbutton',
-    iconright: 'icon-chevron-right icon-white',
+    _id: 'closenextbutton',
+    iconright: 'icon-chevron-right icon-white btn-icon-right',
     label: OB.I18N.getLabel('OBPOS_LblNextStep'),
 
     clickEvent: function (e) {

@@ -9,13 +9,13 @@ define(['utilities'], function () {
 
   // Hardcoded US labels.
   OB.I18N.labels = {
-    'OBPOS_CompanyClient': 'Client: ',
-    'OBPOS_CompanyOrg': 'Organization: ',
-    'OBPOS_CompanyPriceList': 'Price list: ',
-    'OBPOS_CompanyCurrency': 'Currency: ',
-    'OBPOS_CompanyLocation': 'Location: ',
-    'OBPOS_User': 'User: ',
-    'OBPOS_Role': 'Role: ',
+    'OBPOS_CompanyClient': 'Client:',
+    'OBPOS_CompanyOrg': 'Organization:',
+    'OBPOS_CompanyPriceList': 'Price list:',
+    'OBPOS_CompanyCurrency': 'Currency:',
+    'OBPOS_CompanyLocation': 'Location:',
+    'OBPOS_User': 'User:',
+    'OBPOS_Role': 'Role:',
 
     'OBPOS_WelcomeMessage': 'Welcome to Openbravo POS',
     'OBPOS_NoLineSelected': 'There is no line selected',
@@ -60,7 +60,7 @@ define(['utilities'], function () {
 
     'OBPOS_SearchNoResults': 'No results',
     'OBPOS_SearchAllCategories': '(All categories)',
-    'OBPOS_SearchButtonSearch': ' Search',
+    'OBPOS_SearchButtonSearch': 'Search',
 
     'OBPOS_PaymentsEmpty': 'No payments',
     'OBPOS_PaymentsRemaining': ' remaining to pay. ',
@@ -90,14 +90,14 @@ define(['utilities'], function () {
     'OBPOS_LblAssignCustomer': 'Assign a customer to this receipt',
     'OBPOS_LblAssignReceipt': 'Receipts',
 
-    'OBPOS_LblNew': ' NEW',
-    'OBPOS_LblDelete': ' DELETE',
-    'OBPOS_LblPrint': ' PRINT',
-    'OBPOS_LblMenu': ' MENU',
+    'OBPOS_LblNew': 'NEW',
+    'OBPOS_LblDelete': 'DELETE',
+    'OBPOS_LblPrint': 'PRINT',
+    'OBPOS_LblMenu': 'MENU',
     'OBPOS_LblOpenbravoWorkspace': 'Openbravo Workspace',
     'OBPOS_LblReturn': 'Return this receipt',
     'OBPOS_LblCloseCash': 'Cash up',
-    'OBPOS_LblPay': ' PAY',
+    'OBPOS_LblPay': 'PAY',
     'OBPOS_LblBrowse': 'BROWSE',
     'OBPOS_LblSearch': 'SEARCH',
     'OBPOS_LblScan': 'SCAN',
@@ -107,8 +107,8 @@ define(['utilities'], function () {
     'OBPOS_LblCountCash': 'Count Cash',
     'OBPOS_LblPendingReceipts': 'Pending Receipts',
 
-    'OBPOS_LblNextStep': 'Next ',
-    'OBPOS_LblPrevStep': ' Previous',
+    'OBPOS_LblNextStep': 'Next',
+    'OBPOS_LblPrevStep': 'Previous',
     'OBPOS_LblCancel': 'Cancel',
     	
     	

@@ -38,7 +38,7 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
             {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'}, content: [
                 {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
-                  {kind: B.KindJQuery('i'), attr: {'class': 'icon-search'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
+                  {kind: B.KindJQuery('i'), attr: {'class': 'icon-search btn-icon-left'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
                 ], init: function () {
                   this.$el.click(function (e) {
                     e.preventDefault();
