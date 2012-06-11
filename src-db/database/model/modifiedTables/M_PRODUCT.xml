@@ -1,29 +1,14 @@
 <?xml version="1.0"?>
   <database name="MODIFIED TABLE M_PRODUCT">
     <table name="M_PRODUCT" primaryKey="M_PRODUCT_KEY">
-      <column name="EM_OBPOS_PRODUCTAUX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="EM_OBPOS_SCALE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="EM_OBPOS_ATTRIBUTES" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="EM_OBPOS_LINE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <column name="EM_OBPOS_CATALOG" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="M_PRODUCT" name="EM_OBPOS_PRODUCTAUX">
-        <reference local="EM_OBPOS_PRODUCTAUX_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <check name="EM_OBPOS_CATALOG_CHK"><![CDATA[EM_OBPOS_CATALOG IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_SCALE_CHK"><![CDATA[EM_OBPOS_SCALE IN ('Y', 'N')]]></check>
     </table>

@@ -18,6 +18,6 @@ public class Product extends ProcessHQLQuery {
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "select p as product, img.bindaryData as img "
         + "from Product p left outer join p.image img "
-        + "where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.obposLine, p.name";
+        + "where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.name";
   }
 }

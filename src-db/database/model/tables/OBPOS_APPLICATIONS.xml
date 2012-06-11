@@ -61,10 +61,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_PRODUCT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -108,9 +104,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="OBPOS_APP_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="OBPOS_APP_PRODUCT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="OBPOS_APP_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
