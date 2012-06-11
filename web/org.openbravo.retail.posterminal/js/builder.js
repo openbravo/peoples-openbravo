@@ -26,9 +26,24 @@ define([], function () {
       for (i = 0, max = b.content.length; i < max; i++) {
         child = b.content[i];
         if (typeof (child) === 'string') {
-          inst.append(B({
-            kind: B.KindText(child)
-          }, mycontext));
+          if (child.indexOf('\n') !== -1) { // To allow introduce carriage returns using "\n" in labels
+            child = child.split('\n');
+            for (var i=0; i < child.length; i++) {
+              console.log(child[i]);
+              inst.append(B({
+                kind: B.KindText(child[i])
+              }, mycontext));
+              if (i < child.length-1) {
+                inst.append(B({
+                  kind: B.KindHTML('<br />')
+                }, mycontext));
+              }
+            }
+          } else {
+            inst.append(B({
+              kind: B.KindText(child)
+            }, mycontext));
+          }
         } else if (child.kind) {
           inst.append(B(child, mycontext));
         } else {
