@@ -84,15 +84,17 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
                 {kind: B.KindJQuery('div'), id: 'coinscontainer', content: [
                 ]},
                 {kind: B.KindJQuery('div'), id: 'doneaction', content: [
-                      {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink', 'style': 'font-size: 150%; font-weight: bold; float: right;'}, content: [
-                        OB.I18N.getLabel('OBPOS_LblDone')
-                      ], init: function () {
-                           this.$el.click(function (e) {
-                             e.preventDefault();
-                             me.receipt.trigger('taxes', me.modelorderlist);
-                           });
-                        }
-                      }
+                  {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink', 'style': 'font-size: 150%; font-weight: bold; float: right;'}, content: [
+                    OB.I18N.getLabel('OBPOS_LblDone')
+                  ], init: function () {
+                    this.$el.click(function (e) {
+                       e.preventDefault();
+                       me.receipt.calculateTaxes(function () {
+                         me.receipt.trigger('closed');
+                         me.modelorderlist.deleteCurrent();                               
+                      });
+                    });
+                  }}
                 ]}
               ]}
             ]}

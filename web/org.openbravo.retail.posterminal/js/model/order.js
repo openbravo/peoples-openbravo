@@ -82,6 +82,12 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
     },
+    
+    calculateTaxes : function (callback) {
+      if (callback) {
+        callback();
+      }
+    },
 
     getTotal: function () {
       return this.getGross();
