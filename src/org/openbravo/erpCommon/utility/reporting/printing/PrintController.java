@@ -1203,11 +1203,14 @@ public class PrintController extends HttpSecureAppServlet {
     // sales Rep. to choose one of the 3 possibilities
     // 1.- n customer n sales rep (hide "To" and "Reply-to" inputs)
     // 2.- n customers 1 sales rep (hide "To" input)
-    // 3.- Otherwise show both
+    // 3.- 1 customes n sales rep (hide Reply-to inputs)
+    // 4.- Otherwise show both
     if (moreThanOneCustomer && moreThanOnesalesRep) {
       discard = new String[] { "to", "to_bottomMargin", "replyTo", "replyTo_bottomMargin" };
     } else if (moreThanOneCustomer) {
       discard = new String[] { "to", "to_bottomMargin", "multSalesRep", "multSalesRepCount" };
+    } else if (moreThanOnesalesRep) {
+      discard = new String[] { "replyTo", "replyTo_bottomMargin" };
     } else {
       discard = new String[] { "multipleCustomer", "multipleCustomer_bottomMargin" };
     }
