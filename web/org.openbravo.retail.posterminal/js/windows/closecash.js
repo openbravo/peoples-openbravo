@@ -6,7 +6,10 @@ define(['builder', 'i18n', 'data/datamaster',
         'windows/closebuttons',
         'windows/closeinfo',
         'windows/closekeyboard',
-        'windows/tabpendingreceipts', 'windows/tabcountcash', 'windows/tabpostprintclose', 'windows/closekeyboard', 'components/listpaymentmethod'
+        'windows/tabpendingreceipts', 
+        'windows/tabcountcash', 'windows/tabpostprintclose', 
+        'windows/closekeyboard', 'components/listpaymentmethod'
+        
         ], function (B) {
 
   OB = window.OB || {};
@@ -41,6 +44,8 @@ define(['builder', 'i18n', 'data/datamaster',
 //              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
             ]}
           ]},
+          
+          
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [

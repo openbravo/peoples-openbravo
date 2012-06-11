@@ -38,27 +38,12 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n' ], function (B) {
 
                   ]}
                 ]},
-
-
-              {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
-                   {kind: OB.COMP.ListPaymentMethods, attr:{
-                     renderLine:function (model) {
-                       return (
-                         {kind: B.KindJQuery('button'), attr: {'class': 'btnselect'}, content: [
-                           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [
-                             {kind: OB.UTIL.Thumbnail, attr: {img: model.get('img')}}
-                           ]},
-                           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [
-                             model.get('methodType')._identifier
-                           ]},
-                           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
-                         ]}
-                       );
-                     }
-                   }}
-                 ]}
-               ]},
+				{kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [                                                                                      
+                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [                                                                             
+                   {kind: OB.COMP.ListPaymentMethods}             
+                   
+                 ]}        
+               ]}
 
 
 

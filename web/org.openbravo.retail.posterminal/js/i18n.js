@@ -109,7 +109,22 @@ define(['utilities'], function () {
 
     'OBPOS_LblNextStep': 'Next ',
     'OBPOS_LblPrevStep': ' Previous',
-    'OBPOS_LblCancel': 'Cancel'
+    'OBPOS_LblCancel': 'Cancel',
+    	
+    	
+    // Cash management window
+    'OBPOS_LblDepositsDrops': 'Cash Deposits and Drops',
+    'OBPOS_LblDepositsDropsMsg': 'Drop or deposit cash using the numerical pad and tap Done to complete',
+
+    'OBPOS_LblDoneStep': 'Done',
+    'OBPOS_LblStartCash': ' Starting cash',
+    'OBPOS_LblTotalCash': 'Total cash tendered today',
+    'OBPOS_LblTotalCash': 'Avaulable in cash',
+    'OBPOS_LblDepositCash': 'Deposit Cash',
+    'OBPOS_LblDropCash': 'Drop Cash',
+    'OBPOS_LblDepositVoucher': 'Deposit Voucher',
+    'OBPOS_LblDrop Voucher': 'Drop Voucher'
+    	
   };
 
 
