@@ -12,13 +12,16 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 -->
 // jslint
+
+OB = window.OB || {};
+OB.I18N = window.OB.I18N || {};
 
 OB.I18N.labels = {
 <#list data.labels as label>
@@ -49,7 +52,7 @@ OB.I18N.getLabel = function(key, params, object, property) {
         }
     }
     if (object && property) {
-      if (isc.isA.Function(object[property])) {
+      if (isc && isc.isA.Function(object[property])) {
         object[property](label);
       } else {
         object[property] = label;
