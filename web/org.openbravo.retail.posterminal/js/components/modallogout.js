@@ -21,7 +21,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     getContentView: function () {
       return (
         {kind: B.KindJQuery('div'), attr: {'class': 'modal-body', 'style': 'text-align: center;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-logout-content-text'}, content: [{kind: B.KindHTML(OB.I18N.getLabel('OBPOS_LogoutDialogText'))}]},
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-logout-content-text'}, content: [OB.I18N.getLabel('OBPOS_LogoutDialogText')]},
           {kind: OB.COMP.LogoutDialogLogout},
           {kind: OB.COMP.LogoutDialogLock},
           {kind: OB.COMP.LogoutDialogCancel}

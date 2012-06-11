@@ -81,7 +81,7 @@ define(['utilities'], function () {
 
 
     // Point of sale window
-    'OBPOS_LogoutDialogText': '<span>You may have tickets pending which will be deleted when you log out.<br/>Are you sure you want to log out?</span>',
+    'OBPOS_LogoutDialogText': 'You may have tickets pending which will be deleted when you log out.\nAre you sure you want to log out?',
     'OBPOS_LogoutDialogLogout': 'Log Out',
     'OBPOS_LogoutDialogLock': 'Lock Screen',
     'OBPOS_LogoutDialogCancel': 'Cancel',
