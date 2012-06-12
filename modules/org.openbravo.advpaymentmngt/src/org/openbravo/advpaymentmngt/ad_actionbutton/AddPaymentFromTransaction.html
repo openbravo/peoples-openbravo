@@ -627,12 +627,12 @@ function displayMulticurrencyControls() {
 
 function currencyOnChange() {
   if( isPaymentMethodMulticurrency() ) {
-    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ')
+    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
     loadGridList();
     return refreshExchangeRate();
   } else {
     // Reset currency
-    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ');
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
     selectCombo(document.getElementById('paramCurrencyId'), document.getElementById('paramFinancialAccountCurrencyId').value);
     document.getElementById('paramExchangeRate').value='1';
     updateConvertedAmounts();
@@ -718,6 +718,7 @@ function onLoadDo(){
   displayLogicElement('sectionDifference', false);
   displayLogicElement('sectionDifferenceBox', false);
   displayLogicForCredit();
+  currencyOnChange();
   displayMulticurrencyControls();
 
   resizeAreaCreateFrom();
