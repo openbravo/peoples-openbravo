@@ -52,7 +52,7 @@ OB.I18N.getLabel = function(key, params, object, property) {
         }
     }
     if (object && property) {
-      if (isc && isc.isA.Function(object[property])) {
+      if (Object.prototype.toString.call(object[property]) === '[object Function]') {
         object[property](label);
       } else {
         object[property] = label;
