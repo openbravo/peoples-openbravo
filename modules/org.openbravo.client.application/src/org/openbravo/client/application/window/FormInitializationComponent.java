@@ -1435,7 +1435,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     try {
       Context cx = Context.enter();
-      cx.setOptimizationLevel(-1);
       Scriptable scope = cx.initStandardObjects();
       cx.evaluateString(scope, resp, "<cmd>", 1, null);
       NativeArray array = (NativeArray) scope.get("respuesta", scope);
