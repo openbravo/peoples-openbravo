@@ -484,6 +484,8 @@ function updateTotal() {
 
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
+  var distributedAmount = 0;
+  var keepSelection = false;
   var chk = frm.inpScheduledPaymentDetailId;
   var scheduledPaymentDetailId, outstandingAmount, j, i;
   if (isGLItemEnabled) {
@@ -506,13 +508,25 @@ function distributeAmount(_amount) {
       }
     }
     frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
-    if (!chk.checked) {
+    if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
       chk.checked = true;
       updateData(chk.value, chk.checked);
     }
   } else {
     var total = chk.length;
     for (i = 0; i < total; i++) {
+      if (chk[i].checked) {
+        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
+    }
+    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+      amount = subtract(amount, distributedAmount);
+      keepSelection = true;
+    }
+    for (i = 0; i < total; i++) {
+      if (chk[i].checked && keepSelection) {
+        continue;
+      }
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
       if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {

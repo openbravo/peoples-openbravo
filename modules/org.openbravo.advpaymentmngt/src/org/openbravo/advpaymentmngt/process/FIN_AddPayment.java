@@ -138,9 +138,9 @@ public class FIN_AddPayment {
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
     final FIN_Payment payment;
-    if (_payment != null)
+    if (_payment != null) {
       payment = _payment;
-    else {
+    } else {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
           paymentCurrency, finTxnConvertRate, finTxnAmount);
@@ -151,8 +151,9 @@ public class FIN_AddPayment {
       }
     }
 
-    for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())
+    for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
+    }
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     OBContext.setAdminMode();
@@ -160,36 +161,106 @@ public class FIN_AddPayment {
       for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
         // Payment Schedule Detail already linked to a payment detail.
         OBDal.getInstance().refresh(paymentScheduleDetail);
-        if (paymentScheduleDetail.getPaymentDetails() != null) {
+        if (paymentScheduleDetail.getPaymentDetails() != null
+            && !paymentScheduleDetail.getPaymentDetails().getFinPayment().getId()
+                .equals(payment.getId())) {
+          // If payment schedule detail belongs to a different payment
           throw new OBException(String.format(FIN_Utility.messageBD("APRM_PsdInSeveralPayments"),
               paymentScheduleDetail.getIdentifier()));
+        } else if (paymentScheduleDetail.getPaymentDetails() != null
+            && paymentScheduleDetail.getPaymentDetails().getFinPayment().getId()
+                .equals(payment.getId())) {
+          // Detail for this payment already exists. Payment being edited
+          BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts
+              .get(paymentScheduleDetail.getId());
+          // If amount has changed payment schedule details needs to be updated. Aggregate amount
+          // coming from unpaid schedule detail which remains unpaid
+          if (paymentScheduleDetail.getAmount().compareTo(paymentDetailAmount) != 0) {
+            // update Amounts as they have changed
+            assignedAmount = assignedAmount.subtract(paymentScheduleDetail.getPaymentDetails()
+                .getAmount());
+            assignedAmount = assignedAmount.add(paymentDetailAmount);
+            // update detail with the new value
+            List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
+            BigDecimal difference = paymentScheduleDetail.getAmount().subtract(paymentDetailAmount);
+            if (outStandingPSDs.size() == 0) {
+              if (!isWriteoff) {
+                // No outstanding PSD exists so one needs to be created for the difference
+                FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil
+                    .copy(paymentScheduleDetail, false);
+                outstandingPSD.setAmount(difference);
+                outstandingPSD.setPaymentDetails(null);
+                OBDal.getInstance().save(outstandingPSD);
+              } else {
+                // Set difference as writeoff
+                paymentScheduleDetail.setWriteoffAmount(difference);
+                OBDal.getInstance().save(paymentScheduleDetail);
+                paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(difference);
+                OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
+              }
+            } else {
+              if (!isWriteoff) {
+                // First make sure outstanding amount is not equal zero
+                if (outStandingPSDs.get(0).getAmount().add(difference).signum() == 0) {
+                  OBDal.getInstance().remove(outStandingPSDs.get(0));
+                } else {
+                  // update existing PD with difference
+                  outStandingPSDs.get(0).setAmount(
+                      outStandingPSDs.get(0).getAmount().add(difference));
+                  OBDal.getInstance().save(outStandingPSDs.get(0));
+                }
+              } else {
+                paymentScheduleDetail.setWriteoffAmount(difference.add(outStandingPSDs.get(0)
+                    .getAmount()));
+                OBDal.getInstance().save(paymentScheduleDetail);
+                paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
+                    difference.add(outStandingPSDs.get(0).getAmount()));
+                OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
+                OBDal.getInstance().remove(outStandingPSDs.get(0));
+              }
+            }
+            paymentScheduleDetail.setAmount(paymentDetailAmount);
+            OBDal.getInstance().save(paymentScheduleDetail);
+            paymentScheduleDetail.getPaymentDetails().setAmount(paymentDetailAmount);
+            OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
+          } else if (isWriteoff) {
+            List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
+            paymentScheduleDetail.setWriteoffAmount(outStandingPSDs.get(0).getAmount());
+            OBDal.getInstance().save(paymentScheduleDetail);
+            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
+                outStandingPSDs.get(0).getAmount());
+            OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
+            OBDal.getInstance().remove(outStandingPSDs.get(0));
+          }
+        } else {
+          BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts
+              .get(paymentScheduleDetail.getId());
+          // If detail to be added is zero amount, skip it
+          if (paymentDetailAmount.signum() == 0
+              && paymentScheduleDetail.getWriteoffAmount().signum() == 0) {
+            continue;
+          }
+          BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
+              paymentDetailAmount);
+          if (amountDifference.compareTo(BigDecimal.ZERO) != 0) {
+            if (!isWriteoff) {
+              dao.duplicateScheduleDetail(paymentScheduleDetail, amountDifference);
+              amountDifference = BigDecimal.ZERO;
+            } else
+              paymentScheduleDetail.setWriteoffAmount(amountDifference);
+            paymentScheduleDetail.setAmount(paymentDetailAmount);
+          }
+          assignedAmount = assignedAmount.add(paymentDetailAmount);
+          dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
+              amountDifference, false, null);
         }
-        BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts
-            .get(paymentScheduleDetail.getId());
-        // If detail to be added is zero amount, skip it
-        if (paymentDetailAmount.signum() == 0
-            && paymentScheduleDetail.getWriteoffAmount().signum() == 0) {
-          continue;
-        }
-        BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
-            paymentDetailAmount);
-        if (amountDifference.compareTo(BigDecimal.ZERO) != 0) {
-          if (!isWriteoff) {
-            dao.duplicateScheduleDetail(paymentScheduleDetail, amountDifference);
-            amountDifference = BigDecimal.ZERO;
-          } else
-            paymentScheduleDetail.setWriteoffAmount(amountDifference);
-          paymentScheduleDetail.setAmount(paymentDetailAmount);
-        }
-        assignedAmount = assignedAmount.add(paymentDetailAmount);
-        dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
-            amountDifference, false, null);
       }
+      // TODO: Review this condition !=0??
       if (assignedAmount.compareTo(payment.getAmount()) == -1) {
-        FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(payment
-            .getOrganization(), payment.getAmount().subtract(assignedAmount));
-        dao.getNewPaymentDetail(payment, refundScheduleDetail, payment.getAmount().subtract(
-            assignedAmount), BigDecimal.ZERO, false, null);
+        FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
+            payment.getOrganization(), payment.getAmount().subtract(assignedAmount));
+        dao.getNewPaymentDetail(payment, refundScheduleDetail,
+            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null);
       }
     } catch (final Exception e) {
       e.printStackTrace(System.err);
@@ -258,8 +329,8 @@ public class FIN_AddPayment {
       refundPayment = payment;
     else {
       refundPayment = (FIN_Payment) DalUtil.copy(payment, false);
-      String strDescription = Utility.messageBD(conProvider, "APRM_RefundPayment", vars
-          .getLanguage());
+      String strDescription = Utility.messageBD(conProvider, "APRM_RefundPayment",
+          vars.getLanguage());
       strDescription += ": " + payment.getDocumentNo();
       refundPayment.setDescription(strDescription);
       refundPayment.setGeneratedCredit(BigDecimal.ZERO);
@@ -276,8 +347,8 @@ public class FIN_AddPayment {
 
     setFinancialTransactionAmountAndRate(refundPayment, conversionRate, null);
 
-    FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(payment
-        .getOrganization(), refundAmount);
+    FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
+        payment.getOrganization(), refundAmount);
     dao.getNewPaymentDetail(refundPayment, refundScheduleDetail, refundAmount, BigDecimal.ZERO,
         true, null);
 
@@ -323,8 +394,9 @@ public class FIN_AddPayment {
             selectedPaymentScheduleDetailAmounts.get(paymentScheduleDetail.getId()));
 
       dao.getNewPaymentProposalDetail(paymentProposal.getOrganization(), paymentProposal,
-          paymentScheduleDetail, selectedPaymentScheduleDetailAmounts.get(paymentScheduleDetail
-              .getId()), detailWriteOffAmt, null);
+          paymentScheduleDetail,
+          selectedPaymentScheduleDetailAmounts.get(paymentScheduleDetail.getId()),
+          detailWriteOffAmt, null);
     }
   }
 
@@ -592,14 +664,13 @@ public class FIN_AddPayment {
     FIN_PaymentScheduleDetail[] FIN_PaymentScheduleDetails = new FIN_PaymentScheduleDetail[0];
     FIN_PaymentScheduleDetails = shownScheduledPaymentDetails.toArray(FIN_PaymentScheduleDetails);
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(shownScheduledPaymentDetails);
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     OBContext.setAdminMode();
     try {
-
       for (int i = 0; i < data.length; i++) {
         String selectedId = (selectedScheduledPaymentDetails
             .contains(FIN_PaymentScheduleDetails[i])) ? FIN_PaymentScheduleDetails[i].getId() : "";
@@ -712,11 +783,18 @@ public class FIN_AddPayment {
                 .getInvoicePaymentSchedule().getFINPaymentPriority().getColor());
           }
         } else {
-          FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
-              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
-          FieldProviderFactory.setField(data[i], "transactionDate", dateFormater.format(
-              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getOrderDate())
-              .toString());
+          FieldProviderFactory.setField(
+              data[i],
+              "dueDate",
+              dateFormater.format(
+                  FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory.setField(
+              data[i],
+              "transactionDate",
+              dateFormater
+                  .format(
+                      FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder()
+                          .getOrderDate()).toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", "");
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
               .getOrderPaymentSchedule().getAmount().toString());
@@ -810,14 +888,14 @@ public class FIN_AddPayment {
       OBCriteria<FIN_PaymentScheduleDetail> psdFilter = OBDal.getInstance().createCriteria(
           FIN_PaymentScheduleDetail.class);
       psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_CLIENT, psd.getClient()));
-      psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION, psd
-          .getOrganization()));
+      psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION,
+          psd.getOrganization()));
       psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       if (psd.getOrderPaymentSchedule() == null)
         psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE));
       else
-        psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, psd
-            .getOrderPaymentSchedule()));
+        psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
+            psd.getOrderPaymentSchedule()));
       if (psd.getInvoicePaymentSchedule() == null)
         psdFilter.add(Restrictions
             .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
@@ -941,8 +1019,8 @@ public class FIN_AddPayment {
     OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance().createCriteria(
         FinAccPaymentMethod.class);
     psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-        .getPaymentMethod()));
+    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+        payment.getPaymentMethod()));
     for (FinAccPaymentMethod paymentMethod : psdFilter.list()) {
       return payment.isReceipt() ? paymentMethod.isAutomaticDeposit() : paymentMethod
           .isAutomaticWithdrawn();
@@ -1063,5 +1141,45 @@ public class FIN_AddPayment {
     new FIN_BankStatementProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
+  }
+
+  public static List<FIN_PaymentScheduleDetail> getOutstandingPSDs(
+      FIN_PaymentScheduleDetail paymentScheduleDetail) {
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
+          FIN_PaymentScheduleDetail.class);
+      obc.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+        obc.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
+            paymentScheduleDetail.getInvoicePaymentSchedule()));
+      }
+      if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+        obc.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
+            paymentScheduleDetail.getOrderPaymentSchedule()));
+      }
+      return obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static List<FIN_PaymentScheduleDetail> getGLItemScheduleDetails(FIN_Payment payment) {
+    if (payment.getFINPaymentDetailList().size() > 0) {
+      OBContext.setAdminMode();
+      try {
+        OBCriteria<FIN_PaymentScheduleDetail> selectedGLItems = OBDal.getInstance().createCriteria(
+            FIN_PaymentScheduleDetail.class);
+        selectedGLItems.createAlias(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, "pd");
+        selectedGLItems.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
+            payment.getFINPaymentDetailList()));
+        selectedGLItems.add(Restrictions.isNotNull("pd." + FIN_PaymentDetail.PROPERTY_GLITEM));
+        return selectedGLItems.list();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      return new ArrayList<FIN_PaymentScheduleDetail>();
+    }
   }
 }
