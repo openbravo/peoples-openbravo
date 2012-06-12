@@ -29,11 +29,13 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
+import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -41,6 +43,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -52,15 +55,20 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -70,27 +78,33 @@ public class OrderLoader {
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
+  String paymentDescription = null;
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
-    for (int i = 0; i < jsonarray.length(); i++) {
-      if (i % 1 == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
+    OBContext.setAdminMode(true);
+    try {
+      for (int i = 0; i < jsonarray.length(); i++) {
+        if (i % 1 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        long t1 = System.currentTimeMillis();
+        JSONObject jsonorder = jsonarray.getJSONObject(i);
+        JSONObject result = saveOrder(jsonorder);
+        if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
+            JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
+          log.error("There was an error importing order: " + jsonorder.toString());
+          error = true;
+        }
+        log.info("Total order time: " + (System.currentTimeMillis() - t1));
       }
-      long t1 = System.currentTimeMillis();
-      JSONObject jsonorder = jsonarray.getJSONObject(i);
-      JSONObject result = saveOrder(jsonorder);
-      if (!result.get(JsonConstants.RESPONSE_STATUS)
-          .equals(JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-        log.error("There was an error importing order: " + jsonorder.toString());
-        error = true;
-      }
-      log.info("Total order time: " + (System.currentTimeMillis() - t1));
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    OBDal.getInstance().flush();
     JSONObject jsonResponse = new JSONObject();
     if (!error) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -104,32 +118,34 @@ public class OrderLoader {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws JSONException {
 
-    long t1 = System.currentTimeMillis();
-    long t11;
-    long t2;
+    long t0 = System.currentTimeMillis();
+    long t1, t11, t2, t3;
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
     TriggerHandler.getInstance().disable();
     try {
-
-      boolean createInvoice = true;
+      t1 = System.currentTimeMillis();
+      boolean createInvoice = false;
       // Order header
       order = OBProvider.getInstance().get(Order.class);
+      long t111 = System.currentTimeMillis();
       createOrder(order, jsonorder);
-
+      long t112 = System.currentTimeMillis();
       // Order lines
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       JSONArray orderlines = jsonorder.getJSONArray("lines");
       createOrderLines(order, jsonorder, orderlines, lineReferences);
 
+      long t113 = System.currentTimeMillis();
       // Shipment header
       shipment = OBProvider.getInstance().get(ShipmentInOut.class);
       createShipment(shipment, order, jsonorder);
 
+      long t114 = System.currentTimeMillis();
       // Shipment lines
       createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
-
+      long t115 = System.currentTimeMillis();
       if (createInvoice) {
         // Invoice header
         invoice = OBProvider.getInstance().get(Invoice.class);
@@ -141,14 +157,20 @@ public class OrderLoader {
       t11 = System.currentTimeMillis();
       OBDal.getInstance().save(order);
       OBDal.getInstance().save(shipment);
-      OBDal.getInstance().save(invoice);
+      if (invoice != null) {
+        OBDal.getInstance().save(invoice);
+      }
       t2 = System.currentTimeMillis();
+      t3 = System.currentTimeMillis();
+      log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (113 - 112)
+          + "; Shipment: " + (t114 - t113) + "; Shipmentlines: " + (t115 - t114) + "; Invoice: "
+          + (t11 - t115));
 
     } finally {
       TriggerHandler.getInstance().enable();
     }
 
-    long t3 = System.currentTimeMillis();
+    long t4 = System.currentTimeMillis();
 
     // Payment
     JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
@@ -159,8 +181,9 @@ public class OrderLoader {
     // Stock manipulation
     handleStock(shipment);
 
-    log.info("Generate bobs:" + (t11 - t1) + "; Save bobs:" + (t2 - t11) + "; Flush:" + (t3 - t2)
-        + "; Process Payments:" + (System.currentTimeMillis() - t3));
+    log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
+        + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
+        + "; Process Payments:" + (System.currentTimeMillis() - t4));
 
     final JSONObject jsonResponse = new JSONObject();
 
@@ -169,6 +192,15 @@ public class OrderLoader {
     jsonResponse.put("data", jsonorder);
 
     return jsonResponse;
+  }
+
+  protected String getPaymentDescription() {
+    if (paymentDescription == null) {
+      String language = RequestContext.get().getVariablesSecureApp().getLanguage();
+      paymentDescription = Utility.messageBD(new DalConnectionProvider(false), "OrderDocumentno",
+          language);
+    }
+    return paymentDescription;
   }
 
   protected DocumentType getPaymentDocumentType(Organization org) {
@@ -242,8 +274,10 @@ public class OrderLoader {
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
     invoice.setProcessed(true);
-    invoice.setPaymentMethod(order.getBusinessPartner().getPaymentMethod());
-    invoice.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
+    invoice.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
+        jsonorder.getJSONObject("bp").getString("paymentMethod")));
+    invoice.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
+        jsonorder.getJSONObject("bp").getString("paymentTerms")));
     invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
     invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
     invoice.setTotalPaid(BigDecimal.ZERO);
@@ -252,6 +286,7 @@ public class OrderLoader {
 
     // Create invoice tax lines
     JSONObject taxes = jsonorder.getJSONObject("taxes");
+    @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     int i = 0;
     while (itKeys.hasNext()) {
@@ -341,15 +376,17 @@ public class OrderLoader {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
     fillBobFromJSON(orderEntity, order, jsonorder);
 
-    order.setTransactionDocument(OBDal.getInstance().get(DocumentType.class,
+    order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
 
     order.setInvoiceAddress(order.getPartnerAddress());
-    order.setPaymentMethod(order.getBusinessPartner().getPaymentMethod());
-    order.setPaymentTerms(order.getBusinessPartner().getPaymentTerms());
-    order.setInvoiceTerms(order.getBusinessPartner().getInvoiceTerms());
+    order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
+        jsonorder.getJSONObject("bp").getString("paymentMethod")));
+    order.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
+        jsonorder.getJSONObject("bp").getString("paymentTerms")));
+    order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")));
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")));
 
@@ -360,6 +397,7 @@ public class OrderLoader {
     order.setProcessNow(false);
 
     JSONObject taxes = jsonorder.getJSONObject("taxes");
+    @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     int i = 0;
     while (itKeys.hasNext()) {
@@ -469,6 +507,27 @@ public class OrderLoader {
             paymentScheduleDetail);
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         OBDal.getInstance().save(paymentScheduleInvoice);
+
+        Fin_OrigPaymentSchedule origPaymentSchedule = OBProvider.getInstance().get(
+            Fin_OrigPaymentSchedule.class);
+        origPaymentSchedule.setCurrency(order.getCurrency());
+        origPaymentSchedule.setInvoice(invoice);
+        origPaymentSchedule.setPaymentMethod(paymentSchedule.getFinPaymentmethod());
+        origPaymentSchedule.setAmount(amount);
+        origPaymentSchedule.setDueDate(order.getOrderDate());
+        origPaymentSchedule.setPaymentPriority(paymentScheduleInvoice.getFINPaymentPriority());
+
+        OBDal.getInstance().save(origPaymentSchedule);
+
+        FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
+            FIN_OrigPaymentScheduleDetail.class);
+        origDetail.setArchivedPaymentPlan(origPaymentSchedule);
+        origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
+        origDetail.setAmount(amount);
+        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
+
+        OBDal.getInstance().save(origDetail);
+
       }
 
       HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
@@ -483,11 +542,24 @@ public class OrderLoader {
           .getPaymentMethod(), account, paymentSchedule.getAmount().toString(), order
           .getOrderDate(), order.getOrganization(), null, paymentSchedule
           .getFINPaymentScheduleDetailOrderPaymentScheduleList(), paymentAmount, false, false);
+      String description = getPaymentDescription();
+      description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
+          + "\n";
+      finPayment.setDescription(description);
 
       long t3 = System.currentTimeMillis();
       // Process Payment
-      FIN_AddPayment.processPayment(RequestContext.get().getVariablesSecureApp(),
-          new DalConnectionProvider(false), "D", finPayment);
+
+      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+      ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars)
+          .init(new DalConnectionProvider(false));
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("action", "D");
+      parameters.put("Fin_Payment_ID", finPayment.getId());
+      parameters.put("isPOSOrder", "Y");
+      pb.setParams(parameters);
+      new FIN_PaymentProcess().execute(pb);
+      vars.setSessionValue("POSOrder", "Y");
       log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
           + "; Process payment: " + (System.currentTimeMillis() - t3));
     } catch (Exception e) {
@@ -501,6 +573,7 @@ public class OrderLoader {
 
   protected void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)
       throws JSONException {
+    @SuppressWarnings("unchecked")
     Iterator<String> keys = json.keys();
     while (keys.hasNext()) {
       String key = keys.next();
