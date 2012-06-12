@@ -62,9 +62,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
 
       OBContext.setAdminMode();
       try {
-        transaction.setProcessNow(true);
-        OBDal.getInstance().save(transaction);
-        OBDal.getInstance().flush();
+        // transaction.setProcessNow(true);
+        // OBDal.getInstance().save(transaction);
+        // OBDal.getInstance().flush();
         if (strAction.equals("P")) {
           // ***********************
           // Process Transaction
@@ -89,7 +89,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
-          OBDal.getInstance().flush();
+          // OBDal.getInstance().flush();
         } else if (strAction.equals("R")) {
           // ***********************
           // Reactivate Transaction
@@ -146,9 +146,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           OBDal.getInstance().flush();
           bundle.setResult(msg);
         }
-        transaction.setProcessNow(false);
-        OBDal.getInstance().save(transaction);
-        OBDal.getInstance().flush();
+        // transaction.setProcessNow(false);
+        // OBDal.getInstance().save(transaction);
+        // OBDal.getInstance().flush();
       } finally {
         OBContext.restorePreviousMode();
       }

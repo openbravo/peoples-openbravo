@@ -83,13 +83,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final ConnectionProvider conProvider = bundle.getConnection();
       final boolean isReceipt = payment.isReceipt();
 
-      payment.setProcessNow(true);
-      OBDal.getInstance().save(payment);
-      OBDal.getInstance().flush();
+      // payment.setProcessNow(true);
+      // OBDal.getInstance().save(payment);
+      // OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Set APRM_Ready preference
-        if (!dao.existsAPRMReadyPreference()
-            && vars.getSessionValue("APRMT_MigrationToolRunning", "N").equals("Y")) {
+        if (vars.getSessionValue("APRMT_MigrationToolRunning", "N").equals("Y")
+            && !dao.existsAPRMReadyPreference()) {
           dao.createAPRMReadyPreference();
         }
 
@@ -163,33 +163,37 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               glitems.add(paymentDetail.getGLItem().getName());
           }
           // Set description
-          StringBuffer description = new StringBuffer();
-          if (payment.getDescription() != null && !payment.getDescription().equals(""))
-            description.append(payment.getDescription()).append("\n");
-          if (!invoiceDocNos.isEmpty()) {
-            description.append(Utility.messageBD(conProvider, "InvoiceDocumentno", language));
-            description.append(": ").append(
-                invoiceDocNos.toString().substring(1, invoiceDocNos.toString().length() - 1));
-            description.append("\n");
-          }
-          if (!orderDocNos.isEmpty()) {
-            description.append(Utility.messageBD(conProvider, "OrderDocumentno", language));
-            description.append(": ").append(
-                orderDocNos.toString().substring(1, orderDocNos.toString().length() - 1));
-            description.append("\n");
-          }
-          if (!glitems.isEmpty()) {
-            description.append(Utility.messageBD(conProvider, "APRM_GLItem", language));
-            description.append(": ").append(
-                glitems.toString().substring(1, glitems.toString().length() - 1));
-            description.append("\n");
-          }
-          if (!"".equals(strRefundCredit))
-            description.append(strRefundCredit).append("\n");
+          if (bundle.getParams().get("isPOSOrder") == null
+              || !bundle.getParams().get("isPOSOrder").equals("Y")) {
+            StringBuffer description = new StringBuffer();
 
-          String truncateDescription = (description.length() > 255) ? description.substring(0, 252)
-              .concat("...").toString() : description.toString();
-          payment.setDescription(truncateDescription);
+            if (payment.getDescription() != null && !payment.getDescription().equals(""))
+              description.append(payment.getDescription()).append("\n");
+            if (!invoiceDocNos.isEmpty()) {
+              description.append(Utility.messageBD(conProvider, "InvoiceDocumentno", language));
+              description.append(": ").append(
+                  invoiceDocNos.toString().substring(1, invoiceDocNos.toString().length() - 1));
+              description.append("\n");
+            }
+            if (!orderDocNos.isEmpty()) {
+              description.append(Utility.messageBD(conProvider, "OrderDocumentno", language));
+              description.append(": ").append(
+                  orderDocNos.toString().substring(1, orderDocNos.toString().length() - 1));
+              description.append("\n");
+            }
+            if (!glitems.isEmpty()) {
+              description.append(Utility.messageBD(conProvider, "APRM_GLItem", language));
+              description.append(": ").append(
+                  glitems.toString().substring(1, glitems.toString().length() - 1));
+              description.append("\n");
+            }
+            if (!"".equals(strRefundCredit))
+              description.append(strRefundCredit).append("\n");
+
+            String truncateDescription = (description.length() > 255) ? description
+                .substring(0, 252).concat("...").toString() : description.toString();
+            payment.setDescription(truncateDescription);
+          }
 
           if (paymentAmount.compareTo(payment.getAmount()) != 0) {
             payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
@@ -237,9 +241,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               payment.isReceipt())) {
             try {
               payment.setStatus("RPAE");
-              payment.setProcessNow(false);
-              OBDal.getInstance().save(payment);
-              OBDal.getInstance().flush();
+              // payment.setProcessNow(false);
+              // OBDal.getInstance().save(payment);
+              // OBDal.getInstance().flush();
 
               if (dao.hasNotDeferredExecutionProcess(payment.getAccount(),
                   payment.getPaymentMethod(), payment.isReceipt())) {
@@ -338,7 +342,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               }
             }
             payment.setStatus(isReceipt ? "RPR" : "PPM");
-            if ((FIN_Utility.isAutomaticDepositWithdrawn(payment) || strAction.equals("D"))
+            if ((strAction.equals("D") || FIN_Utility.isAutomaticDepositWithdrawn(payment))
                 && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
               triggerAutomaticFinancialAccountTransaction(vars, conProvider, payment);
           }
@@ -897,20 +901,23 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
       }
 
-      payment.setProcessNow(false);
-      OBDal.getInstance().save(payment);
-      OBDal.getInstance().flush();
+      // payment.setProcessNow(false);
+      // OBDal.getInstance().save(payment);
+      // OBDal.getInstance().flush();
 
       // When payment is reversed, original payment plan is updated to reverse a particular original
       // payment plan details (the ones related with payment which is reverted) so this step can be
       // skipped
-      if (!"Y".equals(isReversedPayment) && !updateOriginalPaymentPlanInformation(payment)) {
-        msg.setType("Error");
-        msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-            "@CouldNotUpdateOriginalPaymentPlan@"));
-        bundle.setResult(msg);
-        OBDal.getInstance().rollbackAndClose();
-        return;
+      if (bundle.getParams().get("isPOSOrder") == null
+          || !bundle.getParams().get("isPOSOrder").equals("Y")) {
+        if (!"Y".equals(isReversedPayment) && !updateOriginalPaymentPlanInformation(payment)) {
+          msg.setType("Error");
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@CouldNotUpdateOriginalPaymentPlan@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
       }
 
       bundle.setResult(msg);
@@ -966,6 +973,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
    */
   private void removeExistingOrigDetails(FIN_Payment payment) {
     if (payment.getFINPaymentDetailList().size() > 0) {
+
       ArrayList<String> opsdToRemove = new ArrayList<String>();
       OBCriteria<FIN_PaymentScheduleDetail> criOpsd = OBDal.getInstance().createCriteria(
           FIN_PaymentScheduleDetail.class);
