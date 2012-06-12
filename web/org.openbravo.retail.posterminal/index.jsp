@@ -10,7 +10,31 @@
 <%
 Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class);
 
-request.setAttribute("loginURL", "/web/org.openbravo.retail.posterminal/login.jsp");
+String terminal = request.getParameter("terminal");
+String window = request.getParameter("window");
+
+if (terminal != null) {
+  terminal = "terminal=" + terminal;
+}
+if (window != null) {
+  window = "window=" + window;
+}
+
+if (terminal != null && window != null) {
+  terminal = "?" + terminal;
+  window = "&" + window;
+} else if (terminal != null && window == null) {
+  terminal = "?" + terminal;
+  window = "";
+} else if (terminal == null && window != null) {
+  terminal = "";
+  window = "?" + window;
+} else {
+  terminal = "";
+  window = "";
+}
+
+request.setAttribute("loginURL", "/web/org.openbravo.retail.posterminal/login.jsp" + terminal + window);
 
 AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 

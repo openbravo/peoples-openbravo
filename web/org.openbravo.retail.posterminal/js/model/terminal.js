@@ -63,13 +63,14 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
         data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
         type: 'POST',
         success: function (data, textStatus, jqXHR) {
-          var pos;
+          var pos, baseUrl;
           if(data && data.showMessage) {
             me.triggerLoginFail(401, mode);
             return;
           }
           pos = location.pathname.indexOf('login.jsp');
-          window.location = window.location.pathname.substring(0, pos);
+          baseUrl = window.location.pathname.substring(0, pos);
+          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
         },
         error: function (jqXHR, textStatus, errorThrown) {
           me.triggerLoginFail(jqXHR.status, mode);

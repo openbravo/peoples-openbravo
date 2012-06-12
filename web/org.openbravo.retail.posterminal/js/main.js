@@ -73,7 +73,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
-    window.location = window.location.pathname + 'login.jsp';
+    window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
   $(document).ready(function () {

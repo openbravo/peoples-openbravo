@@ -67,23 +67,23 @@ define(['builder', 'i18n', 'components/clock',
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid login-inputs-container'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-screenlocked'}, content: ['Screen locked']}
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-screenlocked'}, content: [OB.I18N.getLabel('OBPOS_LoginScreenLocked')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'placeholder': 'User', 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
+                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'placeholder': OB.I18N.getLabel('OBPOS_LoginUserInput'), 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password', 'placeholder': 'Password', 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
+                    {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password', 'placeholder': OB.I18N.getLabel('OBPOS_LoginPasswordInput'), 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
-                    {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: ['Log In'],
+                    {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: [OB.I18N.getLabel('OBPOS_LoginButton')],
                       init: function () {
 
                         OB.POS.modelterminal.on('loginfail', function (status) {

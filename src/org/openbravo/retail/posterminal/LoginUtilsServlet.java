@@ -30,6 +30,26 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
 
   private static final long serialVersionUID = 1L;
 
+  private String[] getClientOrgIds(String terminalName) {
+    final String hqlOrg = "select terminal.organization.client.id, terminal.organization.id "
+        + "from OBPOS_Applications terminal " + "where terminal.searchKey = :theTerminalSearchKey";
+    Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
+    qryOrg.setParameter("theTerminalSearchKey", terminalName);
+    qryOrg.setMaxResults(1);
+
+    String strClient = "none";
+    String strOrg = "none";
+
+    if (qryOrg.uniqueResult() != null) {
+      final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
+      strClient = orgResult[0].toString();
+      strOrg = orgResult[1].toString();
+    }
+
+    final String result[] = { strClient, strOrg };
+    return result;
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -44,21 +64,52 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     JSONArray data = new JSONArray();
     JSONObject item = null;
     try {
-      if (command.equals("companyLogo")) {
+      if (command.equals("getLoginLabels")) {
+        int queryCount = 0;
+
+        item = new JSONObject();
+
+        String hqlLabel = "select message.searchKey, message.messageText "
+            + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
+        Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);
+
+        for (Object qryLabelObject : qryLabel.list()) {
+          queryCount++;
+          final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
+          item.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
+        }
+
+        data.put(item);
+
+        resp.put("startRow", 0);
+        resp.put("endRow", (queryCount == 0 ? 0 : queryCount - 1));
+        resp.put("totalRows", queryCount);
+        resp.put("data", data);
+
+        result.append("response", resp);
+        writeResult(response, result.toString());
+      } else if (command.equals("checkPOSTerminal")) {
         int queryCount = 1;
 
-        // Get the organization of the current terminal
-        final String hqlOrg = "select terminal.organization.id, terminal.organization.client.id "
-            + "from OBPOS_Applications terminal "
-            + "where terminal.searchKey = :theTerminalSearchKey";
-        Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
-        qryOrg.setParameter("theTerminalSearchKey", terminalName);
-        qryOrg.setMaxResults(1);
+        final String strClient = getClientOrgIds(terminalName)[0];
 
-        String strClient = "0";
-        if (qryOrg.uniqueResult() != null) {
-          final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
-          strClient = orgResult[1].toString();
+        item = new JSONObject();
+        item.put("strClient", strClient);
+        data.put(item);
+
+        resp.put("startRow", 0);
+        resp.put("endRow", (queryCount == 0 ? 0 : queryCount - 1));
+        resp.put("totalRows", queryCount);
+        resp.put("data", data);
+
+        result.append("response", resp);
+        writeResult(response, result.toString());
+      } else if (command.equals("companyLogo")) {
+        int queryCount = 1;
+
+        String strClient = getClientOrgIds(terminalName)[0];
+        if ("none".equals(strClient)) {
+          strClient = "0";
         }
 
         String hqlCompanyImage = "select image.mimetype, image.bindaryData "
@@ -88,20 +139,13 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         writeResult(response, result.toString());
       } else if (command.equals("userImages")) {
 
-        // Get the organization of the current terminal
-        final String hqlOrg = "select terminal.organization.id, terminal.organization.client.id "
-            + "from OBPOS_Applications terminal "
-            + "where terminal.searchKey = :theTerminalSearchKey";
-        Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
-        qryOrg.setParameter("theTerminalSearchKey", terminalName);
-        qryOrg.setMaxResults(1);
-
-        String strOrg = "0";
-        String strClient = "0";
-        if (qryOrg.uniqueResult() != null) {
-          final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
-          strOrg = orgResult[0].toString();
-          strClient = orgResult[1].toString();
+        String strClient = getClientOrgIds(terminalName)[0];
+        String strOrg = getClientOrgIds(terminalName)[1];
+        if ("none".equals(strClient)) {
+          strClient = "0";
+        }
+        if ("none".equals(strOrg)) {
+          strOrg = "0";
         }
 
         Set<String> orgNaturalTree = OBContext.getOBContext()
