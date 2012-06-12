@@ -8,6 +8,8 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
   OB.DATA.OrderTaxes = function(context) {
     this._id = 'logicOrderTaxes';
     
+    this.receipt = context.modelorder;
+    
     this.receipt.calculateTaxes = function (callback) {
        var me = this,
            bpTaxCategory = this.get('bp').get('taxCategory'),
