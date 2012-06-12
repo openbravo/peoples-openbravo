@@ -22,13 +22,13 @@ define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
                   ////
                 });
               }},
-              {kind: B.KindJQuery('div'), content: ['You have started the End of Day process.']} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('EndDayProcess')]} ,
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 20px;'}, content: [{kind: OB.COMP.ButtonPrev},{kind: OB.COMP.ButtonNext}]} ,
-              {kind: B.KindJQuery('div'), content: ['Steps']} ,
-              {kind: B.KindJQuery('div'), content: ['1) Review pending tickets']} ,
-              {kind: B.KindJQuery('div'), content: ['2) Count cash']} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblSteps')]} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep1')]} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep2')]} ,
               //{kind: B.KindJQuery('div'), content: ['3) Prepare report']} ,
-              {kind: B.KindJQuery('div'), content: ['3) Post, print and close']}
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep3')]}
             ]}
           ]}
         ]}

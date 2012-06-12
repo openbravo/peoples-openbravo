@@ -1,15 +1,15 @@
 /*global define, $ */
 
-define(['builder', 'i18n', 'data/datamaster',
+define(['builder', 'i18n', 'closecash/data/datamaster',
         'components/commonbuttons', 'components/hwmanager',
-        'model/daycash','model/terminal', 'model/order',
-        'windows/closebuttons',
-        'windows/closeinfo',
-        'windows/closekeyboard',
-        'windows/tabpendingreceipts', 
-        'windows/tabcountcash', 'windows/tabpostprintclose', 
-        'windows/closekeyboard', 'components/listpaymentmethod'
-        
+        'closecash/model/daycash','model/terminal', 'model/order',
+        'closecash/components/closebuttons',
+        'closecash/windows/closeinfo',
+        'closecash/components/closekeyboard',
+        'closecash/windows/tabpendingreceipts',
+        'closecash/windows/tabcountcash', 'closecash/windows/tabpostprintclose',
+        'closecash/components/listpaymentmethod'
+
         ], function (B) {
 
   OB = window.OB || {};
@@ -44,8 +44,6 @@ define(['builder', 'i18n', 'data/datamaster',
 //              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
             ]}
           ]},
-          
-          
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [

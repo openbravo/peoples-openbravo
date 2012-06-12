@@ -55,8 +55,8 @@ define(['builder', 'i18n',
                     {kind: OB.COMP.MenuReturn},
                     {kind: OB.COMP.MenuSeparator},
                     {kind: OB.COMP.MenuItem.extend({href:'../..', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/windows/closecash'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/windows/cashmgmt'), label: 'Cash Management'})}
+                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/closecash/windows/closecash'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},
+                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/cashmgmt/windows/cashmgmt'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})}
                   ]}
                 ]},
                 {kind: B.KindJQuery('li'), content: [

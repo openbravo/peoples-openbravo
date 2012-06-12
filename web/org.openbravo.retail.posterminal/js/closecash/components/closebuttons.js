@@ -6,8 +6,8 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.ButtonPrev = OB.COMP.ToolbarButton.extend({
-    _id: 'closeprevbutton',
-    icon: 'icon-chevron-left icon-white btn-icon-left',
+	_id: 'closeprevbutton',
+    icon: 'icon-chevron-left icon-white',
     label: OB.I18N.getLabel('OBPOS_LblPrevStep'),
     clickEvent: function (e) {
     if(this.options.modeldaycash.defaults.step===2){
@@ -26,8 +26,8 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
   });
 
   OB.COMP.ButtonNext = OB.COMP.ToolbarButton.extend({
-    _id: 'closenextbutton',
-    iconright: 'icon-chevron-right icon-white btn-icon-right',
+	_id: 'closenextbutton',
+    iconright: 'icon-chevron-right icon-white',
     label: OB.I18N.getLabel('OBPOS_LblNextStep'),
 
     clickEvent: function (e) {
@@ -61,7 +61,7 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
   });
 
   OB.COMP.ButtonOk =OB.COMP.Button.extend({
-_id: 'okbutton',
+	_id: 'okbutton',
     iconright: 'icon-ok icon-black',
     tagName: 'a',
     className: 'btnlink btnlink-green',
@@ -85,7 +85,7 @@ _id: 'okbutton',
     }
   });
   OB.COMP.ButtonEdit =OB.COMP.Button.extend({
-_id: 'editbutton',
+	_id: 'editbutton',
     iconright: 'icon-pencil icon-black',
     tagName: 'a',
     className: 'btnlink btnlink-orange',

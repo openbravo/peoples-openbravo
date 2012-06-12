@@ -14,9 +14,9 @@ define(['utilities', 'datasource'], function () {
 
   OB.DATA.Container.prototype.append = function (child) {
     this.datachildren.push(child);
-  };  
+  };
 
-  OB.DATA.Container.prototype.inithandler = function () {  
+  OB.DATA.Container.prototype.inithandler = function () {
     var i, max;
     for (i = 0, max = this.datachildren.length; i < max; i++) {
       this.datachildren[i].load();
@@ -24,9 +24,9 @@ define(['utilities', 'datasource'], function () {
   };
 
   OB.DATA.Base = {
-    load: function () { 
+    load: function () {
        this.ds.load(this.loadparams);
-    } 
+    }
   };
 
   OB.DATA.BPs = function (context) {
@@ -34,7 +34,7 @@ define(['utilities', 'datasource'], function () {
     this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
       'org.openbravo.retail.posterminal.master.BusinessPartner',
-      OB.POS.modelterminal.get('terminal').client, 
+      OB.POS.modelterminal.get('terminal').client,
       OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {};     
   };
@@ -45,8 +45,8 @@ define(['utilities', 'datasource'], function () {
     this.context = context;
     this.ds = new OB.DS.DataSourceProductPrice(
       new OB.DS.Query(
-      'org.openbravo.retail.posterminal.master.Product', 
-      OB.POS.modelterminal.get('terminal').client, 
+      'org.openbravo.retail.posterminal.master.Product',
+      OB.POS.modelterminal.get('terminal').client,
       OB.POS.modelterminal.get('terminal').organization),
       new OB.DS.Query(
       'org.openbravo.retail.posterminal.master.ProductPrice',
@@ -58,7 +58,7 @@ define(['utilities', 'datasource'], function () {
  
   OB.DATA.Category = function (context, id) {
     this._id = 'DataCategory';
-    this.context = context;    
+    this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
         'org.openbravo.retail.posterminal.master.Category'));
     this.loadparams = {};
@@ -67,24 +67,13 @@ define(['utilities', 'datasource'], function () {
  
   OB.DATA.TaxRate = function (context, id) {
     this._id = 'DataTaxRate';
-    this.context = context;    
+    this.context = context;
     this.ds = new OB.DS.DataSource(new OB.DS.Query(
         'org.openbravo.retail.posterminal.master.TaxRate'));
     this.loadparams = {};
   };
   _.extend(OB.DATA.TaxRate.prototype, OB.DATA.Base);
 
-  OB.DATA.PaymentMethod = function (context, id) {
-	    this._id = 'DataPaymentMethod';
-	    this.context = context;
-	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
-	      'org.openbravo.retail.posterminal.term.Payments',
-	      OB.POS.modelterminal.get('terminal').client, 
-	      OB.POS.modelterminal.get('terminal').organization));
-	    this.loadparams = {};     
-	  };
-	  _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
-  
   // Offline based on WebSQL
 
   if(!window.openDatabase) {

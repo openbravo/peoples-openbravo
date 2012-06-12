@@ -16,7 +16,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n'], function (B) {
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'}, content: [
 
-                     'Step 3 of 3: Post, print and close'
+                      OB.I18N.getLabel('OBPOS_LblStep3of3')
 
                   ]}
                 ]}
