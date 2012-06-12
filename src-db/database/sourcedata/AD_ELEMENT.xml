@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <data>
 <!--102--><AD_ELEMENT>
 <!--102-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
@@ -5573,10 +5573,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--957-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--957-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--957-->  <COLUMNNAME><![CDATA[PriceStd]]></COLUMNNAME>
-<!--957-->  <NAME><![CDATA[Net Unit Price]]></NAME>
-<!--957-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
+<!--957-->  <NAME><![CDATA[Unit Price]]></NAME>
+<!--957-->  <PRINTNAME><![CDATA[Unit Price]]></PRINTNAME>
 <!--957-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
-<!--957-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
+<!--957-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list. This price might be net or gross depending on its price list configuration.]]></HELP>
 <!--957-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--957-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--957--></AD_ELEMENT>
@@ -24204,20 +24204,6 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--667AE26F6635E6A7E040007F01015B98-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--667AE26F6635E6A7E040007F01015B98-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--667AE26F6635E6A7E040007F01015B98--></AD_ELEMENT>
-
-<!--66B636405CF942289703BC2D11AA8831--><AD_ELEMENT>
-<!--66B636405CF942289703BC2D11AA8831-->  <AD_ELEMENT_ID><![CDATA[66B636405CF942289703BC2D11AA8831]]></AD_ELEMENT_ID>
-<!--66B636405CF942289703BC2D11AA8831-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--66B636405CF942289703BC2D11AA8831-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--66B636405CF942289703BC2D11AA8831-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--66B636405CF942289703BC2D11AA8831-->  <COLUMNNAME><![CDATA[PriceGross]]></COLUMNNAME>
-<!--66B636405CF942289703BC2D11AA8831-->  <NAME><![CDATA[Gross Price]]></NAME>
-<!--66B636405CF942289703BC2D11AA8831-->  <PRINTNAME><![CDATA[Gross Price]]></PRINTNAME>
-<!--66B636405CF942289703BC2D11AA8831-->  <DESCRIPTION><![CDATA[The total price ( including tax ) for the item]]></DESCRIPTION>
-<!--66B636405CF942289703BC2D11AA8831-->  <HELP><![CDATA[Gross Price is the total price inclusive of tax for the item. The sale price will be calculated after deducting the tax amount. It is also called Maximum Retail Price  ( MRP)]]></HELP>
-<!--66B636405CF942289703BC2D11AA8831-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--66B636405CF942289703BC2D11AA8831-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--66B636405CF942289703BC2D11AA8831--></AD_ELEMENT>
 
 <!--66E1860A46E045D4BD7F018323FA10D4--><AD_ELEMENT>
 <!--66E1860A46E045D4BD7F018323FA10D4-->  <AD_ELEMENT_ID><![CDATA[66E1860A46E045D4BD7F018323FA10D4]]></AD_ELEMENT_ID>

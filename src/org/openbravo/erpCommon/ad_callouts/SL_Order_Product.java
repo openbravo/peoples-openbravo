@@ -60,7 +60,6 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
       String strPriceLimit = vars.getNumericParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
-      String strPriceGross = vars.getStringParameter("inpmProductId_PGRS");
       String strQty = vars.getNumericParameter("inpqtyordered");
 
       String strCBpartnerID = vars.getStringParameter("inpcBpartnerId");
@@ -78,8 +77,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       try {
         printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
             strMProductID, strCBPartnerLocationID, strDateOrdered, strADOrgID, strMWarehouseID,
-            strCOrderId, strWindowId, strIsSOTrx, strCBpartnerID, strTabId, strQty, cancelPriceAd,
-            strPriceGross);
+            strCOrderId, strWindowId, strIsSOTrx, strCBpartnerID, strTabId, strQty, cancelPriceAd);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -91,8 +89,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strPriceList, String strPriceStd, String strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strDateOrdered,
       String strADOrgID, String strMWarehouseID, String strCOrderId, String strWindowId,
-      String strIsSOTrx, String strCBpartnerID, String strTabId, String strQty,
-      String cancelPriceAd, String strPriceGross) throws IOException, ServletException {
+      String strIsSOTrx, String strCBpartnerID, String strTabId, String strQty, String cancelPriceAd)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -143,7 +141,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     if (isPriceTaxInclusive(strCOrderId)) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
-          + (strPriceActual.equals("") ? "0" : strPriceGross) + "),");
+          + (strPriceActual.equals("") ? "0" : strPriceList) + "),");
 
     } else {
       resultado.append("new Array(\"inppricelist\", "
