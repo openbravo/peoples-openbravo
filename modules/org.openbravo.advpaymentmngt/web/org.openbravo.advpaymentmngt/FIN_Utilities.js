@@ -283,7 +283,7 @@ function updateConvertedAmounts(recalcExchangeRate) {
   if (actualConverted && expectedConverted && exchangeRate) {
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
-        if (actualPayment.value !== applyFormat('0')) {
+        if (compare(actualPayment.value, '!=', 0)) {
           exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
         }
       } else {
