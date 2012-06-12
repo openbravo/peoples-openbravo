@@ -161,7 +161,11 @@ public class JsonToDataConverter {
               strValue = JsonUtils.convertFromXSDToJavaFormat(strValue);
             }
 
-            return new Timestamp(xmlTimeFormat.parse(strValue).getTime());
+            Date localTime1970 = new Timestamp(xmlTimeFormat.parse(strValue).getTime());
+
+            Date localTimeCurrentDate = convertToCurrentDate(localTime1970);
+
+            return new Timestamp(localTimeCurrentDate.getTime());
           } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
@@ -216,6 +220,20 @@ public class JsonToDataConverter {
     } catch (Exception e) {
       throw new OBException("Error when converting value " + value + " for prop " + property, e);
     }
+  }
+
+  private static Date convertToCurrentDate(Date localTime1970) {
+    Calendar now = Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(localTime1970);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+    int dstOffset = now.get(Calendar.DST_OFFSET) / (1000 * 60 * 60);
+    calendar.add(Calendar.HOUR, dstOffset);
+
+    return calendar.getTime();
   }
 
   private static boolean isEmptyOrNull(Object value) {

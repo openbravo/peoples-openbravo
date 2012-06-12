@@ -71,6 +71,16 @@ public class JsonUtils {
   }
 
   /**
+   * @return a new instance of the {@link SimpleDateFormat} using a format of HH:MM:SS. The date
+   *         format has lenient set to true.
+   */
+  public static SimpleDateFormat createTimeFormatWithoutGMTOffset() {
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    dateFormat.setLenient(true);
+    return dateFormat;
+  }
+
+  /**
    * @return a new instance of the {@link SimpleDateFormat} using a format of yyyy-MM-dd'T'HH:mm:ss
    *         (see http://www.w3.org/TR/xmlschema-2/#dateTime). The date format has lenient set to
    *         true.

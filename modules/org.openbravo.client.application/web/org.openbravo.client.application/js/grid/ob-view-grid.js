@@ -198,10 +198,17 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length;
+      var i, length, timeFields;
 
+      // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
+      if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
+        if (this.grid) {
+          timeFields = this.grid.getTimeFields();
+          this.grid.convertUTCTimeToLocalTime(newData, timeFields);
+        }
+      }
       // only do this stuff for fetch operations, in other cases strange things
-      // happen as update/delete operations do not return the totalRows parameter
+      // happen as update/delete operations do not return the totalRows parameter      
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
         return;
       }
@@ -224,6 +231,41 @@ isc.OBViewGrid.addProperties({
       }
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
+      }
+    }
+  },
+
+  // returns the name of all time fields (type = '_id_24')
+  getTimeFields: function () {
+    var i, field, timeFields = [],
+        length = this.completeFields.length;
+    for (i = 0; i < length; i++) {
+      field = this.completeFields[i];
+      if (field.type === '_id_24') {
+        timeFields.push(field.name);
+      }
+    }
+    return timeFields;
+  },
+
+  convertUTCTimeToLocalTime: function (newData, timeFields) {
+    var textField, fieldToDate, i, j, localHour
+    timeFieldsLength = timeFields.length,
+        newDataLength = newData.length,
+        UTCOffset = isc.Time.getUTCHoursDisplayOffset(new Date());
+    for (i = 0; i < timeFieldsLength; i++) {
+      for (j = 0; j < newDataLength; j++) {
+        textField = newData[j][timeFields[i]];
+        if (textField && textField.length > 0) {
+          fieldToDate = isc.Time.parseInput(textField);
+          localHour = fieldToDate.getHours() + UTCOffset;
+          if (localHour > 23) {
+            localHour = localHour - 24;
+          } else if (localHour < 0) {
+            localHour = localHour + 24;
+          }
+          newData[j][timeFields[i]] = '' + localHour + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+        }
       }
     }
   },

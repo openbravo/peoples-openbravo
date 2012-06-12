@@ -182,10 +182,20 @@ OB.ViewFormProperties = {
     }
   },
 
-  editRecord: function (record, preventFocus, hasChanges, focusFieldName) {
+  editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime) {
+    var timeFields, ret;
     this.clearValues();
+    // if editRecord is called from OBStandardView.editRecord, then the time fields have already
+    //   be converted from UTC to local time
+    // if editRecord is called from fetchDataReply (ActionMethod.js) then the record comes directly  
+    //   from the datasource, so it has to be converted from UTC to local time
+    // see issue https://issues.openbravo.com/view.php?id=20684
+    if (!isLocalTime) {
+      timeFields = this.getTimeFields();
+      this.convertUTCTimeToLocalTime(record, timeFields);
+    }
 
-    var ret = this.Super('editRecord', arguments);
+    ret = this.Super('editRecord', arguments);
 
     // used when clicking on a cell in a grid
     if (!preventFocus && focusFieldName) {
@@ -245,6 +255,38 @@ OB.ViewFormProperties = {
     if (isNew) {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
+    }
+  },
+
+  getTimeFields: function () {
+    var i, field, timeFields = [],
+        length = this.fields.length;
+    for (i = 0; i < length; i++) {
+      field = this.fields[i];
+      if (field.type === '_id_24') {
+        timeFields.push(field.name);
+      }
+    }
+    return timeFields;
+  },
+
+  convertUTCTimeToLocalTime: function (record, timeFields) {
+    var textField, fieldToDate, i, localHour
+    timeFieldsLength = timeFields.length,
+        UTCOffset = isc.Time.getUTCHoursDisplayOffset(new Date());
+    for (i = 0; i < timeFieldsLength; i++) {
+      textField = record[timeFields[i]];
+      if (textField && textField.length > 0) {
+        fieldToDate = isc.Time.parseInput(textField);
+        localHour = fieldToDate.getHours() + UTCOffset;
+        if (localHour > 23) {
+          localHour = localHour - 24;
+        } else if (localHour < 0) {
+          localHour = localHour + 24;
+        }
+        // TODO: support time formats other than HH:mm:ss
+        record[timeFields[i]] = '' + localHour + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+      }
     }
   },
 
