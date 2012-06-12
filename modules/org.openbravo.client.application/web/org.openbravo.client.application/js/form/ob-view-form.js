@@ -271,8 +271,7 @@ OB.ViewFormProperties = {
   },
 
   convertUTCTimeToLocalTime: function (record, timeFields) {
-    var textField, fieldToDate, i, localHour
-    timeFieldsLength = timeFields.length,
+    var textField, fieldToDate, i, localHour, timeFieldsLength = timeFields.length,
         UTCOffset = isc.Time.getUTCHoursDisplayOffset(new Date());
     for (i = 0; i < timeFieldsLength; i++) {
       textField = record[timeFields[i]];
@@ -285,7 +284,7 @@ OB.ViewFormProperties = {
           localHour = localHour + 24;
         }
         // TODO: support time formats other than HH:mm:ss
-        record[timeFields[i]] = '' + localHour + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+        record[timeFields[i]] = String(localHour) + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
       }
     }
   },

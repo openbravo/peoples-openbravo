@@ -249,7 +249,7 @@ isc.OBViewGrid.addProperties({
   },
 
   convertUTCTimeToLocalTime: function (newData, timeFields) {
-    var textField, fieldToDate, i, j, localHour
+    var textField, fieldToDate, i, j, localHour,
     timeFieldsLength = timeFields.length,
         newDataLength = newData.length,
         UTCOffset = isc.Time.getUTCHoursDisplayOffset(new Date());
@@ -264,7 +264,7 @@ isc.OBViewGrid.addProperties({
           } else if (localHour < 0) {
             localHour = localHour + 24;
           }
-          newData[j][timeFields[i]] = '' + localHour + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+          newData[j][timeFields[i]] = String(localHour) + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
         }
       }
     }
