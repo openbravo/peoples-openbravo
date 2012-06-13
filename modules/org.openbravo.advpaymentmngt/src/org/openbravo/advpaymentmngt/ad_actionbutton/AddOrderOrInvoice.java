@@ -547,8 +547,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
     List<FIN_PaymentScheduleDetail> storedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     // This is to identify first load of the grid
-    if (strSelectedPaymentDetails == null || "".equals(strSelectedPaymentDetails)
-        && payment.getFINPaymentDetailList().size() > 0) {
+    String strFirstLoad = vars.getStringParameter("isFirstLoad");
+    if ("true".equals(strFirstLoad)) {
       // Add payment schedule details related to orders or invoices to storedSchedulePaymentDetails
       OBContext.setAdminMode();
       try {
