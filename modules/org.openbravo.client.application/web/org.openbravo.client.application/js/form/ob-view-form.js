@@ -191,8 +191,7 @@ OB.ViewFormProperties = {
     //   from the datasource, so it has to be converted from UTC to local time
     // see issue https://issues.openbravo.com/view.php?id=20684
     if (!isLocalTime) {
-      timeFields = this.getTimeFields();
-      this.convertUTCTimeToLocalTime(record, timeFields);
+      OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields);
     }
 
     ret = this.Super('editRecord', arguments);
@@ -255,33 +254,6 @@ OB.ViewFormProperties = {
     if (isNew) {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
-    }
-  },
-
-  getTimeFields: function () {
-    var i, field, timeFields = [],
-        length = this.fields.length;
-    for (i = 0; i < length; i++) {
-      field = this.fields[i];
-      if (field.type === '_id_24') {
-        timeFields.push(field.name);
-      }
-    }
-    return timeFields;
-  },
-
-  convertUTCTimeToLocalTime: function (record, timeFields) {
-    var textField, fieldToDate, i, timeFieldsLength = timeFields.length,
-        UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
-        UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
-    for (i = 0; i < timeFieldsLength; i++) {
-      textField = record[timeFields[i]];
-      if (textField && textField.length > 0) {
-        fieldToDate = isc.Time.parseInput(textField);
-        fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
-        // TODO: support time formats other than HH:mm:ss
-        record[timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
-      }
     }
   },
 

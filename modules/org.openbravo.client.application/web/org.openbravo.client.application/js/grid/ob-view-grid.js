@@ -203,8 +203,7 @@ isc.OBViewGrid.addProperties({
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
         if (this.grid) {
-          timeFields = this.grid.getTimeFields();
-          this.grid.convertUTCTimeToLocalTime(newData, timeFields);
+          OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
         }
       }
       // only do this stuff for fetch operations, in other cases strange things
@@ -231,36 +230,6 @@ isc.OBViewGrid.addProperties({
       }
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
-      }
-    }
-  },
-
-  // returns the name of all time fields (type = '_id_24')
-  getTimeFields: function () {
-    var i, field, timeFields = [],
-        length = this.completeFields.length;
-    for (i = 0; i < length; i++) {
-      field = this.completeFields[i];
-      if (field.type === '_id_24') {
-        timeFields.push(field.name);
-      }
-    }
-    return timeFields;
-  },
-
-  convertUTCTimeToLocalTime: function (newData, timeFields) {
-    var textField, fieldToDate, i, j, timeFieldsLength = timeFields.length,
-        newDataLength = newData.length,
-        UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
-        UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
-    for (i = 0; i < timeFieldsLength; i++) {
-      for (j = 0; j < newDataLength; j++) {
-        textField = newData[j][timeFields[i]];
-        if (textField && textField.length > 0) {
-          fieldToDate = isc.Time.parseInput(textField);
-          fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
-          newData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
-        }
       }
     }
   },
