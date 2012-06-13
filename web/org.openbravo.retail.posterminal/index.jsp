@@ -98,6 +98,7 @@ if(userId == null){
           <div style="display: inline-block; font-weight: bold; float:right">
             <span>Openbravo Point of Sale</span>&nbsp;
             <a data-toggle="modal" id="logoutlink" href="#logoutDialog" class=""><i class="icon-off icon-white"></i></a>
+            <div id="logoutDialogContainer"></div>
           </div>
         </div>
       </div>

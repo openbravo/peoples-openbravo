@@ -9,7 +9,7 @@ require.config({
   }
 });
 
-require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
+require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal', 'components/modallogout'], function(B, login) {
 
   var modelterminal = new OB.MODEL.Terminal();
 
@@ -78,6 +78,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 
   $(document).ready(function () {
     // Entry Point
+    $('#logoutDialogContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
     modelterminal.load();
   });
 

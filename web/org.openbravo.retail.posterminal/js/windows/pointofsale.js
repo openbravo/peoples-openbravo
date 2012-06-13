@@ -5,7 +5,7 @@ define(['builder', 'i18n',
         'model/terminal', 'model/order',
         'components/commonbuttons', 'components/hwmanager',
         'windows/posbuttons',
-        'components/modalreceipts', 'components/modalbps', 'components/modallogout',
+        'components/modalreceipts', 'components/modalbps',
         'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
         'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
         ], function (B) {
