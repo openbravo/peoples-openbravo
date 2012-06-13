@@ -74,6 +74,9 @@
 <script data-main="js/mainlogin" src="js/libs/require-1.0.7.min.js"></script>
 
 <script>
+OB = window.OB || {};
+OB.I18N = window.OB.I18N || {};
+OB.I18N.getLabel = window.OB.I18N.getLabel || function(param) { return param; };
 
 // Hack focus captured by location bar in android browser.
 (function () {
