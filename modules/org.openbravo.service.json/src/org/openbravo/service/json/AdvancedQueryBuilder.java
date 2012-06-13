@@ -136,6 +136,8 @@ public class AdvancedQueryBuilder {
   // join associated entities
   private boolean joinAssociatedEntities = false;
 
+  private List<String> additionalProperties = new ArrayList<String>();
+
   public Entity getEntity() {
     return entity;
   }
@@ -971,6 +973,22 @@ public class AdvancedQueryBuilder {
       }
     }
 
+    for (String additionalProperty : additionalProperties) {
+      final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(),
+          additionalProperty);
+      if (properties.isEmpty()) {
+        continue;
+      }
+      final Property lastProperty = properties.get(properties.size() - 1);
+      if (lastProperty.isPrimitive()) {
+        properties.remove(lastProperty);
+      }
+      if (properties.isEmpty() || lastProperty.isOneToMany()) {
+        continue;
+      }
+      resolveJoins(properties, getMainAlias());
+    }
+
     // make sure that the join clauses are computed
     getWhereClause();
     getOrderByClause();
@@ -1236,7 +1254,7 @@ public class AdvancedQueryBuilder {
     private Property property;
     private String joinAlias;
     private String ownerAlias;
-    private boolean fetchJoin = false;
+    private boolean fetchJoin = true;
 
     public boolean appliesTo(String checkAlias, Property checkProperty) {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
@@ -1328,8 +1346,19 @@ public class AdvancedQueryBuilder {
       // force an alias then
       setMainAlias(JsonConstants.MAIN_ALIAS);
     }
+  }
+
+  public List<String> getAdditionalProperties() {
+    return additionalProperties;
+  }
+
+  public void clearCachedValues() {
     joinClause = null;
     whereClause = null;
     orderByClause = null;
+  }
+
+  public void setAdditionalProperties(List<String> additionalProperties) {
+    this.additionalProperties = additionalProperties;
   }
 }

@@ -232,4 +232,12 @@ public class DataEntityQueryService {
     queryBuilder.setJoinAssociatedEntities(joinAssociatedEntities);
   }
 
+  public void setAdditionalProperties(List<String> additionalProperties) {
+    queryBuilder.setAdditionalProperties(additionalProperties);
+  }
+
+  public void clearCachedValues() {
+    queryBuilder.clearCachedValues();
+  }
+
 }
