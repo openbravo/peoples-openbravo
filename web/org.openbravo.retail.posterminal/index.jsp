@@ -92,14 +92,14 @@ if(userId == null){
           </div>
           <div class="dropdown" style="display: inline-block; margin-left:30px;" >
             <a id="loggeduser" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
-            <div id="loggeduserproperties" class="dropdown-menu" style="color: black; padding:5px; width: 400px;">
+            <div id="loggeduserproperties" class="dropdown-menu" style="color: black; padding: 0px; width: 300px;">
             </div>
           </div>
           <div style="display: inline-block; font-weight: bold; float:right">
             <span>Openbravo Point of Sale</span>&nbsp;
             <a data-toggle="modal" id="logoutlink" href="#logoutDialog" class=""><i class="icon-off icon-white"></i></a>
-            <div id="logoutDialogContainer"></div>
           </div>
+          <div id="dialogsContainer"></div>
         </div>
       </div>
     </div>
@@ -125,11 +125,6 @@ if(userId == null){
   <script data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 
   <script>
-    $('#logoutDialogLogout').click(function (e) {
-      e.preventDefault();
-      OB.POS.logout();
-    });
-
     // Hack focus captured by location bar in android browser.
     (function () {
       var locationwarning = true;

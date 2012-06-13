@@ -332,3 +332,56 @@ button.modal-logout-content-button {
   margin: 0px 20px 0px 20px;
   width: 115px;
 }
+
+div.modal-profile {
+  background: white;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border: 3px double #3E4439;
+  width: 500px;
+}
+
+div.modal-profile-header {
+  background: #6cb33f;
+  padding: 2px 5px 2px 10px;
+  border: none;
+}
+
+div.modal-profile-body {
+  padding: 0px;
+  text-align: center;
+}
+
+h3.modal-profile-header-text {
+  text-align: left;
+  font-size: 15px;
+  font-weight: normal;
+  color: white;
+}
+
+div.modal-profile-content-text {
+  height: 140px;
+}
+
+button.modal-profile-content-button-apply {
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: none;
+  background-color: #72B446;
+  color: white;
+  padding: 8px 0px 10px 0px;
+  margin: 0px 20px 0px 20px;
+  width: 115px;
+}
+
+button.modal-profile-content-button-cancel {
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: none;
+  background-color: #F5AF5D;
+  color: black;
+  padding: 8px 0px 10px 0px;
+  margin: 0px 20px 0px 20px;
+  width: 115px;
+}

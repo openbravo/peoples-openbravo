@@ -103,6 +103,10 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
       });
     },
 
+    lock: function () {
+      alert('Feature not yet implemented');
+    },
+
     load: function () {
 
       // reset all application state.

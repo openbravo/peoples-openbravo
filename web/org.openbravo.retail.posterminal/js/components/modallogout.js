@@ -52,15 +52,15 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       return this;
     },
     clickEvent: function (e) {
-      alert('Feature not yet implemented');
+      OB.POS.lock();
     }
   });
 
-  // Lock the application
+  // Cancel
   OB.COMP.LogoutDialogCancel = OB.COMP.Button.extend({
     render: function () {
       this.$el.addClass('btnlink btnlink-gray modal-logout-content-button');
-      this.$el.html(OB.I18N.getLabel('OBPOS_LogoutDialogCancel'));
+      this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
       this.$el.attr('data-dismiss', 'modal');
       return this;
     },

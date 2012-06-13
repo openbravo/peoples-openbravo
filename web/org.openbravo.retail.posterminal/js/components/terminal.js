@@ -1,6 +1,6 @@
-/*global define */
+/*global define, $ */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
+define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'windows/posbuttons', 'components/modalprofile'], function (B) {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -22,32 +22,34 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
         this.loggeduser.text(ctx.user._identifier);
         this.loggeduserproperties.empty();
         this.loggeduserproperties.append(B(
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [
-            {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
-          ]}
-        ).$el);
-        this.loggeduserproperties.append(B(
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 70%;'}, content: [
-            {kind: B.KindJQuery('div'), content: [
-              {kind: B.KindJQuery('span'), content: [
-                OB.I18N.getLabel('OBPOS_User')
-              ]},
-              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
-                ctx.user._identifier
-              ]}
+          {kind: B.KindJQuery('div'), attr: {style: 'height: 60px; background-color: #FFF899;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 55px; margin: 6px 0px 0px 6px;'}, content: [
+              {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
             ]},
-            {kind: B.KindJQuery('div'), content: [
-              {kind: B.KindJQuery('span'), content: [
-                OB.I18N.getLabel('OBPOS_Role')
+            {kind: B.KindJQuery('div'), attr: {style: 'float: left; margin: 6px 0px 0px 0px; line-height: 180%;'}, content: [
+              {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
+                  ctx.user._identifier
+                ]}
               ]},
-              {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
-                ctx.role._identifier
+              {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
+                  ctx.role._identifier
+                ]}
               ]}
             ]}
           ]}
         ).$el);
         this.loggeduserproperties.append(B(
-          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
+          {kind: B.KindJQuery('div'), content: [
+            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
+            {kind: OB.COMP.MenuAction.extend({clickEvent: function() { $('#profileDialog').modal('show'); }, label: OB.I18N.getLabel('OBPOS_LblProfile')})},
+            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
+            {kind: OB.COMP.MenuAction.extend({clickEvent: function() { OB.POS.lock(); }, label: OB.I18N.getLabel('OBPOS_LogoutDialogLock')})},
+            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
+            {kind: OB.COMP.MenuAction.extend({clickEvent: function() { $('#logoutDialog').modal('show'); }, label: OB.I18N.getLabel('OBPOS_LogoutDialogLogout')})},
+            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}}
+          ]}
         ).$el);
       } else {
         this.loggeduser.text('');
