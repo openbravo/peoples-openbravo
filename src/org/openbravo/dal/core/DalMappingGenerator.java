@@ -230,16 +230,12 @@ public class DalMappingGenerator implements OBSingleton {
       if (p.isMandatory()) {
         sb.append(" not-null=\"true\"");
       }
-      if (p.getTargetEntity() != null && p.getTargetEntity().getName().equals("ADLanguage")) {
-        sb.append(" fetch=\"join\"");
-      }
 
       // language is always loaded explicitly by Hibernate because it is a non-pk
       // association, eager fetch with the parent then..
-      // disabled for now for later study
-      // if (p.getTargetEntity().getName().equals("ADLanguage")) {
-      // sb.append(" fetch=\"join\" ");
-      // }
+      if (p.getTargetEntity() != null && p.getTargetEntity().getName().equals("ADLanguage")) {
+        sb.append(" fetch=\"join\"");
+      }
 
       if (p.isInactive() || p.getEntity().isView()) {
         sb.append(" update=\"false\"");
