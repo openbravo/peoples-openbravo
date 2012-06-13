@@ -8,7 +8,8 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
         'closecash/components/closekeyboard',
         'closecash/windows/tabpendingreceipts',
         'closecash/windows/tabcountcash', 'closecash/windows/tabpostprintclose',
-        'closecash/components/listpaymentmethod'
+        'closecash/components/listpaymentmethod',
+        'closecash/components/renderpayments'
 
         ], function (B) {
 
@@ -33,8 +34,9 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
           {kind: OB.MODEL.DayCash},
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
-
-          {kind: OB.DATA.PaymentMethod},
+          {kind: OB.DATA.Container, content: [
+               {kind: OB.DATA.PaymentMethod}
+          ]},
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [

@@ -36,7 +36,7 @@ define(['utilities', 'datasource'], function () {
 	      'org.openbravo.retail.posterminal.term.Payments',
 	      OB.POS.modelterminal.get('terminal').client,
 	      OB.POS.modelterminal.get('terminal').organization));
-	    this.loadparams = {};
+	    this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
 	  };
   _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
 

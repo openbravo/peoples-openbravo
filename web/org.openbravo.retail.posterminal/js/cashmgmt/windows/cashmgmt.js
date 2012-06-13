@@ -42,7 +42,8 @@ define(['builder', 'i18n', 'data/datamaster',
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
                {kind: OB.COMP.DepositsDrops},
-               {kind: OB.COMP.ModalDropDestinations}
+               {kind: OB.COMP.ModalDropDestinations},
+               {kind: OB.COMP.CashChange}
              ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), content: [

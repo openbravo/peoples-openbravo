@@ -22,7 +22,7 @@ define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
                   ////
                 });
               }},
-              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('EndDayProcess')]} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblEndDayProcess')]} ,
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 20px;'}, content: [{kind: OB.COMP.ButtonPrev},{kind: OB.COMP.ButtonNext}]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblSteps')]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep1')]} ,

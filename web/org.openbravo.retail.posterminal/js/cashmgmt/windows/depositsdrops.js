@@ -21,19 +21,18 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n' ], function (B) {
 	              ]},
 	              {kind: B.KindJQuery('div')},
 	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-  	                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-  	                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
-  	                     OB.I18N.getLabel('OBPOS_LblStartCash')
-  	                  ]},
-  	                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
+	{kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+	{kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
+	OB.I18N.getLabel('OBPOS_LblStartCash')
+	]},
+	{kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
                          '250,00'
-                    ]}
-  	                ]}
-  	              ]},
-
-  	            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
+        ]}
+	]}
+	]},
+	{kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+	{kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+	{kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
                      OB.I18N.getLabel('OBPOS_LblTotalCash')
                   ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
@@ -50,9 +49,9 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n' ], function (B) {
                     '250,00'
                  ]}
                 ]}
-              ]},
-//  	            {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
-//                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
+              ]}
+//              {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
+//              {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
                    //{kind: OB.COMP.ListPaymentMethods}
 //                 ]}
 //               ]}

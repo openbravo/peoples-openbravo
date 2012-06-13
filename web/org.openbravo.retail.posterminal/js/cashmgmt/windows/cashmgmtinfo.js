@@ -21,11 +21,11 @@ define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
                   e.preventDefault();
                   ////
                 });
-              }},
+              }}
             ]}
           ]},
           {kind: B.KindJQuery('div'), content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 0px 150px 20px 10px; float: left; font-weight:bold; font-size: 140%;'}  , content: ['Drop or deposit cash using the numerical pad and tad Done to complete']} ,
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 0px 150px 20px 10px; float: left; font-weight:bold; font-size: 140%;'}  , content: ['Drop or deposit cash using the numerical pad and tad Done to complete']} 
             ]}
           ,
           {kind: B.KindJQuery('div'), content: [

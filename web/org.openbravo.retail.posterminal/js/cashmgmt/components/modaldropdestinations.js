@@ -9,9 +9,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     id: 'modaldropdestinations',
     header: 'Select Destination for Cash Drop',
     getContentView: function () {
-      return (
-    	{kind:OB.COMP.RenderDropDestinations}
-      );
+      return ({kind:OB.COMP.RenderDropDestinations});
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default

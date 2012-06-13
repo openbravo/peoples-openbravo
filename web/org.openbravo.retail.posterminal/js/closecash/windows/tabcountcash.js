@@ -24,25 +24,9 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n' ], function (B) {
                   ]}
                 ]}
               ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 36%'}, content: [
-                       OB.I18N.getLabel('OBPOS_LblPaymentMethod')
-                    ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
-                         OB.I18N.getLabel('OBPOS_LblExpected')
-                    ]},
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 0px 10px 0px; border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
-                         OB.I18N.getLabel('OBPOS_LblCounted')
-                  ]}
-
-                  ]}
-                ]},
-				{kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black;'}, content: [
                    {kind: OB.COMP.ListPaymentMethods}
                  ]}
-               ]}
 
 
 
