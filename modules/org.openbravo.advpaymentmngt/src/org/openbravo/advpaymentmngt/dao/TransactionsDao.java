@@ -129,7 +129,7 @@ public class TransactionsDao {
         newTransaction.setForeignAmount(payment.getAmount());
       }
       OBDal.getInstance().save(newTransaction);
-      // OBDal.getInstance().flush();
+      OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -89,7 +89,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
-          // OBDal.getInstance().flush();
+          OBDal.getInstance().flush();
         } else if (strAction.equals("R")) {
           // ***********************
           // Reactivate Transaction
