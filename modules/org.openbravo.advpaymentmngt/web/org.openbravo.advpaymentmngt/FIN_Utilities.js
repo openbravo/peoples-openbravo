@@ -290,9 +290,17 @@ function updateConvertedAmounts(recalcExchangeRate) {
         exchangeRate.value = '';
       }
     } else {
-      actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      if (exchangeRate.value !== '') {
+        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      } else {
+        actualConverted.value = applyFormat('0');
+      }
     }
-    expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    if (exchangeRate.value !== '') {
+      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    } else {
+      expectedConverted.value = applyFormat('0');
+    }
   }
 }
 
