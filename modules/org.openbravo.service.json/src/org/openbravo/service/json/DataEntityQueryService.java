@@ -227,4 +227,9 @@ public class DataEntityQueryService {
   public void setFilterOnActive(boolean filterOnActive) {
     this.filterOnActive = filterOnActive;
   }
+
+  public void setJoinAssociatedEntities(boolean joinAssociatedEntities) {
+    queryBuilder.setJoinAssociatedEntities(joinAssociatedEntities);
+  }
+
 }

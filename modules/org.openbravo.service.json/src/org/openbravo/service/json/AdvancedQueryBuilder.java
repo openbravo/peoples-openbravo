@@ -133,6 +133,9 @@ public class AdvancedQueryBuilder {
 
   private SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
 
+  // join associated entities
+  private boolean joinAssociatedEntities = false;
+
   public Entity getEntity() {
     return entity;
   }
@@ -663,7 +666,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-              .equals(OPERATOR_GREATEROREQUALFIELD));
+            .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -671,7 +674,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-              .equals(OPERATOR_LESSOREQUALFIElD));
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -954,15 +957,28 @@ public class AdvancedQueryBuilder {
       return joinClause;
     }
 
+    // create join definitions for all many-to-ones
+    if (joinAssociatedEntities) {
+      for (Property property : entity.getProperties()) {
+        if (!property.isPrimitive() && !property.isOneToMany() && !property.isOneToOne()) {
+          final JoinDefinition joinDefinition = new JoinDefinition();
+          joinDefinition.setOwnerAlias(getMainAlias());
+          joinDefinition.setFetchJoin(true);
+          joinDefinition.setJoinAlias(getNewUniqueAlias());
+          joinDefinition.setProperty(property);
+          joinDefinitions.add(joinDefinition);
+        }
+      }
+    }
+
     // make sure that the join clauses are computed
     getWhereClause();
     getOrderByClause();
 
-    if (getMainAlias() == null) {
-      return "";
-    }
     final StringBuilder sb = new StringBuilder();
-    sb.append(" as " + getMainAlias() + " ");
+    if (getMainAlias() != null) {
+      sb.append(" as " + getMainAlias() + " ");
+    }
     for (JoinDefinition joinDefinition : joinDefinitions) {
       sb.append(joinDefinition.getJoinStatement());
     }
@@ -1220,6 +1236,7 @@ public class AdvancedQueryBuilder {
     private Property property;
     private String joinAlias;
     private String ownerAlias;
+    private boolean fetchJoin = false;
 
     public boolean appliesTo(String checkAlias, Property checkProperty) {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
@@ -1227,10 +1244,13 @@ public class AdvancedQueryBuilder {
 
     public String getJoinStatement() {
       if (orNesting > 0) {
-        return " left outer join " + ownerAlias + DalUtil.DOT + property.getName() + " as "
+        return " left outer join " + (fetchJoin ? "fetch " : "")
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
             + joinAlias;
       } else {
-        return " left join " + ownerAlias + DalUtil.DOT + property.getName() + " as " + joinAlias;
+        return " left join " + (fetchJoin ? "fetch " : "")
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
+            + joinAlias;
       }
     }
 
@@ -1248,6 +1268,14 @@ public class AdvancedQueryBuilder {
 
     public void setOwnerAlias(String ownerAlias) {
       this.ownerAlias = ownerAlias;
+    }
+
+    public boolean isFetchJoin() {
+      return fetchJoin;
+    }
+
+    public void setFetchJoin(boolean fetchJoin) {
+      this.fetchJoin = fetchJoin;
     }
   }
 
@@ -1288,5 +1316,20 @@ public class AdvancedQueryBuilder {
 
   public void setCriteria(JSONObject criteria) {
     this.criteria = criteria;
+  }
+
+  public boolean isJoinAssociatedEntities() {
+    return joinAssociatedEntities;
+  }
+
+  public void setJoinAssociatedEntities(boolean joinAssociatedEntities) {
+    this.joinAssociatedEntities = joinAssociatedEntities;
+    if (joinAssociatedEntities) {
+      // force an alias then
+      setMainAlias(JsonConstants.MAIN_ALIAS);
+    }
+    joinClause = null;
+    whereClause = null;
+    orderByClause = null;
   }
 }
