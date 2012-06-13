@@ -118,7 +118,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
           String strLineSequence = SequenceIdData.getUUID();
           try {
             if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence,
-                vars.getClient(), dataLines[i].adOrgId, vars.getUser(), strSequence,
+                vars.getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence,
                 dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description,
                 dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId,
                 dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr,
