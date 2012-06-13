@@ -287,9 +287,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
           // update outstanding amount
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
           if (outStandingPSDs.size() == 0) {
-            // No outstanding PSD exists so we update this one
-            psd.setPaymentDetails(null);
-            OBDal.getInstance().save(psd);
+            toRemovePDs.add(pd.getId());
           } else {
             // First make sure outstanding amount is not equal zero
             if (outStandingPSDs.get(0).getAmount().add(psd.getAmount()).signum() == 0) {
@@ -548,7 +546,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     List<FIN_PaymentScheduleDetail> storedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     // This is to identify first load of the grid
     String strFirstLoad = vars.getStringParameter("isFirstLoad");
-    if ("true".equals(strFirstLoad)) {
+    if ("true".equals(strFirstLoad) && payment.getFINPaymentDetailList().size() > 0) {
       // Add payment schedule details related to orders or invoices to storedSchedulePaymentDetails
       OBContext.setAdminMode();
       try {
