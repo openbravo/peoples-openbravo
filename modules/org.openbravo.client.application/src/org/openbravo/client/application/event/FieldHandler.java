@@ -1,0 +1,98 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
+package org.openbravo.client.application.event;
+
+import javax.enterprise.event.Observes;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
+
+/**
+ * Fills in the {@link Field#setColumn(org.openbravo.model.ad.datamodel.Column)} of the
+ * {@link Field} if the {@link Field#getProperty()} is set.
+ * 
+ * @author mtaal
+ */
+public class FieldHandler extends EntityPersistenceEventObserver {
+  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Field.ENTITY_NAME) };
+
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    setColumn(event);
+  }
+
+  public void onNew(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    setColumn(event);
+  }
+
+  private void setColumn(EntityPersistenceEvent event) {
+    final String propertyPath = (String) event.getCurrentState(getPropertyProperty());
+    if (propertyPath == null || propertyPath.trim().length() == 0) {
+      if (event.getCurrentState(getColumnProperty()) == null) {
+        // TODO: I18N me
+        throw new OBException("Column must be set");
+      }
+      return;
+    }
+    final Tab tab = (Tab) event.getCurrentState(getTabProperty());
+    final String tableId = (String) DalUtil.getId(tab.getTable());
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    final Property property = DalUtil.getPropertyFromPath(entity, propertyPath);
+    if (property == null) {
+      // TODO: I18N me
+      throw new OBException("Property not found");
+    }
+    final Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
+    event.setCurrentState(getColumnProperty(), column);
+  }
+
+  @Override
+  protected Entity[] getObservedEntities() {
+    return entities;
+  }
+
+  private Property getColumnProperty() {
+    return entities[0].getProperty(Field.PROPERTY_COLUMN);
+  }
+
+  private Property getPropertyProperty() {
+    return entities[0].getProperty(Field.PROPERTY_PROPERTY);
+  }
+
+  private Property getTabProperty() {
+    return entities[0].getProperty(Field.PROPERTY_TAB);
+  }
+}
