@@ -207,7 +207,13 @@
       END IF;
 
       -- Check if the gl journal has lines.
-      SELECT 1, documentNo INTO v_has_lines, v_documentNo FROM GL_Journal WHERE EXISTS (SELECT 1 FROM GL_JournalLine WHERE GL_JournalLine.GL_Journal_ID = v_Record_ID);
+     
+      SELECT 1, documentNo INTO v_has_lines, v_documentNo
+      FROM GL_Journal
+      WHERE EXISTS (SELECT 1
+                    FROM GL_JournalLine
+                    WHERE GL_JournalLine.GL_Journal_ID = GL_Journal.GL_Journal_ID
+                    AND GL_JournalLine.GL_Journal_ID = v_Record_ID);
       IF (v_has_lines=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@GLJournalHasNoLines@' || ' ' || v_DocumentNo);
       END IF;
