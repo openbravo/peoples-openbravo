@@ -239,8 +239,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       fieldQuery.setNamedParameter("roleId", roleId);
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
       for (Field f : fieldQuery.list()) {
-        String key = entity.getPropertyByColumnName(f.getColumn().getDBColumnName().toLowerCase())
-            .getName();
+        String key = KernelUtils.getProperty(f).getName();
         if (data.has(key)) {
           String newValue = getValue(data, key);
           String oldValue = getValue(oldData, key);
@@ -300,8 +299,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           if (additionalProperties.length() > 0) {
             additionalProperties.append(",");
           }
-          additionalProperties.append(dsProp.getName() + DalUtil.FIELDSEPARATOR
-              + addProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
+          additionalProperties.append(dsProp.getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+              + DalUtil.FIELDSEPARATOR + addProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
         }
       }
     }
@@ -315,7 +314,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
         final Property property = DalUtil.getPropertyFromPath(entity, additionalProp);
         final DataSourceProperty dsProperty = DataSourceProperty.createFromProperty(property);
         dsProperty.setAdditional(true);
-        dsProperty.setName(additionalProp);
+        dsProperty.setName(additionalProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
         dsProperties.add(dsProperty);
       }
     }

@@ -41,6 +41,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 
 /**
@@ -416,6 +417,25 @@ public class KernelUtils {
       }
     }
     return targetTab;
+  }
+
+  /**
+   * Calls {@link #getProperty(Entity, Field)} using the entity of the tab of the field.
+   */
+  public static Property getProperty(org.openbravo.model.ad.ui.Field field) {
+    final String tableId = (String) DalUtil.getId(field.getTab().getTable());
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    return KernelUtils.getProperty(entity, field);
+  }
+
+  /**
+   * Compute the property from the field, assuming that the field is defined on the basis of entity.
+   */
+  public static Property getProperty(Entity entity, org.openbravo.model.ad.ui.Field field) {
+    if (field.getProperty() == null) {
+      return entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
+    }
+    return DalUtil.getPropertyFromPath(entity, field.getProperty());
   }
 
   private class ModuleDependencyCycleException extends OBException {

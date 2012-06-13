@@ -57,6 +57,7 @@ import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -104,6 +105,20 @@ public class OBViewTab extends BaseTemplateComponent {
       dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
     }
     dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
+
+    final StringBuilder sb = new StringBuilder();
+    for (Field fld : tab.getADFieldList()) {
+      if (fld.getProperty() != null && fld.getProperty().contains(".")) {
+        if (sb.length() > 0) {
+          sb.append(",");
+        }
+        sb.append(fld.getProperty());
+      }
+    }
+
+    if (sb.length() > 0) {
+      dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, sb.toString());
+    }
     final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }

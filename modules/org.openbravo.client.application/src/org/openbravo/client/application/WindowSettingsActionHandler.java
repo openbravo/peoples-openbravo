@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.personalization.PersonalizationHandler;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -112,12 +113,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             jTab.put("fields", jFields);
             final Set<String> fields = new TreeSet<String>();
             for (Field field : tabAccess.getTab().getADFieldList()) {
-              fields.add(entity.getPropertyByColumnName(
-                  field.getColumn().getDBColumnName().toLowerCase()).getName());
+              fields.add(KernelUtils.getProperty(entity, field).getName());
             }
             for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-              final String name = entity.getPropertyByColumnName(
-                  fieldAccess.getField().getColumn().getDBColumnName().toLowerCase()).getName();
+              final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
               jFields.put(name, fieldAccess.isEditableField());
               fields.remove(name);
             }
@@ -167,8 +166,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
           }
           final Entity entity = ModelProvider.getInstance().getEntityByTableId(
               f.getTab().getTable().getId());
-          ps.put(entity.getPropertyByColumnName(f.getColumn().getDBColumnName().toLowerCase())
-              .getName());
+          ps.put(KernelUtils.getProperty(f).getName());
         }
       }
 

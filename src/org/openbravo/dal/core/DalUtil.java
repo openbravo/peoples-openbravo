@@ -137,12 +137,11 @@ public class DalUtil {
    *          the start entity for the property path
    * @param propertyPath
    *          the property path, dot-separated property names
-   * @return the found property
+   * @return the found value
    */
   public static Object getValueFromPath(BaseOBObject bob, String propertyPath) {
     final String[] parts = propertyPath.replace(FIELDSEPARATOR, DOT).split("\\" + DOT);
     BaseOBObject currentBob = bob;
-    Property result = null;
     Object value = null;
     for (String part : parts) {
       // only consider it as an identifier if it is called an identifier and
@@ -166,7 +165,7 @@ public class DalUtil {
         return value;
       }
     }
-    return result;
+    return currentBob;
   }
 
   /**

@@ -92,6 +92,7 @@
       ad_field, ad_column 
       where ad_field.ad_column_id = ad_column.ad_column_id 
       and ad_column.ad_process_id = app.ad_process_id 
+      AND (ad_field.property is null or ad_field.property not like '%.%')
       and app.ISACTIVE = 'Y' 
       and app.AD_REFERENCE_ID IN ('30', '31', '35', '25') 
       and ad_field.ad_tab_id = ? 
@@ -110,6 +111,7 @@
       from ad_column c, ad_field f, ad_process_para p 
       where c.AD_COLUMN_ID = f.AD_COLUMN_ID 
       and c.AD_PROCESS_ID = p.AD_PROCESS_ID  
+      and (f.property is null or f.property not like '%.%')
       and p.DEFAULTVALUE LIKE '@SQL=%'
       and f.AD_TAB_ID = ?
       ]]>
