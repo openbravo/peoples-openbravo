@@ -162,7 +162,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_process/CopyFromGLJournal").createXmlDocument();
     CopyFromGLJournalData[] data = CopyFromGLJournalData.selectFrom(this, strDescription,
         strDocumentNo, vars.getClient(),
-        Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"));
+        Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"), strKey);
     xmlDocument.setData("structure1", data);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
