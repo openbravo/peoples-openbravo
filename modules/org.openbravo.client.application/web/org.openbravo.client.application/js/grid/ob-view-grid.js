@@ -1102,7 +1102,8 @@ isc.OBViewGrid.addProperties({
   },
 
   convertCriteria: function (criteria) {
-    var selectedValues, prop, fld, value, i, criterion, fldName, length;
+    var selectedValues, prop, fld, value, i, j, k, criterion, fldName, length, today = new Date(),
+        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset();
 
     if (!criteria) {
       criteria = {};
@@ -1186,7 +1187,9 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    // get rid of some unneeded stuff in the criteria
+    // Iterates all the criterias
+    // -If they are not needed, they are removed
+    // -Otherwise, if it is a datetime criteria, the UTC offset in minutes is added
     if (criteria && criteria.criteria) {
       var internalCriteria = criteria.criteria;
       for (i = (internalCriteria.length - 1); i >= 0; i--) {
@@ -1200,6 +1203,27 @@ isc.OBViewGrid.addProperties({
         }
         if (shouldRemove) {
           internalCriteria.removeAt(i);
+        } else {
+          var fieldName;
+          //The first name a date time field is filtered, the fieldName is stored in criteria.criteria[i].criteria[0].fieldName
+          if (criteria.criteria[i].criteria && criteria.criteria[i].criteria[0]) {
+            fieldName = criteria.criteria[i].criteria[0].fieldName;
+          } else { //After the first time, the fieldName is stored in criteria.criteria[i].fieldName
+            fieldName = criteria.criteria[i].fieldName;
+          }
+
+          for (j = 0; j < this.fields.length; j++) {
+            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === "datetime") {
+              if (criteria.criteria[i].criteria) {
+                for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
+                  criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+                }
+              } else {
+                criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+              }
+              break;
+            }
+          }
         }
       }
     }

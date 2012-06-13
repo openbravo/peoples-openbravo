@@ -129,6 +129,8 @@ public class AdvancedQueryBuilder {
   // keeps track if during parsing the criteria one or more or's are encountered.
   private int orNesting = 0;
 
+  private int minutesTimeZoneDiff = 0;
+
   private SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
 
   public Entity getEntity() {
@@ -292,6 +294,17 @@ public class AdvancedQueryBuilder {
 
     String fieldName = jsonCriteria.getString("fieldName");
     Object value = jsonCriteria.has("value") ? jsonCriteria.get("value") : null;
+    // Retrieves the UTC time zone offset of the client
+    if (jsonCriteria.has("minutesTimezoneOffset")) {
+      int clientMinutesTimezoneOffset = Integer.parseInt(jsonCriteria.get("minutesTimezoneOffset")
+          .toString());
+      Calendar now = Calendar.getInstance();
+      // Obtains the UTC time zone offset of the server
+      int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET) + now
+          .get(Calendar.DST_OFFSET)) / (1000 * 60);
+      // Obtains the time zone offset between the server and the client
+      minutesTimeZoneDiff = serverMinutesTimezoneOffset - clientMinutesTimezoneOffset;
+    }
 
     if (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL)) {
       value = null;
@@ -620,27 +633,24 @@ public class AdvancedQueryBuilder {
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
         final Date date = simpleDateFormat.parse(value.toString());
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
-          final Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
           calendar.set(Calendar.HOUR, 0);
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
           calendar.set(Calendar.MILLISECOND, 0);
-          return calendar.getTime();
         } else if (isLesserOperator(operator)) {
           // move the data to the end of the day
-          final Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
           calendar.set(Calendar.HOUR, 23);
           calendar.set(Calendar.MINUTE, 59);
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
-          return calendar.getTime();
-        } else {
-          return date;
         }
+        // Applies the time zone offset difference between the client and the server
+        calendar.add(Calendar.MINUTE, minutesTimeZoneDiff);
+        return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
       }
