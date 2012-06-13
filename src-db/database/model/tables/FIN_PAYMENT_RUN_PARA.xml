@@ -62,6 +62,5 @@
         <reference local="FIN_PAY_EXEC_PROCESS_PARA_ID" foreign="FIN_PAY_EXEC_PROCESS_PARA_ID"/>
       </foreign-key>
       <check name="FIN_PAYMENTRUNPARA_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTRUNPARA_VALCHK_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

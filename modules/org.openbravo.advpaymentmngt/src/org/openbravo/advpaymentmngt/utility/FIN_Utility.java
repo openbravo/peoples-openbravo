@@ -44,6 +44,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -59,6 +60,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -925,7 +927,8 @@ public class FIN_Utility {
       // By default take the invoice document number
       invoiceDocNo = invoice.getDocumentNo();
 
-      final String paymentDescription = organization.getOrganizationInformationList().get(0)
+      final String paymentDescription = OBDal.getInstance()
+          .get(OrganizationInformation.class, ((String) DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {

@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
 -->
 
@@ -37,7 +37,7 @@
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, 
         '' as M_InOutLine_ID, '' AS PriceActual, '' AS PriceList, '' AS PriceLimit, '' AS Description, '' as PriceStd,
         '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, '' AS M_Offer_ID, '' AS PricePrecision,
-        l.taxbaseamt, l.CancelPriceAD
+        l.taxbaseamt, l.CancelPriceAD, '' AS Rate
         FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  AND m.C_InvoiceLine_ID IS NOT NULL, 
         C_ORDER o, C_UOM uom,  M_PRODUCT p
@@ -590,15 +590,15 @@
         C_OrderLine_ID,M_InOutLine_ID, Line,Description, M_Product_ID,
         C_UOM_ID,QtyInvoiced, PriceList,
         PriceActual,PriceLimit, LineNetAmt,
-        ChargeAmt,C_Tax_ID, QuantityOrder, M_Product_UOM_ID,
+        ChargeAmt,C_Tax_ID, taxamt, QuantityOrder, M_Product_UOM_ID,
         M_Attributesetinstance_ID, PriceStd, taxbaseamt, excludeforwithholding)
       VALUES 
         (?, ?, ?, ?, 'Y', 
          now(), ?, now(), ?, 
          ?, ?, (SELECT (COALESCE(Max(Line),0))+10 FROM C_InvoiceLine WHERE C_Invoice_ID=?), ?, ?, 
          ?, TO_NUMBER(?), TO_NUMBER(?), 
-         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
-         0, ?, TO_NUMBER(?), ?, 
+         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+         0, ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
          ?, TO_NUMBER(?), TO_NUMBER(?), 'N')
     </Sql>
     <Parameter name="cInvoicelineId"/>
@@ -619,6 +619,7 @@
     <Parameter name="pricelimit"/>
     <Parameter name="linenetamt"/>
     <Parameter name="cTaxId"/>
+    <Parameter name="taxAmt"/>
     <Parameter name="quantityOrder"/>
     <Parameter name="mProductUomId"/>
     <Parameter name="mAttributesetinstanceId"/>
@@ -679,5 +680,14 @@
     <Parameter name="qty"/>
     <Parameter name="pricelist"/>
     <Parameter name="invoiceid"/>
+  </SqlMethod>
+  <SqlMethod name="selectTaxRate" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT Rate
+      FROM C_TAX
+      WHERE C_Tax_ID = ?
+    </Sql>
+    <Parameter name="cTaxId"/>
   </SqlMethod>
 </SqlClass>
