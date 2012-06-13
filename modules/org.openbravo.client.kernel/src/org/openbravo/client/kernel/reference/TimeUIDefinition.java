@@ -103,9 +103,8 @@ public class TimeUIDefinition extends UIDefinition {
         calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
         calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
-        int gmtHourOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET))
-            / (1000 * 60 * 60);
-        calendar.add(Calendar.HOUR, gmtHourOffset);
+        int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+        calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
         StringBuffer localTimeColumnValue = getClassicFormat().format(calendar.getTime(),
             new StringBuffer(), new FieldPosition(0));
         jsnobject.put("value", createFromClassicString(localTimeColumnValue.toString()));
@@ -139,9 +138,8 @@ public class TimeUIDefinition extends UIDefinition {
       calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
       // Applies the zone offset and the dst offset to convert the time from local to UTC
-      int gmtHourOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET))
-          / (1000 * 60 * 60);
-      calendar.add(Calendar.HOUR, -gmtHourOffset);
+      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+      calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
       return xmlTimeFormat.format(calendar.getTime());
     } catch (Exception e) {

@@ -271,20 +271,16 @@ OB.ViewFormProperties = {
   },
 
   convertUTCTimeToLocalTime: function (record, timeFields) {
-    var textField, fieldToDate, i, localHour, timeFieldsLength = timeFields.length,
-        UTCOffset = isc.Time.getUTCHoursDisplayOffset(new Date());
+    var textField, fieldToDate, i, timeFieldsLength = timeFields.length,
+        UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
+        UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
     for (i = 0; i < timeFieldsLength; i++) {
       textField = record[timeFields[i]];
       if (textField && textField.length > 0) {
         fieldToDate = isc.Time.parseInput(textField);
-        localHour = fieldToDate.getHours() + UTCOffset;
-        if (localHour > 23) {
-          localHour = localHour - 24;
-        } else if (localHour < 0) {
-          localHour = localHour + 24;
-        }
+        fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
         // TODO: support time formats other than HH:mm:ss
-        record[timeFields[i]] = String(localHour) + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+        record[timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
       }
     }
   },

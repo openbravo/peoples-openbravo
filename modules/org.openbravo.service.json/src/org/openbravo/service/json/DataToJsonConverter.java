@@ -301,9 +301,8 @@ public class DataToJsonConverter {
     calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
     calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
 
-    int gmtHourOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET))
-        / (1000 * 60 * 60);
-    calendar.add(Calendar.HOUR, -gmtHourOffset);
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
     return calendar.getTime();
   }

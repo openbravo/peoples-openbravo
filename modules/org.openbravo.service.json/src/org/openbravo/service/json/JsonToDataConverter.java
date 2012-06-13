@@ -126,6 +126,7 @@ public class JsonToDataConverter {
   private final static SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final static SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
+  private final static SimpleDateFormat jsTimeFormat = JsonUtils.createJSTimeFormat();
 
   private final List<JsonConversionError> errors = new ArrayList<JsonConversionError>();
 
@@ -161,11 +162,13 @@ public class JsonToDataConverter {
               strValue = JsonUtils.convertFromXSDToJavaFormat(strValue);
             }
 
-            Date localTime1970 = new Timestamp(xmlTimeFormat.parse(strValue).getTime());
+            Calendar now = Calendar.getInstance();
+            strValue = xmlDateFormat.format(now.getTime()) + "T" + strValue;
+            Date UTCTime = new Timestamp(jsTimeFormat.parse(strValue).getTime());
 
-            Date localTimeCurrentDate = convertToCurrentDate(localTime1970);
+            Date localTime = convertToLocalTime(UTCTime);
 
-            return new Timestamp(localTimeCurrentDate.getTime());
+            return new Timestamp(localTime.getTime());
           } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
@@ -222,18 +225,15 @@ public class JsonToDataConverter {
     }
   }
 
-  private static Date convertToCurrentDate(Date localTime1970) {
-    Calendar now = Calendar.getInstance();
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(localTime1970);
-    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
-    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
-    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+  private static Date convertToLocalTime(Date UTCTime) {
+    Calendar localTime = Calendar.getInstance();
+    localTime.setTime(UTCTime);
 
-    int dstOffset = now.get(Calendar.DST_OFFSET) / (1000 * 60 * 60);
-    calendar.add(Calendar.HOUR, dstOffset);
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
+        .get(Calendar.DST_OFFSET));
+    localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
 
-    return calendar.getTime();
+    return localTime.getTime();
   }
 
   private static boolean isEmptyOrNull(Object value) {
