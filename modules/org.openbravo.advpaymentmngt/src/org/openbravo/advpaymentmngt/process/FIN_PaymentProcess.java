@@ -85,7 +85,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
       // payment.setProcessNow(true);
       // OBDal.getInstance().save(payment);
-      // OBDal.getInstance().flush();
+      OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Guess if this is a refund payment
         boolean isRefund = false;
