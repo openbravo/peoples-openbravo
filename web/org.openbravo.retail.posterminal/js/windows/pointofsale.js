@@ -36,7 +36,6 @@ define(['builder', 'i18n',
 
           {kind: OB.COMP.ModalBPs},
           {kind: OB.COMP.ModalReceipts},
-          {kind: OB.COMP.ModalLogout},
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
