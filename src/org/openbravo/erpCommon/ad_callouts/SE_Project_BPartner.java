@@ -113,16 +113,38 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcBpartnerLocationId\", ");
     if (tdv != null && tdv.length > 0) {
       resultado.append("new Array(");
-      for (int i = 0; i < tdv.length; i++) {
-        resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-            + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-        if (i < tdv.length - 1)
-          resultado.append(",\n");
+      if (strLocation.isEmpty()) {
+        // If no location is provided, the first one is selected
+        if (tdv.length > 0) {
+          resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
+          if (tdv.length > 1) {
+            resultado.append(",\n");
+          }
+        }
+        for (int i = 1; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
+          if (i < tdv.length - 1) {
+            resultado.append(",\n");
+          }
+        }
+      } else {
+        // If a location is provided, it is selected
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+              + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
+          if (i < tdv.length - 1) {
+            resultado.append(",\n");
+          }
+        }
       }
       resultado.append("\n)");
-    } else
+
+    } else {
       resultado.append("null");
+    }
     resultado.append("\n),");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
@@ -183,12 +205,29 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpbilltoId\", ");
     if (tlv != null && tlv.length > 0) {
       resultado.append("new Array(");
-      for (int i = 0; i < tlv.length; i++) {
-        resultado.append("new Array(\"" + tlv[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tlv[i].getField("name")) + "\", \""
-            + (tlv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-        if (i < tlv.length - 1)
-          resultado.append(",\n");
+
+      if (strLocation.isEmpty()) {
+        if (tlv.length > 0) {
+          resultado.append("new Array(\"" + tlv[0].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tlv[0].getField("name")) + "\", \"" + "true" + "\")");
+          if (tlv.length > 1) {
+            resultado.append(",\n");
+          }
+        }
+        for (int i = 1; i < tlv.length; i++) {
+          resultado.append("new Array(\"" + tlv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tlv[i].getField("name")) + "\", \"" + "false" + "\")");
+          if (i < tlv.length - 1)
+            resultado.append(",\n");
+        }
+      } else {
+        for (int i = 0; i < tlv.length; i++) {
+          resultado.append("new Array(\"" + tlv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tlv[i].getField("name")) + "\", \""
+              + (tlv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
+          if (i < tlv.length - 1)
+            resultado.append(",\n");
+        }
       }
       resultado.append("\n)");
     } else
