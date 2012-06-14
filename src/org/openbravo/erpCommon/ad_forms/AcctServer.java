@@ -2439,10 +2439,12 @@ public abstract class AcctServer {
    */
   boolean disableDocumentConfirmation() {
     OBContext.setAdminMode();
-    StringBuffer whereClause = new StringBuffer();
     String strClassname = "";
+    C_DocType_ID = objectFieldProvider[0].getField("cDoctypeId");
+    loadDocumentType();
     try {
       for (int i = 0; i < m_as.length; i++) {
+        StringBuffer whereClause = new StringBuffer();
         whereClause.append(" as astdt ");
         whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
             + m_as[i].m_C_AcctSchema_ID + "'");
