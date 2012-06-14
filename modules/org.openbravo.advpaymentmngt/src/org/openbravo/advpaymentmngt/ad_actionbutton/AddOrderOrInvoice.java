@@ -581,7 +581,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       filteredScheduledPaymentDetails.removeAll(FIN_AddPayment.getOutstandingPSDs(psd));
     }
     FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
-        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
+        selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null,
+        strSelectedPaymentDetails);
     for (FIN_PaymentScheduleDetail psd : storedScheduledPaymentDetails) {
       // Calculate pending amount
       BigDecimal outstandingAmount = BigDecimal.ZERO;
