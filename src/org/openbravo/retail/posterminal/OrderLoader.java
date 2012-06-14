@@ -213,21 +213,23 @@ public class OrderLoader {
 
   }
 
-  protected DocumentType getInvoiceDocumentType(Organization org) {
-    if (invoiceDocTypes.get(DalUtil.getId(org)) != null) {
-      return invoiceDocTypes.get(DalUtil.getId(org));
+  protected DocumentType getInvoiceDocumentType(String documentTypeId) {
+    if (invoiceDocTypes.get(documentTypeId) != null) {
+      return invoiceDocTypes.get(documentTypeId);
     }
-    final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_ARInvoice);
-    invoiceDocTypes.put((String) DalUtil.getId(org), docType);
+    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
+    final DocumentType docType = orderDocType.getDocumentTypeForInvoice();
+    invoiceDocTypes.put(documentTypeId, docType);
     return docType;
   }
 
-  protected DocumentType getShipmentDocumentType(Organization org) {
-    if (shipmentDocTypes.get(DalUtil.getId(org)) != null) {
-      return shipmentDocTypes.get(DalUtil.getId(org));
+  protected DocumentType getShipmentDocumentType(String documentTypeId) {
+    if (shipmentDocTypes.get(documentTypeId) != null) {
+      return shipmentDocTypes.get(documentTypeId);
     }
-    final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_MatShipment);
-    shipmentDocTypes.put((String) DalUtil.getId(org), docType);
+    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
+    final DocumentType docType = orderDocType.getDocumentTypeForShipment();
+    shipmentDocTypes.put(documentTypeId, docType);
     return docType;
   }
 
@@ -264,8 +266,10 @@ public class OrderLoader {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     fillBobFromJSON(invoiceEntity, invoice, jsonorder);
 
-    invoice.setDocumentType(getInvoiceDocumentType(order.getOrganization()));
-    invoice.setTransactionDocument(getInvoiceDocumentType(order.getOrganization()));
+    invoice
+        .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
+    invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
+        .getDocumentType())));
     invoice.setAccountingDate(order.getOrderDate());
     invoice.setInvoiceDate(order.getOrderDate());
     invoice.setSalesTransaction(true);
@@ -330,7 +334,8 @@ public class OrderLoader {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     fillBobFromJSON(shpEntity, shipment, jsonorder);
 
-    shipment.setDocumentType(getShipmentDocumentType(order.getOrganization()));
+    shipment
+        .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
     shipment.setSalesTransaction(true);
