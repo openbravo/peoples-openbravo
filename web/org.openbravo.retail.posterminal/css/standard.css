@@ -294,18 +294,24 @@ div.clock-date {
   margin: 10px;
 }
 
-div.modal-logout {
+div.modal-dialog {
   background: #6cb33f;
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
 
-div.modal-logout-header {
+div.modal-dialog-header {
   border: none;
+  padding: 9px 10px 20px 10px;
 }
 
-h3.modal-logout-header-text {
+div.modal-dialog-body {
+  padding: 0px;
+  text-align: center;
+}
+
+h3.modal-dialog-header-text {
   text-align: center;
   font-size: 225%;
   font-weight: bold;
@@ -313,74 +319,24 @@ h3.modal-logout-header-text {
   color: white;
 }
 
-div.modal-logout-content-text {
+div.modal-dialog-content-text {
   text-align: center;
   font-size: 120%;
-  padding-top: 10px;
   line-height: 200%;
-  padding: 0px 0px 30px 0px;
+
   color: white;
 }
 
-button.modal-logout-content-button {
+div.modal-dialog-content-buttons-container {
+  padding: 30px 0px 30px 0px;
+}
+
+button.modal-dialog-content-button {
   font-weight: bold;
   font-size: 16px;
   text-decoration: none;
   background-color: white;
   color: #72B446;
-  padding: 8px 0px 10px 0px;
-  margin: 0px 20px 0px 20px;
-  width: 115px;
-}
-
-div.modal-profile {
-  background: white;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  border: 3px double #3E4439;
-  width: 500px;
-}
-
-div.modal-profile-header {
-  background: #6cb33f;
-  padding: 2px 5px 2px 10px;
-  border: none;
-}
-
-div.modal-profile-body {
-  padding: 0px;
-  text-align: center;
-}
-
-h3.modal-profile-header-text {
-  text-align: left;
-  font-size: 15px;
-  font-weight: normal;
-  color: white;
-}
-
-div.modal-profile-content-text {
-  height: 140px;
-}
-
-button.modal-profile-content-button-apply {
-  font-weight: bold;
-  font-size: 15px;
-  text-decoration: none;
-  background-color: #72B446;
-  color: white;
-  padding: 8px 0px 10px 0px;
-  margin: 0px 20px 0px 20px;
-  width: 115px;
-}
-
-button.modal-profile-content-button-cancel {
-  font-weight: bold;
-  font-size: 15px;
-  text-decoration: none;
-  background-color: #F5AF5D;
-  color: black;
   padding: 8px 0px 10px 0px;
   margin: 0px 20px 0px 20px;
   width: 115px;
