@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -62,8 +63,7 @@ public class FieldHandler extends EntityPersistenceEventObserver {
     final String propertyPath = (String) event.getCurrentState(getPropertyProperty());
     if (propertyPath == null || propertyPath.trim().length() == 0) {
       if (event.getCurrentState(getColumnProperty()) == null) {
-        // TODO: I18N me
-        throw new OBException("Column must be set");
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ColumnMustBeSet"));
       }
       return;
     }
@@ -72,9 +72,13 @@ public class FieldHandler extends EntityPersistenceEventObserver {
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     final Property property = DalUtil.getPropertyFromPath(entity, propertyPath);
     if (property == null) {
-      // TODO: I18N me
-      throw new OBException("Property not found");
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropertyNotFound"));
     }
+
+    if (propertyPath.contains(DalUtil.DOT)) {
+      event.setCurrentState(getIgnoreInWadProperty(), true);
+    }
+
     final Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
     event.setCurrentState(getColumnProperty(), column);
   }
@@ -90,6 +94,10 @@ public class FieldHandler extends EntityPersistenceEventObserver {
 
   private Property getPropertyProperty() {
     return entities[0].getProperty(Field.PROPERTY_PROPERTY);
+  }
+
+  private Property getIgnoreInWadProperty() {
+    return entities[0].getProperty(Field.PROPERTY_IGNOREINWAD);
   }
 
   private Property getTabProperty() {

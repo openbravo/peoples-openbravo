@@ -42,7 +42,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.ad_table_id = ad_table.ad_table_id 
         AND ad_column.isActive = 'Y' 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
         AND ad_tab_id = ?
       ORDER BY ad_field.SEQNO
@@ -188,7 +188,7 @@
       and UPPER(ad_column.columnname) not in ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') 
       and ad_tab_id = ? 
       AND upper(ad_column.columnname) <> 'BINARYDATA' 
-      AND (ad_field.property is null or ad_field.property not like '%.%')
+      AND ad_field.ignoreinwad='N'
       AND ad_column.isEncrypted <> 'Y'
       AND ad_column.isactive = 'Y'
       ORDER BY ad_field.SEQNO
@@ -236,7 +236,7 @@
       FROM ad_field, ad_column
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_tab_id = ?
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND ad_field.SORTNO is not null
       ORDER BY ad_field.SORTNO, ad_field.SEQNO
       ]]>
@@ -268,7 +268,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
         AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND upper(ad_column.columnname) <> 'BINARYDATA'
       union
       SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
@@ -303,7 +303,7 @@
         AND ad_tab_id = ?
         AND (ad_column.ISSESSIONATTR = 'Y' 
         OR ad_column.iskey = 'Y') 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
         AND ad_column.ColumnName <> 'Created'
       ORDER BY ad_field.SEQNO
@@ -323,7 +323,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
         AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         and isParent='N'
         and ad_column.columnname = 'DocumentNo'
         and ad_column.defaultvalue is null
@@ -344,7 +344,7 @@
       FROM ad_column, ad_process, ad_field
       where ad_column.ad_process_id = ad_process.ad_process_id 
       and ad_column.ad_column_id = ad_field.ad_column_id  
-      AND (ad_field.property is null or ad_field.property not like '%.%')
+      AND ad_field.ignoreinwad='N'
       AND (ad_process.procedurename is not null 
            or ad_process.isjasper = 'Y'
            or (UIPattern='S' AND EXISTS (SELECT 1 FROM AD_MODEL_OBJECT WHERE AD_PROCESS_ID = AD_PROCESS.AD_PROCESS_ID))) 
@@ -374,7 +374,7 @@
       and ad_column.columnname not in('DocAction', 'PaymentRule') 
       and (ad_column.columnname <> 'CreateFrom'
       or ad_column.ad_process_id is not null)
-      and (ad_field.property is null or ad_field.property not like '%.%')
+      and ad_field.ignoreinwad='N'
       and (ad_column.columnname <> 'Posted'
       or ad_column.ad_process_id is not null)
       and ad_column.ad_column_id in (select ad_column_id from ad_field where isdisplayed='Y' and isactive='Y')
@@ -436,7 +436,7 @@
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id
         AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND ad_tab_id = ? 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND AD_COLUMN.ad_reference_id = '28'
         AND AD_COLUMN.COLUMNNAME = 'CreateFrom'
         AND AD_COLUMN.AD_PROCESS_ID IS NULL
@@ -454,7 +454,7 @@
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id
         AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND ad_tab_id = ? 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND AD_COLUMN.ad_reference_id = '28'
         AND AD_COLUMN.COLUMNNAME = 'Posted'
         AND AD_COLUMN.AD_PROCESS_ID IS NULL
@@ -475,7 +475,7 @@
                          left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
         WHERE f.AD_COLUMN_ID = c.ad_column_id
         AND f.ad_tab_id = ? 
-        AND (f.property is null or f.property not like '%.%')
+        AND f.ignoreinwad='N'
         AND (t.whereclause IS NOT NULL
             OR v.code IS NOT NULL
             OR c.ad_reference_id in ('19','18','17'))
@@ -541,7 +541,7 @@
       AND ad_column.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
       and ad_field.ISDISPLAYED = 'Y'
       AND ad_field.ad_tab_id = ?
-      AND (ad_field.property is null or ad_field.property not like '%.%')
+      AND ad_field.ignoreinwad='N'
       AND ad_column.ad_column_id = ? 
       AND ad_column.ad_reference_id = '18'
     </Sql>
@@ -577,7 +577,7 @@
       and ad_column.ad_table_id = ad_table.ad_table_id 
       and ad_field.ISDISPLAYED = 'Y'
       AND ad_field.ad_tab_id = ?
-      AND (ad_field.property is null or ad_field.property not like '%.%')
+      AND ad_field.ignoreinwad='N'
       AND ad_column.ad_column_id = ? 
       AND ad_reference_id = '19'
     </Sql>
@@ -620,7 +620,7 @@
         AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
         and ismandatory='Y' 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND upper(ad_column.columnname) = 'VALUE'
       ORDER BY ad_field.SEQNO
       ]]>
@@ -645,7 +645,7 @@
         SELECT count(*) AS total 
         FROM AD_FIELD, AD_COLUMN
         WHERE AD_FIELD.ad_tab_id = ? 
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.isEncrypted = 'Y' 
         AND ad_field.ISDISPLAYED = 'Y'
@@ -662,7 +662,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.isEncrypted = 'Y' 
         AND ad_field.ISDISPLAYED = 'Y'
-        AND (ad_field.property is null or ad_field.property not like '%.%')
+        AND ad_field.ignoreinwad='N'
         AND ad_tab_id = ?
       ORDER BY ad_field.SEQNO
       ]]>
@@ -678,7 +678,7 @@
       where f.ad_column_id = c.ad_column_id 
       and f.ad_tab_id = ?
       and f.isactive = 'Y'
-      and (f.property is null or f.property not like '%.%')
+      and f.ignoreinwad='N'
       and f.isdisplayed = 'Y'
       and c.isactive = 'Y'
       and ad_reference_value_id is not null
@@ -698,7 +698,7 @@
       and f.ad_tab_id = ?
       and f.isactive = 'Y'
       and f.isdisplayed = 'Y'
-      and (f.property is null or f.property not like '%.%')
+      and f.ignoreinwad='N'
       and c.isactive = 'Y'
       and ad_reference_value_id is not null
       and c.ad_reference_id = '28' 
@@ -717,7 +717,7 @@
        where f.ad_tab_id = ?
          and f.ad_column_id = c.ad_column_id
          and ad_reference_id = '28'
-         and (f.property is null or f.property not like '%.%')
+         and f.ignoreinwad='N'
          and f.isdisplayed = 'Y'
          and f.isactive='Y'
       ]]>
