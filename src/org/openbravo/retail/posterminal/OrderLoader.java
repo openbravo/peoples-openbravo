@@ -635,8 +635,6 @@ public class OrderLoader {
       return "unitPrice";
     } else if (key.equals("posTerminal")) {
       return "obposApplications";
-    } else if (key.equals("taxId")) {
-      return "tax";
     }
     return null;
   }

@@ -122,6 +122,9 @@ if(userId == null){
   <script src="js/libs/bootstrap/js/bootstrap-modal.js"></script>
   <script src="js/libs/bootstrap/js/bootstrap-alert.js"></script>
 
+  <!-- Models -->
+  <script src="../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate"></script>
+
   <script data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
 
   <script>

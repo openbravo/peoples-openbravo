@@ -57,7 +57,7 @@ asyncTest('Query - find one', function () {
   }
 
   OB.Dal.find(OB.Model.TaxRate, {
-    name: 'Servicios prestados exentos'
+    'taxSearchKey': 'IVA18'
   }, success, errorCallback);
 });
 
@@ -76,4 +76,31 @@ asyncTest('Query - save - update', function () {
   }
 
   OB.Dal.get(OB.Model.TaxRate, 'D61CD889CF2E42A7B46C935ACA0538FF', success, errorCallback);
+});
+
+asyncTest('Query - save - insert', function () {
+  var randomRate = Math.floor(Math.random() * (60 - 2)) + 1,
+      rateObj = new OB.Model.TaxRate();
+
+  rateObj.set('rate', randomRate);
+
+  expect(4);
+
+  function found(coll) {
+    ok(coll, 'Collection is present');
+    ok(coll.length > 0, 'Record found');
+    ok(coll.at(0).get('rate') === randomRate, 'Random rate: ' + randomRate);
+    console.log(coll);
+    start();
+  }
+
+  function saveSuccess(tx) {
+    ok(tx, 'Transaction is present');
+    OB.Dal.find(OB.Model.TaxRate, {
+      'rate': randomRate
+    }, found, errorCallback);
+  }
+
+
+  OB.Dal.save(rateObj, saveSuccess, errorCallback);
 });

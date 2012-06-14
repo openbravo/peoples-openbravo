@@ -36,15 +36,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   public static final String QUALIFIER = "OBPOS_Main";
   public static final String APP_CACHE_COMPONENT = "AppCacheManifest";
+  public static final String CLIENT_MODEL_COMPONENT = "ClientModel";
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     if (componentId.equals(APP_CACHE_COMPONENT)) {
       final ApplicationCacheComponent component = getComponent(ApplicationCacheComponent.class);
+      component.setId(APP_CACHE_COMPONENT);
+      component.setParameters(parameters);
+      return component;
+    } else if (componentId.equals(CLIENT_MODEL_COMPONENT)) {
+      final ClientModelComponent component = getComponent(ClientModelComponent.class);
+      component.setId(CLIENT_MODEL_COMPONENT);
       component.setParameters(parameters);
       return component;
     }
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
-
 }

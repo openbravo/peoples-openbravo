@@ -1,15 +1,33 @@
 /*global define,_,console,Backbone */
 
-(function () {
+(function (d) {
 
   var dbSize = 10 * 1024 * 1024,
       undef, wsql = window.openDatabase !== undef,
-      db = wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize);
+      db = d || (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize));
 
+  function S4() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1).toUpperCase();
+  }
+
+  function get_uuid() {
+    return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
+  }
+
+
+  function transform(model, obj) {
+    var tmp = {},
+        modelProto = model.prototype;
+    _.each(modelProto.properties, function (prop) {
+      tmp[prop] = obj[modelProto.propertyMap[prop]];
+    });
+    return tmp;
+  }
 
   function find(model, whereClause, success, error) {
     var tableName = model.prototype.tableName,
-        sql = 'select * from ' + tableName,
+        propertyMap = model.prototype.propertyMap,
+        sql = 'SELECT * FROM ' + tableName,
         params = null,
         appendWhere = true,
         firstParam = true,
@@ -21,15 +39,15 @@
         _.each(_.keys(whereClause), function (k) {
 
           if (appendWhere) {
-            sql = sql + ' where ';
+            sql = sql + ' WHERE ';
             params = [];
             appendWhere = false;
           }
 
-          sql = sql + (firstParam ? '' : ' and ') + ' ' + k + ' ';
+          sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
 
           if (whereClause[k] === null) {
-            sql = sql + ' is null ';
+            sql = sql + ' IS null ';
           } else {
             sql = sql + ' = ? ';
             params.push(whereClause[k]);
@@ -42,19 +60,18 @@
         });
       }
 
-      console.log(sql);
-      console.log(params);
-
+      //console.log(sql);
+      //console.log(params);
       db.readTransaction(function (tx) {
         tx.executeSql(sql, params, function (tr, result) {
-          var i, collectionType = OB.Collection[model.modelName + 's'] || Backbone.Collection,
+          var i, collectionType = OB.Collection[model.prototype.modelName + 'List'] || Backbone.Collection,
               collection = new collectionType(),
               len = result.rows.length;
           if (len === 0) {
             return null;
           } else {
             for (i = 0; i < len; i++) {
-              collection.add(result.rows.item(i));
+              collection.add(transform(model, result.rows.item(i)));
             }
             success(collection);
           }
@@ -67,10 +84,12 @@
   }
 
   function save(model, success, error) {
-    var tableName = model.constructor.prototype.tableName,
+    var modelProto = model.constructor.prototype,
+        tableName = modelProto.tableName,
         sql = '',
         params = null,
-        firstParam = true;
+        firstParam = true,
+        uuid;
 
     if (db) {
       // websql
@@ -78,13 +97,13 @@
         throw 'Missing table name in model';
       }
 
-      if (model.attributes[tableName + '_id']) { // has an id model.get('id')
+      if (model.get('id')) {
         // UPDATE
-        sql = 'update ' + tableName + ' set ';
+        sql = 'UPDATE ' + tableName + ' SET ';
 
         _.each(_.keys(model.attributes), function (attr) {
 
-          if (attr === 'c_tax_id') { // TODO: change to 'id'
+          if (attr === 'id') {
             return;
           }
 
@@ -95,21 +114,30 @@
             sql = sql + ', ';
           }
 
-          sql = sql + attr + ' = ? ';
+          sql = sql + modelProto.propertyMap[attr] + ' = ? ';
 
           params.push(model.attributes[attr]);
         });
 
-        sql = sql + ' where ' + tableName + '_id = ?'; // TODO: change to where id = ?
+        sql = sql + ' WHERE ' + tableName + '_id = ?';
         params.push(model.attributes.c_tax_id);
       } else {
         // INSERT
-        throw 'Not implemented';
+        params = [];
+        sql = modelProto.insertStatement;
+        params.push(get_uuid());
+
+        _.each(modelProto.properties, function (property) {
+          if ('id' === property) {
+            return;
+          }
+          params.push(model.get(property) === undefined ? null : model.get(property));
+        });
+        console.log(params.length);
       }
 
-      console.log(sql);
-      console.log(params);
-
+      //console.log(sql);
+      //console.log(params);
       db.transaction(function (tx) {
         tx.executeSql(sql, params, success, error);
       });
@@ -120,7 +148,7 @@
 
   function get(model, id, success, error) {
     var tableName = model.prototype.tableName,
-        sql = 'select * from ' + tableName + ' where ' + tableName + '_id = ?';
+        sql = 'SELECT * FROM ' + tableName + ' WHERE ' + tableName + '_id = ?';
 
     if (db) {
       // websql
@@ -129,7 +157,7 @@
           if (result.rows.length === 0) {
             return null;
           } else {
-            success(new model(result.rows.item(0)));
+            success(new model(transform(model, result.rows.item(0))));
           }
         }, error);
       });
@@ -146,4 +174,4 @@
     find: find,
     get: get
   };
-}());
+}(OB && OB.DATA && OB.DATA.OfflineDB));

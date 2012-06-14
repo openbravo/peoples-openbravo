@@ -1,7 +1,7 @@
 /*global define, $ */
 
 define(['builder', 'i18n',
-        'data/datamaster', 'data/dataordersave', 'data/dataordertaxes', 'data/dataorderdiscount',
+        'data/datamaster', 'data/dal', 'data/dataordersave', 'data/dataordertaxes', 'data/dataorderdiscount',
         'model/terminal', 'model/order',
         'components/commonbuttons', 'components/hwmanager',
         'windows/posbuttons',
