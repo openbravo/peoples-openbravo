@@ -39,7 +39,7 @@
     updateStatement: '${data.updateStatement?js_string}'
   });
 
-  var ${data.modelName}s = Backbone.Collection.extend({
+  var ${data.modelName}List = Backbone.Collection.extend({
     model: ${data.modelName}
   });
 
