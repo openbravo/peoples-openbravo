@@ -267,6 +267,7 @@ public class OrderLoader {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     fillBobFromJSON(invoiceEntity, invoice, jsonorder);
 
+    invoice.setDocumentNo(null);
     invoice
         .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
     invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
@@ -334,7 +335,7 @@ public class OrderLoader {
       throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     fillBobFromJSON(shpEntity, shipment, jsonorder);
-
+    shipment.setDocumentNo(null);
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
     shipment.setAccountingDate(order.getOrderDate());
