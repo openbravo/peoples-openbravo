@@ -216,9 +216,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
           try {
-            // If Action PRP o PPW, Process payment but as well create a financial transaction
-            message = FIN_AddPayment.processPayment(vars, this,
-                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+            // Process just in case there are lines, empty Refund payment does not need to call
+            // process
+            if (payment.getFINPaymentDetailList().size() > 0) {
+              // If Action PRP o PPW, Process payment but as well create a financial transaction
+              message = FIN_AddPayment.processPayment(vars, this,
+                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+            }
             if (strDifferenceAction.equals("refund")) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
