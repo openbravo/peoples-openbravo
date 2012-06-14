@@ -63,13 +63,11 @@ if(userId == null){
   <link rel="apple-touch-icon" href="img/openbravopos57x57.png" />
   <link rel="apple-touch-icon" sizes="72x72" href="img/openbravopos72x72.png" />
   <link rel="apple-touch-icon" sizes="114x114" href="img/openbravopos114x114.png" />
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
 
   <link rel="stylesheet/less" href="js/libs/bootstrap/less/bootstrap.less">
   <link rel="stylesheet/less" href="js/libs/bootstrap/less/responsive.less">
   <script src="js/libs/less/less-1.3.0.min.js"></script>
-
-  <link rel="shortcut icon" href="../../web/images/favicon.ico" />
 
   <link rel="stylesheet" type="text/css" href="css/standard.css" />
   <link rel="stylesheet" type="text/css" href="css/login.css" />
