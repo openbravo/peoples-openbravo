@@ -123,7 +123,7 @@ public class OrderLoader {
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
-    TriggerHandler.getInstance().disable();
+    TriggerHandler.getInstance().disableSql();
     try {
       t1 = System.currentTimeMillis();
       boolean createInvoice = false;
@@ -167,7 +167,7 @@ public class OrderLoader {
           + (t11 - t115));
 
     } finally {
-      TriggerHandler.getInstance().enable();
+      TriggerHandler.getInstance().enableSql();
     }
 
     long t4 = System.currentTimeMillis();
