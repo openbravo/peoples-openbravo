@@ -225,12 +225,14 @@ public class FIN_AddPayment {
             OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
           } else if (isWriteoff) {
             List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
-            paymentScheduleDetail.setWriteoffAmount(outStandingPSDs.get(0).getAmount());
-            OBDal.getInstance().save(paymentScheduleDetail);
-            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
-                outStandingPSDs.get(0).getAmount());
-            OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
-            OBDal.getInstance().remove(outStandingPSDs.get(0));
+            if (outStandingPSDs.size() > 0) {
+              paymentScheduleDetail.setWriteoffAmount(outStandingPSDs.get(0).getAmount());
+              OBDal.getInstance().save(paymentScheduleDetail);
+              paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
+                  outStandingPSDs.get(0).getAmount());
+              OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
+              OBDal.getInstance().remove(outStandingPSDs.get(0));
+            }
           }
         } else {
           BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts

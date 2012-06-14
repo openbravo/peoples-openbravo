@@ -277,7 +277,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       List<FIN_PaymentScheduleDetail> selectedPaymentDetails) {
     Set<String> toRemovePDs = new HashSet<String>();
     for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-
       for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
         if (!selectedPaymentDetails.contains(psd)) {
           if (pd.getGLItem() != null) {
@@ -287,6 +286,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
           // update outstanding amount
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
           if (outStandingPSDs.size() == 0) {
+            psd.setPaymentDetails(null);
+            psd.setFINOrigPaymentScheduleDetailList(null);
+            OBDal.getInstance().save(psd);
             toRemovePDs.add(pd.getId());
           } else {
             // First make sure outstanding amount is not equal zero
@@ -305,25 +307,29 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
     for (String pdID : toRemovePDs) {
       FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdID);
-      FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
-          pd.getFINPaymentScheduleDetailList().get(0).getId());
-      pd.getFINPaymentScheduleDetailList().remove(psd);
-      OBDal.getInstance().save(pd);
-      psd.setFINOrigPaymentScheduleDetailList(null);
-      OBDal.getInstance().save(psd);
-      ArrayList<String> opsdToRemove = new ArrayList<String>();
-      OBCriteria<FIN_OrigPaymentScheduleDetail> opsds = OBDal.getInstance().createCriteria(
-          FIN_OrigPaymentScheduleDetail.class);
-      opsds.add(Restrictions.eq(FIN_OrigPaymentScheduleDetail.PROPERTY_PAYMENTSCHEDULEDETAIL, psd));
-      for (FIN_OrigPaymentScheduleDetail opsd : opsds.list()) {
-        opsdToRemove.add(opsd.getId());
+      boolean hasPSD = pd.getFINPaymentScheduleDetailList().size() > 0;
+      if (hasPSD) {
+        FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+            pd.getFINPaymentScheduleDetailList().get(0).getId());
+        pd.getFINPaymentScheduleDetailList().remove(psd);
+        OBDal.getInstance().save(pd);
+        psd.setFINOrigPaymentScheduleDetailList(null);
+        OBDal.getInstance().save(psd);
+        ArrayList<String> opsdToRemove = new ArrayList<String>();
+        OBCriteria<FIN_OrigPaymentScheduleDetail> opsds = OBDal.getInstance().createCriteria(
+            FIN_OrigPaymentScheduleDetail.class);
+        opsds.add(Restrictions
+            .eq(FIN_OrigPaymentScheduleDetail.PROPERTY_PAYMENTSCHEDULEDETAIL, psd));
+        for (FIN_OrigPaymentScheduleDetail opsd : opsds.list()) {
+          opsdToRemove.add(opsd.getId());
+        }
+        for (String id : opsdToRemove) {
+          FIN_OrigPaymentScheduleDetail opsd = OBDal.getInstance().get(
+              FIN_OrigPaymentScheduleDetail.class, id);
+          OBDal.getInstance().remove(opsd);
+        }
+        OBDal.getInstance().remove(psd);
       }
-      for (String id : opsdToRemove) {
-        FIN_OrigPaymentScheduleDetail opsd = OBDal.getInstance().get(
-            FIN_OrigPaymentScheduleDetail.class, id);
-        OBDal.getInstance().remove(opsd);
-      }
-      OBDal.getInstance().remove(psd);
       payment.getFINPaymentDetailList().remove(pd);
       OBDal.getInstance().save(payment);
       OBDal.getInstance().remove(pd);
