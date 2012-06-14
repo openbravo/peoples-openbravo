@@ -60,6 +60,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class AdvancedQueryBuilder {
 
   private static final String ALIAS_PREFIX = "alias_";
+  private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
 
   private static final String OPERATOR_AND = "and";
@@ -966,7 +967,6 @@ public class AdvancedQueryBuilder {
           final JoinDefinition joinDefinition = new JoinDefinition();
           joinDefinition.setOwnerAlias(getMainAlias());
           joinDefinition.setFetchJoin(true);
-          joinDefinition.setJoinAlias(getNewUniqueAlias());
           joinDefinition.setProperty(property);
           joinDefinitions.add(joinDefinition);
         }
@@ -1232,7 +1232,6 @@ public class AdvancedQueryBuilder {
       // a joinable property
       final JoinDefinition joinDefinition = new JoinDefinition();
       joinDefinition.setOwnerAlias(alias);
-      joinDefinition.setJoinAlias(getNewUniqueAlias());
       joinDefinition.setProperty(prop);
       joinDefinitions.add(joinDefinition);
 
@@ -1246,13 +1245,13 @@ public class AdvancedQueryBuilder {
     return alias + DalUtil.DOT + props.get(props.size() - 1).getName();
   }
 
-  private String getNewUniqueAlias() {
-    return ALIAS_PREFIX + (aliasIndex++);
+  private String getNewUniqueJoinAlias() {
+    return JOIN_ALIAS_PREFIX + (aliasIndex++);
   }
 
   private class JoinDefinition {
     private Property property;
-    private String joinAlias;
+    private String joinAlias = getNewUniqueJoinAlias();
     private String ownerAlias;
     private boolean fetchJoin = true;
 
@@ -1278,10 +1277,6 @@ public class AdvancedQueryBuilder {
 
     public String getJoinAlias() {
       return joinAlias;
-    }
-
-    public void setJoinAlias(String joinAlias) {
-      this.joinAlias = joinAlias;
     }
 
     public void setOwnerAlias(String ownerAlias) {
@@ -1356,6 +1351,10 @@ public class AdvancedQueryBuilder {
     joinClause = null;
     whereClause = null;
     orderByClause = null;
+    joinDefinitions.clear();
+    filterParameters.clear();
+    typedParameters.clear();
+    additionalProperties.clear();
   }
 
   public void setAdditionalProperties(List<String> additionalProperties) {
