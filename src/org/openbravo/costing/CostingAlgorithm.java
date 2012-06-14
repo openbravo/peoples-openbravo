@@ -20,16 +20,23 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -39,6 +46,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
+import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
@@ -72,6 +80,10 @@ public abstract class CostingAlgorithm {
     costDimensions = CostingUtils.getEmptyDimensions();
     if (costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
+    }
+    // Production products cannot be calculated by warehouse dimension.
+    if (transaction.getProduct().isProduction()) {
+      costDimensions = CostingUtils.getEmptyDimensions();
     }
 
   }
@@ -125,11 +137,12 @@ public abstract class CostingAlgorithm {
       return getBOMPartCost();
     case BOMProduct:
       return getBOMProductCost();
-    case ManufacturingRawMaterial:
-      return getManufacturingRawMaterialCost();
-    case Manufacturing:
-      // Manufacturing transactions are not implemented.
-      return null;
+    case ManufacturingConsumed:
+      // Manufacturing transactions are not fully implemented.
+      return getManufacturingConsumedCost();
+    case ManufacturingProduced:
+      // Manufacturing transactions are not fully implemented.
+      return getManufacturingProducedCost();
     case Unknown:
       throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
     default:
@@ -470,13 +483,79 @@ public abstract class CostingAlgorithm {
   }
 
   /**
-   * Calculates the cost of a Raw Material consumed in a Work Effort using by default the
+   * <p>
+   * The Manufacturing cost is not fully migrated to the new costing engine. <b>This method must not
+   * be overwritten by algorithms.</b>
+   * </p>
+   * Gets the cost of the manufacturing transaction. It calculates the cost of the Work Effort when
+   * needed.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  private BigDecimal getManufacturingProducedCost() {
+    if (!transaction.getProductionLine().isCalculated()) {
+      calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
+    }
+    OBDal.getInstance().refresh(transaction.getProductionLine());
+    return transaction.getProductionLine().getEstimatedCost()
+        .multiply(transaction.getMovementQuantity().abs());
+  }
+
+  /**
+   * <p>
+   * The Manufacturing cost is not fully migrated to the new costing engine. <b>This method must not
+   * be overwritten by algorithms.</b>
+   * </p>
+   * Calculates the cost of a consumed product in a Work Effort using by default the
    * {@link #getOutgoingTransactionCost()} method as a regular outgoing transaction.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
-  private BigDecimal getManufacturingRawMaterialCost() {
-    return getOutgoingTransactionCost();
+  private BigDecimal getManufacturingConsumedCost() {
+    if (!transaction.getProductionLine().isCalculated()) {
+      calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
+    }
+    OBDal.getInstance().refresh(transaction.getProductionLine());
+    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
+        .getProductionLine().getEstimatedCost() : BigDecimal.ZERO;
+  }
+
+  private void calculateWorkEffortCost(ProductionTransaction production) {
+    // List<Object> params = new ArrayList<Object>();
+    // params.add(production.getId());
+    // params.add(DalUtil.getId(OBContext.getOBContext().getUser()));
+    // CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST1", params, null);
+
+    // call the SP
+    try {
+      // first get a connection
+      final Connection connection = OBDal.getInstance().getConnection();
+      // connection.createStatement().execute("CALL M_InOut_Create0(?)");
+
+      final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+      final CallableStatement ps;
+      String statement;
+      if (obProps.getProperty("bbdd.rdbms") != null
+          && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+        statement = "SELECT * FROM MA_PRODUCTION_COST(?, ?)";
+      } else {
+        statement = "CALL MA_PRODUCTION_COST(?, ?, ?)";
+      }
+      ps = connection.prepareCall(statement);
+
+      ps.setString(1, production.getId());
+      ps.setString(2, (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      if (obProps.getProperty("bbdd.rdbms") == null
+          || !obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+        ps.registerOutParameter(3, Types.NVARCHAR);
+      }
+
+      ps.execute();
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      throw new IllegalStateException(e);
+    }
+
   }
 
   protected BigDecimal getDefaultCost() {

@@ -77,9 +77,6 @@ public class CostingServer {
       CostingAlgorithm costingAlgorithm = getCostingAlgorithm();
       costingAlgorithm.init(this);
       log4j.debug("  *** Algorithm initializated: " + costingAlgorithm.getClass());
-      if (costingAlgorithm.trxType == TrxType.Manufacturing) {
-        throw new OBException("@ManufacturingProductsNotSupported@");
-      }
 
       trxCost = costingAlgorithm.getTransactionCost();
       if (trxCost == null) {
@@ -106,6 +103,18 @@ public class CostingServer {
     // Algorithm class is retrieved from costDimensionRule
     org.openbravo.model.materialmgmt.cost.CostingAlgorithm costAlgorithm = costingRule
         .getCostingAlgorithm();
+    // FIXME: remove when manufacturing costs are fully migrated
+    // In case the product is Manufacturing type it is forced to use Average Algorithm
+    if (transaction.getProduct().isProduction()) {
+      OBQuery<org.openbravo.model.materialmgmt.cost.CostingAlgorithm> caQry = OBDal.getInstance()
+          .createQuery(
+              org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class,
+              org.openbravo.model.materialmgmt.cost.CostingAlgorithm.PROPERTY_JAVACLASSNAME
+                  + " = 'org.openbravo.costing.AverageAlgorithm'");
+      caQry.setFilterOnReadableClients(false);
+      caQry.setFilterOnReadableOrganization(false);
+      costAlgorithm = caQry.list().get(0);
+    }
     transaction.setCostingAlgorithm(costAlgorithm);
 
     try {
@@ -160,6 +169,13 @@ public class CostingServer {
     if (currency != null) {
       return currency;
     }
+    // FIXME: remove when manufacturing costs are fully migrated
+    // Production product costs are calculated in clients currency
+    if (transaction.getProduct().isProduction()) {
+      Client client = OBDal.getInstance().get(Client.class,
+          OBContext.getOBContext().getCurrentClient().getId());
+      return client.getCurrency();
+    }
     if (organization != null) {
       if (organization.getCurrency() != null) {
         return organization.getCurrency();
@@ -193,7 +209,7 @@ public class CostingServer {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingRawMaterial, Manufacturing, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingConsumed, ManufacturingProduced, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -285,12 +301,10 @@ public class CostingServer {
         } else {
           log4j.debug("Manufacturing Product");
           // Work Effort
-          if (transaction.getProductionLine().getProductionType().equals("-")
-              && transaction.getProduct().isPurchase()) {
-            return ManufacturingRawMaterial;
+          if ("+".equals(transaction.getProductionLine().getProductionType())) {
+            return ManufacturingProduced;
           } else {
-            // TODO: Pending to implement manufacturing cost management.
-            return Manufacturing;
+            return ManufacturingConsumed;
           }
         }
       }

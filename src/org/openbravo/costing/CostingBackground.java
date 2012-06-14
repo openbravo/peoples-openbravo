@@ -105,9 +105,6 @@ public class CostingBackground extends DalBaseProcess {
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
-    // Filter out manufacturing products that are not purchased.
-    where.append("   and (p." + Product.PROPERTY_PRODUCTION + " = false");
-    where.append("        or p." + Product.PROPERTY_PURCHASE + " = true)");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());

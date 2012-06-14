@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -50,6 +51,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     case InternalConsNegative:
     case InternalConsVoid:
     case BOMProduct:
+    case ManufacturingProduced:
       Costing currentCosting = getProductCost();
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
@@ -133,7 +135,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setCostType("AVA");
     cost.setManual(false);
     cost.setPermanent(true);
-    cost.setProduction(false);
+    // FIXME: remove when manufacturing costs are fully migrated
+    cost.setProduction(trxType == TrxType.ManufacturingProduced);
     cost.setWarehouse((Warehouse) costDimensions.get(CostDimension.Warehouse));
     OBDal.getInstance().save(cost);
   }
@@ -151,7 +154,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
     } else {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
     }
-    where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+    } else {
+      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+    }
     OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
     costQry.setFilterOnReadableOrganization(false);
     costQry.setNamedParameter("product", product.getId());
@@ -160,7 +168,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    costQry.setNamedParameter("org", costOrg);
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      costQry.setNamedParameter("client", costOrg.getClient());
+    } else {
+      costQry.setNamedParameter("org", costOrg);
+    }
 
     if (costQry.count() > 0) {
       if (costQry.count() > 1) {

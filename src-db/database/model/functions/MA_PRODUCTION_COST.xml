@@ -58,8 +58,7 @@
   v_Cost_UOM                            CHAR;
   v_NextNo                              VARCHAR2(32);
   v_ProductionNo                        NUMBER;
-  v_costcurrency                        VARCHAR2(32);
-  v_clientcurrency                      VARCHAR2(32);
+  v_iscostmigrated                      CHAR;
   Cur_ProductionPlan RECORD;
   Cur_ProductionLine RECORD;
   Cur_WIP RECORD;
@@ -71,26 +70,6 @@
   FINISH_PROCESS                        BOOLEAN := FALSE;
 BEGIN
   BEGIN --BODY
-    --Check that there are not raw material products whose cost has not been calculated.
-    SELECT count(1) INTO v_count
-    FROM m_production p
-        JOIN m_productionplan pp ON p.m_production_id = pp.m_production_id
-        JOIN m_productionline pl ON pp.m_productionplan_id = pl.m_productionplan_id
-        JOIN m_product pr ON pr.m_product_id = pl.m_product_id
-        JOIN m_transaction trx ON pl.m_productionline_id = trx.m_productionline_id
-    WHERE p.m_production_id = p_production_id
-      AND pl.productiontype = '-'
-      AND pr.producttype = 'I'
-      AND pr.isstocked = 'Y'
-      AND pr.ispurchased = 'Y'
-      AND trx.iscostcalculated = 'N'
-      AND EXISTS (SELECT 1 FROM m_costing_rule cr
-                  WHERE cr.isvalidated = 'Y'
-                    AND ad_isorgincluded(pl.ad_org_id, cr.ad_org_id, p.ad_client_id) <> -1);
-    IF (v_count > 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@NotCalculatedCostsOnProduction@');
-    END IF;
-    
     v_ResultStr := 'Update productionline calculated';
     UPDATE M_PRODUCTIONLINE
     SET CALCULATED='Y'
@@ -128,17 +107,10 @@ BEGIN
       AND pp.m_productionplan_id = pl.m_productionplan_id
       AND pl.calculated = 'N';
 
-    SELECT COALESCE(org.c_currency_id, c.c_currency_id), c.c_currency_id
-      INTO v_costcurrency, v_clientcurrency
-    FROM m_costing_rule cr
-          JOIN ad_org org ON cr.ad_org_id = org.ad_org_id
-          JOIN ad_client c ON cr.ad_client_id = c.ad_client_id
-    WHERE coalesce(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY')) = (SELECT max(coalesce(datefrom, TO_DATE('01-01-1900', 'DD-MM-YYYY'))) FROM m_costing_rule cr2
-                         WHERE cr2.datefrom <= v_productiondate
-                           AND cr2.isvalidated = 'Y'
-                           AND ad_isorgincluded(v_org_id, cr2.ad_org_id, cr2.ad_client_id) <> -1)
-      AND ad_isorgincluded(v_org_id, cr.ad_org_id, cr.ad_client_id) <> -1
-      AND cr.isvalidated = 'Y';
+    SELECT CASE COUNT(1) WHEN 0 THEN 'N' ELSE 'Y' END INTO v_iscostmigrated
+    FROM DUAL
+    WHERE EXISTS (SELECT 1 FROM m_costing_rule cr
+               WHERE cr.isvalidated = 'Y');
 
     v_ResultStr := 'Calculate cost';
 
@@ -195,14 +167,14 @@ BEGIN
 
         --Sums the cost of the used raw material and WIP.
         --First sum the cost of WIP
-        --  WIP are product that has a production cost, this is products that have been produced in a production plan.
-        v_ProductionCost_Tmp := 0;
         v_ResultStr := 'WIP cost';
+        v_ProductionCost_Tmp := 0;
+
         FOR Cur_WIP IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
                         FROM M_COSTING c, M_PRODUCTIONLINE ppl
                         WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
-                          AND c.DATEFROM <= v_ProductionDate
-                          AND c.DATETO > v_ProductionDate
+                          AND TRUNC(c.DATEFROM) <= v_ProductionDate
+                          AND TRUNC(c.DATETO) > v_ProductionDate
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y') LOOP
@@ -210,56 +182,46 @@ BEGIN
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_WIP.cost, 0)
           WHERE M_PRODUCTIONLINE_ID = Cur_WIP.M_PRODUCTIONLINE_ID;
-          UPDATE m_transaction
-          SET transactioncost = ABS(COALESCE(cur_wip.cost, 0)),
-              iscostcalculated = 'Y'
-          WHERE m_productionline_id = cur_wip.m_productionline_id;
-          DELETE FROM m_transaction_cost
-          WHERE m_transaction_id IN (SELECT m_transaction_id FROM m_transaction
-                                     WHERE m_productionline_id = cur_wip.m_productionline_id);
-          INSERT INTO m_transaction_cost (
-            m_transaction_cost_id, ad_client_id, ad_org_id, isactive,
-            created, createdby, updated, updatedby,
-            m_transaction_id, cost, costdate
-          ) SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
-                now(), p_user_id, now(), p_user_id,
-                m_transaction_id, ABS(COALESCE(cur_wip.cost, 0)), trxprocessdate
-            FROM m_transaction
-            WHERE m_productionline_id = cur_wip.m_productionline_id;
         END LOOP;
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
-
         --Second sum of raw materials that had not been added previously as WIP
         v_ResultStr := 'Raw Material cost';
-        FOR Cur_RawMaterial IN (SELECT m_get_transaction_cost(trx.m_transaction_id, trx.trxprocessdate) AS cost,
-                                    ppl.M_PRODUCTIONLINE_ID,
-                                    CASE WHEN p.producttype = 'I' AND p.isstocked = 'Y' THEN 'Y' ELSE 'N' END AS calculate_cost
-                                FROM M_PRODUCTIONLINE ppl
-                                    JOIN m_transaction trx ON ppl.m_productionline_id = trx.m_productionline_id
-                                    JOIN m_product p ON ppl.m_product_id = p.m_product_id
-                                WHERE ppl.PRODUCTIONTYPE = '-'
-                                  AND ppl.m_productionplan_id = cur_productionplan.m_productionplan_id
+        FOR Cur_RawMaterial IN (SELECT c.COST*ppl.MOVEMENTQTY AS cost, ppl.M_PRODUCTIONLINE_ID
+                                FROM M_COSTING c, M_PRODUCTIONLINE ppl
+                                WHERE c.M_PRODUCT_ID = ppl.M_PRODUCT_ID
+                                  AND TRUNC(c.DATEFROM) <= v_ProductionDate
+                                  AND TRUNC(c.DATETO) > v_ProductionDate
+                                  AND ppl.PRODUCTIONTYPE = '-'
+                                  AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
+                                  AND c.ISPRODUCTION='N'
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
-                                                    AND M_COSTING.DATEFROM <= v_ProductionDate
-                                                    AND M_COSTING.DATETO > v_ProductionDate
+                                                    AND TRUNC(M_COSTING.DATEFROM) <= v_ProductionDate
+                                                    AND TRUNC(M_COSTING.DATETO) > v_ProductionDate
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
-                                                    AND M_PRODUCTIONLINE.M_PRODUCT_ID = ppl.M_Product_ID
+                                                    AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y')) LOOP
-          IF (v_costcurrency IS NOT NULL AND v_costcurrency <> v_clientcurrency
-              AND cur_rawmaterial.calculate_cost = 'Y') THEN
-            v_ProductionCost_Tmp := v_ProductionCost_Tmp + C_CURRENCY_CONVERT_PRECISION(COALESCE(Cur_RawMaterial.cost, 0), v_costcurrency, v_clientcurrency, v_productiondate, NULL , v_client_id, v_org_id);
-          ELSE
-            v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
-          END IF;
+          v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_RawMaterial.cost, 0)
           WHERE M_PRODUCTIONLINE_ID = Cur_RawMaterial.M_PRODUCTIONLINE_ID;
         END LOOP;
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
+        
+        IF (v_iscostmigrated = 'Y') THEN
+          SELECT count(1), max(p.name) INTO v_count2, v_count3
+          FROM m_productionline pl JOIN m_product p ON pl.m_product_id = p.m_product_id
+          WHERE pl.m_productionplan_id = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
+            AND pl.productiontype = '-'
+            AND pl.calccost IS NULL;
+          IF (v_count2 > 0) THEN
+            v_message := '@NoAvgCostDefined@ @Product@: ' || v_count3 || ', @Date@:' || v_ProductionDate;
+            RAISE_APPLICATION_ERROR(-20000, v_message);
+          END IF;
+        END IF;
 
         -- Calculates the cost of the cost center
         -- Cost directly inserted on cost center definition
@@ -403,16 +365,16 @@ BEGIN
           SELECT COUNT(*) INTO v_count2
           FROM M_COSTING
           WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-            AND DATETO > v_ProductionDate
-            AND DATEFROM <=v_ProductionDate
+            AND TRUNC(DATETO) > v_ProductionDate
+            AND TRUNC(DATEFROM) <=v_ProductionDate
             AND ISPRODUCTION='Y';
           v_ResultStr := 'previous costs ' || v_count2 || ' product: ' || Cur_ProductionLine.M_Product_ID;
           IF (v_count2 IS NOT NULL AND v_count2 <> 0) THEN
             SELECT COALESCE(COST,0) INTO v_CostOld
             FROM M_COSTING
             WHERE M_Product_ID = Cur_ProductionLine.M_PRODUCT_ID
-              AND DATETO > v_ProductionDate
-              AND DATEFROM <=v_ProductionDate
+              AND TRUNC(DATETO) > v_ProductionDate
+              AND TRUNC(DATEFROM) <=v_ProductionDate
               AND ISPRODUCTION='Y';
           ELSE
             v_CostOld := 0;
@@ -439,22 +401,6 @@ BEGIN
             UPDATE M_PRODUCTIONLINE
             SET CALCCOST = ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4)
             WHERE M_PRODUCTIONLINE_ID = Cur_ProductionLine.M_ProductionLine_ID;
-            UPDATE m_transaction
-            SET transactioncost = v_cost,
-                iscostcalculated = 'Y'
-            WHERE m_productionline_id = cur_productionline.m_productionline_id;
-            DELETE FROM m_transaction_cost
-            WHERE m_transaction_id IN (SELECT m_transaction_id FROM m_transaction
-                                       WHERE m_productionline_id = cur_productionline.m_productionline_id);
-            INSERT INTO m_transaction_cost (
-              m_transaction_cost_id, ad_client_id, ad_org_id, isactive,
-              created, createdby, updated, updatedby,
-              m_transaction_id, cost, costdate
-            ) SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
-                  now(), p_user_id, now(), p_user_id,
-                  m_transaction_id, v_cost, trxprocessdate
-              FROM m_transaction
-              WHERE m_productionline_id = cur_productionline.m_productionline_id;
 
             v_ResultStr := 'M_Costing';
             --Check if the product has any cost previously calculated.
@@ -464,7 +410,10 @@ BEGIN
               AND ISPRODUCTION='Y';
 
             --Insert cost per unit.
-            IF (v_count2 = 0) THEN
+            IF (v_iscostmigrated = 'Y') THEN
+              --Do nothing
+              v_ResultStr := 'new engine in use';
+            ELSIF (v_count2 = 0) THEN
               v_ResultStr := 'new cost';
               Ad_Sequence_Next('M_Costing', Cur_ProductionLine.AD_ORG_ID, v_NextNo);
               --First time
