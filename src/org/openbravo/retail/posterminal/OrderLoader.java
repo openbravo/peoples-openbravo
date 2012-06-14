@@ -126,7 +126,8 @@ public class OrderLoader {
     TriggerHandler.getInstance().disableSql();
     try {
       t1 = System.currentTimeMillis();
-      boolean createInvoice = false;
+      boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
+          .getBoolean("generateInvoice"));
       // Order header
       order = OBProvider.getInstance().get(Order.class);
       long t111 = System.currentTimeMillis();
