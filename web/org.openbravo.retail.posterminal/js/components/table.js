@@ -14,7 +14,17 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       );
       this.$el = this.component.$el;
     };
-
+    
+    F.prototype._addModelToCollection = function (model, index) {
+      var me = this;
+      var tr = B(this.renderLine(model)).$el;
+      if (_.isNumber(index) && index < this.collection.length - 1) {
+        this.$el.append(tr);
+      } else {
+        this.$el.children().eq(index + this.header).before(tr);
+      }      
+    };
+    
     F.prototype.attr = function (attr) {
       this.renderLine = attr.renderLine;
       this.renderHeader = attr.renderHeader;
@@ -28,14 +38,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       }, this);
 
       this.collection.on('add', function(model, prop, options) {
-        var index = options.index;
-        var me = this;
-        var tr = B(this.renderLine(model)).$el;
-        if (index === this.collection.length - 1) {
-          this.$el.append(tr);
-        } else {
-          this.$el.children().eq(index + this.header).before(tr);
-        }
+        this._addModelToCollection(model, options.index);
       }, this);
 
       this.collection.on('remove', function (model, prop, options) {
@@ -48,6 +51,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         if (this.renderHeader) {
           this.$el.append(B(this.renderHeader()).$el);
         }
+        this.collection.each(this._addModelToCollection, this);        
       }, this);
 
       // Init clear...
@@ -116,7 +120,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         }
       }, this);
 
-      if (index && index < this.collection.length - 1) {
+      if (_.isNumber(index) && index < this.collection.length - 1) {
         this.tbody.children().eq(index).before(tr);        
       } else {
         this.tbody.append(tr);
@@ -154,33 +158,6 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       this.tbody.show();
       
       this._addModelToCollection(model, options.index);
-
-//      var me = this;
-//      var tr = B({kind: B.KindJQuery('li')}).$el;
-//      tr.append(this.renderLineModel(model).$el);
-//      // tr.click(stdClickEvent);
-//
-//      model.on('change', function() {
-//        tr.empty().append(this.renderLineModel(model).$el);
-//      }, this);
-//
-//      model.on('selected', function() {
-//        if (this.style) {
-//          if (this.selected) {
-//            this.selected.removeClass('selected');
-//          }
-//          this.selected = tr;
-//          this.selected.addClass('selected');
-//          OB.UTIL.makeElemVisible(this.$el, this.selected);
-//        }
-//      }, this);
-//
-//      var index = options.index;
-//      if (index === this.collection.length - 1) {
-//        this.tbody.append(tr);
-//      } else {
-//        this.tbody.children().eq(index).before(tr);
-//      }
 
       if (this.style === 'list') {
         if (!this.selected) {
