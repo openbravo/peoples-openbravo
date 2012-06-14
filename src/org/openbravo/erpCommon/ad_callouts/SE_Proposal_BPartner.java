@@ -95,16 +95,36 @@ public class SE_Proposal_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcBpartnerLocationId\", ");
     if (tdv != null && tdv.length > 0) {
       resultado.append("new Array(");
-      for (int i = 0; i < tdv.length; i++) {
-        resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
-            + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
-        if (i < tdv.length - 1)
+
+      if (strLocation.isEmpty()) {
+        // If no location is provided, the first one is selected
+        resultado.append("new Array(\"" + tdv[0].getField("id") + "\", \""
+            + FormatUtilities.replaceJS(tdv[0].getField("name")) + "\", \"" + "true" + "\")");
+        if (tdv.length > 1) {
           resultado.append(",\n");
+        }
+        for (int i = 1; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \"" + "false" + "\")");
+          if (i < tdv.length - 1) {
+            resultado.append(",\n");
+          }
+        }
+      } else {
+        // If a location is provided, it is selected
+        for (int i = 0; i < tdv.length; i++) {
+          resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+              + (tdv[i].getField("id").equalsIgnoreCase(strLocation) ? "true" : "false") + "\")");
+          if (i < tdv.length - 1) {
+            resultado.append(",\n");
+          }
+        }
       }
       resultado.append("\n)");
-    } else
+    } else {
       resultado.append("null");
+    }
     resultado.append("\n),");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",

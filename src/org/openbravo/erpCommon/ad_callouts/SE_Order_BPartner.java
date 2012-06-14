@@ -118,17 +118,22 @@ public class SE_Order_BPartner extends SimpleCallout {
     }
 
     String strLocation = info.vars.getStringParameter("inpcBpartnerId_LOC");
-    if (!strLocation.isEmpty()) {
-      if (tdv != null && tdv.length > 0) {
-        info.addSelect("inpcBpartnerLocationId");
+    if (tdv != null && tdv.length > 0) {
+      info.addSelect("inpcBpartnerLocationId");
+      if (strLocation.isEmpty()) {
+        // If no location is provided, the first one is selected
+        info.addSelectResult(tdv[0].getField("id"), tdv[0].getField("name"), true);
+        for (int i = 1; i < tdv.length; i++) {
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), false);
+        }
+      } else {
+        // If a location is provided, it is selected
         for (int i = 0; i < tdv.length; i++) {
           info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
               .getField("id").equalsIgnoreCase(strLocation));
         }
-        info.endSelect();
-      } else {
-        info.addResult("inpcBpartnerLocationId", null);
       }
+      info.endSelect();
     }
     // Warehouses
 
@@ -246,11 +251,19 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     if (tlv != null && tlv.length > 0) {
       info.addSelect("inpbilltoId");
-      for (int i = 0; i < tlv.length; i++) {
-        info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), tlv[i].getField("id")
-            .equalsIgnoreCase(strLocation));
+      if (strLocation.isEmpty()) {
+        // If no location is provided, the first one is selected
+        info.addSelectResult(tlv[0].getField("id"), tlv[0].getField("name"), true);
+        for (int i = 0; i < tlv.length; i++) {
+          info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), false);
+        }
+      } else {
+        // If a location is provided, it is selected
+        for (int i = 0; i < tlv.length; i++) {
+          info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), tlv[i]
+              .getField("id").equalsIgnoreCase(strLocation));
+        }
       }
-
       info.endSelect();
     } else {
       info.addResult("inpbilltoId", null);
