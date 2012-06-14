@@ -232,6 +232,7 @@ public class CostingMigrationProcess implements Process {
         .createQuery("delete from " + TransactionCost.ENTITY_NAME);
     queryDelete.executeUpdate();
 
+    // FIXME: Update should be done with a loop based on scroll.
     StringBuffer update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false,");
@@ -417,6 +418,7 @@ public class CostingMigrationProcess implements Process {
       Set<String> naturalTree) {
     log4j.debug("****** UpdateTrxLegacyCosts");
 
+    // FIXME: Update should be done with a loop based on scroll.
     StringBuffer update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = :isCalculated,");
@@ -485,6 +487,7 @@ public class CostingMigrationProcess implements Process {
   private void convertTrxLegacyCosts(ConversionRate convRate, Long standardPrecision,
       Set<String> naturalTree) {
     log4j.debug("****** ConvertTrxLegacyCosts");
+    // FIXME: Update should be done with a loop based on scroll.
     StringBuffer convUpd = new StringBuffer();
     convUpd.append(" update " + MaterialTransaction.ENTITY_NAME);
     convUpd.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true,");
@@ -508,6 +511,7 @@ public class CostingMigrationProcess implements Process {
   private void updateWithCeroCostRemainingTrx() {
     log4j.debug("****** updateWithCeroRemainingTrx");
 
+    // FIXME: Update should be done with a loop based on scroll.
     StringBuffer update = new StringBuffer();
     update.append("update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true,");
@@ -521,6 +525,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void insertAlertRecipients(AlertRule alertRule) {
+    // FIXME: Insert should be done with a loop based on scroll.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + AlertRecipient.ENTITY_NAME);
     insert.append(" (id ");
@@ -558,6 +563,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void insertTrxCosts() {
+    // FIXME: Insert should be done with a loop based on scroll.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + TransactionCost.ENTITY_NAME);
     insert.append(" (id ");
@@ -596,6 +602,7 @@ public class CostingMigrationProcess implements Process {
 
   private void insertStandardCosts() {
     // Insert STANDARD cost for products with costtype = 'ST'.
+    // FIXME: Insert should be done with a loop based on scroll.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + Costing.ENTITY_NAME);
     insert.append(" (id ");

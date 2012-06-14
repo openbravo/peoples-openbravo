@@ -315,6 +315,7 @@ public class CostingRuleProcess implements Process {
         new StandardSQLFunction("get_uuid", new StringType()));
     OBDal.getInstance().registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
 
+    // FIXME: Insert should be done with a loop based on scroll.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + InventoryCountLine.ENTITY_NAME + "(");
     insert.append(" id ");
