@@ -13,8 +13,8 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
     var lines = this.receipt.get('lines');
 
     this.receipt.on('change:gross', this.renderTotal, this);
-
-    this.receipt.on('change:orderType', this.renderOrderType, this);
+    this.receipt.on('change:orderType', this.renderFooter, this);
+    this.receipt.on('change:generateInvoice', this.renderFooter, this);
 
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
@@ -55,32 +55,35 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
             ]}
           ]},
           {kind: B.KindJQuery('li'), content: [
-            {kind: B.KindJQuery('div'), id: 'ordertype', attr: {style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #888888'}}
+            {kind: B.KindJQuery('div'), id: 'footer', attr: {style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #888888'}}
           ]}
         ]}
       ]}
     );
     this.$el = this.component.$el;
-    this.$ordertype = this.component.context.ordertype.$el;
+    this.$footer = this.component.context.footer.$el;
     this.totalgross = this.component.context.totalgross.$el;
     this.tableview = this.component.context.tableview;
 
     // Initial total display...
-    this.renderOrderType();
+    this.renderFooter();
     this.renderTotal();
   };
 
-  OB.COMP.OrderView.prototype.renderOrderType = function () {
-    if (this.receipt.get('orderType') === 0) {
-      // Sales Order
-      this.$ordertype.hide();
-    } else if (this.receipt.get('orderType') === 1) {
-      // Return order
-      this.$ordertype.show();
-      this.$ordertype.text(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+  OB.COMP.OrderView.prototype.renderFooter = function () {
+    var s = [];
+    if (this.receipt.get('orderType') === 1) {
+      s.push(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+    }
+    if (this.receipt.get('generateInvoice')) {
+      s.push(OB.I18N.getLabel('OBPOS_ToInvoice'));
+    }     
+    
+    if (s.length > 0) {
+      this.$footer.text(s.join(' / '));
+      this.$footer.show();
     } else {
-      // Unknown
-      this.$ordertype.hide();
+      this.$footer.hide();
     }
   };
 

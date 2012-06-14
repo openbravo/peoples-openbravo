@@ -52,6 +52,7 @@ define(['builder', 'i18n',
                 {kind: B.KindJQuery('li'), content: [
                   {kind: OB.COMP.MenuButton.extend({icon: 'icon-th-large icon-white btn-icon-left', label: OB.I18N.getLabel('OBPOS_LblMenu')}), content: [
                     {kind: OB.COMP.MenuReturn},
+                    {kind: OB.COMP.MenuInvoice},
                     {kind: OB.COMP.MenuSeparator},
                     {kind: OB.COMP.MenuItem.extend({href:'../..', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
                     {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/closecash/windows/closecash'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},

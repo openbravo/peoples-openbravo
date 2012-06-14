@@ -66,6 +66,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('organization', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
+      this.set('generateInvoice', false);      
       this.set('priceList', null);
       this.set('currency', null);
       this.set('warehouse',null);
@@ -141,6 +142,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('organization', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
+      this.set('generateInvoice', false);      
       this.set('priceList', null);
       this.set('currency', null);
       this.set('warehouse',null);
@@ -165,6 +167,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('organization', _order.get('organization'));
       this.set('documentType', _order.get('documentType'));
       this.set('orderType', _order.get('orderType'));
+      this.set('generateInvoice', _order.get('generateInvoice'));      
       this.set('priceList', _order.get('priceList'));
       this.set('currency', _order.get('currency'));
       this.set('warehouse', _order.get('warehouse'));
@@ -356,7 +359,11 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
       this.set('orderType', 1); // 0: Sales order, 1: Return order
     },
-
+    
+    setOrderInvoice: function () {
+      this.set('generateInvoice', true);
+    },
+    
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -488,6 +495,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
+      order.set('generateInvoice', false);
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
