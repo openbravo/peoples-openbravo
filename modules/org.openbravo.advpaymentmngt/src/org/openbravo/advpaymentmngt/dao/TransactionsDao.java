@@ -144,7 +144,9 @@ public class TransactionsDao {
             "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=?");
     query.setString(0, (String) DalUtil.getId(financialAccount));
     for (Object obj : query.list()) {
-      return (Long) obj;
+      if (obj != null) {
+        return (Long) obj;
+      }
     }
     return 0l;
   }
