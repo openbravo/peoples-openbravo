@@ -1,9 +1,42 @@
-/*global window, define, Backbone */
+/*global window, define, Backbone, console */
 
 define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'components/table'], function (B) {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
+
+  var terminalName = OB.UTIL.getParameterByName('terminal') || 'POS-1';
+  var userId = '100'; //TODO: Remove hardcoded userId
+
+  var RoleModel = Backbone.Model.extend({});
+  var RoleCollection = Backbone.Collection.extend({
+    model: RoleModel,
+    url: '../../org.openbravo.service.retail.posterminal.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
+    parse: function (response, error) {
+      if (response && response.response[0] && response.response[0].data) {
+        return response.response[0].data;
+      } else {
+        return null;
+      }
+    }
+  });
+  var myRoleCollection = new RoleCollection();
+  myRoleCollection.fetch();
+
+  var LanguageModel = Backbone.Model.extend({});
+  var LanguageCollection = Backbone.Collection.extend({
+    model: LanguageModel,
+    url: '../../org.openbravo.service.retail.posterminal.profileutils?command=availableLanguages',
+    parse: function (response, error) {
+      if (response && response.response[0] && response.response[0].data) {
+        return response.response[0].data;
+      } else {
+        return null;
+      }
+    }
+  });
+  var myLanguageCollection = new LanguageCollection();
+  myLanguageCollection.fetch();
 
 
   OB.COMP.ModalProfile = OB.COMP.Modal.extend({
@@ -33,8 +66,29 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
               {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
                 {kind: B.KindJQuery('select'), attr: {'style': 'height: 40px; width: 343px; margin: 0px;'}, content: [
                   {kind: B.KindJQuery('option'), attr: {'style': 'height: 40px; width: 343px; margin: 0px;'}, content: ['Feature not yet implemented']}
-                ]}
-               // {kind: OB.COMP.ListView('select'), id: 'xx'}
+                ]},
+
+                {kind: OB.COMP.ListView('select'), attr: {
+                  collection: myRoleCollection,
+                  renderHeader: function (model) {
+                    console.log(this.collection.toJSON());
+                    return (
+                      {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
+                         OB.I18N.getLabel('OBPOS_SearchAllCategories')
+                      ]}
+                    );
+                  },
+                  renderLine: function (model) {
+                    model = this.collection.toJSON()[0];
+                    console.log(model);
+                    return (
+                      {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
+                          model.get('client')
+                      ]}
+                    );
+                  }
+                }}
+
               ]}
             ]},
             {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
@@ -45,8 +99,29 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
               {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
                 {kind: B.KindJQuery('select'), attr: {'style': 'height: 40px; width: 343px; margin: 0px;'}, content: [
                   {kind: B.KindJQuery('option'), attr: {'style': 'height: 40px; width: 343px; margin: 0px;'}, content: ['Feature not yet implemented']}
-                ]}
-               // {kind: OB.COMP.ListView('select'), id: 'xx'}
+                ]},
+
+                {kind: OB.COMP.ListView('select'), attr: {
+                  collection: myLanguageCollection,
+                  renderHeader: function (model) {
+                    console.log(this.collection.toJSON());
+                    return (
+                      {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
+                         OB.I18N.getLabel('OBPOS_SearchAllCategories')
+                      ]}
+                    );
+                  },
+                  renderLine: function (model) {
+                    model = this.collection.toJSON()[0];
+                    console.log(model);
+                    return (
+                      {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
+                          model.get('client')
+                      ]}
+                    );
+                  }
+                }}
+
               ]}
             ]}
           ]},
@@ -60,7 +135,6 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       );
     }
   });
-
 
   // Apply the changes
   OB.COMP.ProfileDialogApply = OB.COMP.Button.extend({
