@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.util.Iterator;
 
 import org.hibernate.ScrollableResults;
+import org.openbravo.dal.service.OBDal;
 
 public abstract class Scroll {
   public abstract boolean next();
@@ -19,9 +20,13 @@ public abstract class Scroll {
 
   public static Scroll create(final ScrollableResults sr) {
     return new Scroll() {
-      // private ScrollableResults sr = sr;
+      int index = 0;
       @Override
       public boolean next() {
+        index++;
+        if (index % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
         return sr.next();
       }
 
@@ -34,6 +39,7 @@ public abstract class Scroll {
       @Override
       public void close() {
         sr.close();
+        OBDal.getInstance().getSession().clear();
       }
     };
   }
