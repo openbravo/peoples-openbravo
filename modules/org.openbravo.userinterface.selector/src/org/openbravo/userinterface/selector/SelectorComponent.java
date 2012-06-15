@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -919,7 +920,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       }
 
       public void setStringValue(String value) {
-        this.value = "'" + value + "'";
+        this.value = "'" + StringEscapeUtils.escapeJavaScript(value) + "'";
       }
 
       public void setValue(String value) {
