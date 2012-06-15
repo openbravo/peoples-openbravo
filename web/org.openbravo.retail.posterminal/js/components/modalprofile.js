@@ -1,4 +1,4 @@
-/*global window, define, Backbone, console */
+/*global window, define, Backbone */
 
 define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'components/table'], function (B) {
 
@@ -70,20 +70,10 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
 
                 {kind: OB.COMP.ListView('select'), attr: {
                   collection: myRoleCollection,
-                  renderHeader: function (model) {
-                    console.log(this.collection.toJSON());
-                    return (
-                      {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
-                         OB.I18N.getLabel('OBPOS_SearchAllCategories')
-                      ]}
-                    );
-                  },
                   renderLine: function (model) {
-                    model = this.collection.toJSON()[0];
-                    console.log(model);
                     return (
                       {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                          model.get('client')
+                          model.get('_identifier')
                       ]}
                     );
                   }
@@ -103,20 +93,10 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
 
                 {kind: OB.COMP.ListView('select'), attr: {
                   collection: myLanguageCollection,
-                  renderHeader: function (model) {
-                    console.log(this.collection.toJSON());
-                    return (
-                      {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
-                         OB.I18N.getLabel('OBPOS_SearchAllCategories')
-                      ]}
-                    );
-                  },
                   renderLine: function (model) {
-                    model = this.collection.toJSON()[0];
-                    console.log(model);
                     return (
                       {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                          model.get('client')
+                          model.get('_identifier')
                       ]}
                     );
                   }
