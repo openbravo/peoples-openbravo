@@ -141,7 +141,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     if (isPriceTaxInclusive(strCOrderId)) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
-          + (strPriceActual.equals("") ? "0" : strPriceList) + "),");
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
 
     } else {
       resultado.append("new Array(\"inppricelist\", "
