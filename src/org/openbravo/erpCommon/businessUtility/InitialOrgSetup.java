@@ -44,6 +44,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.model.common.geography.Location;
@@ -135,7 +136,7 @@ public class InitialOrgSetup {
 
     log4j.debug("createOrganization() - Creating organization.");
     obResult = insertOrganization((strOrgName == null || strOrgName.equals("")) ? "newOrg"
-        : strOrgName, strOrgType, strParentOrg, strcLocationId);
+        : strOrgName, strOrgType, strParentOrg, strcLocationId, strCurrency);
     if (!obResult.getType().equals(OKTYPE))
       return obResult;
     obResult.setType(ERRORTYPE);
@@ -638,7 +639,7 @@ public class InitialOrgSetup {
   }
 
   private OBError insertOrganization(String strOrgName, String strOrgType, String strParentOrg,
-      String strcLocationId) {
+      String strcLocationId, String strCurrency) {
 
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
@@ -648,7 +649,7 @@ public class InitialOrgSetup {
 
     try {
       org = InitialSetupUtility.insertOrganization(strOrgName, getOrgType(strOrgType),
-          strcLocationId, client);
+          strcLocationId, client, getCurencyType(strCurrency));
       if (org == null)
         return logErrorAndRollback("@CreateOrgFailed@",
             "createOrganization() - ERROR - Organization creation process failed.", null);
@@ -696,6 +697,10 @@ public class InitialOrgSetup {
 
   private OrganizationType getOrgType(String strOrgType) {
     return OBDal.getInstance().get(OrganizationType.class, strOrgType);
+  }
+
+  private Currency getCurencyType(String strCurrency) {
+    return OBDal.getInstance().get(Currency.class, strCurrency);
   }
 
   public String getLog() {
