@@ -69,9 +69,12 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('generateInvoice', false);      
       this.set('priceList', null);
       this.set('currency', null);
+      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('warehouse',null);
       this.set('salesRepresentative', null);
+      this.set('salesRepresentative'+ OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('posTerminal', null);
+      this.set('posTerminal'+ OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
       this.set('documentNo', '');
       this.set('undo', null);
@@ -145,9 +148,12 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('generateInvoice', false);      
       this.set('priceList', null);
       this.set('currency', null);
+      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('warehouse',null);
       this.set('salesRepresentative', null);
+      this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('posTerminal', null);
+      this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
       this.set('documentNo', '');
       this.set('undo', null);
@@ -170,9 +176,12 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       this.set('generateInvoice', _order.get('generateInvoice'));      
       this.set('priceList', _order.get('priceList'));
       this.set('currency', _order.get('currency'));
+      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
       this.set('warehouse', _order.get('warehouse'));
       this.set('salesRepresentative', _order.get('salesRepresentative'));
+      this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
       this.set('posTerminal', _order.get('posTerminal'));
+      this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
       this.set('orderDate', _order.get('orderDate'));
       this.set('documentNo', _order.get('documentNo'));
       this.set('undo', null);
@@ -498,9 +507,12 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
       order.set('generateInvoice', false);
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
+      order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
       order.set('salesRepresentative',  OB.POS.modelterminal.get('context').user.id);
+      order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,  OB.POS.modelterminal.get('context').user._identifier);
       order.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+      order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
 
       order.set('orderDate', new Date());
       var documentseq = localStorage.getItem('Document_Sequence') || '0';

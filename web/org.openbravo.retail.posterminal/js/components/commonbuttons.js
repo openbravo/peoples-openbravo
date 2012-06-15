@@ -32,7 +32,7 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
       return this;
     },
     clickEvent: function (e) {
-      this.options.modelorder.addPayment(new OB.MODEL.PaymentLine({'kind': this.paymenttype, 'amount': OB.DEC.number(this.amount)}));
+      this.options.modelorder.addPayment(new OB.MODEL.PaymentLine({'kind': this.paymenttype, 'name': OB.POS.modelterminal.getPaymentName(this.paymenttype), 'amount': OB.DEC.number(this.amount)}));
     }
   });
 

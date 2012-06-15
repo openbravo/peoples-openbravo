@@ -2,30 +2,40 @@
 
 <output>
     <ticket>
-        <line></line>
         <line>
-            <text align="center" length="42">Openbravo Retail</text>
-        </line>
-        <line>
-            <text align="center" length="42">Copyright 2007-2011 Openbravo, S.L.U.</text>
+            <image type="file">/home/openbravo/logofb.png</image>
         </line>
         <line></line>
-        
         <line>
-            <text align="left" length="15">Document:</text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckheader_line1'))%></text>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckheader_line2'))%></text>
+        </line>
+        <line></line>
+        <line>
+            <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticket')) %></text>
             <text><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></text>
         </line>
         <line>
-            <text align="left" length="15">Date:</text>
+            <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
             <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
+            <text> </text>
+            <text><%= OB.I18N.formatHour(order.get('orderDate')) %></text>
+        </line>
+        <line>
+            <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
+            <text><%= OB.UTIL.encodeXMLComponent(order.get('salesRepresentative'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
+            <text>, </text> 
+            <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
         </line>   
-        
         <line></line>
         <line>
-            <text align ="left" length="17">Item</text>
-            <text align ="right" length="10">Price</text>
-            <text align ="right" length="5"></text>
-            <text align ="right" length="10">Value</text>
+            <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
+            <text align ="center" length="5">#</text>
+            <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LinePrice'))%></text>
+            <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
+            <!--Todo: Taxes-->
         </line>
         <line>
              <text>------------------------------------------</text>
@@ -36,55 +46,56 @@
     %>
         
         <line>
-
-            <text align ="left" length="17"><%= lines.at(i).get('product').get('product')._identifier %></text>
-
-            <text align ="right" length="10"><%= lines.at(i).printPrice() %></text>
-            <text align ="right" length="5">x<%= lines.at(i).printQty() %></text>
-            <text align ="right" length="10"><%= lines.at(i).printGross() %></text>
+            <text align ="left" length="21"><%= lines.at(i).get('product').get('product')._identifier %></text>
+            <text align ="center" length="5"><%= lines.at(i).printQty() %></text>
+            <text align ="left" length="8"><%= lines.at(i).printPrice() %></text>
+            <text align ="left" length="8"><%= lines.at(i).printGross() %></text>
+            <!--Todo: Taxes-->
         </line>  
     <%
      } 
     %>
-        <line>
-             <text>------------------------------------------</text>
-        </line>  
-    <% 
-     var taxes = order.get('taxes');
-     for (var t in taxes) { 
-    %>   
-        <line>
-            <text align ="left" length="25">Total net</text>
-            <text align ="right" length="10"><%= OB.I18N.formatCurrency(taxes[t].net) %></text>
-        </line>   
-        <line>
-            <text align ="left" length="15"><%= taxes[t].name %></text>
-            <text align ="right" length="10"><%= OB.I18N.formatRate(taxes[t].rate) %></text>
-            <text align ="right" length="10"><%= OB.I18N.formatCurrency(taxes[t].amount) %></text>           
-        </line>       
-    <%
-     } 
-    %>        
         <line></line>
         <line size="1">
-            <text align ="left" length="16" bold="true">Total.</text>
-            <text align ="right" length="20" bold="true"><%= order.printGross() %></text>
-        </line>    
-        
-        
+            <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>
+            <text align ="right" length="14"><%= order.printGross() %></text>
+        </line>
+        <line>
+    <%
+     var payments = order.get('payments');
+     for (var i = 0; i < payments.length; i++) {
+    %>
+        <text align="left" length="20"><%= payments.at(i).get('name') %></text>
+        <text align="right" length="20"><%= payments.at(i).get('amount') %></text>
+    <%
+     }
+    %>
+       </line>
+       <line>
+         <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
+         <text align="right" length="20"><%= order.get('change')%></text>
+       </line>
+       <line></line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1'))%></text>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>
+        </line>
+       <line>
+         <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></barcode>
+       </line>
+
+
     </ticket>
         
     <display>
         <line>
-            <text align="left" length="10">Total.</text>
+            <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
             <text align="right" length="10"><%= order.printGross() %></text>
         </line>
         <line>
-           <text align="center" length="20">Thank you.</text>
+           <text align="center" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_thankyou'))%></text>
         </line>
     </display>
-    
-    
-    
-    
 </output>
