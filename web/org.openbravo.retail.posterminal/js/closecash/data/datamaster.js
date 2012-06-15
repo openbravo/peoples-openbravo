@@ -29,6 +29,17 @@ define(['utilities', 'datasource'], function () {
     }
   };
 
+  OB.DATA.PaymentMethod = function (context, id) {
+	    this._id = 'DataPaymentMethod';
+	    this.context = context;
+	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+	      'org.openbravo.retail.posterminal.term.Payments',
+	      OB.POS.modelterminal.get('terminal').client,
+	      OB.POS.modelterminal.get('terminal').organization));
+	    this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
+	  };
+  _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
+
   OB.MODEL.Payment = Backbone.Model.extend({});
 
   OB.MODEL.PaymentList = Backbone.Collection.extend({
