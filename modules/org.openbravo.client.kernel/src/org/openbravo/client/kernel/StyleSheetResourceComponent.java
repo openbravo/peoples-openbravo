@@ -108,9 +108,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
         KernelConstants.SERVLET_CONTEXT);
     final StringBuffer sb = new StringBuffer();
 
-    final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
-        || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
-            KernelConstants.MODE_PARAMETER_300);
+    final String appName = getApplicationName();
 
     final boolean makeCssDataUri = getParameters().get("_cssDataUri") != null
         && getParameters().get("_cssDataUri").equals("true");
@@ -131,12 +129,9 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
         if (provider.getModule().getId().equals(module.getId())) {
           for (ComponentResource resource : resources) {
-            if (classicMode && !resource.isIncludeAlsoInClassicMode()) {
-              continue;
-            }
-            if (!classicMode && !resource.isIncludeInNewUIMode()) {
-              continue;
-            }
+
+            resource.isValidForApp(appName);
+
             log.debug("Processing resource: " + resource);
             if (resource.getType() == ComponentResourceType.Stylesheet) {
               String resourcePath = resource.getPath();

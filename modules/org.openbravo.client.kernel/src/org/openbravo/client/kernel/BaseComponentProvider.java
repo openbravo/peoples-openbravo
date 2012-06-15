@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,31 +98,75 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return null;
   }
 
+  protected ComponentResource createComponentResource(ComponentResourceType type, String path) {
+    final ComponentResource resource = new ComponentResource();
+    resource.setType(type);
+    resource.setPath(path);
+    return resource;
+  }
+
+  protected ComponentResource createComponentResource(ComponentResourceType type, String path,
+      String validForApp) {
+    final ComponentResource resource = new ComponentResource();
+    resource.setType(type);
+    resource.setPath(path);
+    resource.addValidForApp(validForApp);
+    return resource;
+  }
+
+  protected ComponentResource createComponentResource(ComponentResourceType type, String path,
+      List<String> validForAppList) {
+    final ComponentResource resource = new ComponentResource();
+    resource.setType(type);
+    resource.setPath(path);
+    resource.setValidForAppList(validForAppList);
+    return resource;
+  }
+
   protected ComponentResource createStaticResource(String path, boolean includeAlsoInClassicMode,
       boolean includeInNewUIMode) {
-    final ComponentResource componentResource = new ComponentResource();
-    componentResource.setType(ComponentResourceType.Static);
-    componentResource.setPath(path);
-    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
-    componentResource.setIncludeInNewUIMode(includeInNewUIMode);
+
+    final ComponentResource componentResource = createComponentResource(
+        ComponentResourceType.Static, path);
+
+    if (includeAlsoInClassicMode) {
+      componentResource.addValidForApp(ComponentResource.APP_CLASSIC);
+    }
+
+    if (includeInNewUIMode) {
+      componentResource.addValidForApp(ComponentResource.APP_OB3);
+    }
+
     return componentResource;
   }
 
   protected ComponentResource createStaticResource(String path, boolean includeAlsoInClassicMode) {
-    final ComponentResource componentResource = new ComponentResource();
-    componentResource.setType(ComponentResourceType.Static);
-    componentResource.setPath(path);
-    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
+    final ComponentResource componentResource = createComponentResource(
+        ComponentResourceType.Static, path);
+
+    // mimic old behavior *always* include for OB3
+    componentResource.addValidForApp(ComponentResource.APP_OB3);
+
+    if (includeAlsoInClassicMode) {
+      componentResource.addValidForApp(ComponentResource.APP_CLASSIC);
+    }
+
     return componentResource;
   }
 
   protected ComponentResource createStyleSheetResource(String path,
       boolean includeAlsoInClassicMode, boolean includeInNewUIMode) {
-    final ComponentResource componentResource = new ComponentResource();
-    componentResource.setType(ComponentResourceType.Stylesheet);
-    componentResource.setPath(path);
-    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
-    componentResource.setIncludeInNewUIMode(includeInNewUIMode);
+    final ComponentResource componentResource = createComponentResource(
+        ComponentResourceType.Stylesheet, path);
+
+    if (includeAlsoInClassicMode) {
+      componentResource.addValidForApp(ComponentResource.APP_CLASSIC);
+    }
+
+    if (includeInNewUIMode) {
+      componentResource.addValidForApp(ComponentResource.APP_OB3);
+    }
+
     return componentResource;
   }
 
@@ -129,15 +174,20 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     final ComponentResource componentResource = new ComponentResource();
     componentResource.setType(ComponentResourceType.Stylesheet);
     componentResource.setPath(path);
-    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
+
+    // mimic old behavior *always* include for OB3
+    componentResource.addValidForApp(ComponentResource.APP_OB3);
+
+    if (includeAlsoInClassicMode) {
+      componentResource.addValidForApp(ComponentResource.APP_CLASSIC);
+    }
+
     return componentResource;
   }
 
   protected ComponentResource createDynamicResource(String path) {
-    final ComponentResource componentResource = new ComponentResource();
-    componentResource.setType(ComponentResourceType.Dynamic);
-    componentResource.setPath(path);
-    componentResource.setIncludeAlsoInClassicMode(false);
+    final ComponentResource componentResource = createComponentResource(
+        ComponentResourceType.Dynamic, path, ComponentResource.APP_OB3);
     return componentResource;
   }
 
@@ -165,10 +215,21 @@ public abstract class BaseComponentProvider implements ComponentProvider {
       Static, Dynamic, Stylesheet
     }
 
+    public static final String APP_OB3 = "OB3";
+    public static final String APP_CLASSIC = "CLASSIC";
+    public static final List<String> ALL_CORE_APPS = Arrays.asList(new String[] { APP_OB3,
+        APP_CLASSIC });
+
     private ComponentResourceType type;
     private String path;
+
+    @Deprecated
     private boolean includeAlsoInClassicMode = false;
+
+    @Deprecated
     private boolean includeInNewUIMode = true;
+
+    private List<String> validForAppList = new ArrayList<String>();
 
     public ComponentResourceType getType() {
       return type;
@@ -190,20 +251,40 @@ public abstract class BaseComponentProvider implements ComponentProvider {
       return type + " " + path;
     }
 
+    @Deprecated
     public boolean isIncludeAlsoInClassicMode() {
       return includeAlsoInClassicMode;
     }
 
+    @Deprecated
     public void setIncludeAlsoInClassicMode(boolean includeAlsoInClassicMode) {
       this.includeAlsoInClassicMode = includeAlsoInClassicMode;
     }
 
+    @Deprecated
     public boolean isIncludeInNewUIMode() {
       return includeInNewUIMode;
     }
 
+    @Deprecated
     public void setIncludeInNewUIMode(boolean includeInNewUIMode) {
       this.includeInNewUIMode = includeInNewUIMode;
+    }
+
+    public List<String> getValidForAppList() {
+      return validForAppList;
+    }
+
+    public void setValidForAppList(List<String> validForAppList) {
+      this.validForAppList = validForAppList;
+    }
+
+    public void addValidForApp(String app) {
+      this.validForAppList.add(app);
+    }
+
+    public boolean isValidForApp(String app) {
+      return this.validForAppList.contains(app);
     }
 
   }
