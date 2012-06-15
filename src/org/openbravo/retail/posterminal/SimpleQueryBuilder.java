@@ -179,6 +179,12 @@ public class SimpleQueryBuilder {
     }
   }
 
+  private static class LanguageId implements PartBuilder {
+    public String getPart() {
+      return "'" + OBContext.getOBContext().getLanguage().getId() + "'";
+    }
+  }
+
   public String getHQLQuery() {
 
     String newhql = hql;
@@ -196,6 +202,7 @@ public class SimpleQueryBuilder {
 
     newhql = replaceAll(newhql, "$roleId", new RoleId());
     newhql = replaceAll(newhql, "$userId", new UserId());
+    newhql = replaceAll(newhql, "$languageId", new LanguageId());
 
     return newhql;
   }
