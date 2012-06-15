@@ -78,7 +78,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/total", "components/modalpayment", "components/payment",
         "components/paymentcoins", "components/tabpayment", "components/renderorderline",
         "components/order", "components/orderdetails", "components/businesspartner",
-        "components/listreceiptscounter", "windows/pointofsale" };
+        "components/listreceiptscounter", "windows/pointofsale", "main" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
