@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -32,8 +32,6 @@ v_DocTaxAmount C_TAX.DOCTAXAMOUNT%TYPE;
 v_Rate  C_TAX.RATE%TYPE;
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
-V_INCR_AMT NUMBER ;
-V_ORDERTAX_ID VARCHAR(32) ;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -59,17 +57,14 @@ BEGIN
     WHERE C_TAX_ID = v_C_Tax_ID;
 
   IF ( INSERTING ) THEN
-    v_Increment_Amount=:NEW.TAXAMT ;
-    v_Increment_Base=:NEW.TAXBASEAMT ;
+    v_Increment_Amount := :NEW.TAXAMT ;
+    v_Increment_Base := :NEW.TAXBASEAMT ;
+  ELSIF ( UPDATING ) THEN
+    v_Increment_Amount := :NEW.TAXAMT - :OLD.TAXAMT ;
+    v_Increment_Base := :NEW.TAXBASEAMT - :OLD.TAXBASEAMT ;
   ELSE
-	IF ( UPDATING ) THEN
-	   v_Increment_Amount=:NEW.TAXAMT - :OLD.TAXAMT ;
-           v_Increment_Base=:NEW.TAXBASEAMT - :OLD.TAXBASEAMT ;
-           
-        ELSE
-	   v_Increment_Amount= - :OLD.TAXAMT ;
-           v_Increment_Base= - :OLD.TAXBASEAMT ;
-        END IF;
+    v_Increment_Amount := - :OLD.TAXAMT ;
+    v_Increment_Base := - :OLD.TAXBASEAMT ;
   END IF;
     
   IF (INSERTING OR UPDATING) THEN
@@ -78,17 +73,12 @@ BEGIN
     WHERE C_ORDER_ID = :NEW.C_Order_ID
     AND C_TAX_ID = :NEW.C_TAX_ID;
     IF(v_Count>0) THEN
-	IF UPDATING THEN
-	
-		SELECT   TAXAMT + v_Increment_Amount  , C_ORDERTAX_ID INTO V_INCR_AMT, V_ORDERTAX_ID  from C_ORDERTAX 
-	                where C_ORDER_ID = :NEW.C_Order_ID  AND C_TAX_ID = :NEW.C_TAX_ID;
+      UPDATE C_ORDERTAX
+      SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + v_Increment_Base) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END),
+          TAXBASEAMT=TAXBASEAMT + v_Increment_Base
+      WHERE C_ORDER_ID = :NEW.C_Order_ID
+        AND C_TAX_ID = :NEW.C_TAX_ID;
 
-		--		RAISE Exception 'New tax amt is % for tax id % ' , V_INCR_AMT, V_ORDERTAX_ID ;
-	END IF ;
-  	UPDATE C_ORDERTAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + v_Increment_Base) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END), TAXBASEAMT=TAXBASEAMT + v_Increment_Base
-		WHERE C_ORDER_ID = :NEW.C_Order_ID
-			AND C_TAX_ID = :NEW.C_TAX_ID;
-       
     ELSE
       SELECT COALESCE(MAX(LINE),0) + 10
       INTO v_LineNo

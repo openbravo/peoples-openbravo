@@ -4,6 +4,12 @@
       <parameter name="p_orderline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_grossamount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_netamount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -19,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -27,14 +33,30 @@
   v_ResultStr VARCHAR(2000):=''; 
   v_Message VARCHAR(2000):='';  
   v_Result NUMBER:=1; 
-  v_expected_tax_diff NUMBER ;
-  v_actual_tax_diff NUMBER ;
+  v_expected_tax_amt NUMBER ;
+  v_current_tax_amt NUMBER ;
   v_description VARCHAR(2000) ;
-  BEGIN --BODY
-   select (coalesce(line_gross_amount,0) - linenetamt) , sum(taxamt) , description into v_expected_tax_diff , v_actual_tax_diff, v_description from c_orderline, c_orderlinetax where c_orderlinetax.c_orderline_id = c_orderline.c_orderline_id and c_orderline.c_orderline_id = p_orderline_id   group by (coalesce(line_gross_amount,0) - linenetamt), c_orderline.description;
-   if ( v_actual_tax_diff - v_expected_tax_diff  != 0 ) then
-        update c_orderlinetax set taxamt = taxamt - (v_actual_tax_diff - v_expected_tax_diff ) where c_orderlinetax_id  = ( select c_orderlinetax_id from c_orderlinetax where c_orderline_id = p_orderline_id order by taxamt desc limit 1) ;
-   end if ;
+  TYPE RECORD IS REF CURSOR;
+  cur_orderlinetax RECORD;
+
+BEGIN --BODY
+  v_expected_tax_amt := p_grossamount - p_netamount;
+  SELECT SUM(taxamt) INTO v_current_tax_amt
+  FROM c_orderlinetax
+  WHERE c_orderline_id = p_orderline_id;
+  IF (v_expected_tax_amt <> v_current_tax_amt) THEN
+    FOR cur_orderlinetax IN (
+      SELECT c_orderlinetax_id
+      FROM c_orderlinetax
+      WHERE c_orderline_id = p_orderline_id
+      ORDER BY taxamt desc
+    ) LOOP
+      UPDATE c_orderlinetax
+      SET taxamt = taxamt - (v_current_tax_amt - v_expected_tax_amt)
+      WHERE c_orderlinetax_id  = cur_orderlinetax.c_orderlinetax_id ;
+      EXIT;
+    END LOOP;
+  END IF;
    EXCEPTION
     WHEN OTHERS THEN
      v_ResultStr:= '@ERROR=' || SQLERRM;

@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2010 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -196,11 +196,12 @@ END IF;
   /**************************************************************************
    * Calculate Tax, etc.
    */
- SELECT processed, stdPrecision
-   INTO v_Processed, v_Prec
- FROM C_Order, C_Currency
- WHERE C_Order.C_Currency_ID = C_Currency.C_Currency_ID
- AND C_Order_ID=v_ID;
+ SELECT processed, stdPrecision, m_pricelist.istaxincluded
+   INTO v_processed, v_prec, v_istaxincluded
+ FROM c_order
+        JOIN c_currency ON c_order.c_currency_id = c_currency.c_currency_id
+        JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
+ WHERE C_Order_ID=v_ID;
  v_oldLine:=0;
  v_newLineNetAmt:=0;
  IF(v_Processed='N') THEN
@@ -216,10 +217,9 @@ END IF;
    FROM C_TAX
    WHERE C_TAX_ID = :new.C_Tax_ID;
    C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
-   select  m_pricelist.istaxincluded into v_istaxincluded from c_order join m_pricelist on c_order.m_pricelist_id = m_pricelist.m_pricelist_id where c_order.c_order_id = :new.c_order_Id ;
-   if ( v_istaxincluded = 'Y' ) then
-      C_ORDERLINETAX_ROUNDING( :new.C_OrderLine_ID , :new.UpdatedBy);
-   end if ;
+   IF (v_istaxincluded = 'Y') THEN
+     C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, v_newLineNetAmt, :new.UpdatedBy);
+   END IF;
   -- Get Total Tax Amt
    SELECT SUM(TaxAmt)
      INTO v_taxAmt
