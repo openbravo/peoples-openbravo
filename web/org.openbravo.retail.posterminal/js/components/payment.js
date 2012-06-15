@@ -1,6 +1,6 @@
 /*global define */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons', 'model/order'], function (B) {
+define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons', 'components/modalpayment', 'model/order'], function (B) {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -152,25 +152,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
     }
 
   });
-
-
-
-//  OB.COMP.Payment.prototype.attr = function (attrs) {
-//    var i, max;
-//    var me = this;
-//
-//    var addCoinButton = function (v) {
-//
-//      var btn = new (OB.COMP.PaymentButton.extend({paymenttype: v.paymenttype, amount: v.amount, classcolor: v.classcolor, label: v.label }))(me.options);
-//      me.coinscontainer.append(btn.render().$el);;
-//    };
-//    if (attrs.cashcoins) {
-//      for (i = 0, max = attrs.cashcoins.length; i < max; i++) {
-//        addCoinButton(attrs.cashcoins[i]);
-//      }
-//    }
-//  };
-
-
-
 });

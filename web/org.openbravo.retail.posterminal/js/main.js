@@ -36,7 +36,9 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
       },
       lock: function (callback) {
         modelterminal.lock();
-      }
+      },
+      paymentProviders: {},
+      windows: {}
   };
 
   modelterminal.on('ready', function () {

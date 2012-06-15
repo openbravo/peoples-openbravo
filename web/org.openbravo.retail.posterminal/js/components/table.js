@@ -19,9 +19,9 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       var me = this;
       var tr = B(this.renderLine(model)).$el;
       if (_.isNumber(index) && index < this.collection.length - 1) {
-        this.$el.append(tr);
-      } else {
         this.$el.children().eq(index + this.header).before(tr);
+      } else {
+        this.$el.append(tr);  
       }      
     };
     
@@ -51,7 +51,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
         if (this.renderHeader) {
           this.$el.append(B(this.renderHeader()).$el);
         }
-        this.collection.each(this._addModelToCollection, this);        
+        this.collection.each(function (model) { this._addModelToCollection(model); }, this);        
       }, this);
 
       // Init clear...
@@ -203,7 +203,7 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       } else {
         this.tempty.hide();
         this.tbody.show();
-        this.collection.each(this._addModelToCollection, this);
+        this.collection.each(function (model) { this._addModelToCollection(model); }, this);        
         
         if (this.style === 'list' || this.style === 'edit') {
           lastmodel = this.collection.at(this.collection.size() -1);

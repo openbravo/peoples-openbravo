@@ -186,11 +186,18 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
             {kind: B.KindJQuery('h3'), content: [this.header]}
           ]}
       , this.options).$el);
-      this.$el.append(B(
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-body'}, content: [
-            this.getContentView()
-          ]}
-      , this.options).$el);
+      var body = $('<div/>').addClass('modal-body');
+      this.$el.append(body);
+      
+      var getcv = this.getContentView();
+      if (getcv.kind) {
+        // it is a builder structure
+        this.contentview = B(getcv, this.options);            
+      } else {
+        // it is a backbone view
+        this.contentview = new getcv(this.options).render();
+      }
+      body.append(this.contentview.$el);    
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
