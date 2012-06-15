@@ -48,6 +48,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         + "and (destinationCountry = :toCountry or destinationCountry is null) "
         + "and (destinationRegion = :toRegion or destinationRegion is null) "
         + "order by validFromDate desc");
+    whereOrderByClause.put("OBPOS_App_Payment", "obposApplications.searchKey = :pos");
   }
 
   @Override
@@ -72,7 +73,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
     final String entityName = pathParts[1];
 
-    if ("Product".equals(entityName) || "FinancialMgmtTaxRate".equals(entityName)) {
+    if (whereOrderByClause.containsKey(entityName)) {
       getData(request, response, entityName);
     } else {
       emptyResult(request, response);
@@ -122,6 +123,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       obq.setNamedParameter("fromRegion", fromRegion);
       obq.setNamedParameter("toCountry", toCountry);
       obq.setNamedParameter("toRegion", toRegion);
+    } else if ("OBPOS_App_Payment".equals(entity)) {
+      obq.setNamedParameter("pos", "POS-1");
     }
 
     final ScrollableResults results = obq.scroll(ScrollMode.FORWARD_ONLY);

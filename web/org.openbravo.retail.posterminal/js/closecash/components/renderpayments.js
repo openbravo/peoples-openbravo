@@ -15,18 +15,14 @@ define(['builder', 'utilities', 'utilitiesui', 'components/commonbuttons', 'arit
                     this.model.get('_identifier')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
-                    '6.195'
+                    this.model.get('createdBy')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': ' border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
-                       {kind: OB.COMP.ButtonEdit}, {kind: OB.COMP.ButtonOk}
-//                       ,{kind: OB.COMP.CustomView.extend({
-//                       _id :'countedcash',
-//                       createView: function () {
-//                          return ({kind: B.KindJQuery('div'),attr:{'style':'padding: 17px 110px 17px 0px; float: right; width: 10%'},
-//                        content:['6.195']});
-//                       }
-//                       })
-//                       }
+                       {kind: OB.COMP.ButtonEdit.extend({_id :'editbutton_'+this.model.get('id'),rowid :this.model.get('id')})}, 
+                       {kind: OB.COMP.ButtonOk.extend({_id :'okbutton_'+this.model.get('id'),rowid :this.model.get('id')})},
+                       {kind: B.KindJQuery('div'), id :'counted_'+this.model.get('id') , rowid :this.model.get('id'), attr:{'hidden':'hidden','style':'padding: 17px 110px 17px 0px; float: right; width: 10%'},
+                        content:[this.model.get('createdBy')]
+                       }
                   ]}
 
                ]}

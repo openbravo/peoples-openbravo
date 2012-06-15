@@ -37,7 +37,6 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
           {kind: OB.DATA.Container, content: [
                {kind: OB.DATA.PaymentMethod}
           ]},
-
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
 //              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]} ,

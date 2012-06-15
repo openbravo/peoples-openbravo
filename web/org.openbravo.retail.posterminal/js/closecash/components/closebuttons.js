@@ -68,6 +68,7 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
     label: '',
    clickEvent: function (e) {
     this.$el.hide();
+    this.options['counted_'+this.rowid].$el.show();
     //this.options.countcash.;
     //this.options.modeldaycash.ok();
    },
