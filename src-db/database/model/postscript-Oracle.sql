@@ -621,7 +621,7 @@ SELECT to_number(a.value) AS value
   WHERE a.value <= 1024
 /-- END
 
-create or replace FUNCTION AD_GET_RDBMS RETURN VARCHAR2
+create or replace FUNCTION AD_GET_RDBMS RETURN VARCHAR2 DETERMINISTIC
 AS
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -635,7 +635,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -700,7 +700,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -799,6 +799,8 @@ DECLARE
   V_NEW_NUMBER NUMBER := NULL;
   V_OLD_DATE DATE := NULL;
   V_NEW_DATE DATE := NULL;
+  V_OLD_TEXT CLOB := NULL;
+  V_NEW_TEXT CLOB := NULL;
   V_TIME DATE;
   V_ORG VARCHAR2(32);
   V_CLIENT VARCHAR2(32);
@@ -875,7 +877,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
 			and c.isexcludeaudit='N'
                         order by c.position) loop
-      if (cur_cols.data_type in ('VARCHAR2', 'CHAR', 'CLOB')) then
+      if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
         datatype := 'CHAR';
         code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
       elsif (cur_cols.data_type in ('NVARCHAR2', 'NCHAR')) then
@@ -884,6 +886,9 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
       elsif (cur_cols.data_type in ('DATE')) then
         datatype := 'DATE';
         code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', now()))';
+      elsif (cur_cols.data_type in ('CLOB')) then
+        datatype := 'TEXT';
+        code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
       else
         datatype := 'NUMBER';
         code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', -1))';

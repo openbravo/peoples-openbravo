@@ -372,14 +372,14 @@ $BODY$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
   return 'POSTGRE';
 END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
+  LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE VIEW AD_INTEGER AS
@@ -490,7 +490,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -569,6 +569,8 @@ DECLARE
   V_NEW_NUMBER NUMERIC := NULL;
   V_OLD_DATE TIMESTAMP := NULL;
   V_NEW_DATE TIMESTAMP := NULL;
+  V_OLD_TEXT TEXT := NULL;
+  V_NEW_TEXT TEXT := NULL;
   V_TIME TIMESTAMP;
   V_ORG VARCHAR(32); 
   V_CLIENT VARCHAR(32); 
@@ -648,7 +650,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         order by c.position) loop
       code := code || '
     V_Change := false;';
-      if (cur_cols.data_type in ('VARCHAR', 'BPCHAR', 'TEXT')) then
+      if (cur_cols.data_type in ('VARCHAR', 'BPCHAR')) then
         datatype := 'CHAR';
         code := code || '
    IF TG_OP = ''UPDATE'' THEN
@@ -659,6 +661,12 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
 code := code || '
    IF TG_OP = ''UPDATE'' THEN
      V_CHANGE = COALESCE(new.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(old.'||cur_cols.COLUMN_NAME||', now());
+   END IF;';
+      elsif (cur_cols.data_type in ('TEXT')) then
+        datatype := 'TEXT';
+        code := code || '
+   IF TG_OP = ''UPDATE'' THEN
+     V_CHANGE = (COALESCE(new.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(old.'||cur_cols.COLUMN_NAME||',''.'') OR (new.'||cur_cols.COLUMN_NAME||' IS NULL AND old.'||cur_cols.COLUMN_NAME||'=''.'') OR (old.'||cur_cols.COLUMN_NAME||' IS NULL AND new.'||cur_cols.COLUMN_NAME||'=''.'') );
    END IF;';
       else
         datatype := 'NUMBER';
