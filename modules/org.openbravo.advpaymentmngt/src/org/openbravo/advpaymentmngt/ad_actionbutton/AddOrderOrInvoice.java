@@ -556,7 +556,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     List<FIN_PaymentScheduleDetail> storedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     // This is to identify first load of the grid
     String strFirstLoad = vars.getStringParameter("isFirstLoad");
-    if ("true".equals(strFirstLoad) && payment.getFINPaymentDetailList().size() > 0) {
+    if (payment.getFINPaymentDetailList().size() > 0) {
       // Add payment schedule details related to orders or invoices to storedSchedulePaymentDetails
       OBContext.setAdminMode();
       try {
@@ -572,11 +572,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         OBContext.restorePreviousMode();
       }
     }
-
     // Pending Payments from invoice
     final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment
-        .getSelectedPaymentDetails(new ArrayList<FIN_PaymentScheduleDetail>(
-            storedScheduledPaymentDetails), strSelectedPaymentDetails);
+        .getSelectedPaymentDetails(
+            "true".equals(strFirstLoad) ? new ArrayList<FIN_PaymentScheduleDetail>(
+                storedScheduledPaymentDetails) : null, strSelectedPaymentDetails);
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
@@ -586,10 +586,18 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             showAlternativePM ? null : payment.getPaymentMethod(), selectedScheduledPaymentDetails,
             isReceipt);
     // Remove related outstanding schedule details related to those ones being edited as amount will
-    // be later added to stored
+    // be later added to storedScheduledPaymentDetails
     for (FIN_PaymentScheduleDetail psd : storedScheduledPaymentDetails) {
       filteredScheduledPaymentDetails.removeAll(FIN_AddPayment.getOutstandingPSDs(psd));
     }
+    // Get stored not selected PSDs
+    List<FIN_PaymentScheduleDetail> storedNotSelectedPSDs = new ArrayList<FIN_PaymentScheduleDetail>(
+        storedScheduledPaymentDetails);
+    storedNotSelectedPSDs.removeAll(selectedScheduledPaymentDetails);
+    // Add stored but not selected details which maps documenttype
+    filteredScheduledPaymentDetails.addAll(filterDocumenttype(storedNotSelectedPSDs,
+        strDocumentType));
+
     FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null,
         strSelectedPaymentDetails);
@@ -604,10 +612,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
       for (int i = 0; i < data.length; i++) {
         if (data[i].getField("finScheduledPaymentDetailId").equals(psd.getId())) {
-          FieldProviderFactory.setField(data[i], "paymentAmount", psd.getAmount().toPlainString());
           FieldProviderFactory.setField(data[i], "outstandingAmount",
               psd.getAmount().add(outstandingAmount).toPlainString());
-          FieldProviderFactory.setField(data[i], "difference", outstandingAmount.toPlainString());
+          if ("true".equals(strFirstLoad)) {
+            FieldProviderFactory.setField(data[i], "difference", outstandingAmount.toPlainString());
+            FieldProviderFactory
+                .setField(data[i], "paymentAmount", psd.getAmount().toPlainString());
+          }
         }
       }
     }
@@ -797,6 +808,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
     orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
     return orderedPSDs.list();
+  }
+
+  private List<FIN_PaymentScheduleDetail> filterDocumenttype(
+      List<FIN_PaymentScheduleDetail> storedNotSelectedPSDs, String strDocumentType) {
+    List<FIN_PaymentScheduleDetail> listIterator = new ArrayList<FIN_PaymentScheduleDetail>(
+        storedNotSelectedPSDs);
+    for (FIN_PaymentScheduleDetail paymentScheduleDetail : listIterator) {
+      if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && "O".equals(strDocumentType)) {
+        storedNotSelectedPSDs.remove(paymentScheduleDetail);
+      } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null
+          && "I".equals(strDocumentType)) {
+        storedNotSelectedPSDs.remove(paymentScheduleDetail);
+      }
+    }
+    return storedNotSelectedPSDs;
   }
 
   public String getServletInfo() {
