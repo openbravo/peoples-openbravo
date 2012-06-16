@@ -1,4 +1,4 @@
-/*global define */
+/*global define, Backbone */
 
 define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table', 'closecash/components/renderpayments'], function (B) {
 

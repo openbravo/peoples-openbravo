@@ -1,4 +1,4 @@
-/*global define, $ */
+/*global define, _, $ */
 
 define(['builder', 'utilities', 'i18n'], function (B) {
 
