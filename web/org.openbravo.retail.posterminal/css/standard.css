@@ -341,3 +341,9 @@ button.modal-dialog-content-button {
   margin: 0px 20px 0px 20px;
   width: 115px;
 }
+
+.modal-dialog-profile-combo {
+  height: 40px;
+  width: 343px;
+  margin: 0px;
+}

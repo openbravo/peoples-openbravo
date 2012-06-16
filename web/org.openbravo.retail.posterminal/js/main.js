@@ -16,6 +16,9 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
   terminal.setModel(modelterminal);
 
+  var modalProfile = new OB.COMP.ModalProfile($('#dialogsContainer'));
+  modalProfile.setModel(modelterminal);
+
   // alert all errors
   window.onerror = function (e) {
     if (typeof(e) === 'string') {
@@ -84,7 +87,6 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   $(document).ready(function () {
     // Entry Point
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
-    $('#dialogsContainer').append(B({kind: OB.COMP.ModalProfile}).$el);
     modelterminal.load();
   });
 

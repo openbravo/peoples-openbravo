@@ -89,7 +89,7 @@ public class ProfileUtilsServlet extends WebServiceAbstractServlet {
             + "from ADRole role, ADRoleOrganization roleOrg, ADUserRoles userRoles, OBPOS_POS_Access posAccess "
             + "where roleOrg.organization.id = :strOrg and " + "role.id = roleOrg.role.id and "
             + "role.id = userRoles.role.id and " + "role.id = posAccess.role.id and "
-            + "userRoles.userContact.id = :userId";
+            + "userRoles.userContact.id = :userId " + "order by role.name";
         Query qryRole = OBDal.getInstance().getSession().createQuery(hqlRole);
         qryRole.setParameter("strOrg", strOrg);
         qryRole.setParameter("userId", userId);

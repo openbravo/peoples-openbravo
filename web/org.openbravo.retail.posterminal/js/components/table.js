@@ -26,6 +26,8 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     };
     
     F.prototype.attr = function (attr) {
+      this.htmlId = attr.htmlId;
+      this.className = attr.className;
       this.renderLine = attr.renderLine;
       this.renderHeader = attr.renderHeader;
       this.header = this.renderHeader ? 1 : 0;
@@ -56,6 +58,12 @@ define(['builder', 'utilities', 'i18n'], function (B) {
 
       // Init clear...
       this.$el.empty();
+      if (this.htmlId) {
+        this.$el.attr('id', this.htmlId);
+      }
+      if (this.className) {
+        this.$el.addClass(this.className);
+      }
       if (this.renderHeader) {
         this.$el.append(B(this.renderHeader()).$el);
       }
