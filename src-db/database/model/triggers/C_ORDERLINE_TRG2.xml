@@ -244,7 +244,7 @@ END IF;
     UPDATE C_Order
     SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
         GrandTotal = CASE v_istaxincluded
-                       WHEN 'Y' THEN round(grandtotal - v_oldgrossamt + v_newgrossamt, 3)
+                       WHEN 'Y' THEN grandtotal - v_oldgrossamt + v_newgrossamt
                        ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
                      END
     --  Updated = SysDate -- Don't update as otherwise it does not save changes

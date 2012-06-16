@@ -47,7 +47,12 @@
   v_taxAmt NUMBER;
   v_Prec C_CURRENCY.STDPRECISION%TYPE;
   v_BaseAmount C_TAX.BASEAMOUNT%TYPE;  
-    
+  v_istaxincluded CHAR(1) ;
+  v_oldGrossAmt NUMBER:=0;
+  v_newGrossAmt NUMBER:=0;
+  v_totallines NUMBER:=0;
+  v_grandtotal NUMBER:=0;
+        
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -73,14 +78,28 @@ END IF;
  END IF;
 
  IF INSERTING OR v_Insert THEN
-   SELECT C_BPartner_ID, dateInvoiced, priceprecision, M_PriceList_ID
-    INTO v_BPartner_ID, v_DateInvoiced, v_Precision, v_PriceList_ID
-     FROM C_INVOICE i,
+   SELECT C_BPartner_ID, dateInvoiced, priceprecision, i.M_PriceList_ID,p.istaxincluded
+    INTO v_BPartner_ID, v_DateInvoiced, v_Precision, v_PriceList_ID, v_istaxincluded
+     FROM C_INVOICE i
+             JOIN m_pricelist p ON i.m_pricelist_id = p.m_pricelist_id,
+
           C_CURRENCY c
+          
    WHERE C_Invoice_ID = :NEW.C_Invoice_ID
      AND i.C_Currency_ID = c.C_Currency_ID;
 
+   IF (v_istaxincluded = 'Y') THEN
+     IF (DELETING) THEN
+        v_oldgrossamt := :old.line_gross_amount;
+     ELSIF (UPDATING) THEN
+        v_oldgrossamt := :old.line_gross_amount;
+        v_newgrossamt := :new.line_gross_amount;
+     ELSE
+        v_newgrossamt := :new.line_gross_amount;
+     END IF;
+   END IF;
 
+ 
    --Get the new "std" price from the Actual price (if actual price is the std price they will be equal)
    v_Price := :NEW.PriceActual;
     FOR Cur_Offer IN (SELECT M_OFFER_ID
@@ -223,6 +242,10 @@ END IF;
      FROM C_TAX
      WHERE C_TAX_ID = :new.C_Tax_ID;
      C_INVOICELINETAX_INSERT(:new.AD_Org_ID, :new.C_Invoice_ID, :new.C_InvoiceLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+     IF (v_istaxincluded = 'Y') THEN
+        C_INVOICELINETAX_ROUNDING(:new.C_InvoiceLine_ID, :new.line_gross_amount, v_newLineNetAmt);
+     END IF;
+    
    END IF;
   -- Get Total Tax Amt
    SELECT SUM(TaxAmt)
@@ -231,9 +254,13 @@ END IF;
    WHERE C_Invoice_ID=:new.C_Invoice_ID;
   -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
    -- Update Header
+       -- Get Total Tax Amt
    UPDATE C_Invoice
      SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
-     GrandTotal = TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+     GrandTotal = CASE v_istaxincluded
+                     WHEN 'Y' THEN grandtotal - v_oldgrossamt + v_newgrossamt
+                     ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+                  END
    --  Updated = SysDate -- Don't update as otherwise it does not save changes
    WHERE C_Invoice_ID = :new.C_Invoice_ID;
   ELSE -- DELETING
@@ -245,10 +272,22 @@ END IF;
    -- Update Header
    UPDATE C_Invoice
      SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
-     GrandTotal = TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+     GrandTotal = CASE v_istaxincluded
+                       WHEN 'Y' THEN grandtotal - v_oldgrossamt
+                       ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+                  END
    --  Updated = SysDate -- Don't update as otherwise it does not save changes
    WHERE C_Invoice_ID=:old.C_Invoice_ID;
   END IF;
+  IF (v_istaxincluded = 'Y') THEN
+    SELECT totallines, grandtotal INTO v_totallines, v_grandtotal
+    FROM c_invoice
+    WHERE c_invoice_id = v_id;
+    IF (v_totallines <> 0) THEN
+      C_INVOICETAX_ROUNDING(v_id, v_grandtotal, v_totallines);
+    END IF;
+  END IF;
+  
  END IF;
 
 
