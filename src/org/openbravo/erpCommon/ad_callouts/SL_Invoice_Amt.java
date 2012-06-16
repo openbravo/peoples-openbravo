@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -30,7 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -61,10 +66,13 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strPriceStd = vars.getNumericParameter("inppricestd");
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
+      String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
+      String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
-            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt, strTaxId);
+            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt,
+            strTaxId, strGrossUnitPrice, strtaxbaseamt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -75,7 +83,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct,
       String strPriceLimit, String strTabId, String strPriceList, String strPriceStd,
-      String strLineNetAmt, String strTaxId) throws IOException, ServletException {
+      String strLineNetAmt, String strTaxId, String strGrossUnitPrice, String strTaxBaseAmt)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -107,7 +116,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("taxRate: " + taxRate);
 
-    BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd;
+    BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd, taxBaseAmt;
 
     qtyInvoice = (!Utility.isBigDecimal(strQtyInvoice) ? ZERO : new BigDecimal(strQtyInvoice));
     priceStd = (!Utility.isBigDecimal(strPriceStd) ? ZERO : new BigDecimal(strPriceStd));
@@ -116,7 +125,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     priceLimit = (!Utility.isBigDecimal(strPriceLimit) ? ZERO : (new BigDecimal(strPriceLimit)))
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     LineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
-
+    taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
+        +PricePrecision, BigDecimal.ROUND_HALF_UP);
     StringBuffer resultado = new StringBuffer();
 
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");
@@ -143,6 +153,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
           dataInvoice[0].id));
       resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
+      resultado.append("new Array(\"inptaxbaseamt\", " + priceActual.multiply(qtyInvoice) + "),");
     }
 
     // If quantity changes, recalculates unit price (actual price) applying
@@ -156,8 +167,50 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           qtyInvoice.toString(), dataInvoice[0].mPricelistId, dataInvoice[0].id));
       if (priceActual.scale() > PricePrecision)
         priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+      // invoiced qty multiply with gross price
+      BigDecimal grossAmount = new BigDecimal(strGrossUnitPrice.trim()).multiply(new BigDecimal(
+          strQtyInvoice.trim()));
+      resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     }
+    // if taxRate field is changed
+    if (strChanged.equals("inpcTaxId")) {
+      BigDecimal grossUnitPrice = new BigDecimal(0);
+      BigDecimal unitPrice = new BigDecimal(0);
+      grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+      unitPrice = new BigDecimal(strPriceActual.trim());
+      if (isPriceTaxInclusive(strInvoiceId)) {
+        // todo - Alternate Amount
+        unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision, taxBaseAmt,
+            strQtyInvoice);
+        priceActual = unitPrice;
+        priceStd = unitPrice;
+        BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
+        BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyInvoice.trim()));
 
+        resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
+        resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
+
+      }
+
+    }
+    // if taxinclusive field is changed then modify net unit price and gross price
+    if (strChanged.equals("inpgrossUnitPrice")) {
+      BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
+      final BigDecimal lineUnitAmount = calculateNetFromGross(strTaxId, strGrossUnitPrice,
+          strPrecision, taxBaseAmt, strQtyInvoice);
+      BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyInvoice.trim()));
+      priceActual = lineUnitAmount;
+      priceStd = lineUnitAmount;
+
+      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
+      resultado.append("new Array(\"inppriceactual\",\"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricelist\",\"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inppricestd\",\"" + lineUnitAmount + "\"),");
+    }
     if (!strChanged.equals("inplinenetamt"))
       // Net amount of a line equals quantity x unit price (actual price)
       LineNetAmt = qtyInvoice.multiply(priceActual);
@@ -209,7 +262,36 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
-
     out.close();
+  }
+
+  private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
+      String strPrecision, BigDecimal alternateAmount, String strQtyOrdered) {
+    BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+    if (grossUnitPrice.compareTo(BigDecimal.ZERO) == 0)
+      return BigDecimal.ZERO;
+    final List parameters = new ArrayList();
+    parameters.add(strTaxId);
+    parameters.add(grossUnitPrice);
+
+    // TODO: Alternate Base Amount
+    parameters.add(alternateAmount);
+    parameters.add(new BigDecimal(strPrecision));
+    // Initial value of zero
+    parameters.add(new BigDecimal("0.0"));
+    parameters.add(new BigDecimal(strQtyOrdered));
+
+    final String procedureName = "c_tax_net_from_gross";
+    final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+        procedureName, parameters, null);
+    return lineUnitAmount;
+  }
+
+  private boolean isPriceTaxInclusive(String orderId) {
+    if (OBDal.getInstance().get(Invoice.class, orderId).getPriceList().isPriceIncludesTax())
+      return true;
+    else
+      return false;
+
   }
 }
