@@ -7,9 +7,9 @@ define(['builder', 'i18n',
         'windows/posbuttons',
         'components/modalreceipts', 'components/modalbps',
         'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
-        'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard',
-                // payment providers...
-        '../../../org.openbravo.paymentgateway.elementps/js/mockpayments', '../../../org.openbravo.paymentgateway.elementps/js/hostedpayments'    
+        'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
+        // payment providers...
+        // '../../../org.openbravo.paymentgateway.elementps/js/mockpayments', '../../../org.openbravo.paymentgateway.elementps/js/hostedpayments'    
         ], function (B) {
 
   OB = window.OB || {};
