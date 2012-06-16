@@ -17,7 +17,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
 
       var terminalName = OB.POS.paramTerminal;
       var roleId = ctx.role.id;
-      var languageId = ctx.language.id;
+      var languageId = OB.Application.language;
       var userId = ctx.user.id;
 
       var RoleModel = Backbone.Model.extend({});
