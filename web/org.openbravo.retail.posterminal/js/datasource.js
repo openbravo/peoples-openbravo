@@ -1,6 +1,6 @@
-/*global $,Backbone,_ */
+/*global define,$,Backbone,_ */
 
-(function () {
+define(['i18n'], function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
