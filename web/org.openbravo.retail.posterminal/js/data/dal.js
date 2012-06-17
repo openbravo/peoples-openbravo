@@ -24,6 +24,16 @@
     return tmp;
   }
 
+  function dbSuccess() {
+
+  }
+
+  function dbError() {
+    if (window.console) {
+      window.console.error(arguments);
+    }
+  }
+
   function find(model, whereClause, success, error) {
     var tableName = model.prototype.tableName,
         propertyMap = model.prototype.propertyMap,
@@ -167,11 +177,62 @@
     }
   }
 
+  function initCache(model, initialData, successCallback, errorCallback) {
+
+    if (db) {
+      if (!model.prototype.createStatement || !model.prototype.dropStatement) {
+        throw 'Model requires a create and drop statement';
+      }
+
+      db.transaction(function (tx) {
+        tx.executeSql(model.prototype.dropStatement);
+      }, errorCallback);
+
+      db.transaction(function (tx) {
+        tx.executeSql(model.prototype.createStatement);
+      }, errorCallback);
+
+      if (_.isArray(initialData)) {
+        db.transaction(function (tx) {
+          var props = model.prototype.properties,
+              propMap = model.prototype.propertyMap,
+              values, _idx = 0;
+
+          _.each(initialData, function (item) {
+            values = [];
+
+            _.each(props, function (propName) {
+              if ('_idx' === propName) {
+                return;
+              }
+              values.push(item[propName]);
+            });
+            values.push(_idx);
+
+            tx.executeSql(model.prototype.insertStatement, values, null, errorCallback);
+            _idx++;
+          });
+        }, errorCallback, function () {
+          // transaction success, execute callback
+          if (_.isFunction(successCallback)) {
+            successCallback();
+          }
+        });
+      } else { // no initial data
+        throw 'Intial data must be passed as parameter';
+      }
+    } else {
+      throw 'Not implemented';
+    }
+
+  }
+
   window.OB = window.OB || {};
 
   window.OB.Dal = {
     save: save,
     find: find,
-    get: get
+    get: get,
+    initCache: initCache
   };
 }(OB && OB.DATA && OB.DATA.OfflineDB));

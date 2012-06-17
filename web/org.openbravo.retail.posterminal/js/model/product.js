@@ -1,13 +1,32 @@
 /*global Backbone */
 
+
 (function () {
+
   var Product = Backbone.Model.extend({
     modelName: 'Product',
     tableName: 'm_product',
-    entityName: 'Product'
+    entityName: 'Product',
+    source: 'org.openbravo.retail.posterminal.master.Product',
+    properties: ['id', 'uPCEAN', 'uOM', 'productCategory', 'taxCategory', 'img', 'obposScale', '_identifier', '_idx'],
+    propertyMap: {
+      'id': 'm_product_id',
+      'uPCEAN': 'upc',
+      'uOM': 'c_uom_id',
+      'productCategory': 'm_product_category_id',
+      'taxCategory': 'c_taxcategory_id',
+      'img': 'img',
+      'obposScale': 'em_obpos_scale',
+      '_identifier': '_identifier',
+      '_idx': '_idx'
+    },
+    createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, em_obpos_scale TEXT, _identifier TEXT, _idx NUMERIC)',
+    dropStatement: 'DROP TABLE IF EXISTS m_product',
+    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, m_product_category_id, img, em_obpos_scale, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    updateStatement: ''
   });
 
-  var Products = Backbone.Collection.extend({
+  var ProductList = Backbone.Collection.extend({
     model: Product
   });
 
@@ -16,5 +35,5 @@
   window.OB.Collection = window.OB.Collection || {};
 
   window.OB.Model.Product = Product;
-  window.OB.Collection.Products = Products;
+  window.OB.Collection.ProductList = ProductList;
 }());

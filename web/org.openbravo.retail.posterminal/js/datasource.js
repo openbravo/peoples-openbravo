@@ -1,6 +1,6 @@
-/*global define,$,Backbone,_ */
+/*global $,Backbone,_ */
 
-define(['i18n'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
@@ -8,75 +8,75 @@ define(['i18n'], function () {
   OB.DS.MAXSIZE = 100;
 
   var serviceSuccess = function (data, textStatus, jqXHR, callback) {
-    if (data._entityname) {
-      callback([data]);
-    } else {
-      var response = data.response;
-      var status = response.status;
-      if (status === 0) {
-        callback(response.data, response.message);
-      } else if (response.errors) {
-        callback({
-          exception: {
-            message: response.errors.id
-          }
-        });
+      if (data._entityname) {
+        callback([data]);
       } else {
-        callback({
-          exception: {
-            message: response.error.message
-          }
-        });
+        var response = data.response;
+        var status = response.status;
+        if (status === 0) {
+          callback(response.data, response.message);
+        } else if (response.errors) {
+          callback({
+            exception: {
+              message: response.errors.id
+            }
+          });
+        } else {
+          callback({
+            exception: {
+              message: response.error.message
+            }
+          });
+        }
       }
-    }
-  };
+      };
 
   var serviceError = function (jqXHR, textStatus, errorThrown, callback) {
-    callback({
-      exception: {
-        message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-        status: jqXHR.status
-      }
-    });
-  };
+      callback({
+        exception: {
+          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+          status: jqXHR.status
+        }
+      });
+      };
 
   var servicePOST = function (source, dataparams, callback) {
-    $.ajax({
-      url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source,
-      contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'POST',
-      data: JSON.stringify(dataparams),
-      success: function (data, textStatus, jqXHR) {
-        serviceSuccess(data, textStatus, jqXHR, callback);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback);
-      }
-    });
-  };
+      $.ajax({
+        url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source,
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'json',
+        type: 'POST',
+        data: JSON.stringify(dataparams),
+        success: function (data, textStatus, jqXHR) {
+          serviceSuccess(data, textStatus, jqXHR, callback);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          serviceError(jqXHR, textStatus, errorThrown, callback);
+        }
+      });
+      };
 
   var serviceGET = function (source, dataparams, callback) {
-    $.ajax({
-      url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
-      contentType: 'application/json;charset=utf-8',
-      dataType: 'json',
-      type: 'GET',
-      success: function (data, textStatus, jqXHR) {
-        serviceSuccess(data, textStatus, jqXHR, callback);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        serviceError(jqXHR, textStatus, errorThrown, callback);
-      }
-    });
-  };
+      $.ajax({
+        url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'json',
+        type: 'GET',
+        success: function (data, textStatus, jqXHR) {
+          serviceSuccess(data, textStatus, jqXHR, callback);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          serviceError(jqXHR, textStatus, errorThrown, callback);
+        }
+      });
+      };
 
   // Process object
   OB.DS.Process = function (source) {
     this.source = source;
   };
 
-  OB.DS.Process.prototype.exec = function  (params, callback) {
+  OB.DS.Process.prototype.exec = function (params, callback) {
     var attr;
     var data = {};
 
@@ -91,7 +91,11 @@ define(['i18n'], function () {
 
   // Source object
   OB.DS.Query = function (source, client, org) {
-    this.source = source;
+    this.model = source && source.prototype.modelName && source; // we're using a Backbone.Model as source
+    this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
+    if (!this.source) {
+      throw 'Query must have a source';
+    }
     this.client = client;
     this.org = org;
   };
@@ -190,10 +194,16 @@ define(['i18n'], function () {
   function execInData(data, filter, filterfunction) {
     var newdata, info, i, max, f, item;
 
-    if ($.isEmptyObject(filter) && ! filterfunction) {
-      return {data: data.slice(0, OB.DS.MAXSIZE), info: (data.length > OB.DS.MAXSIZE ? 'OBPOS_DataMaxReached' : null) };
+    if ($.isEmptyObject(filter) && !filterfunction) {
+      return {
+        data: data.slice(0, OB.DS.MAXSIZE),
+        info: (data.length > OB.DS.MAXSIZE ? 'OBPOS_DataMaxReached' : null)
+      };
     } else {
-      f = filterfunction || function (item) { return item; };
+      f = filterfunction ||
+      function (item) {
+        return item;
+      };
       newdata = [];
       info = null;
       for (i = 0, max = data.length; i < max; i++) {
@@ -208,13 +218,15 @@ define(['i18n'], function () {
           }
         }
       }
-      return {data: newdata, info: info};
+      return {
+        data: newdata,
+        info: info
+      };
     }
   }
 
   // DataSource objects
   // OFFLINE GOES HERE
-
   OB.DS.DataSource = function (query) {
     this.query = query;
     this.cache = null;
@@ -222,15 +234,28 @@ define(['i18n'], function () {
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
   OB.DS.DataSource.prototype.load = function (params) {
+    var me = this;
     this.cache = null;
 
-    // OFFLINE GOES HERE
-    var me = this;
     this.query.exec(params, function (data) {
-      if (!data.exception) {
-        me.cache = data;
+
+      var db = OB.DATA.OfflineDB;
+
+      if (data.exception) {
+        throw data.exception;
       }
-      me.trigger('ready');
+
+      me.cache = data;
+
+      if (db && me.query.model) {
+        OB.Dal.initCache(me.query.model, data, function () {
+          me.trigger('ready');
+        }, function () {
+          window.console.error(arguments);
+        });
+      } else {
+        me.trigger('ready');
+      }
     });
   };
 
@@ -238,7 +263,7 @@ define(['i18n'], function () {
     if (this.cache) {
       callback(findInData(this.cache, filter));
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         callback(findInData(this.cache, filter));
       }, this);
     }
@@ -249,7 +274,7 @@ define(['i18n'], function () {
       var result1 = execInData(this.cache, filter);
       callback(result1.data, result1.info);
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         var result2 = execInData(this.cache, filter);
         callback(result2.data, result2.info);
       }, this);
@@ -257,7 +282,6 @@ define(['i18n'], function () {
   };
 
   // Datasource for product and prices...
-
   OB.DS.DataSourceProductPrice = function (pquery, ppquery) {
     this.pquery = pquery;
     this.ppquery = ppquery;
@@ -284,24 +308,27 @@ define(['i18n'], function () {
   };
 
   var findPrice = function (item, prices, priceListVersion) {
-    if (item) {
-      var price = findInData(prices, {'priceListVersion': priceListVersion, 'product': item.product.id});
-      if (price) {
-        item.price = price;
-        return item;
+      if (item) {
+        var price = findInData(prices, {
+          'priceListVersion': priceListVersion,
+          'product': item.product.id
+        });
+        if (price) {
+          item.price = price;
+          return item;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
-    } else {
-      return null;
-    }
-  };
+      };
 
   OB.DS.DataSourceProductPrice.prototype.find = function (filter, callback) {
     if (this.pcache && this.ppcache) {
       callback(findPrice(findInData(this.pcache, filter.product), this.ppcache, filter.priceListVersion));
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         callback(findPrice(findInData(this.pcache, filter.product), this.ppcache, filter.priceListVersion));
       }, this);
     }
@@ -310,16 +337,16 @@ define(['i18n'], function () {
   OB.DS.DataSourceProductPrice.prototype.exec = function (filter, callback) {
 
     var filterfunction = function (cache) {
-      return function (item) {
-        return findPrice(item, cache, filter.priceListVersion);
-      };
-    };
+        return function (item) {
+          return findPrice(item, cache, filter.priceListVersion);
+        };
+        };
 
     if (this.pcache && this.ppcache) {
       var result1 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
       callback(result1.data, result1.info);
     } else {
-      this.on('ready', function() {
+      this.on('ready', function () {
         var result2 = execInData(this.pcache, filter.product, filterfunction(this.ppcache));
         callback(result2.data, result2.info);
       }, this);
@@ -327,7 +354,6 @@ define(['i18n'], function () {
   };
 
   // HWServer
-
   OB.DS.HWServer = function (url, scaleurl) {
     this.url = url;
     this.scaleurl = scaleurl;
@@ -357,46 +383,48 @@ define(['i18n'], function () {
         }
       });
     } else {
-      callback({result: 1});
+      callback({
+        result: 1
+      });
     }
   };
 
   OB.DS.HWServer.prototype.print = function (templatedata, params, callback) {
     if (this.url) {
       var me = this;
-        $.ajax({
-          timeout: 5000,
-          url: me.url,
-          contentType: 'application/json;charset=utf-8',
-          dataType: 'jsonp',
-          type: 'GET',
-          data: {
-            content: params ? _.template(templatedata, params) : templatedata
-          },
-          success: function (data, textStatus, jqXHR) {
-            if (callback) {
-              callback(data);
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            if (callback) {
-              callback({
-                exception: {
-                  message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
-                }
-              });
-            }
+      $.ajax({
+        timeout: 5000,
+        url: me.url,
+        contentType: 'application/json;charset=utf-8',
+        dataType: 'jsonp',
+        type: 'GET',
+        data: {
+          content: params ? _.template(templatedata, params) : templatedata
+        },
+        success: function (data, textStatus, jqXHR) {
+          if (callback) {
+            callback(data);
           }
-        });
-//    } else {
-//      if (callback) {
-//        callback({
-//          exception: {
-//            status: 0,
-//            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
-//          }
-//        });
-//      }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          if (callback) {
+            callback({
+              exception: {
+                message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+              }
+            });
+          }
+        }
+      });
+      //    } else {
+      //      if (callback) {
+      //        callback({
+      //          exception: {
+      //            status: 0,
+      //            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
+      //          }
+      //        });
+      //      }
     }
   };
-});
+}());

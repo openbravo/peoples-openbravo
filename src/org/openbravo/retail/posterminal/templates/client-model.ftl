@@ -15,6 +15,7 @@
     modelName: '${data.modelName}',
     tableName: '${data.tableName}',
     entityName: '${data.entityName}',
+    source: '<#if !data.source??>${data.source}</#if>',
     properties: [
 <#list data.properties as property>
   <#if property.columnName??>

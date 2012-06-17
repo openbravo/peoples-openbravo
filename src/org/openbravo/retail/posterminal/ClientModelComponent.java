@@ -37,8 +37,11 @@ import org.openbravo.service.json.JsonConstants;
 @RequestScoped
 public class ClientModelComponent extends BaseTemplateComponent {
   private static final String TEMPLATE_ID = "ECC3231352D446F68244260BAA69CA39";
+
   private static final String ENTITY_PARAM = "entity";
   private static final String MODEL_NAME_PARAM = "modelName";
+  private static final String SOURCE_PARAM = "source";
+
   private static final List<String> FILTERED_PROP_NAMES = new ArrayList<String>();
 
   private List<Property> filteredProps = null;
@@ -190,4 +193,7 @@ public class ClientModelComponent extends BaseTemplateComponent {
     return "";
   }
 
+  public String getSource() {
+    return getParameter(SOURCE_PARAM);
+  }
 }
