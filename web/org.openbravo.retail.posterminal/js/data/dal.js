@@ -184,6 +184,10 @@
         throw 'Model requires a create and drop statement';
       }
 
+      if(!initialData) {
+        throw 'initialData must be passed as parameter';
+      }
+
       db.transaction(function (tx) {
         tx.executeSql(model.prototype.dropStatement);
       }, errorCallback);
@@ -219,7 +223,7 @@
           }
         });
       } else { // no initial data
-        throw 'Intial data must be passed as parameter';
+        throw 'initialData must be an Array';
       }
     } else {
       throw 'Not implemented';
