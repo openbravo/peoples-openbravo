@@ -14,18 +14,18 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     }
   });
   OB.COMP.TabSearch = OB.COMP.CustomView.extend({
-      tagName: 'div',
-      attributes: {'id': 'search', 'class': 'tab-pane'},
-      initialize: function () {
-          var $child = $('<div/>');
-          $child.css({'overflow': "auto", 'height': '500px', 'margin': '5px'});
-          var $subChild = $('<div/>');
-          $subChild.css({'background-color': "#ffffff", 'color': 'black', 'padding': '5px'});
-          var searchProd = new OB.COMP.SearchProduct(this.options);
-          $subChild.append(searchProd.$el);
-          $child.append($subChild);
-          this.$el.append($child);
-      }
+    tagName: 'div',
+    attributes: {'id': 'search', 'class': 'tab-pane'},
+    initialize: function () {
+      var $child = $('<div/>');
+      $child.css({'overflow': "auto", 'height': '500px', 'margin': '5px'});
+      var $subChild = $('<div/>');
+      $subChild.css({'background-color': "#ffffff", 'color': 'black', 'padding': '5px'});
+      var searchProd = new OB.COMP.SearchProduct(this.options);
+      $subChild.append(searchProd.$el);
+      $child.append($subChild);
+      this.$el.append($child);
+    }
   });
 
 });
