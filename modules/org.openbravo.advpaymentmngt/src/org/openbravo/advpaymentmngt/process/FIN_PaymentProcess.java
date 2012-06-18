@@ -87,9 +87,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       if (strAction.equals("P") || strAction.equals("D")) {
         // Guess if this is a refund payment
         boolean isRefund = false;
-        if (payment.getFINPaymentDetailList().size() > 0
-            && payment.getFINPaymentDetailList().get(0).isRefund()) {
-          isRefund = true;
+        OBContext.setAdminMode(false);
+        try {
+          if (payment.getFINPaymentDetailList().size() > 0
+              && payment.getFINPaymentDetailList().get(0).isRefund()) {
+            isRefund = true;
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
         if (!isRefund) {
           // Undo Used credit as it will be calculated again
