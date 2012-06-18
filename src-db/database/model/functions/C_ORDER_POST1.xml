@@ -54,6 +54,7 @@
   v_DocBaseTypeTarget VARCHAR(60);
   v_IsReturnDocType CHAR(1);
   v_IsBinding CHAR(1):='Y';
+  v_istaxincluded CHAR(1);
   --
   ToDeliver NUMBER;
   ToInvoice NUMBER;
@@ -139,16 +140,16 @@
     */
     v_ResultStr:='ReadingOrder';
     SELECT Processing, Processed, DocAction, DocStatus,
-      C_DocType_ID, C_DocTypeTarget_ID, AD_Client_ID,
-      AD_Org_ID, UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
-      Issotrx, c_Bpartner_Id, c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, M_PriceList_ID, invoicerule
+      C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
+      c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
+      Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
+      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule
-    FROM C_ORDER
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded
+    FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
     -- Get current DocSubTypeSO
     SELECT DocSubTypeSO
@@ -978,7 +979,7 @@
         -- For all Tax Rates
         v_ResultStr:='InsertNewTaxes';
         FOR Cur_Tax IN
-            (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded,
+            (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded, l.line_gross_amount,
                 SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNetAmt,
                 SUM(l.TaxBaseAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS TaxBaseAmt,
                 SUM(o.FreightAmt) + SUM(coalesce(o.ChargeAmt,0)) AS HeaderNet,
@@ -988,7 +989,7 @@
               AND o.C_Order_ID=v_Record_ID -- Parameter
               AND l.C_Tax_ID=t.C_Tax_ID
               AND o.C_Currency_ID=c.C_Currency_ID
-            GROUP BY l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded, t.Rate,
+            GROUP BY l.C_OrderLine_ID, l.C_Tax_ID, l.line_gross_amount, o.IsTaxIncluded, t.Rate,
                      t.IsSummary, c.StdPrecision, t.BaseAmount, o.C_Order_ID
             ORDER BY 4 DESC
             )
@@ -1000,17 +1001,26 @@
             v_LineNetAmt:=v_LineNetAmt + Cur_Tax.HeaderNet;
           END IF;
           C_ORDERLINETAX_INSERT(v_Org_ID, Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
+          IF (v_istaxincluded = 'Y') THEN
+            C_ORDERLINETAX_ROUNDING(Cur_Tax.C_OrderLine_ID, Cur_Tax.line_gross_amount, Cur_Tax.LineNetAmt);
+          END IF;
         END LOOP; -- Insert New Taxes
-        SELECT COALESCE(SUM(TAXAMT), 0)
-            INTO xGrandTotal
-        FROM C_ORDERTAX
-        WHERE C_ORDER_ID = v_Record_ID;
-        xGrandTotal:=xGrandTotal+ xTotalLines;    
+        IF (v_istaxincluded = 'Y') THEN
+          SELECT COALESCE(SUM(line_gross_amount), 0) INTO xGrandTotal
+          FROM c_orderline
+          WHERE c_order_id = v_record_id;
+        ELSE
+          SELECT COALESCE(SUM(TAXAMT), 0) INTO xGrandTotal
+          FROM C_ORDERTAX
+          WHERE C_ORDER_ID = v_Record_ID;
+          xGrandTotal:=xGrandTotal+ xTotalLines;
+        END IF;
         -- Update Header
         UPDATE C_ORDER
         SET TotalLines=xTotalLines,
             GrandTotal=xGrandTotal
         WHERE C_Order_ID=v_Record_ID;
+        C_ORDERTAX_ROUNDING(v_Record_ID, xGrandTotal, xTotalLines);
         DBMS_OUTPUT.PUT_LINE('GrandTotal=' || xGrandTotal) ;
       END; -- Calculate Tax and Totals
       -- Synchronize Client/Org Ownership
