@@ -1,24 +1,15 @@
 /*
- *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
- * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
- ************************************************************************
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
  */
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,6 +59,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -87,19 +79,37 @@ public class OrderLoader {
     OBContext.setAdminMode(true);
     try {
       for (int i = 0; i < jsonarray.length(); i++) {
-        if (i % 1 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
         long t1 = System.currentTimeMillis();
         JSONObject jsonorder = jsonarray.getJSONObject(i);
-        JSONObject result = saveOrder(jsonorder);
-        if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-            JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-          log.error("There was an error importing order: " + jsonorder.toString());
-          error = true;
+        try {
+          JSONObject result = saveOrder(jsonorder);
+          if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
+              JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
+            log.error("There was an error importing order: " + jsonorder.toString());
+            error = true;
+          }
+          if (i % 1 == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getConnection().commit();
+            OBDal.getInstance().getSession().clear();
+          }
+          log.info("Total order time: " + (System.currentTimeMillis() - t1));
+        } catch (Exception e) {
+          // Creation of the order failed. We will now store the order in the import errors table
+          OBDal.getInstance().rollbackAndClose();
+          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
+          errorEntry.setError(getErrorMessage(e));
+          errorEntry.setOrderstatus("N");
+          errorEntry.setJsoninfo(jsonorder.toString());
+          OBDal.getInstance().save(errorEntry);
+          OBDal.getInstance().flush();
+          try {
+            OBDal.getInstance().getConnection().commit();
+          } catch (SQLException e1) {
+            // this won't happen
+          }
+
         }
-        log.info("Total order time: " + (System.currentTimeMillis() - t1));
       }
 
     } finally {
@@ -629,6 +639,20 @@ public class OrderLoader {
       }
 
     }
+  }
+
+  public static String getErrorMessage(Exception e) {
+    StringBuffer sb = new StringBuffer();
+    Throwable et = e;
+    while (et != null) {
+      sb.append(et.getMessage() + "\n");
+      if (et instanceof SQLException) {
+        et = ((SQLException) et).getNextException();
+      } else {
+        et = et.getCause();
+      }
+    }
+    return sb.toString();
   }
 
   private static String getEquivalentKey(String key) {
