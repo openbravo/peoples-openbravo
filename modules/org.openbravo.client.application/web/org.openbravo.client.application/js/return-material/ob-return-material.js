@@ -23,7 +23,7 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  if (!isc.isA.Number(value)){
+  if (!isc.isA.Number(value)) {
     return false;
   }
   // Check if record has related shipment to skip check.
