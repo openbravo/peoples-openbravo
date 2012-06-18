@@ -26,7 +26,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   // global components.
   OB.POS = {
       modelterminal: modelterminal,
-      paramWindow: OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/js/windows/pointofsale",
+      paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
       paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
       hrefWindow: function (windowname) {
         return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);

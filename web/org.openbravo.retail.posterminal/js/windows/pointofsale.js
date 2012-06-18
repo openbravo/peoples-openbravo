@@ -57,8 +57,8 @@ define(['builder', 'i18n',
                     {kind: OB.COMP.MenuInvoice},
                     {kind: OB.COMP.MenuSeparator},
                     {kind: OB.COMP.MenuItem.extend({href:'../..', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/closecash/windows/closecash'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('org.openbravo.retail.posterminal/js/cashmgmt/windows/cashmgmt'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})}
+                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},
+                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})}
                   ]}
                 ]},
                 {kind: B.KindJQuery('li'), content: [
@@ -125,5 +125,6 @@ define(['builder', 'i18n',
     }
   });
 
-  return OB.COMP.PointOfSale;
+  // register
+  OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
 });

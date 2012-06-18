@@ -56,5 +56,7 @@ define(['builder', 'i18n', 'data/datamaster',
       );
     }
   });
-  return OB.COMP.CashManagement;
+  
+  // register
+  OB.POS.windows['retail.cashmanagement'] = OB.COMP.CashManagement;  
 });

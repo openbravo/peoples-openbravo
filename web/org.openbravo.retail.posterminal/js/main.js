@@ -9,7 +9,15 @@ require.config({
   }
 });
 
-require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal', 'components/modallogout', 'components/modalprofile'], function(B, login) {
+// Must be defined before the require because componnets can register
+OB.POS = {
+  paymentProviders: {},
+  windows: {}    
+};
+
+require(['builder', 'windows/login', 
+         'windows/pointofsale', 'closecash/windows/closecash', 'cashmgmt/windows/cashmgmt', 
+         'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal', 'components/modallogout', 'components/modalprofile'], function(B, login) {
 
   var modelterminal = new OB.MODEL.Terminal();
 
@@ -27,9 +35,9 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
   };
 
   // global components.
-  OB.POS = {
+  _.extend(OB.POS, {
       modelterminal: modelterminal,
-      paramWindow: OB.UTIL.getParameterByName("window") || "org.openbravo.retail.posterminal/js/windows/pointofsale",
+      paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
       paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
       hrefWindow: function (windowname) {
         return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
@@ -39,10 +47,8 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
       },
       lock: function (callback) {
         modelterminal.lock();
-      },
-      paymentProviders: {},
-      windows: {}
-  };
+      }
+  });
 
   modelterminal.on('ready', function () {
     // We are Logged !!!
@@ -55,13 +61,20 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
 
-    var webwindowname = "../../" + OB.POS.paramWindow;
+    var webwindow = OB.POS.windows[OB.POS.paramWindow];
 
-    require([webwindowname], function (webwindow) { // load window...
+    if (webwindow) {
       var c = _.extend({}, Backbone.Events);
-      $("#containerwindow").empty().append((new webwindow(c)).$el);
+      var w = new webwindow(c);
+      if (w.render) {
+        w = w.render();
+      }
+      $("#containerwindow").empty().append(w.$el);
       c.trigger('domready');
-    });
+    } else {
+      alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
+    }
+     
   });
 
   modelterminal.on('loginsuccess', function () {

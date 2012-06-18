@@ -66,6 +66,7 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
       );
     }
   });
-
-  return OB.COMP.CloseCash;
+  
+  // register
+  OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
 });
