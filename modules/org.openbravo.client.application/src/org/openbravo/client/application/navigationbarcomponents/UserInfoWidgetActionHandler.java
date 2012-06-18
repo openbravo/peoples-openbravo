@@ -326,11 +326,25 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     final HttpServletRequest request = (HttpServletRequest) parameters
         .get(KernelConstants.HTTP_REQUEST);
     final JSONObject json = new JSONObject(content);
-    final String orgId = getStringValue(json, "organization");
-    final String roleId = getStringValue(json, "role");
+
+    String orgId = getStringValue(json, "organization");
+    if (orgId == null) {
+      orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    }
+
+    String roleId = getStringValue(json, "role");
+    if (roleId == null) {
+      roleId = OBContext.getOBContext().getRole().getId();
+    }
+
     final Role role = OBDal.getInstance().get(Role.class, roleId);
     final String clientId = role.getClient().getId();
-    final String warehouseId = getStringValue(json, "warehouse");
+
+    String warehouseId = getStringValue(json, "warehouse");
+    if (warehouseId == null && OBContext.getOBContext().getWarehouse() != null) {
+      warehouseId = OBContext.getOBContext().getWarehouse().getId();
+    }
+
     String languageId = getStringValue(json, "language");
     if (languageId == null) {
       // If the default language the user has is not a system language, then another language will
