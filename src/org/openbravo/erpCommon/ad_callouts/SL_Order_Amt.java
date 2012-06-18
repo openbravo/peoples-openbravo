@@ -376,7 +376,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    log4j.info("Callout for field changed: " + strChanged + " is " + resultado.toString());
+    log4j.debug("Callout for field changed: " + strChanged + " is " + resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
