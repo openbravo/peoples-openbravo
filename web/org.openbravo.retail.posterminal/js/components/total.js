@@ -1,4 +1,4 @@
-/*global define */
+/*global define, Backbone */
 
 define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
 
@@ -6,24 +6,22 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
   OB.COMP = window.OB.COMP || {};
 
   // Order list
-  OB.COMP.Total = function (context) {
+  OB.COMP.Total = Backbone.View.extend({
+    tagName: 'span',
+    initialize: function () {
 
-    this.component = B(
-      {kind: B.KindJQuery('span'), content: [
-        {kind: B.KindJQuery('strong'), id: 'totalgross'}
-      ]}
-    );
-    this.$el = this.component.$el;
-    this.totalgross = this.component.context.totalgross.$el;
-
-    // Set Model
-    this.receipt =  context.modelorder;
-
-    this.receipt.on('change:gross', function() {
+      this.totalgross = $('<strong/>');
+      this.$el.append(totalgross);
+  
+      // Set Model
+      this.receipt = this.options.modelorder;
+  
+      this.receipt.on('change:gross', function() {
+        this.totalgross.text(this.receipt.printTotal());
+      }, this);
+  
+      // Initial total display
       this.totalgross.text(this.receipt.printTotal());
-    }, this);
-
-    // Initial total display
-    this.totalgross.text(this.receipt.printTotal());
-  };
+    }
+  });
 });
