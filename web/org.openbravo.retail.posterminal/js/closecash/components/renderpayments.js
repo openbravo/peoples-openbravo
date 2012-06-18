@@ -15,7 +15,7 @@ define(['builder', 'utilities', 'utilitiesui', 'components/commonbuttons', 'arit
                     this.model.get('_identifier')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
-                    this.model.get('createdBy')
+                    this.model.get('commercialName')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': ' border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
                        {kind: OB.COMP.ButtonEdit.extend({_id :'editbutton_'+this.model.get('id'),rowid :this.model.get('id')})}, 

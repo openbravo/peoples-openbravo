@@ -34,6 +34,7 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
           {kind: OB.MODEL.DayCash},
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
+          {kind: OB.DATA.CloseCashPaymentMethod},
           {kind: OB.DATA.Container, content: [
                {kind: OB.DATA.PaymentMethod}
           ]},

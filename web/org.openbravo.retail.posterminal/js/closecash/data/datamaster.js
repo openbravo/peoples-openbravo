@@ -40,6 +40,17 @@ define(['utilities', 'datasource'], function () {
 	  };
   _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
 
+  OB.DATA.CloseCashPaymentMethod = function (context, id) {
+	    this._id = 'DataCloseCashPaymentMethod';
+	    this.context = context;
+	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
+	      'org.openbravo.retail.posterminal.term.CloseCashPayments',
+	      OB.POS.modelterminal.get('terminal').client,
+	      OB.POS.modelterminal.get('terminal').organization));
+	    this.loadparams = {};
+	  };
+_.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
+
   OB.MODEL.Payment = Backbone.Model.extend({});
 
   OB.MODEL.PaymentList = Backbone.Collection.extend({

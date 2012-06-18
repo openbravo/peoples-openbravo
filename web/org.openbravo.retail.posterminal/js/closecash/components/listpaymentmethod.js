@@ -11,9 +11,10 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     initialize: function () {
 	    this._id = 'ListPaymentMethods';
 	    this.daycash =  this.options.modeldaycash;
-	    this.daycash.on('all', this.renderTotal, this);
-	    this.daycash.paymethods= new OB.MODEL.PaymentList();
-
+	    this.daycash.on('reset:paymethods', this.renderTotal, this);
+	    this.options.DataCloseCashPaymentMethod.ds.load();
+	    this.daycash.paymethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
+	    
 	    this.component = B(
 	      {kind: B.KindJQuery('div'), content: [
 	       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -58,16 +59,9 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
 	    );
 	    this.$el = this.component.$el;
 	    this.tableview = this.component.context.tableview;
-	//    this.tableview.renderLine = function (model) {
-	//      return (
-	//        {kind: OB.COMP.RenderPayments}
-	//       );
-	//    }
-	  // Exec
-	    //this.paymethods.exec();
-	    this.daycash.paymethods.fetch();
     }
   });
   OB.COMP.ListPaymentMethods.prototype.renderTotal = function () {
+//	  debugger;
 	  };
 });
