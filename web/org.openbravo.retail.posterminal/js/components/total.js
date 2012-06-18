@@ -11,7 +11,7 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
     initialize: function () {
 
       this.totalgross = $('<strong/>');
-      this.$el.append(totalgross);
+      this.$el.append(this.totalgross);
   
       // Set Model
       this.receipt = this.options.modelorder;
