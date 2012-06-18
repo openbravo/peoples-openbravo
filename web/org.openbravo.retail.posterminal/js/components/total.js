@@ -1,4 +1,4 @@
-/*global define, Backbone */
+/*global define, $, Backbone */
 
 define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
 
