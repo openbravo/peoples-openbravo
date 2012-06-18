@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -311,42 +312,35 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // if taxRate field is changed
-    if (strChanged.equals("inpcTaxId")) {
-      BigDecimal grossUnitPrice = new BigDecimal(0);
-      BigDecimal unitPrice = new BigDecimal(0);
-      grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
-      unitPrice = new BigDecimal(strPriceActual.trim());
-      if (isPriceTaxInclusive(strCOrderId)) {
-        // todo - Alternate Amount
-        unitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice, strPrecision, taxBaseAmt,
-            strQtyOrdered);
-        priceActual = unitPrice;
-        priceStd = unitPrice;
-        resultado.append("new Array(\"inppriceactual\",\"" + unitPrice + "\"),");
-        resultado.append("new Array(\"inppricelist\", \"" + unitPrice + "\"),");
-        resultado.append("new Array(\"inppricelimit\", \"" + unitPrice + "\"),");
-        resultado.append("new Array(\"inppricestd\", \"" + unitPrice + "\"),");
-
-      }
-
+    if (strChanged.equals("inpcTaxId") && isPriceTaxInclusive(strCOrderId)) {
+      // todo - Alternate Amount
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice,
+          strPrecision, taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
+      priceActual = netUnitPrice;
+      priceStd = netUnitPrice;
+      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricelist\", \"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricestd\", \"" + netUnitPrice + "\"),");
     }
 
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
-      BigDecimal priceInclusive = new BigDecimal(strGrossUnitPrice.trim());
+      BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
 
-      final BigDecimal lineUnitAmount = calculateNetFromGross(strTaxId, strGrossUnitPrice,
-          strPrecision, taxBaseAmt, strQtyOrdered);
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice,
+          strPrecision, taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
 
-      BigDecimal grossPrice = priceInclusive.multiply(new BigDecimal(strQtyOrdered.trim()));
-      priceActual = lineUnitAmount;
-      priceStd = lineUnitAmount;
+      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
+          RoundingMode.HALF_UP);
+      priceActual = netUnitPrice;
+      priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossPrice + "\"),");
-      resultado.append("new Array(\"inppriceactual\",\"" + lineUnitAmount + "\"),");
-      resultado.append("new Array(\"inppricelist\",\"" + lineUnitAmount + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + lineUnitAmount + "\"),");
-      resultado.append("new Array(\"inppricestd\",\"" + lineUnitAmount + "\"),");
+      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossAmount + "\"),");
+      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricelist\",\"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppricestd\",\"" + netUnitPrice + "\"),");
     }
 
     // if net unit price changed then modify tax inclusive unit price
@@ -385,25 +379,21 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   }
 
   private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
-      String strPrecision, BigDecimal alternateAmount, String strQtyOrdered) {
+      String strPrecision, BigDecimal alternateAmount) {
     BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
     if (grossUnitPrice.compareTo(BigDecimal.ZERO) == 0)
       return BigDecimal.ZERO;
-    final List parameters = new ArrayList();
+    final List<Object> parameters = new ArrayList<Object>();
     parameters.add(strTaxId);
     parameters.add(grossUnitPrice);
-
     // TODO: Alternate Base Amount
     parameters.add(alternateAmount);
     parameters.add(new BigDecimal(strPrecision));
-    // Initial value of zero
-    parameters.add(new BigDecimal("0.0"));
-    parameters.add(new BigDecimal(strQtyOrdered));
 
-    final String procedureName = "c_tax_net_from_gross";
-    final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+    final String procedureName = "C_GET_NET_AMT_FROM_GROSS";
+    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
-    return lineUnitAmount;
+    return lineNetAmount;
   }
 
   private boolean isPriceTaxInclusive(String orderId) {
