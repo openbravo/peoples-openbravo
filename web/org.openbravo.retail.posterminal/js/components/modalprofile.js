@@ -15,6 +15,10 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     this.terminal.on('change:context', function() {
       var ctx = this.terminal.get('context');
 
+      if (!ctx) {
+        return;
+      }
+
       var terminalName = OB.POS.paramTerminal;
       var roleId = ctx.role.id;
       var languageId = OB.Application.language;
@@ -137,32 +141,43 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
 
       // Apply the changes
       OB.COMP.ProfileDialogApply = OB.COMP.Button.extend({
+        isActive: true,
         render: function () {
           this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
           this.$el.html(OB.I18N.getLabel('OBPOS_LblApply'));
           return this;
         },
         clickEvent: function (e) {
-          var newLanguageId = $('#profileLanguageId').val();
-          var newRoleId = $('#profileRoleId').val();
-          var submitJSON = {
-              "language": newLanguageId,
-              "role": newRoleId,
-              "default": false
-              };
-          var submitJSONString = JSON.stringify(submitJSON);
-          $.ajax({
-            type: 'POST',
-            url: '../../org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
-            contentType: 'application/json;charset=utf-8',
-            dataType: 'json',
-            data: {
-              stringifiedJSON: submitJSONString
-            },
-            success: function (data, textStatus, jqXHR) {
-              window.location.reload();
-            }
-          });
+          if (OB.COMP.ProfileDialogApply.prototype.isActive) {
+            OB.COMP.ProfileDialogApply.prototype.isActive = false;
+            var newLanguageId = $('#profileLanguageId').val(),
+                newRoleId = $('#profileRoleId').val(),
+                actionURL = '../../org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
+                postData = {
+                  'language': newLanguageId,
+                  'role': newRoleId,
+                  'default': false
+                };
+            $.ajax({
+              url: actionURL,
+              type: 'POST',
+              contentType: 'application/json;charset=utf-8',
+              dataType: 'json',
+              data: JSON.stringify(postData),
+              success: function (data, textStatus, jqXHR) {
+                if(data.result === 'success') {
+                  window.location.reload();
+                } else {
+                  OB.UTIL.showError(data.result);
+                }
+                OB.COMP.ProfileDialogApply.prototype.isActive = true;
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                OB.UTIL.showError(errorThrown);
+                OB.COMP.ProfileDialogApply.prototype.isActive = true;
+              }
+            });
+          }
         }
       });
 
