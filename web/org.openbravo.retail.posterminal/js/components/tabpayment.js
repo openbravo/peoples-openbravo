@@ -28,12 +28,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
   });
 
   OB.COMP.TabPayment = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {'id': 'payment', 'class': 'tab-pane'}, content: [
-          {kind: OB.COMP.PaymentCoins}
-        ]}
-      );
+    tagName: 'div',
+    attributes: {'id': 'payment', 'class': 'tab-pane'},
+    initialize: function () {
+      var paymentCoins = new OB.COMP.PaymentCoins(this.options);
+      this.$el.append(paymentCoins.$el);
     }
   });
 

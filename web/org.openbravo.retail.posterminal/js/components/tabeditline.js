@@ -20,12 +20,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
   });
 
   OB.COMP.TabEditLine = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {'id': 'edition', 'class': 'tab-pane'}, content: [
-          {kind: OB.COMP.EditLine }
-        ]}
-      );
+    tagName: 'div',
+    attributes: {'id': 'edition', 'class': 'tab-pane'},
+    initialize: function () {
+      var editLine = new OB.COMP.EditLine(this.options);
+      this.$el.append(editLine.$el);
     }
   });
 

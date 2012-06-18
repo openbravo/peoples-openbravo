@@ -23,12 +23,11 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
   });
 
   OB.COMP.TabScan = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {'id': 'scan', 'class': 'tab-pane'}, content: [
-          {kind: OB.COMP.Scan }
-        ]}
-      );
+    tagName: 'div',
+    attributes: {'id': 'scan', 'class': 'tab-pane'},
+	initialize: function () {
+      var scan = new OB.COMP.Scan(this.options);
+      this.$el.append(scan.$el);
     }
   });
 
