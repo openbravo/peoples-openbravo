@@ -91,7 +91,7 @@ define(['i18n'], function () {
 
   // Source object
   OB.DS.Query = function (source, client, org) {
-    this.model = source && source.prototype.modelName && source; // we're using a Backbone.Model as source
+    this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
       throw 'Query must have a source';
