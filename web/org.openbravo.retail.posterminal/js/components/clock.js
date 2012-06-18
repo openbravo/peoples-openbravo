@@ -28,9 +28,14 @@ define(['builder', 'utilities', 'i18n'], function (B) {
       setInterval(updateclock, 1000);
     },
     attr: function (attributes) {
-      if (attributes.className) {
-        this.$el.attr('class', attributes.className);
-      }
+      var me = this;
+      $.each(attributes, function(k, v){
+        if (k === 'class') {
+          me.$el.addClass(v);
+        } else {
+          me.$el.attr(k, v);
+        }
+      });
     }
   });
 });

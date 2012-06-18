@@ -13,7 +13,7 @@ define(['builder', 'utilities', 'i18n', 'components/clock', 'model/order', 'mode
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
         {kind: B.KindJQuery('div'), attr: {'style': 'position:relative; background: #7da7d9 url(img/scan.png) center center no-repeat; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'}},
+          {kind: OB.COMP.Clock, attr: {'class': 'pos-clock'}},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'float:right;'}, content: [
