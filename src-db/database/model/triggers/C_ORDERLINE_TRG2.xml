@@ -268,9 +268,7 @@ END IF;
     SELECT totallines, grandtotal INTO v_totallines, v_grandtotal
     FROM c_order
     WHERE c_order_id = v_id;
-    IF (v_totallines <> 0) THEN
-      C_ORDERTAX_ROUNDING(v_id, v_grandtotal, v_totallines);
-    END IF;
+    C_ORDERTAX_ROUNDING(v_id, v_grandtotal, v_totallines);
   END IF;
 
  END IF;

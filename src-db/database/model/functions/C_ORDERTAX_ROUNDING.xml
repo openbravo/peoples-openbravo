@@ -29,17 +29,23 @@
 -- Variables
   v_ResultStr VARCHAR(2000):=''; 
   v_current_gross_amt NUMBER;
+  v_count NUMBER;
   TYPE RECORD IS REF CURSOR;
   cur_ordertax RECORD;
 
 BEGIN --BODY
 
-  SELECT COALESCE(p_totallines, 0) + COALESCE(SUM(taxamt),0) INTO v_current_gross_amt
+  SELECT count(1) INTO v_count
   FROM c_ordertax
   WHERE c_order_id = p_order_id;
-  DBMS_OUTPUT.PUT_LINE(' ordertaxrounding ' || p_order_id || ' - ' || p_grandtotal || ' - ' || v_current_gross_amt) ;
+  IF (v_count > 0) THEN
+    SELECT COALESCE(p_totallines, 0) + COALESCE(SUM(taxamt),0) INTO v_current_gross_amt
+    FROM c_ordertax
+    WHERE c_order_id = p_order_id;
+  ELSE
+    v_current_gross_amt := p_totallines;
+  END IF;
 
-  
   IF (p_grandtotal <> v_current_gross_amt) THEN
     FOR cur_ordertax IN (
       SELECT c_ordertax_id
