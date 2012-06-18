@@ -14,7 +14,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
 	    this.daycash.on('reset:paymethods', this.renderTotal, this);
 	    this.options.DataCloseCashPaymentMethod.ds.load();
 	    this.daycash.paymethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
-	    
+
 	    this.component = B(
 	      {kind: B.KindJQuery('div'), content: [
 	       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
