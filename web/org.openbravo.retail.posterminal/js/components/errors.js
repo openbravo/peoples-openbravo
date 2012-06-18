@@ -12,7 +12,7 @@ OB.POS.Errors = {};
 
 OB.POS.Errors.saveOrder = function(params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
-    var i;
+    var i, requestParams;
     var ids = [];
     for (i = 0; i < selectedRecords.length; i++) {
         ids.push(selectedRecords[i].id);
@@ -30,7 +30,7 @@ OB.POS.Errors.saveOrder = function(params, view) {
 OB.POS.Errors.clearError = function(params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
     var theParams=params;
-    var i;
+    var i, requestParams;
     var ids = [];
 
     var callback = function(response, data, request) {
