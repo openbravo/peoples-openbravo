@@ -641,6 +641,14 @@ function currencyOnChange() {
   }
 }
 
+function currencyOnChangeOnLoad() {
+  if( isPaymentMethodMulticurrency() ) {
+    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
+  } else {
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
+  }
+}
+
 function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
@@ -718,7 +726,7 @@ function onLoadDo(){
   displayLogicElement('sectionDifference', false);
   displayLogicElement('sectionDifferenceBox', false);
   displayLogicForCredit();
-  currencyOnChange();
+  currencyOnChangeOnLoad();
   displayMulticurrencyControls();
 
   resizeAreaCreateFrom();
