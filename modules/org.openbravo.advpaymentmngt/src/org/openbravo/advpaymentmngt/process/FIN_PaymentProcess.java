@@ -83,8 +83,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final ConnectionProvider conProvider = bundle.getConnection();
       final boolean isReceipt = payment.isReceipt();
 
-      // payment.setProcessNow(true);
-      // OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Guess if this is a refund payment
@@ -252,9 +250,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               payment.isReceipt())) {
             try {
               payment.setStatus("RPAE");
-              // payment.setProcessNow(false);
-              // OBDal.getInstance().save(payment);
-              // OBDal.getInstance().flush();
 
               if (dao.hasNotDeferredExecutionProcess(payment.getAccount(),
                   payment.getPaymentMethod(), payment.isReceipt())) {
@@ -942,10 +937,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBContext.restorePreviousMode();
         }
       }
-
-      // payment.setProcessNow(false);
-      // OBDal.getInstance().save(payment);
-      // OBDal.getInstance().flush();
 
       // When payment is reversed, original payment plan is updated to reverse a particular original
       // payment plan details (the ones related with payment which is reverted) so this step can be
