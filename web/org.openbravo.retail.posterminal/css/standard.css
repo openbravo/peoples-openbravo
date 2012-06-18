@@ -218,7 +218,28 @@
     margin: 2px 0px 0px 5px;
   }
 
-  
+  .btn-check {
+    width: 34px;
+    height: 27px;
+    border: none;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-color: transparent;
+    background-image: url('../img/checkbox-off.png');
+  }
+
+  .btn-check:active {
+    background-image: url('../img/checkbox-on.png');
+  }
+
+  .btn-check.active {
+    background-image: url('../img/checkbox-on.png');
+  }
+
+  .btn-check.active:active {
+    background-image: url('../img/checkbox-off.png');
+  }
+
   ul.nav-pos:after {
     clear: both;
   }  
@@ -346,4 +367,11 @@ button.modal-dialog-content-button {
   height: 40px;
   width: 343px;
   margin: 0px;
+  background-color: white;
+}
+
+.modal-dialog-btn-check {
+  height: 38px;
+  width: 340px;
+  background-position: 10px center;
 }

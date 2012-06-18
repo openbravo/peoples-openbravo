@@ -19,6 +19,28 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }
   });
 
+  OB.COMP.CheckboxButton = Backbone.View.extend({
+    tagName: 'button',
+    attributes: {'class': 'btn-check'},
+    initialize: function () {
+      this.$el.click(_.bind(this._clickEvent, this));
+    },
+    attr: function (attributes) {
+      if (attributes.className) {
+        this.$el.addClass(attributes.className);
+      }
+      if (attributes.id) {
+        this.$el.attr('id', attributes.id);
+      }
+    },
+    _clickEvent: function (e) {
+      this.$el.toggleClass('active');
+      this.clickEvent(e);
+    },
+    clickEvent: function (e) {
+    }
+  });
+
   OB.COMP.PaymentButton = OB.COMP.Button.extend({
     className: 'btnlink btnlink-small',
     attributes: {'style': 'width:70px; text-align:right;'},
