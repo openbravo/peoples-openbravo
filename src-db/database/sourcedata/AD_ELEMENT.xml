@@ -3719,10 +3719,13 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--520-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--520-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--520-->  <COLUMNNAME><![CDATA[PriceList]]></COLUMNNAME>
-<!--520-->  <NAME><![CDATA[Net List Price]]></NAME>
-<!--520-->  <PRINTNAME><![CDATA[Net List Price]]></PRINTNAME>
+<!--520-->  <NAME><![CDATA[List Price]]></NAME>
+<!--520-->  <PRINTNAME><![CDATA[List Price]]></PRINTNAME>
 <!--520-->  <DESCRIPTION><![CDATA[The official net price of a product in a specified currency.]]></DESCRIPTION>
 <!--520-->  <HELP><![CDATA[The Net List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
+<!--520-->  <PO_NAME><![CDATA[List Price]]></PO_NAME>
+<!--520-->  <PO_PRINTNAME><![CDATA[List Price]]></PO_PRINTNAME>
+<!--520-->  <PO_HELP><![CDATA[The Net List Price is the official price stated by the selected pricelist and the currency of the document.]]></PO_HELP>
 <!--520-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--520-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--520--></AD_ELEMENT>
@@ -5559,10 +5562,12 @@ Usually, company's internal identifiers for various records (products, customers
 <!--955-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--955-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--955-->  <COLUMNNAME><![CDATA[PriceLimit]]></COLUMNNAME>
-<!--955-->  <NAME><![CDATA[Net Price Limit]]></NAME>
-<!--955-->  <PRINTNAME><![CDATA[Net Price Limit]]></PRINTNAME>
+<!--955-->  <NAME><![CDATA[Price Limit]]></NAME>
+<!--955-->  <PRINTNAME><![CDATA[Price Limit]]></PRINTNAME>
 <!--955-->  <DESCRIPTION><![CDATA[The lowest net price a specified item may be sold for.]]></DESCRIPTION>
 <!--955-->  <HELP><![CDATA[The Net Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
+<!--955-->  <PO_NAME><![CDATA[Price Limit]]></PO_NAME>
+<!--955-->  <PO_PRINTNAME><![CDATA[Price Limit]]></PO_PRINTNAME>
 <!--955-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--955-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--955--></AD_ELEMENT>
@@ -21242,8 +21247,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <COLUMNNAME><![CDATA[PriceList]]></COLUMNNAME>
-<!--3C8963BA09134DA48BF3B762216A6FFB-->  <NAME><![CDATA[Net List Price]]></NAME>
-<!--3C8963BA09134DA48BF3B762216A6FFB-->  <PRINTNAME><![CDATA[Net List Price]]></PRINTNAME>
+<!--3C8963BA09134DA48BF3B762216A6FFB-->  <NAME><![CDATA[List Price]]></NAME>
+<!--3C8963BA09134DA48BF3B762216A6FFB-->  <PRINTNAME><![CDATA[List Price]]></PRINTNAME>
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <DESCRIPTION><![CDATA[The official price of a product in a specified currency.]]></DESCRIPTION>
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <HELP><![CDATA[The List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
 <!--3C8963BA09134DA48BF3B762216A6FFB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
