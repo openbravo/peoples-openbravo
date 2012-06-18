@@ -44,6 +44,9 @@ BEGIN --BODY
     WHERE c_order_id = p_order_id;
   ELSE
     v_current_gross_amt := p_totallines;
+    UPDATE c_order
+    SET grandtotal = p_totallines
+    WHERE c_order_id = p_order_id;
   END IF;
 
   IF (p_grandtotal <> v_current_gross_amt) THEN
