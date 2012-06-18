@@ -133,7 +133,7 @@ public class OrderLoader {
     Order order = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
-    TriggerHandler.getInstance().disableSql();
+    TriggerHandler.getInstance().disable();
     try {
       t1 = System.currentTimeMillis();
       boolean createInvoice = (jsonorder.has("generateInvoice") && jsonorder
@@ -178,7 +178,7 @@ public class OrderLoader {
           + (t11 - t115));
 
     } finally {
-      TriggerHandler.getInstance().enableSql();
+      TriggerHandler.getInstance().enable();
     }
 
     long t4 = System.currentTimeMillis();
