@@ -1250,6 +1250,7 @@ BEGIN --BODY
         SELECT COALESCE(SUM(line_gross_amount), 0) INTO v_grandtotal
         FROM c_invoiceline
         WHERE c_invoice_id = v_record_id;
+        v_grandtotal := v_grandtotal + v_taxnorecalculable;
       ELSE
         SELECT COALESCE(SUM(TAXAMT), 0) INTO v_GrandTotal
         FROM C_INVOICETAX
