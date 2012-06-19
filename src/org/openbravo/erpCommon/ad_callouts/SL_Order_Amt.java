@@ -313,9 +313,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     // if taxRate field is changed
     if (strChanged.equals("inpcTaxId") && isPriceTaxInclusive(strCOrderId)) {
-      // todo - Alternate Amount
-      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice,
-          strPrecision, taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
+      BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
+          RoundingMode.HALF_UP);
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, strPrecision,
+          taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
       resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
@@ -327,12 +329,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
-
-      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice,
-          strPrecision, taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
-
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
+
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, strPrecision,
+          taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
+
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
@@ -378,14 +380,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     out.close();
   }
 
-  private BigDecimal calculateNetFromGross(String strTaxId, String strGrossUnitPrice,
+  private BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
       String strPrecision, BigDecimal alternateAmount) {
-    BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
-    if (grossUnitPrice.compareTo(BigDecimal.ZERO) == 0)
+    if (grossAmount.compareTo(BigDecimal.ZERO) == 0)
       return BigDecimal.ZERO;
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(strTaxId);
-    parameters.add(grossUnitPrice);
+    parameters.add(grossAmount);
     // TODO: Alternate Base Amount
     parameters.add(alternateAmount);
     parameters.add(new BigDecimal(strPrecision));
