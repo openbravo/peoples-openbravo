@@ -22,6 +22,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -97,6 +98,9 @@ public class OrderLoader {
         } catch (Exception e) {
           // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
+          if (TriggerHandler.getInstance().isDisabled()) {
+            TriggerHandler.getInstance().enable();
+          }
           OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
           errorEntry.setError(getErrorMessage(e));
           errorEntry.setOrderstatus("N");
@@ -172,6 +176,7 @@ public class OrderLoader {
         OBDal.getInstance().save(invoice);
       }
       t2 = System.currentTimeMillis();
+      OBDal.getInstance().flush();
       t3 = System.currentTimeMillis();
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (113 - 112)
           + "; Shipment: " + (t114 - t113) + "; Shipmentlines: " + (t115 - t114) + "; Invoice: "
@@ -231,6 +236,11 @@ public class OrderLoader {
     DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
     final DocumentType docType = orderDocType.getDocumentTypeForInvoice();
     invoiceDocTypes.put(documentTypeId, docType);
+    if (docType == null) {
+      throw new OBException(
+          "There is no 'Document type for Invoice' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
+              + orderDocType.getName());
+    }
     return docType;
   }
 
@@ -241,6 +251,11 @@ public class OrderLoader {
     DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
     final DocumentType docType = orderDocType.getDocumentTypeForShipment();
     shipmentDocTypes.put(documentTypeId, docType);
+    if (docType == null) {
+      throw new OBException(
+          "There is no 'Document type for Shipment' defined for the specified Document Type. The document type for shipments can be configured in the Document Type window, and it should be configured for the document type: "
+              + orderDocType.getName());
+    }
     return docType;
   }
 

@@ -16,6 +16,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSErrors;
@@ -48,6 +49,9 @@ public class SaveOrderActionHandler extends BaseActionHandler {
       } catch (Exception e1) {
         errorb = true;
         OBDal.getInstance().rollbackAndClose();
+        if (TriggerHandler.getInstance().isDisabled()) {
+          TriggerHandler.getInstance().enable();
+        }
         OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
         error.setError(OrderLoader.getErrorMessage(e1));
         OBDal.getInstance().flush();
