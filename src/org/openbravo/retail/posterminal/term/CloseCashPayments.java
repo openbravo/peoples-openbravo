@@ -16,7 +16,7 @@ public class CloseCashPayments extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p.commercialName as commercialName, f.currentBalance as currentBalance from OBPOS_App_Payment as p, FIN_Financial_Account as f "
+    return "select p.id as id, p.commercialName as commercialName, f.id as financialId, f.currentBalance as currentBalance from OBPOS_App_Payment as p, FIN_Financial_Account as f "
         + "where p.financialAccount=f";
   }
 }

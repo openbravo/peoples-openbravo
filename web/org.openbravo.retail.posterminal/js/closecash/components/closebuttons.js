@@ -7,16 +7,18 @@
 
   OB.COMP.ButtonPrev = OB.COMP.ToolbarButton.extend({
 	_id: 'closeprevbutton',
-    icon: 'icon-chevron-left icon-white  btn-icon-left',
+//    icon: 'icon-chevron-left icon-white  btn-icon-left',
+	disabled: 'disabled',
     label: OB.I18N.getLabel('OBPOS_LblPrevStep'),
     clickEvent: function (e) {
     if(this.options.modeldaycash.defaults.step===2){
-    this.options.postprintclose.$el.hide();
+        this.options.closenextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
+        this.options.postprintclose.$el.hide();
         this.options.countcash.$el.show();
         this.options.modeldaycash.defaults.step=1;
         this.options.closenextbutton.$el.removeAttr('disabled');
     }else if(this.options.modeldaycash.defaults.step===1){
-    this.options.countcash.$el.hide();
+        this.options.countcash.$el.hide();
         this.options.pendingreceipts.$el.show();
         this.options.modeldaycash.defaults.step=0;
         this.$el.attr('disabled','disabled');
@@ -27,7 +29,7 @@
 
   OB.COMP.ButtonNext = OB.COMP.ToolbarButton.extend({
 	_id: 'closenextbutton',
-    iconright: 'icon-chevron-right icon-white  btn-icon-right',
+//    iconright: 'icon-chevron-right icon-white  btn-icon-right',
     label: OB.I18N.getLabel('OBPOS_LblNextStep'),
 
     clickEvent: function (e) {
@@ -40,24 +42,13 @@
     this.options.countcash.$el.hide();
         this.options.postprintclose.$el.show();
         this.options.modeldaycash.defaults.step=2;
+        this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+        this.options.renderpaymentlines.$el.empty();
+        this.options.renderpaymentlines.render();
         //this.$el.attr('disabled','disabled');
     }
     //this.options.modeldaycash.nextStep();
    }
-  });
-
-  OB.COMP.CloseCashSteps = Backbone.View.extend({
-    tagName: 'div',
-    className: 'btnlink',
-    initialize: function () {
-
-      this.component = B(
-        {kind: B.KindJQuery('div'), content: [
-          'Steps 1 of 3: Review pending tickets'
-        ]}
-      );
-      this.$el.append(this.component.$el);
-    }
   });
 
   OB.COMP.ButtonOk =OB.COMP.Button.extend({

@@ -14,12 +14,15 @@
         if (providerview) {
           modalpayment.show(receipt, key, name, providerview, OB.DEC.number(parseFloat(txt, 10)));
         } else {
-          receipt.addPayment(new OB.MODEL.PaymentLine(
-            {
-              'kind': key,
-              'name': name,
-              'amount': OB.DEC.number(parseFloat(txt, 10))
-            }));
+        var totalCounted = 0;
+        this.options.modeldaycash.paymentmethods.each(function(payment){
+        if(payment.get('name')===name){
+          payment.set('counted',parseFloat(txt, 10));
+        }
+        totalCounted= totalCounted+parseFloat(payment.get('counted'), 10);
+        });
+        this.options.modeldaycash.set('totalCounted',totalCounted);
+        this.options.modeldaycash.set('totalDifference',totalCounted-parseFloat(this.options.modeldaycash.get('totalExpected'), 10));
         }
       }
     });
