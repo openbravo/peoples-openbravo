@@ -45,6 +45,7 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -290,9 +291,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
           // update outstanding amount
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
           if (outStandingPSDs.size() == 0) {
-            psd.setPaymentDetails(null);
-            psd.setFINOrigPaymentScheduleDetailList(null);
-            OBDal.getInstance().save(psd);
+            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(
+                psd, false);
+            newOutstanding.setPaymentDetails(null);
+            newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
+            newOutstanding.setFINOrigPaymentScheduleDetailList(null);
+            OBDal.getInstance().save(newOutstanding);
             toRemovePDs.add(pd.getId());
           } else {
             // First make sure outstanding amount is not equal zero
