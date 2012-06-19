@@ -88,7 +88,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/components/modaldropdestinations", "cashmgmt/components/renderdropdestinations",
         "cashmgmt/components/toolbarcashmgmt",
         "cashmgmt/windows/cashmgmtinfo",
-        "cashmgmt/windows/depositdrops",
+        "cashmgmt/windows/depositsdrops",
         "cashmgmt/windows/cashmgmt",
         // Cash Up window
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
