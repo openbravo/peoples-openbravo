@@ -389,7 +389,7 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
           cash = OB.DEC.add(cash, p.get('amount'));
           pcash = p;
         } else {
-          nocash = OB.DEC.add(cash, p.get('amount'));
+          nocash = OB.DEC.add(nocash, p.get('amount'));
         }
       }
 
