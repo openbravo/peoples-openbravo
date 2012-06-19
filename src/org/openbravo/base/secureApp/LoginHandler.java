@@ -255,6 +255,7 @@ public class LoginHandler extends HttpBaseServlet {
         switch (ak.checkNewWSCall(false)) {
         case NO_RESTRICTION:
         case EXPIRED:
+        case EXPIRED_MODULES:
           break;
         case EXCEEDED_WARN_WS_CALLS:
           msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)

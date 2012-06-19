@@ -164,7 +164,7 @@ public class ActivationKey {
   }
 
   public enum WSRestriction {
-    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS, EXCEEDED_WARN_WS_CALLS, EXPIRED;
+    NO_RESTRICTION, EXCEEDED_MAX_WS_CALLS, EXCEEDED_WARN_WS_CALLS, EXPIRED, EXPIRED_MODULES;
   }
 
   public enum LicenseClass {
@@ -1150,19 +1150,24 @@ public class ActivationKey {
    * @return List of the expired modules
    */
   public ArrayList<Module> getExpiredInstalledModules() {
-    ArrayList<Module> result = new ArrayList<Module>();
-    HashMap<String, CommercialModuleStatus> subscribedModules = getSubscribedModules();
-    Iterator<String> iterator = subscribedModules.keySet().iterator();
-    while (iterator.hasNext()) {
-      String moduleId = iterator.next();
-      if (subscribedModules.get(moduleId) == CommercialModuleStatus.EXPIRED) {
-        Module module = OBDal.getInstance().get(Module.class, moduleId);
-        if (module != null && module.getStatus().equals("A")) {
-          result.add(module);
+    OBContext.setAdminMode();
+    try {
+      ArrayList<Module> result = new ArrayList<Module>();
+      HashMap<String, CommercialModuleStatus> subscribedModules = getSubscribedModules();
+      Iterator<String> iterator = subscribedModules.keySet().iterator();
+      while (iterator.hasNext()) {
+        String moduleId = iterator.next();
+        if (subscribedModules.get(moduleId) == CommercialModuleStatus.EXPIRED) {
+          Module module = OBDal.getInstance().get(Module.class, moduleId);
+          if (module != null && module.getStatus().equals("A")) {
+            result.add(module);
+          }
         }
       }
+      return result;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return result;
   }
 
   /**
@@ -1617,13 +1622,18 @@ public class ActivationKey {
    *          daily calls should be updated
    */
   public synchronized WSRestriction checkNewWSCall(boolean updateCounter) {
+    if (hasExpired) {
+      return WSRestriction.EXPIRED;
+    }
+
+    if (getExpiredInstalledModules().size() > 0) {
+      return WSRestriction.EXPIRED_MODULES;
+    }
+
     if (!limitedWsAccess) {
       return WSRestriction.NO_RESTRICTION;
     }
 
-    if (hasExpired) {
-      return WSRestriction.EXPIRED;
-    }
     Date today = getDayAt0(new Date());
 
     if (initWsCountTime == null || today.getTime() != initWsCountTime.getTime()) {

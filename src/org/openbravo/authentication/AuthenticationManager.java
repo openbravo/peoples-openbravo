@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -224,6 +224,10 @@ public abstract class AuthenticationManager {
       updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
       log4j.warn("Cannot use WS, license expired");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
+    case EXPIRED_MODULES:
+      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      log4j.warn("Cannot use WS, expired modules");
+      throw new AuthenticationException("There are expired modules");
     }
 
     return null;
