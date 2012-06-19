@@ -77,10 +77,10 @@
   OB.UTIL.showLoading = function (value) {
     if (value) {
       $('#containerLoading').css('display', '');
-      $('#containerwindow').css('display', 'none');
+      $('#containerWindow').css('display', 'none');
     } else {
       $('#containerLoading').css('display', 'none');
-      $('#containerwindow').css('display', '');
+      $('#containerWindow').css('display', '');
     }
   };
 

@@ -110,7 +110,7 @@ if(userId == null){
           </div>
         </div>
       </div>
-      <div id="containerwindow" style="display: none;">
+      <div id="containerWindow" style="display: none;">
         <!-- Here it goes the POS window... -->
       </div>
     </div>

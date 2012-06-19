@@ -54,7 +54,7 @@
       if (w.render) {
         w = w.render();
       }
-      $("#containerwindow").empty().append(w.$el);
+      $("#containerWindow").empty().append(w.$el);
       c.trigger('domready');
     } else {
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
@@ -74,7 +74,7 @@
     $('#logoutlink').css('visibility', 'hidden');
 
 //    var c = _.extend({}, Backbone.Events);
-//    $("#containerwindow").empty().append((new login(c)).$el);
+//    $("#containerWindow").empty().append((new login(c)).$el);
 //    c.trigger('domready'); window.location=
 
     // Redirect to login window
