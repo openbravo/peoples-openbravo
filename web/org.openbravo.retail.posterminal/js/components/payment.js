@@ -125,7 +125,6 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
     },
     updatePending : function () {
       var paymentstatus = this.receipt.getPaymentStatus();
-      this.totalpending.text(paymentstatus.pending);
       if (paymentstatus.change) {
         this.change.text(paymentstatus.change);
         this.change.show();
@@ -143,9 +142,14 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
         this.overpaymentlbl.hide();
       }
       if (paymentstatus.done) {
+        this.totalpending.hide();
+        this.totalpendinglbl.hide();        
         this.coinscontainer.hide();
         this.doneaction.show();
       } else {
+        this.totalpending.text(paymentstatus.pending);
+        this.totalpending.show();
+        this.totalpendinglbl.show();
         this.doneaction.hide();
         this.coinscontainer.show();
       }
