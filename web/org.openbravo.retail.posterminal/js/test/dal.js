@@ -62,6 +62,25 @@ asyncTest('Query - find one', function () {
   }, success, errorCallback);
 });
 
+asyncTest('Query - find one using contains', function () {
+  expect(2);
+
+  function success(collection) {
+    ok(collection, 'Collection is present');
+    ok(collection.length > 0, 'Collection at 0: ' + collection.at(0).get('name'));
+    console.log(arguments);
+    start();
+  }
+
+  //using simplified API, defaults to equal
+  OB.Dal.find(OB.Model.TaxRate, {
+    'name': {
+      operator: OB.Dal.CONTAINS,
+      value: '18'
+    }
+  }, success, errorCallback);
+});
+
 asyncTest('Query - save - update', function () {
   expect(1);
 
