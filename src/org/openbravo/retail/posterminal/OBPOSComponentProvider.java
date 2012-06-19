@@ -63,12 +63,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
-    final String[] resourceDependency = { "builder", "datasource", "utilities", "utilitiesui",
+    final String[] resourceDependency = {
+        // Common components
+        "builder", "datasource", "utilities",
+        "utilitiesui",
         "arithmetic", "i18n", "components/clock", "model/order", "model/terminal",
         "components/commonbuttons", "components/hwmanager", "components/table",
+        "components/terminal", "components/modalprofile", "components/modallogout", "main",
+        // Web POS window
         "components/toolbarpayment", "components/toolbarscan", "components/keyboard",
-        "windows/login", "windows/posbuttons", "components/modalprofile", "components/terminal",
-        "components/modallogout", "data/datamaster", "data/dal", "data/dataordersave",
+        "windows/login", "windows/posbuttons", "data/datamaster", "data/dal", "data/dataordersave",
         "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
         "components/listreceipts", "components/modalreceipts", "components/renderbusinesspartner",
         "components/searchbps", "components/modalbps", "components/scan", "components/tabscan",
@@ -78,7 +82,22 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/total", "components/modalpayment", "components/payment",
         "components/paymentcoins", "components/tabpayment", "components/renderorderline",
         "components/order", "components/orderdetails", "components/businesspartner",
-        "components/listreceiptscounter", "windows/pointofsale", "main" };
+        "components/listreceiptscounter", "windows/pointofsale",
+        // Cash Management window
+        "cashmgmt/components/cashmgmtbuttons", "cashmgmt/components/cashmgmtkeyboard",
+        "cashmgmt/components/modaldropdestinations", "cashmgmt/components/renderdropdestinations",
+        "cashmgmt/components/toolbarcashmgmt",
+        "cashmgmt/windows/cashmgmtinfo",
+        "cashmgmt/windows/depositdrops",
+        "cashmgmt/windows/cashmgmt",
+        // Cash Up window
+        "closecash/components/closebuttons", "closecash/components/closekeyboard",
+        "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
+        "closecash/data/datamaster", "closecash/model/daycash", "closecash/windows/closeinfo",
+        "closecash/windows/tabcountcash", "closecash/windows/tabpendingreceipts",
+        "closecash/windows/tabpostprintclose", "closecash/windows/closecash"
+
+    };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

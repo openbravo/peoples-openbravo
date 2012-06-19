@@ -45,8 +45,10 @@
           }
         } else if (child.kind) {
           inst.append(B(child, mycontext));
-        } else {
+        } else if (b) {
           inst.append(child);
+        } else {
+          throw "Content does not exist";
         }
       }
     }

@@ -123,7 +123,8 @@ if(userId == null){
   <!-- Models -->
   <script src="../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate"></script>
 
-  <script data-main="js/main" src="js/libs/require-1.0.7.min.js"></script>
+  <!-- Web POS Application -->
+  <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
 
   <script>
     // Hack focus captured by location bar in android browser.

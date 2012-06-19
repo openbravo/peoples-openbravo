@@ -2,12 +2,6 @@
 
 (function () {
 
-// Must be defined before the require because componnets can register
-  OB.POS = {
-    paymentProviders: {},
-    windows: {}    
-  };
-
   var modelterminal = new OB.MODEL.Terminal();
 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
@@ -24,20 +18,22 @@
   };
 
   // global components.
-  _.extend(OB.POS, {
-      modelterminal: modelterminal,
-      paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
-      paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
-      hrefWindow: function (windowname) {
-        return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
-      },
-      logout: function (callback) {
-        modelterminal.logout();
-      },
-      lock: function (callback) {
-        modelterminal.lock();
-      }
-  });
+  OB.POS = {
+    modelterminal: modelterminal,
+    paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
+    paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
+    hrefWindow: function (windowname) {
+      return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
+    },
+    logout: function (callback) {
+      modelterminal.logout();
+    },
+    lock: function (callback) {
+      modelterminal.lock();
+    },
+    paymentProviders: {},
+    windows: {}         
+  };
 
   modelterminal.on('ready', function () {
     // We are Logged !!!
