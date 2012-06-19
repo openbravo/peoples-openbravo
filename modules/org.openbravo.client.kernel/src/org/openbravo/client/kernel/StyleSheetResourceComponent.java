@@ -130,10 +130,11 @@ public class StyleSheetResourceComponent extends BaseComponent {
         if (provider.getModule().getId().equals(module.getId())) {
           for (ComponentResource resource : resources) {
 
-            resource.isValidForApp(appName);
+            if (resource.getType() == ComponentResourceType.Stylesheet
+                && resource.isValidForApp(appName)) {
 
-            log.debug("Processing resource: " + resource);
-            if (resource.getType() == ComponentResourceType.Stylesheet) {
+              log.debug("Processing resource: " + resource);
+
               String resourcePath = resource.getPath();
 
               // Skin version handling
