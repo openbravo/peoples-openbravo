@@ -29,7 +29,6 @@
 -- Variables
   v_ResultStr VARCHAR(2000):=''; 
   v_current_gross_amt NUMBER;
-  v_lineno NUMBER;
   v_count NUMBER;
   TYPE RECORD IS REF CURSOR;
   cur_invoicetax RECORD;
@@ -52,10 +51,6 @@ BEGIN --BODY
   END IF;
   
   IF (p_grandtotal <> v_current_gross_amt) THEN
-    SELECT COALESCE(MAX(line),0) + 10 INTO v_lineno
-    FROM c_invoicetax
-    WHERE c_invoice_id = p_invoice_id;
-
     FOR cur_invoicetax IN (
       SELECT c_invoicetax_id
       FROM c_invoicetax
