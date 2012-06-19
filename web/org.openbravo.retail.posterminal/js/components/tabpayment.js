@@ -27,7 +27,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     }
   });
 
-  OB.COMP.TabPayment = OB.COMP.CustomView.extend({
+  OB.COMP.TabPayment = Backbone.View.extend({
     tagName: 'div',
     attributes: {'id': 'payment', 'class': 'tab-pane'},
     initialize: function () {

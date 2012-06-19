@@ -13,7 +13,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
       this.options.keyboard.hide();
     }
   });
-  OB.COMP.TabSearch = OB.COMP.CustomView.extend({
+  OB.COMP.TabSearch = Backbone.View.extend({
     tagName: 'div',
     attributes: {'id': 'search', 'class': 'tab-pane'},
     initialize: function () {

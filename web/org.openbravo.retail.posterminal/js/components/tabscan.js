@@ -22,7 +22,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     }
   });
 
-  OB.COMP.TabScan = OB.COMP.CustomView.extend({
+  OB.COMP.TabScan = Backbone.View.extend({
     tagName: 'div',
     attributes: {'id': 'scan', 'class': 'tab-pane'},
 	initialize: function () {

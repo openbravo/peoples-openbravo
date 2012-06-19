@@ -19,7 +19,7 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     }
   });
 
-  OB.COMP.TabEditLine = OB.COMP.CustomView.extend({
+  OB.COMP.TabEditLine = Backbone.View.extend({
     tagName: 'div',
     attributes: {'id': 'edition', 'class': 'tab-pane'},
     initialize: function () {
