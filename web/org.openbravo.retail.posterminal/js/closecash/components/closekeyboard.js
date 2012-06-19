@@ -31,8 +31,8 @@
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
 
       // Toolbars at the end...
-      this.addToolbar('toolbarpayment', new OB.COMP.ToolbarPayment(this.options).toolbar);
-     this.toolbars.toolbarpayment.show();
+      this.addToolbar('toolbarcountcash', new OB.COMP.ToolbarCountCash(this.options).toolbar);
+     this.toolbars.toolbarcountcash.show();
     }
   });
 

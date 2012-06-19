@@ -93,6 +93,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Cash Up window
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
         "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
+        "closecash/components/renderpaymentlines", "closecash/components/toolbarcountcash",
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/windows/closeinfo",
         "closecash/windows/tabcountcash", "closecash/windows/tabpendingreceipts",
         "closecash/windows/tabpostprintclose", "closecash/windows/closecash"
