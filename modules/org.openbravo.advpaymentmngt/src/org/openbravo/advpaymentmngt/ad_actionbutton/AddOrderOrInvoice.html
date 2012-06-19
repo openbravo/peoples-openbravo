@@ -331,11 +331,6 @@ function removeGLItem(key, removedAmount) {
   updateConvertedAmounts();
   loadGLItemList();
 }
-function removeAllGLItem(closePopup) {
-  OB.APRM.APFT_GLItems = [];
-  loadGLItemList();
-  updateConvertedAmounts();
-}
 function displayMulticurrencyControls() {
   var invCurrency = document.getElementById('paramCurrencyId').value;
   var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value;
@@ -590,11 +585,6 @@ function onLoadDo() {
 }
 function onResizeDo(){
   resizeAreaCreateFrom(true);
-}
-function closeThisPage() {
-  removeAllGLItem(true);
-  closePage();
-  return true;
 }
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
@@ -1484,7 +1474,7 @@ function closeProcessPayment() {
                   <button type="button" 
                     id="buttonCancel" 
                     class="ButtonLink" 
-                    onclick="closeThisPage();return false;"
+                    onclick="closePage();return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
