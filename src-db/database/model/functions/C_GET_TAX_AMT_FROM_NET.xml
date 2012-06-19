@@ -61,7 +61,7 @@ BEGIN --BODY
     END IF;
     
     IF (v_BaseAmount = 'TAX' OR v_BaseAmount = 'LNATAX' OR v_BaseAmount = 'TBATAX') THEN
-      v_TaxBaseAmount := v_TaxBaseAmount + C_TAX_FROM_NET_AMT(v_C_TaxBase_ID, p_netamt, p_AlternateTaxBaseAmt, p_StdPrecision, p_accumulatedtaxamt);
+      v_TaxBaseAmount := v_TaxBaseAmount + C_GET_TAX_AMT_FROM_NET(v_C_TaxBase_ID, p_netamt, p_AlternateTaxBaseAmt, p_StdPrecision, p_accumulatedtaxamt);
     END IF;
     
     IF(v_Cascade='Y') THEN
@@ -76,7 +76,7 @@ BEGIN --BODY
         WHERE parent_tax_id=p_tax_id
         ORDER BY line
     ) LOOP
-      v_taxamt := C_TAX_FROM_NET_AMT(cur_taxes.c_tax_id, p_netamt, p_AlternateTaxBaseAmt, p_StdPrecision, p_accumulatedtaxamt + v_summary_tax) ;
+      v_taxamt := C_GET_TAX_AMT_FROM_NET(cur_taxes.c_tax_id, p_netamt, p_AlternateTaxBaseAmt, p_StdPrecision, p_accumulatedtaxamt + v_summary_tax) ;
       v_summary_tax := v_summary_tax + v_taxamt;
     END LOOP;
     RETURN v_summary_tax ;
