@@ -1,6 +1,6 @@
-/*global define, _, $ */
+/*global B, _, $ */
 
-define(['builder', 'utilities', 'i18n'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -230,4 +230,4 @@ define(['builder', 'utilities', 'i18n'], function (B) {
     }, this);
   };
 
-});
+}());

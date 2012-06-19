@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['utilities'], function () {
+(function () {
 
   // Mockup for OB.I18N
 
@@ -60,4 +60,4 @@ define(['utilities'], function () {
     var curr_sec = d.getSeconds();
     return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min, 2);
   };
-});
+}());

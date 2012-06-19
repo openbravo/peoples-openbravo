@@ -1,6 +1,6 @@
-/*global define, $, _ */
+/*global window, $, _ */
 
-define([], function () {
+(function () {
 
   var B;
 
@@ -111,5 +111,5 @@ define([], function () {
     return F;
   };
 
-  return B;
-});
+  window.B = B;
+}());

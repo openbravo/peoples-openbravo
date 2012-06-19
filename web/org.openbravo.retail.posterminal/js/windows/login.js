@@ -1,8 +1,6 @@
-/*global define, $, Backbone, console */
+/*global B, $, Backbone, console */
 
-define(['builder', 'i18n', 'components/clock',
-        'components/commonbuttons', 'components/hwmanager', 'components/keyboard'
-       ], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -188,5 +186,4 @@ define(['builder', 'i18n', 'components/clock',
     }
   });
 
-  return OB.COMP.Login;
-});
+}());

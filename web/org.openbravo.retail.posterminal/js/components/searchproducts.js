@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'components/renderproduct', 'model/order', 'model/terminal'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -105,4 +105,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     this.tableview = this.component.context.tableview;
     this.categories.exec({});
   };
-});
+}());

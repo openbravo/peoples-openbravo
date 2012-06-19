@@ -1,6 +1,6 @@
-/*global define, */
+/*global B */
 
-define(['utilities', 'utilitiesui', 'model/order', 'model/terminal'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -55,4 +55,4 @@ define(['utilities', 'utilitiesui', 'model/order', 'model/terminal'], function (
       OB.POS.hwserver.print(data, {}, hwcallback);
     }, this);
   };
-});
+}());

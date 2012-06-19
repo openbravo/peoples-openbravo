@@ -1,6 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'windows/posbuttons', 'components/modalprofile'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -129,4 +129,4 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal', 'window
 
   };
 
-});
+}());

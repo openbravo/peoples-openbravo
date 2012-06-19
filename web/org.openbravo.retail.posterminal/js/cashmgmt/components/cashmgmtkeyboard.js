@@ -1,6 +1,6 @@
-/*global define,$,_,Backbone */
+/*global B,$,_,Backbone */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/keyboard', 'cashmgmt/components/toolbarcashmgmt'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -35,4 +35,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/keyboard', 'ca
       this.show('toolbarcashmgmt');
     }
   });
-});
+}());

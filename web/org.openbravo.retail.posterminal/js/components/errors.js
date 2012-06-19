@@ -6,6 +6,9 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+(function () {
+
 OB.POS = {};
 
 OB.POS.Errors = {};
@@ -51,3 +54,5 @@ OB.POS.Errors.clearError = function(params, view) {
         }
     });
 };
+
+}());

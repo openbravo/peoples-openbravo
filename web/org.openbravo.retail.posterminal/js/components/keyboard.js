@@ -1,7 +1,6 @@
-/*global define,$,_,Backbone */
+/*global B, $,_,Backbone */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal', 'components/commonbuttons', 'components/table',
-        'components/toolbarpayment', 'components/toolbarscan'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -433,4 +432,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
   });
 
 
-});
+}());

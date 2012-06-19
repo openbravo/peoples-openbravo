@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'i18n', 'components/renderorder', 'model/order', 'model/terminal'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -34,4 +34,4 @@ define(['builder', 'utilities', 'i18n', 'components/renderorder', 'model/order',
     this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;
   };
-});
+}());

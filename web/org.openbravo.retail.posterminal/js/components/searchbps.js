@@ -1,7 +1,6 @@
-/*global define, Backbone */
+/*global B, Backbone */
 
-define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order', 'model/terminal',
-        'components/renderbusinesspartner'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -80,4 +79,4 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons', 'model/order
     this.bpname = this.component.context.bpname.$el;
     this.tableview = this.component.context.tableview;
   };
-});
+}());

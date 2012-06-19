@@ -1,6 +1,6 @@
-/*global define, setInterval */
+/*global B, setInterval */
 
-define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -42,4 +42,4 @@ define(['builder', 'utilities', 'i18n', 'components/clock'], function (B) {
 
   };
 
-});
+}());

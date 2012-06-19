@@ -1,6 +1,6 @@
-/*global window, define, Backbone, require */
+/*global window, B, Backbone, require */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -46,4 +46,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     }
   });  
 
-});
+}());

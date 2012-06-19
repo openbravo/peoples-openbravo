@@ -1,6 +1,6 @@
-/*global define,$ */
+/*global B, $ */
 
-define(['builder', 'i18n'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
@@ -85,4 +85,4 @@ define(['builder', 'i18n'], function (B) {
   OB.UTIL.showError = function (s) {
     OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
   };
-});
+}());

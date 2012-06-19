@@ -1,6 +1,6 @@
-/*global define, $, _ */
+/*global B, $, _ */
 
-define([], function () {
+(function () {
 
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
@@ -43,6 +43,6 @@ define([], function () {
     });
   };
 
-});
+}());
 
 

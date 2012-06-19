@@ -1,6 +1,6 @@
-/*global define,$ */
+/*global B,$ */
 
-define([], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.DEC = window.OB.DEC || {};
@@ -52,4 +52,4 @@ define([], function (B) {
     roundingmode = r;
   };
 
-});
+}());

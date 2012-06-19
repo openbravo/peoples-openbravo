@@ -1,6 +1,6 @@
-/*global window, define, $, Backbone */
+/*global B, window, define, $, Backbone */
 
-define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -28,4 +28,4 @@ define(['builder', 'utilities', 'i18n', 'components/commonbuttons'], function (B
 	  label: OB.I18N.getLabel('OBPOS_LblDone'),
 	  attributes: {'href': '#modaldropdestinations', 'data-toggle': 'modal'}
   });
-});
+}());

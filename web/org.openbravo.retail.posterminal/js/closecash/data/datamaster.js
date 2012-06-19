@@ -1,6 +1,6 @@
-/*global define, Backbone, _ , $ */
+/*global B, Backbone, _ , $ */
 
-define(['utilities', 'datasource'], function () {
+(function () {
 
   var db, dbSize, dbSuccess, dbError, fetchTaxes;
 
@@ -71,4 +71,4 @@ _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
     return;
   }
 
-});
+}());

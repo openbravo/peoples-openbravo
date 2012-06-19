@@ -1,6 +1,6 @@
-/*global define,_,$*/
+/*global B, _, $*/
 
-define(['utilities', 'datasource'], function () {
+(function () {
 
   var db, dbSize, dbSuccess, dbError, fetchData;
 
@@ -131,4 +131,4 @@ define(['utilities', 'datasource'], function () {
   });
 
   OB.DATA.OfflineDB = db;
-});
+}());

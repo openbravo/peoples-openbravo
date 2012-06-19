@@ -1,6 +1,6 @@
-/*global define,Backbone,localStorage */
+/*global B, Backbone, localStorage */
 
-define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -17,4 +17,4 @@ define(['utilities', 'utilitiesui', 'arithmetic', 'i18n'], function () {
     }
   });
 
-});
+}());

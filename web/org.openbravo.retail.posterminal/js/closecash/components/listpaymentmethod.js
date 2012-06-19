@@ -1,6 +1,6 @@
-/*global define, Backbone */
+/*global B, Backbone */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table', 'closecash/components/renderpayments'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -64,4 +64,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
   OB.COMP.ListPaymentMethods.prototype.renderTotal = function () {
 //	  debugger;
 	  };
-});
+}());

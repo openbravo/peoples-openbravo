@@ -1,12 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'i18n', 'data/datamaster',
-        'components/commonbuttons', 'components/hwmanager','model/terminal', 'model/order',
-        'cashmgmt/components/cashmgmtbuttons',
-        'cashmgmt/windows/cashmgmtinfo',
-        'cashmgmt/components/cashmgmtkeyboard',
-        'cashmgmt/windows/depositsdrops', 'cashmgmt/components/modaldropdestinations'
-        ], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -59,4 +53,4 @@ define(['builder', 'i18n', 'data/datamaster',
   
   // register
   OB.POS.windows['retail.cashmanagement'] = OB.COMP.CashManagement;  
-});
+}());

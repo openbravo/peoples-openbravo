@@ -1,6 +1,6 @@
-/*global define, $, Backbone */
+/*global B, $, Backbone */
 
-define(['datasource', 'utilities', 'utilitiesui'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.MODEL = window.OB.MODEL || {};
@@ -296,4 +296,4 @@ define(['datasource', 'utilities', 'utilitiesui'], function () {
 
   });
 
-});
+}());

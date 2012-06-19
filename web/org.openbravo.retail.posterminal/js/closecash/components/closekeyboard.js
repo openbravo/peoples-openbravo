@@ -1,6 +1,6 @@
-/*global define,$,_,Backbone */
+/*global B, $, _, Backbone */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/keyboard', 'components/toolbarpayment'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -37,4 +37,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/keyboard', 'co
   });
 
 
-});
+}());

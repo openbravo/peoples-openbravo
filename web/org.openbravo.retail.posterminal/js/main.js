@@ -1,23 +1,12 @@
-/*global require,$, _, Backbone, window, confirm, OB, localStorage */
+/*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
-require.config({
-  paths: {
-    jQuery: 'libs/jquery/jquery',
-    Underscore: 'libs/underscore/underscore',
-    Backbone: 'libs/backbone/backbone',
-    text: 'libs/text-1.0.8.min'
-  }
-});
+(function () {
 
 // Must be defined before the require because componnets can register
-OB.POS = {
-  paymentProviders: {},
-  windows: {}    
-};
-
-require(['builder', 'windows/login', 
-         'windows/pointofsale', 'closecash/windows/closecash', 'cashmgmt/windows/cashmgmt', 
-         'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal', 'components/modallogout', 'components/modalprofile'], function(B, login) {
+  OB.POS = {
+    paymentProviders: {},
+    windows: {}    
+  };
 
   var modelterminal = new OB.MODEL.Terminal();
 
@@ -103,4 +92,4 @@ require(['builder', 'windows/login',
     modelterminal.load();
   });
 
-});
+}());

@@ -1,7 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table',
-        'components/renderproduct'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -49,4 +48,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
       this.titleProd.text(OB.I18N.getLabel('OBPOS_LblNoCategory'));
     }
   };
-});
+}());

@@ -1,6 +1,6 @@
 /*global window, define, Backbone */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons', 'cashmgmt/components/renderdropdestinations'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -17,4 +17,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/commonbuttons
     //debugger;
     }
   });
-});
+}());

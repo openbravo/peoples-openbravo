@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/table', 'components/renderorderline'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -90,4 +90,4 @@ define(['builder', 'utilities', 'model/order', 'model/terminal', 'components/tab
   OB.COMP.OrderView.prototype.renderTotal = function () {
     this.totalgross.text(this.receipt.printTotal());
   };
-});
+}());

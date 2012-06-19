@@ -1,6 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'utilities', 'i18n', 'components/payment', 'components/commonbuttons'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -18,4 +18,4 @@ define(['builder', 'utilities', 'i18n', 'components/payment', 'components/common
       OB.COMP.PaymentButton.extend({paymenttype: 'payment.cash', amount:0.05, classcolor: 'btnlink-lightpink'})
     ]
   });
-});
+}());

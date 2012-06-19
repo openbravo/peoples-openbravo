@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['utilities', 'arithmetic', 'i18n'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
@@ -19,4 +19,4 @@ define(['utilities', 'arithmetic', 'i18n'], function () {
       }
     }, this);
   };
-});
+}());

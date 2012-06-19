@@ -1,6 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'utilities', 'utilitiesui', 'components/commonbuttons', 'arithmetic', 'i18n'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -33,4 +33,4 @@ define(['builder', 'utilities', 'utilitiesui', 'components/commonbuttons', 'arit
       return this;
     }
   });
-});
+}());

@@ -1,6 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/terminal'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -39,5 +39,5 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'model/order', 'model/term
       this.toolbar.push({command: payments[i].searchKey, definition: getPayment(this.modalpayment, this.receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider), label: payments[i]._identifier});
     }
   };
-});
+}());
 

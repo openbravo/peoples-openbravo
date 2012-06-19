@@ -1,6 +1,6 @@
-/*global window, define, Backbone */
+/*global window, B, Backbone */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/listreceipts'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -88,4 +88,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'components/listreceipts'
     }
   });
 
-});
+}());

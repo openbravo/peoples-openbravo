@@ -1,6 +1,6 @@
-/*global define,_*/
+/*global B,_*/
 
-define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
+(function () {
 
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
@@ -29,4 +29,4 @@ define(['utilities', 'utilities', 'i18n', 'datasource'], function () {
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
   };
 
- });
+ }());

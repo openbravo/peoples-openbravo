@@ -1,16 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'i18n',
-        'data/datamaster', 'data/dal', 'data/dataordersave', 'data/dataordertaxes', 'data/dataorderdiscount',
-        'model/terminal', 'model/order',
-        'components/commonbuttons', 'components/hwmanager',
-        'windows/posbuttons',
-        'components/modalreceipts', 'components/modalbps',
-        'components/tabscan', 'components/tabbrowse', 'components/tabsearch', 'components/tabeditline', 'components/tabpayment',
-        'components/order', 'components/orderdetails', 'components/businesspartner', 'components/listreceiptscounter', 'components/keyboard'
-        // payment providers...
-        // '../../../org.openbravo.paymentgateway.elementps/js/mockpayments', '../../../org.openbravo.paymentgateway.elementps/js/hostedpayments'    
-        ], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -127,4 +117,4 @@ define(['builder', 'i18n',
 
   // register
   OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
-});
+}());

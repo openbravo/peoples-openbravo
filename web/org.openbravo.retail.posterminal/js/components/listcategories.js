@@ -1,7 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/terminal', 'components/table',
-        'components/rendercategory'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -46,4 +45,4 @@ define(['builder', 'utilities', 'utilitiesui', 'i18n', 'model/order', 'model/ter
     // Exec
     this.categories.exec();
   };
-});
+}());

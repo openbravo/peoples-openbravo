@@ -1,17 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'i18n', 'closecash/data/datamaster',
-        'components/commonbuttons', 'components/hwmanager',
-        'closecash/model/daycash','model/terminal', 'model/order',
-        'closecash/components/closebuttons',
-        'closecash/windows/closeinfo',
-        'closecash/components/closekeyboard',
-        'closecash/windows/tabpendingreceipts',
-        'closecash/windows/tabcountcash', 'closecash/windows/tabpostprintclose',
-        'closecash/components/listpaymentmethod',
-        'closecash/components/renderpayments'
-
-        ], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -69,4 +58,4 @@ define(['builder', 'i18n', 'closecash/data/datamaster',
   
   // register
   OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
-});
+}());

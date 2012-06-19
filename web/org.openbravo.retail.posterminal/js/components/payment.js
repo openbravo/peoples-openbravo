@@ -1,6 +1,6 @@
-/*global define */
+/*global B */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons', 'components/modalpayment', 'model/order'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -156,4 +156,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n', 'components/commonbuttons'
     }
 
   });
-});
+}());

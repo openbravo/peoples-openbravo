@@ -1,6 +1,6 @@
-/*global define, $, Backbone */
+/*global B, $, Backbone */
 
-define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -24,4 +24,4 @@ define(['builder', 'utilities', 'model/order', 'model/terminal'], function (B) {
       this.totalgross.text(this.receipt.printTotal());
     }
   });
-});
+}());

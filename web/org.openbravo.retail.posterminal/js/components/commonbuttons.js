@@ -1,6 +1,6 @@
-/*global window, define, $, Backbone, _ */
+/*global window, B, $, Backbone, _ */
 
-define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -239,4 +239,4 @@ define(['builder', 'utilities', 'i18n', 'model/order', 'model/terminal'], functi
     }
   });
 
-});
+}());

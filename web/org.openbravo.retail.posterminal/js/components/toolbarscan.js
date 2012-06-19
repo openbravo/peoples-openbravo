@@ -1,6 +1,6 @@
-/*global define, $ */
+/*global B, $ */
 
-define(['builder', 'utilities', 'arithmetic', 'i18n'], function (B) {
+(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -10,4 +10,4 @@ define(['builder', 'utilities', 'arithmetic', 'i18n'], function (B) {
       {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')}
     ];
   };
-});
+}());

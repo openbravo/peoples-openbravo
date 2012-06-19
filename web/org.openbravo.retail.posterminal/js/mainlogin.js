@@ -1,15 +1,6 @@
-/*global require,$, _, Backbone, window, confirm, OB */
+/*global B, $, _, Backbone, window, confirm, OB */
 
-require.config({
-  paths: {
-    jQuery: 'libs/jquery/jquery',
-    Underscore: 'libs/underscore/underscore',
-    Backbone: 'libs/backbone/backbone',
-    text: 'libs/text-1.0.8.min'
-  }
-});
-
-require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 'model/terminal', 'components/terminal'], function(B, login) {
+(function () {
 
   var modelterminal = new OB.MODEL.Terminal();
 
@@ -118,7 +109,7 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
 
     function renderLoginPage() {
       var c = _.extend({}, Backbone.Events);
-      $("#containerwindow").empty().append((new login(c)).$el);
+      $("#containerwindow").empty().append((new OB.COMP.Login(c)).$el);
       c.trigger('domready');
     }
 
@@ -166,4 +157,4 @@ require(['builder', 'windows/login', 'utilitiesui', 'arithmetic', 'datasource', 
     getLoginLabels();
   });
 
-});
+}());
