@@ -23,7 +23,14 @@ OB.RM = OB.RM || {};
  * Check that entered return quantity is less than original inout qty.
  */
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
-  var movementQty = new BigDecimal(String(record.movementQuantity)),
+  if (!isc.isA.Number(value)) {
+    return false;
+  }
+  // Check if record has related shipment to skip check.
+  if (record.goodsShipmentLine === null || record.goodsShipmentLine === '') {
+    return value !== null && value > 0;
+  }
+  var movementQty = record.movementQuantity !== null ? new BigDecimal(String(record.movementQuantity)) : BigDecimal.prototype.ZERO,
       returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
       newReturnedQty = new BigDecimal(String(value));
   if ((value !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (value > 0)) {

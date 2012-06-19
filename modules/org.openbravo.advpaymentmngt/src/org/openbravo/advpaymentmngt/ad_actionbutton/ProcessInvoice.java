@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -45,6 +45,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonUtility;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
@@ -195,8 +196,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           // account defined or invoice's payment method is not inside BP's financial
           // account do not cancel credit
           if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
-              && isPaymentMethodConfigured(invoice) && !isInvoiceWithPayments(invoice)
-              && ("API".equals(invoiceDocCategory) || "ARI".equals(invoiceDocCategory))) {
+              && isPaymentMethodConfigured(invoice)
+              && !isInvoiceWithPayments(invoice)
+              && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory) || AcctServer.DOCTYPE_APInvoice
+                  .equals(invoiceDocCategory))) {
             creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
                 invoice.getBusinessPartner(), invoice.isSalesTransaction());
             if (creditPayments != null && !creditPayments.isEmpty()) {
@@ -301,7 +304,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           // Create new Payment
           final boolean isSalesTransaction = invoice.isSalesTransaction();
           final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
-              isSalesTransaction ? "ARR" : "APP");
+              isSalesTransaction ? AcctServer.DOCTYPE_ARReceipt : AcctServer.DOCTYPE_APPayment);
           final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
               docType.getTable() != null ? docType.getTable().getDBTableName() : "");
           final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
@@ -450,11 +453,13 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("css", vars.getTheme());
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
-    xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
     xmlDocument.setParameter("window", strWindowId);
     xmlDocument.setParameter("tab", strTabId);
     xmlDocument.setParameter("adOrgId", strOrg);
+
+    xmlDocument.setParameter("messageType", "SUCCESS");
+    xmlDocument.setParameter("messageTitle",
+        Utility.messageBD(this, "InvoiceComplete", vars.getLanguage()));
 
     xmlDocument.setParameter("invoiceGrossAmt", dao.getObject(Invoice.class, strC_Invoice_ID)
         .getGrandTotalAmount().toString());

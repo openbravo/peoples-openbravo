@@ -46,6 +46,7 @@ isc.OBMessageBar.addProperties({
   closeIcon: null,
 
   initWidget: function () {
+    this.Super('initWidget', arguments);
     this.mainIcon = isc.OBMessageBarMainIcon.create({});
     this.text = isc.OBMessageBarDescriptionText.create({
       contents: ''

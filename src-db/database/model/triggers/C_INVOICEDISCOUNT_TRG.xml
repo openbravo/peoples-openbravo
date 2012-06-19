@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2009 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -38,7 +38,7 @@ BEGIN
     FROM C_INVOICE
     WHERE C_INVOICE_ID=:OLD.C_INVOICE_ID;
     IF(v_Processed='Y') THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   -- Get ID
@@ -55,7 +55,7 @@ BEGIN
     AND(Processed='Y'
     OR Posted='Y') ;
   IF(v_RO > 0) THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
 END C_INVOICEDISCOUNT_TRG
 ]]></body>

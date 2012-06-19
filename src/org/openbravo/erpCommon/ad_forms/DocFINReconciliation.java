@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,13 +25,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -62,7 +63,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
-import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -76,6 +76,8 @@ public class DocFINReconciliation extends AcctServer {
   private static final Logger log4j = Logger.getLogger(DocFINReconciliation.class);
 
   String SeqNo = "0";
+
+  Set<FIN_FinaccTransaction> transactionsToBePosted = new HashSet<FIN_FinaccTransaction>();
 
   public DocFINReconciliation() {
   }
@@ -109,9 +111,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] linesInfo = null;
     OBContext.setAdminMode();
     try {
-      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
-      List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
-      for (FIN_FinaccTransaction transaction : transactions) {
+      for (FIN_FinaccTransaction transaction : transactionsToBePosted) {
         FIN_Payment payment = transaction.getFinPayment();
         // If payment exists the payment details are loaded, if not the GLItem info is loaded,
         // finally fee is loaded
@@ -477,7 +477,7 @@ public class DocFINReconciliation extends AcctServer {
         String strPaymentId = data[i].getField("FIN_Payment_ID");
         if (strPaymentId != null && !strPaymentId.equals(""))
           docLine.setFinPaymentId(strPaymentId);
-        docLine.m_Record_Id2 = strPaymentId;
+        // docLine.m_Record_Id2 = strPaymentId;
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
         docLine.setPaymentAmount(data[i].getField("PaymentAmount"));
@@ -548,12 +548,13 @@ public class DocFINReconciliation extends AcctServer {
         FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
             line.getFinFinAccTransactionId());
         // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd GL item transaction
-        if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
+        if (TRXTYPE_BankFee.equals(transaction.getTransactionType())) {
           fact = createFactFee(line, as, conn, fact, Fact_Acct_Group_ID);
-        else if (!"".equals(line.getFinPaymentId()))
+        } else if (!"".equals(line.getFinPaymentId())) {
           fact = createFactPayment(line, as, conn, fact, Fact_Acct_Group_ID);
-        else
+        } else {
           fact = createFactGLItem(line, as, conn, fact, Fact_Acct_Group_ID);
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -953,41 +954,46 @@ public class DocFINReconciliation extends AcctServer {
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
+          }
           if (payment.isReceipt()) {
             if (("INT").equals(lines.get(0).getUponDepositUse())
-                && account.getInTransitPaymentAccountIN() != null)
+                && account.getInTransitPaymentAccountIN() != null) {
               confirmation = true;
-            else if (("DEP").equals(lines.get(0).getUponDepositUse())
-                && account.getDepositAccount() != null)
+            } else if (("DEP").equals(lines.get(0).getUponDepositUse())
+                && account.getDepositAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponDepositUse())
-                && account.getClearedPaymentAccount() != null)
+            } else if (("CLE").equals(lines.get(0).getUponDepositUse())
+                && account.getClearedPaymentAccount() != null) {
               confirmation = true;
+            }
           } else {
             if (("INT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getFINOutIntransitAcct() != null)
+                && account.getFINOutIntransitAcct() != null) {
               confirmation = true;
-            else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getWithdrawalAccount() != null)
+            } else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getWithdrawalAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getClearedPaymentAccountOUT() != null)
+            } else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getClearedPaymentAccountOUT() != null) {
               confirmation = true;
+            }
           }
         }
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
+          }
           if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType()) && account
               .getDepositAccount() != null)
               || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType()) && account
                   .getWithdrawalAccount() != null)
               || (TRXTYPE_BankFee.equals(transaction.getTransactionType()) && account
-                  .getWithdrawalAccount() != null))
+                  .getWithdrawalAccount() != null)) {
             confirmation = true;
+          }
         }
       }
     } catch (Exception e) {
@@ -1004,7 +1010,6 @@ public class DocFINReconciliation extends AcctServer {
    */
   @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    boolean confirmation = false;
     OBContext.setAdminMode();
     try {
       FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
@@ -1013,8 +1018,6 @@ public class DocFINReconciliation extends AcctServer {
       List<FIN_FinancialAccountAccounting> accounts = reconciliation.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinaccTransaction transaction : transactions) {
-        if (confirmation)
-          break;
         FIN_Payment payment = transaction.getFinPayment();
         // If payment exists, check Payment Method + financial Account Configuration
         if (payment != null) {
@@ -1028,87 +1031,68 @@ public class DocFINReconciliation extends AcctServer {
           obCriteria.setFilterOnReadableOrganization(false);
           List<FinAccPaymentMethod> lines = obCriteria.list();
           for (FIN_FinancialAccountAccounting account : accounts) {
-            if (confirmation)
-              return confirmation;
             if (payment.isReceipt()) {
               if (("INT").equals(lines.get(0).getINUponClearingUse())
-                  && account.getInTransitPaymentAccountIN() != null)
-                confirmation = true;
-              else if (("DEP").equals(lines.get(0).getINUponClearingUse())
-                  && account.getDepositAccount() != null)
-                confirmation = true;
-              else if (("CLE").equals(lines.get(0).getINUponClearingUse())
-                  && account.getClearedPaymentAccount() != null)
-                confirmation = true;
+                  && account.getInTransitPaymentAccountIN() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("DEP").equals(lines.get(0).getINUponClearingUse())
+                  && account.getDepositAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("CLE").equals(lines.get(0).getINUponClearingUse())
+                  && account.getClearedPaymentAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              }
             } else {
               if (("INT").equals(lines.get(0).getOUTUponClearingUse())
-                  && account.getFINOutIntransitAcct() != null)
-                confirmation = true;
-              else if (("WIT").equals(lines.get(0).getOUTUponClearingUse())
-                  && account.getWithdrawalAccount() != null)
-                confirmation = true;
-              else if (("CLE").equals(lines.get(0).getOUTUponClearingUse())
-                  && account.getClearedPaymentAccountOUT() != null)
-                confirmation = true;
+                  && account.getFINOutIntransitAcct() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("WIT").equals(lines.get(0).getOUTUponClearingUse())
+                  && account.getWithdrawalAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("CLE").equals(lines.get(0).getOUTUponClearingUse())
+                  && account.getClearedPaymentAccountOUT() != null) {
+                transactionsToBePosted.add(transaction);
+              }
             }
           }
         } else if (transaction.getGLItem() != null) {
           for (FIN_FinancialAccountAccounting account : accounts) {
-            if (confirmation)
-              return confirmation;
             if ("BPD".equals(transaction.getTransactionType())
                 && account.getClearedPaymentAccount() != null) {
-              confirmation = true;
+              transactionsToBePosted.add(transaction);
             } else if ("BPW".equals(transaction.getTransactionType())
                 && account.getClearedPaymentAccountOUT() != null) {
-              confirmation = true;
+              transactionsToBePosted.add(transaction);
             }
           }
         } else {
           for (FIN_FinancialAccountAccounting account : accounts) {
-            if (confirmation)
-              return confirmation;
             if ("BF".equals(transaction.getTransactionType())
                 && account.getClearedPaymentAccountOUT() != null) {
-              confirmation = true;
+              transactionsToBePosted.add(transaction);
             }
           }
         }
       }
-      if (confirmation) {
-        // Exists line in closed period
-        Period period = documentGetPeriod(reconciliation.getTransactionDate());
-        OBCriteria<FIN_ReconciliationLine_v> obCriteria = OBDal.getInstance().createCriteria(
-            FIN_ReconciliationLine_v.class);
-        obCriteria.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION,
-            reconciliation));
-        obCriteria.add(Restrictions.or(
-            Restrictions.ge(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE,
-                period.getEndingDate()),
-            Restrictions.le(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE,
-                period.getStartingDate())));
-        obCriteria.setFilterOnReadableOrganization(false);
-        obCriteria.addOrder(Order.asc(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE));
-        obCriteria.toString();
-        List<FIN_ReconciliationLine_v> lines = obCriteria.list();
-        for (FIN_ReconciliationLine_v line : lines) {
-          Period linePeriod = documentGetPeriod(line.getAccountingDate());
-          if (linePeriod == null) {
-            confirmation = false;
-            setStatus(STATUS_PeriodClosed);
-            return confirmation;
-          }
+      // Exists line in closed period
+      for (FIN_FinaccTransaction line : transactionsToBePosted) {
+        Period linePeriod = documentGetPeriod(line.getDateAcct());
+        if (linePeriod == null) {
+          setStatus(STATUS_PeriodClosed);
+          return false;
         }
       }
     } catch (Exception e) {
       setStatus(STATUS_DocumentDisabled);
-      return confirmation;
+      return false;
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (!confirmation)
+    if (transactionsToBePosted.size() == 0) {
       setStatus(STATUS_DocumentDisabled);
-    return confirmation;
+      return false;
+    }
+    return true;
   }
 
   @Override

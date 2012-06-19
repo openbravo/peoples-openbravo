@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2001-2008 Openbravo SLU
+  * All portions are Copyright (C) 2001-2012 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -44,7 +44,7 @@ BEGIN
       FROM C_BANKACCOUNT
       WHERE C_BANKACCOUNT_ID=cur_BankAccount.C_BANKACCOUNT_ID;
       IF (v_IBANCount > 0 AND :OLD.C_COUNTRY_ID <> :NEW.C_COUNTRY_ID) THEN
-        RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20259@') ;
       END IF;
     END LOOP;
   END LOOP;

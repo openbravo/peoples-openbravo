@@ -63,7 +63,7 @@ isc.OBStatusBarLeftBar.addProperties({
   layoutLeftMargin: 7,
   defaultLayoutAlign: 'center',
   align: 'left',
-  overflow: 'visible'
+  overflow: 'hidden'
 });
 
 isc.OBStatusBarTextLabel.addProperties({
@@ -79,7 +79,8 @@ isc.OBStatusBarIconButtonBar.addProperties({
   width: 130,
   align: 'right',
   overflow: 'visible',
-  membersMargin: 4
+  membersMargin: 4,
+  layoutLeftMargin: 3
 });
 
 isc.OBStatusBarIconButton.addProperties({

@@ -242,7 +242,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
   length = statusBarFields.length;
   for (i = 0; i < length; i++) {
     record = dataFields.find('name', statusBarFields[i]);
-    if (record && !record.parentName) {
+    if (record) {
       record.parentName = OB.Personalization.STATUSBAR_GROUPNAME;
       // these items can not be moved from the statusbar
       record.isStatusBarField = true;

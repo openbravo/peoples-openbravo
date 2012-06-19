@@ -93,15 +93,15 @@
         openedFromMaintenanceWindow: true,
 
         tabId: record.tab,
-        tabIdentifier: record['tab._identifier'],
+        tabIdentifier: record['tab' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
         clientId: record.visibleAtClient,
-        clientIdentifier: record['visibleAtClient._identifier'],
+        clientIdentifier: record['visibleAtClient' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
         orgId: record.visibleAtOrganization,
-        orgIdentifier: record['visibleAtOrganization._identifier'],
+        orgIdentifier: record['visibleAtOrganization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
         roleId: record.visibleAtRole,
-        roleIdentifier: record['visibleAtRole._identifier'],
+        roleIdentifier: record['visibleAtRole' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
         userId: record.user,
-        userIdentifier: record['user._identifier']
+        userIdentifier: record['user' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]
       });
       personalizeForm.doOpen();
     },

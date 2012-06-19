@@ -54,17 +54,18 @@ isc.OBTestSelectionGrid.addProperties({
   actionHandler: null,
 
   initWidget: function () {
-    var me = this;
+    var me = this,
+        callBack;
 
     // the data request calls this method, which sets the data in the grid
-    var callBack = function (response, data, request) {
-        me.dataSource = isc.DataSource.create({
-          clientOnly: true,
-          fields: me.fields,
-          testData: data.list
-        });
-        me.filterData();
-        };
+    callBack = function (response, data, request) {
+      me.dataSource = isc.DataSource.create({
+        clientOnly: true,
+        fields: me.fields,
+        testData: data.list
+      });
+      me.filterData();
+    };
 
     // request the data, note the _command value
     OB.RemoteCallManager.call(this.actionHandler, {}, {

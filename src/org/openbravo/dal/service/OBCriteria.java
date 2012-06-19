@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -159,7 +158,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
       if (orderOn.indexOf(".") != -1) {
         final String orderJoin = orderOn.substring(0, orderOn.lastIndexOf("."));
         final String alias = "order_ob_" + j;
-        createCriteria(orderJoin, alias, CriteriaSpecification.LEFT_JOIN);
+        createAlias(orderJoin, alias);
         orderOn = alias + "." + orderOn.substring(orderOn.lastIndexOf(".") + 1);
       }
 

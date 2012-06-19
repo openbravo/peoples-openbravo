@@ -29,15 +29,15 @@ test('Create Canvas', function () {
   expect(3);
 
   var canvasID = 'myCanvas',
-      canvas;
-  var createCanvas = function (isc) {
-      var c = isc.Canvas.newInstance({
-        ID: canvasID,
-        width: '100%',
-        height: '100%'
-      });
-      return c;
-      };
+      canvas, createCanvas;
+  createCanvas = function (isc) {
+    var c = isc.Canvas.newInstance({
+      ID: canvasID,
+      width: '100%',
+      height: '100%'
+    });
+    return c;
+  };
 
   canvas = createCanvas(isc);
   canvas.setBackgroundColor('blue');

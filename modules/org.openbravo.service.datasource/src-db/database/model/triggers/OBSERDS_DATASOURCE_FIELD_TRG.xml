@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -50,11 +50,11 @@ BEGIN
      D.OBSERDS_DATASOURCE_ID = currentDSID;
 
     IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
-      RAISE_APPLICATION_ERROR(-20532, 'Cannot update an object in a module not in developement and without an active template');
+      RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
 
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
-    RAISE_APPLICATION_ERROR(-20533, 'Cannot insert/delete objects in a module not in development.');
+    RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
 
 END OBSERDS_DATASOURCE_FIELD_TRG

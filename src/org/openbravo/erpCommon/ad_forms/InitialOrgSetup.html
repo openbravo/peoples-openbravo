@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,14 +52,13 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
   var frm = document.frmMain;
-  if ((frm.inpCurrency.value==null || frm.inpCurrency.value=="") && frm.inpCreateAccounting.checked==true) {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrganization.value==null || frm.inpOrganization.value=="") {setWindowElementFocus(frm.inpOrganization); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpOrgType.value==null || frm.inpOrgType.value=="") {setWindowElementFocus(frm.inpOrgType); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpParentOrg.value==null || frm.inpParentOrg.value=="") {setWindowElementFocus(frm.inpParentOrg); showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpOrgUser.value==null || frm.inpOrgUser.value=="") {setWindowElementFocus(frm.inpOrgUser);  showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpPassword.value==null || frm.inpPassword.value=="") {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpConfirmPassword.value==null || frm.inpConfirmPassword.value=="") {setWindowElementFocus(frm.inpConfirmPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpConfirmPassword.value!=frm.inpPassword.value) {setWindowElementFocus(frm.inpConfirmPassword);  showJSMessage(20); setProcessingMode('window',false); return false; }
+  if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && (frm.inpPassword.value==null || frm.inpPassword.value=="")) {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && (frm.inpConfirmPassword.value==null || frm.inpConfirmPassword.value=="")) {setWindowElementFocus(frm.inpConfirmPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpOrgUser.value!=null && frm.inpOrgUser.value!="" && frm.inpConfirmPassword.value!=frm.inpPassword.value) {setWindowElementFocus(frm.inpConfirmPassword);  showJSMessage(20); setProcessingMode('window',false); return false; }
+  if ((frm.inpCurrency.value==null || frm.inpCurrency.value=="") && frm.inpCreateAccounting.checked==true) {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
   return true;
 }
 
@@ -82,8 +81,8 @@ function myReadOnlyLogic() {
       frm.inpSalesRegion.disabled=false;
       frm.inpFile.disabled=false;
     } else {
-      readOnlyLogicElement('inpCurrency', true);
       frm.inpCurrency.value="";
+      readOnlyLogicElement('inpCurrency', true);
       frm.inpBPartner.checked=false;
       frm.inpProduct.checked=false;
       frm.inpProject.checked=false;
@@ -304,17 +303,17 @@ function myReadOnlyLogic() {
                   </td>
                   <td class="TitleCell"><span class="LabelText">Organization Username</span></td>
                   <td class="Combo_ContentCell" colspan="2">
-                    <input dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpOrgUser" id="paramOrgClient" maxlength="30" value="OrgUser"></input><script>djConfig.searchIds.push("paramOrgClient");</script>
+                    <input dojoType="openbravo:ValidationTextbox" class="TextBox_TwoCells_width" type="text" name="inpOrgUser" id="paramOrgClient" maxlength="30"></input><script>djConfig.searchIds.push("paramOrgClient");</script>
                   </td>
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Password</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
-                   <input type="password" dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" name="inpPassword" id="inpPassword"    maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
+                   <input type="password" dojoType="openbravo:ValidationTextbox" class="TextBox_TwoCells_width" name="inpPassword" id="inpPassword"    maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
                   </td>
                   <td class="TitleCell"><span class="LabelText">Confirm Password</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
-                   <input type="password" dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" name="inpConfirmPassword" id="inpConfirmPassword" maxlength="40"></input><script>djConfig.searchIds.push("inpConfirmPassword");</script>
+                   <input type="password" dojoType="openbravo:ValidationTextbox" class="TextBox_TwoCells_width" name="inpConfirmPassword" id="inpConfirmPassword" maxlength="40"></input><script>djConfig.searchIds.push("inpConfirmPassword");</script>
                   </td>
                 </tr>
                 <tr>

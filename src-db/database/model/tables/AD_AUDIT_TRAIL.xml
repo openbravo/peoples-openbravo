@@ -101,6 +101,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OLD_TEXT" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NEW_TEXT" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <index name="AD_AUDIT_TRAIL_INSERT_IDX" unique="false">
         <index-column name="AD_TABLE_ID"/>
         <index-column name="RECORD_ID"/>

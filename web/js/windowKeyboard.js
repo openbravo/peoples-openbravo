@@ -168,7 +168,9 @@ function windowTableId(tableId, defaultActionButtonId) {
 }
 
 function setWindowTableParentElement() {
-  setMDIEnvironment();
+  if (moreOnLoadDoFunctions) {
+    moreOnLoadDoFunctions();
+  }
   windowTableParentElement = windowTables[focusedWindowTable].tableId;
 }
 
@@ -461,7 +463,7 @@ function drawWindowElementFocus(obj) {
       }
       isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
-      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
+      if (navigator.userAgent.toUpperCase().indexOf('MSIE') == -1) {
         if (obj.className.indexOf(' Combo_focus') == -1) {
           obj.className = obj.className.replace('Login_Combo', 'Login_Combo_focus');
           obj.className = obj.className + ' Combo_focus';

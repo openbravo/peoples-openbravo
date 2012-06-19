@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -284,6 +284,7 @@
               WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                 AND pb.M_Product_ID=pp.M_PRODUCT_ID
                 AND pp.M_PRODUCTION_ID=v_Record_ID
+                AND pb.isactive='Y'
               ORDER BY pb.M_PRODUCTBOM_ID,
                 pb.Line
               )
@@ -383,8 +384,13 @@
               --<<NEXT_PRODUCT>>
               NEXT_PRODUCT:=false;
               v_Line:=v_Line;
-              IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) THEN
+              IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) AND MustBeStocked='Y' THEN
                 v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;
+                ROLLBACK;
+                RAISE_APPLICATION_ERROR(-20000, v_Message);
+              END IF;
+              IF (CUR_BOM.ProductionQty <= 0) THEN
+                v_Message := '@NegativeBOMProductionQty@';
                 ROLLBACK;
                 RAISE_APPLICATION_ERROR(-20000, v_Message);
               END IF;
@@ -446,6 +452,7 @@
                   M_PRODUCT p
                 WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                   AND pb.M_Product_ID=CUR_PLineBOM.M_Product_ID
+                  AND pb.isactive='Y'
                 ORDER BY pb.M_PRODUCTBOM_ID,
                   pb.Line
                 )

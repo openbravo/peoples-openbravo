@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -273,6 +273,16 @@ public class XmlDocument implements XmlComponentValue {
           xmlVectorValue.handler = handler;
       } else {
         log4jXmlDocument.debug("print(String strBlank) - properties file not found");
+        try {
+          handler.setLanguage(xmlTemplate.xmlEngine.sessionLanguage);
+          handler.generateTranslations();
+          if (!ignoreTranslation && handler.getFormLabels() != null
+              && !handler.getFormLabels().isEmpty()) {
+            xmlVectorValue.setTextMap(handler.getFormLabels());
+          }
+        } catch (Exception e) {
+          log4jXmlDocument.error("Error translating", e);
+        }
       }
     } else {
       log4jXmlDocument.debug("print(String strBlank) - hasParameterValue is null");

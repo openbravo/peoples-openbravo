@@ -315,7 +315,10 @@ isc.OBSelectorItem.addProperties({
 
   autoFetchData: false,
   showPickerIcon: true,
-  validateOnChange: true,
+  //  selectors should not be validated on change, only after its content has been deleted
+  //  and after an option of the combo has been selected
+  //  see issue 19956 (https://issues.openbravo.com/view.php?id=19956)
+  validateOnChange: false,
   completeOnTab: true,
   // note validateonexit does not work when completeOnTab is true
   // setting it anyway, the this.validate() is called in the blur
@@ -356,6 +359,40 @@ isc.OBSelectorItem.addProperties({
       return;
     }
     this.Super('updateValue', arguments);
+  },
+
+  setValue: function (val) {
+    var i, displayedVal;
+
+    if (val && this.valueMap) {
+      displayedVal = this.valueMap[val];
+      for (i in this.valueMap) {
+        if (this.valueMap.hasOwnProperty(i)) {
+          if (this.valueMap[i] === displayedVal && i !== val) {
+            // cleaning up valueMap: there are 2 values that display the same info, keep just the one for
+            // the current value
+            delete this.valueMap[i];
+            break;
+          }
+        }
+      }
+    } else { //Select by default the first option in the picklist, if possible
+      this.selectFirstPickListOption();
+    }
+
+    this.Super('setValue', arguments);
+  },
+
+  selectFirstPickListOption: function () {
+    var firstRecord;
+    if (this.pickList) {
+      if (this.pickList.data && (this.pickList.data.totalRows > 0)) {
+        firstRecord = this.pickList.data.get(0);
+        this.pickList.selection.selectSingle(firstRecord);
+        this.pickList.clearLastHilite();
+        this.pickList.scrollRecordIntoView(0);
+      }
+    }
   },
 
   // changed handles the case that the user removes the value using the keyboard
@@ -437,26 +474,28 @@ isc.OBSelectorItem.addProperties({
 
   setValueFromRecord: function (record, fromPopup) {
     var currentValue = this.getValue(),
-        identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+        i;
     if (!record) {
       this.storeValue(null);
-      this.form.setValue(this.name + '.' + this.displayField, null);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, null);
       this.form.setValue(identifierFieldName, null);
 
       // make sure that the grid does not display the old identifier
       if (this.form.grid && this.form.grid.getEditForm()) {
         this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name, null);
         this.form.grid.setEditValue(this.form.grid.getEditRow(), identifierFieldName, '');
-        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + '.' + this.displayField, '');
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, '');
       }
     } else {
       this.handleOutFields(record);
       this.storeValue(record[this.valueField]);
-      this.form.setValue(this.name + '.' + this.displayField, record[this.displayField]);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
       if (!this.valueMap) {
         this.valueMap = {};
       }
+
       this.valueMap[record[this.valueField]] = record[this.displayField];
       this.updateValueMap();
     }
@@ -500,7 +539,7 @@ isc.OBSelectorItem.addProperties({
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
             item = form.getItem(outFields[i].fieldName);
             if (item && item.valueMap) {
-              item.valueMap[value] = record[outFields[i].fieldName + '._identifier'];
+              item.valueMap[value] = record[outFields[i].fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
             }
           } else {
             form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
@@ -649,7 +688,7 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
         this.valueMap[value] = '';
         return '';
-      } else if (!this.valueMap[value]) {
+      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
     }

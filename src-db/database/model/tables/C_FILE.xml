@@ -66,5 +66,9 @@
       <foreign-key foreignTable="AD_TABLE" name="C_FILE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <index name="C_FILE_RECORD_IDX" unique="false">
+        <index-column name="AD_TABLE_ID"/>
+        <index-column name="AD_RECORD_ID"/>
+      </index>
     </table>
   </database>

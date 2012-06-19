@@ -399,7 +399,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function () {
-    var me = this;
+    var me = this,
+        completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
         canFocus: true,
@@ -428,7 +429,12 @@ isc.OBStandardView.addProperties({
         }
       });
 
-      this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
+      // the grid should not show the image fields
+      // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+      completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
+      fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
+
+      this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
 
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
@@ -504,6 +510,31 @@ isc.OBStandardView.addProperties({
       // children
       this.statusBar.maximizeButton.disable();
     }
+  },
+
+  // returns a copy of fields after deleting the image fields
+  // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+  removeImageFields: function (fields) {
+    var indexesToDelete, i, length, fieldsWithoutImages;
+    indexesToDelete = [];
+    if (fields) {
+      fieldsWithoutImages = fields.duplicate();
+      length = fieldsWithoutImages.length;
+      // gets the index of the image fields
+      for (i = 0; i < length; i++) {
+        if (fieldsWithoutImages[i].targetEntity === 'ADImage') {
+          indexesToDelete.push(i);
+        }
+      }
+      // removes the image fields
+      length = indexesToDelete.length;
+      for (i = 0; i < length; i++) {
+        fieldsWithoutImages.splice(indexesToDelete[i] - i, 1);
+      }
+    } else {
+      fieldsWithoutImages = fields;
+    }
+    return fieldsWithoutImages;
   },
 
   getDirectLinkUrl: function () {
@@ -616,6 +647,9 @@ isc.OBStandardView.addProperties({
   setReadOnly: function (readOnly) {
     this.readOnly = readOnly;
     this.viewForm.readOnly = readOnly;
+    if (this.viewGrid && readOnly) {
+      this.viewGrid.setReadOnlyMode();
+    }
   },
 
   setSingleRecord: function (singleRecord) {
@@ -629,6 +663,15 @@ isc.OBStandardView.addProperties({
     // clear for a non-focusable item
     if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
       this.lastFocusedItem = null;
+    }
+
+    // Enable the shortcuts of the form and grid view
+    // See issue 20651 (https://issues.openbravo.com/view.php?id=20651)
+    if (this.viewForm && this.viewForm.enableShortcuts) {
+      this.viewForm.enableShortcuts();
+    }
+    if (this.viewGrid && this.viewGrid.enableShortcuts) {
+      this.viewGrid.enableShortcuts();
     }
 
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
@@ -837,19 +880,33 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  refreshChildViewsWithEntity: function (entity) {
-    var i, length, tabViewPane;
-    if (entity && this.childTabSet) {
-      length = this.childTabSet.tabs.length;
-      for (i = 0; i < length; i++) {
-        tabViewPane = this.childTabSet.tabs[i].pane;
-        // if the view belong to the input entity, it is refreshed
-        // See https://issues.openbravo.com/view.php?id=18951
-        if (tabViewPane && tabViewPane.entity === entity) {
-          tabViewPane.doRefreshContents(true);
+  refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
+    var i, length, tabViewPane, excludeTab = false;
+    if (entity && excludedTabIds) {
+      //Check is the tab has to be refreshed
+      for (i = 0; i < excludedTabIds.length; i++) {
+        if (excludedTabIds[i].match(this.tabId)) {
+          excludeTab = true;
+          // removes the tabId from the list of excluded, so it does
+          // not have to be checked by the child tabs
+          excludedTabIds.splice(i, 1);
+          break;
         }
-        // Refresh the child views of these tab
-        tabViewPane.refreshChildViewsWithEntity(entity);
+      }
+      // If it the tab is not in the exclude list, refresh 
+      // it if it belongs to the entered entity
+      if (!excludeTab) {
+        if (this.entity === entity) {
+          this.doRefreshContents(true);
+        }
+      }
+      // Refresh the child views of this tab
+      if (this.childTabSet) {
+        length = this.childTabSet.tabs.length;
+        for (i = 0; i < length; i++) {
+          tabViewPane = this.childTabSet.tabs[i].pane;
+          tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+        }
       }
     }
   },
@@ -960,7 +1017,9 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function (record, preventFocus, focusFieldName) {
-
+    var rowNum,
+    // at this point the time fields of the record are formatted in local time
+    localTime = true;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -976,8 +1035,8 @@ isc.OBStandardView.addProperties({
 
       // also handle the case that there are unsaved values in the grid
       // show them in the form
-      var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName);
+      rowNum = this.viewGrid.getRecordIndex(record);
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
     }
   },
 
@@ -1271,7 +1330,7 @@ isc.OBStandardView.addProperties({
     // added check on tab as initially it is not set
     if (this.isRootView && tab) {
       // update the document title
-      document.title = 'Openbravo - ' + tab.title;
+      document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
     }
   },
 
@@ -1432,7 +1491,7 @@ isc.OBStandardView.addProperties({
     var msg, dialogTitle, view = this,
         deleteCount, callback;
 
-    if (!this.readOnly) {
+    if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
       if (!autoSaveDone) {
         var actionObject = {
@@ -1835,11 +1894,28 @@ isc.OBStandardView.addProperties({
   },
 
   convertContextValue: function (value, type) {
-    var isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+    var isTime;
+    // if a string is received, it is converted to a date so that the function
+    //   is able to return its UTC time in the HH:mm:ss format
+    if (isc.isA.String(value) && value.length > 0 && type && isc.SimpleType.getType(type).inheritsFrom === 'time') {
+      value = this.convertToDate(value);
+    }
+    isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
     if (isTime) {
       return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
     }
     return value;
+  },
+
+  convertToDate: function (stringValue) {
+    var today = new Date(),
+        dateValue = isc.Time.parseInput(stringValue);
+    // Only the time is relevant. In order to be able to convert it from UTC to local time
+    //   properly the date value should be today's date
+    dateValue.setYear(today.getFullYear());
+    dateValue.setMonth(today.getMonth());
+    dateValue.setDate(today.getDate());
+    return dateValue;
   },
 
   getPropertyDefinition: function (property) {
@@ -1925,10 +2001,10 @@ isc.OBStandardView.addProperties({
     return result;
   },
 
-  setFieldFormProperties: function (fld) {
+  setFieldFormProperties: function (fld, isGridField) {
     var onChangeFunction;
 
-    if (fld.displayed === false) {
+    if (fld.displayed === false && !isGridField) {
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }
@@ -2025,8 +2101,10 @@ isc.OBStandardView.addProperties({
         fld.hoverHTML = hoverFunction;
       }
 
-      if (fld.gridProps.length) {
-        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.length);
+      if (fld.gridProps.displaylength) {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.displaylength);
+      } else {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(30);
       }
 
       // move the showif defined on form level
@@ -2037,10 +2115,6 @@ isc.OBStandardView.addProperties({
       }
 
       isc.addProperties(fld, fld.gridProps);
-
-      if (!fld.width) {
-        fld.width = isc.OBGrid.getDefaultColumnWidth(30);
-      }
 
       // correct some stuff coming from the form fields
       if (fld.displayed === false) {
@@ -2055,8 +2129,8 @@ isc.OBStandardView.addProperties({
       fld.escapeHTML = (fld.escapeHTML === false ? false : true);
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
-      this.setFieldFormProperties(fld.editorProperties);
-
+      //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
       }
@@ -2076,7 +2150,7 @@ isc.OBStandardView.addProperties({
       }
 
       if (fld.fkField) {
-        fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
 
@@ -2100,10 +2174,14 @@ isc.OBStandardView.addProperties({
       result.push(fld);
     }
 
-    // sort according to length, for the autoexpandfieldnames
+    // sort according to displaylength, for the autoexpandfieldnames
     result.sort(function (v1, v2) {
-      var t1 = v1.length,
-          t2 = v2.length;
+      var t1 = v1.displaylength,
+          t2 = v2.displaylength,
+          l1 = v1.length,
+          l2 = v2.length,
+          n1 = v1.name,
+          n2 = v2.name;
       if (!t1 && !t2) {
         return 0;
       }
@@ -2116,7 +2194,25 @@ isc.OBStandardView.addProperties({
       if (t1 > t2) {
         return -1;
       } else if (t1 === t2) {
-        return 0;
+        if (!l1 && !l2) {
+          return 0;
+        }
+        if (!l1) {
+          return 1;
+        }
+        if (!l2) {
+          return -1;
+        }
+        if (l1 > l2) {
+          return -1;
+        } else if (l1 === l2) {
+          if (v1.name > v2.name) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+        return 1;
       }
       return 1;
     });
@@ -2128,7 +2224,6 @@ isc.OBStandardView.addProperties({
         this.autoExpandFieldNames.push(result[i].name);
       }
     }
-
     // sort according to the sortnum
     // that's how they are displayed
     result.sort(function (v1, v2) {

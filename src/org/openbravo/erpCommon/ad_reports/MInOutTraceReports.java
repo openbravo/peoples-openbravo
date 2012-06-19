@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -171,11 +172,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
   private MInOutTraceReportsData[] processData(VariablesSecureApp vars,
       MInOutTraceReportsData[] data, String strIn, String strmProductIdGlobal,
       Hashtable<String, Integer> calculated, Vector<Integer> count) throws ServletException {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return data;
+    }
     for (int i = 0; i < data.length; i++) {
       data[i].html = processChilds(vars, data[i].mAttributesetinstanceId, data[i].mProductId,
           data[i].mLocatorId, strIn, true, strmProductIdGlobal, calculated, count);
+      if ("".equals(data[i].html)) {
+        // Delete data[i] from array
+        data = (MInOutTraceReportsData[]) ArrayUtils.removeElement(data, data[i]);
+        i--;
+      }
     }
     return data;
   }
@@ -233,8 +240,9 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     MInOutTraceReportsData[] dataChild = MInOutTraceReportsData.selectChilds(this, vars
         .getLanguage(), mAttributesetinstanceId, mProductId, mLocatorId,
         strIn.equals("Y") ? "plusQty" : "minusQty", strIn.equals("N") ? "minusQty" : "plusQty");
-    if (dataChild == null || dataChild.length == 0)
+    if (dataChild == null || dataChild.length == 0) {
       return "";
+    }
     boolean colorbg = true;
 
     strHtml.append(insertHeaderHtml(false, "0"));

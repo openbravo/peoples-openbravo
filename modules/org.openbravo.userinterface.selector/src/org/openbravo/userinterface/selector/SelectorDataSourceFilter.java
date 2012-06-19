@@ -131,7 +131,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           cEntity = entity;
           JSONObject jSONObject = new JSONObject(separatedValue);
           fieldName = (String) jSONObject.get("fieldName");
-          if (fieldName.contains("_dummy") || fieldName.contains("_identifier")
+          if (fieldName.contains("_dummy") || fieldName.contains(JsonConstants.IDENTIFIER)
               || fieldName.contains("searchKey")) {
             filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
             continue;

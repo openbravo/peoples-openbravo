@@ -109,7 +109,8 @@ var recBrowserSafari = '5.0.0.0';
       }
       msgContainer.style.display = '';
       isRecBrowserMsgShown = false;
-    } else if (type === 'Warning') {
+      return false;
+    } else if (type === 'Warning' || type === 'Confirmation') {
       var alertText = '';
       if (typeof title !== 'undefined' && title !== '' && title !== null) {
         alertText += title.replace(/<br>/g, '\n') + '\n';
@@ -117,7 +118,12 @@ var recBrowserSafari = '5.0.0.0';
       if (typeof text !== 'undefined' && text !== '' && text !== null) {
         alertText += text.replace(/<br>/g, '\n')
       }
-      alert(alertText);
+      if (type === 'Warning') {
+        alert(alertText);
+        return true;
+      } else {
+        return confirm(alertText);
+      }
     }
   }
 
@@ -209,13 +215,15 @@ function buttonOK_click() {
   }
 
   function processResult(result){
+    var target, command, shouldContinue = true;
     if (result.showMessage) {
-      setLoginMessage(result.messageType, result.messageTitle, result.messageText);
-      document.getElementById('password').value = '';
+      shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
+      if (!shouldContinue) {
+        document.getElementById('password').value = '';
+      }
     }
 
-    if (!result.showMessage || result.messageType === 'Warning') {
-      var target;
+    if (shouldContinue) {
       try {
         if (parent.frameMenu) {
           target = '_parent';
@@ -225,7 +233,8 @@ function buttonOK_click() {
       } catch (e) {
         target = '_self';
       }
-      submitCommandForm('DEFAULT', false, null, result.target, target, true);
+      command = result.command || 'DEFAULT';
+      submitCommandForm(command, false, null, result.target, target, true);
     } else {
       enableButton('buttonOK');
       setWindowElementFocus('password', 'id');
@@ -391,7 +400,7 @@ function buttonOK_click() {
     }
     catch (e) { }
 
-    if ((!revisionControl('14275')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('16452')) || (isOpsInstance() != isOpsInstanceCached())) {
       maskLoginWindow(cacheMsg);
       setLoginMessage('Warning', '', cacheMsg);
     }
@@ -497,7 +506,7 @@ function buttonOK_click() {
       <div class="Login_BottomLogos_Container" id="BottomLogos_Container" style="display: none;">
         <div class="Login_BottomLogos_Openbravo_Logo_Container" id="OpenbravoLogo_Container"><img class="Login_Logo_Openbravo" src="../../../../../web/images/blank.gif" /></div>
         <div class="Login_BottomLogos_CopyrightText_Container"><span class="Login_BottomLogos_CopyrightText">&copy; Copyright Openbravo <br />
-        2001-2011</span></div>
+        2001-2012</span></div>
       </div>
     </div>
 

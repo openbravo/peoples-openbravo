@@ -143,7 +143,8 @@ public class DocLine_FINPayment extends DocLine {
   public DocLine_FINPayment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
     Line_ID = TrxLine_ID;
-    m_Record_Id2 = Line_ID;
+    // TODO:Review Record_id2 implementation for new flow
+    // m_Record_Id2 = Line_ID;
   }
 
   public String getServletInfo() {

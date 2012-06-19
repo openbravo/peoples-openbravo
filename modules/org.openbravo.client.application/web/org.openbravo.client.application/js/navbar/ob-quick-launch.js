@@ -104,6 +104,8 @@ isc.OBQuickLaunch.addProperties({
 
     if (valueField.pickList) {
       valueField.pickList.deselectAllRecords();
+      valueField.pickList.clearLastHilite();
+      valueField.pickList.scrollRecordIntoView(0);
     }
     valueField.setValue(null);
     valueField.setElementValue('', null);
@@ -192,7 +194,7 @@ isc.OBQuickLaunch.addProperties({
         getPickListFilterCriteria: function () {
           // only filter on identifier
           var criteria = {};
-          criteria[OB.Constants.IDENTIFIER] = this.getValue();
+          criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
           return criteria;
         },
         pickListFields: [{
@@ -220,19 +222,13 @@ isc.OBQuickLaunch.addProperties({
         fetchDelay: 50,
 
         optionDataSource: OB.Datasource.get(this.dataSourceId),
+        valueField: OB.Constants.ID,
 
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
         command: this.command,
 
         pickValue: function (theValue) {
-          // HACK: set this temporary value to prevent a temporary 
-          // display of the db id
-          if (!this.getValueMap()) {
-            this.setValueMap({});
-          }
-          this.getValueMap()[theValue] = '';
-
           this.Super('pickValue', arguments);
 
           if (this.getSelectedRecord()) {
@@ -241,7 +237,7 @@ isc.OBQuickLaunch.addProperties({
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
             if (record.optionType && record.optionType === 'tab') {
-              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon);
+              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon, record.readOnly, record.singleRecord);
               if (openObject) {
                 OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
               }

@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2010 Openbravo SLU
+* All portions are Copyright (C) 2008-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -41,7 +41,7 @@ BEGIN
     and ISINDEVELOPMENT = 'Y';
     
     if (exist > 0) then
-      RAISE_APPLICATION_ERROR(-20631,'There is already an active Industry Template.');
+      RAISE_APPLICATION_ERROR(-20000,'@20631@');
     else
       idCustomizationModule:=get_uuid();
       Insert into AD_MODULE (

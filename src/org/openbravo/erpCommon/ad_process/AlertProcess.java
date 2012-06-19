@@ -32,7 +32,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.EMail;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
@@ -85,6 +84,8 @@ public class AlertProcess implements Process {
       }
     } catch (Exception e) {
       throw new JobExecutionException(e.getMessage(), e);
+    } finally {
+      OBDal.getInstance().commitAndClose();
     }
   }
 
@@ -139,8 +140,8 @@ public class AlertProcess implements Process {
         // the 'Client' tab or in the 'Email Configuration' tab.
         // The SMTP server configured in 'Client' tab way is @Deprecated in 3.0
 
-        final String adClientId = alert[0].adClientId;
-        final String adOrgId = alert[0].adOrgId;
+        final String adClientId = alertRule.adClientId;
+        final String adOrgId = alertRule.adOrgId;
         final String deprecatedMailHost = OBDal.getInstance().get(Client.class, adClientId)
             .getMailHost();
         boolean isDeprecatedMode = false;
@@ -161,11 +162,11 @@ public class AlertProcess implements Process {
                 .createCriteria(EmailServerConfiguration.class);
             mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
                 .getInstance().get(Client.class, adClientId)));
+            mailConfigCriteria.setFilterOnReadableClients(false);
+            mailConfigCriteria.setFilterOnReadableOrganization(false);
             final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
 
-            if (mailConfigList.size() == 0) {
-              log4j.error("No Poc configuration found for this client.");
-            } else {
+            if (mailConfigList.size() > 0) {
               // TODO: There should be a mechanism to select the desired Email server configuration
               // for alerts, until then, first search for the current organization (and use the
               // first returned one), then for organization '0' (and use the first returned one) and
@@ -195,6 +196,8 @@ public class AlertProcess implements Process {
                   .createCriteria(AlertRecipient.class);
               alertRecipientsCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, OBDal
                   .getInstance().get(AlertRule.class, alertRule.adAlertruleId)));
+              alertRecipientsCriteria.setFilterOnReadableClients(false);
+              alertRecipientsCriteria.setFilterOnReadableOrganization(false);
 
               final List<AlertRecipient> alertRecipientsList = alertRecipientsCriteria.list();
 
@@ -317,8 +320,9 @@ public class AlertProcess implements Process {
           if (mail != null) {
             for (int i = 0; i < mail.length; i++) {
               String head = Utility.messageBD(conn, "AlertMailHead", mail[i].adLanguage) + "\n";
-              EMail email = new EMail(null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto,
-                  "[OB Alert] " + alertRule.name, head + msg);
+              org.openbravo.erpCommon.businessUtility.EMail email = new org.openbravo.erpCommon.businessUtility.EMail(
+                  null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto, "[OB Alert] "
+                      + alertRule.name, head + msg);
               String pwd = "";
               try {
                 pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);

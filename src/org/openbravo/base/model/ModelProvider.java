@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -509,12 +509,7 @@ public class ModelProvider implements OBSingleton {
       // }
 
       if (t.getPrimaryKeyColumns().size() == 0) {
-        // note, after this issue is solved:
-        // https://issues.openbravo.com/view.php?id=14696
-        // then also log.warn for views
-        if (!t.isView()) {
-          log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
-        }
+        log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
         toRemove.add(t);
         continue;
       }
@@ -561,8 +556,6 @@ public class ModelProvider implements OBSingleton {
         uniqueConstraint = null;
       }
       if (entity == null) {
-        log.warn("No entity found for " + uniqueConstraintColumn.getTableName()
-            + " table, for uniqueconstraint computation");
         continue;
       }
 

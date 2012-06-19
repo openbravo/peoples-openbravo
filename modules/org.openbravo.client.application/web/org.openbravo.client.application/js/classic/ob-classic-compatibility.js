@@ -52,28 +52,29 @@
     // * {{{recordId}}} the record to show
     //
     openLinkedItem: function (tabId, recordId) {
-      var doOpenClassicWindow = function (response, data, request) {
+      var doOpenClassicWindow;
+      doOpenClassicWindow = function (response, data, request) {
 
-          if (!data.recordId || data.recordId.length === 0) {
-            L.ViewManager.openView('OBClassicWindow', {
-              tabTitle: data.tabTitle,
-              windowId: data.windowId,
-              tabId: data.tabId,
-              mappingName: data.mappingName,
-              command: 'DEFAULT'
-            });
-          } else {
-            L.ViewManager.openView('OBClassicWindow', {
-              tabTitle: data.tabTitle,
-              windowId: data.windowId,
-              tabId: data.tabId,
-              mappingName: data.mappingName,
-              keyParameter: data.keyParameter,
-              recordId: data.recordId,
-              command: 'DIRECT'
-            });
-          }
-          };
+        if (!data.recordId || data.recordId.length === 0) {
+          L.ViewManager.openView('OBClassicWindow', {
+            tabTitle: data.tabTitle,
+            windowId: data.windowId,
+            tabId: data.tabId,
+            mappingName: data.mappingName,
+            command: 'DEFAULT'
+          });
+        } else {
+          L.ViewManager.openView('OBClassicWindow', {
+            tabTitle: data.tabTitle,
+            windowId: data.windowId,
+            tabId: data.tabId,
+            mappingName: data.mappingName,
+            keyParameter: data.keyParameter,
+            recordId: data.recordId,
+            command: 'DIRECT'
+          });
+        }
+      };
 
       OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
         'tabId': tabId,
@@ -338,13 +339,12 @@
       // be set as a String as a %
       // * {{{url}}} type: String - the url to be opened in the popup
       // * {{{title}}} type: String - the title to be displayed in the popup
-      // * {{{theOpener}}} type: Window Object - the window object of the opener
+      // * {{{theOpener}}} type: Window Object - the window object of the opener of the popup. Used in window.open to allow IE know which is the opener
       // * {{{showMinimizeControl}}} type: Boolean - to specify if the popup should show the minimize control or not. The default value is "true" if it is not specified
       // * {{{showMaximizeControl}}} type: Boolean - to specify if the popup should show the maximize control or not. The default value is "true" if it is not specified
       // * {{{showCloseControl}}} type: Boolean - to specify if the popup should show the close control or not. The default value is "true" if it is not specified
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is "true" if it is not specified
-      // of the popup. Used in window.open to allow IE know which is the opener
       // 
       // returns the created OBClassicPopupWindow
       open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal) {
@@ -362,6 +362,12 @@
         if (isModal !== false) {
           isModal = true;
         }
+        var _htmlCode, _navUserAgent = navigator.userAgent.toUpperCase();
+        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf("MSIE") === -1) { // IE >= 9 (Strict) or any other browser
+          _htmlCode = '<html><head></head><body style="margin: 0; padding: 0; border: none;">' + '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' + '<iframe name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' + '</body></html>';
+        } else { // IE <= 8
+          _htmlCode = '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>';
+        }
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
           width: width,
@@ -375,7 +381,7 @@
           areParamsSet: false,
           isFramesetDraw: false,
           isLoaded: false,
-          htmlCode: '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>',
+          htmlCode: _htmlCode,
           popupURL: url + urlCharacter + 'IsPopUpCall=1'
         });
         cPopup.show();
@@ -403,7 +409,7 @@
           return true;
         }
         if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-          //  In IE if window.open is executed against a frame, the target frame doesn't know which is its opener
+          //  In IE (non-Strict) if window.open is executed against a frame, the target frame doesn't know which is its opener
           if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
             if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
@@ -419,6 +425,26 @@
         if (!cPopup.areParamsSet) {
           if (!postParams) {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
+            if (OB.Utilities.isIE9Strict) {
+              // In IE9 Strict, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
+              cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+              var setOpenerInterval;
+              setOpenerInterval = setInterval(
+
+              function () {
+                if (!cPopup.getIframeHtmlObj()) {
+                  clearInterval(setOpenerInterval);
+                } else if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete') {
+                  if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].opener) {
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                  }
+                  if (cPopup.getIframeHtmlObj().contentWindow.frames[0].window.MDIPopupId !== wName) {
+                    cPopup.getIframeHtmlObj().contentWindow.document.getElementById('MDIPopupContainer').name = wName;
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].window.checkWindowInMDIPopup();
+                  }
+                }
+              }, 100);
+            }
           } else {
             // Create a form and POST parameters as input hidden values
             var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,

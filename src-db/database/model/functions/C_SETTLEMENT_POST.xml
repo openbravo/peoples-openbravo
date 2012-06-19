@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2010 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -523,7 +523,7 @@
               AND ISACTIVE='Y'
               AND ISDEFAULT='Y';
             IF p_CashBook IS NULL THEN
-              RAISE_APPLICATION_ERROR(-20600, 'No default cash book') ;
+              RAISE_APPLICATION_ERROR(-20000, '@20600@') ;
             END IF;
           END IF;
           IF(NOT FINISH_PROCESS) THEN

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -81,10 +82,11 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           exprResult = engine.eval(f.getDefaultExpression());
 
           if (sel.isCustomQuery()) {
-            result.put(f.getDisplayColumnAlias(), exprResult);
+            result.put(f.getDisplayColumnAlias().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
+                exprResult);
           } else {
             String fieldName = f.getProperty();
-            result.put(fieldName, exprResult);
+            result.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR), exprResult);
           }
         } catch (Exception e) {
           log.error(

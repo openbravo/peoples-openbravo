@@ -18,66 +18,30 @@
  */
 package org.openbravo.client.application.test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.junit.Test;
+import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.test.base.BaseTest;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+public class DynamicExpressionParserTest extends BaseTest {
 
-public class DynamicExpressionParserTest extends TestCase {
-
-  private static Map<String, String> exprToJSMap;
-  static {
-    exprToJSMap = new HashMap<String, String>();
-    exprToJSMap.put("'Y'", "true");
-    exprToJSMap.put("'N'", "false");
-  }
-
-  private String transformValue(String value) {
-    if (value == null) {
-      return null;
-    }
-    String removeBracketsRegExp = "[\\[\\(]*(.*?)[\\)\\]]*";
-    Pattern pattern = Pattern.compile(removeBracketsRegExp);
-    Matcher matcher = pattern.matcher(value);
-    String transformedValueWithBrackets = null;
-    // It is always matched: zero or plus opening brackets, followed by any string, follow by zero
-    // or plus closing brackets
-    if (matcher.matches()) {
-      // Extracts the value
-      String valueWithoutBrackets = matcher.group(1);
-      // Transforms the value
-      String transformedValueWithoutBrackets = exprToJSMap.get(valueWithoutBrackets) != null ? exprToJSMap
-          .get(valueWithoutBrackets) : valueWithoutBrackets;
-      // Re-encloses the value
-      transformedValueWithBrackets = value.replace(valueWithoutBrackets,
-          transformedValueWithoutBrackets);
-    }
-    return transformedValueWithBrackets;
-  }
-
+  @Test
   public void testRegularExpression() {
-    String value = "'Y'";
-    String transformedValue = transformValue(value);
-    Assert.assertEquals(transformedValue, "true");
+    setSystemAdministratorContext();
+    String displayLogic = "((@Financial_Invoice_Line@='N'))";
+    String expectedResult = "((OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false))";
+    Tab tab = OBDal.getInstance().get(Tab.class, "270");
 
-    value = "(['Y'";
-    transformedValue = transformValue(value);
-    Assert.assertEquals(transformedValue, "([true");
+    DynamicExpressionParser parser = new DynamicExpressionParser(displayLogic, tab);
+    assertTrue(expectedResult.equals(parser.getJSExpression()));
 
-    value = "'Y')";
-    transformedValue = transformValue(value);
-    Assert.assertEquals(transformedValue, "true)");
+    displayLogic = "@Financial_Invoice_Line@='Y'";
+    expectedResult = "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === true";
 
-    value = "(['Y'])";
-    transformedValue = transformValue(value);
-    Assert.assertEquals(transformedValue, "([true])");
+    parser = new DynamicExpressionParser(displayLogic, tab);
+    assertTrue(expectedResult.equals(parser.getJSExpression()));
 
-    value = "('NotBoolean')";
-    transformedValue = transformValue(value);
-    Assert.assertEquals(transformedValue, "('NotBoolean')");
   }
 
 }

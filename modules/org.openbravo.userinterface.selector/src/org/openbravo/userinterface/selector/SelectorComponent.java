@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -135,17 +136,18 @@ public class SelectorComponent extends BaseTemplateComponent {
   }
 
   private static String getPropertyOrDataSourceField(SelectorField selectorField) {
+    final String result;
     if (selectorField.getProperty() != null) {
-      return selectorField.getProperty();
+      result = selectorField.getProperty();
+    } else if (selectorField.getDisplayColumnAlias() != null) {
+      result = selectorField.getDisplayColumnAlias();
+    } else if (selectorField.getObserdsDatasourceField() != null) {
+      result = selectorField.getObserdsDatasourceField().getName();
+    } else {
+      throw new IllegalStateException("Selectorfield " + selectorField
+          + " has a null datasource and a null property");
     }
-    if (selectorField.getDisplayColumnAlias() != null) {
-      return selectorField.getDisplayColumnAlias();
-    }
-    if (selectorField.getObserdsDatasourceField() != null) {
-      return selectorField.getObserdsDatasourceField().getName();
-    }
-    throw new IllegalStateException("Selectorfield " + selectorField
-        + " has a null datasource and a null property");
+    return result.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
   }
 
   public static String getAdditionalProperties(Selector selector, boolean onlyDisplayField) {
@@ -164,7 +166,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       String fieldName = getPropertyOrDataSourceField(selectorField);
       final DomainType domainType = getDomainType(selectorField);
       if (domainType instanceof ForeignKeyDomainType) {
-        fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+        fieldName = fieldName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
       }
       if (extraProperties.length() > 0) {
         extraProperties.append(",");
@@ -201,15 +203,18 @@ public class SelectorComponent extends BaseTemplateComponent {
     if (getSelector().isCustomQuery()) {
       if (getSelector().getDisplayfield() != null
           && getSelector().getDisplayfield().getDisplayColumnAlias() != null) {
-        return getSelector().getDisplayfield().getDisplayColumnAlias();
+        return getSelector().getDisplayfield().getDisplayColumnAlias()
+            .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
       return JsonConstants.IDENTIFIER;
     }
     if (getSelector().getDisplayfield() != null && getSelector().getDisplayfield().isShowingrid()) {
       if (getSelector().getDisplayfield().getProperty() != null) {
-        return getSelector().getDisplayfield().getProperty();
+        return getSelector().getDisplayfield().getProperty()
+            .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       } else {
-        return getSelector().getDisplayfield().getObserdsDatasourceField().getName();
+        return getSelector().getDisplayfield().getObserdsDatasourceField().getName()
+            .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
     }
     // a very common case, return the first selector field which is part of the
@@ -281,11 +286,11 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public String getValueField() {
     if (getSelector().getValuefield() != null) {
-      String valueField = getPropertyOrDataSourceField(getSelector().getValuefield());
+      final String valueField = getPropertyOrDataSourceField(getSelector().getValuefield());
       if (!getSelector().isCustomQuery()) {
         final DomainType domainType = getDomainType(getSelector().getValuefield());
         if (domainType instanceof ForeignKeyDomainType) {
-          return valueField + "." + JsonConstants.ID;
+          return valueField + DalUtil.FIELDSEPARATOR + JsonConstants.ID;
         }
       }
       return valueField;
@@ -316,7 +321,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       // and which has a field defined
       if (dataSource.getTable() == null && !dataSource.getOBSERDSDatasourceFieldList().isEmpty()) {
         final DatasourceField dsField = dataSource.getOBSERDSDatasourceFieldList().get(0);
-        return dsField.getName();
+        return dsField.getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
     }
 
@@ -444,7 +449,7 @@ public class SelectorComponent extends BaseTemplateComponent {
         // in that case always show the identifier
         final DomainType domainType = getDomainType(selectorField);
         if (domainType instanceof ForeignKeyDomainType) {
-          fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+          fieldName = fieldName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
         }
 
         if (sb.length() > 0) {
@@ -634,9 +639,12 @@ public class SelectorComponent extends BaseTemplateComponent {
       // in that case always show the identifier
       final DomainType domainType = getDomainType(selectorField);
       if (domainType instanceof ForeignKeyDomainType) {
-        String displayField = fieldName + "." + JsonConstants.IDENTIFIER;
+        String displayField = fieldName.replace(".", DalUtil.FIELDSEPARATOR)
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
         localSelectorField.setDisplayField(displayField);
       }
+
+      fieldName = fieldName.replace(".", DalUtil.FIELDSEPARATOR);
 
       localSelectorField.setName(fieldName);
       localSelectorField.setTitle(getTranslatedName(selectorField));
@@ -714,7 +722,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setTabFieldName(String tabFieldName) {
-      this.tabFieldName = tabFieldName;
+      this.tabFieldName = tabFieldName != null ? tabFieldName.replace(DalUtil.DOT,
+          DalUtil.FIELDSEPARATOR) : tabFieldName;
     }
 
     public String getOutFieldName() {
@@ -722,7 +731,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setOutFieldName(String outFieldName) {
-      this.outFieldName = outFieldName;
+      this.outFieldName = outFieldName != null ? outFieldName.replace(DalUtil.DOT,
+          DalUtil.FIELDSEPARATOR) : outFieldName;
     }
 
     public void setOutSuffix(String suffix) {
@@ -910,7 +920,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       }
 
       public void setStringValue(String value) {
-        this.value = "'" + value + "'";
+        this.value = "'" + StringEscapeUtils.escapeJavaScript(value) + "'";
       }
 
       public void setValue(String value) {

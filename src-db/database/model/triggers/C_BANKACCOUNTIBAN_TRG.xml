@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2001-2009 Openbravo SLU
+  * All portions are Copyright (C) 2001-2012 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -59,7 +59,7 @@ BEGIN
       FROM C_BANK
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
       IF (v_Bank IS NULL OR v_Branch IS NULL OR v_DigitBank IS NULL) THEN
-        RAISE_APPLICATION_ERROR(-20258, 'Bank information is missing.');
+        RAISE_APPLICATION_ERROR(-20000, '@20258@');
       END IF;
     END IF;
     IF (:NEW.IBAN IS NOT NULL) THEN
@@ -87,14 +87,14 @@ BEGIN
            INTO v_IBAN_check
         FROM DUAL;        
         IF (v_IBAN_check <> 1) THEN
-          RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
+          RAISE_APPLICATION_ERROR(-20000, '@20257@');
         END IF;
         SELECT C_LOCATION_ID
         INTO v_Location
         FROM C_BANK
         WHERE C_BANK_ID=:NEW.C_BANK_ID;
         IF (v_Location IS NULL) THEN
-          RAISE_APPLICATION_ERROR(-20260, 'Bank does not have country defined.');
+          RAISE_APPLICATION_ERROR(-20000, '@20260@');
         END IF;
         SELECT IBANCOUNTRY, IBANNODIGITS
         INTO v_CountryId, v_Length
@@ -105,7 +105,7 @@ BEGIN
           WHERE C_LOCATION_ID=v_Location
           );
         IF ((v_CountryId IS NULL OR v_Length IS NULL) OR (v_CountryId <> SUBSTR(UPPER(:NEW.IBAN),1,2) OR v_Length <> LENGTH(:NEW.IBAN))) THEN
-          RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
+          RAISE_APPLICATION_ERROR(-20000, '@20259@');
         END IF;
       END IF;
     IF (:NEW.SHOWSPANISH='Y') THEN
@@ -183,7 +183,7 @@ BEGIN
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.') ;
+  RAISE_APPLICATION_ERROR(-20000, '@20257@') ;
 END C_BANKACCOUNTIBAN_TRG
 ]]></body>
     </trigger>

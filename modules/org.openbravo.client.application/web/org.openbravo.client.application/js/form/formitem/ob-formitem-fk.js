@@ -33,7 +33,7 @@ isc.OBFKItem.addProperties({
     }
 
     var display = this.mapValueToDisplay(value),
-        identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     form.setValue(identifierFieldName, display);
     // make sure that the grid does not display the old identifier
     if (form.grid) {

@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2008 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -57,7 +57,7 @@ BEGIN
 	END IF;
 
 	IF(v_Posted='Y')
-		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+		THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@');
 	END IF;
     END IF;
     IF UPDATING THEN
@@ -79,7 +79,7 @@ BEGIN
 		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
 	END IF;
 	IF(v_Posted='Y')
-		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+		THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@');
 	END IF;
     END IF;
     IF DELETING THEN
@@ -108,7 +108,7 @@ BEGIN
 	END IF;
 
 	IF(v_Posted='Y')
-		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+		THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@');
 	END IF;
 	IF (v_HasReversal='Y') THEN
 		  RAISE_APPLICATION_ERROR(-20000, '@InvoiceHasReversal@');

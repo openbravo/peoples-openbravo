@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -921,8 +921,8 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
   color: #333333;
   background-color: #F5F7F1 !important;
   background-image: none;
-  padding: 1px 1px 1px 4px;
-  _padding: 2px 1px 1px 4px;
+  padding: 1px 1px 1px 4px; /*~RTL   padding: 1px 4px 1px 1px; */
+  _padding: 2px 1px 1px 4px; /*~RTL   _padding: 2px 4px 1px 1px; */
   height: 21px;
 }
 
@@ -1468,7 +1468,15 @@ border-collapse: separate; border-spacing: 4;
   border-collapse: collapse;
 }
 
+.Main_ContentPane_Right_Container {
+  background-color: #3A6B01;
+}
+
 .Main_ContentPane_Right {
+  background-color: #3A6B01;
+}
+
+.Main_ContentPane_Left_Container {
   background-color: #3A6B01;
 }
 
@@ -1669,6 +1677,80 @@ a.Popup_Client_Help_LabelLink_focus {
  *************************************************************************
 */
 
+.ob_cell,
+.ob_cellDark,
+.ob_cellOver,
+.ob_cellOverDark,
+.ob_cellSelected,
+.ob_cellSelectedDark,
+.ob_cellSelectedOver,
+.ob_cellSelectedOverDark,
+.ob_cellDisabled,
+.ob_cellDisabledDark,
+.ob_tallCell,
+.ob_tallCellDark,
+.ob_tallCellOver,
+.ob_tallCellOverDark,
+.ob_tallCellSelected,
+.ob_tallCellSelectedDark,
+.ob_tallCellSelectedOver,
+.ob_tallCellSelectedOverDark,
+.ob_tallCellDisabled,
+.ob_tallCellDisabledDark,
+.ob_gridSummaryCell,
+.ob_gridSummaryCellDisabled,
+.ob_groupSummaryCell,
+.ob_groupSummaryCellDisabled {
+  font-family: arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: #333333 !important;
+
+  border-top: 0px solid #CDD7BB !important;
+  border-bottom: 1px solid #CDD7BB !important;
+  border-right: 1px solid #CDD7BB !important;
+  border-left : 0px solid #CDD7BB !important;
+}
+
+.ob_cell {
+  background: none !important;
+  background-color: #FFFFFF !important;
+}
+.ob_cellDark {
+  background: none !important;
+  background-color: #F5F5F5 !important;
+}
+.ob_cellOver,
+.ob_cellOverDark {
+  background: none !important;
+  background-color: #E1E1E1 !important;
+}
+
+.ob_cellSelected,
+.ob_cellSelectedDark,
+.ob_cellSelectedOver,
+.ob_cellSelectedOverDark {
+  background: none !important;
+  background-color: #ffe1c0 !important;
+}
+
+.ob_headerbutton,
+.ob_headerbuttonselected,
+.ob_headerbuttondisabled,
+.ob_headerbuttonselecteddisabled,
+.ob_headerbuttonover,
+.ob_headerbuttondown,
+.ob_headerbuttonselectedover,
+.ob_headerbuttonselecteddown {
+  font-family: arial, sans-serif !important;
+  font-size: 12px !important;
+  border-top: 1px solid #CDD7BB !important;
+  border-bottom: 1px solid #CDD7BB !important;
+  border-right: 1px solid #CDD7BB !important;
+  border-left : 0px solid #CDD7BB !important;
+}
+
+
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -1700,6 +1782,9 @@ a.Popup_Client_Help_LabelLink_focus {
 .pickListCell,
 .pickListCellSelected,
 .pickListCellDisabled,
+.pickListCellDark,
+.pickListCellSelectedDark,
+.pickListCellDisabledDark,
 .labelAnchor,
 .labelAnchorDisabled,
 .labelAnchorError,
@@ -1758,76 +1843,4 @@ a.Popup_Client_Help_LabelLink_focus {
     background-image: none !important;
     padding-left: 4px !important;
     border: 1px solid #FA962F !important;
-}
-
-.cell,
-.cellDark,
-.cellOver,
-.cellOverDark,
-.cellSelected,
-.cellSelectedDark,
-.cellSelectedOver,
-.cellSelectedOverDark,
-.cellDisabled,
-.cellDisabledDark,
-.tallCell,
-.tallCellDark,
-.tallCellOver,
-.tallCellOverDark,
-.tallCellSelected,
-.tallCellSelectedDark,
-.tallCellSelectedOver,
-.tallCellSelectedOverDark,
-.tallCellDisabled,
-.tallCellDisabledDark,
-.groupNode {
-  font-family: arial, sans-serif !important;
-  font-size: 12px !important;
-  font-weight: normal !important;
-  color: #333333 !important;
-
-  border-top: 0px solid #CDD7BB !important;
-  border-bottom: 1px solid #CDD7BB !important;
-  border-right: 1px solid #CDD7BB !important;
-  border-left : 0px solid #CDD7BB !important;
-}
-
-.cell {
-    background: none !important;
-    background-color: #FFFFFF !important;
-}
-.cellDark {
-    background: none !important;
-    background-color: #F5F5F5 !important;
-}
-.cellOver,
-.cellOverDark {
-    background: none !important;
-    background-color: #E1E1E1 !important;
-}
-.cellSelected,
-.cellSelectedDark {
-    background: none !important;
-    background-color: #FFBA6E !important;
-}
-.cellSelectedOver,
-.cellSelectedOverDark {
-    background: none !important;
-    background-color: #E1E1E1 !important;
-}
-
-.headerTitle,
-.headerTitleOver,
-.headerTitleDown,
-.headerTitleSelected,
-.headerTitleSelectedOver,
-.headerTitleSelectedDown,
-.headerTitleDisabled,
-.headerTitleSelectedDisabled {
-  font-family: arial, sans-serif !important;
-  font-size: 12px !important;
-  border-top: 1px solid #CDD7BB !important;
-  border-bottom: 1px solid #CDD7BB !important;
-  border-right: 0px solid #CDD7BB !important;
-  border-left : 1px solid #CDD7BB !important;
 }

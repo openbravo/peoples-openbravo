@@ -22,6 +22,11 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+OB.Utilities.isIE9Strict = false;
+if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && (document.documentMode && document.documentMode >= 9)) {
+  OB.Utilities.isIE9Strict = true;
+}
+
 //** {{{OB.Utilities.checkProfessionalLicense}}} **
 // Checks if the current instance is using a professional license 
 // (!= community). If the instance has a community instance then 
@@ -150,6 +155,14 @@ OB.Utilities.createDialog = function (title, focusOnOKButton, properties) {
   return dialog;
 };
 
+OB.Utilities.uploadFinished = function (target, data) {
+  var origButton = window[target];
+  OB.Utilities.currentUploader = null;
+  if (origButton && origButton.callback) {
+    origButton.callback(data);
+  }
+};
+OB.Utilities.currentUploader = null;
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.
 OB.Utilities.createLoadingLayout = function () {
@@ -161,17 +174,16 @@ OB.Utilities.createLoadingLayout = function () {
     defaultLayoutAlign: 'center'
   });
   var loadingLayout = isc.HLayout.create({
-    styleName: OB.Styles.LoadingPrompt.loadingLayoutStyleName,
-    width: 1,
-    height: 1,
+    align: 'center',
+    defaultLayoutAlign: 'center',
+    membersMargin: 0,
     overflow: 'visible'
   });
   mainLayout.addMember(loadingLayout);
   loadingLayout.addMember(isc.Label.create({
     contents: OB.I18N.getLabel('OBUIAPP_LOADING'),
-    styleName: 'OBLoadingPromptLabel',
+    styleName: OB.Styles.LoadingPrompt.loadingTextStyleName,
     width: 1,
-    height: 1,
     overflow: 'visible'
   }));
   loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
@@ -367,7 +379,7 @@ OB.Utilities.removeFragment = function (str) {
 // ** {{{OB.Utilities.openView}}} **
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
-OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon) {
+OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct) {
   var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
 
   var openObject;
@@ -392,7 +404,9 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       targetRecordId: recordId,
       targetTabId: tabId,
       tabTitle: tabTitle,
-      windowId: windowId
+      windowId: windowId,
+      readOnly: readOnly,
+      singleRecord: singleRecord
     };
   } else {
     openObject = {
@@ -401,25 +415,26 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabId: tabId,
       tabTitle: tabTitle,
       windowId: windowId,
-      icon: icon
+      icon: icon,
+      readOnly: readOnly,
+      singleRecord: singleRecord
     };
   }
   if (command) {
     openObject.command = command;
   }
-  OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, direct);
   return openObject;
 };
 
 // ** {{{OB.Utilities.openDirectView}}} **
 // Open the correct view for a passed in target definition, coming from a certain source Window.
 OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity, recordId) {
-
   var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html',
       callback, reqObj, request;
 
   callback = function (response, data, request) {
-    OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
+    OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId, null, null, null, null, true);
   };
 
   reqObj = {
@@ -877,25 +892,25 @@ OB.Utilities.getTimePassedInterval = function (timeInMiliseconds) {
   var diffDays = Math.floor((timeInMiliseconds) / (1000 * 60 * 60 * 24));
   if (diffDays >= 30) {
     n = Math.floor(diffDays / 30);
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_months_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_months_ago_1');
   } else if (diffDays >= 7) {
     n = Math.floor(diffDays / 7);
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_weeks_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_weeks_ago_1');
   } else if (diffDays >= 1) {
     n = diffDays;
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_days_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_days_ago_1');
   }
 
   // time difference in hours
   var diffHours = Math.floor((timeInMiliseconds) / (1000 * 60 * 60));
   if (diffHours >= 1) {
     n = diffHours;
-    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_hours_ago');
+    return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_hours_ago_1');
   }
 
   // time difference in minutes
   n = Math.floor((timeInMiliseconds) / (1000 * 60));
-  return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_minutes_ago');
+  return OB.Utilities.formatTimePassedMessage(n, 'OBUIAPP_minutes_ago_1');
 };
 
 //** {{{ OB.Utilities.getValue }}} **
@@ -905,4 +920,18 @@ OB.Utilities.getTimePassedInterval = function (timeInMiliseconds) {
 // is a reserved javascript word
 OB.Utilities.getValue = function (object, property) {
   return object[property];
+};
+
+/* This function will return true if it receives a string parameter, and 
+ * which complies with the OB UUID format (that is, its a
+ * hexadecimal number of length 32)
+ */
+OB.Utilities.isUUID = function (object) {
+  if (typeof object !== 'string') {
+    return false;
+  }
+  if (object.length !== 32) {
+    return false;
+  }
+  return (/[A-Fa-f0-9]{32,32}/).test(object);
 };

@@ -49,7 +49,7 @@ isc.OBPickAndExecuteView.addProperties({
   initWidget: function () {
 
     var view = this,
-        okButton, cancelButton, i, buttonLayout = [];
+        okButton, newButton, cancelButton, i, buttonLayout = [];
 
     function actionClick() {
       if (view.validate()) {
@@ -109,11 +109,14 @@ isc.OBPickAndExecuteView.addProperties({
       for (i in this.buttons) {
         if (this.buttons.hasOwnProperty(i)) {
 
-          buttonLayout.push(isc.OBFormButton.create({
+          newButton = isc.OBFormButton.create({
             title: this.buttons[i],
             _buttonValue: i,
             click: actionClick
-          }));
+          });
+          buttonLayout.push(newButton);
+          OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.' + i, newButton);
+
 
           // pushing a spacer
           buttonLayout.push(isc.LayoutSpacer.create({
@@ -123,6 +126,7 @@ isc.OBPickAndExecuteView.addProperties({
       }
     } else {
       buttonLayout.push(okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
       buttonLayout.push(isc.LayoutSpacer.create({
         width: 32
       }));
@@ -130,6 +134,8 @@ isc.OBPickAndExecuteView.addProperties({
 
     buttonLayout.push(cancelButton);
     buttonLayout.push(isc.LayoutSpacer.create({}));
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
+
 
     if (this.viewProperties.allowAdd) {
       this.addNewButton = isc.OBLinkButtonItem.create({
@@ -144,12 +150,12 @@ isc.OBPickAndExecuteView.addProperties({
         }
       });
     }
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.pickandexecute.button.addnew', this.addNewButton);
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
     this.items = [this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
-      align: 'left',
+      align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
       width: '100%',
       visibility: (this.addNewButton ? 'visible' : 'hidden'),
       members: (this.addNewButton ? [this.addNewButton] : [])
@@ -168,6 +174,7 @@ isc.OBPickAndExecuteView.addProperties({
     })];
 
     this.Super('initWidget', arguments);
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.popup', this);
 
     if (this.viewGrid.saveLocally) {
       // Using "disconnected" data to avoid update/remove/add operations to the back-end
@@ -241,7 +248,7 @@ isc.OBPickAndExecuteView.addProperties({
       width: OB.Styles.Process.PickAndExecute.pinColumnWidth,
       formatCellValue: function (value, record, rowNum, colNum, grid) {
         if (record[grid.selectionProperty]) {
-          return '<img src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
+          return '<img class="' + OB.Styles.Process.PickAndExecute.iconPinStyle + '" src="' + OB.Styles.Process.PickAndExecute.iconPinSrc + '" />';
         }
         return '';
       },
@@ -279,7 +286,7 @@ isc.OBPickAndExecuteView.addProperties({
             onmouseover = 'this.src=\'' + srcWithoutExt + '_Over.' + srcExt + '\'',
             onmousedown = 'this.src=\'' + srcWithoutExt + '_Down.' + srcExt + '\'',
             onmouseout = 'this.src=\'' + src + '\'';
-        return '<img style="cursor: pointer;" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
+        return '<img class="' + OB.Styles.Process.PickAndExecute.iconDeleteStyle + '" onmouseover="' + onmouseover + '" onmousedown="' + onmousedown + '" onmouseout="' + onmouseout + '" src="' + src + '" />';
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);

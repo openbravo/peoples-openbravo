@@ -79,7 +79,10 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
         objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
         objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
-        objCloneOrdLine.setListPrice(bdPriceList);
+        if (!"".equals(bdPriceList) || bdPriceList != null
+            || !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
+          objCloneOrdLine.setListPrice(bdPriceList);
+        }
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
       }
@@ -98,7 +101,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
 
   private String getPriceListVersion(String priceList, String clientId) {
     try {
-      String whereClause = " as plv , PricingPriceList pl where pl.id=plv.id and plv.active='Y' and "
+      String whereClause = " as plv left outer join plv.priceList pl where plv.active='Y' and plv.active='Y' and "
           + " pl.id = :priceList and plv.client.id = :clientId order by plv.validFromDate desc";
 
       OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance().createQuery(
@@ -135,7 +138,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
   public static BigDecimal getLineNetAmt(String strOrderId) {
 
     BigDecimal bdLineNetAmt = new BigDecimal("0");
-    final String readLineNetAmtHql = " select (ol.lineNetAmount + ol.freightAmount + ol.chargeAmount) as LineNetAmt from OrderLine ol where ol.salesOrder.id=?";
+    final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=?";
     final Query readLineNetAmtQry = OBDal.getInstance().getSession().createQuery(readLineNetAmtHql);
     readLineNetAmtQry.setString(0, strOrderId);
 

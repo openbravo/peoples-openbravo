@@ -135,21 +135,22 @@ isc.OBLinkedItemLayout.addProperties({
 
     var that = this;
 
-    var callback = function (response, data, request) {
-        var msg = data.msg;
-        var usedByLinkData = data.usedByLinkData;
-        if (msg !== null) {
-          that.messageLabel.setContents(msg);
-        }
+    var callback;
+    callback = function (response, data, request) {
+      var msg = data.msg;
+      var usedByLinkData = data.usedByLinkData;
+      if (msg !== null) {
+        that.messageLabel.setContents(msg);
+      }
 
-        if (usedByLinkData === null) {
-          usedByLinkData = [];
-        }
+      if (usedByLinkData === null) {
+        usedByLinkData = [];
+      }
 
-        that.linkedItemCategoryDS.setCacheData(usedByLinkData, true);
-        that.linkedItemCategoryListGrid.invalidateCache();
-        that.linkedItemCategoryListGrid.filterData();
-        };
+      that.linkedItemCategoryDS.setCacheData(usedByLinkData, true);
+      that.linkedItemCategoryListGrid.invalidateCache();
+      that.linkedItemCategoryListGrid.filterData();
+    };
 
     var reqObj = {
       params: {
@@ -179,20 +180,21 @@ isc.OBLinkedItemLayout.addProperties({
     var selCatItems = this.linkedItemCategoryListGrid.getSelectedRecord();
 
     var that = this; /* loads linked items to the child grid */
-    var callback = function (response, data, request) {
-        var msg = data.msg;
-        var usedByLinkData = data.usedByLinkData;
-        if (msg !== null) {
-          that.messageLabel.setContents(msg);
-        }
+    var callback;
+    callback = function (response, data, request) {
+      var msg = data.msg;
+      var usedByLinkData = data.usedByLinkData;
+      if (msg !== null) {
+        that.messageLabel.setContents(msg);
+      }
 
-        if (usedByLinkData === null) {
-          usedByLinkData = [];
-        }
-        that.linkedItemListGrid.invalidateCache();
-        that.linkedItemDS.setCacheData(usedByLinkData, true);
-        that.linkedItemListGrid.filterData();
-        };
+      if (usedByLinkData === null) {
+        usedByLinkData = [];
+      }
+      that.linkedItemListGrid.invalidateCache();
+      that.linkedItemDS.setCacheData(usedByLinkData, true);
+      that.linkedItemListGrid.filterData();
+    };
 
     if (!selCatItems) {
       this.linkedItemCategoryListGrid.filterEditorSubmit();
@@ -222,7 +224,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function (record) {
-    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT');
+    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT', null, record.readOnly, record.singleRecord, true);
   },
 
   /**
@@ -306,7 +308,7 @@ isc.OBLinkedItemLayout.addProperties({
       height: 300,
       dataSource: this.linkedItemCategoryDS,
       layout: this,
-      emptyDataMessage: this.emptyMessage,
+      emptyDataMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
       loadingDataMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
       recordClick: 'this.layout.loadLinkedItems(record)',
       showFilterEditor: true,

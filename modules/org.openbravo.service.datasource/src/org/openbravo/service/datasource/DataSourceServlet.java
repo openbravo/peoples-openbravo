@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,12 +60,12 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -116,8 +116,12 @@ public class DataSourceServlet extends BaseKernelServlet {
       throws ServletException, IOException {
 
     try {
-      super.service(request, response);
+      SessionInfo.setModuleId(request.getParameter("moduleId"));
+      SessionInfo.setCommand(request.getParameter(DataSourceConstants.OPERATION_TYPE_PARAM));
+      SessionInfo.setProcessId(request.getParameter("tabId"));
+      SessionInfo.setProcessType("W");
 
+      super.service(request, response);
     } catch (final InvalidRequestException e) {
       if (SessionHandler.isSessionHandlerPresent()) {
         SessionHandler.getInstance().setDoRollback(true);
@@ -161,7 +165,6 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
     doFetch(request, response, parameters);
   }
 
@@ -430,7 +433,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       try {
         while (itKeysF.hasNext()) {
           String key = (String) itKeysF.next();
-          if (key.endsWith("_identifier")) {
+          if (key.endsWith(JsonConstants.IDENTIFIER)) {
             continue;
           }
           if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
@@ -466,7 +469,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         boolean isFirst = true;
         while (itKeys.hasNext()) {
           String key = (String) itKeys.next();
-          if (key.endsWith("_identifier")) {
+          if (key.endsWith(JsonConstants.IDENTIFIER)) {
             continue;
           }
           if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
@@ -481,8 +484,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (!json.has(key)) {
             continue;
           }
-          Object keyValue = json.has(key + "._identifier") ? json.get(key + "._identifier") : json
-              .get(key);
+          Object keyValue = json.has(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) ? json
+              .get(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) : json.get(key);
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number && keyValue != null) {
@@ -559,7 +562,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
+
+    setSessionInfo();
 
     try {
       if (!hasAccess(request, parameters.get("tabId"))) {
@@ -586,8 +590,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    UsageAudit.auditAction(request, parameters);
-    setSessionInfo(request, parameters);
+    setSessionInfo();
     try {
       // checks and set parameters, if not valid then go away
       if (!checkSetParameters(request, response, parameters)) {
@@ -629,8 +632,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
-    setSessionInfo(request, parameters);
-    UsageAudit.auditAction(request, parameters);
+    setSessionInfo();
     try {
       if (!hasAccess(request, parameters.get("tabId"))) {
         throw new OBUserException("AccessTableNoView");
@@ -647,15 +649,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
   }
 
-  private void setSessionInfo(HttpServletRequest request, Map<String, String> parameters) {
-    SessionInfo.setModuleId(parameters.get("moduleId"));
-    SessionInfo.setProcessType("W");
-    SessionInfo.setProcessId(parameters.get("tabId"));
-    // Session ID and user needn't be set as they were done in the service method.
-
-    // SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
-    // SessionInfo.setSessionId((String) request.getAttribute("#AD_SESSION_ID"));
-
+  private void setSessionInfo() {
     // FIXME: Because of issue #15331 connection is initialized with temporary audit table before
     // setting session info
     // Reset Session Info in DB manually as it was set in the service but actual information is not

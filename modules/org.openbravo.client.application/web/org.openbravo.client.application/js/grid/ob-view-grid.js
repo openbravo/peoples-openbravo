@@ -29,6 +29,12 @@ isc.OBViewGrid.addClassProperties({
   ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP
 });
 
+if (!isc.Browser.isIE) {
+  isc.OBViewGrid.addProperties({
+    enforceVClipping: true // To avoid apply in IE, since it moves the grid row content to the top of each cell (issue 17884)
+  });
+}
+
 // = OBViewGrid =
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
@@ -50,8 +56,9 @@ isc.OBViewGrid.addProperties({
   editLinkFieldProperties: {
     type: 'text',
     canSort: false,
+    canReorder: false,
     frozen: true,
-    canFreeze: true,
+    canFreeze: false,
     canEdit: false,
     canGroupBy: false,
     canHide: false,
@@ -91,6 +98,7 @@ isc.OBViewGrid.addProperties({
   canAddSummaryFields: true,
   canGroupBy: false,
   selectionAppearance: 'checkbox',
+  arrowKeyAction: 'select',
   useAllDataSourceFields: false,
   editEvent: 'none',
   showCellContextMenus: true,
@@ -140,7 +148,6 @@ isc.OBViewGrid.addProperties({
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
 
-  enforceVClipping: true,
   fixedRecordHeights: true,
 
   validateByCell: true,
@@ -191,10 +198,16 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length;
+      var i, length, timeFields;
 
+      // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
+      if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
+        if (this.grid) {
+          OB.Utilities.Date.convertUTCTimeToLocalTime(newData, this.grid.completeFields);
+        }
+      }
       // only do this stuff for fetch operations, in other cases strange things
-      // happen as update/delete operations do not return the totalRows parameter
+      // happen as update/delete operations do not return the totalRows parameter      
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
         return;
       }
@@ -293,24 +306,24 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
-    this.filterNoRecordsEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLinkButtonItem">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
+    this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
 
     return ret;
   },
 
-  clearFilter: function() {
+  clearFilter: function () {
     // hide the messagebar
     this.view.messageBar.hide();
     this.Super('clearFilter', arguments);
   },
-  
-  filterEditorSubmit: function() {
+
+  filterEditorSubmit: function () {
     // hide the messagebar
     this.view.messageBar.hide();
     this.Super('filterEditorSubmit', arguments);
   },
-  
+
   // destroy the context menu also
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
@@ -355,10 +368,22 @@ isc.OBViewGrid.addProperties({
     this.setFields(this.completeFields.duplicate());
   },
 
+  setReadOnlyMode: function () {
+    if (this.uiPattern !== 'RO') {
+      this.uiPattern = 'RO';
+      this.canEdit = false;
+      if (this.contextMenu) {
+        this.contextMenu.destroy();
+        this.contextMenu = null;
+      }
+      this.refreshContents();
+    }
+  },
+
   draw: function () {
     var drawnBefore = this.isDrawn(),
         i, form, item, items, length;
-
+    this.enableShortcuts();
     this.Super('draw', arguments);
 
     // set the focus in the filter editor
@@ -849,9 +874,9 @@ isc.OBViewGrid.addProperties({
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
-      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="OBLinkButtonItem">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
 
@@ -1077,7 +1102,8 @@ isc.OBViewGrid.addProperties({
   },
 
   convertCriteria: function (criteria) {
-    var selectedValues, prop, fld, value, i, criterion, fldName, length;
+    var selectedValues, prop, fld, value, i, j, k, criterion, fldName, length, today = new Date(),
+        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset();
 
     if (!criteria) {
       criteria = {};
@@ -1161,7 +1187,9 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    // get rid of some unneeded stuff in the criteria
+    // Iterates all the criterias
+    // -If they are not needed, they are removed
+    // -Otherwise, if it is a datetime criteria, the UTC offset in minutes is added
     if (criteria && criteria.criteria) {
       var internalCriteria = criteria.criteria;
       for (i = (internalCriteria.length - 1); i >= 0; i--) {
@@ -1175,6 +1203,27 @@ isc.OBViewGrid.addProperties({
         }
         if (shouldRemove) {
           internalCriteria.removeAt(i);
+        } else {
+          var fieldName;
+          //The first name a date time field is filtered, the fieldName is stored in criteria.criteria[i].criteria[0].fieldName
+          if (criteria.criteria[i].criteria && criteria.criteria[i].criteria[0]) {
+            fieldName = criteria.criteria[i].criteria[0].fieldName;
+          } else { //After the first time, the fieldName is stored in criteria.criteria[i].fieldName
+            fieldName = criteria.criteria[i].fieldName;
+          }
+
+          for (j = 0; j < this.fields.length; j++) {
+            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === "datetime") {
+              if (criteria.criteria[i].criteria) {
+                for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
+                  criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+                }
+              } else {
+                criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+              }
+              break;
+            }
+          }
         }
       }
     }
@@ -1203,6 +1252,10 @@ isc.OBViewGrid.addProperties({
       // determined from the target record and the parent property
       if (this.isOpenDirectMode && this.view.parentView) {
         params._filterByParentProperty = this.view.parentProperty;
+      }
+
+      if (this.view && this.view.directNavigation) {
+        params._directNavigation = true;
       }
     } else if (params._targetRecordId) {
       delete params._targetRecordId;
@@ -1301,11 +1354,11 @@ isc.OBViewGrid.addProperties({
       parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
       } else if (selectedValues.length === 0) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
       } else if (selectedValues.length > 1) {
-        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
+        this.emptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
       } else {
         this.emptyMessage = this.noDataEmptyMessage;
       }
@@ -1397,7 +1450,7 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function () {
           var fldName = field.name;
-          var dotIndex = fldName.indexOf('.');
+          var dotIndex = fldName.indexOf(OB.Constants.FIELDSEPARATOR);
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }
@@ -1405,7 +1458,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
+    if (this.view.isDeleteableTable && recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text', 'ToolBar_Eliminate', 'id'),
@@ -2021,7 +2074,8 @@ isc.OBViewGrid.addProperties({
     // sometimes rowNum and colnum are not set, then don't compute the next cell
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
-    if (this.view.standardWindow.isAutoSaveEnabled() && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
+    var enterKey = editCompletionEvent === 'enter';
+    if (!this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,
         method: this.cellEditEnd,
@@ -2030,32 +2084,16 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    if (ficCallDone) {
-      // get new value as the row can have changed
-      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum)]);
-      return;
-    } else {
-      // only needed for non picklist fields
-      // as picklist fields will always have picked a value
-      // note that focusItem updatevalue for picklist can result in extra datasource requests
-      if (focusItem && !focusItem.hasPickList) {
-        focusItem.blur(focusItem.form, focusItem);
-        if (editForm.inFicCall) {
-          // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(rowNum);
-          editValues.actionAfterFicReturn = {
-            target: this,
-            method: this.cellEditEnd,
-            parameters: [editCompletionEvent, newValue, true, autoSaveDone]
-          };
-          return;
-        }
-      }
-    }
     if (newValue) {
       this.Super('cellEditEnd', [editCompletionEvent, newValue]);
     } else {
       this.Super('cellEditEnd', [editCompletionEvent]);
+    }
+    // only needed for non picklist fields
+    // as picklist fields will always have picked a value
+    // note that focusItem updatevalue for picklist can result in extra datasource requests
+    if (focusItem && !focusItem.hasPickList) {
+      focusItem.blur(focusItem.form, focusItem);
     }
   },
 
@@ -2140,7 +2178,7 @@ isc.OBViewGrid.addProperties({
 
     if (ficCallDone) {
       // reset the new values as this can have changed because of a fic call
-      newValues = this.getEditValues(editValuesID);
+      newValues = this.getEditValues(rowNum);
     } else {
       var editForm = this.getEditForm(),
           focusItem = editForm.getFocusItem();
@@ -2148,12 +2186,11 @@ isc.OBViewGrid.addProperties({
         focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(editValuesID);
-          editValues.actionAfterFicReturn = {
+          this.setEditValue(rowNum, 'actionAfterFicReturn', {
             target: this,
             method: this.saveEditedValues,
             parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
-          };
+          }, true, true);
           return;
         }
       }
@@ -2164,7 +2201,11 @@ isc.OBViewGrid.addProperties({
   },
 
   autoSave: function () {
+    // flag to force the parsing of date fields when autosaving
+    // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
+    this._autoSaving = true;
     this.storeUpdatedEditorValue();
+    delete this._autoSaving;
     this.endEditing();
   },
 
@@ -2205,6 +2246,9 @@ isc.OBViewGrid.addProperties({
       editForm.clearValues();
       // clear the errors so that they don't show up at the next row
       editForm.clearErrors();
+      // do not save the focus item to prevent wrong validations when creating a new row
+      // see issue 20537 (https://issues.openbravo.com/view.php?id=20537)
+      editForm.setFocusItem(null);
     }
 
     delete this._hidingInlineEditor;
@@ -2329,8 +2373,10 @@ isc.OBViewGrid.addProperties({
   // https://issues.openbravo.com/view.php?id=16611
   storeUpdatedEditorValue: function (suppressChange, editCol) {
     this._storingUpdatedEditorValue = true;
+    this._preventDateParsing = true;
     this.Super('storeUpdatedEditorValue', arguments);
     delete this._storingUpdatedEditorValue;
+    delete this._preventDateParsing;
   },
 
   // the form gets recreated many times, maintain the already read valuemap
@@ -2505,8 +2551,12 @@ isc.OBViewGrid.addProperties({
       });
       layout.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      layout.showEditOpen();
       record.editColumnLayout = layout;
+      if (record._new) {
+        layout.showSaveCancel();
+      } else {
+        layout.showEditOpen();
+      }
       return layout;
     }
     if (fld.clientClass && !isEditRecord) {
@@ -2537,7 +2587,11 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout = component;
       component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      component.showEditOpen();
+      if (record._new) {
+        component.showSaveCancel();
+      } else {
+        component.showEditOpen();
+      }
     } else if (isEditRecord) {
       return null;
     } else {

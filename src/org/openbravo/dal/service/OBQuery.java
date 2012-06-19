@@ -69,6 +69,7 @@ public class OBQuery<E extends BaseOBObject> {
   private boolean filterOnActive = true;
   private int firstResult = -1;
   private int maxResult = -1;
+  private int fetchSize = -1;
 
   // package visible
   OBQuery() {
@@ -226,6 +227,9 @@ public class OBQuery<E extends BaseOBObject> {
     try {
       final Query qry = getSession().createQuery(qryStr);
       setParameters(qry);
+      if (fetchSize > -1) {
+        qry.setFetchSize(fetchSize);
+      }
       if (firstResult > -1) {
         qry.setFirstResult(firstResult);
       }
@@ -605,5 +609,13 @@ public class OBQuery<E extends BaseOBObject> {
 
   public void setMaxResult(int maxResult) {
     this.maxResult = maxResult;
+  }
+
+  public int getFetchSize() {
+    return fetchSize;
+  }
+
+  public void setFetchSize(int fetchSize) {
+    this.fetchSize = fetchSize;
   }
 }

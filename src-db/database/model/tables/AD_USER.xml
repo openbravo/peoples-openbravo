@@ -121,7 +121,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="USERNAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="USERNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -147,6 +147,10 @@
       </column>
       <column name="ISLOCKED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
@@ -179,6 +183,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="AD_USER_DEFAULT_M_WAREHOUSE">
         <reference local="DEFAULT_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_USER_IMAGE_KEY">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -191,6 +198,9 @@
       <index name="AD_USER_NAME" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="NAME"/>
+      </index>
+      <index name="AD_USER_PARTNER" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
       </index>
       <unique name="AD_USER_UN_USERNAME">
         <unique-column name="USERNAME"/>

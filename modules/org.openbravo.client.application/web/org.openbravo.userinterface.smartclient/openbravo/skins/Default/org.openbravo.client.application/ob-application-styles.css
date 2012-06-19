@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,6 @@ body {
   overflow: hidden;
   font-family: 'lucida sans', sans-serif;
   font-size: 1em;
-  line-height: 1.6em;
   color: #333;
 }
 
@@ -56,6 +55,33 @@ body {
 .normal:focus {
   outline: none;
   -moz-outline-style: none;
+}
+
+.imgButton,
+.imgButtonOver,
+.imgButtonFocused,
+.imgButtonFocusedOver,
+.imgButtonDown,
+.imgButtonFocusedDown,
+.imgButtonSelected,
+.imgButtonSelectedFocused,
+.imgButtonSelectedDown,
+.imgButtonSelectedFocusedDown,
+.imgButtonSelectedOver,
+.imgButtonSelectedFocusedOver {
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
+}
+
+/* menuMain changes to avoid UI defects due to the CSS3 attributes introduced by SmartClient 8.3d 03-May-2012 */
+.menuMain {
+  background: #FFFFFF url(../../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/smartclient/images/Menu/menu_background.png) repeat-y scroll;
+  filter: none;
+  -ms-filter: none;
+}
+.menuMainRTL {
+  background: #FFFFFF url(../../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/smartclient/images/Menu/menu_background_rtl.png) repeat-y right scroll;
+  filter: none;
+  -ms-filter: none;
 }
 
 /*============================================================
@@ -81,15 +107,11 @@ body {
  Loading prompts
  ============================================================*/
 .OBLoadingPromptLabel {
-    font-family: 'Arial';
-    font-size: 12px;
-    color: #ccd0d4;
+  font-family: 'Arial';
+  font-size: 12px;
+  color: #ccd0d4;
 }
 
 .OBLoadingPromptModalMask {
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #7f7f7f;
+  background-color: #7f7f7f;
 }

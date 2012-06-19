@@ -69,8 +69,17 @@ public class DynamicExpressionParser {
   private String code;
   private Tab tab;
   private StringBuffer jsCode;
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   public DynamicExpressionParser(String code, Tab tab) {
+    this.code = code;
+    this.tab = tab;
+    parse();
+  }
+
+  public DynamicExpressionParser(String code, Tab tab,
+      ApplicationDictionaryCachedStructures cachedStructures) {
+    this.cachedStructures = cachedStructures;
     this.code = code;
     this.tab = tab;
     parse();
@@ -219,9 +228,20 @@ public class DynamicExpressionParser {
   private DisplayLogicElement getDisplayLogicTextTranslate(String token) {
     if (token == null || token.trim().equals(""))
       return new DisplayLogicElement("", false);
-    ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
-        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-    for (Field field : cachedStructures.getFieldsOfTab(tab.getId())) {
+    List<Field> fields;
+    List<AuxiliaryInput> auxIns;
+    try {
+      if (cachedStructures == null) {
+        cachedStructures = WeldUtils
+            .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+      }
+      fields = cachedStructures.getFieldsOfTab(tab.getId());
+      auxIns = cachedStructures.getAuxiliarInputList(tab.getId());
+    } catch (NullPointerException e) {
+      fields = tab.getADFieldList();
+      auxIns = tab.getADAuxiliaryInputList();
+    }
+    for (Field field : fields) {
       if (field.getColumn() == null) {
         continue;
       }
@@ -237,7 +257,7 @@ public class DynamicExpressionParser {
             uiDef instanceof YesNoUIDefinition);
       }
     }
-    for (AuxiliaryInput auxIn : cachedStructures.getAuxiliarInputList(tab.getId())) {
+    for (AuxiliaryInput auxIn : auxIns) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
         return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);

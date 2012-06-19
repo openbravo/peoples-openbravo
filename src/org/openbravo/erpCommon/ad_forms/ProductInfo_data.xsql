@@ -27,7 +27,7 @@
     <Sql>
       <![CDATA[
   SELECT P.PRODUCTTYPE, PC.VALUE,P.C_UOM_ID,P.AD_CLIENT_ID,P.AD_ORG_ID,
-  '' AS REVENUE, '' AS EXPENSE, '' AS ASSET, '' AS COGS, '' AS PURCHASEPRICEVARIANCE, '' AS INVOICEPRICEVARIANCE,
+  '' AS REVENUE, '' AS REVENUERETURN, '' AS EXPENSE, '' AS ASSET, '' AS COGS, '' AS COGSRETURN, '' AS PURCHASEPRICEVARIANCE, '' AS INVOICEPRICEVARIANCE,
   '' AS DISCOUNTREC, '' AS DISCOUNTGRANT, '' AS CONVERTED, '' AS CURRENTCOSTPRICE, '' AS COSTAVERAGE, '' AS PRICELASTPO,
   '' AS COSTSTANDARD, '' AS C_CURRENCY_ID, '' AS PRICELIST, '' AS PRICESTD, '' AS PRICELIMIT, '' AS PRICEPO
   FROM M_PRODUCT_CATEGORY PC, M_PRODUCT P 
@@ -41,8 +41,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  SELECT P_Revenue_Acct as revenue, P_Expense_Acct as expense, P_Asset_Acct as asset, P_Cogs_Acct as cogs, 
-  P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
+  SELECT P_Revenue_Acct as revenue, P_Revenue_Return_Acct as revenuereturn, P_Expense_Acct as expense, P_Asset_Acct as asset, P_Cogs_Acct as cogs, 
+  P_Cogs_Return_Acct as cogsreturn, P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
   P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
   FROM M_Product_Acct
   WHERE M_Product_ID=? 
@@ -56,8 +56,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT coalesce(acctsdef.P_Revenue_Acct, pca.P_Revenue_Acct) as revenue, coalesce(acctsdef.P_Expense_Acct, pca.P_Expense_Acct) as expense,
-             coalesce(acctsdef.P_Asset_Acct, pca.P_Asset_Acct) as asset, coalesce(acctsdef.P_Cogs_Acct, pca.P_Cogs_Acct) as cogs,
+      SELECT coalesce(acctsdef.P_Revenue_Acct, pca.P_Revenue_Acct) as revenue, coalesce(acctsdef.P_Revenue_Return_Acct, pca.P_Revenue_Return_Acct) as revenuereturn,
+             coalesce(acctsdef.P_Expense_Acct, pca.P_Expense_Acct) as expense, coalesce(acctsdef.P_Asset_Acct, pca.P_Asset_Acct) as asset, 
+             coalesce(acctsdef.P_Cogs_Acct, pca.P_Cogs_Acct) as cogs, coalesce(acctsdef.P_Cogs_Return_Acct, pca.P_Cogs_Return_Acct) as cogsreturn,
              coalesce(acctsdef.P_PurchasePriceVariance_Acct, pca.P_PurchasePriceVariance_Acct) as purchasepricevariance,
              coalesce(acctsdef.P_InvoicePriceVariance_Acct, pca.P_InvoicePriceVariance_Acct) as invoicepricevariance,
              coalesce(acctsdef.P_TradeDiscountRec_Acct, pca.P_TradeDiscountRec_Acct) as discountrec,

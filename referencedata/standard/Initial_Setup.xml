@@ -519,6 +519,30 @@
     <reversal>false</reversal>
     <return>false</return>
   </DocumentType>
+<DocumentType id="56AA9305B32C44A08554D3DB16E2B4E2" identifier="Return Material Sales Invoice">
+    <id>56AA9305B32C44A08554D3DB16E2B4E2</id>
+    <active>true</active>
+    <name>Return Material Sales Invoice</name>
+    <printText>Return Material Sales Invoice</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>ARI_RM</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="CD179732385848B09607674D35D1C447" entity-name="ADSequence" identifier="Return Material Sales Invoice"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>true</return>
+  </DocumentType>
   <DocumentType id="3DDDC41E36534A79B7CC1B725472882D" identifier="Inventory Move">
     <id>3DDDC41E36534A79B7CC1B725472882D</id>
     <active>true</active>
@@ -1033,7 +1057,7 @@
     <salesTransaction>true</salesTransaction>
     <sOSubType>SO</sOSubType>
     <documentTypeForShipment id="6FC1637EEE784A368157D86E0BDD852A" entity-name="DocumentType" identifier="RFC Receipt"/>
-    <documentTypeForInvoice id="67C3266D11A04078B7A14AC21E91C711" entity-name="DocumentType" identifier="Reversed Sales Invoice"/>
+    <documentTypeForInvoice id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="78E54919CD7742EEA66B2CA1AD41C87E" entity-name="ADSequence" identifier="RFC Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
@@ -1316,6 +1340,18 @@
     <active>true</active>
     <name>Reversed Sales Invoice</name>
     <description>Reversed Sales Invoice</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+<ADSequence id="CD179732385848B09607674D35D1C447" identifier="Return Material Sales Invoice">
+    <id>CD179732385848B09607674D35D1C447</id>
+    <active>true</active>
+    <name>Return Material Sales Invoice</name>
+    <description>Return Material Sales Invoice</description>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
@@ -1715,6 +1751,18 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+<DocumentTemplate id="B1D6986BD45E4E108B0C3121FC90D3B5" identifier="Return Material Sales Invoice Report template">
+    <id>B1D6986BD45E4E108B0C3121FC90D3B5</id>
+    <active>true</active>
+    <documentType id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
+    <name>Return Material Sales Invoice Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Return Material Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>

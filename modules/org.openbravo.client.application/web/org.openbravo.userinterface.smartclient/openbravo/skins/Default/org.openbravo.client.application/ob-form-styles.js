@@ -129,7 +129,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   // is 20
   pickListCellHeight: 22,
 
-  quickRunWidth: 210,
+  quickRunWidth: 267,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
   pickListHeight: 200,
@@ -180,10 +180,12 @@ OB.Styles.OBFormField.DefaultSearch = {
   pickerIconHspace: 0,
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
-    showHover: true,
-    height: 15,
-    width: 15,
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',
+    showRollOver: true,
+    showDown: true,
+    height: 21,
+    width: 21,
+    hspace: 0,
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clearField.png',
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
   newTabIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
@@ -276,6 +278,9 @@ OB.Styles.OBFormField.DefaultDateInput = {
 };
 
 isc.OBDateItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
+isc.OBDateItem.addProperties({
+  textAlign: 'left'
+});
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 

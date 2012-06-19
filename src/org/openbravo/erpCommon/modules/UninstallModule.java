@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,6 +97,11 @@ public class UninstallModule {
       if (moduleIdList.contains("'0'")) {
         log4j.error("Cannot uninstall core");
         addLog("@CannotUninstallCore@", MSG_ERROR);
+        return;
+      }
+      if (moduleIdList.contains("'0138E7A89B5E4DC3932462252801FFBC'")) {
+        log4j.error("Cannot uninstall Openbravo 3.0");
+        addLog("@CannotUninstallOpenbravo3@", MSG_ERROR);
         return;
       }
       final UninstallModuleData[] dependencies = UninstallModuleData.selectDependencies(pool,

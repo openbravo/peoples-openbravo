@@ -39,7 +39,9 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         targetFld.valueMap = {};
       }
       targetFld.valueMap[targetFld.getValue()] = display;
-      targetFld.form.setValue(targetFld.displayField, display);
+      if (targetFld.displayField) {
+        targetFld.form.setValue(targetFld.displayField, display);
+      }
       targetFld.updateValueMap(true);
 
       if (parameters && parameters.length > 0) {
@@ -55,6 +57,8 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
       targetFld.form.handleItemChange(targetFld);
       // fire with a delay otherwise results in strange errors
       targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
+
+      targetFld.form.focusInNextItem(targetFld.name);
     }
     isc.OBSearchItem.openedWindow.close();
     isc.OBSearchItem.openSearchItem = null;

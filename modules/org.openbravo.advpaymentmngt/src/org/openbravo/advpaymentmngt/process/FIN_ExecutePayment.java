@@ -211,7 +211,30 @@ public class FIN_ExecutePayment {
           FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(),
               psd.getAmount(), psd.getWriteoffAmount());
         }
+        if (pDetail.isPrepayment() && psd.getOrderPaymentSchedule() == null
+            && psd.getInvoicePaymentSchedule() == null) {
+          // This PSD is credit
+          BusinessPartner bPartner = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
+          BigDecimal creditUsed = bPartner.getCreditUsed();
+          BigDecimal amountWithSign = psd.getPaymentDetails().getFinPayment().isReceipt() ? psd
+              .getAmount() : psd.getAmount().negate();
+          creditUsed = creditUsed.subtract(amountWithSign);
+          bPartner.setCreditUsed(creditUsed);
+          OBDal.getInstance().save(bPartner);
+        }
       }
+    }
+    // When credit is used (consumed) we compensate so_creditused as this amount is already
+    // included in the payment details. Credit consumed should not affect to so_creditused
+    if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+        && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+      BusinessPartner bp = payment.getBusinessPartner();
+      if (payment.isReceipt()) {
+        bp.setCreditUsed(bp.getCreditUsed().add(payment.getUsedCredit()));
+      } else {
+        bp.setCreditUsed(bp.getCreditUsed().subtract(payment.getUsedCredit()));
+      }
+      OBDal.getInstance().save(bp);
     }
   }
 

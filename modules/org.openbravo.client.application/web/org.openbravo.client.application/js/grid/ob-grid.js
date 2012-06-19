@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // grid implementations.
 isc.OBGrid.addProperties({
 
+  reverseRTLAlign: true,
   dragTrackerMode: 'none',
 
   // recycle gives better performance but also results
@@ -102,6 +103,9 @@ isc.OBGrid.addProperties({
   },
 
   bodyKeyPress: function (event, eventInfo) {
+    if ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id)) {
+      return true;
+    }
     var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body');
     if (response !== false) {
       response = this.Super('bodyKeyPress', arguments);
@@ -112,12 +116,13 @@ isc.OBGrid.addProperties({
   filterFieldsKeyDown: function (item, form, keyName) {
     var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter');
     if (response !== false) {
-      if (isc.EventHandler.getKeyName() === 'Tab' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown()) {
-        return false; // To avoid strange double field jump while pressing Tab Key
-      }
       response = this.Super('filterFieldsKeyDown', arguments);
     }
     return response;
+  },
+
+  isEditing: function () {
+    return this.getEditForm();
   },
 
   focusInFirstFilterEditor: function () {
@@ -194,7 +199,7 @@ isc.OBGrid.addProperties({
     setEditValue: function (rowNum, colNum, newValue, suppressDisplay, suppressChange) {
       // prevent any setting of non fields in the filter editor
       // this prevents a specific issue that smartclient will set a value
-      // in the {field.name}._identifier (for example warehouse._identifier)
+      // in the {field.name} + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER (for example warehouse + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)
       // because it thinks that the field does not have its own datasource
       if (isc.isA.String(colNum) && !this.getField(colNum)) {
         return;
@@ -210,41 +215,6 @@ isc.OBGrid.addProperties({
     // header in the filter editor row
     isCheckboxField: function () {
       return false;
-    },
-
-    filterImg: {
-      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
-    },
-
-    makeActionButton: function () {
-      var ret = this.Super('makeActionButton', arguments);
-      this.filterImage.setLeft(this.computeFunnelLeft(2));
-      var layout = isc.HLayout.create({
-        styleName: 'OBGridFilterFunnelBackground',
-        width: '100%',
-        height: '100%',
-        left: this.computeFunnelLeft()
-      });
-      this.funnelLayout = layout;
-      this.addChild(layout);
-      return ret;
-    },
-
-    computeFunnelLeft: function (correction) {
-      correction = correction || 0;
-      return this.getInnerWidth() - this.getScrollbarSize() - 3 + correction;
-    },
-
-    // keep the funnel stuff placed correctly
-    layoutChildren: function () {
-      var ret = this.Super("layoutChildren", arguments);
-      if (this.funnelLayout) {
-        this.funnelLayout.setLeft(this.computeFunnelLeft());
-      }
-      if (this.filterImage) {
-        this.filterImage.setLeft(this.computeFunnelLeft(2));
-      }
-      return ret;
     },
 
     // overridden for:
@@ -325,8 +295,8 @@ isc.OBGrid.addProperties({
             continue;
           }
           fullPropName = prop;
-          if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
-            var index = prop.lastIndexOf('.');
+          if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+            var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
             prop = prop.substring(0, index);
           }
           var fnd = false,
@@ -443,6 +413,9 @@ isc.OBGrid.addProperties({
     if (!noPerformAction) {
       this.filterEditor.performAction();
     }
+    if (this.view && this.view.directNavigation) {
+      delete this.view.directNavigation;
+    }
   },
 
   showSummaryRow: function () {
@@ -478,6 +451,23 @@ isc.OBGrid.addProperties({
     this.checkShowFilterFunnelIcon(criteria);
   },
 
+  setSingleRecordFilterMessage: function () {
+    var showMessageProperty, showMessage;
+
+    if (!this.isOpenDirectModeLeaf && !this.view.isShowingForm && (this.view.messageBar && !this.view.messageBar.isVisible())) {
+      showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowSingleRecordFilterMsg');
+      showMessage = showMessageProperty !== 'N' && showMessageProperty !== '"N"';
+      if (showMessage) {
+        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_SingleRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowSingleRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+        this.view.messageBar.hasFilterMessage = true;
+      }
+    } else if (this.isOpenDirectModeLeaf && this.view.messageBar.hasFilterMessage) {
+      // remove grid message if it was set previously when in direct open
+      this.view.messageBar.hasFilterMessage = false;
+      this.view.messageBar.hide();
+    }
+  },
+
   checkShowFilterFunnelIcon: function (criteria) {
     if (!this.filterImage) {
       return;
@@ -485,7 +475,12 @@ isc.OBGrid.addProperties({
     var gridIsFiltered = this.isGridFiltered(criteria);
     var noParentOrParentSelected = !this.view || !this.view.parentView || (this.view.parentView.viewGrid.getSelectedRecords() && this.view.parentView.viewGrid.getSelectedRecords().length > 0);
 
-    if (this.filterClause && gridIsFiltered) {
+    if (this.view && this.view.directNavigation) {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterSingleRecord');
+      this.filterImage.show(true);
+      this.setSingleRecordFilterMessage();
+      return;
+    } else if (this.filterClause && gridIsFiltered) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');
       this.filterImage.show(true);
     } else if (this.filterClause) {
@@ -502,11 +497,11 @@ isc.OBGrid.addProperties({
       this.filterImage.hide();
     }
 
-    if (this.filterClause && !this.view.isShowingForm && !this.view.messageBar.isVisible()) {
+    if (this.filterClause && !this.view.isShowingForm && (this.view.messageBar && !this.view.messageBar.isVisible())) {
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {
-        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
         this.view.messageBar.hasFilterMessage = true;
       }
     }
@@ -543,8 +538,8 @@ isc.OBGrid.addProperties({
       }
       var value = criterion.value;
       // see the description in setValuesAsCriteria above
-      if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
-        var index = prop.lastIndexOf('.');
+      if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+        var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
         prop = prop.substring(0, index);
       }
 

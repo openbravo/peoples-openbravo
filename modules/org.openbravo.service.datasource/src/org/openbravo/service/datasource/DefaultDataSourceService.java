@@ -300,7 +300,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           if (additionalProperties.length() > 0) {
             additionalProperties.append(",");
           }
-          additionalProperties.append(dsProp.getName() + "." + addProp);
+          additionalProperties.append(dsProp.getName() + DalUtil.FIELDSEPARATOR
+              + addProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
         }
       }
     }

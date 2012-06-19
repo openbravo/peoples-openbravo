@@ -41,7 +41,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,6 +48,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -68,10 +68,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -81,8 +79,6 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.ad.ui.Message;
-import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -115,57 +111,6 @@ public class Utility {
     autosaveExcludedPackages.add("org.openbravo.erpCommon.info");
     autosaveExcludedPackages.add("org.openbravo.erpCommon.ad_callouts");
     autosaveExcludedClasses.add("org.openbravo.erpCommon.utility.PopupLoading");
-  }
-
-  /**
-   * Returns a message in the right language with parameter substitution. Each occurence of a %
-   * parameter (%0, %1 etc) is replaced with the corresponding parameter value. in the params array.
-   * 
-   * @param key
-   *          the key of the message
-   * @param params
-   *          the parameters to substitute in the message
-   * @return the translated message with the parameters substituted
-   */
-  public static String getI18NMessage(String key, String[] params) {
-    OBContext.setAdminMode();
-    try {
-
-      // first read the labels from the base table
-      final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-          Message.PROPERTY_SEARCHKEY + "=:key");
-      messages.setNamedParameter("key", key);
-      if (messages.list().isEmpty()) {
-        return null;
-      }
-
-      if (messages.list().size() > 1) {
-        log4j.warn("More than one message found using key " + key);
-      }
-
-      // pick the first one
-      final Message message = messages.list().get(0);
-      String label = message.getMessageText();
-      final String languageId = OBContext.getOBContext().getLanguage().getId();
-      for (MessageTrl messageTrl : message.getADMessageTrlList()) {
-        if (DalUtil.getId(messageTrl.getLanguage()).equals(languageId)) {
-          label = messageTrl.getMessageText();
-          break;
-        }
-      }
-      // parameter substitution
-      if (params != null && params.length > 0) {
-        int cnt = 0;
-        for (String param : params) {
-          label = label.replace("%" + cnt++, param);
-        }
-      }
-      return label;
-    } catch (Exception e) {
-      throw new OBException("Exception when getting message for key: " + key, e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   /**
@@ -312,17 +257,10 @@ public class Utility {
   }
 
   /**
-   * Returns an String with the date in the specified format
-   * 
-   * @param date
-   *          Date to be formatted.
-   * @param pattern
-   *          Format expected for the output.
-   * @return String formatted.
+   * @see OBDateUtils#formatDate(Date, String)
    */
   public static String formatDate(Date date, String pattern) {
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
-    return dateFormatter.format(date);
+    return OBDateUtils.formatDate(date, pattern);
   }
 
   /**
@@ -346,24 +284,14 @@ public class Utility {
   }
 
   /**
-   * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
+   * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
     return BasicUtility.messageBD(conn, strCode, strLanguage, true);
   }
 
   /**
-   * Translate the given code into some message from the application dictionary.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param strCode
-   *          String with the code to search.
-   * @param strLanguage
-   *          String with the translation language.
-   * @param escape
-   *          Escape \n and " characters
-   * @return String with the translated message.
+   * @see OBMessageUtils#messageBD(ConnectionProvider, String, String, boolean)
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage,
       boolean escape) {
@@ -371,18 +299,7 @@ public class Utility {
   }
 
   /**
-   * 
-   * Formats a message String into a String for html presentation. Escapes the &, <, >, " and ®, and
-   * replace the \n by <br/>
-   * and \r for space.
-   * 
-   * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
-   * this method replaces \n by \\n and \" by &quote. Because of that, the first replacements revert
-   * this previous replacements.
-   * 
-   * @param message
-   *          message with java formating
-   * @return html format message
+   * @see OBMessageUtils#formatMessageBDToHtml(String)
    */
   public static String formatMessageBDToHtml(String message) {
     return BasicUtility.formatMessageBDToHtml(message);
@@ -1070,99 +987,28 @@ public class Utility {
   }
 
   /**
-   * Parse the text searching @ parameters to translate.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param language
-   *          String with the language to translate.
-   * @param text
-   *          String with the text to translate.
-   * @return String translated.
+   * @see OBMessageUtils#parseTranslation(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
       String language, String text) {
-    return parseTranslation(conn, vars, null, language, text);
+    return OBMessageUtils.parseTranslation(conn, vars, language, text);
   }
 
   /**
-   * Parse the text searching @ parameters to translate. If replaceMap is not null and contains a
-   * replacement value for a token then it will be used, otherwise the return value of the translate
-   * method will be used for the translation.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param replaceMap
-   *          optional Map containing replacement values for the tokens
-   * @param language
-   *          String with the language to translate.
-   * @param text
-   *          String with the text to translate.
-   * @return String translated.
+   * @see OBMessageUtils#parseTranslation(ConnectionProvider, VariablesSecureApp, Map, String,
+   *      String)
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars,
       Map<String, String> replaceMap, String language, String text) {
-    if (text == null || text.length() == 0)
-      return text;
-
-    String inStr = text;
-    String token;
-    final StringBuffer outStr = new StringBuffer();
-
-    int i = inStr.indexOf("@");
-    while (i != -1) {
-      outStr.append(inStr.substring(0, i));
-      inStr = inStr.substring(i + 1, inStr.length());
-
-      final int j = inStr.indexOf("@");
-      if (j < 0) {
-        inStr = "@" + inStr;
-        break;
-      }
-
-      token = inStr.substring(0, j);
-      if (replaceMap != null && replaceMap.containsKey(token)) {
-        outStr.append(replaceMap.get(token));
-      } else {
-        outStr.append(translate(conn, vars, token, language));
-      }
-
-      inStr = inStr.substring(j + 1, inStr.length());
-      i = inStr.indexOf("@");
-    }
-
-    outStr.append(inStr);
-    return outStr.toString();
+    return OBMessageUtils.parseTranslation(conn, vars, replaceMap, language, text);
   }
 
   /**
-   * For each token found in the parseTranslation method, this method is called to find the correct
-   * translation.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param token
-   *          String with the token to translate.
-   * @param language
-   *          String with the language to translate.
-   * @return String with the token translated.
+   * @see OBMessageUtils#translate(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static String translate(ConnectionProvider conn, VariablesSecureApp vars, String token,
       String language) {
-    String strTranslate = token;
-    strTranslate = vars.getSessionValue(token);
-    if (!strTranslate.equals(""))
-      return strTranslate;
-    strTranslate = messageBD(conn, token, language);
-    if (strTranslate.equals(""))
-      return token;
-    return strTranslate;
+    return OBMessageUtils.translate(conn, vars, token, language);
   }
 
   /**
@@ -1386,194 +1232,75 @@ public class Utility {
   }
 
   /**
-   * Gets the Message for the instance of the processes.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param pinstanceData
-   *          Array with the instance information.
-   * @return Object with the message.
-   * @throws ServletException
+   * @see OBMessageUtils#getProcessInstanceMessage(ConnectionProvider, VariablesSecureApp,
+   *      PInstanceProcessData[])
    */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars,
       PInstanceProcessData[] pinstanceData) throws ServletException {
     OBError myMessage = new OBError();
-    if (pinstanceData != null && pinstanceData.length > 0) {
-      String message = "";
-      String title = "Error";
-      String type = "Error";
-      if (!pinstanceData[0].errormsg.equals("")) {
-        message = pinstanceData[0].errormsg;
-      } else if (!pinstanceData[0].pMsg.equals("")) {
-        message = pinstanceData[0].pMsg;
-      }
-
-      if (pinstanceData[0].result.equals("1")) {
-        type = "Success";
-        title = Utility.messageBD(conn, "Success", vars.getLanguage());
-      } else if (pinstanceData[0].result.equals("0")) {
-        type = "Error";
-        title = Utility.messageBD(conn, "Error", vars.getLanguage());
-      } else {
-        type = "Warning";
-        title = Utility.messageBD(conn, "Warning", vars.getLanguage());
-      }
-
-      final int errorPos = message.indexOf("@ERROR=");
-      if (errorPos != -1) {
-        myMessage = Utility.translateError(conn, vars, vars.getLanguage(),
-            "@CODE=@" + message.substring(errorPos + 7));
-        if (log4j.isDebugEnabled())
-          log4j.debug("Error Message returned: " + myMessage.getMessage());
-        if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
-          myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
-              myMessage.getMessage()));
-        }
-        if (errorPos > 0)
-          message = message.substring(0, errorPos);
-        else
-          message = "";
-      }
-      if (!message.equals("") && message.indexOf("@") != -1)
-        message = Utility.parseTranslation(conn, vars, vars.getLanguage(), message);
-      myMessage.setType(type);
-      myMessage.setTitle(title);
-      myMessage.setMessage(message + ((!message.equals("") && errorPos != -1) ? " <br> " : "")
-          + myMessage.getMessage());
+    if (pinstanceData == null || pinstanceData.length == 0) {
+      return myMessage;
     }
+    String message = "";
+    String title = "Error";
+    String type = "Error";
+    if (!pinstanceData[0].errormsg.equals("")) {
+      message = pinstanceData[0].errormsg;
+    } else if (!pinstanceData[0].pMsg.equals("")) {
+      message = pinstanceData[0].pMsg;
+    }
+
+    if (pinstanceData[0].result.equals("1")) {
+      type = "Success";
+      title = messageBD(conn, "Success", vars.getLanguage());
+    } else if (pinstanceData[0].result.equals("0")) {
+      type = "Error";
+      title = messageBD(conn, "Error", vars.getLanguage());
+    } else {
+      type = "Warning";
+      title = messageBD(conn, "Warning", vars.getLanguage());
+    }
+
+    final int errorPos = message.indexOf("@ERROR=");
+    if (errorPos != -1) {
+      myMessage = translateError(conn, vars, vars.getLanguage(),
+          "@CODE=@" + message.substring(errorPos + 7));
+      log4j.debug("Error Message returned: " + myMessage.getMessage());
+      if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
+        myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
+            myMessage.getMessage()));
+      }
+      if (errorPos > 0) {
+        message = message.substring(0, errorPos);
+      } else {
+        message = "";
+      }
+    }
+    if (!message.equals("") && message.indexOf("@") != -1) {
+      message = parseTranslation(conn, vars, vars.getLanguage(), message);
+    }
+    myMessage.setType(type);
+    myMessage.setTitle(title);
+    myMessage.setMessage(message + ((!message.equals("") && errorPos != -1) ? " <br> " : "")
+        + myMessage.getMessage());
+
     return myMessage;
   }
 
   /**
-   * Translate the message, searching the @ parameters, and making use of the ErrorTextParser class
-   * to get the appropiated message.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param strLanguage
-   *          Language to translate.
-   * @param message
-   *          Strin with the message to translate.
-   * @return Object with the message.
+   * @see OBMessageUtils#translateError(ConnectionProvider, VariablesSecureApp, String, String)
    */
   public static OBError translateError(ConnectionProvider conn, VariablesSecureApp vars,
       String strLanguage, String message) {
-    final OBError myError = new OBError();
-    myError.setType("Error");
-    myError.setMessage(message);
-    if (message != null && !message.equals("")) {
-      String code = "";
-      if (log4j.isDebugEnabled())
-        log4j.debug("translateError - message: " + message);
-      if (message.startsWith("@CODE=@"))
-        message = message.substring(7);
-      else if (message.startsWith("@CODE=")) {
-        message = message.substring(6);
-        final int pos = message.indexOf("@");
-        if (pos == -1) {
-          code = message;
-          message = "";
-        } else {
-          code = message.substring(0, pos);
-          message = message.substring(pos + 1);
-        }
-      }
-      myError.setMessage(message);
-      if (log4j.isDebugEnabled())
-        log4j.debug("translateError - code: " + code + " - message: " + message);
-
-      // BEGIN Checking if is a pool problem
-      if (code != null && code.equals("NoConnectionAvailable")) {
-        myError.setType("Error");
-        myError.setTitle("Critical Error");
-        myError.setConnectionAvailable(false);
-        myError.setMessage("No database connection available");
-        return myError;
-      }
-      // END Checking if is a pool problem
-
-      // BEGIN Parsing message text
-      if (message != null && !message.equals("")) {
-        final String rdbms = conn.getRDBMS();
-        ErrorTextParser myParser = null;
-        try {
-          final Class<?> c = Class.forName("org.openbravo.erpCommon.utility.ErrorTextParser"
-              + rdbms.toUpperCase());
-          myParser = (ErrorTextParser) c.newInstance();
-        } catch (final ClassNotFoundException ex) {
-          log4j.warn("Couldn´t find class: org.openbravo.erpCommon.utility.ErrorTextParser"
-              + rdbms.toUpperCase());
-          myParser = null;
-        } catch (final Exception ex1) {
-          log4j.warn("Couldn´t initialize class: org.openbravo.erpCommon.utility.ErrorTextParser"
-              + rdbms.toUpperCase());
-          myParser = null;
-        }
-        if (myParser != null) {
-          myParser.setConnection(conn);
-          myParser.setLanguage(strLanguage);
-          myParser.setMessage(message);
-          myParser.setVars(vars);
-          try {
-            final OBError myErrorAux = myParser.parse();
-            if (myErrorAux != null
-                && !myErrorAux.getMessage().equals("")
-                && (code == null || code.equals("") || code.equals("0") || !myErrorAux.getMessage()
-                    .equalsIgnoreCase(message)))
-              return myErrorAux;
-          } catch (final Exception ex) {
-            log4j.error("Error while parsing text: " + ex);
-          }
-        }
-      } else
-        myError.setMessage(code);
-      // END Parsing message text
-
-      // BEGIN Looking for error code in AD_Message
-      if (code != null && !code.equals("")) {
-        final FieldProvider fldMessage = locateMessage(conn, code, strLanguage);
-        if (fldMessage != null) {
-          myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : (fldMessage
-              .getField("msgtype").equals("I") ? "Info" : (fldMessage.getField("msgtype").equals(
-              "S") ? "Success" : "Warning"))));
-          myError.setMessage(fldMessage.getField("msgtext"));
-          return myError;
-        }
-      }
-      // END Looking for error code in AD_Message
-    }
-    return myError;
+    return OBMessageUtils.translateError(conn, vars, strLanguage, message);
   }
 
   /**
-   * Search a message in the database.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param strCode
-   *          Message to search.
-   * @param strLanguage
-   *          Language to translate.
-   * @return FieldProvider with the message info.
+   * @see OBMessageUtils#locateMessage(ConnectionProvider, String, String)
    */
   public static FieldProvider locateMessage(ConnectionProvider conn, String strCode,
       String strLanguage) {
-    FieldProvider[] fldMessage = null;
-
-    try {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Utility.messageBD - Message Code: " + strCode);
-      fldMessage = MessageBDData.messageInfo(conn, strLanguage, strCode);
-    } catch (final Exception ignore) {
-    }
-    if (fldMessage != null && fldMessage.length > 0)
-      return fldMessage[0];
-    else
-      return null;
+    return OBMessageUtils.locateMessage(conn, strCode, strLanguage);
   }
 
   public String getServletInfo() {
@@ -1943,139 +1670,44 @@ public class Utility {
   }
 
   /**
-   * Determines the labor days between two dates
-   * 
-   * @param strDate1
-   *          Date 1.
-   * @param strDate2
-   *          Date 2.
-   * @param DateFormatter
-   *          Format of the dates.
-   * @return strLaborDays as the number of days between strDate1 and strDate2.
+   * @see OBDateUtils#calculateLaborDays(String, String, DateFormat)
    */
   public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    String strLaborDays = "";
-    if (strDate1 != null && !strDate1.equals("") && strDate2 != null && !strDate2.equals("")) {
-      Integer LaborDays = 0;
-      if (Utility.isBiggerDate(strDate1, strDate2, DateFormatter)) {
-        do {
-          strDate2 = Utility.addDaysToDate(strDate2, "1", DateFormatter); // Adds a day to the Date
-          // 2 until it
-          // reaches the Date 1
-          if (!Utility.isWeekendDay(strDate2, DateFormatter))
-            LaborDays++; // If it is not a weekend day, it adds a
-          // day to the labor days
-        } while (!strDate2.equals(strDate1));
-      } else {
-        do {
-          strDate1 = Utility.addDaysToDate(strDate1, "1", DateFormatter); // Adds a day to the Date
-          // 1 until it
-          // reaches the Date 2
-          if (!Utility.isWeekendDay(strDate1, DateFormatter))
-            LaborDays++; // If it is not a weekend day, it adds a
-          // day to the labor days
-        } while (!strDate1.equals(strDate2));
-      }
-      strLaborDays = LaborDays.toString();
-    }
-    return strLaborDays;
+    return OBDateUtils.calculateLaborDays(strDate1, strDate2, DateFormatter);
   }
 
   /**
-   * Adds an integer number of days to a given date
-   * 
-   * @param strDate
-   *          Start date.
-   * @param strDays
-   *          Number of days to add.
-   * @param DateFormatter
-   *          Format of the date.
-   * @return strFinalDate as the sum of strDate plus strDays.
+   * @see OBDateUtils#addDaysToDate(String, int, DateFormat)
    */
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter)
       throws ParseException {
-    String strFinalDate = "";
-    if (strDate != null && !strDate.equals("") && strDays != null && !strDays.equals("")) {
-      final Calendar FinalDate = Calendar.getInstance();
-      FinalDate.setTime(DateFormatter.parse(strDate)); // FinalDate equals
-      // to strDate
-      FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); // FinalDate
-      // equals
-      // to
-      // strDate
-      // plus one
-      // day
-      strFinalDate = DateFormatter.format(FinalDate.getTime());
+    if (strDays == null || "".equals(strDays)) {
+      return "";
     }
-    return strFinalDate;
+    return OBDateUtils.addDaysToDate(strDate, Integer.parseInt(strDays), DateFormatter);
   }
 
   /**
-   * Determines the format of the date
-   * 
-   * @param vars
-   *          Global variables.
-   * @return DateFormatter as the format of the date.
+   * @see OBDateUtils#getDateFormatter(VariablesSecureApp)
    */
   public static DateFormat getDateFormatter(VariablesSecureApp vars) {
-    String strFormat = vars.getSessionValue("#AD_SqlDateFormat").toString();
-    strFormat = strFormat.replace('Y', 'y'); // Java accepts 'yy' for the
-    // year
-    strFormat = strFormat.replace('D', 'd'); // Java accepts 'dd' for the
-    // day of the date
-    final DateFormat DateFormatter = new SimpleDateFormat(strFormat);
-    return DateFormatter;
+    return OBDateUtils.getDateFormatter(vars);
   }
 
   /**
-   * Determines if a day is a day of the weekend, i.e., Saturday or Sunday
-   * 
-   * @param strDay
-   *          Given Date.
-   * @param DateFormatter
-   *          Format of the date.
-   * @return true if the date is a Sunday or a Saturday.
+   * @see OBDateUtils#isWeekendDay(String, DateFormat)
    */
   public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException {
-    final Calendar Day = Calendar.getInstance();
-    Day.setTime(DateFormatter.parse(strDay));
-    final int weekday = Day.get(Calendar.DAY_OF_WEEK); // Gets the number of
-    // the day of the
-    // week: 1-Sunday,
-    // 2-Monday,
-    // 3-Tuesday,
-    // 4-Wednesday,
-    // 5-Thursday,
-    // 6-Friday,
-    // 7-Saturday
-    if (weekday == 1 || weekday == 7)
-      return true; // 1-Sunday, 7-Saturday
-    return false;
+    return OBDateUtils.isWeekendDay(strDay, DateFormatter);
   }
 
   /**
-   * Determines if a date 1 is bigger than a date 2
-   * 
-   * @param strDate1
-   *          Date 1.
-   * @param strDate2
-   *          Date 2.
-   * @param DateFormatter
-   *          Format of the dates.
-   * @return true if strDate1 is bigger than strDate2.
+   * @see OBDateUtils#isBiggerDate(String, String, DateFormat)
    */
   public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter)
       throws ParseException {
-    final Calendar Date1 = Calendar.getInstance();
-    Date1.setTime(DateFormatter.parse(strDate1));
-    final long MillisDate1 = Date1.getTimeInMillis();
-    final Calendar Date2 = Calendar.getInstance();
-    Date2.setTime(DateFormatter.parse(strDate2));
-    final long MillisDate2 = Date2.getTimeInMillis();
-    if (MillisDate1 > MillisDate2)
-      return true; // Date 1 is bigger than Date 2
-    return false;
+    return OBDateUtils.isBiggerDate(strDate1, strDate2, DateFormatter);
   }
 
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
@@ -2503,6 +2135,11 @@ public class Utility {
           img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
         }
         if (img == null) {
+          img = OBDal.getInstance()
+              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+              .getYourCompanyDocumentImage();
+        }
+        if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
         }
       } else if ("banner-production".equals(logo)) {
@@ -2832,4 +2469,23 @@ public class Utility {
     Object[] names = (Object[]) qName.list().get(0);
     return names[0] != null ? (String) names[0] : (String) names[1];
   }
+
+  /**
+   * Creates a comma separated string with the Id's of the Set of Strings.
+   * 
+   * @param set
+   *          Set of Strings
+   * @return Comma separated string of Id's
+   */
+  public static String getInStrSet(Set<String> set) {
+    StringBuilder strInList = new StringBuilder();
+    for (String string : set) {
+      if (strInList.length() == 0)
+        strInList.append("'" + string + "'");
+      else
+        strInList.append(", '" + string + "'");
+    }
+    return strInList.toString();
+  }
+
 }

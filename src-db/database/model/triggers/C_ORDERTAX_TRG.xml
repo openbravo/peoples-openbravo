@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -57,12 +57,12 @@ BEGIN
     OR(COALESCE(:old.C_TAX_ID, '0') <> COALESCE(:new.C_TAX_ID, '0'))
     OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   NULL;
   IF((DELETING OR INSERTING) AND v_Processed='Y' AND v_Docaction <> 'CL') THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
   /** Is not needed
   -- Get ID
@@ -79,7 +79,7 @@ BEGIN
   AND DocAction <> 'CL' -- allow to close order
   AND (Processed='Y' OR Posted='Y');
   IF (v_RO > 0) THEN
-  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+  RAISE_APPLICATION_ERROR(-20000, '@20501@');
   END IF;
   **/
 END C_ORDERTAX_TRG

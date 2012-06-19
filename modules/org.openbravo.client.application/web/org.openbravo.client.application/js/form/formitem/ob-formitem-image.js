@@ -100,6 +100,7 @@ isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
 isc.OBImageCanvas.addProperties({
   initWidget: function () {
+    this.Super('initWidget', arguments);
     this.imageLayout = isc.OBImageItemSmallImageContainer.create({
       imageItem: this.creator
     });

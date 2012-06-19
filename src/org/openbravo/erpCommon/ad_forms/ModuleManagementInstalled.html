@@ -85,8 +85,9 @@ var baseDirectory = "../../../../../web/";
     resizeArea();
     gt_adjustTreeWidth();
 
-    // disable the core module checkbox (core module can't be disabled or uninstalled)
+    // disable the core and Openbravo 3.0 modules checkbox (these modules can't be disabled or uninstalled)
     document.getElementById("inpNodes_0").disabled=true;
+    document.getElementById("inpNodes_0138E7A89B5E4DC3932462252801FFBC").disabled=true;
   }
 
   function onResizeDo(){

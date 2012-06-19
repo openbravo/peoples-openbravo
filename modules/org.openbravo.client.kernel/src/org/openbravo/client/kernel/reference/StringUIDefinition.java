@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -44,9 +46,11 @@ public class StringUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    Long length = field.getDisplayedLength();
-    if (length == null || length == 0) {
-      length = field.getColumn().getLength();
+    Long length = field.getColumn().getLength();
+
+    Long displaylength = field.getDisplayedLength();
+    if (displaylength == null || displaylength == 0) {
+      displaylength = length;
     }
 
     // custom override
@@ -54,6 +58,25 @@ public class StringUIDefinition extends UIDefinition {
       length = new Long(20);
     }
     return getShowHoverGridFieldSettings(field) + (length != null ? ", length:" + length : "")
-        + super.getGridFieldProperties(field);
+        + ", displaylength:" + displaylength + super.getGridFieldProperties(field);
   }
+
+  public String getFieldProperties(Field field) {
+    String fieldProperties = super.getFieldProperties(field);
+    if (field != null && field.getColumn() != null) {
+      final Long length = field.getColumn().getLength();
+      try {
+        if (length != null) {
+          JSONObject o = new JSONObject(
+              fieldProperties != null && fieldProperties.length() > 0 ? fieldProperties : "{}");
+          o.put("length", length);
+          return o.toString();
+        }
+      } catch (Exception e) { // ignore
+        throw new OBException(e);
+      }
+    }
+    return fieldProperties;
+  }
+
 }

@@ -19,6 +19,7 @@
 isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', isc.SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
+  fetchMissingValues: true,
   operator: 'equals',
   valueField: OB.Constants.ID,
 
@@ -61,6 +62,6 @@ isc.OBSelectorFilterSelectItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = contextInfo.inpadOrgId;
     }
 
-    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
+    return this.Super('filterDataBoundPickList', [requestProperties, true]);
   }
 });

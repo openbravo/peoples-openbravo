@@ -22,15 +22,17 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-  v_Count NUMBER;
+  
   v_Tree_ID   varchar2(32);
   v_Parent_ID VARCHAR2(32);
+  v_count NUMBER;
     
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
+ IF(DELETING) THEN
 
   SELECT c.AD_Tree_Project_ID,
     n.Node_ID
@@ -41,12 +43,17 @@ BEGIN
   WHERE c.AD_Tree_Project_ID=n.AD_Tree_ID
     AND n.Parent_ID IS NULL
     AND c.AD_Client_ID=:old.AD_Client_ID;
-  IF(v_Count=0) THEN
+
+  select COUNT(*) INTO v_count from AD_TREENODE where parent_id=:OLD.C_PROJECT_ID
+    and AD_TREE_ID=v_Tree_ID;    
+  IF(v_count>0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@ChildProjectCheck@') ;
+  END IF;
     DELETE
     FROM AD_TREENODE
     WHERE AD_TREE_ID=v_Tree_ID
       AND NODE_ID=:OLD.C_Project_ID;
-  END IF;
+ END IF;
 END C_PROJECT_TRG3
 ]]></body>
     </trigger>

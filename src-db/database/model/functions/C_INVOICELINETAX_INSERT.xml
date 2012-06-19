@@ -40,7 +40,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -97,7 +97,7 @@
       FROM C_INVOICELINETAX
       WHERE C_INVOICELINE_ID = p_invoiceline_id;
       IF(p_invoice_id IS NULL OR p_invoiceline_id IS NULL) THEN
-         RAISE_APPLICATION_ERROR(-20200, 'Null ORDER OR LINE ID');
+         RAISE_APPLICATION_ERROR(-20000, '@20200@');
       END IF;
       INSERT
       INTO C_INVOICELINETAX (

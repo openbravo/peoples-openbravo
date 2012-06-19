@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -39,7 +39,7 @@ BEGIN
        AND instr(upper(:new.NAME), upper(name)||'_') = 1;
     
     IF v_Aux = 0 THEN
-      RAISE_APPLICATION_ERROR(-20536, 'Messages must start with its module DB prefix') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20536@') ;
     END IF;
   END IF;
 

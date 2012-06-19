@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -31,6 +31,7 @@
     ************************************************************************/
     v_Tree_ID VARCHAR2(32);
   v_Parent_ID VARCHAR2(32);
+    v_Count NUMBER;
   --
   TYPE RECORD IS REF CURSOR;
     Cur_Defaults RECORD;
@@ -110,13 +111,22 @@ BEGIN
       )
       ;
     ELSIF (UPDATING) THEN
-     UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
-     WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+     IF (:new.AD_ORG_ID <> :old.AD_ORG_ID) THEN
+       SELECT COUNT(*) INTO v_Count FROM C_PROJECTPHASE WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+       IF(v_Count > 0) THEN
+        UPDATE C_PROJECTPHASE
+        SET AD_ORG_ID = :new.AD_ORG_ID
+        WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+       END IF;
+     
+       UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+       WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+      END IF;
     END IF;
     -- Summary Nodes first
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
-    RAISE_APPLICATION_ERROR(-20001, 'C_Project InsertTrigger Error: No ClientInfo or parent TreeNode') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20001@') ;
 END C_PROJECT_TRG
 ]]></body>
     </trigger>

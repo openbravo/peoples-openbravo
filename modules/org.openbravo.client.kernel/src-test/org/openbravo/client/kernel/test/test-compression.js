@@ -536,7 +536,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'client',
           hidden: true
         }, {
-          name: 'client._identifier',
+          name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           canSave: false,
@@ -549,7 +549,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'organization',
           hidden: true
         }, {
-          name: 'organization._identifier',
+          name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'organization'
@@ -572,7 +572,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'createdBy',
           hidden: true
         }, {
-          name: 'createdBy._identifier',
+          name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           canSave: false,
@@ -591,7 +591,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'updatedBy',
           hidden: true
         }, {
-          name: 'updatedBy._identifier',
+          name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           canSave: false,
@@ -666,7 +666,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'documentType',
           hidden: true
         }, {
-          name: 'documentType._identifier',
+          name: 'documentType' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           canSave: false,
@@ -679,7 +679,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'transactionDocument',
           hidden: true
         }, {
-          name: 'transactionDocument._identifier',
+          name: 'transactionDocument' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'transactionDocument'
@@ -719,7 +719,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'salesRepresentative',
           hidden: true
         }, {
-          name: 'salesRepresentative._identifier',
+          name: 'salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'salesRepresentative'
@@ -753,7 +753,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'businessPartner',
           hidden: true
         }, {
-          name: 'businessPartner._identifier',
+          name: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'businessPartner'
@@ -764,7 +764,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'invoiceAddress',
           hidden: true
         }, {
-          name: 'invoiceAddress._identifier',
+          name: 'invoiceAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'invoiceAddress'
@@ -776,7 +776,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'partnerAddress',
           hidden: true
         }, {
-          name: 'partnerAddress._identifier',
+          name: 'partnerAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'partnerAddress'
@@ -799,7 +799,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'currency',
           hidden: true
         }, {
-          name: 'currency._identifier',
+          name: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           canSave: false,
@@ -832,7 +832,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'paymentTerms',
           hidden: true
         }, {
-          name: 'paymentTerms._identifier',
+          name: 'paymentTerms' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'paymentTerms'
@@ -898,7 +898,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'shippingCompany',
           hidden: true
         }, {
-          name: 'shippingCompany._identifier',
+          name: 'shippingCompany' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'shippingCompany'
@@ -909,7 +909,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'charge',
           hidden: true
         }, {
-          name: 'charge._identifier',
+          name: 'charge' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'charge'
@@ -950,7 +950,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'warehouse',
           hidden: true
         }, {
-          name: 'warehouse._identifier',
+          name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'warehouse'
@@ -962,7 +962,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'priceList',
           hidden: true
         }, {
-          name: 'priceList._identifier',
+          name: 'priceList' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'priceList'
@@ -978,7 +978,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'salesCampaign',
           hidden: true
         }, {
-          name: 'salesCampaign._identifier',
+          name: 'salesCampaign' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'salesCampaign'
@@ -989,7 +989,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'project',
           hidden: true
         }, {
-          name: 'project._identifier',
+          name: 'project' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'project'
@@ -1000,7 +1000,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'activity',
           hidden: true
         }, {
-          name: 'activity._identifier',
+          name: 'activity' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'activity'
@@ -1031,7 +1031,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'userContact',
           hidden: true
         }, {
-          name: 'userContact._identifier',
+          name: 'userContact' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'userContact'
@@ -1047,7 +1047,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'dropShipPartner',
           hidden: true
         }, {
-          name: 'dropShipPartner._identifier',
+          name: 'dropShipPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'dropShipPartner'
@@ -1058,7 +1058,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'dropShipLocation',
           hidden: true
         }, {
-          name: 'dropShipLocation._identifier',
+          name: 'dropShipLocation' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'dropShipLocation'
@@ -1069,7 +1069,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'dropShipContact',
           hidden: true
         }, {
-          name: 'dropShipContact._identifier',
+          name: 'dropShipContact' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'dropShipContact'
@@ -1085,7 +1085,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'trxOrganization',
           hidden: true
         }, {
-          name: 'trxOrganization._identifier',
+          name: 'trxOrganization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'trxOrganization'
@@ -1114,7 +1114,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'incoterms',
           hidden: true
         }, {
-          name: 'incoterms._identifier',
+          name: 'incoterms' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'incoterms'
@@ -1136,7 +1136,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'deliveryLocation',
           hidden: true
         }, {
-          name: 'deliveryLocation._identifier',
+          name: 'deliveryLocation' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'deliveryLocation'
@@ -1152,7 +1152,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'paymentMethod',
           hidden: true
         }, {
-          name: 'paymentMethod._identifier',
+          name: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'paymentMethod'
@@ -1163,7 +1163,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           title: 'fINPaymentPriority',
           hidden: true
         }, {
-          name: 'fINPaymentPriority._identifier',
+          name: 'fINPaymentPriority' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           type: 'text',
           hidden: true,
           title: 'fINPaymentPriority'
@@ -1654,7 +1654,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             OB.Utilities.fixNull250(currentValues);
             return !this.hiddenInForm && context && (context.$Element_PJ === 'Y');
           },
-          displayField: 'project._identifier',
+          displayField: 'project' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'project',
           showPickerIcon: true,
           "width": "*",
@@ -2186,7 +2186,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           referencedKeyColumnName: '',
           targetEntity: 'User',
           required: false,
-          displayField: 'createdBy._identifier',
+          displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'createdBy',
           showPickerIcon: true,
           'width': '*',
@@ -2231,7 +2231,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           referencedKeyColumnName: '',
           targetEntity: 'User',
           required: false,
-          displayField: 'updatedBy._identifier',
+          displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'updatedBy',
           showPickerIcon: true,
           'width': '*',
@@ -2679,7 +2679,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'organization._identifier',
+          displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'organization',
           foreignKeyField: true,
           name: 'organization',
@@ -2748,7 +2748,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             firstFocusedField: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'transactionDocument._identifier',
+          displayField: 'transactionDocument' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'transactionDocument',
           foreignKeyField: true,
           name: 'transactionDocument',
@@ -2979,7 +2979,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             firstFocusedField: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'businessPartner._identifier',
+          displayField: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'businessPartner',
           foreignKeyField: true,
           name: 'businessPartner',
@@ -3015,7 +3015,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'partnerAddress._identifier',
+          displayField: 'partnerAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'partnerAddress',
           foreignKeyField: true,
           name: 'partnerAddress',
@@ -3079,7 +3079,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: false
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'currency._identifier',
+          displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'currency',
           foreignKeyField: true,
           name: 'currency',
@@ -3156,7 +3156,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'priceList._identifier',
+          displayField: 'priceList' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'priceList',
           foreignKeyField: true,
           name: 'priceList',
@@ -3227,7 +3227,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(32),
-          displayField: 'paymentMethod._identifier',
+          displayField: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'paymentMethod',
           foreignKeyField: true,
           name: 'paymentMethod',
@@ -3263,7 +3263,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'paymentTerms._identifier',
+          displayField: 'paymentTerms' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'paymentTerms',
           foreignKeyField: true,
           name: 'paymentTerms',
@@ -3299,7 +3299,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'warehouse._identifier',
+          displayField: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'warehouse',
           foreignKeyField: true,
           name: 'warehouse',
@@ -3400,7 +3400,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'userContact._identifier',
+          displayField: 'userContact' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'userContact',
           foreignKeyField: true,
           name: 'userContact',
@@ -3449,7 +3449,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'project._identifier',
+          displayField: 'project' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'project',
           foreignKeyField: true,
           name: 'project',
@@ -3485,7 +3485,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: false
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'documentType._identifier',
+          displayField: 'documentType' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'documentType',
           foreignKeyField: true,
           name: 'documentType',
@@ -3553,7 +3553,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'salesRepresentative._identifier',
+          displayField: 'salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'salesRepresentative',
           foreignKeyField: true,
           name: 'salesRepresentative',
@@ -3622,7 +3622,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'invoiceAddress._identifier',
+          displayField: 'invoiceAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'invoiceAddress',
           foreignKeyField: true,
           name: 'invoiceAddress',
@@ -3658,7 +3658,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'deliveryLocation._identifier',
+          displayField: 'deliveryLocation' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'deliveryLocation',
           foreignKeyField: true,
           name: 'deliveryLocation',
@@ -3745,7 +3745,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'shippingCompany._identifier',
+          displayField: 'shippingCompany' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'shippingCompany',
           foreignKeyField: true,
           name: 'shippingCompany',
@@ -3976,7 +3976,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'salesCampaign._identifier',
+          displayField: 'salesCampaign' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'salesCampaign',
           foreignKeyField: true,
           name: 'salesCampaign',
@@ -4040,7 +4040,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'charge._identifier',
+          displayField: 'charge' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'charge',
           foreignKeyField: true,
           name: 'charge',
@@ -4081,7 +4081,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'activity._identifier',
+          displayField: 'activity' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'activity',
           foreignKeyField: true,
           name: 'activity',
@@ -4122,7 +4122,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'trxOrganization._identifier',
+          displayField: 'trxOrganization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'trxOrganization',
           foreignKeyField: true,
           name: 'trxOrganization',
@@ -4232,7 +4232,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: false
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'client._identifier',
+          displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'client',
           foreignKeyField: true,
           name: 'client',
@@ -4628,7 +4628,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'dropShipContact._identifier',
+          displayField: 'dropShipContact' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'dropShipContact',
           foreignKeyField: true,
           name: 'dropShipContact',
@@ -4664,7 +4664,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'dropShipPartner._identifier',
+          displayField: 'dropShipPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'dropShipPartner',
           foreignKeyField: true,
           name: 'dropShipPartner',
@@ -4700,7 +4700,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'dropShipLocation._identifier',
+          displayField: 'dropShipLocation' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'dropShipLocation',
           foreignKeyField: true,
           name: 'dropShipLocation',
@@ -4806,7 +4806,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             updatable: true
           },
           width: isc.OBGrid.getDefaultColumnWidth(44),
-          displayField: 'incoterms._identifier',
+          displayField: 'incoterms' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'incoterms',
           foreignKeyField: true,
           name: 'incoterms',
@@ -4904,7 +4904,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           canHide: true,
           editorType: 'OBSearchItem',
           filterEditorType: 'OBFKFilterTextItem',
-          displayField: 'createdBy._identifier',
+          displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'createdBy',
           filterOnKeypress: true,
           canFilter: true,
@@ -4960,7 +4960,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
           canHide: true,
           editorType: 'OBSearchItem',
           filterEditorType: 'OBFKFilterTextItem',
-          displayField: 'updatedBy._identifier',
+          displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           valueField: 'updatedBy',
           filterOnKeypress: true,
           canFilter: true,
@@ -5327,7 +5327,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'client',
               hidden: true
             }, {
-              name: 'client._identifier',
+              name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5340,7 +5340,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'organization',
               hidden: true
             }, {
-              name: 'organization._identifier',
+              name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'organization'
@@ -5363,7 +5363,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'createdBy',
               hidden: true
             }, {
-              name: 'createdBy._identifier',
+              name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5382,7 +5382,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'updatedBy',
               hidden: true
             }, {
-              name: 'updatedBy._identifier',
+              name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5395,7 +5395,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'salesOrder',
               hidden: true
             }, {
-              name: 'salesOrder._identifier',
+              name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5413,7 +5413,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'businessPartner',
               hidden: true
             }, {
-              name: 'businessPartner._identifier',
+              name: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'businessPartner'
@@ -5424,7 +5424,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'partnerAddress',
               hidden: true
             }, {
-              name: 'partnerAddress._identifier',
+              name: 'partnerAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'partnerAddress'
@@ -5464,7 +5464,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'product',
               hidden: true
             }, {
-              name: 'product._identifier',
+              name: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'product'
@@ -5476,7 +5476,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'warehouse',
               hidden: true
             }, {
-              name: 'warehouse._identifier',
+              name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'warehouse'
@@ -5494,7 +5494,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'uOM',
               hidden: true
             }, {
-              name: 'uOM._identifier',
+              name: 'uOM' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5530,7 +5530,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'shippingCompany',
               hidden: true
             }, {
-              name: 'shippingCompany._identifier',
+              name: 'shippingCompany' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'shippingCompany'
@@ -5542,7 +5542,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'currency',
               hidden: true
             }, {
-              name: 'currency._identifier',
+              name: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5589,7 +5589,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'charge',
               hidden: true
             }, {
-              name: 'charge._identifier',
+              name: 'charge' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'charge'
@@ -5606,7 +5606,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'tax',
               hidden: true
             }, {
-              name: 'tax._identifier',
+              name: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'tax'
@@ -5617,7 +5617,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'resourceAssignment',
               hidden: true
             }, {
-              name: 'resourceAssignment._identifier',
+              name: 'resourceAssignment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'resourceAssignment'
@@ -5629,7 +5629,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'sOPOReference',
               hidden: true
             }, {
-              name: 'sOPOReference._identifier',
+              name: 'sOPOReference' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -5641,7 +5641,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'attributeSetValue',
               hidden: true
             }, {
-              name: 'attributeSetValue._identifier',
+              name: 'attributeSetValue' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'attributeSetValue'
@@ -5662,7 +5662,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'orderUOM',
               hidden: true
             }, {
-              name: 'orderUOM._identifier',
+              name: 'orderUOM' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'orderUOM'
@@ -5673,7 +5673,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'priceAdjustment',
               hidden: true
             }, {
-              name: 'priceAdjustment._identifier',
+              name: 'priceAdjustment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'priceAdjustment'
@@ -5695,7 +5695,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'orderDiscount',
               hidden: true
             }, {
-              name: 'orderDiscount._identifier',
+              name: 'orderDiscount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'orderDiscount'
@@ -5806,7 +5806,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 disableFilter: false,
                 canSort: true,
                 type: '_id_19',
-                displayField: 'warehouse._identifier',
+                displayField: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                 filterOperator: 'equals',
                 filterOnKeypress: true,
                 canFilter: true,
@@ -5838,7 +5838,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 disableFilter: false,
                 canSort: true,
                 type: '_id_19',
-                displayField: 'productPrice.priceListVersion._identifier',
+                displayField: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                 filterOperator: 'equals',
                 filterOnKeypress: true,
                 canFilter: true,
@@ -5903,7 +5903,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   'suffix': '_PLIM'
                 }
               },
-              extraSearchFields: ['product.name', 'product._identifier', 'product.searchKey'],
+              extraSearchFields: ['product.name', 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, 'product.searchKey'],
               optionDataSource: OB.Datasource.create({
                 createClassName: '',
                 titleField: OB.Constants.IDENTIFIER,
@@ -5938,7 +5938,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     adTabId: '187',
                     IsSelectorItem: 'true',
                     columnName: 'M_Product_ID',
-                    _extraProperties: 'product.id,productPrice.priceListVersion._identifier,available,warehouse._identifier,productPrice.priceListVersion.priceList.currency.id,product.name,qtyOnHand,product._identifier,qtyOrdered,netListPrice,product.uOM.id,priceLimit,standardPrice,product.searchKey'
+                    _extraProperties: 'product.id,productPrice.priceListVersionOB.Constants.FIELDSEPARATOR,available,warehouseOB.Constants.FIELDSEPARATOR,productPrice.priceListVersion.priceList.currency.id,product.name,qtyOnHand,productOB.Constants.FIELDSEPARATOR,qtyOrdered,netListPrice,product.uOM.id,priceLimit,standardPrice,product.searchKey'
                   }
                 },
                 fields: [{
@@ -5957,7 +5957,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'client',
                   hidden: true
                 }, {
-                  name: 'client._identifier',
+                  name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -5970,7 +5970,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'organization',
                   hidden: true
                 }, {
-                  name: 'organization._identifier',
+                  name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -5994,7 +5994,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'updatedBy',
                   hidden: true
                 }, {
-                  name: 'updatedBy._identifier',
+                  name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -6013,7 +6013,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'createdBy',
                   hidden: true
                 }, {
-                  name: 'createdBy._identifier',
+                  name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -6026,7 +6026,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'product',
                   hidden: true
                 }, {
-                  name: 'product._identifier',
+                  name: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'product'
@@ -6038,7 +6038,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'warehouse',
                   hidden: true
                 }, {
-                  name: 'warehouse._identifier',
+                  name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'warehouse'
@@ -6050,7 +6050,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'productPrice',
                   hidden: true
                 }, {
-                  name: 'productPrice._identifier',
+                  name: 'productPrice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'productPrice'
@@ -6098,24 +6098,24 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canSave: false,
                   title: 'product.id'
                 }, {
-                  name: 'productPrice.priceListVersion._identifier',
+                  name: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: '_id_10',
                   additional: true,
                   required: true,
                   length: 60,
-                  title: 'productPrice.priceListVersion._identifier'
+                  title: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                 }, {
                   name: 'available',
                   type: '_id_29',
                   additional: true,
                   title: 'available'
                 }, {
-                  name: 'warehouse._identifier',
+                  name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: '_id_10',
                   additional: true,
                   required: true,
                   length: 60,
-                  title: 'warehouse._identifier'
+                  title: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                 }, {
                   name: 'productPrice.priceListVersion.priceList.currency.id',
                   type: '_id_13',
@@ -6137,12 +6137,12 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   additional: true,
                   title: 'qtyOnHand'
                 }, {
-                  name: 'product._identifier',
+                  name: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: '_id_10',
                   additional: true,
                   required: true,
                   length: 60,
-                  title: 'product._identifier'
+                  title: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                 }, {
                   name: 'qtyOrdered',
                   type: '_id_29',
@@ -6239,7 +6239,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 OB.Utilities.fixNull250(currentValues);
                 return !this.hiddenInForm && context && ((context.ATTRIBUTESET !== '' && context.ATTRSETVALUETYPE !== 'F') || (currentValues.attributeSetValue !== '' && currentValues.attributeSetValue !== '0'));
               },
-              displayField: 'attributeSetValue._identifier',
+              displayField: 'attributeSetValue' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'attributeSetValue',
               showPickerIcon: true,
               width: '*',
@@ -7034,7 +7034,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               showPickerIcon: true,
               'width': '*',
@@ -7079,7 +7079,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               showPickerIcon: true,
               'width': '*',
@@ -7462,7 +7462,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   disableFilter: false,
                   canSort: true,
                   type: '_id_19',
-                  displayField: 'warehouse._identifier',
+                  displayField: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   filterOperator: 'equals',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -7494,7 +7494,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   disableFilter: false,
                   canSort: true,
                   type: '_id_19',
-                  displayField: 'productPrice.priceListVersion._identifier',
+                  displayField: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   filterOperator: 'equals',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -7559,7 +7559,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     'suffix': '_PLIM'
                   }
                 },
-                extraSearchFields: ['product.name', 'product._identifier', 'product.searchKey'],
+                extraSearchFields: ['product.name', 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, 'product.searchKey'],
                 optionDataSource: OB.Datasource.create({
                   createClassName: '',
                   titleField: OB.Constants.IDENTIFIER,
@@ -7594,7 +7594,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                       adTabId: '187',
                       IsSelectorItem: 'true',
                       columnName: 'M_Product_ID',
-                      _extraProperties: 'product.id,productPrice.priceListVersion._identifier,available,warehouse._identifier,productPrice.priceListVersion.priceList.currency.id,product.name,qtyOnHand,product._identifier,qtyOrdered,netListPrice,product.uOM.id,priceLimit,standardPrice,product.searchKey'
+                      _extraProperties: 'product.id,productPrice.priceListVersionOB.Constants.FIELDSEPARATOR,available,warehouseOB.Constants.FIELDSEPARATOR,productPrice.priceListVersion.priceList.currency.id,product.name,qtyOnHand,productOB.Constants.FIELDSEPARATOR,qtyOrdered,netListPrice,product.uOM.id,priceLimit,standardPrice,product.searchKey'
                     }
                   },
                   fields: [{
@@ -7613,7 +7613,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'client',
                     hidden: true
                   }, {
-                    name: 'client._identifier',
+                    name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     canSave: false,
@@ -7626,7 +7626,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'organization',
                     hidden: true
                   }, {
-                    name: 'organization._identifier',
+                    name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     canSave: false,
@@ -7650,7 +7650,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'updatedBy',
                     hidden: true
                   }, {
-                    name: 'updatedBy._identifier',
+                    name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     canSave: false,
@@ -7669,7 +7669,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'createdBy',
                     hidden: true
                   }, {
-                    name: 'createdBy._identifier',
+                    name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     canSave: false,
@@ -7682,7 +7682,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'product',
                     hidden: true
                   }, {
-                    name: 'product._identifier',
+                    name: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     title: 'product'
@@ -7694,7 +7694,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'warehouse',
                     hidden: true
                   }, {
-                    name: 'warehouse._identifier',
+                    name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     title: 'warehouse'
@@ -7706,7 +7706,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     title: 'productPrice',
                     hidden: true
                   }, {
-                    name: 'productPrice._identifier',
+                    name: 'productPrice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: 'text',
                     hidden: true,
                     title: 'productPrice'
@@ -7754,24 +7754,24 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     canSave: false,
                     title: 'product.id'
                   }, {
-                    name: 'productPrice.priceListVersion._identifier',
+                    name: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: '_id_10',
                     additional: true,
                     required: true,
                     length: 60,
-                    title: 'productPrice.priceListVersion._identifier'
+                    title: 'productPrice.priceListVersion' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                   }, {
                     name: 'available',
                     type: '_id_29',
                     additional: true,
                     title: 'available'
                   }, {
-                    name: 'warehouse._identifier',
+                    name: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: '_id_10',
                     additional: true,
                     required: true,
                     length: 60,
-                    title: 'warehouse._identifier'
+                    title: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                   }, {
                     name: 'productPrice.priceListVersion.priceList.currency.id',
                     type: '_id_13',
@@ -7793,12 +7793,12 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     additional: true,
                     title: 'qtyOnHand'
                   }, {
-                    name: 'product._identifier',
+                    name: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                     type: '_id_10',
                     additional: true,
                     required: true,
                     length: 60,
-                    title: 'product._identifier'
+                    title: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
                   }, {
                     name: 'qtyOrdered',
                     type: '_id_29',
@@ -7849,7 +7849,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 firstFocusedField: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'product._identifier',
+              displayField: 'product' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'product',
               foreignKeyField: true,
               name: 'product',
@@ -7926,7 +7926,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(14),
-              displayField: 'attributeSetValue._identifier',
+              displayField: 'attributeSetValue' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'attributeSetValue',
               foreignKeyField: true,
               name: 'attributeSetValue',
@@ -7962,7 +7962,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'uOM._identifier',
+              displayField: 'uOM' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'uOM',
               foreignKeyField: true,
               name: 'uOM',
@@ -8054,7 +8054,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'tax._identifier',
+              displayField: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'tax',
               foreignKeyField: true,
               name: 'tax',
@@ -8343,7 +8343,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'warehouse._identifier',
+              displayField: 'warehouse' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'warehouse',
               foreignKeyField: true,
               name: 'warehouse',
@@ -8417,7 +8417,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'shippingCompany._identifier',
+              displayField: 'shippingCompany' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'shippingCompany',
               foreignKeyField: true,
               name: 'shippingCompany',
@@ -8622,7 +8622,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'businessPartner._identifier',
+              displayField: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'businessPartner',
               foreignKeyField: true,
               name: 'businessPartner',
@@ -8742,7 +8742,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'partnerAddress._identifier',
+              displayField: 'partnerAddress' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'partnerAddress',
               foreignKeyField: true,
               name: 'partnerAddress',
@@ -8820,7 +8820,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'orderUOM._identifier',
+              displayField: 'orderUOM' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'orderUOM',
               foreignKeyField: true,
               name: 'orderUOM',
@@ -8963,7 +8963,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'client._identifier',
+              displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'client',
               foreignKeyField: true,
               name: 'client',
@@ -9096,7 +9096,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'currency._identifier',
+              displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'currency',
               foreignKeyField: true,
               name: 'currency',
@@ -9132,7 +9132,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'organization._identifier',
+              displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'organization',
               foreignKeyField: true,
               name: 'organization',
@@ -9237,7 +9237,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }
               },
               width: isc.OBGrid.getDefaultColumnWidth(32),
-              displayField: 'orderDiscount._identifier',
+              displayField: 'orderDiscount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'orderDiscount',
               foreignKeyField: true,
               name: 'orderDiscount',
@@ -9273,7 +9273,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'priceAdjustment._identifier',
+              displayField: 'priceAdjustment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'priceAdjustment',
               foreignKeyField: true,
               name: 'priceAdjustment',
@@ -9375,7 +9375,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -9431,7 +9431,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -9587,7 +9587,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'client',
                   hidden: true
                 }, {
-                  name: 'client._identifier',
+                  name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -9600,7 +9600,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'organization',
                   hidden: true
                 }, {
-                  name: 'organization._identifier',
+                  name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'organization'
@@ -9623,7 +9623,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'createdBy',
                   hidden: true
                 }, {
-                  name: 'createdBy._identifier',
+                  name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -9642,7 +9642,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'updatedBy',
                   hidden: true
                 }, {
-                  name: 'updatedBy._identifier',
+                  name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -9655,7 +9655,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'salesOrderLine',
                   hidden: true
                 }, {
-                  name: 'salesOrderLine._identifier',
+                  name: 'salesOrderLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -9674,7 +9674,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'priceAdjustment',
                   hidden: true
                 }, {
-                  name: 'priceAdjustment._identifier',
+                  name: 'priceAdjustment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -9858,7 +9858,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -9903,7 +9903,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -10072,7 +10072,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(44),
-                  displayField: 'priceAdjustment._identifier',
+                  displayField: 'priceAdjustment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'priceAdjustment',
                   foreignKeyField: true,
                   name: 'priceAdjustment',
@@ -10192,7 +10192,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(44),
-                  displayField: 'client._identifier',
+                  displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'client',
                   foreignKeyField: true,
                   name: 'client',
@@ -10228,7 +10228,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(44),
-                  displayField: 'organization._identifier',
+                  displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'organization',
                   foreignKeyField: true,
                   name: 'organization',
@@ -10293,7 +10293,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -10349,7 +10349,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -10506,7 +10506,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'salesOrderLine',
                   hidden: true
                 }, {
-                  name: 'salesOrderLine._identifier',
+                  name: 'salesOrderLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10519,7 +10519,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'tax',
                   hidden: true
                 }, {
-                  name: 'tax._identifier',
+                  name: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'tax'
@@ -10531,7 +10531,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'client',
                   hidden: true
                 }, {
-                  name: 'client._identifier',
+                  name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10544,7 +10544,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'organization',
                   hidden: true
                 }, {
-                  name: 'organization._identifier',
+                  name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10568,7 +10568,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'createdBy',
                   hidden: true
                 }, {
-                  name: 'createdBy._identifier',
+                  name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10587,7 +10587,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'updatedBy',
                   hidden: true
                 }, {
-                  name: 'updatedBy._identifier',
+                  name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10617,7 +10617,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'salesOrder',
                   hidden: true
                 }, {
-                  name: 'salesOrder._identifier',
+                  name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -10767,7 +10767,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -10812,7 +10812,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -10972,7 +10972,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'tax._identifier',
+                  displayField: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'tax',
                   foreignKeyField: true,
                   name: 'tax',
@@ -11064,7 +11064,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'client._identifier',
+                  displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'client',
                   foreignKeyField: true,
                   name: 'client',
@@ -11100,7 +11100,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'organization._identifier',
+                  displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'organization',
                   foreignKeyField: true,
                   name: 'organization',
@@ -11202,7 +11202,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -11258,7 +11258,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -11411,7 +11411,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'client',
               hidden: true
             }, {
-              name: 'client._identifier',
+              name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -11424,7 +11424,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'organization',
               hidden: true
             }, {
-              name: 'organization._identifier',
+              name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'organization'
@@ -11447,7 +11447,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'createdBy',
               hidden: true
             }, {
-              name: 'createdBy._identifier',
+              name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -11466,7 +11466,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'updatedBy',
               hidden: true
             }, {
-              name: 'updatedBy._identifier',
+              name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -11479,7 +11479,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'salesOrder',
               hidden: true
             }, {
-              name: 'salesOrder._identifier',
+              name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -11492,7 +11492,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'discount',
               hidden: true
             }, {
-              name: 'discount._identifier',
+              name: 'discount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'discount'
@@ -11654,7 +11654,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               showPickerIcon: true,
               'width': '*',
@@ -11699,7 +11699,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               showPickerIcon: true,
               'width': '*',
@@ -11899,7 +11899,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(12),
-              displayField: 'discount._identifier',
+              displayField: 'discount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'discount',
               foreignKeyField: true,
               name: 'discount',
@@ -12009,7 +12009,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(12),
-              displayField: 'client._identifier',
+              displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'client',
               foreignKeyField: true,
               name: 'client',
@@ -12045,7 +12045,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(12),
-              displayField: 'organization._identifier',
+              displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'organization',
               foreignKeyField: true,
               name: 'organization',
@@ -12110,7 +12110,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -12166,7 +12166,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -12323,7 +12323,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'salesOrder',
               hidden: true
             }, {
-              name: 'salesOrder._identifier',
+              name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -12336,7 +12336,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'tax',
               hidden: true
             }, {
-              name: 'tax._identifier',
+              name: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -12349,7 +12349,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'client',
               hidden: true
             }, {
-              name: 'client._identifier',
+              name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -12362,7 +12362,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'organization',
               hidden: true
             }, {
-              name: 'organization._identifier',
+              name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'organization'
@@ -12385,7 +12385,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'createdBy',
               hidden: true
             }, {
-              name: 'createdBy._identifier',
+              name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -12404,7 +12404,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'updatedBy',
               hidden: true
             }, {
-              name: 'updatedBy._identifier',
+              name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -12572,7 +12572,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               showPickerIcon: true,
               'width': '*',
@@ -12617,7 +12617,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               showPickerIcon: true,
               'width': '*',
@@ -12778,7 +12778,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 firstFocusedField: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'tax._identifier',
+              displayField: 'tax' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'tax',
               foreignKeyField: true,
               name: 'tax',
@@ -12907,7 +12907,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'client._identifier',
+              displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'client',
               foreignKeyField: true,
               name: 'client',
@@ -12943,7 +12943,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'organization._identifier',
+              displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'organization',
               foreignKeyField: true,
               name: 'organization',
@@ -13008,7 +13008,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -13064,7 +13064,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -13252,7 +13252,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'client',
               hidden: true
             }, {
-              name: 'client._identifier',
+              name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -13265,7 +13265,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'organization',
               hidden: true
             }, {
-              name: 'organization._identifier',
+              name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -13289,7 +13289,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'createdBy',
               hidden: true
             }, {
-              name: 'createdBy._identifier',
+              name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -13308,7 +13308,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'updatedBy',
               hidden: true
             }, {
-              name: 'updatedBy._identifier',
+              name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -13321,7 +13321,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'invoice',
               hidden: true
             }, {
-              name: 'invoice._identifier',
+              name: 'invoice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -13333,7 +13333,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'salesOrder',
               hidden: true
             }, {
-              name: 'salesOrder._identifier',
+              name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'salesOrder'
@@ -13350,7 +13350,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'paymentMethod',
               hidden: true
             }, {
-              name: 'paymentMethod._identifier',
+              name: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'paymentMethod'
@@ -13380,7 +13380,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'currency',
               hidden: true
             }, {
-              name: 'currency._identifier',
+              name: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'currency'
@@ -13401,7 +13401,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'fINPaymentPriority',
               hidden: true
             }, {
-              name: 'fINPaymentPriority._identifier',
+              name: 'fINPaymentPriority' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'fINPaymentPriority'
@@ -13453,7 +13453,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: 'Fin_Paymentmethod_ID',
               targetEntity: 'FIN_PaymentMethod',
               required: true,
-              displayField: 'paymentMethod._identifier',
+              displayField: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'paymentMethod',
               showPickerIcon: true,
               width: '*',
@@ -13582,7 +13582,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: 'C_Currency_ID',
               targetEntity: 'Currency',
               required: true,
-              displayField: 'currency._identifier',
+              displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'currency',
               showPickerIcon: true,
               width: '*',
@@ -13645,7 +13645,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               showPickerIcon: true,
               'width': '*',
@@ -13690,7 +13690,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               showPickerIcon: true,
               'width': '*',
@@ -13851,7 +13851,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(32),
-              displayField: 'paymentMethod._identifier',
+              displayField: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'paymentMethod',
               foreignKeyField: true,
               name: 'paymentMethod',
@@ -14028,7 +14028,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(19),
-              displayField: 'currency._identifier',
+              displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'currency',
               foreignKeyField: true,
               name: 'currency',
@@ -14063,7 +14063,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(32),
-              displayField: 'client._identifier',
+              displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'client',
               foreignKeyField: true,
               name: 'client',
@@ -14098,7 +14098,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(32),
-              displayField: 'invoice._identifier',
+              displayField: 'invoice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'invoice',
               foreignKeyField: true,
               name: 'invoice',
@@ -14170,7 +14170,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(32),
-              displayField: 'organization._identifier',
+              displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'organization',
               foreignKeyField: true,
               name: 'organization',
@@ -14235,7 +14235,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -14291,7 +14291,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -14537,7 +14537,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'client',
                   hidden: true
                 }, {
-                  name: 'client._identifier',
+                  name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -14550,7 +14550,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'organization',
                   hidden: true
                 }, {
-                  name: 'organization._identifier',
+                  name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -14574,7 +14574,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'createdBy',
                   hidden: true
                 }, {
-                  name: 'createdBy._identifier',
+                  name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -14593,7 +14593,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'updatedBy',
                   hidden: true
                 }, {
-                  name: 'updatedBy._identifier',
+                  name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   canSave: false,
@@ -14605,7 +14605,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'invoicePaymentPlan',
                   hidden: true
                 }, {
-                  name: 'invoicePaymentPlan._identifier',
+                  name: 'invoicePaymentPlan' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'invoicePaymentPlan'
@@ -14616,7 +14616,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'orderPaymentPlan',
                   hidden: true
                 }, {
-                  name: 'orderPaymentPlan._identifier',
+                  name: 'orderPaymentPlan' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'orderPaymentPlan'
@@ -14647,7 +14647,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'payment',
                   hidden: true
                 }, {
-                  name: 'payment._identifier',
+                  name: 'payment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'payment'
@@ -14680,7 +14680,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'businessPartner',
                   hidden: true
                 }, {
-                  name: 'businessPartner._identifier',
+                  name: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'businessPartner'
@@ -14692,7 +14692,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'paymentMethod',
                   hidden: true
                 }, {
-                  name: 'paymentMethod._identifier',
+                  name: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'paymentMethod'
@@ -14704,7 +14704,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'finFinancialAccount',
                   hidden: true
                 }, {
-                  name: 'finFinancialAccount._identifier',
+                  name: 'finFinancialAccount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'finFinancialAccount'
@@ -14715,7 +14715,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'currency',
                   hidden: true
                 }, {
-                  name: 'currency._identifier',
+                  name: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'currency'
@@ -14742,7 +14742,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   title: 'finaccCurrency',
                   hidden: true
                 }, {
-                  name: 'finaccCurrency._identifier',
+                  name: 'finaccCurrency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   type: 'text',
                   hidden: true,
                   title: 'finaccCurrency'
@@ -14795,7 +14795,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: 'Fin_Payment_ID',
                   targetEntity: 'FIN_Payment',
                   required: true,
-                  displayField: 'payment._identifier',
+                  displayField: 'payment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'payment',
                   showPickerIcon: true,
                   width: '*',
@@ -14861,7 +14861,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: 'Fin_Paymentmethod_ID',
                   targetEntity: 'FIN_PaymentMethod',
                   required: true,
-                  displayField: 'paymentMethod._identifier',
+                  displayField: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'paymentMethod',
                   showPickerIcon: true,
                   width: '*',
@@ -14885,7 +14885,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: 'Fin_Financial_Account_ID',
                   targetEntity: 'FIN_Financial_Account',
                   required: true,
-                  displayField: 'finFinancialAccount._identifier',
+                  displayField: 'finFinancialAccount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'finFinancialAccount',
                   showPickerIcon: true,
                   width: '*',
@@ -15114,7 +15114,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -15159,7 +15159,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   referencedKeyColumnName: '',
                   targetEntity: 'User',
                   required: false,
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   showPickerIcon: true,
                   'width': '*',
@@ -15382,7 +15382,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'paymentMethod._identifier',
+                  displayField: 'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'paymentMethod',
                   foreignKeyField: true,
                   name: 'paymentMethod',
@@ -15501,7 +15501,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'finFinancialAccount._identifier',
+                  displayField: 'finFinancialAccount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'finFinancialAccount',
                   foreignKeyField: true,
                   name: 'finFinancialAccount',
@@ -15573,7 +15573,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'payment._identifier',
+                  displayField: 'payment' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'payment',
                   foreignKeyField: true,
                   name: 'payment',
@@ -15617,7 +15617,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     }
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'currency._identifier',
+                  displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'currency',
                   foreignKeyField: true,
                   name: 'currency',
@@ -15761,7 +15761,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     }
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'finaccCurrency._identifier',
+                  displayField: 'finaccCurrency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'finaccCurrency',
                   foreignKeyField: true,
                   name: 'finaccCurrency',
@@ -15796,7 +15796,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'client._identifier',
+                  displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'client',
                   foreignKeyField: true,
                   name: 'client',
@@ -15996,7 +15996,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: true
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'businessPartner._identifier',
+                  displayField: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'businessPartner',
                   foreignKeyField: true,
                   name: 'businessPartner',
@@ -16059,7 +16059,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                     updatable: false
                   },
                   width: isc.OBGrid.getDefaultColumnWidth(32),
-                  displayField: 'organization._identifier',
+                  displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'organization',
                   foreignKeyField: true,
                   name: 'organization',
@@ -16225,7 +16225,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'createdBy._identifier',
+                  displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'createdBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -16281,7 +16281,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                   canHide: true,
                   editorType: 'OBSearchItem',
                   filterEditorType: 'OBFKFilterTextItem',
-                  displayField: 'updatedBy._identifier',
+                  displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
                   valueField: 'updatedBy',
                   filterOnKeypress: true,
                   canFilter: true,
@@ -16560,7 +16560,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'client',
               hidden: true
             }, {
-              name: 'client._identifier',
+              name: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -16573,7 +16573,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'organization',
               hidden: true
             }, {
-              name: 'organization._identifier',
+              name: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'organization'
@@ -16596,7 +16596,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'createdBy',
               hidden: true
             }, {
-              name: 'createdBy._identifier',
+              name: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -16615,7 +16615,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'updatedBy',
               hidden: true
             }, {
-              name: 'updatedBy._identifier',
+              name: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               canSave: false,
@@ -16632,7 +16632,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'settlementCancelled',
               hidden: true
             }, {
-              name: 'settlementCancelled._identifier',
+              name: 'settlementCancelled' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'settlementCancelled'
@@ -16643,7 +16643,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'settlementGenerate',
               hidden: true
             }, {
-              name: 'settlementGenerate._identifier',
+              name: 'settlementGenerate' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'settlementGenerate'
@@ -16660,7 +16660,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'invoice',
               hidden: true
             }, {
-              name: 'invoice._identifier',
+              name: 'invoice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'invoice'
@@ -16671,7 +16671,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'businessPartner',
               hidden: true
             }, {
-              name: 'businessPartner._identifier',
+              name: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'businessPartner'
@@ -16683,7 +16683,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'currency',
               hidden: true
             }, {
-              name: 'currency._identifier',
+              name: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'currency'
@@ -16694,7 +16694,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'cashJournalLine',
               hidden: true
             }, {
-              name: 'cashJournalLine._identifier',
+              name: 'cashJournalLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'cashJournalLine'
@@ -16705,7 +16705,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'bankAccount',
               hidden: true
             }, {
-              name: 'bankAccount._identifier',
+              name: 'bankAccount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'bankAccount'
@@ -16716,7 +16716,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'cashbook',
               hidden: true
             }, {
-              name: 'cashbook._identifier',
+              name: 'cashbook' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'cashbook'
@@ -16779,7 +16779,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'bankStatementLine',
               hidden: true
             }, {
-              name: 'bankStatementLine._identifier',
+              name: 'bankStatementLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'bankStatementLine'
@@ -16815,7 +16815,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'gLItem',
               hidden: true
             }, {
-              name: 'gLItem._identifier',
+              name: 'gLItem' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'gLItem'
@@ -16826,7 +16826,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'salesOrder',
               hidden: true
             }, {
-              name: 'salesOrder._identifier',
+              name: 'salesOrder' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'salesOrder'
@@ -16837,7 +16837,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'project',
               hidden: true
             }, {
-              name: 'project._identifier',
+              name: 'project' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'project'
@@ -16883,7 +16883,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               title: 'withholding',
               hidden: true
             }, {
-              name: 'withholding._identifier',
+              name: 'withholding' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               type: 'text',
               hidden: true,
               title: 'withholding'
@@ -16921,7 +16921,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: 'C_Settlement_ID',
               targetEntity: 'FinancialMgmtSettlement',
               required: false,
-              displayField: 'settlementCancelled._identifier',
+              displayField: 'settlementCancelled' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'settlementCancelled',
               showPickerIcon: true,
               width: '*',
@@ -17234,7 +17234,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: 'C_CashLine_ID',
               targetEntity: 'FinancialMgmtJournalLine',
               required: false,
-              displayField: 'cashJournalLine._identifier',
+              displayField: 'cashJournalLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'cashJournalLine',
               showPickerIcon: true,
               width: '*',
@@ -17279,7 +17279,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: 'C_BankStatementLine_ID',
               targetEntity: 'FinancialMgmtBankStatementLine',
               required: false,
-              displayField: 'bankStatementLine._identifier',
+              displayField: 'bankStatementLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'bankStatementLine',
               showPickerIcon: true,
               width: '*',
@@ -17509,7 +17509,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               showPickerIcon: true,
               'width': '*',
@@ -17554,7 +17554,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               referencedKeyColumnName: '',
               targetEntity: 'User',
               required: false,
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               showPickerIcon: true,
               'width': '*',
@@ -17705,7 +17705,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'settlementCancelled._identifier',
+              displayField: 'settlementCancelled' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'settlementCancelled',
               foreignKeyField: true,
               name: 'settlementCancelled',
@@ -17968,7 +17968,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'businessPartner._identifier',
+              displayField: 'businessPartner' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'businessPartner',
               foreignKeyField: true,
               name: 'businessPartner',
@@ -18037,7 +18037,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'cashbook._identifier',
+              displayField: 'cashbook' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'cashbook',
               foreignKeyField: true,
               name: 'cashbook',
@@ -18072,7 +18072,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'cashJournalLine._identifier',
+              displayField: 'cashJournalLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'cashJournalLine',
               foreignKeyField: true,
               name: 'cashJournalLine',
@@ -18108,7 +18108,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'bankAccount._identifier',
+              displayField: 'bankAccount' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'bankAccount',
               foreignKeyField: true,
               name: 'bankAccount',
@@ -18143,7 +18143,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'bankStatementLine._identifier',
+              displayField: 'bankStatementLine' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'bankStatementLine',
               foreignKeyField: true,
               name: 'bankStatementLine',
@@ -18207,7 +18207,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'currency._identifier',
+              displayField: 'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'currency',
               foreignKeyField: true,
               name: 'currency',
@@ -18303,7 +18303,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'project._identifier',
+              displayField: 'project' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'project',
               foreignKeyField: true,
               name: 'project',
@@ -18418,7 +18418,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'invoice._identifier',
+              displayField: 'invoice' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'invoice',
               foreignKeyField: true,
               name: 'invoice',
@@ -18573,7 +18573,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'settlementGenerate._identifier',
+              displayField: 'settlementGenerate' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'settlementGenerate',
               foreignKeyField: true,
               name: 'settlementGenerate',
@@ -18683,7 +18683,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: true
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'organization._identifier',
+              displayField: 'organization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'organization',
               foreignKeyField: true,
               name: 'organization',
@@ -18719,7 +18719,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 updatable: false
               },
               width: isc.OBGrid.getDefaultColumnWidth(44),
-              displayField: 'client._identifier',
+              displayField: 'client' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'client',
               foreignKeyField: true,
               name: 'client',
@@ -18821,7 +18821,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'createdBy._identifier',
+              displayField: 'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'createdBy',
               filterOnKeypress: true,
               canFilter: true,
@@ -18877,7 +18877,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               canHide: true,
               editorType: 'OBSearchItem',
               filterEditorType: 'OBFKFilterTextItem',
-              displayField: 'updatedBy._identifier',
+              displayField: 'updatedBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
               valueField: 'updatedBy',
               filterOnKeypress: true,
               canFilter: true,

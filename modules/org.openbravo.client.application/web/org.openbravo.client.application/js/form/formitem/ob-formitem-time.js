@@ -59,6 +59,27 @@ isc.OBTimeItem.addProperties({
     if (isc.isA.String(value) && (value.contains('+') || value.contains('-'))) {
       value = isc.Time.parseInput(value, null, null, true);
     }
+    if (value && isc.isA.String(value)) {
+      value = isc.Time.parseInput(value);
+    }
+    if (value && isc.isA.Date(value)) {
+      this.setTodaysDate(value);
+    }
     return this.Super('setValue', arguments);
+  },
+
+  getValue: function () {
+    var value = this.Super('getValue', arguments);
+    if (value && isc.isA.Date(value)) {
+      this.setTodaysDate(value);
+    }
+    return value;
+  },
+
+  setTodaysDate: function (date) {
+    var today = new Date();
+    date.setYear(today.getFullYear());
+    date.setMonth(today.getMonth());
+    date.setDate(today.getDate());
   }
 });

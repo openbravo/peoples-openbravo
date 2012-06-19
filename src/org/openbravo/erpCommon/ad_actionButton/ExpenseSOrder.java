@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -362,25 +362,22 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
         BigDecimal priceActual, priceList, priceLimit, discount;
 
-        // If there is no invoice price, looks for the prices in the
-        // pricelist of the business partner
-        if (data.invoiceprice == null || data.invoiceprice.equals("")) {
-          ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data.mProductId,
-              data.mPricelistId, strBPCCurrencyId);
-          for (int j = 0; data3 != null && j < data3.length; j++) {
-            if (data3[j].validfrom == null || data3[j].validfrom.equals("")
-                || !DateTimeData.compare(this, strDateexpense, data3[j].validfrom).equals("-1")) {
-              priceactual = data3[j].pricestd;
-              pricelist = data3[j].pricelist;
-              pricelimit = data3[j].pricelimit;
-            }
+        // Looks for the prices in the pricelist of the business partner
+        ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data.mProductId,
+            data.mPricelistId, strBPCCurrencyId);
+        for (int j = 0; data3 != null && j < data3.length; j++) {
+          if (data3[j].validfrom == null || data3[j].validfrom.equals("")
+              || !DateTimeData.compare(this, strDateexpense, data3[j].validfrom).equals("-1")) {
+            priceactual = data3[j].pricestd;
+            pricelist = data3[j].pricelist;
+            pricelimit = data3[j].pricelimit;
           }
-        } else {
+        }
+
+        if (data.invoiceprice != null && !"".equals(data.invoiceprice)) {
           // If there is an invoice price, it takes it and makes
           // currency conversions, if necessary
           priceactual = data.invoiceprice;
-          pricelist = "0";
-          pricelimit = "0";
 
           // If the currency of the expense line is not the same as
           // the currency of the business partner pricelist, make the

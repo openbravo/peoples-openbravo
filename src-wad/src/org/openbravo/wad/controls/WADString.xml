@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="requiredClass" attribute="class" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
+  <PARAMETER id="xx" name="type" attribute="type" default="text"/>
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="columnName" attribute="id" replace="xx"/>
 

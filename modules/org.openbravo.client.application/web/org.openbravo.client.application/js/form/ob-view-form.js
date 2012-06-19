@@ -149,8 +149,8 @@ OB.ViewFormProperties = {
         // one
         if (item.displayField && this.getValue(item.displayField)) {
           displayedValue = this.getValue(item.displayField);
-        } else if (this.getValue(item.name + '._identifier')) {
-          displayedValue = this.getValue(item.name + '._identifier');
+        } else if (this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+          displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER);
         }
 
         statusBarFields[0].push(title);
@@ -182,10 +182,19 @@ OB.ViewFormProperties = {
     }
   },
 
-  editRecord: function (record, preventFocus, hasChanges, focusFieldName) {
+  editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime) {
+    var timeFields, ret;
     this.clearValues();
+    // if editRecord is called from OBStandardView.editRecord, then the time fields have already
+    //   be converted from UTC to local time
+    // if editRecord is called from fetchDataReply (ActionMethod.js) then the record comes directly  
+    //   from the datasource, so it has to be converted from UTC to local time
+    // see issue https://issues.openbravo.com/view.php?id=20684
+    if (!isLocalTime) {
+      OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields);
+    }
 
-    var ret = this.Super('editRecord', arguments);
+    ret = this.Super('editRecord', arguments);
 
     // used when clicking on a cell in a grid
     if (!preventFocus && focusFieldName) {
@@ -261,7 +270,7 @@ OB.ViewFormProperties = {
       var parentRecord = this.view.getParentRecord();
       if (parentRecord) {
         this.setValue(this.view.parentProperty, parentRecord.id);
-        this.setValue(this.view.parentProperty + '.' + OB.Constants.IDENTIFIER, parentRecord[OB.Constants.IDENTIFIER]);
+        this.setValue(this.view.parentProperty + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, parentRecord[OB.Constants.IDENTIFIER]);
         if (this.getField(this.view.parentProperty) && !this.getField(this.view.parentProperty).valueMap) {
           var valueMap = {};
           this.getField(this.view.parentProperty).valueMap = valueMap;
@@ -597,16 +606,16 @@ OB.ViewFormProperties = {
     // note that only the fields with errors are validated anyway
     this.validateAfterFicReturn = true;
 
-    // get the editRow before doing the call
-    var editRow = me.view.viewGrid.getEditRow();
+    // store grid editing information which can be used when the fic returns
+    // this is needed as after the fic return the edit row may have changed.
+    var gridEditInformation = this.view.viewGrid.getEditForm() ? {
+      grid: this.view.viewGrid,
+      editRow: this.view.viewGrid.getEditRow()
+    } : null;
 
     this.inFicCall = true;
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
-      var editValues;
-      if (editRow || editRow === 0) {
-        editValues = me.view.viewGrid.getEditValues(editRow);
-      }
 
       // no focus item found, focus on the body of the grid
       // this makes sure that keypresses end up in the 
@@ -615,9 +624,9 @@ OB.ViewFormProperties = {
         me.view.viewGrid.body.focus();
       }
 
-      me.processFICReturn(response, data, request, editValues, editRow);
+      me.processFICReturn(response, data, request, gridEditInformation);
 
-      if (!this.grid || this.grid.getEditRow() !== editRow) {
+      if (!this.grid || !gridEditInformation || this.grid.getEditRow() !== gridEditInformation.editRow) {
         // remember the initial values, if we are still editing the same row
         me.rememberValues();
       }
@@ -654,7 +663,15 @@ OB.ViewFormProperties = {
     // also remember the valuemaps
     for (i = 0; i < length; i++) {
       if (flds[i].valueMap) {
-        flds[i]._rememberedValueMap = flds[i].valueMap;
+        //This ensures that the valueMap of the createdBy and updatedBy fields will be properly initialized when adding a new record in form view
+        //See issue #19843
+        if (isc.isA.emptyObject(flds[i].valueMap) && (flds[i].name === 'createdBy' || flds[i].name === 'updatedBy') && flds[i].form.getValue(flds[i].displayField)) {
+          flds[i].valueMap = {};
+          flds[i].valueMap[flds[i].form.getValue(flds[i].name)] = flds[i].form.getValue(flds[i].displayField);
+          flds[i]._rememberedValueMap = flds[i].valueMap;
+        } else {
+          flds[i]._rememberedValueMap = flds[i].valueMap;
+        }
       }
     }
   },
@@ -668,7 +685,7 @@ OB.ViewFormProperties = {
     }
   },
 
-  processFICReturn: function (response, data, request, editValues, editRow) {
+  processFICReturn: function (response, data, request, gridEditInformation) {
     var length, modeIsNew = request.params.MODE === 'NEW',
         noErrors, errorSolved;
 
@@ -697,20 +714,21 @@ OB.ViewFormProperties = {
         auxInputs = data.auxiliaryInputValues,
         prop, value, i, j, dynamicCols = data.dynamicCols,
         sessionAttributes = data.sessionAttributes,
-        item, section, retHiddenInputs = data.hiddenInputs;
+        editValues, item, section, retHiddenInputs = data.hiddenInputs;
 
     // edit row has changed when returning, don't update the form anymore
-    if (this.grid && this.grid.getEditRow() !== editRow) {
+    if (this.grid && gridEditInformation && this.grid.getEditRow() !== gridEditInformation.editRow) {
       if (columnValues) {
         for (prop in columnValues) {
           if (columnValues.hasOwnProperty(prop)) {
-            this.setColumnValuesInEditValues(prop, columnValues[prop], editValues);
+            this.setColumnValuesInEditValues(prop, columnValues[prop], gridEditInformation);
           }
         }
       }
+      editValues = gridEditInformation.grid.getEditValues(gridEditInformation.editRow);
       if (editValues && editValues.actionAfterFicReturn) {
         OB.Utilities.callAction(editValues.actionAfterFicReturn);
-        delete editValues.actionAfterFicReturn;
+        gridEditInformation.grid.setEditValue(gridEditInformation.editRow, 'actionAfterFicReturn', null, true, true);
       }
       return;
     }
@@ -718,7 +736,7 @@ OB.ViewFormProperties = {
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
-          this.processColumnValue(prop, columnValues[prop], editValues);
+          this.processColumnValue(prop, columnValues[prop], gridEditInformation);
         }
       }
     }
@@ -772,7 +790,9 @@ OB.ViewFormProperties = {
     }
 
     // grid editing    
-    if (this.grid && this.grid.setEditValues && this.grid.getEditRow() === editRow) {
+    if (this.grid && gridEditInformation && this.grid.setEditValues && this.grid.getEditRow() === gridEditInformation.editRow) {
+      editValues = gridEditInformation.grid.getEditValues(gridEditInformation.editRow);
+
       // keep it as it is overwritten by the setEditValues
       var tmpActionAfterFic = null;
       if (editValues && editValues.actionAfterFicReturn) {
@@ -780,8 +800,8 @@ OB.ViewFormProperties = {
       }
       this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
       this.grid.storeUpdatedEditorValue(true);
-      if (editValues) {
-        editValues.actionAfterFicReturn = tmpActionAfterFic;
+      if (tmpActionAfterFic) {
+        this.grid.setEditValue(gridEditInformation.editRow, 'actionAfterFicReturn', tmpActionAfterFic, true, true);
       }
     }
 
@@ -893,12 +913,12 @@ OB.ViewFormProperties = {
     this.fetchData(criteria);
   },
 
-  processColumnValue: function (columnName, columnValue, editValues) {
+  processColumnValue: function (columnName, columnValue, gridEditInformation) {
     // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, i, valueMap = {},
+    var isDate, isDateTime, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -929,10 +949,10 @@ OB.ViewFormProperties = {
       field.setEntries(entries);
     }
 
-    if (editValues && field.valueMap) {
+    if (gridEditInformation && field.valueMap) {
       // store the valuemap in the edit values so it can be retrieved later
       // when the form is rebuild
-      editValues[prop + '._valueMap'] = field.valueMap;
+      gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop + '._valueMap', field.valueMap, true, true);
     }
 
     // Adjust to formatting if exists value and classicValue. 
@@ -951,9 +971,12 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       this.setValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
+      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
+      isDateTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'datetime';
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+      } else if (isDateTime) {
+        this.setItemValue(field.name, isc.Date.parseStandardDate(columnValue.value));
       } else if (columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {
@@ -978,10 +1001,10 @@ OB.ViewFormProperties = {
             // only set the display field name if the field does not have its own
             // datasource and the field displayfield contains a dot, otherwise 
             // it is a direct field
-            if (field.displayField && field.displayField.contains('.') && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
+            if (field.displayField && field.displayField.contains(OB.Constants.FIELDSEPARATOR) && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
               field.form.setItemValue(field.displayField, identifier);
             } else if (!field.displayField) {
-              field.form.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
+              field.form.setItemValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, identifier);
             }
           }
         }
@@ -992,8 +1015,8 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
-      if (this.getValue(field.name + '.' + OB.Constants.IDENTIFIER)) {
-        this.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, null);
+      if (this.getValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+        this.setItemValue(field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       }
     }
 
@@ -1008,12 +1031,12 @@ OB.ViewFormProperties = {
     }
   },
 
-  setColumnValuesInEditValues: function (columnName, columnValue, editValues) {
+  setColumnValuesInEditValues: function (columnName, columnValue, gridEditInformation) {
     // Modifications in this method should go also in processColumnValue because both almost do the same
     var assignClassicValue, typeInstance, length, isDate;
 
     // no editvalues even anymore, go away
-    if (!editValues) {
+    if (!gridEditInformation) {
       return;
     }
 
@@ -1034,18 +1057,18 @@ OB.ViewFormProperties = {
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
         valueMap[id] = identifier;
       }
-      editValues[prop + '._valueMap'] = valueMap;
+      gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop + '._valueMap', valueMap, true, true);
     }
 
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
       // note: do not use clearvalue as this removes the value from the form
-      editValues[prop] = null;
+      gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, null, true, true);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field && field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
-        editValues[prop] = isc.Date.parseSchemaDate(columnValue.value);
+        gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, isc.Date.parseSchemaDate(columnValue.value), true, true);
       } else {
 
         // set the identifier/display field if the identifier is passed also
@@ -1056,14 +1079,14 @@ OB.ViewFormProperties = {
           identifier = valueMap[columnValue.value];
         }
         if (identifier) {
-          editValues[prop + '.' + OB.Constants.IDENTIFIER] = identifier;
+          gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, identifier, true, true);
         }
-        editValues[prop] = columnValue.value;
+        gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, columnValue.value, true, true);
       }
     } else {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
-      editValues[prop] = null;
+      gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, null, true, true);
     }
 
     // store the textualvalue so that it is correctly send back to the server
@@ -1072,25 +1095,27 @@ OB.ViewFormProperties = {
       assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue)) : columnValue.classicValue;
       typeInstance = isc.SimpleType.getType(field.type);
       if (columnValue.classicValue && typeInstance.decSeparator) {
-        this.setTextualValue(field.name, assignClassicValue, typeInstance, editValues);
+        this.setTextualValue(field.name, assignClassicValue, typeInstance, gridEditInformation);
       }
     }
   },
 
   // note textValue is in user format using users decimal and group separator
-  setTextualValue: function (fldName, textValue, type, editValues) {
+  setTextualValue: function (fldName, textValue, type, gridEditInformation) {
     if (!textValue || textValue.trim() === '') {
       textValue = '';
     } else {
       textValue = OB.Utilities.Number.OBMaskedToOBPlain(textValue, type.decSeparator, type.groupSeparator);
       textValue = textValue.replace(type.decSeparator, '.');
     }
-    if (editValues) {
-      editValues[fldName + '_textualValue'] = textValue;
-    } else if (this.grid && this.grid.getEditForm()) {
-      this.grid.getEditValues(this.grid.getEditRow())[fldName + '_textualValue'] = textValue;
-    }
+
     this.setValue(fldName + '_textualValue', textValue);
+
+    if (gridEditInformation) {
+      gridEditInformation.grid.setEditValue(gridEditInformation.editRow, fldName + '_textualValue', textValue, true, true);
+    } else if (this.grid && this.grid.isEditing()) {
+      this.grid.setEditValue(this.grid.getEditRow(), fldName + '_textualValue', textValue, true, true);
+    }
   },
 
   // calls setValue and the onchange handling
@@ -1216,15 +1241,16 @@ OB.ViewFormProperties = {
       this.delayCall('setDisabledWhenStillInFIC', [true], 10);
     }
 
-    var editRow = this.view.viewGrid.getEditRow();
+    // store grid editing information which can be used when the fic returns
+    // this is needed as after the fic return the edit row may have changed.
+    var gridEditInformation = this.view.viewGrid.isEditing() ? {
+      grid: this.view.viewGrid,
+      editRow: this.view.viewGrid.getEditRow()
+    } : null;
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
-      var editValues;
-      if (editRow || editRow === 0) {
-        editValues = me.view.viewGrid.getEditValues(editRow);
-      }
 
-      me.processFICReturn(response, data, request, editValues, editRow);
+      me.processFICReturn(response, data, request, gridEditInformation);
 
       // compute the focus item after the fic has been done
       // and fields have become visible
@@ -1234,14 +1260,13 @@ OB.ViewFormProperties = {
       } else if (!me.forceFocusedField) {
         // don't set the focus in this case, this happens
         // when moving to a new row in grid editing
-
         if (me.getFocusItem()) {
           me.setFocusInForm();
         }
       }
       if (preserveGridEditing) {
         me.view.isEditingGrid = true;
-        this.view.toolBar.updateButtonState(true);
+        me.view.toolBar.updateButtonState(true);
       }
     });
     this.view.toolBar.updateButtonState(true);
@@ -1316,6 +1341,13 @@ OB.ViewFormProperties = {
     if (this.isNew) {
       this.view.refreshChildViews();
     }
+
+    if (this.view.directNavigation) {
+      // direct navigation opens form view, set message in toolbar when switching 
+      // back to grid
+      this.view.viewGrid.setSingleRecordFilterMessage();
+    }
+
     this.view.standardWindow.setDirtyEditForm(null);
   },
 
@@ -1339,7 +1371,7 @@ OB.ViewFormProperties = {
   saveRow: function () {
     var savingNewRecord = this.isNew,
         i, length, flds, form = this,
-        ficCallDone, record, recordIndex, callback;
+        ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
 
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
@@ -1445,23 +1477,36 @@ OB.ViewFormProperties = {
         form.setNewState(false);
 
         view.refreshParentRecord();
-        // Refreshes the child views that belong to the same entity
+
+        // Refreshes the selected record of the views that belong to the same entity
         // as the view being saved
-        view.refreshChildViewsWithEntity(this.view.entity);
+        if (view.standardWindow) {
+          viewsNotToRefresh = [];
+          // there is no need to refresh the current view...
+          viewsNotToRefresh[0] = view.tabId;
+          if (view.parentView) {
+            //  ... nor the parent view, if any (it would have been refreshed just a few lines ago)
+            viewsNotToRefresh[1] = view.parentView.tabId;
+          }
+          view.standardWindow.refreshViewsWithEntity(this.view.entity, viewsNotToRefresh);
+        }
 
         // We fill attachments in case the record is new, so that components
         // of the attachments section are created
         if (savingNewRecord) {
           this.attachmentsSection.fillAttachments(null);
-          // We also do a call to the FIC on SETSESSION mode to set the session variables
-          // to fix issue 18453
-          sessionProperties = this.view.getContextInfo(true, true, false, true);
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-            MODE: 'SETSESSION',
-            TAB_ID: this.view.tabId,
-            PARENT_ID: this.view.getParentId(),
-            ROW_ID: this.values.id
-          }, null);
+          //Issue 20544 -> The session shouldn't be setted with a null value
+          if (this.values.id) {
+            // We also do a call to the FIC on SETSESSION mode to set the session variables
+            // to fix issue 18453
+            sessionProperties = this.view.getContextInfo(true, true, false, true);
+            OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
+              MODE: 'SETSESSION',
+              TAB_ID: this.view.tabId,
+              PARENT_ID: this.view.getParentId(),
+              ROW_ID: this.values.id
+            }, null);
+          }
         }
 
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
@@ -1474,6 +1519,7 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
+
       return false;
     };
 
@@ -1522,7 +1568,7 @@ OB.ViewFormProperties = {
         return;
       }
     }
-    
+
     // wait for the redraw to be finished before moving the focus 
     if (this.isDirty()) {
       this.delayCall('focusInNextItem', [currentItemName], 100);
@@ -1668,7 +1714,9 @@ OB.ViewFormProperties = {
 
       return '<span class="OBFormFieldLinkButton">' + titleHTML + '</span>&nbsp;' + imgHTML;
     }
-
+    //is not a link therefore this property is not needed.
+    //if this property is null the click event won't open a new tab
+    item.linkButtonClick = null;
     return titleHTML;
   },
 
@@ -1707,11 +1755,18 @@ OB.ViewFormProperties = {
   // has only been edited half, only do this if we are in change
   // handling (to enable buttons etc.)
   updateFocusItemValue: function () {
-    var focusItem = this.getFocusSubItem();
+    var ret, focusItem = this.getFocusSubItem();
     if (this.inChangeHandling && focusItem && !focusItem.changeOnKeypress) {
       return;
     }
-    return this.Super('updateFocusItemValue', arguments);
+    if (this.grid) {
+      this.grid._preventDateParsing = true;
+      ret = this.Super('updateFocusItemValue', arguments);
+      delete this.grid._preventDateParsing;
+    } else {
+      ret = this.Super('updateFocusItemValue', arguments);
+    }
+    return ret;
   },
 
   enableShortcuts: function () {
@@ -1797,7 +1852,7 @@ OB.ViewFormProperties = {
         value, undef, nullValue = null;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
-      value = this.getValue(item);
+      value = item.getValue();
       if (this.isRequired(item) && value !== false && value !== 0 && !value) {
         return false;
       }

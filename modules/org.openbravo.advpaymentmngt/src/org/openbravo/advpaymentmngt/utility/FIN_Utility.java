@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -44,13 +44,15 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
@@ -58,6 +60,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -67,7 +70,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class FIN_Utility {
@@ -76,51 +78,26 @@ public class FIN_Utility {
   private static AdvPaymentMngtDao dao;
 
   /**
-   * Parses the string to a date using the dateFormat.java property.
-   * 
-   * @param strDate
-   *          String containing the date
-   * @return the date
+   * @see OBDateUtils#getDate(String)
    */
   public static Date getDate(String strDate) {
-    if (strDate.equals(""))
-      return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      return (outputFormat.parse(strDate));
+      return OBDateUtils.getDate(strDate);
     } catch (ParseException e) {
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error parsing date", e);
       return null;
     }
+
   }
 
   /**
-   * Parses the string to a date with time using the dateTimeFormat defined in Openbravo.properties.
-   * If the string parameter does not have time include it will add the current hours, minutes and
-   * seconds.
-   * 
-   * @param strDate
-   *          String date.
-   * @return the date with time.
+   * @see OBDateUtils#getDateTime(String)
    */
   public static Date getDateTime(String strDate) {
-    String dateTime = strDate;
-    Calendar cal = Calendar.getInstance();
-    if (!strDate.contains(":")) {
-      dateTime = strDate + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE)
-          + ":" + cal.get(Calendar.SECOND);
-    }
-    if (dateTime.equals(""))
-      return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateTimeFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      return (outputFormat.parse(dateTime));
+      return OBDateUtils.getDateTime(strDate);
     } catch (ParseException e) {
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error parsing date", e);
       return null;
     }
   }
@@ -253,21 +230,16 @@ public class FIN_Utility {
   }
 
   /**
-   * Creates a comma separated string with the Id's of the Set of Strings.
+   * Creates a comma separated string with the Id's of the Set of Strings. This method is deprecated
+   * as it has been added to Utility (core)
    * 
    * @param set
    *          Set of Strings
    * @return Comma separated string of Id's
    */
+  @Deprecated
   public static String getInStrSet(Set<String> set) {
-    StringBuilder strInList = new StringBuilder();
-    for (String string : set) {
-      if (strInList.length() == 0)
-        strInList.append("'" + string + "'");
-      else
-        strInList.append(", '" + string + "'");
-    }
-    return strInList.toString();
+    return Utility.getInStrSet(set);
   }
 
   /**
@@ -608,17 +580,10 @@ public class FIN_Utility {
   }
 
   /**
-   * Translate the given code into some message from the application dictionary. It searches first
-   * in AD_Message table and if there are not matchings then in AD_Element table.
-   * 
-   * @param strCode
-   *          String with the search key to search.
-   * @return String with the translated message.
+   * @see OBMessageUtils#messageBD(String)
    */
   public static String messageBD(String strCode) {
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    return Utility.messageBD(conn, strCode, language);
+    return OBMessageUtils.messageBD(strCode);
   }
 
   /**
@@ -962,7 +927,8 @@ public class FIN_Utility {
       // By default take the invoice document number
       invoiceDocNo = invoice.getDocumentNo();
 
-      final String paymentDescription = organization.getOrganizationInformationList().get(0)
+      final String paymentDescription = OBDal.getInstance()
+          .get(OrganizationInformation.class, ((String) DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
@@ -991,6 +957,51 @@ public class FIN_Utility {
         parameters, null);
 
     return "Y".equals(result);
+  }
+
+  /**
+   * Returns a list of Payment Status. If isConfirmed equals true, then the status returned are
+   * confirmed payments. Else they are pending of execution
+   * 
+   */
+  private static List<String> getListPaymentConfirmedOrNot(Boolean isConfirmed) {
+
+    List<String> listPaymentConfirmedOrNot = new ArrayList<String>();
+    OBContext.setAdminMode(true);
+    try {
+      final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
+          "575BCB88A4694C27BC013DE9C73E6FE7"));
+      List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
+      for (org.openbravo.model.ad.domain.List adRef : adRefList) {
+        if (isConfirmed.equals(isPaymentConfirmed(adRef.getSearchKey(), null))) {
+          listPaymentConfirmedOrNot.add(adRef.getSearchKey());
+        }
+      }
+      return listPaymentConfirmedOrNot;
+    } catch (Exception e) {
+      log4j.error(e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns a list confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentConfirmed() {
+    return getListPaymentConfirmedOrNot(true);
+  }
+
+  /**
+   * Returns a list not confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentNotConfirmed() {
+    return getListPaymentConfirmedOrNot(false);
   }
 
   /**

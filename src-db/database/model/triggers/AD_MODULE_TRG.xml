@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2008-2011 Openbravo SLU
+  * All portions are Copyright (C) 2008-2012 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -56,7 +56,7 @@ BEGIN
       AND (COALESCE(:NEW.NAME, '.') <> COALESCE(:NEW.NAME, '.')
         OR COALESCE(:NEW.TYPE, '.') <> COALESCE(:NEW.TYPE, '.')
         OR COALESCE(:NEW.JAVAPACKAGE, '.') <> COALESCE(:NEW.JAVAPACKAGE, '.')) THEN
-      RAISE_APPLICATION_ERROR(-20534, 'Cannot modify registered module.');
+      RAISE_APPLICATION_ERROR(-20000, '@20534@');
     END IF;
     
     

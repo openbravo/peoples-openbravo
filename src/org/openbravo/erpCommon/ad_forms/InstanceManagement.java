@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -330,6 +331,14 @@ public class InstanceManagement extends HttpSecureAppServlet {
             activationKey.getErrorMessage()));
       }
 
+      if (myMessage == null
+          && activationKey.checkOPSLimitations(null) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setMessage(Utility.messageBD(this, "OffDemandPlatform", vars.getLanguage()));
+
+      }
+
       vars.removeMessage("InstanceManagement");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -426,8 +435,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     // Purpose combo
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"),
+      String validation = ActivationKey.getInstance().isOffPlatform() ? "50AFB21662F74D7DAEA5EA721AA7F2BA"
+          : "";
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose",
+          validation, Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"),
           Utility.getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
           sysInfo.getInstancePurpose());

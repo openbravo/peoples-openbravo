@@ -50,8 +50,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -203,6 +203,11 @@ public class DocMatchInv extends AcctServer {
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
 
+    if (ZERO.compareTo(bdCost) == 0) {
+      strMessage = "@MatchedInvIsZero@";
+      setStatus(STATUS_DocumentDisabled);
+    }
+
     dr = fact
         .createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
             costCurrencyId, bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -215,9 +220,16 @@ public class DocMatchInv extends AcctServer {
     }
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
     for (DocLine docLineInvoice : p_lines) {
-      bdExpenses.toString();
-      String strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
-          new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
+      String strAmount = "";
+      if (strInvoiceCurrency != costCurrencyId) {
+        strAmount = getConvertedAmt((changeSign) ? new BigDecimal(docLineInvoice.getAmount())
+            .multiply(new BigDecimal(-1)).toString() : docLineInvoice.getAmount(),
+            strInvoiceCurrency, costCurrencyId, strDate, "", vars.getClient(), vars.getOrg(), conn);
+      } else {
+        strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
+            new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
+      }
+
       cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
           costCurrencyId, "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       if (cr == null && ZERO.compareTo(new BigDecimal(strAmount)) != 0) {

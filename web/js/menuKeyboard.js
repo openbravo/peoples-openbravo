@@ -55,7 +55,7 @@ function getStyle(id, isId) {
 }
 
 function changeState(evt, element) {
-  if (window.navigator.appName.indexOf("Microsoft")!=-1) onFocusMenu();
+  if (window.navigator.userAgent.indexOf("MSIE")!=-1) onFocusMenu();
   if(element == null) {
     element = (!document.all) ? evt.target : event.srcElement;
   } else if (evt == null) {

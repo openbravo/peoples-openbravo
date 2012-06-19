@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERLINE2_TRG">
-    <trigger name="C_ORDERLINE2_TRG" table="C_ORDERLINE" fires="before" insert="false" update="true" delete="false" foreach="row">
+    <trigger name="C_ORDERLINE2_TRG" table="C_ORDERLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 
@@ -18,15 +18,20 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_ID VARCHAR2(32);
-  v_QtyReserved      NUMBER;
-  v_QtyOrderReserved NUMBER;
-  V_STOCKED          NUMBER;
-    
+  v_ID VARCHAR2(32);   
+  v_QtyReserved        NUMBER;
+  v_QtyOrderReserved   NUMBER;
+  V_STOCKED            NUMBER;
+  v_DocStatus          VARCHAR(60);
+  v_DocAction          VARCHAR(60);
+  v_isSOTrx            CHAR(1);
+  v_QtyReservedPO      NUMBER;
+  v_QtyOrderReservedPO NUMBER;
+
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -56,6 +61,51 @@ BEGIN
       END IF;
     END IF;
   END IF;
+
+  IF(UPDATING OR DELETING) THEN
+    v_ID:=:old.C_Order_ID;
+    SELECT DocStatus, DocAction, isSOTrx
+    INTO v_DocStatus, v_DocAction, v_isSOTrx
+    FROM c_Order
+    WHERE c_order_id = v_ID;
+    IF(v_DocStatus = 'IP') THEN
+      IF(v_isSOTrx = 'Y') THEN
+        v_QtyReserved := -:old.qtyordered;
+        v_QtyOrderReserved := -:old.quantityorder;
+        v_QtyReservedPO := 0;
+        v_QtyOrderReservedPO := null;
+      ELSE
+        v_QtyReserved := 0;
+        v_QtyOrderReserved := null;
+        v_QtyReservedPO := -:old.qtyordered;
+        v_QtyOrderReservedPO := -:old.quantityorder;
+      END IF;
+      M_UPDATE_STORAGE_PENDING(:old.AD_Client_ID, :old.AD_Org_ID, :old.UpdatedBy, :old.M_Product_ID, :old.M_Warehouse_ID, :old.M_AttributeSetInstance_ID, :old.C_UOM_ID, :old.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+    END IF;
+  END IF;
+
+  IF(INSERTING OR UPDATING) THEN
+    v_ID:=:new.C_Order_ID;
+    SELECT DocStatus, DocAction, isSOTrx
+    INTO v_DocStatus, v_DocAction, v_isSOTrx
+    FROM c_Order
+    WHERE c_order_id = v_ID;
+    IF(v_DocStatus = 'IP') THEN
+      IF(v_isSOTrx = 'Y') THEN
+        v_QtyReserved := :new.qtyordered;
+        v_QtyOrderReserved := :new.quantityorder;
+        v_QtyReservedPO := 0;
+        v_QtyOrderReservedPO := null;
+      ELSE
+        v_QtyReserved := 0;
+        v_QtyOrderReserved := null;
+        v_QtyReservedPO := :new.qtyordered;
+        v_QtyOrderReservedPO := :new.quantityorder;
+      END IF;
+      M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+    END IF;
+  END IF;
+
 END C_ORDERLINE2_TRG
 ]]></body>
     </trigger>

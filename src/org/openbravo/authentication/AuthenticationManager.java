@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -82,6 +82,7 @@ public abstract class AuthenticationManager {
       log4j
           .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       authManager = new DefaultAuthenticationManager(s);
+      authManager.init(s);
     }
     return authManager;
   }
@@ -144,8 +145,15 @@ public abstract class AuthenticationManager {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
+    // A restricted resource can define a custom login URL
+    // It just need to set an the attribute loginURL in the request
+    final String customLoginURL = (String) request.getAttribute("loginURL");
+
+    final String loginURL = localAdress
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
+
     if (userId == null && !response.isCommitted()) {
-      response.sendRedirect(localAdress + defaultServletUrl);
+      response.sendRedirect(loginURL);
       return null;
     }
 
@@ -216,6 +224,10 @@ public abstract class AuthenticationManager {
       updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
       log4j.warn("Cannot use WS, license expired");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
+    case EXPIRED_MODULES:
+      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      log4j.warn("Cannot use WS, expired modules");
+      throw new AuthenticationException("There are expired modules");
     }
 
     return null;

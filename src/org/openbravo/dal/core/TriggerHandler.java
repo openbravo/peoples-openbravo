@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,13 +19,14 @@
 
 package org.openbravo.dal.core;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.SessionStatus;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Supports disabling and again enabling of database triggers.
@@ -48,7 +49,7 @@ public class TriggerHandler {
     return instance;
   }
 
-  private ThreadLocal<SessionStatus> sessionStatus = new ThreadLocal<SessionStatus>();
+  private ThreadLocal<Boolean> sessionStatus = new ThreadLocal<Boolean>();
 
   /**
    * Disabled all triggers in the database. This is done by creating an ADSessionStatus object and
@@ -59,19 +60,21 @@ public class TriggerHandler {
     log.debug("Disabling triggers");
     Check.isNull(sessionStatus.get(), "There is already a ADSessionStatus present in this thread, "
         + "call enable before calling disable again");
-    OBContext.setAdminMode();
+    Connection con = OBDal.getInstance().getConnection();
+    PreparedStatement ps = null;
     try {
-      final SessionStatus localSessionStatus = OBProvider.getInstance().get(SessionStatus.class);
-      localSessionStatus.setImporting(true);
-      localSessionStatus.setClient(OBDal.getInstance().get(Client.class, "0"));
-      localSessionStatus.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-      OBDal.getInstance().save(localSessionStatus);
-      OBDal.getInstance().flush();
-      Check.isNotNull(localSessionStatus.getId(), "The id is not set after insert");
-      sessionStatus.set(localSessionStatus);
+      ps = con
+          .prepareStatement("INSERT INTO AD_SESSION_STATUS VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
+      ps.executeUpdate();
+    } catch (Exception e) {
+      log.error("Couldn't disable triggers: ", e);
     } finally {
-      OBContext.restorePreviousMode();
+      try {
+        ps.close();
+      } catch (SQLException e) {
+      }
     }
+    sessionStatus.set(Boolean.TRUE);
   }
 
   /**
@@ -96,13 +99,20 @@ public class TriggerHandler {
     log.debug("Enabling triggers");
     Check.isNotNull(sessionStatus.get(), "SessionStatus not set, call disable "
         + "before calling this method");
-    OBContext.setAdminMode();
+
+    Connection con = OBDal.getInstance().getConnection();
+    PreparedStatement ps = null;
     try {
-      OBDal.getInstance().remove(sessionStatus.get());
-      OBDal.getInstance().flush();
+      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS");
+      ps.executeUpdate();
+    } catch (Exception e) {
+      log.error("Couldn't enable triggers: ", e);
     } finally {
-      sessionStatus.set(null);
-      OBContext.restorePreviousMode();
+      try {
+        ps.close();
+      } catch (SQLException e) {
+      }
     }
+    sessionStatus.set(null);
   }
 }

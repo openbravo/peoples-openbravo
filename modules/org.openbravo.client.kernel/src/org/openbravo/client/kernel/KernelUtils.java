@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,7 +37,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
@@ -74,10 +74,10 @@ public class KernelUtils {
   private List<Module> sortedModules = null;
 
   /**
-   * @see Utility#getI18NMessage(String, String[])
+   * @see OBMessageUtils#getI18NMessage(String, String[])
    */
   public String getI18N(String key, String[] params) {
-    return Utility.getI18NMessage(key, params);
+    return OBMessageUtils.getI18NMessage(key, params);
   }
 
   public Property getPropertyFromColumn(Column column) {
@@ -166,6 +166,23 @@ public class KernelUtils {
     return KernelConstants.RESOURCE_VERSION_PARAMETER + "=" + module.getVersion() + "&"
         + KernelConstants.RESOURCE_LANGUAGE_PARAMETER + "="
         + OBContext.getOBContext().getLanguage().getId();
+  }
+
+  /**
+   * Returns "true" if the module given its java package exists and "false" if it doesn't.
+   * 
+   * @param javaPackage
+   *          the java package used to read the module
+   * @return boolean
+   */
+  public boolean isModulePresent(String javaPackage) {
+    for (Module module : getModulesOrderedByDependency()) {
+      // do trim to handle small typing errors, consider to do lowercase also
+      if (javaPackage.trim().equals(module.getJavaPackage().trim())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

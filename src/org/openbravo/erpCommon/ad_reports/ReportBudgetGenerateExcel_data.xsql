@@ -75,7 +75,14 @@
 		      SELECT PERIODNO           
 		      FROM C_PERIOD           
 		      WHERE C_PERIOD.C_PERIOD_ID=B.C_PERIOD_ID)        ), TO_CHAR(?)      
-		    ) END AS MONTH,    
+		    )  || ' ' ||
+            AD_COLUMN_IDENTIFIER('C_YEAR', (        
+            SELECT TO_CHAR(C_YEAR_ID)         
+            FROM C_YEAR WHERE C_YEAR_ID = (          
+              SELECT C_YEAR_ID           
+              FROM C_PERIOD           
+              WHERE C_PERIOD.C_PERIOD_ID=B.C_PERIOD_ID)        ), TO_CHAR(?)      
+            ) END AS MONTH,    
 		  C_BUDGET.EXPORTACTUAL,
 		  CASE WHEN C_BUDGET.EXPORTACTUAL = 'Y' THEN        (        
 		    SELECT CASE WHEN E.ACCOUNTSIGN='C' THEN SUM(AMTACCTCR-AMTACCTDR) ELSE SUM(AMTACCTDR-AMTACCTCR) END AS AMOUNT        
@@ -106,6 +113,7 @@
 		WHERE   B.C_BUDGET_ID = C_BUDGET.C_BUDGET_ID                  
 		  AND B.C_BUDGET_ID = ?
      ]]></Sql>
+     <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICELINE_V2">
-    <view name="C_INVOICELINE_V2"><![CDATA[SELECT il.ad_client_id, il.ad_org_id, il.c_invoiceline_id, i.c_invoice_id, i.salesrep_id, i.c_bpartner_id, i.c_bp_group_id, il.m_product_id, p.m_product_category_id, i.dateinvoiced, i.dateacct, il.qtyinvoiced * i.multiplier AS qtyinvoiced, il.pricelist, il.priceactual, il.pricelimit, 
+    <view name="C_INVOICELINE_V2"><![CDATA[SELECT il.c_invoiceline_id AS c_invoiceline_v2_id, il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, il.c_invoiceline_id, i.c_invoice_id, i.salesrep_id, i.c_bpartner_id, i.c_bp_group_id, il.m_product_id, p.m_product_category_id, i.dateinvoiced, i.dateacct, il.qtyinvoiced * i.multiplier AS qtyinvoiced, il.pricelist, il.priceactual, il.pricelimit, 
 CASE il.pricelist
 WHEN 0 THEN 0
 ELSE round((il.pricelist - il.priceactual) / il.pricelist * 100, 2)

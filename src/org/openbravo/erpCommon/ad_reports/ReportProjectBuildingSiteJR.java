@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -38,6 +39,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.UtilityData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
@@ -46,6 +48,18 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    String referenceId = UtilityData.getReferenceId(this, "ProjectStatus");
+    String[] referenceValues = Utility.getReferenceValues(this, vars.getLanguage(), referenceId);
+    ValueListFilter valueFilterstatus = new ValueListFilter(referenceValues);
+
+    referenceId = UtilityData.getReferenceId(this, "Projectkind");
+    referenceValues = Utility.getReferenceValues(this, vars.getLanguage(), referenceId);
+    ValueListFilter valueFilterkind = new ValueListFilter(referenceValues);
+
+    referenceId = UtilityData.getReferenceId(this, "Projectphase");
+    referenceValues = Utility.getReferenceValues(this, vars.getLanguage(), referenceId);
+    ValueListFilter valueFilterphase = new ValueListFilter(referenceValues);
 
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
@@ -61,11 +75,11 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId",
           "ReportProjectBuildingSiteJR|mCategoryId", "", IsIDFilter.instance);
       String strProjectkind = vars.getInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSiteJR|Projectkind", "", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectkind", "", valueFilterkind);
       String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSiteJR|Projectstatus", "", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectstatus", "", valueFilterstatus);
       String strProjectphase = vars.getInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSiteJR|Projectphase", "", IsIDFilter.instance);
+          "ReportProjectBuildingSiteJR|Projectphase", "", valueFilterphase);
       String strProduct = vars.getInGlobalVariable("inpmProductId_IN",
           "ReportProjectBuildingSiteJR|mProductId_IN", "", IsIDFilter.instance);
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic",
@@ -91,11 +105,11 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId",
           "ReportProjectBuildingSiteJR|mCategoryId", IsIDFilter.instance);
       String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind",
-          "ReportProjectBuildingSiteJR|Projectkind", null);
+          "ReportProjectBuildingSiteJR|Projectkind", valueFilterkind);
       String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus",
-          "ReportProjectBuildingSiteJR|Projectstatus", null);
+          "ReportProjectBuildingSiteJR|Projectstatus", valueFilterstatus);
       String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase",
-          "ReportProjectBuildingSiteJR|Projectphase", null);
+          "ReportProjectBuildingSiteJR|Projectphase", valueFilterphase);
       String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportProjectBuildingSiteJR|mProductId_IN", IsIDFilter.instance);
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic",

@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -86,7 +86,7 @@ BEGIN
             COALESCE(:NEW.OBSERDS_DATASOURCE_ID , '.') != COALESCE(:OLD.OBSERDS_DATASOURCE_ID , '.') OR
             COALESCE(:NEW.OBCLKER_TEMPLATE_ID , '.') != COALESCE(:OLD.OBCLKER_TEMPLATE_ID , '.') OR
             1=2) THEN
-            RAISE_APPLICATION_ERROR(-20532, 'Cannot update an object in a module not in developement and without an active template');
+            RAISE_APPLICATION_ERROR(-20000, '@20532@');
         END IF;
     END IF;
 
@@ -117,7 +117,7 @@ BEGIN
 
     -- don't allow insert/delete if not in development
     IF ((DELETING OR INSERTING) AND devModule='N') THEN
-        RAISE_APPLICATION_ERROR(-20533, 'Cannot insert/delete objects in a module not in development.');
+        RAISE_APPLICATION_ERROR(-20000, '@20533@');
     END IF;
 END OBUISEL_SELECTOR_TRG
 ]]></body>

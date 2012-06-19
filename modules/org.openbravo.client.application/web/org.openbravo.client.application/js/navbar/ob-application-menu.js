@@ -33,6 +33,9 @@ isc.OBApplicationMenuTree.addProperties({
   // move the menu a few pixels down and a bit to the left
   placeNear: function (left, top) {
     var parentLeft = this.menuButton.parentElement.getPageLeft();
+    if (isc.Page.isRTL()) {
+      parentLeft = parentLeft - this.getVisibleWidth() + this.menuButton.getVisibleWidth() + 1;
+    }
     return this.Super('placeNear', [parentLeft, top - 1]);
   },
 
@@ -119,7 +122,7 @@ isc.OBApplicationMenuTree.addProperties({
     var isClassicEnvironment = OB.Utilities.useClassicMode(item.windowId);
     var selectedView = isc.addProperties({}, item);
     if (item.tabId) {
-      selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon);
+      selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon, item.readOnly, item.singleRecord);
       selectedView.type = item.type;
       selectedView.icon = item.icon;
       if (selectedView) {

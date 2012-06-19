@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@
   font-family: 'lucida sans', sans-serif;
   padding: 4px 8px 4px 8px;
   vertical-align: top;
+  line-height: 1.4em;
 }
 
 .OBFormFieldLabel,
@@ -251,20 +252,6 @@
   -webkit-text-fill-color: #7d7d7d;
 }
 
-.OBFormFieldDateInputRequired,
-.OBFormFieldDateInputRequiredDisabled,
-.OBFormFieldDateInputRequiredFocused,
-.OBFormFieldDateInputRequiredError,
-.OBFormFieldDateInputRequiredHint,
-
-.OBFormFieldDateInput,
-.OBFormFieldDateInputDisabled,
-.OBFormFieldDateInputFocused,
-.OBFormFieldDateInputError,
-.OBFormFieldDateInputHint {
-  margin-right: -6px;
-}
-
 .OBFormFieldSelectControl,
 .OBFormFieldSelectControlSelected,
 .OBFormFieldSelectControlSelectedFocused,
@@ -371,16 +358,16 @@
 .OBPickListBodyFocused {
   border:1px solid #CDD7BB;
   outline: none; 
-  background-color:#FFFFFF;
+  background-color: #F5F7F1;
 }
 
-// workaround for this issue:
-// https://issues.openbravo.com/view.php?id=18501
+/* workaround for this issue:
+   https://issues.openbravo.com/view.php?id=18501 */
 .pickListMenuBody,
 .pickListMenuBodyFocused {
   border:1px solid #CDD7BB;
   outline: none; 
-  background-color:#FFFFFF;
+  background-color: #F5F7F1;
 }
 
 .OBFormFieldPickListCell,

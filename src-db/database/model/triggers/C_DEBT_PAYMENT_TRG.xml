@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2006 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -52,7 +52,7 @@ BEGIN
       WHERE C_Invoice_ID = :old.C_Invoice_ID;
       --dbms_output.put_line('inv:'||coalesce(:old.C_Invoice_ID,'null') ||' ord:'|| coalesce(:old.C_Order_ID,'null'));
       IF (v_Processed = 'Y' AND NOT (:old.C_Invoice_ID IS NULL AND :old.C_Order_ID IS NOT NULL)) THEN
-        RAISE_APPLICATION_ERROR(-20513, 'A valid Debt/Payment should not be deleted');
+        RAISE_APPLICATION_ERROR(-20000, '@20513@');
       END IF;
     END IF;
   ELSIF (INSERTING) THEN
@@ -61,7 +61,7 @@ BEGIN
        FROM C_Settlement
        WHERE C_Settlement_ID =:new.C_Settlement_Generate_ID;
       IF v_IsProcessed='Y' THEN
-        RAISE_APPLICATION_ERROR(-20510, 'The settlement is processed');
+        RAISE_APPLICATION_ERROR(-20000, '@20510@');
       END IF;
     END IF;
 
@@ -103,7 +103,7 @@ BEGIN
      FROM C_Invoice
     WHERE C_Invoice_ID = :new.C_Invoice_ID;
     IF v_IsProcessed = 'Y' THEN
-      RAISE_APPLICATION_ERROR(-20508, 'The invoice is processed');
+      RAISE_APPLICATION_ERROR(-20000, '@20508@');
     END IF;
     END IF;
     :new.Status := :new.Status_Initial;
@@ -116,18 +116,18 @@ BEGIN
                OR (:old.C_Currency_ID<>:new.C_Currency_ID)
                OR (:old.Amount<>:new.Amount)
                OR (:old.IsManual<>:new.IsManual))) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'A valid Debt/Payment should not be modified');
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
     END IF;
     IF (C_DEBT_PAYMENT_STATUS(:old.C_Settlement_Cancel_ID,:old.Cancel_Processed,:old.Generate_Processed,
         :old.IsPaid,:old.IsValid,:old.C_CashLine_ID,:old.C_BankStatementLine_ID) NOT IN ('P','I')
      AND ((COALESCE(:old.C_BankAccount_ID,'0')<>COALESCE(:new.C_BankAccount_ID,'0')) OR
        (COALESCE(:old.C_CashBook_ID,'0')<>COALESCE(:new.C_CashBook_ID,'0')) OR
         (:old.PaymentRule<>:new.PaymentRule) OR (:old.DatePlanned<>:new.DatePlanned))) THEN
-      RAISE_APPLICATION_ERROR(-20511, 'This Debt/Payment can not be modified');
+      RAISE_APPLICATION_ERROR(-20000, '@20511@');
     END IF;
     IF (:new.C_Settlement_Cancel_ID IS NOT NULL) THEN
      IF (:old.C_Settlement_Cancel_ID<>:new.C_Settlement_Cancel_ID) THEN
-        RAISE_APPLICATION_ERROR(-20512, 'The Debt/Payment is already in a Settlement Cancel');
+        RAISE_APPLICATION_ERROR(-20000, '@20512@');
      END IF;
      IF ((COALESCE(:old.C_Settlement_Cancel_ID,'0')<>COALESCE(:new.C_Settlement_Cancel_ID,'0'))
       OR (:old.IsPaid<>:new.IsPaid)
@@ -136,7 +136,7 @@ BEGIN
           WHERE C_Settlement_ID =:new.C_Settlement_Cancel_ID;
 
           IF v_IsProcessed='Y' THEN
-           RAISE_APPLICATION_ERROR(-20510, 'The settlement is processed');
+           RAISE_APPLICATION_ERROR(-20000, '@20510@');
           END IF;
      END IF;
     END IF;
@@ -146,7 +146,7 @@ BEGIN
         SELECT processed INTO v_IsProcessed FROM C_Settlement
           WHERE C_Settlement_ID =:new.C_Settlement_Generate_ID;
           IF v_IsProcessed='Y' THEN
-           RAISE_APPLICATION_ERROR(-20510, 'The settlement is processed');
+           RAISE_APPLICATION_ERROR(-20000, '@20510@');
           END IF;
       END IF;
     END IF;
@@ -176,7 +176,7 @@ BEGIN
          FROM C_Invoice
         WHERE C_Invoice_ID = :new.C_Invoice_ID;
         IF v_IsProcessed = 'Y' THEN
-          RAISE_APPLICATION_ERROR(-20508, 'The invoice is processed');
+          RAISE_APPLICATION_ERROR(-20000, '@20508@');
         END IF;
     END IF;
 

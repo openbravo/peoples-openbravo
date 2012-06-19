@@ -113,10 +113,12 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strSelectedPaymentDetails = vars.getInStringParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      final String strAmountFrom = vars.getNumericParameter("inpAmountFrom", "");
+      final String strAmountTo = vars.getNumericParameter("inpAmountTo", "");
 
       printGrid(response, vars, strFinancialAccountId, strBusinessPartnerId, strDueDateFrom,
           strDueDateTo, strTransDateFrom, strTransDateTo, strDocumentType, strDocumentNo,
-          strSelectedPaymentDetails, isReceipt, strCurrencyId);
+          strSelectedPaymentDetails, isReceipt, strCurrencyId, strAmountFrom, strAmountTo);
 
     } else if (vars.commandIn("PAYMENTMETHODCOMBO")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -533,7 +535,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       String strFinancialAccountId, String strBusinessPartnerId, String strDueDateFrom,
       String strDueDateTo, String strTransDateFrom, String strTransDateTo, String strDocumentType,
       String strDocumentNo, String strSelectedPaymentDetails, boolean isReceipt,
-      String strCurrencyId) throws IOException, ServletException {
+      String strCurrencyId, String strAmountFrom, String strAmountTo) throws IOException,
+      ServletException {
 
     log4j.debug("Output: Grid with pending payments");
 
@@ -557,7 +560,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     // list
     if (!"".equals(strBusinessPartnerId) || !"".equals(strDocumentNo)
         || isValidJSDate(strDueDateFrom) || isValidJSDate(strDueDateTo)
-        || isValidJSDate(strTransDateFrom) || isValidJSDate(strTransDateTo)) {
+        || isValidJSDate(strTransDateFrom) || isValidJSDate(strTransDateTo)
+        || !"".equals(strAmountFrom) || !"".equals(strAmountTo)) {
       Currency paymentCurrency;
       if (strCurrencyId == null || strCurrencyId.isEmpty()) {
         paymentCurrency = financialAccount.getCurrency();
@@ -572,7 +576,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")),
           FIN_Utility.getDate(strTransDateFrom),
           FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strTransDateTo, "1")), strDocumentType,
-          strDocumentNo, null, selectedScheduledPaymentDetails, isReceipt);
+          strDocumentNo, null, selectedScheduledPaymentDetails, isReceipt, strAmountFrom,
+          strAmountTo);
     }
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);

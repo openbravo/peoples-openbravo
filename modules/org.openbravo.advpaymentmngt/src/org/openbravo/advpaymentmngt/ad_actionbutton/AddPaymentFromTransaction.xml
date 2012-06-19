@@ -36,6 +36,8 @@
     <PARAMETER id="paramPaymentMethod" name="paymentMethod" attribute="value"/>
     <PARAMETER id="paramExpectedPayment" name="expectedPayment" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
+    <PARAMETER id="paramAmountFrom" name="amountFrom" attribute="value" format="euroEdition" default=""/>
+    <PARAMETER id="paramAmountTo" name="amountTo" attribute="value" format="euroEdition" default=""/>
     <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
     <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
     <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
