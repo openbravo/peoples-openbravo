@@ -57,8 +57,8 @@
         _.each(_.keys(whereClause), function (k) {
 
           var undef, val = whereClause[k],
-              operator = val.operator !== undef ? val.operator : '=',
-              value = val.value !== undef ? val.value : val;
+              operator = (val !== null && val.operator !== undef) ? val.operator : '=',
+              value = (val !== null && val.value !== undef) ? val.value : val;
 
           if (appendWhere) {
             sql = sql + ' WHERE ';
