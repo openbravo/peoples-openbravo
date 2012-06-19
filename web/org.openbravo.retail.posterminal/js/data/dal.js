@@ -4,7 +4,15 @@
 
   var dbSize = 10 * 1024 * 1024,
       undef, wsql = window.openDatabase !== undef,
-      db = d || (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize));
+      db = d || (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize)),
+      OP;
+
+  OP = {
+    EQ: '=',
+    CONTAINS: 'contains',
+    STARTSWITH: 'startsWith',
+    ENDSWITH: 'endsWith'
+  };
 
   function S4() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1).toUpperCase();
@@ -63,7 +71,20 @@
           if (value === null) {
             sql = sql + ' IS null ';
           } else {
-            sql = sql + ' ' + operator + ' ? ';
+
+            if (operator === OP.EQ) {
+              sql = sql + ' = ? ';
+            } else {
+              sql = sql + ' like ? ';
+            }
+
+            if (operator === OP.CONTAINS) {
+              value = '%' + value + '%';
+            } else if (operator === OP.STARTSWITH) {
+              value = '%' + value;
+            } else if (operator === OP.ENDSWITH) {
+              value = value + '%';
+            }
             params.push(value);
           }
 
@@ -239,8 +260,10 @@
 
   window.OB.Dal = {
     // constants
-    EQ: '=',
-    LIKE: 'like',
+    EQ: OP.EQ,
+    CONTAINS: OP.CONTAINS,
+    STARTSWITH: OP.STARTSWITH,
+    ENDSWITH: OP.ENDSWITH,
     // methods
     save: save,
     find: find,
