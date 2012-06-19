@@ -35,7 +35,7 @@
   v_NetAmount NUMBER;
   v_TaxAmount NUMBER;
 BEGIN --BODY
-  v_TaxAmount := c_tax_from_net_amt(p_tax_id, p_grossamt, p_alternatetaxbaseamt, p_stdprecision, 0);
+  v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, p_stdprecision, 0);
   DBMS_OUTPUT.PUT_LINE('Unit tax ' || v_TaxAmount);
   v_NetAmount:= ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)), p_stdprecision);
 
