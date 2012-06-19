@@ -281,11 +281,9 @@ END IF;
   END IF;
   IF (v_istaxincluded = 'Y') THEN
     SELECT totallines, grandtotal INTO v_totallines, v_grandtotal
-    FROM c_invoice
+    FROM C_invoice
     WHERE c_invoice_id = v_id;
-    IF (v_totallines <> 0) THEN
-      C_INVOICETAX_ROUNDING(v_id, v_grandtotal, v_totallines);
-    END IF;
+    C_INVOICETAX_ROUNDING(v_id, v_grandtotal, v_totallines);
   END IF;
   
  END IF;

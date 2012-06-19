@@ -29,22 +29,38 @@
 -- Variables
   v_ResultStr VARCHAR(2000):=''; 
   v_current_gross_amt NUMBER;
+  v_lineno NUMBER;
+  v_count NUMBER;
   TYPE RECORD IS REF CURSOR;
   cur_invoicetax RECORD;
 
 BEGIN --BODY
 
-  SELECT COALESCE(p_totallines, 0) + COALESCE(SUM(taxamt),0) INTO v_current_gross_amt
+  SELECT count(1) INTO v_count
   FROM c_invoicetax
   WHERE c_invoice_id = p_invoice_id;
-  DBMS_OUTPUT.PUT_LINE(' invoicetaxrounding ' || p_invoice_id || ' - ' || p_grandtotal || ' - ' || v_current_gross_amt) ;
-
+  IF (v_count > 0) THEN
+    SELECT COALESCE(p_totallines, 0) + COALESCE(SUM(taxamt),0) INTO v_current_gross_amt
+    FROM c_invoicetax
+    WHERE c_invoice_id = p_invoice_id
+      AND recalculate = 'Y';
+  ELSE
+    v_current_gross_amt := p_totallines;
+    UPDATE c_invoice
+    SET grandtotal = p_totallines
+    WHERE c_invoice_id = p_invoice_id;
+  END IF;
   
   IF (p_grandtotal <> v_current_gross_amt) THEN
+    SELECT COALESCE(MAX(line),0) + 10 INTO v_lineno
+    FROM c_invoicetax
+    WHERE c_invoice_id = p_invoice_id;
+
     FOR cur_invoicetax IN (
       SELECT c_invoicetax_id
       FROM c_invoicetax
       WHERE c_invoice_id = p_invoice_id
+        AND recalculate = 'Y'
       ORDER BY taxamt desc
     ) LOOP
       UPDATE c_invoicetax

@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -27,6 +27,7 @@ v_Count NUMBER;
 v_LineNo  NUMBER;
 v_C_Invoice_ID C_INVOICELINETAX.C_INVOICE_ID%TYPE;
 v_C_Tax_ID C_INVOICELINETAX.C_TAX_ID%TYPE;
+v_c_invoicetax_id C_INVOICETAX.C_INVOICETAX_ID%TYPE;
 v_Prec C_CURRENCY.STDPRECISION%TYPE;
 v_DocTaxAmount C_TAX.DOCTAXAMOUNT%TYPE;
 v_Rate  C_TAX.RATE%TYPE;
@@ -68,17 +69,15 @@ BEGIN
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
-    SELECT COUNT(C_TAX_ID) INTO v_Count
+    SELECT COUNT(C_TAX_ID), MAX(c_invoicetax_id) INTO v_Count, v_c_invoicetax_id
     FROM C_INVOICETAX
     WHERE C_INVOICE_ID = :NEW.C_Invoice_ID
-    AND C_TAX_ID = :NEW.C_TAX_ID;
-    --AND Recalculate = 'Y';
+    AND C_TAX_ID = :NEW.C_TAX_ID
+    AND Recalculate = 'Y';
     IF(v_Count>0) THEN
-      UPDATE C_INVOICETAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + + v_Increment_Base) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END), 
-      TAXBASEAMT=TAXBASEAMT + + v_Increment_Base
-      WHERE C_INVOICE_ID = :NEW.C_Invoice_ID
-      AND C_TAX_ID = :NEW.C_TAX_ID;
-      --AND Recalculate = 'Y';
+      UPDATE C_INVOICETAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + v_Increment_Base) * v_Rate/100, v_Prec) ELSE (TAXAMT + v_Increment_Amount) END), 
+      TAXBASEAMT=TAXBASEAMT + v_Increment_Base
+      WHERE C_INVOICETAX_ID = v_c_invoicetax_id;
     ELSE
       SELECT COALESCE(MAX(LINE),0) + 10
       INTO v_LineNo
@@ -98,8 +97,8 @@ BEGIN
     
     UPDATE C_INVOICETAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT - :OLD.TAXBASEAMT) * v_Rate/100, v_Prec) ELSE (TAXAMT - :OLD.TAXAMT) END), TAXBASEAMT=TAXBASEAMT - :OLD.TAXBASEAMT
     WHERE C_INVOICE_ID = :OLD.C_Invoice_ID
-    AND C_TAX_ID = :OLD.C_TAX_ID;
-    --AND Recalculate = 'Y';
+    AND C_TAX_ID = :OLD.C_TAX_ID
+    AND Recalculate = 'Y';
     
     DELETE FROM C_INVOICETAX 
     WHERE C_INVOICE_ID = :OLD.C_Invoice_ID

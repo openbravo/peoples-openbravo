@@ -189,9 +189,9 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+      BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
       final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, strGrossUnitPrice,
           strPrecision, taxBaseAmt).divide(qtyInvoice, PricePrecision, RoundingMode.HALF_UP);
-      BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyInvoice.trim()));
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
