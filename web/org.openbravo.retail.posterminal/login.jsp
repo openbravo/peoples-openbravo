@@ -71,7 +71,17 @@
 <script src="js/libs/bootstrap/js/bootstrap-modal.js"></script>
 <script src="js/libs/bootstrap/js/bootstrap-alert.js"></script>
 
-<script data-main="js/mainlogin" src="js/libs/require-1.0.7.min.js"></script>
+<!-- Login application -->
+<script src="js/builder.js"></script>
+<script src="js/datasource.js"></script>
+<script src="js/utilities.js"></script>
+<script src="js/utilitiesui.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/components/clock.js"></script>
+<script src="js/components/commonbuttons.js"></script>
+<script src="js/model/terminal.js"></script>
+<script src="js/windows/login.js"></script>
+<script src="js/mainlogin.js"></script>
 
 <script>
 OB = window.OB || {};
