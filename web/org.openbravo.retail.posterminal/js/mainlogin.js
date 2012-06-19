@@ -55,6 +55,7 @@
       var c = _.extend({}, Backbone.Events);
       $("#containerwindow").empty().append((new OB.COMP.Login(c)).$el);
       c.trigger('domready');
+      OB.UTIL.showLoading(false);
     }
 
     function checkPOSTerminal() {

@@ -59,7 +59,7 @@
     } else {
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     }
-     
+    OB.UTIL.showLoading(false);
   });
 
   modelterminal.on('loginsuccess', function () {

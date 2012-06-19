@@ -55,7 +55,15 @@
     </div>
   </div>
   <div>
-    <div id="containerwindow">
+    <div id="containerLoading">
+      <div class="POSLoadingCenteredBox">
+        <div class="POSLoadingPromptLabel" id="">LOADING...</div>
+        <div class="POSLoadingProgressBar">
+          <div class="POSLoadingProgressBarImg"></div>
+        </div>
+      </div>
+    </div>
+    <div id="containerwindow" style="display: none;">
       <!-- Here it goes the POS window... -->
     </div>
   </div>

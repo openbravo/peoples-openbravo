@@ -74,6 +74,16 @@
     }, 5000);
   };
 
+  OB.UTIL.showLoading = function (value) {
+    if (value) {
+      $('#containerLoading').css('display', '');
+      $('#containerwindow').css('display', 'none');
+    } else {
+      $('#containerLoading').css('display', 'none');
+      $('#containerwindow').css('display', '');
+    }
+  };
+
   OB.UTIL.showSuccess = function (s) {
     OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
   };

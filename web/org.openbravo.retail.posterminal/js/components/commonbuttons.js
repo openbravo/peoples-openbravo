@@ -154,7 +154,7 @@
   OB.COMP.MenuItem = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
-      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).append($('<span/>').text(this.label)));
+      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('onclick', 'OB.UTIL.showLoading(true); return true;').append($('<span/>').text(this.label)));
     },
     href: '',
     label: ''

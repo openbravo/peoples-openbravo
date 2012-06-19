@@ -23,6 +23,34 @@
    ul,ol {
      margin-bottom: 0px;
    }
+
+  .POSLoadingCenteredBox {
+    position: fixed;
+    background-image: url('../img/loading-bg.png');
+    z-index: 1000000;
+    top: 50%;
+    left: 50%;
+    margin: -70px 0 0 -130px;
+    width: 260px;
+    height: 140px;
+  }
+
+  .POSLoadingPromptLabel {
+    padding: 45px 0px 3px 25px;
+    font-size: 130%;
+    color: #ccd0d4;
+  }
+
+  .POSLoadingProgressBar {
+    text-align: center;
+  }
+
+  .POSLoadingProgressBarImg {
+    width: 220px;
+    height: 16px;
+    margin: 0px auto;
+    background-image: url('../img/loading-bar.gif');
+  }
    
   .btnlink-toolbar:after {
     clear: both;

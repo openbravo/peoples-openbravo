@@ -49,6 +49,7 @@
     },
 
     login: function (user, password, mode) {
+      OB.UTIL.showLoading(true);
       var me = this;
       this.set('terminal', null);
       this.set('payments', null);
@@ -275,6 +276,7 @@
     },
 
     triggerLoginFail: function (e, mode) {
+      OB.UTIL.showLoading(false);
       if (mode === 'userImgPress') {
         this.trigger('loginUserImgPressfail', e);
       } else {
