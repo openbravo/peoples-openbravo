@@ -1,4 +1,4 @@
-/*global window, B, Backbone, require */
+/*global window, B, Backbone */
 
 (function () {
 
