@@ -48,6 +48,10 @@
       if (whereClause && !_.isEmpty(whereClause)) {
         _.each(_.keys(whereClause), function (k) {
 
+          var undef, val = whereClause[k],
+              operator = val.operator !== undef ? val.operator : '=',
+              value = val.value !== undef ? val.value : val;
+
           if (appendWhere) {
             sql = sql + ' WHERE ';
             params = [];
@@ -56,11 +60,11 @@
 
           sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
 
-          if (whereClause[k] === null) {
+          if (value === null) {
             sql = sql + ' IS null ';
           } else {
-            sql = sql + ' = ? ';
-            params.push(whereClause[k]);
+            sql = sql + ' ' + operator + ' ? ';
+            params.push(value);
           }
 
           if (firstParam) {
@@ -184,7 +188,7 @@
         throw 'Model requires a create and drop statement';
       }
 
-      if(!initialData) {
+      if (!initialData) {
         throw 'initialData must be passed as parameter';
       }
 
@@ -234,6 +238,10 @@
   window.OB = window.OB || {};
 
   window.OB.Dal = {
+    // constants
+    EQ: '=',
+    LIKE: 'like',
+    // methods
     save: save,
     find: find,
     get: get,

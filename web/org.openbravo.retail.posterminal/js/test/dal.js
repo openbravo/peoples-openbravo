@@ -56,6 +56,7 @@ asyncTest('Query - find one', function () {
     start();
   }
 
+  //using simplified API, defaults to equal
   OB.Dal.find(OB.Model.TaxRate, {
     'taxSearchKey': 'IVA18'
   }, success, errorCallback);
@@ -96,8 +97,12 @@ asyncTest('Query - save - insert', function () {
 
   function saveSuccess(tx) {
     ok(tx, 'Transaction is present');
+    // using operator and value
     OB.Dal.find(OB.Model.TaxRate, {
-      'rate': randomRate
+      'rate': {
+        operator: OB.Dal.EQ,
+        value: randomRate
+      }
     }, found, errorCallback);
   }
 
