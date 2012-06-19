@@ -534,12 +534,12 @@
                         ELSE
                           IF (v_lines <= 10) THEN
                             IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.') <= 1800 ) THEN
-			                        v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @NotEnoughStocked@ @ForProduct@ ' || ol.name || '.' ;
-			                      END IF;
+                              v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @NotEnoughStocked@ @ForProduct@ ' || ol.name || '.' ;
+                            END IF;
                           ELSE
                             IF (LENGTH(v_resultlinesstr || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.') <= 1800 ) THEN
-			                        v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
-			                      END IF;
+                              v_resultlinesstr := COALESCE(v_resultlinesstr, '') || '<br>@OrderLine@: ' || ol.Line || ' @ForProduct@ ' || ol.name || ': @notEnoughStockPartial@' || '.' ;
+                            END IF;
                           END IF;
                           v_hasPartial := true;
                         END IF;
@@ -667,7 +667,7 @@
         END LOOP; -- Order Header Loop
         IF (v_order_delivered_count = 0 AND v_order_partial_count = 0) THEN
           IF (v_Message = '') THEN
-             v_Message := '@ZeroOrdersProcessed@';
+            v_Message := '@ZeroOrdersProcessed@';
           ELSE
             v_Message := COALESCE(v_Message, '@ZeroOrdersProcessed@');
           END IF;
