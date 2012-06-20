@@ -65,11 +65,22 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "builder", "datasource", "utilities",
+        "builder",
+        "datasource",
+        "utilities",
         "utilitiesui",
-        "arithmetic", "i18n", "components/clock", "model/order", "model/terminal",
-        "components/commonbuttons", "components/hwmanager", "components/table",
-        "components/terminal", "components/modalprofile", "components/modallogout", "main",
+        "arithmetic",
+        "i18n",
+        "components/clock",
+        "model/order",
+        "model/terminal",
+        "components/commonbuttons",
+        "components/hwmanager",
+        "components/table",
+        "components/terminal",
+        "components/modalprofile",
+        "components/modallogout",
+        "main",
         // Web POS window
         "components/toolbarpayment", "components/toolbarscan", "components/keyboard",
         "windows/login", "windows/posbuttons", "data/datamaster", "data/dal", "data/dataordersave",
@@ -79,13 +90,22 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/rendercategory", "components/listcategories", "components/renderproduct",
         "components/listproducts", "components/tabbrowse", "components/searchproducts",
         "components/tabsearch", "components/editline", "components/tabeditline",
-        "components/total", "components/modalpayment", "components/payment",
-        "components/paymentcoins", "components/tabpayment", "components/renderorderline",
-        "components/order", "components/orderdetails", "components/businesspartner",
-        "components/listreceiptscounter", "windows/pointofsale",
+        "components/total",
+        "components/modalpayment",
+        "components/payment",
+        "components/paymentcoins",
+        "components/tabpayment",
+        "components/renderorderline",
+        "components/order",
+        "components/orderdetails",
+        "components/businesspartner",
+        "components/listreceiptscounter",
+        "windows/pointofsale",
         // Cash Management window
-        "cashmgmt/components/cashmgmtbuttons", "cashmgmt/components/cashmgmtkeyboard",
-        "cashmgmt/components/modaldropdestinations", "cashmgmt/components/renderdropdestinations",
+        "cashmgmt/components/cashmgmtbuttons",
+        "cashmgmt/components/cashmgmtkeyboard",
+        "cashmgmt/components/modaldropdestinations",
+        "cashmgmt/components/renderdropdestinations",
         "cashmgmt/components/toolbarcashmgmt",
         "cashmgmt/windows/cashmgmtinfo",
         "cashmgmt/windows/depositsdrops",
@@ -104,6 +124,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
           + ".js", POSUtils.APP_NAME));
     }
+
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "components/errors.js", ComponentResource.APP_OB3));
 
     return globalResources;
   }

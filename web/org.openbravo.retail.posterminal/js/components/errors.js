@@ -9,11 +9,11 @@
 
 (function () {
 
-OB.POS = {};
+OB.OBPOS = {};
 
-OB.POS.Errors = {};
+OB.OBPOS.Errors = {};
 
-OB.POS.Errors.saveOrder = function(params, view) {
+OB.OBPOS.Errors.saveOrder = function(params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
     var i, requestParams;
     var ids = [];
@@ -30,7 +30,7 @@ OB.POS.Errors.saveOrder = function(params, view) {
     };
     OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', ids, requestParams, callback);
 };
-OB.POS.Errors.clearError = function(params, view) {
+OB.OBPOS.Errors.clearError = function(params, view) {
     var selectedRecords = view.view.viewGrid.getSelectedRecords();
     var theParams=params;
     var i, requestParams;
