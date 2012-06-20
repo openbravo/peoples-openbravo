@@ -18,7 +18,8 @@
           taxes = {},
           totalnet = OB.DEC.Zero,
           queue = {},
-          triggerNext = false;
+          triggerNext = false,
+          gross = OB.DEC.Zero;
 
       _.each(lines.models, function (element, index, list) {
         var product = element.get('product');
@@ -40,6 +41,7 @@
           pricenet = OB.DEC.div(element.get('price'), OB.DEC.add(1, rate));
           net = OB.DEC.div(element.get('gross'), OB.DEC.add(1, rate));
           amount = OB.DEC.sub(element.get('gross'), net);
+          gross = element.get('gross');
 
           element.set('tax', taxId);
           element.set('taxAmount', amount);
@@ -51,12 +53,14 @@
           if (taxes[taxId]) {
             taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
             taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
+            taxes[taxId].gross = OB.DEC.add(taxes[taxId].gross, gross);
           } else {
             taxes[taxId] = {};
             taxes[taxId].name = taxRate.get('name');
             taxes[taxId].rate = taxRate.get('rate');
             taxes[taxId].net = net;
             taxes[taxId].amount = amount;
+            taxes[taxId].gross = gross;
           }
 
           // processed = yes

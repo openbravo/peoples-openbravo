@@ -18,7 +18,7 @@
 
   OB.I18N.formatRate = function (num) {
     // Hardcoded to US Locale.
-    return OB.I18N.formatGeneralNumber(num * 100, {
+    return OB.I18N.formatGeneralNumber(num, {
       decimals: 2,
       decimal: '.',
       group: ',',
