@@ -44,7 +44,7 @@
   OB.COMP.PaymentButton = OB.COMP.Button.extend({
     className: 'btnlink btnlink-small',
     attributes: {'style': 'width:70px; text-align:right;'},
-    paymenttype: 'payment.cash',
+    paymenttype: 'OBPOS_payment.cash',
     amount: 10,
     label: null,
     classcolor: 'btnlink-orange',

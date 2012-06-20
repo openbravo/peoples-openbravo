@@ -385,7 +385,7 @@
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         p.set('paid', p.get('amount'));
-        if (p.get('kind') === 'payment.cash') {
+        if (p.get('kind') === 'OBPOS_payment.cash') {
           cash = OB.DEC.add(cash, p.get('amount'));
           pcash = p;
         } else {

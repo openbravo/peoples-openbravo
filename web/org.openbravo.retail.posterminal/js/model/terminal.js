@@ -179,12 +179,12 @@
 
     loadPermissions: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Permissions').exec({}
+      new OB.DS.Query('org.openbravo.retail.posterminal.term.RolePreferences').exec({}
       , function (data) {
         var i, max, permissions = {};
         if (data) {
           for (i = 0, max = data.length; i < max; i++) {
-            permissions[data[i]['obposPos' + OB.Constants.FIELDSEPARATOR + '_identifier']] = true;
+            permissions[data[i].key] = data[i].value;
           }
           me.set('permissions', permissions);
           me.triggerReady();

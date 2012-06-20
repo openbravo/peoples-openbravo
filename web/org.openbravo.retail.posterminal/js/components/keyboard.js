@@ -151,12 +151,12 @@
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction(this), attr: {'command': 'line:price', 'permission': 'order.changePrice'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}
+                    {kind: BtnAction(this), attr: {'command': 'line:price', 'permission': 'OBPOS_order.changePrice'}, content: [OB.I18N.getLabel('OBPOS_KbPrice')]}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: BtnAction(this), attr: {'command': 'line:dto', 'permission': 'order.discount'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}
+                    {kind: BtnAction(this), attr: {'command': 'line:dto', 'permission': 'OBPOS_order.discount'}, content: [OB.I18N.getLabel('OBPOS_KbDiscount')]}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -354,7 +354,7 @@
         }
       });
       this.addCommand('line:price', {
-        'permission': 'order.changePrice',
+        'permission': 'OBPOS_order.changePrice',
         'action': function (txt) {
           if (this.line) {
             this.receipt.setPrice(this.line, parseNumber(txt));
@@ -363,7 +363,7 @@
         }
       });
       this.addCommand('line:dto', {
-        'permission': 'order.discount',
+        'permission': 'OBPOS_order.discount',
         'action': function (txt) {
           if (this.line) {
              this.receipt.trigger('discount', this.line, parseNumber(txt));
