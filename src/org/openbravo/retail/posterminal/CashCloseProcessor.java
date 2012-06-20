@@ -41,8 +41,7 @@ public class CashCloseProcessor {
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
-      String terminalId = cashCloseObj.getString("posTerminal");
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, terminalId);
+      OBPOSApplications posTerminal = paymentType.getObposApplications();
 
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj,
           paymentType.getFinancialAccount());
