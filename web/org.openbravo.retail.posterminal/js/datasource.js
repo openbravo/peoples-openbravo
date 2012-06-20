@@ -42,7 +42,7 @@
 
   var servicePOST = function (source, dataparams, callback) {
       $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source,
+        url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         type: 'POST',
@@ -58,7 +58,7 @@
 
   var serviceGET = function (source, dataparams, callback) {
       $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
+        url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         type: 'GET',

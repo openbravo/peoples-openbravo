@@ -33,7 +33,7 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
   private static final Logger log = Logger.getLogger(TerminalServlet.class);
   private static final long serialVersionUID = 1L;
 
-  private static String SERVLET_PATH = "org.openbravo.service.retail.posterminal.jsonrest";
+  private static String SERVLET_PATH = "org.openbravo.retail.posterminal.service.jsonrest";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -57,8 +57,7 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
     }
     try {
       final Object jsonsent = getContentAsJSON((content == null && pathparts.length == 3) ? java.net.URLDecoder
-          .decode(pathparts[2], "UTF-8")
-          : content);
+          .decode(pathparts[2], "UTF-8") : content);
 
       response.setContentType("application/json");
       response.setCharacterEncoding("UTF-8");
