@@ -145,8 +145,9 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         + "),");
     resultado.append("new Array(\"inppriceactual\", "
         + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
-    resultado.append("new Array(\"inpcCurrencyId\", "
-        + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
+    if (!"".equals(strCurrency)) {
+      resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");
+    }
     resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     if (!strMProductID.equals("")) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
