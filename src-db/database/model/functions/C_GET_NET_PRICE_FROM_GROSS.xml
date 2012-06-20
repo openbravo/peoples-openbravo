@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION C_GET_NET_AMT_FROM_GROSS">
-    <function name="C_GET_NET_AMT_FROM_GROSS" type="NUMERIC">
+  <database name="FUNCTION C_GET_NET_PRICE_FROM_GROSS">
+    <function name="C_GET_NET_PRICE_FROM_GROSS" type="NUMERIC">
       <parameter name="p_tax_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -10,7 +10,10 @@
       <parameter name="p_alternatetaxbaseamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_stdprecision" type="NUMERIC" mode="in">
+      <parameter name="p_priceprecision" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qty" type="NUMERIC" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,25 +35,25 @@
 -- Logistice
   v_ResultStr VARCHAR(2000):=''; 
   v_message VARCHAR2(2000):='';
-  v_NetAmount NUMBER;
+  v_NetPrice NUMBER;
   v_TaxAmount NUMBER;
 BEGIN --BODY
-  v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, p_stdprecision, 0);
+  v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, p_priceprecision, 0);
   DBMS_OUTPUT.PUT_LINE('Unit tax ' || v_TaxAmount);
-  v_NetAmount:= ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)), p_stdprecision);
+  v_NetPrice:= ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)) / p_qty, p_priceprecision);
 
   --TODO:Call function to recalculate alternate taxbase amount.
 
   --TODO:If alternate taxbase amount is different recalculate line net amount c_tax_from_net_amt function.
 
-  RETURN v_NetAmount;
+  RETURN v_NetPrice;
 
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   RAISE;
-END C_GET_NET_AMT_FROM_GROSS
+END C_GET_NET_PRICE_FROM_GROSS
 ]]></body>
     </function>
   </database>

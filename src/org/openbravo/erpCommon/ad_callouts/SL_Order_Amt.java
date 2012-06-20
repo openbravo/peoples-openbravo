@@ -316,8 +316,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
-      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, strPrecision,
-          taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, PricePrecision,
+          taxBaseAmt, qtyOrdered);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
       resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
@@ -332,8 +332,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
 
-      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, strPrecision,
-          taxBaseAmt).divide(qtyOrdered, PricePrecision, RoundingMode.HALF_UP);
+      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, PricePrecision,
+          taxBaseAmt, qtyOrdered);
 
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
@@ -381,7 +381,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   }
 
   private BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
-      String strPrecision, BigDecimal alternateAmount) {
+      int pricePrecision, BigDecimal alternateAmount, BigDecimal orderedQty) {
     if (grossAmount.compareTo(BigDecimal.ZERO) == 0)
       return BigDecimal.ZERO;
     final List<Object> parameters = new ArrayList<Object>();
@@ -389,9 +389,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     parameters.add(grossAmount);
     // TODO: Alternate Base Amount
     parameters.add(alternateAmount);
-    parameters.add(new BigDecimal(strPrecision));
+    parameters.add(pricePrecision);
+    parameters.add(orderedQty);
 
-    final String procedureName = "C_GET_NET_AMT_FROM_GROSS";
+    final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
     final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
     return lineNetAmount;
