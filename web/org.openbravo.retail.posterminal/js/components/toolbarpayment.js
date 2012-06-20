@@ -1,4 +1,4 @@
-/*global B, $ */
+/*global B, $, _ */
 
 (function () {
 
@@ -8,17 +8,19 @@
   var getPayment = function (modalpayment, receipt, key, name, provider) {
     return ({
       'permission': key,
+      'stateless': provider,
       'action': function (txt) {
-        
+        var amount = OB.DEC.number(parseFloat(txt, 10));
+        amount = _.isNaN(amount) ? receipt.getPending() : amount;
         var providerview = OB.POS.paymentProviders[provider];
         if (providerview) {
-          modalpayment.show(receipt, key, name, providerview, OB.DEC.number(parseFloat(txt, 10)));
+          modalpayment.show(receipt, key, name, providerview, amount);
         } else {
           receipt.addPayment(new OB.MODEL.PaymentLine(
             {
               'kind': key,
               'name': name,
-              'amount': OB.DEC.number(parseFloat(txt, 10))
+              'amount': amount
             }));
         }
       }
