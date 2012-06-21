@@ -60,7 +60,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingRuleProcess implements Process {
   private ProcessLogger logger;
-  private static Logger log4j = Logger.getLogger(CostingRuleProcess.class);
+  private static final Logger log4j = Logger.getLogger(CostingRuleProcess.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -132,7 +132,7 @@ public class CostingRuleProcess implements Process {
       OBDal.getInstance().rollbackAndClose();
       String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
       logger.log(resultMsg);
-      log4j.error(e.getMessage(), e);
+      log4j.error(e);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(resultMsg);

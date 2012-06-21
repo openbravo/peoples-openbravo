@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -176,15 +177,16 @@ public class AverageAlgorithm extends CostingAlgorithm {
       costQry.setNamedParameter("org", costOrg);
     }
 
-    if (costQry.count() > 0) {
-      if (costQry.count() > 1) {
-        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
-            + " for product: " + product.getName() + " (" + product.getId() + ")");
-      }
-      return costQry.list().get(0);
-    }
+    List<Costing> costList = costQry.list();
     // If no average cost is found return null.
-    return null;
+    if (costList.size() == 0) {
+      return null;
+    }
+    if (costList.size() > 1) {
+      log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
+          + " for product: " + product.getName() + " (" + product.getId() + ")");
+    }
+    return costList.get(0);
   }
 
   private Date getLastDate() {

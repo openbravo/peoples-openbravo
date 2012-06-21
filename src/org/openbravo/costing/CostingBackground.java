@@ -40,7 +40,7 @@ import org.openbravo.service.db.DalBaseProcess;
  * 
  */
 public class CostingBackground extends DalBaseProcess {
-  static Logger log4j = Logger.getLogger(CostingBackground.class);
+  private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   private ProcessLogger logger;
 
   // private ConnectionProvider connection;
@@ -70,7 +70,7 @@ public class CostingBackground extends DalBaseProcess {
           log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
         } catch (OBException e) {
           String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
-          log4j.error(e.getMessage(), e);
+          log4j.error(e);
           logger.logln(resultMsg);
           result.setType("Error");
           result.setTitle(OBMessageUtils.messageBD("Error"));

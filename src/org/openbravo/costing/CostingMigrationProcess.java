@@ -73,7 +73,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
-  private static Logger log4j = Logger.getLogger(CostingRuleProcess.class);
+  private static final Logger log4j = Logger.getLogger(CostingRuleProcess.class);
   private static CostingAlgorithm averageAlgorithm = null;
   private final String alertRuleName = "Products with transactions without available cost on date.";
 
@@ -119,7 +119,7 @@ public class CostingMigrationProcess implements Process {
       OBDal.getInstance().rollbackAndClose();
       String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
       logger.log(resultMsg);
-      log4j.error(e.getMessage(), e);
+      log4j.error(e);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(resultMsg);

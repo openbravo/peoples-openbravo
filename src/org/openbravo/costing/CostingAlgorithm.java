@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
@@ -527,13 +528,13 @@ public abstract class CostingAlgorithm {
     // CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST1", params, null);
 
     // call the SP
+    CallableStatement ps = null;
     try {
       // first get a connection
       final Connection connection = OBDal.getInstance().getConnection();
       // connection.createStatement().execute("CALL M_InOut_Create0(?)");
 
       final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-      final CallableStatement ps;
       String statement;
       if (obProps.getProperty("bbdd.rdbms") != null
           && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
@@ -554,6 +555,14 @@ public abstract class CostingAlgorithm {
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       throw new IllegalStateException(e);
+    } finally {
+      try {
+        if (ps != null) {
+          ps.close();
+        }
+      } catch (SQLException e) {
+        // ignore
+      }
     }
 
   }
