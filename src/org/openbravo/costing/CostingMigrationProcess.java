@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -733,7 +734,8 @@ public class CostingMigrationProcess implements Process {
     where.append(" as cri ");
     where.append("   join cri." + CostingRuleInit.PROPERTY_INITINVENTORY + " as ipi");
     where.append(" where ipi." + InventoryCount.PROPERTY_PROCESSED + " = false");
-
+    where.append(" order by ipi." + InventoryCount.PROPERTY_CLIENT + ", ipi." + InventoryCount.PROPERTY_ORGANIZATION);
+    
     OBQuery<CostingRuleInit> criQry = OBDal.getInstance().createQuery(CostingRuleInit.class,
         where.toString());
     criQry.setFilterOnReadableClients(false);
@@ -742,14 +744,19 @@ public class CostingMigrationProcess implements Process {
     if (criList.isEmpty()) {
       return;
     }
-    StringBuffer inventoryList = new StringBuffer();
+    List<String> inventoryList = new ArrayList<String>();
+    String client = "";
+    String msg = ""; 
     for (CostingRuleInit cri : criList) {
-      if (inventoryList.length() > 0) {
-        inventoryList.append(", ");
+      if (!client.equals(cri.getClient().getIdentifier())){
+    	  client = cri.getClient().getIdentifier();
+    	  msg = msg + "CLIENT: " + cri.getClient().getIdentifier() + "<br>";
       }
-      inventoryList.append(cri.getInitInventory().getIdentifier());
+      msg = msg + cri.getOrganization().getIdentifier() + " - " + cri.getWarehouse().getIdentifier();
+      inventoryList.add(msg);
+      msg = "<br>";
     }
-    throw new OBException("@unprocessedInventories@: " + inventoryList.toString());
+    throw new OBException("@unprocessedInventories@: <br>"  + inventoryList.toString());
   }
 
   private List<CostingRule> getRules() {
