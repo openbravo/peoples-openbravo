@@ -60,6 +60,7 @@
     this.options.modeldaycash.paymentmethods.on('closed', function () {
     var a = me.options.modeldaycash.paymentmethods.serializeToJSON();
     this.proc.exec({
+    terminalId: OB.POS.modelterminal.get('terminal').id,
     cashCloseInfo: me.options.modeldaycash.paymentmethods.serializeToJSON()
       }, function (data, message) {
         if (data && data.exception) {
