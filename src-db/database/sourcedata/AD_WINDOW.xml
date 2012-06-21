@@ -2751,7 +2751,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3E945A9102144C16BD211D211089C2DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <NAME><![CDATA[Costing Rules]]></NAME>
-<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[Costing Rules are rules to be applied during cost calculation. Each rule has a valid from date and sets for a single product or all products the costing algorithm to be used and the dimensions that are desired to apply.]]></HELP>
+<!--3E945A9102144C16BD211D211089C2DF-->  <HELP><![CDATA[Costing Rules are rules to be applied during cost calculation. Each rule has a valid from date and sets the costing algorithm to be used and the dimensions that are desired to apply.]]></HELP>
 <!--3E945A9102144C16BD211D211089C2DF-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3E945A9102144C16BD211D211089C2DF-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3E945A9102144C16BD211D211089C2DF-->  <PROCESSING><![CDATA[N]]></PROCESSING>
