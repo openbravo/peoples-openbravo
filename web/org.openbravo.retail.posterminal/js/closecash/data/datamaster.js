@@ -47,21 +47,21 @@
 	      'org.openbravo.retail.posterminal.term.CloseCashPayments',
 	      OB.POS.modelterminal.get('terminal').client,
 	      OB.POS.modelterminal.get('terminal').organization));
-	    this.loadparams = {};
+	    this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
 	  };
-_.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
+_.extend(OB.DATA.CloseCashPaymentMethod.prototype, OB.DATA.Base);
 
-  OB.MODEL.Payment = Backbone.Model.extend({});
-
-  OB.MODEL.PaymentList = Backbone.Collection.extend({
-    model: OB.MODEL.Payment,
-    url: '../../org.openbravo.retail.posterminal.datasource/OBPOS_App_Payment',
-    parse: function (response, error) {
-      if (response && response.response) {
-        return response.response.data;
-      }
-    }
-  });
+//  OB.MODEL.Payment = Backbone.Model.extend({});
+//
+//  OB.MODEL.PaymentList = Backbone.Collection.extend({
+//    model: OB.MODEL.Payment,
+//    url: '../../org.openbravo.retail.posterminal.datasource/OBPOS_App_Payment',
+//    parse: function (response, error) {
+//      if (response && response.response) {
+//        return response.response.data;
+//      }
+//    }
+//  });
 
   //OB.MODEL.Payments = new OB.MODEL.PaymentList;
   // Offline based on WebSQL

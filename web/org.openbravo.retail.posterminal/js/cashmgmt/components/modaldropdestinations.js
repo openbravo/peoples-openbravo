@@ -9,7 +9,7 @@
     id: 'modaldropdestinations',
     header: 'Select Destination for Cash Drop',
     getContentView: function () {
-      return ({kind:OB.COMP.RenderDropDestinations});
+      return ({kind:OB.COMP.SearchDropDestinations});
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default

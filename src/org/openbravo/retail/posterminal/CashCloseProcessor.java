@@ -36,7 +36,7 @@ public class CashCloseProcessor {
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
-      BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("total"));
+      BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"));
       BigDecimal difference = BigDecimal.valueOf(cashCloseObj.getDouble("difference"));
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);

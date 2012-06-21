@@ -9,6 +9,9 @@
 	_id:'renderpaymentlines',
     render: function() {
      var me = this;
+     if(!this.options.modeldaycash.paymentmethods){
+     this.options.modeldaycash.paymentmethods= new OB.MODEL.PaymentMethodCol();
+     }
      this.options.modeldaycash.paymentmethods.each(function(payment){
       me.$el.append(B(
       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [

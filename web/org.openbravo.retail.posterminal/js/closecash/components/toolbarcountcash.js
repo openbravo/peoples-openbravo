@@ -14,14 +14,19 @@
           modalpayment.show(receipt, key, name, providerview, OB.DEC.number(parseFloat(txt, 10)));
         } else {
         var totalCounted = 0;
+        var counted = 0;
         this.options.modeldaycash.paymentmethods.each(function(payment){
         if(payment.get('name')===name){
-          payment.set('counted',parseFloat(txt, 10));
+          payment.set('counted',OB.DEC.add(0,txt));
+          counted=OB.DEC.add(0,txt);
         }
-        totalCounted= totalCounted+parseFloat(payment.get('counted'), 10);
+        totalCounted= OB.DEC.add(totalCounted,payment.get('counted'));
         });
         this.options.modeldaycash.set('totalCounted',totalCounted);
-        this.options.modeldaycash.set('totalDifference',totalCounted-parseFloat(this.options.modeldaycash.get('totalExpected'), 10));
+        this.options.modeldaycash.set('totalDifference',OB.DEC.sub(totalCounted,this.options.modeldaycash.get('totalExpected')));
+        $('div[searchKey*="'+key+'"]').prev().hide();
+        $('div[searchKey*="'+key+'"]').text(counted.toString());
+        $('div[searchKey*="'+key+'"]').show();
         }
       }
     });

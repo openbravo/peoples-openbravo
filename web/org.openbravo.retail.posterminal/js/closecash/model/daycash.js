@@ -1,4 +1,4 @@
-/*global B, Backbone, localStorage */
+/*global B, _ , Backbone, localStorage */
 
 (function () {
 
@@ -10,15 +10,31 @@
 	    defaults : {
 	      id: null,
 	      name: null,
-	      financialaccount: null,
 	      expected: OB.DEC.Zero,
 	      counted: OB.DEC.Zero
 	    }
 	  });
 //DayCash.PaymentMethodCol Model.
   OB.MODEL.PaymentMethodCol = Backbone.Collection.extend({
-    model: OB.MODEL.PaymentMethod
-  });
+    model: OB.MODEL.PaymentMethod,
+    serializeToJSON: function () {
+        var jsonpayment = JSON.parse(JSON.stringify(this.toJSON()));
+
+        // remove not needed members
+        delete jsonpayment.undo;
+
+        _.forEach(jsonpayment, function (item) {
+          item.difference = item.counted - item.expected;
+          item.paymentTypeId = item.id;
+
+          delete item.id;
+          delete item.name;
+          delete item.counted;
+          delete item._id;
+        });
+        return jsonpayment;
+      }
+    });
   OB.MODEL.DayCash = Backbone.Model.extend({
 		_id: 'modeldaycash',
 	    defaults : {

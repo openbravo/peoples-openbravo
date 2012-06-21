@@ -11,39 +11,8 @@
     initialize: function () {
         var me = this;
 	    this._id = 'ListPaymentMethods';
-	    this.daycash =  this.options.modeldaycash;
-//	    this.options.DataCloseCashPaymentMethod.ds.load();
-//	    this.daycash.paymethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
-//	    this.daycash.paymethods.ds.load();
-	    //***************TEMP*****************************
-	    var pay1 = new OB.MODEL.PaymentMethod();
-	    pay1.set('id', '1');
-	    pay1.set('name', 'Card');
-	    pay1.set('financialaccount', '11');
-	    pay1.set('expected', -123.62);
-	    pay1.set('counted', OB.DEC.Zero);
-	    var pay2 = new OB.MODEL.PaymentMethod();
-	    pay2.set('id', '2');
-	    pay2.set('name', 'Cash');
-	    pay2.set('financialaccount', '22');
-	    pay2.set('expected', 150.55);
-	    pay2.set('counted', OB.DEC.Zero);
-	    var pay3 = new OB.MODEL.PaymentMethod();
-	    pay3.set('id', '3');
-	    pay3.set('name', 'Voucher');
-	    pay3.set('financialaccount', '33');
-	    pay3.set('expected', 220.54);
-	    pay3.set('counted', OB.DEC.Zero);
-	    var paycollection = new Backbone.Collection();
-	    paycollection.add(pay1);
-	    paycollection.add(pay2);
-	    paycollection.add(pay3);
-	    this.daycash.paymentmethods=paycollection;
-	    //************************************************
-	    this.daycash.paymentmethods.each(function(payment){
-	      me.daycash.set('totalExpected',parseFloat(me.daycash.get('totalExpected'), 10)+parseFloat(payment.get('expected'), 10));
-	    });
-	    this.daycash.set('totalDifference',parseFloat(this.daycash.get('totalCounted'), 10)-parseFloat(this.daycash.get('totalExpected'), 10));
+	    this.paymentmethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
+//	    this.paymentmethods.ds.load();
 
 	    this.component = B(
 	      {kind: B.KindJQuery('div'), content: [
@@ -62,7 +31,7 @@
 	      ]},
 	        {kind: OB.COMP.TableView, id: 'tableview', attr: {
 	          style: 'list',
-	          collection: this.daycash.paymentmethods,
+	          collection: this.paymentmethods,
 	          me: me,
 	          renderEmpty: function () {
 	            return (
@@ -71,7 +40,7 @@
 	              ]}
 	            );
 	          },
-	          renderLine: OB.COMP.RenderPayments
+	          renderLine: OB.COMP.RenderPayments.extend({me:me})
 	        }},
 	        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
 	             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
@@ -85,12 +54,11 @@
 					            this.total = $('<strong/>');
 					            this.$el.append(this.total);
 					            // Set Model
-					            this.dayCash = me.options.modeldaycash;
-					            this.dayCash.on('change:totalExpected', function() {
-					              this.total.text(this.dayCash.get('totalExpected').toString());
+					              me.options.modeldaycash.on('change:totalExpected', function() {
+					              this.total.text(me.options.modeldaycash.get('totalExpected').toString());
 					            }, this);
 					            // Initial total display
-					            this.total.text(this.dayCash.get('totalExpected').toString());
+					            this.total.text(me.options.modeldaycash.get('totalExpected').toString());
 					    }
 					  })}
 	                 ]},
@@ -101,12 +69,11 @@
 					            this.total = $('<strong/>');
 					            this.$el.append(this.total);
 					            // Set Model
-					            this.dayCash = me.options.modeldaycash;
-					            this.dayCash.on('change:totalDifference', function() {
-					              this.total.text(this.dayCash.get('totalDifference').toString());
+					            me.options.modeldaycash.on('change:totalCounted', function() {
+					              this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
 					            }, this);
 					            // Initial total display
-					            this.total.text(this.dayCash.get('totalDifference').toString());
+					            this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
 					    }
 					  })}
 	                 ]}
@@ -116,6 +83,7 @@
 	    );
 	    this.$el = this.component.$el;
 	    this.tableview = this.component.context.tableview;
+	    this.paymentmethods.exec();
     }
   });
 }());

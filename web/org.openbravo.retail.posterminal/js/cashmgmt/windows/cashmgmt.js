@@ -23,7 +23,7 @@
           {kind: OB.MODEL.DayCash},
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
-
+          {kind: OB.DATA.Destinations},
 
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [

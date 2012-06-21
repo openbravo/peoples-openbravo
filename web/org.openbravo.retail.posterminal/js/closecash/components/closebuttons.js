@@ -15,10 +15,14 @@
         this.options.closenextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
         this.options.postprintclose.$el.hide();
         this.options.countcash.$el.show();
+        this.options.closekeyboard.toolbars.toolbarempty.hide();
+        this.options.closekeyboard.toolbars.toolbarcountcash.show();
         this.options.modeldaycash.defaults.step=1;
         this.options.closenextbutton.$el.removeAttr('disabled');
     }else if(this.options.modeldaycash.defaults.step===1){
         this.options.countcash.$el.hide();
+        this.options.closekeyboard.toolbars.toolbarempty.show();
+        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.pendingreceipts.$el.show();
         this.options.modeldaycash.defaults.step=0;
         this.$el.attr('disabled','disabled');
@@ -33,21 +37,41 @@
     label: OB.I18N.getLabel('OBPOS_LblNextStep'),
 
     clickEvent: function (e) {
+    var me= this;
     if(this.options.modeldaycash.defaults.step===0){
     this.options.pendingreceipts.$el.hide();
         this.options.countcash.$el.show();
+        this.options.closekeyboard.toolbars.toolbarempty.hide();
+        this.options.closekeyboard.toolbars.toolbarcountcash.show();
         this.options.modeldaycash.defaults.step=1;
         this.options.closeprevbutton.$el.removeAttr('disabled');
     }else if(this.options.modeldaycash.defaults.step===1){
-    this.options.countcash.$el.hide();
+        this.options.countcash.$el.hide();
+        this.options.closekeyboard.toolbars.toolbarempty.show();
+        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.postprintclose.$el.show();
         this.options.modeldaycash.defaults.step=2;
         this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
         this.options.renderpaymentlines.$el.empty();
         this.options.renderpaymentlines.render();
         //this.$el.attr('disabled','disabled');
+    }else if(this.options.modeldaycash.defaults.step===2){
+    this.options.modeldaycash.paymentmethods.trigger('closed');
+    this.options.modeldaycash.paymentmethods.on('closed', function () {
+    var a = me.options.modeldaycash.paymentmethods.serializeToJSON();
+    this.proc.exec({
+    cashCloseInfo: me.options.modeldaycash.paymentmethods.serializeToJSON()
+      }, function (data, message) {
+        if (data && data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', ['444']));
+        } else {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', ['666']));
+        }
+      });
+    }, this);
+    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose');
     }
-    //this.options.modeldaycash.nextStep();
+
    }
   });
 
@@ -58,7 +82,15 @@
     className: 'btnlink btnlink-green',
     label: '',
    clickEvent: function (e) {
-    this.$el.hide();
+    var me = this;
+	this.$el.hide();
+    this.me.options.modeldaycash.paymentmethods.each(function(elem){
+    if(elem.get('id')===me.options[me._id].rowid){
+      me.options['counted_'+me.options[me._id].rowid].$el.text(elem.get('expected').toString());
+      elem.set('counted',OB.DEC.add(0,elem.get('expected')));
+      me.me.options.modeldaycash.set('totalCounted',OB.DEC.add(me.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
+    }
+    });
     this.options['counted_'+this.rowid].$el.show();
     //this.options.countcash.;
     //this.options.modeldaycash.ok();
@@ -83,9 +115,12 @@
     className: 'btnlink btnlink-orange',
     label: '',
    clickEvent: function (e) {
-    //this.$el.hide();
-    //this.options.countcash.;
-    //this.options.modeldaycash.ok();
+	   var me = this;
+   $($(this.me.options.closekeyboard.toolbars.toolbarcountcash).find('.btnkeyboard')).each(function(){
+   if($(this).text()===me.commercialName){
+   me.me.options.closekeyboard.trigger('command', me.searchKey);
+   }
+   });
    },
 
    render: function () {
