@@ -17,6 +17,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseKernelServlet;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
@@ -106,6 +107,7 @@ public class DataSourceServlet extends BaseKernelServlet {
           OBPOSApplications.class, "where searchKey = 'POS-1'"); // FIXME: value is not unique
       final OBPOSApplications posDetail = posAppQuery.list().get(0); // FIXME: could throw
                                                                      // IndexOutOfBoundsException
+      OBContext.setAdminMode();
 
       // FROM
       final OrganizationInformation orgInfo = posDetail.getOrganization()
@@ -123,6 +125,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       obq.setNamedParameter("fromRegion", fromRegion);
       obq.setNamedParameter("toCountry", toCountry);
       obq.setNamedParameter("toRegion", toRegion);
+
+      OBContext.restorePreviousMode();
     } else if ("OBPOS_App_Payment".equals(entity)) {
       obq.setNamedParameter("pos", "POS-1");
     }

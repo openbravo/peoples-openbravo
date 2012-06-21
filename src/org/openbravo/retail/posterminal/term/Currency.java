@@ -15,6 +15,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class Currency extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "from Currency where id =:currency and $readableCriteria";
   }

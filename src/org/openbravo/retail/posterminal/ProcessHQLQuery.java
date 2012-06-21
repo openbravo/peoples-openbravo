@@ -21,6 +21,7 @@ import org.hibernate.QueryException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonToDataConverter;
 
@@ -28,12 +29,20 @@ public abstract class ProcessHQLQuery implements JSONProcess {
 
   protected abstract String getQuery(JSONObject jsonsent) throws JSONException;
 
+  protected boolean isAdminMode() {
+    return false;
+  }
+
   @Override
-  public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
+  public final void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
 
     try {
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(getQuery(jsonsent),
           jsonsent.optString("client"), jsonsent.optString("organization"));
+
+      if (isAdminMode()) {
+        OBContext.setAdminMode();
+      }
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(querybuilder.getHQLQuery());
@@ -65,6 +74,10 @@ public abstract class ProcessHQLQuery implements JSONProcess {
       JSONRowConverter.addJSONExceptionFields(w, e);
     } catch (JSONException e) {
       JSONRowConverter.addJSONExceptionFields(w, e);
+    } finally {
+      if (isAdminMode()) {
+        OBContext.restorePreviousMode();
+      }
     }
   }
 }
