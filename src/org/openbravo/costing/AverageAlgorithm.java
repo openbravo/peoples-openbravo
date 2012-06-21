@@ -149,6 +149,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
     where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
+    where.append("  and " + Costing.PROPERTY_COST + " is not null");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
     } else {

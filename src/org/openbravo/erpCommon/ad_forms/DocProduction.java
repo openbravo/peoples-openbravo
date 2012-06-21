@@ -38,7 +38,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
+import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -108,10 +108,10 @@ public class DocProduction extends AcctServer {
       OBContext.setAdminMode(false);
       try {
         // Get related M_Transaction_ID
-        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
-        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+        ProductionLine prodLine = OBDal.getInstance().get(ProductionLine.class, Line_ID);
+        if (prodLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
           // Internal movement lines have 2 related transactions, both of them with the same cost
-          docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
+          docLine.setTransaction(prodLine.getMaterialMgmtMaterialTransactionList().get(0));
         }
       } finally {
         OBContext.restorePreviousMode();

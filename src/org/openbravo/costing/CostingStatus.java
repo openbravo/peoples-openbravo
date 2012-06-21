@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -38,12 +39,17 @@ public class CostingStatus implements OBSingleton {
     // set in a localIsMigrated to prevent threading issues when
     // reseting it in setMigrated()
     if (isMigrated == null) {
-      OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
-          CostingRule.PROPERTY_VALIDATED + " = true");
-      crQry.setFilterOnReadableClients(false);
-      crQry.setFilterOnReadableOrganization(false);
+      OBContext.setAdminMode(false);
+      try {
+        OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
+            CostingRule.PROPERTY_VALIDATED + " = true");
+        crQry.setFilterOnReadableClients(false);
+        crQry.setFilterOnReadableOrganization(false);
 
-      isMigrated = crQry.count() > 0;
+        isMigrated = crQry.count() > 0;
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
     return isMigrated;
   }

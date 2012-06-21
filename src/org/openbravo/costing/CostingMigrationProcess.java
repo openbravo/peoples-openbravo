@@ -166,7 +166,8 @@ public class CostingMigrationProcess implements Process {
       sql.append("\n                  where t.isactive = 'Y'");
       sql.append("\n                    and t.m_product_id = c.m_product_id");
       sql.append("\n                    and t.movementdate >= c.datefrom");
-      sql.append("\n                    and t.movementdate < c.dateto)");
+      sql.append("\n                    and t.movementdate < c.dateto");
+      sql.append("\n                    and c.cost is not null)");
       sql.append("\ngroup by t.m_product_id, p.ad_org_id, p.ad_client_id, p.name");
       legacyCostAvailableAlert.setSql(sql.toString());
 
@@ -402,6 +403,7 @@ public class CostingMigrationProcess implements Process {
     where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < c."
         + Costing.PROPERTY_ENDINGDATE);
     where.append("     )");
+    where.append("   and " + Costing.PROPERTY_COST + " is not null");
     where.append(" order by " + Costing.PROPERTY_PRODUCT + ", " + Costing.PROPERTY_STARTINGDATE
         + ", " + Costing.PROPERTY_ENDINGDATE + " desc");
 
@@ -687,6 +689,7 @@ public class CostingMigrationProcess implements Process {
     where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
     where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AV'");
+    where.append("  and " + Costing.PROPERTY_COST + " is not null");
     OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
     costQry.setFilterOnReadableOrganization(false);
     costQry.setFilterOnReadableClients(false);
@@ -707,6 +710,7 @@ public class CostingMigrationProcess implements Process {
     where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
     where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'ST'");
+    where.append("  and " + Costing.PROPERTY_COST + " is not null");
     costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
     costQry.setFilterOnReadableOrganization(false);
     costQry.setFilterOnReadableClients(false);

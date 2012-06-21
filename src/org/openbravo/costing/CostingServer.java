@@ -193,7 +193,8 @@ public class CostingServer {
     if (organization != null) {
       return organization;
     }
-    return OBContext.getOBContext().getOrganizationStructureProvider()
+    return OBContext.getOBContext()
+        .getOrganizationStructureProvider(transaction.getClient().getId())
         .getLegalEntity(transaction.getOrganization());
   }
 

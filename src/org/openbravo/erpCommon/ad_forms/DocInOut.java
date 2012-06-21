@@ -27,12 +27,10 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
-import org.openbravo.costing.CostingServer;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
@@ -40,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -195,13 +194,10 @@ public class DocInOut extends AcctServer {
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
-        Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-        try {
-          costCurrency = new CostingServer(line.transaction).getCostCurrency();
-        } catch (OBException e) {
-          // CostingRule not found exception. Ignore it.
-          log4j.debug("CostingRule not found to retrieve organization's currency");
-        }
+        Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(AD_Client_ID)
+            .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
+        Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
         C_Currency_ID = costCurrency.getId();
         Account cogsAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn);
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
@@ -225,11 +221,8 @@ public class DocInOut extends AcctServer {
           Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
           setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
           throw new IllegalStateException();
-        } else if (CostingStatus.getInstance().isMigrated()) {
+        } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
           // Check default cost existence
-          Organization legalEntity = OBContext.getOBContext()
-              .getOrganizationStructureProvider(AD_Client_ID)
-              .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
           HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
           costDimensions.put(CostDimension.Warehouse, line.getWarehouse());
           if (!CostingUtils.hasStandardCostDefinition(product, legalEntity, dateAcct,
@@ -284,24 +277,18 @@ public class DocInOut extends AcctServer {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
-        Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-        try {
-          costCurrency = new CostingServer(line.transaction).getCostCurrency();
-        } catch (OBException e) {
-          // CostingRule not found exception. Ignore it.
-          log4j.debug("CostingRule not found to retrieve organization's currency");
-        }
+        Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(AD_Client_ID)
+            .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
+        Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
         C_Currency_ID = costCurrency.getId();
         if (CostingStatus.getInstance().isMigrated() && line.transaction != null
             && !line.transaction.isCostCalculated()) {
           Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
           setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
           throw new IllegalStateException();
-        } else if (CostingStatus.getInstance().isMigrated()) {
+        } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
           // Check default cost existence
-          Organization legalEntity = OBContext.getOBContext()
-              .getOrganizationStructureProvider(AD_Client_ID)
-              .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
           HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
           costDimensions.put(CostDimension.Warehouse, line.getWarehouse());
           if (!CostingUtils.hasStandardCostDefinition(product, legalEntity, dateAcct,
@@ -464,14 +451,15 @@ public class DocInOut extends AcctServer {
                   .getEmptyDimensions();
               costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin().getWarehouse());
               if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
-                  dateAcct, costDimensions)) {
+                  inOut.getAccountingDate(), costDimensions)) {
                 Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
                     .getIdentifier(), DateAcct);
                 setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
                 throw new IllegalStateException();
               } else {
                 trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-                    dateAcct, costDimensions).multiply(inOutLine.getMovementQuantity());
+                    inOut.getAccountingDate(), costDimensions).multiply(
+                    inOutLine.getMovementQuantity());
               }
             }
             if (trxCost == null) {
