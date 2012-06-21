@@ -16,6 +16,6 @@ public class Payments extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p as payment from OBPOS_App_Payment as p where obposApplications.id = :pos and $readableCriteria";
+    return "select p as payment from OBPOS_App_Payment as p where obposApplications.id = :pos and $readableCriteria order by p.commercialName";
   }
 }

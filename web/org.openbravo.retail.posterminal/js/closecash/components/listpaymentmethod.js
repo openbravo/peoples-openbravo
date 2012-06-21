@@ -65,15 +65,26 @@
 	                 {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
 	                           {kind: Backbone.View.extend({
 					    tagName: 'span',
+					    attributes: {'style': 'padding-left: 60px'},
 					    initialize: function () {
 					            this.total = $('<strong/>');
 					            this.$el.append(this.total);
 					            // Set Model
 					            me.options.modeldaycash.on('change:totalCounted', function() {
 					              this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+					              if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+							        this.$el.css("color","red");
+							      }else{
+							        this.$el.css("color","black");
+							      }
 					            }, this);
 					            // Initial total display
 					            this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+					            if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+							      this.$el.css("color","red");
+							    }else{
+							      this.$el.css("color","black");
+							    }
 					    }
 					  })}
 	                 ]}

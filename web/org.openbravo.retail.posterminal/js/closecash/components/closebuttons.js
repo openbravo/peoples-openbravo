@@ -57,20 +57,6 @@
         //this.$el.attr('disabled','disabled');
     }else if(this.options.modeldaycash.defaults.step===2){
     this.options.modeldaycash.paymentmethods.trigger('closed');
-    this.options.modeldaycash.paymentmethods.on('closed', function () {
-    var a = me.options.modeldaycash.paymentmethods.serializeToJSON();
-    this.proc.exec({
-    terminalId: OB.POS.modelterminal.get('terminal').id,
-    cashCloseInfo: me.options.modeldaycash.paymentmethods.serializeToJSON()
-      }, function (data, message) {
-        if (data && data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', ['444']));
-        } else {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', ['666']));
-        }
-      });
-    }, this);
-    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose');
     }
 
    }

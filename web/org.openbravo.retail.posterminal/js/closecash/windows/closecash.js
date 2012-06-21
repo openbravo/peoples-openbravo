@@ -24,6 +24,7 @@
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
           {kind: OB.DATA.CloseCashPaymentMethod},
+          {kind: OB.DATA.PaymentCloseCash},
           {kind: OB.DATA.Container, content: [
                {kind: OB.DATA.PaymentMethod},
                {kind: OB.DATA.CloseCashPaymentMethod}

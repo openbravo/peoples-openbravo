@@ -89,7 +89,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/searchbps", "components/modalbps", "components/scan", "components/tabscan",
         "components/rendercategory", "components/listcategories", "components/renderproduct",
         "components/listproducts", "components/tabbrowse", "components/searchproducts",
-        "components/tabsearch", "components/editline",
+        "components/tabsearch",
+        "components/editline",
         "components/tabeditline",
         "components/total",
         "components/modalpayment",
@@ -103,7 +104,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/listreceiptscounter",
         "windows/pointofsale",
         // Cash Management window
-        "cashmgmt/components/cashmgmtbuttons", "cashmgmt/components/cashmgmtkeyboard",
+        "cashmgmt/components/cashmgmtbuttons",
+        "cashmgmt/components/cashmgmtkeyboard",
         "cashmgmt/components/destinations",
         "cashmgmt/components/renderdropdestinations",
         "cashmgmt/components/searchdropdestinations",
@@ -116,9 +118,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
         "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
         "closecash/components/renderpaymentlines", "closecash/components/toolbarcountcash",
-        "closecash/data/datamaster", "closecash/model/daycash", "closecash/windows/closeinfo",
-        "closecash/windows/tabcountcash", "closecash/windows/tabpendingreceipts",
-        "closecash/windows/tabpostprintclose", "closecash/windows/closecash"
+        "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
+        "closecash/windows/closeinfo", "closecash/windows/tabcountcash",
+        "closecash/windows/tabpendingreceipts", "closecash/windows/tabpostprintclose",
+        "closecash/windows/closecash"
 
     };
 
