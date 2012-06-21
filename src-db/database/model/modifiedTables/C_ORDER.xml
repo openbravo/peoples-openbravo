@@ -8,5 +8,8 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <index name="EM_OBPOS_APPLICATIONS_IDX" unique="false">
+        <index-column name="EM_OBPOS_APPLICATIONS_ID"/>
+      </index>
     </table>
   </database>
