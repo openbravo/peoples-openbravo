@@ -258,4 +258,17 @@ public class FinancialUtils {
     return amount.multiply(cr.getMultipleRateBy()).setScale(precision.intValue(),
         RoundingMode.HALF_UP);
   }
+
+  /**
+   * Returns the Currency of a Legal Entity. If there is no one defined, returns the currency of the
+   * Client.
+   */
+  public static Currency getLegalEntityCurrency(Organization organization) {
+    Organization legalEntity = OBContext.getOBContext()
+        .getOrganizationStructureProvider(organization.getClient().getId())
+        .getLegalEntity(organization);
+    Currency currency = (legalEntity.getCurrency() != null) ? legalEntity.getCurrency()
+        : organization.getClient().getCurrency();
+    return currency;
+  }
 }
