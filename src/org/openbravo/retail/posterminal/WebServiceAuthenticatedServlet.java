@@ -26,12 +26,14 @@ import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.json.JsonConstants;
 
 /**
  * A base JSON web service This servlet just verifies if the user is authenticated
  * 
  * @author adrianromero
+ * @author iperdomo
  */
 public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
   private static final Logger log = Logger.getLogger(WebServiceAuthenticatedServlet.class);
@@ -66,6 +68,14 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
       log.error(e.getMessage(), e);
       writeResult(response, silentExceptionToJson(e));
     }
+  }
+
+  @Override
+  protected void bdError(HttpServletRequest request, HttpServletResponse response, String strCode,
+      String strLanguage) throws IOException {
+    final String message = Utility.messageBD(this, strCode, strLanguage);
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    writeResult(response, silentExceptionToJson(new OBSecurityException(message)));
   }
 
   protected void writeResult(HttpServletResponse response, String result) throws IOException {
