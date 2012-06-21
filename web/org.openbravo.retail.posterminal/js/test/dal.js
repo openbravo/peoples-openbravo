@@ -6,21 +6,50 @@ function errorCallback() {
   console.error(arguments);
 }
 
-test('Basic requirements', function () {
+
+test('Basic requirements', function() {
   expect(3);
   ok(_, 'Underscode is present');
   ok($, 'jQuery is present');
   ok(Backbone, 'Backbone is present');
 });
 
-test('API function availability', function () {
+test('API function availability', function() {
   expect(3);
   ok(OB.Dal.get, 'get function is available');
   ok(OB.Dal.save, 'save function is available');
   ok(OB.Dal.find, 'find function is available');
 });
 
-asyncTest('Query - Get all', function () {
+asyncTest('Load models - WebSQL', function() {
+  var queue = {},
+      triggerNext = false;
+
+  _.each(_.keys(OB.Model), function(m) {
+    var model = OB.Model[m];
+    var ds = new OB.DS.DataSource(new OB.DS.Query(model, '23C59575B9CF467C9620760EB255B389', 'E443A31992CB4635AFCAEABE7183CE85'));
+
+    ds.on('ready', function() {
+      
+      queue[ds.query.source] = true;
+
+      //reduce
+      triggerNext = _.reduce(queue, function(memo, val) {
+        return memo && val;
+      }, true);
+
+      if (triggerNext) {
+        start();
+      }
+    });
+    ds.load();
+    //source
+    queue[ds.query.source] = false;
+  });
+
+});
+
+asyncTest('Query - Get all', function() {
   expect(2);
 
   function success(collection) {
@@ -33,7 +62,7 @@ asyncTest('Query - Get all', function () {
   OB.Dal.find(OB.Model.TaxRate, null, success, errorCallback);
 });
 
-asyncTest('Query - Get one', function () {
+asyncTest('Query - Get one', function() {
   expect(2);
 
   function success(model) {
@@ -46,7 +75,7 @@ asyncTest('Query - Get one', function () {
   OB.Dal.get(OB.Model.TaxRate, 'D61CD889CF2E42A7B46C935ACA0538FF', success, errorCallback);
 });
 
-asyncTest('Query - find one', function () {
+asyncTest('Query - find one', function() {
   expect(2);
 
   function success(collection) {
@@ -62,7 +91,7 @@ asyncTest('Query - find one', function () {
   }, success, errorCallback);
 });
 
-asyncTest('Query - find one using contains', function () {
+asyncTest('Query - find one using contains', function() {
   expect(2);
 
   function success(collection) {
@@ -81,7 +110,7 @@ asyncTest('Query - find one using contains', function () {
   }, success, errorCallback);
 });
 
-asyncTest('Query - save - update', function () {
+asyncTest('Query - save - update', function() {
   expect(1);
 
   function saveSuccess() {
@@ -98,7 +127,7 @@ asyncTest('Query - save - update', function () {
   OB.Dal.get(OB.Model.TaxRate, 'D61CD889CF2E42A7B46C935ACA0538FF', success, errorCallback);
 });
 
-asyncTest('Query - save - insert', function () {
+asyncTest('Query - save - insert', function() {
   var randomRate = Math.floor(Math.random() * (60 - 2)) + 1,
       rateObj = new OB.Model.TaxRate();
 

@@ -239,7 +239,7 @@
 
     this.query.exec(params, function (data) {
 
-      var db = OB.DATA.OfflineDB;
+      //var db = OB.DATA.OfflineDB;
 
       if (data.exception) {
         throw data.exception;
@@ -247,7 +247,7 @@
 
       me.cache = data;
 
-      if (db && me.query.model) {
+      if (me.query.model) {
         OB.Dal.initCache(me.query.model, data, function () {
           me.trigger('ready');
         }, function () {
