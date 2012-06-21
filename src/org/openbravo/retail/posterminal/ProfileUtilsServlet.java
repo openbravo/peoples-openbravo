@@ -83,16 +83,20 @@ public class ProfileUtilsServlet extends WebServiceAbstractServlet {
         // Get the role and role name list with the following criteria
         // * The "Role" is available for the current organization
         // * The "Role" is available for the current user
-        // * The "Role" has something defined in the tab "POS Terminal"
+        // * The "Role" has the "Web POS" form as an allowed one
 
         final String hqlRole = "select distinct role.id, role.name "
-            + "from ADRole role, ADRoleOrganization roleOrg, ADUserRoles userRoles, OBPOS_POS_Access posAccess "
-            + "where roleOrg.organization.id = :strOrg and " + "role.id = roleOrg.role.id and "
-            + "role.id = userRoles.role.id and " + "role.id = posAccess.role.id and "
-            + "userRoles.userContact.id = :userId " + "order by role.name";
+            + "from ADRole role, ADRoleOrganization roleOrg, ADUserRoles userRoles, ADFormAccess formAccess "
+            + "where role.active = true and " + "roleOrg.active = true and "
+            + "userRoles.active = true and " + "formAccess.active = true and "
+            + "roleOrg.organization.id = :strOrg and " + "role.id = roleOrg.role.id and "
+            + "role.id = userRoles.role.id and " + "role.id = formAccess.role.id and "
+            + "userRoles.userContact.id = :userId and "
+            + "formAccess.specialForm.id = :webPOSFormId " + "order by role.name";
         Query qryRole = OBDal.getInstance().getSession().createQuery(hqlRole);
         qryRole.setParameter("strOrg", strOrg);
         qryRole.setParameter("userId", userId);
+        qryRole.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
         int queryCount = 0;
 
         for (Object qryRoleObject : qryRole.list()) {

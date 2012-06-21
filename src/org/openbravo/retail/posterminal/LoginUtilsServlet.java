@@ -151,18 +151,21 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         Set<String> orgNaturalTree = OBContext.getOBContext()
             .getOrganizationStructureProvider(strClient).getNaturalTree(strOrg);
 
-        // Get the user name and uesrname list with the following criteria
-        // * Belongs to a "Role" with anything inside "POS Access"
+        // Get the user name and username list with the following criteria
+        // * Belongs to a "Role" which has the "Web POS" form as an allowed one
         // * Is in the same natural organization tree than the current "POS Terminal"
         final String hqlUser = "select distinct user.name, user.username, user.id "
-            + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-            + "OBPOS_POS_Access posAccess "
-            + "where user.username != '' and user.password is not null and user.active = true and "
+            + "from ADUser user, ADUserRoles userRoles, ADRole role, " + "ADFormAccess formAccess "
+            + "where user.active = true and " + "userRoles.active = true and "
+            + "role.active = true and " + "formAccess.active = true and "
+            + "user.username != '' and " + "user.password is not null and "
             + "userRoles.role.organization.id in :orgList and "
             + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
-            + "userRoles.role.id = posAccess.role.id " + "order by user.name";
+            + "userRoles.role.id = formAccess.role.id and "
+            + "formAccess.specialForm.id = :webPOSFormId " + "order by user.name";
         Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
         qryUser.setParameterList("orgList", orgNaturalTree);
+        qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
         int queryCount = 0;
 
         for (Object qryUserObject : qryUser.list()) {
