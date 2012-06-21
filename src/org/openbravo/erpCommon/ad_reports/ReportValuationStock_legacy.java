@@ -38,35 +38,34 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
-public class ReportValuationStock extends HttpSecureAppServlet {
+public class ReportValuationStock_legacy extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "RELATION")) {
-      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
+      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock_legacy|Date",
           DateTimeData.today(this));
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
-          "ReportValuationStock|Warehouse", "");
+          "ReportValuationStock_legacy|Warehouse", "");
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
-          "ReportValuationStock|CategoryProduct", "");
+          "ReportValuationStock_legacy|CategoryProduct", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportValuationStock|currency", strUserCurrencyId);
+          "ReportValuationStock_legacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
-      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
+      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock_legacy|Date",
           DateTimeData.today(this));
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
-          "ReportValuationStock|Warehouse");
+          "ReportValuationStock_legacy|Warehouse");
       String strCategoryProduct = vars.getRequestGlobalVariable("inpCategoryProduct",
-          "ReportValuationStock|CategoryProduct");
+          "ReportValuationStock_legacy|CategoryProduct");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportValuationStock|currency", strUserCurrencyId);
+          "ReportValuationStock_legacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else
@@ -85,21 +84,22 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     // Checks if there is a conversion rate for each of the transactions of
     // the report
-    ReportValuationStockData[] data = null;
+    ReportValuationStockLegacyData[] data = null;
     String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     OBError myMessage = null;
     myMessage = new OBError();
     String strConvRateErrorMsg = "";
-    if (CostingStatus.getInstance().isMigrated() == false) {
+    if (CostingStatus.getInstance().isMigrated()) {
       advise(request, response, "ERROR",
-          Utility.messageBD(this, "NotUsingNewCost", vars.getLanguage()), "");
+          Utility.messageBD(this, "NotUsingOldCost", vars.getLanguage()), "");
       return;
     }
+
     if (vars.commandIn("FIND")) {
       try {
-        data = ReportValuationStockData.select(this, vars.getLanguage(), strBaseCurrencyId,
-            strCurrencyId, strDate, DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
-            strCategoryProduct);
+        data = ReportValuationStockLegacyData.select(this, vars.getLanguage(), strDate,
+            strBaseCurrencyId, strCurrencyId, DateTimeData.nDaysAfter(this, strDate, "1"),
+            strWarehouse, strCategoryProduct);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -113,44 +113,46 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (data == null || data.length == 0) {
-        data = ReportValuationStockData.set();
+        data = ReportValuationStockLegacyData.set();
         discard[0] = "sectionCategoryProduct";
       }
       if (vars.commandIn("DEFAULT")) {
         discard[0] = "sectionCategoryProduct";
         xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportValuationStock", discard).createXmlDocument();
-        data = ReportValuationStockData.set();
+            "org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy", discard)
+            .createXmlDocument();
+        data = ReportValuationStockLegacyData.set();
       } else {
         xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportValuationStock", discard).createXmlDocument();
+            "org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy", discard)
+            .createXmlDocument();
       }
 
-      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportValuationStock", false, "",
-          "", "", false, "ad_reports", strReplaceWith, false, true);
+      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportValuationStock_legacy", false,
+          "", "", "", false, "ad_reports", strReplaceWith, false, true);
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
 
       try {
         WindowTabs tabs = new WindowTabs(this, vars,
-            "org.openbravo.erpCommon.ad_reports.ReportValuationStock");
+            "org.openbravo.erpCommon.ad_reports.ReportValuationStock_legacy");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
         NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ReportValuationStock.html", classInfo.id, classInfo.type, strReplaceWith,
+            "ReportValuationStock_legacy.html", classInfo.id, classInfo.type, strReplaceWith,
             tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
-        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportValuationStock.html",
-            strReplaceWith);
+        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+            "ReportValuationStock_legacy.html", strReplaceWith);
         xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
       {
-        myMessage = vars.getMessage("ReportValuationStock");
-        vars.removeMessage("ReportValuationStock");
+        myMessage = vars.getMessage("ReportValuationStock_legacy");
+        vars.removeMessage("ReportValuationStock_legacy");
         if (myMessage != null) {
           xmlDocument.setParameter("messageType", myMessage.getType());
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -191,9 +193,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportValuationStock"),
-            Utility.getContext(this, vars, "#User_Client", "ReportValuationStock"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock",
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportValuationStock_legacy"), Utility.getContext(this, vars, "#User_Client",
+                "ReportValuationStock_legacy"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock_legacy",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -208,6 +211,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   }
 
   public String getServletInfo() {
-    return "Servlet ReportValuationStock. This Servlet was made by Pablo Sarobe";
+    return "Servlet ReportValuationStock_legacy. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method
 }

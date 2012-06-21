@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="ReportValuationStockData" package="org.openbravo.erpCommon.ad_reports">
+<SqlClass name="ReportValuationStockLegacyData" package="org.openbravo.erpCommon.ad_reports">
   <SqlClassComment></SqlClassComment>
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -31,16 +31,15 @@
       SELECT CATEGORY_NAME, M_PRODUCT_ID, PRODUCT_NAME, QTY, UOM_NAME, AVERAGE_COST, TOTAL_COST FROM (
       SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_PRODUCT.M_PRODUCT_ID), TO_CHAR(?)) AS PRODUCT_NAME, 
       A.QTY, C_UOM.NAME AS UOM_NAME, 
-      C_CURRENCY_ROUND(C_CURRENCY_CONVERT(CASE WHEN A.QTY<0 THEN Suma*-1 ELSE SUMA END, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, A.AD_ORG_ID)/A.QTY, ?, NULL) AS AVERAGE_COST,       
-      C_CURRENCY_CONVERT(CASE WHEN A.QTY<0 THEN Suma*-1 ELSE SUMA END, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, A.AD_ORG_ID) AS TOTAL_COST
+      C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(A.M_PRODUCT_ID,TO_DATE(?), NULL), ?, ?, COALESCE(MC.DATEFROM,TO_DATE(?)), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) AS AVERAGE_COST,       
+      A.QTY * C_CURRENCY_CONVERT(M_GET_PRODUCT_COST(A.M_PRODUCT_ID,TO_DATE(?), NULL), ?, ?, COALESCE(MC.DATEFROM,TO_DATE(?)), NULL, MC.AD_CLIENT_ID, MC.AD_ORG_ID) AS TOTAL_COST
       FROM M_PRODUCT_CATEGORY,
-      (SELECT M_PRODUCT_ID, SUM(MOVEMENTQTY) AS QTY, SUM(transactioncost) as Suma, C_UOM_ID, m_transaction.AD_CLIENT_ID, m_transaction.AD_ORG_ID  
-      FROM M_TRANSACTION, M_LOCATOR
+      (SELECT M_PRODUCT_ID, SUM(MOVEMENTQTY) AS QTY, C_UOM_ID FROM M_TRANSACTION, M_LOCATOR
       WHERE M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
       AND MOVEMENTDATE < to_date(?)
       AND M_LOCATOR.M_WAREHOUSE_ID = ?
-      GROUP BY M_PRODUCT_ID, C_UOM_ID, m_transaction.AD_CLIENT_ID, m_transaction.AD_ORG_ID) A, C_UOM,
-      M_PRODUCT
+      GROUP BY M_PRODUCT_ID, C_UOM_ID) A, C_UOM,
+      M_PRODUCT LEFT JOIN M_COSTING MC ON MC.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
       WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
       AND A.C_UOM_ID = C_UOM.C_UOM_ID
       AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
@@ -51,10 +50,11 @@
      ]]></Sql>
       <Field name="rownum" value="count"/>
       <Parameter name="adLanguage"/>
+      <Parameter name="date"/>
       <Parameter name="cCurrencyBase"/>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="date"/>
-      <Parameter name="cCurrencyConv"/>
+      <Parameter name="date"/>
       <Parameter name="cCurrencyBase"/>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="date"/>
