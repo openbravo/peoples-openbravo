@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -86,7 +87,7 @@ public class TimeUIDefinition extends UIDefinition {
         RequestContext rq = RequestContext.get();
         String columnValue = rq.getRequestParameter("inp"
             + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
-        if (columnValue.isEmpty()) {
+        if (StringUtils.isEmpty(columnValue)) {
           // If the date is empty, it does not have to be converted
           return result;
         }

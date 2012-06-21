@@ -1450,8 +1450,8 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function () {
           var fldName = field.name;
-          var dotIndex = fldName.indexOf(OB.Constants.FIELDSEPARATOR);
-          if (dotIndex !== -1) {
+          var dotIndex = fldName.lastIndexOf(OB.Constants.FIELDSEPARATOR);
+          if (dotIndex !== -1 && fldName.endsWith(OB.Constants.IDENTIFIER)) {
             fldName = fldName.substring(0, dotIndex);
           }
           OB.Utilities.openDirectView(sourceWindow, field.refColumnName, field.targetEntity, record[fldName]);

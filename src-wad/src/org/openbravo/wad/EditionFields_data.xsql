@@ -55,6 +55,7 @@
             ad_field
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_field.ad_tab_id = ?
+        AND ad_field.ignoreinwad='N'
         AND ad_column.isActive = 'Y'
               union 
       select null, (case when upper(columnname)='CREATED' then 10000 
@@ -160,6 +161,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.readonlylogic is not null 
         AND AD_FIELD.ISDISPLAYED = 'Y' 
+        AND ad_field.ignoreinwad='N'
         AND ad_field.ad_tab_id = ?
         AND ad_field.isreadonly='N'
         AND ad_column.isupdateable='Y'
@@ -193,6 +195,7 @@
         WHERE AD_COLUMN.ad_column_id = AD_FIELD.ad_column_id
         AND AD_FIELD.ad_tab_id = AD_TAB.ad_tab_id 
         AND AD_COLUMN.isactive='Y'
+        AND ad_field.ignoreinwad='N'
         AND AD_FIELD.isactive='Y' 
         AND ISSELECTIONCOLUMN='Y' 
         AND ad_field.ad_tab_id=?
@@ -216,6 +219,7 @@
         AND AD_FIELD.ad_tab_id = AD_TAB.ad_tab_id 
         AND AD_COLUMN.isactive='Y'
         AND AD_FIELD.isactive='Y' 
+        AND ad_field.ignoreinwad='N'
         AND isidentifier='Y'
         AND ad_field.ad_tab_id=?
         ORDER BY AD_COLUMN.seqno, AD_FIELD.seqno

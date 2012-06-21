@@ -60,6 +60,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class AdvancedQueryBuilder {
 
   private static final String ALIAS_PREFIX = "alias_";
+  private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
 
   private static final String OPERATOR_AND = "and";
@@ -132,6 +133,11 @@ public class AdvancedQueryBuilder {
   private int minutesTimeZoneDiff = 0;
 
   private SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
+
+  // join associated entities
+  private boolean joinAssociatedEntities = false;
+
+  private List<String> additionalProperties = new ArrayList<String>();
 
   public Entity getEntity() {
     return entity;
@@ -663,7 +669,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-              .equals(OPERATOR_GREATEROREQUALFIELD));
+            .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -671,7 +677,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-              .equals(OPERATOR_LESSOREQUALFIElD));
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -954,15 +960,43 @@ public class AdvancedQueryBuilder {
       return joinClause;
     }
 
+    // create join definitions for all many-to-ones
+    if (joinAssociatedEntities) {
+      for (Property property : entity.getProperties()) {
+        if (!property.isPrimitive() && !property.isOneToMany() && !property.isOneToOne()) {
+          final JoinDefinition joinDefinition = new JoinDefinition();
+          joinDefinition.setOwnerAlias(getMainAlias());
+          joinDefinition.setFetchJoin(true);
+          joinDefinition.setProperty(property);
+          joinDefinitions.add(joinDefinition);
+        }
+      }
+    }
+
+    for (String additionalProperty : additionalProperties) {
+      final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(),
+          additionalProperty);
+      if (properties.isEmpty()) {
+        continue;
+      }
+      final Property lastProperty = properties.get(properties.size() - 1);
+      if (lastProperty.isPrimitive()) {
+        properties.remove(lastProperty);
+      }
+      if (properties.isEmpty() || lastProperty.isOneToMany()) {
+        continue;
+      }
+      resolveJoins(properties, getMainAlias());
+    }
+
     // make sure that the join clauses are computed
     getWhereClause();
     getOrderByClause();
 
-    if (getMainAlias() == null) {
-      return "";
-    }
     final StringBuilder sb = new StringBuilder();
-    sb.append(" as " + getMainAlias() + " ");
+    if (getMainAlias() != null) {
+      sb.append(" as " + getMainAlias() + " ");
+    }
     for (JoinDefinition joinDefinition : joinDefinitions) {
       sb.append(joinDefinition.getJoinStatement());
     }
@@ -1198,7 +1232,6 @@ public class AdvancedQueryBuilder {
       // a joinable property
       final JoinDefinition joinDefinition = new JoinDefinition();
       joinDefinition.setOwnerAlias(alias);
-      joinDefinition.setJoinAlias(getNewUniqueAlias());
       joinDefinition.setProperty(prop);
       joinDefinitions.add(joinDefinition);
 
@@ -1212,14 +1245,15 @@ public class AdvancedQueryBuilder {
     return alias + DalUtil.DOT + props.get(props.size() - 1).getName();
   }
 
-  private String getNewUniqueAlias() {
-    return ALIAS_PREFIX + (aliasIndex++);
+  private String getNewUniqueJoinAlias() {
+    return JOIN_ALIAS_PREFIX + (aliasIndex++);
   }
 
   private class JoinDefinition {
     private Property property;
-    private String joinAlias;
+    private String joinAlias = getNewUniqueJoinAlias();
     private String ownerAlias;
+    private boolean fetchJoin = true;
 
     public boolean appliesTo(String checkAlias, Property checkProperty) {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
@@ -1227,10 +1261,13 @@ public class AdvancedQueryBuilder {
 
     public String getJoinStatement() {
       if (orNesting > 0) {
-        return " left outer join " + ownerAlias + DalUtil.DOT + property.getName() + " as "
+        return " left outer join " + (fetchJoin ? "fetch " : "")
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
             + joinAlias;
       } else {
-        return " left join " + ownerAlias + DalUtil.DOT + property.getName() + " as " + joinAlias;
+        return " left join " + (fetchJoin ? "fetch " : "")
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
+            + joinAlias;
       }
     }
 
@@ -1242,12 +1279,16 @@ public class AdvancedQueryBuilder {
       return joinAlias;
     }
 
-    public void setJoinAlias(String joinAlias) {
-      this.joinAlias = joinAlias;
-    }
-
     public void setOwnerAlias(String ownerAlias) {
       this.ownerAlias = ownerAlias;
+    }
+
+    public boolean isFetchJoin() {
+      return fetchJoin;
+    }
+
+    public void setFetchJoin(boolean fetchJoin) {
+      this.fetchJoin = fetchJoin;
     }
   }
 
@@ -1288,5 +1329,35 @@ public class AdvancedQueryBuilder {
 
   public void setCriteria(JSONObject criteria) {
     this.criteria = criteria;
+  }
+
+  public boolean isJoinAssociatedEntities() {
+    return joinAssociatedEntities;
+  }
+
+  public void setJoinAssociatedEntities(boolean joinAssociatedEntities) {
+    this.joinAssociatedEntities = joinAssociatedEntities;
+    if (joinAssociatedEntities) {
+      // force an alias then
+      setMainAlias(JsonConstants.MAIN_ALIAS);
+    }
+  }
+
+  public List<String> getAdditionalProperties() {
+    return additionalProperties;
+  }
+
+  public void clearCachedValues() {
+    joinClause = null;
+    whereClause = null;
+    orderByClause = null;
+    joinDefinitions.clear();
+    filterParameters.clear();
+    typedParameters.clear();
+    additionalProperties.clear();
+  }
+
+  public void setAdditionalProperties(List<String> additionalProperties) {
+    this.additionalProperties = additionalProperties;
   }
 }

@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.hibernate.Query;
@@ -77,6 +79,8 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.json.DataEntityQueryService;
+import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -137,6 +141,9 @@ import org.openbravo.test.base.BaseTest;
  * https://issues.openbravo.com/view.php?id=18688: Ability to call database functions from HQL query
  * 
  * https://issues.openbravo.com/view.php?id=20611: OBCriteria doesn't support ScrollabeResults
+ * 
+ * https://issues.openbravo.com/view.php?id=20733: Json serialization: always the identifier
+ * properties of associated entities are serialized also, resulting in extra queries
  * 
  * @author mtaal
  * @author iperdomo
@@ -743,6 +750,19 @@ public class IssuesTest extends BaseTest {
         .getOrganizationStructureProvider(clientId);
     final Set<String> childOrg = osp.getChildOrg(nonExistentOrg);
     assertTrue(childOrg.isEmpty());
+  }
+
+  public void test20733() {
+    setTestUserContext();
+    DataEntityQueryService service = new DataEntityQueryService();
+    service.setEntityName(Order.ENTITY_NAME);
+    service.setJoinAssociatedEntities(true);
+    service.setCriteria(new JSONObject());
+    DataToJsonConverter converter = new DataToJsonConverter();
+    for (BaseOBObject bob : service.list()) {
+      final Order order = (Order) bob;
+      converter.toJsonObjects(Collections.singletonList((BaseOBObject) order));
+    }
   }
 
 }

@@ -57,6 +57,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PROPERTY" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="IGNOREINWAD" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <column name="AD_FIELDGROUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -153,6 +161,9 @@
       </foreign-key>
       <index name="AD_FIELD_COLUMN" unique="false">
         <index-column name="AD_COLUMN_ID"/>
+      </index>
+      <index name="AD_FIELD_IGNOREINWAD" unique="false">
+        <index-column name="IGNOREINWAD"/>
       </index>
       <index name="AD_FIELD_TAB" unique="false">
         <index-column name="AD_TAB_ID"/>

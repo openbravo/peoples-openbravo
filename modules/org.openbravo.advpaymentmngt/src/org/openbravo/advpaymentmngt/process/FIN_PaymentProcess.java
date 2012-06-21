@@ -724,11 +724,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       && paymentScheduleDetail.getInvoicePaymentSchedule() == null
                       && paymentScheduleDetail.getOrderPaymentSchedule() == null && paymentScheduleDetail
                       .getPaymentDetails().getGLItem() == null)) {
-                removedPDS.add(paymentScheduleDetail);
                 FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
+                removedPDS.add(paymentScheduleDetail);
               }
             }
             paymentDetail.getFINPaymentScheduleDetailList().removeAll(removedPDS);
+            if (strAction.equals("R")) {
+              OBDal.getInstance().getSession().refresh(paymentDetail);
+            }
             // If there is any schedule detail with amount zero, those are deleted
             for (FIN_PaymentScheduleDetail psd : removedPDS) {
               if (BigDecimal.ZERO.compareTo(psd.getAmount()) == 0

@@ -168,7 +168,9 @@ public class DataToJsonConverter {
           continue;
         }
         final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
-        if (value instanceof BaseOBObject) {
+        if (value == null) {
+          jsonObject.put(replaceDots(additionalProperty), (Object) null);
+        } else if (value instanceof BaseOBObject) {
           final Property additonalPropertyObject = getPropertyFromPath(bob, additionalProperty);
           addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
               additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
@@ -213,6 +215,7 @@ public class DataToJsonConverter {
       if (!currentEntity.hasProperty(part)) {
         return null;
       }
+      result = currentEntity.getProperty(part);
       value = currentBob.get(part);
       // if there is a next step, just make it
       // if it is last then we stop anyway
@@ -230,7 +233,8 @@ public class DataToJsonConverter {
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
       try {
-        jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
+        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
+            obObject.get(referencedProperty.getName()));
       } catch (ObjectNotFoundException e) {
         // Referenced object does not exist, set UUID
         jsonObject.put(propertyName, e.getIdentifier());
@@ -262,8 +266,8 @@ public class DataToJsonConverter {
             obObject.get(referencingProperty.getDisplayPropertyName()));
       }
     } else {
-      jsonObject.put(propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-          obObject.getIdentifier());
+      jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+          + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, obObject.getIdentifier());
     }
   }
 

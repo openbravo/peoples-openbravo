@@ -142,20 +142,19 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     if (OBDal.getInstance().get(Order.class, strCOrderId).getPriceList().isPriceIncludesTax()) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
-
     } else {
       resultado.append("new Array(\"inppricelist\", "
           + (strPriceList.equals("") ? "0" : strPriceList) + "),");
-      resultado.append("new Array(\"inppriceactual\", "
-          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
       resultado.append("new Array(\"inppricelimit\", "
           + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
       resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
           + "),");
+      resultado.append("new Array(\"inppriceactual\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
     }
-
-    resultado.append("new Array(\"inpcCurrencyId\", "
-        + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
+    if (!"".equals(strCurrency)) {
+      resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");
+    }
     resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     if (!strMProductID.equals("")) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);

@@ -259,7 +259,7 @@
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
               AND t.isActive = 'Y'
               AND ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id) <> -1
-            ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.IsDefault DESC,t.ValidFrom DESC
+            ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.ValidFrom DESC
             )
           LOOP
             v_TaxID := SEL3.C_Tax_ID;

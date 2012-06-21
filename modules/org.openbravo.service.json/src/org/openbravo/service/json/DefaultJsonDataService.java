@@ -291,6 +291,10 @@ public class DefaultJsonDataService implements JsonDataService {
         queryService.setFirstResult(startRow);
       }
     }
+    // do this after the getRowNumber above, the getRowNumber does not need the joins
+    queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    queryService.setJoinAssociatedEntities(true);
+    queryService.clearCachedValues();
     return queryService;
   }
 
