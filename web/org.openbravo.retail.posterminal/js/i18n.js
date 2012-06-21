@@ -7,48 +7,42 @@
   OB = window.OB || {};
   OB.I18N = window.OB.I18N || {};
 
-  OB.I18N.formatCurrency = function (num) {
-    // Hardcoded to US Locale.
-    return OB.I18N.formatGeneralNumber(num, {
-      decimals: 2,
-      decimal: '.',
-      group: ',',
-      currency: '$#'});
-  };
+  OB.I18N.formatCurrency = function (number) {
+    var symbol = OB.POS.modelterminal.get('currency').symbol,
+        isSymbolRight = OB.POS.modelterminal.get('currency').currencySymbolAtTheRight,
+        maskNumeric = OB.Format.formats.priceRelation,
+        decSeparator = OB.Format.defaultDecimalSymbol,
+        groupSeparator = OB.Format.defaultGroupingSymbol,
+        groupInterval = OB.Format.defaultGroupingSize;
 
-  OB.I18N.formatRate = function (num) {
-    // Hardcoded to US Locale.
-    return OB.I18N.formatGeneralNumber(num, {
-      decimals: 2,
-      decimal: '.',
-      group: ',',
-      currency: '#%'});
-  };
+    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupInterval);
 
-  OB.I18N.formatGeneralNumber = function (num, options) {
-    var n = num.toFixed(options.decimals);
-    var x = n.split('.');
-    var x1 = x[0];
-    var x2 = x.length > 1 ? options.decimal + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + options.group + '$2');
-    }
-    if (options.currency) {
-      return options.currency.replace("#", x1 + x2);
+    var formattedNumber = OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+    if (isSymbolRight) {
+      formattedNumber = formattedNumber + symbol;
     } else {
-      return x1 + x2;
+      formattedNumber = symbol + formattedNumber;
     }
+    return formattedNumber;
   };
 
-  OB.I18N.formatDate = function (d) {
-    var curr_date = d.getDate();
-    var curr_month = d.getMonth();
-    var curr_year = d.getFullYear();
-    var curr_hour = d.getHours();
-    var curr_min = d.getMinutes();
-    var curr_sec = d.getSeconds();
-    return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month + 1, 2) + '/' + curr_year;
+  OB.I18N.formatRate = function (number) {
+    var symbol = '%',
+        maskNumeric = OB.Format.formats.euroEdition,
+        decSeparator = OB.Format.defaultDecimalSymbol,
+        groupSeparator = OB.Format.defaultGroupingSymbol,
+        groupInterval = OB.Format.defaultGroupingSize;
+
+    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupInterval);
+
+    var formattedNumber = OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
+    formattedNumber = formattedNumber + symbol;
+    return formattedNumber;
+  };
+
+  OB.I18N.formatDate = function (JSDate) {
+    var dateFormat = OB.Format.date;
+    return OB.Utilities.Date.JSToOB(JSDate, dateFormat);
   };
 
   OB.I18N.formatHour = function (d) {

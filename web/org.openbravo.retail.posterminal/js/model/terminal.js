@@ -45,7 +45,8 @@
       bplocation: null,
       location: null,
       pricelist: null,
-      pricelistversion: null
+      pricelistversion: null,
+      currency: null
     },
 
     login: function (user, password, mode) {
@@ -59,6 +60,7 @@
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
+      this.set('currency', null);
       $.ajax({
         url: '../../secureApp/LoginHandler.html',
         data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
@@ -89,6 +91,7 @@
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
+      this.set('currency', null);
 
       $.ajax({
         url: '../../org.openbravo.service.retail.posterminal.logout',
@@ -120,6 +123,7 @@
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
+      this.set('currency', null);
 
       // Starting app
       var me = this;

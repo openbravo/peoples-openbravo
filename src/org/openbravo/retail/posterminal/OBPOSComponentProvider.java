@@ -88,7 +88,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/listreceipts", "components/modalreceipts", "components/renderbusinesspartner",
         "components/searchbps", "components/modalbps", "components/scan", "components/tabscan",
         "components/rendercategory", "components/listcategories", "components/renderproduct",
-        "components/listproducts", "components/tabbrowse", "components/searchproducts",
+        "components/listproducts",
+        "components/tabbrowse",
+        "components/searchproducts",
         "components/tabsearch",
         "components/editline",
         "components/tabeditline",
@@ -121,9 +123,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
         "closecash/windows/closeinfo", "closecash/windows/tabcountcash",
         "closecash/windows/tabpendingreceipts", "closecash/windows/tabpostprintclose",
-        "closecash/windows/closecash"
-
-    };
+        "closecash/windows/closecash",
+        // Core resources
+        "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
+        "../../org.openbravo.client.application/js/utilities/ob-utilities-date" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
