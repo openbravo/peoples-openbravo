@@ -107,8 +107,6 @@ public class DataEntityQueryService {
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
-    System.err.println("Querying for " + entityName + " " + whereOrderBy);
-
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
     if (getFirstResult() != null) {
       obq.setFirstResult(getFirstResult());
