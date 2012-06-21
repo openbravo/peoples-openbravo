@@ -5,15 +5,16 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.SearchProduct = function (context) {
-    var me = this;
+  OB.COMP.SearchProduct = Backbone.View.extend({
+	  initialize: function(){
+	  var me = this;
 
-    this._id = 'SearchProducts';
+    //this._id = 'SearchProducts';
 
-    this.receipt = context.modelorder;
+    this.receipt = this.options.modelorder;
 
-    this.categories = new OB.MODEL.Collection(context.DataCategory);
-    this.products = new OB.MODEL.Collection(context.DataProductPrice);
+    this.categories = new OB.MODEL.Collection(this.options.DataCategory);
+    this.products = new OB.MODEL.Collection(this.options.DataProductPrice);
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(model);
@@ -104,5 +105,6 @@
     this.productcategory = this.component.context.productcategory.$el;
     this.tableview = this.component.context.tableview;
     this.categories.exec({});
-  };
+    }
+  });
 }());
