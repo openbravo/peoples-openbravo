@@ -93,6 +93,7 @@
   };
 
   OB.UTIL.showError = function (s) {
+    OB.UTIL.showLoading(false);
     OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
   };
 }());
