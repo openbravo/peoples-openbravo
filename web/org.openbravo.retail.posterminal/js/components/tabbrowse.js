@@ -26,8 +26,8 @@
         'color': 'black',
         'padding': '5px'
       });
-      this.ListCategories = new OB.COMP.ListCategories(this.options);
-      $child.append(this.ListCategories.$el);
+      this.listCategories = new OB.COMP.ListCategories(this.options);
+      $child.append(this.listCategories.$el);
       this.$el.append($child);
     }
   });
@@ -76,7 +76,7 @@
       this.$el.append($child);
 
       browseCateg.listCategories.categories.on('selected', function(category) {
-        browseProd.ListProducts.loadCategory(category);
+        browseProd.listProducts.loadCategory(category);
       }, this);
     }
   });
