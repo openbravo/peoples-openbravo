@@ -34,7 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.common.order.Order;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -312,7 +312,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // if taxRate field is changed
-    if (strChanged.equals("inpcTaxId") && isPriceTaxInclusive(strCOrderId)) {
+    if (strChanged.equals("inpcTaxId")
+        && OBDal.getInstance().get(PriceList.class, dataOrder[0].mPricelistId).isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
@@ -396,13 +397,5 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
     return lineNetAmount;
-  }
-
-  private boolean isPriceTaxInclusive(String orderId) {
-    if (OBDal.getInstance().get(Order.class, orderId).getPriceList().isPriceIncludesTax())
-      return true;
-    else
-      return false;
-
   }
 }

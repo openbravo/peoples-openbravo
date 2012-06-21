@@ -130,7 +130,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Invoice_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    if (isPriceTaxInclusive(strCInvoiceID)) {
+    if (OBDal.getInstance().get(Invoice.class, strCInvoiceID).getPriceList().isPriceIncludesTax()) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
 
@@ -221,13 +221,4 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
-  private boolean isPriceTaxInclusive(String invoiceId) {
-    if (OBDal.getInstance().get(Invoice.class, invoiceId).getPriceList().isPriceIncludesTax())
-      return true;
-    else
-      return false;
-
-  }
-
 }

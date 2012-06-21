@@ -173,7 +173,9 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     }
     // if taxRate field is changed
-    if (strChanged.equals("inpcTaxId") && isPriceTaxInclusive(strInvoiceId)) {
+    if (strChanged.equals("inpcTaxId")
+        && (OBDal.getInstance().get(Invoice.class, strInvoiceId).getPriceList()
+            .isPriceIncludesTax())) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
       BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, PricePrecision,
@@ -271,13 +273,5 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
         procedureName, parameters, null);
     return lineUnitAmount;
-  }
-
-  private boolean isPriceTaxInclusive(String orderId) {
-    if (OBDal.getInstance().get(Invoice.class, orderId).getPriceList().isPriceIncludesTax()) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }

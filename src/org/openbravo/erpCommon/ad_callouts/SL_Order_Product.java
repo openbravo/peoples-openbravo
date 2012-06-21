@@ -139,7 +139,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    if (isPriceTaxInclusive(strCOrderId)) {
+    if (OBDal.getInstance().get(Order.class, strCOrderId).getPriceList().isPriceIncludesTax()) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
 
@@ -271,13 +271,4 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
-  private boolean isPriceTaxInclusive(String orderId) {
-    if (OBDal.getInstance().get(Order.class, orderId).getPriceList().isPriceIncludesTax())
-      return true;
-    else
-      return false;
-
-  }
-
 }
