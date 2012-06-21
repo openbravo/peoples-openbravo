@@ -54,6 +54,7 @@ BEGIN --BODY
     IF(v_BaseAmount = 'LNA' OR v_BaseAmount = 'LNATAX') THEN
       v_TaxBaseAmount := p_netamt;
     ELSIF (v_BaseAmount ='TBA' OR v_BaseAmount = 'TBATAX') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@AlternateAndTaxInclusiveNotSupported@');
       v_TaxBaseAmount := p_AlternateTaxBaseAmt;
     END IF;
     IF (v_TaxBaseAmount IS NULL) THEN
