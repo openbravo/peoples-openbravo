@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -57,7 +58,7 @@ public class ClientModelComponent extends BaseTemplateComponent {
 
   }
 
-  // private static final Logger log = Logger.getLogger(ClientModelComponent.class);
+  private static final Logger log = Logger.getLogger(ClientModelComponent.class);
 
   @Override
   protected Template getComponentTemplate() {
@@ -194,6 +195,10 @@ public class ClientModelComponent extends BaseTemplateComponent {
   }
 
   public String getSource() {
-    return getParameter(SOURCE_PARAM);
+    final String source = getParameter(SOURCE_PARAM);
+    if ("".equals(source)) {
+      log.warn("Source parameter must be provided");
+    }
+    return source;
   }
 }
