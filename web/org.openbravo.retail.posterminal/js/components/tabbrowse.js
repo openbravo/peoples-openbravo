@@ -1,6 +1,6 @@
 /*global window, B, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -8,53 +8,76 @@
   OB.COMP.ButtonTabBrowse = OB.COMP.ButtonTab.extend({
     tabpanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
-    shownEvent: function (e) {
+    shownEvent: function(e) {
       this.options.keyboard.hide();
     }
   });
 
-  OB.COMP.BrowseCategories = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
-            {kind: OB.COMP.ListCategories}
-          ]}
-        ]}
-      );
+  OB.COMP.BrowseCategories = Backbone.View.extend({
+    tagName: 'div',
+    attributes: {
+      'id': 'edition',
+      'class': 'tab-pane'
+    },
+    initialize: function() {
+      var $child = $('<div/>');
+      $child.css({
+        'background-color': '#ffffff',
+        'color': 'black',
+        'padding': '5px'
+      });
+      this.ListCategories = new OB.COMP.ListCategories(this.options);
+      $child.append(this.ListCategories.$el);
+      this.$el.append($child);
     }
   });
 
-  OB.COMP.BrowseProducts = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; height: 500px; margin: 5px;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
-            {kind: OB.COMP.ListProducts}
-          ]}
-        ]}
-      );
+  OB.COMP.BrowseProducts = Backbone.View.extend({
+    tagName: 'div',
+    attributes: {
+      'style': 'overflow:auto; height: 500px; margin: 5px;'
+    },
+    initialize: function() {
+      var $child = $('<div/>');
+      $child.css({
+        'background-color': '#ffffff',
+        'color': 'black',
+        'padding': '5px'
+      });
+      this.listProducts = new OB.COMP.ListProducts(this.options);
+      $child.append(this.listProducts.$el);
+      this.$el.append($child);
     }
   });
 
-  OB.COMP.TabBrowse = OB.COMP.CustomView.extend({
-    createView: function () {
-      return (
-        {kind: B.KindJQuery('div'), attr: {'id': 'catalog', 'class': 'tab-pane'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-              {kind: OB.COMP.BrowseProducts}
-            ]},
-            {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-              {kind: OB.COMP.BrowseCategories}
-            ]}
-          ]}
-        ], init: function () {
-          this.context.ListCategories.categories.on('selected', function (category) {
-            this.context.ListProducts.loadCategory(category);
-          }, this);
-        }}
-      );
+  OB.COMP.TabBrowse = Backbone.View.extend({
+    tagName: 'div',
+    attributes: {
+      'id': 'catalog',
+      'class': 'tab-pane'
+    },
+    initialize: function() {
+      var $child = $('<div/>');
+      $child.addClass('row-fluid');
+
+      var $subChild = $('<div/>');
+      $subChild.addClass('span6');
+      var browseProd = new OB.COMP.BrowseProducts(this.options);
+      $subChild.append(browseProd.$el);
+
+      var $subChild2 = $('<div/>');
+      $subChild2.addClass('span6');
+      var browseCateg = new OB.COMP.BrowseCategories(this.options);
+      $subChild2.append(browseCateg.$el);
+
+      $child.append($subChild);
+      $child.append($subChild2);
+
+      this.$el.append($child);
+
+      browseCateg.listCategories.categories.on('selected', function(category) {
+        browseProd.ListProducts.loadCategory(category);
+      }, this);
     }
   });
 }());
