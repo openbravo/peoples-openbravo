@@ -57,7 +57,6 @@
       var c = _.extend({}, Backbone.Events);
       $("#containerWindow").empty().append((new OB.COMP.Login(c)).$el);
       c.trigger('domready');
-      OB.UTIL.showLoading(false);
     }
 
     function preRenderActions() {

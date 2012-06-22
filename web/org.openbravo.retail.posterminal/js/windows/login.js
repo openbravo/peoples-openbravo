@@ -142,6 +142,7 @@
                 content = B({kind: OB.COMP.LoginUserButton, attr: {'user': userName[i], 'userImage': image[i], 'userConnected': connected[i]}, content: [name[i]]}).$el;
                 target.append(content);
               }
+              OB.UTIL.showLoading(false);
               return true;
             }
             function setCompanyLogo(jsonCompanyLogo) {
