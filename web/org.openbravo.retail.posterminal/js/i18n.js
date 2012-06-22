@@ -15,7 +15,7 @@
         groupSeparator = OB.Format.defaultGroupingSymbol,
         groupInterval = OB.Format.defaultGroupingSize;
 
-    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupInterval);
+    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupSeparator);
 
     var formattedNumber = OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     if (isSymbolRight) {
@@ -33,7 +33,7 @@
         groupSeparator = OB.Format.defaultGroupingSymbol,
         groupInterval = OB.Format.defaultGroupingSize;
 
-    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupInterval);
+    maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupSeparator);
 
     var formattedNumber = OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     formattedNumber = formattedNumber + symbol;
