@@ -20,19 +20,14 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
@@ -50,6 +45,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -522,47 +518,17 @@ public abstract class CostingAlgorithm {
   }
 
   private void calculateWorkEffortCost(ProductionTransaction production) {
-    // List<Object> params = new ArrayList<Object>();
-    // params.add(production.getId());
-    // params.add(DalUtil.getId(OBContext.getOBContext().getUser()));
-    // CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST1", params, null);
 
-    // call the SP
-    CallableStatement ps = null;
     try {
       // first get a connection
       final Connection connection = OBDal.getInstance().getConnection();
-      // connection.createStatement().execute("CALL M_InOut_Create0(?)");
 
-      final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-      String statement;
-      if (obProps.getProperty("bbdd.rdbms") != null
-          && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        statement = "SELECT * FROM MA_PRODUCTION_COST(?, ?)";
-      } else {
-        statement = "CALL MA_PRODUCTION_COST(?, ?, ?)";
-      }
-      ps = connection.prepareCall(statement);
+      CostingData.calculateWorkEffortCost(connection, new DalConnectionProvider(),
+          production.getId(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
 
-      ps.setString(1, production.getId());
-      ps.setString(2, (String) DalUtil.getId(OBContext.getOBContext().getUser()));
-      if (obProps.getProperty("bbdd.rdbms") == null
-          || !obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        ps.registerOutParameter(3, Types.NVARCHAR);
-      }
-
-      ps.execute();
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       throw new IllegalStateException(e);
-    } finally {
-      try {
-        if (ps != null) {
-          ps.close();
-        }
-      } catch (SQLException e) {
-        // ignore
-      }
     }
 
   }
