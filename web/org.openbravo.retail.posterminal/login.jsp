@@ -80,6 +80,7 @@
 <script src="js/libs/bootstrap/js/bootstrap-alert.js"></script>
 
 <!-- Login application -->
+<script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script>
 <script src="js/builder.js"></script>
 <script src="js/datasource.js"></script>
 <script src="js/utilities.js"></script>

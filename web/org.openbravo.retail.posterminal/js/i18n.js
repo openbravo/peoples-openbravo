@@ -41,18 +41,8 @@
   };
 
   OB.I18N.formatDate = function (JSDate) {
-    if (OB && OB.Format && OB.Utilities) {
-      var dateFormat = OB.Format.date;
-      return OB.Utilities.Date.JSToOB(JSDate, dateFormat);
-    } else {
-      var curr_date = JSDate.getDate();
-      var curr_month = JSDate.getMonth();
-      var curr_year = JSDate.getFullYear();
-      var curr_hour = JSDate.getHours();
-      var curr_min = JSDate.getMinutes();
-      var curr_sec = JSDate.getSeconds();
-      return OB.UTIL.padNumber(curr_date, 2) + '/' + OB.UTIL.padNumber(curr_month + 1, 2) + '/' + curr_year;
-    }
+    var dateFormat = OB.Format.date;
+    return OB.Utilities.Date.JSToOB(JSDate, dateFormat);
   };
 
   OB.I18N.formatHour = function (d) {

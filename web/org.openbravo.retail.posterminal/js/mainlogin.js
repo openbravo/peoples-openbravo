@@ -19,6 +19,8 @@
       FIELDSEPARATOR: '$'
   };
 
+  OB.Format = window.OB.Format || {};
+
   OB.I18N = window.OB.I18N || {};
 
   OB.I18N.labels = {};
@@ -58,19 +60,21 @@
       OB.UTIL.showLoading(false);
     }
 
-    function checkPOSTerminal() {
+    function preRenderActions() {
       $.ajax({
         url: '../../org.openbravo.service.retail.posterminal.loginutils',
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         data: {
-          command: 'checkPOSTerminal',
+          command: 'preRenderActions',
           terminalName: OB.POS.paramTerminal
         },
         error: function (jqXHR, textStatus, errorThrown) {
           OB.UTIL.showError(errorThrown + ": " + this.url);
         },
         success: function (data, textStatus, jqXHR) {
+          OB.I18N.labels = data.response[0].data[1];
+          OB.Format = data.response[0].data[2];
           if ((data.response[0].data[0].strClient) !== 'none') {
             renderLoginPage();
           } else {
@@ -80,26 +84,7 @@
       });
     }
 
-    function getLoginLabels() {
-      $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.loginutils',
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'json',
-        data: {
-          command: 'getLoginLabels',
-          terminalName: OB.POS.paramTerminal
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          OB.UTIL.showError(errorThrown + ": " + this.url);
-        },
-        success: function (data, textStatus, jqXHR) {
-          OB.I18N.labels = data.response[0].data[0];
-          checkPOSTerminal();
-        }
-      });
-    }
-
-    getLoginLabels();
+    preRenderActions();
   });
 
 }());

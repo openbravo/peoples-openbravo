@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -20,6 +21,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonUtils;
@@ -64,37 +67,33 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
     JSONArray data = new JSONArray();
     JSONObject item = null;
     try {
-      if (command.equals("getLoginLabels")) {
+      if (command.equals("preRenderActions")) {
         int queryCount = 0;
-
-        item = new JSONObject();
-
-        String hqlLabel = "select message.searchKey, message.messageText "
-            + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
-        Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);
-
-        for (Object qryLabelObject : qryLabel.list()) {
-          queryCount++;
-          final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
-          item.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
-        }
-
-        data.put(item);
-
-        resp.put("startRow", 0);
-        resp.put("endRow", (queryCount == 0 ? 0 : queryCount - 1));
-        resp.put("totalRows", queryCount);
-        resp.put("data", data);
-
-        result.append("response", resp);
-        writeResult(response, result.toString());
-      } else if (command.equals("checkPOSTerminal")) {
-        int queryCount = 1;
 
         final String strClient = getClientOrgIds(terminalName)[0];
 
         item = new JSONObject();
         item.put("strClient", strClient);
+        queryCount++;
+        data.put(item);
+
+        item = new JSONObject();
+        String hqlLabel = "select message.searchKey, message.messageText "
+            + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
+        Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);
+        for (Object qryLabelObject : qryLabel.list()) {
+          final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
+          item.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
+        }
+        queryCount++;
+        data.put(item);
+
+        item = new JSONObject();
+        final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+        item.put("date", props.getProperty(KernelConstants.DATE_FORMAT_PROPERTY, "dd-MM-yyyy"));
+        item.put("dateTime",
+            props.getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss"));
+        queryCount++;
         data.put(item);
 
         resp.put("startRow", 0);
