@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ORG_ISINNATURALTREE">
-    <function name="AD_ORG_ISINNATURALTREE" type="NUMERIC">
+    <function name="AD_ORG_ISINNATURALTREE" type="VARCHAR">
       <parameter name="p_orga" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -27,14 +27,12 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  IF (AD_ISORGINCLUDED(p_orgA, p_orgB, p_clientid) <> -1) THEN
+  IF (AD_ISORGINCLUDED(p_orga, p_orgb, p_clientid) <> -1) THEN
+   RETURN 'Y';
+  ELSIF (AD_ISORGINCLUDED(p_orga, p_orgb, p_clientid) <> -1) THEN
    RETURN 'Y';
   ELSE
-    IF (AD_ISORGINCLUDED(p_orgB, p_orgA, p_clientid) <> -1) THEN
-      RETURN 'Y';
-    ELSE
-      RETURN 'N';
-    END IF;
+   RETURN 'N';
   END IF;
 END AD_ORG_ISINNATURALTREE
 ]]></body>
