@@ -4262,9 +4262,9 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--97266E0DF6A24EC0BC6845B9E305F307-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--97266E0DF6A24EC0BC6845B9E305F307-->  <NAME><![CDATA[Unit Price]]></NAME>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
-<!--97266E0DF6A24EC0BC6845B9E305F307-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
+<!--97266E0DF6A24EC0BC6845B9E305F307-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list. This price might be net or gross depending on its price list configuration.]]></HELP>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <AD_PROCESS_ID><![CDATA[23D1B163EC0B41F790CE39BF01DA320E]]></AD_PROCESS_ID>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--97266E0DF6A24EC0BC6845B9E305F307-->  <AD_REFERENCE_ID><![CDATA[800008]]></AD_REFERENCE_ID>
