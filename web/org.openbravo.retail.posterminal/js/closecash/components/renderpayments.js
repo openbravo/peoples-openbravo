@@ -18,9 +18,9 @@
                     this.model.get('currentBalance').toString()
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': ' border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
-                       {kind: OB.COMP.ButtonEdit.extend({rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), commercialName :this.model.get('commercialName'), _id :'edit_'+this.model.get('id'), me:this.me})},
-                       {kind: OB.COMP.ButtonOk.extend({ rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), _id :'ok_'+this.model.get('id'), me:this.me})},
-                       {kind: B.KindJQuery('div'), rowid :this.model.get('id'), id :'counted_'+this.model.get('id'), attr:{'searchKey':this.model.get('searchKey'), 'hidden':'hidden','style':'padding: 17px 110px 17px 0px; float: right; width: 10%'},
+                       {kind: OB.COMP.ButtonEdit.extend({rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), commercialName :this.model.get('commercialName'), _id :'edit_'+this.model.get('id'), me:this.me, attributes:{'button':'editbutton'}})},
+                       {kind: OB.COMP.ButtonOk.extend({ rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), _id :'ok_'+this.model.get('id'), me:this.me, attributes:{'button':'okbutton'}})},
+                       {kind: B.KindJQuery('div'), rowid :this.model.get('id'), id :'counted_'+this.model.get('id'), attr:{'searchKey':this.model.get('searchKey'), 'button':'countedbutton', 'hidden':'hidden','style':'padding: 17px 110px 17px 0px; float: right; width: 10%'},
                         content:['0']
                        }
                   ]}

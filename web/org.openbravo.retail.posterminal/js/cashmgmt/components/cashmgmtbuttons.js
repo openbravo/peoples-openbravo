@@ -9,10 +9,9 @@
 		_id: 'donebutton',
 	    iconright: 'icon-white',
 	    tagName: 'a',
-	    className: 'btnlink btnlink-black',
+	    className: 'btnlink btnlink-green',
 	    label: OB.I18N.getLabel('OBPOS_LblDone'),
-	    attributes: {'class': 'btnlink btnlink-gray','style': 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
-	        'href': '#modaldropdestinations', 'data-toggle': 'modal'},
+	    attributes: {'style': 'height:25px; width: 125px; font-size:150%; padding-top:15px;'},
 	    render: function () {
 		      this.$el.addClass('btnlink');
 		      if (this.icon) {

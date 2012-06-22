@@ -43,6 +43,30 @@
 	          renderLine: OB.COMP.RenderPayments.extend({me:me})
 	        }},
 	        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+             {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; float: left;'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding-right: 88px; float: right;' }, content: [
+                   {kind: OB.COMP.ButtonOk.extend({
+//                   rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), _id :'ok_'+this.model.get('id'), me:this.me
+                   me:me,
+                   clickEvent: function (e) {
+                    var me = this;
+                    $('a[button*="okbutton"]').hide();
+                    this.$el.css('visibility', 'hidden');
+                    this.me.options.modeldaycash.paymentmethods.each(function(elem){
+                    $('div[searchKey*="'+elem.get("_id")+'"]').text(elem.get('expected').toString());
+                    elem.set('counted',OB.DEC.add(0,elem.get('expected')));
+                    me.me.options.modeldaycash.set('totalCounted',OB.DEC.add(me.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
+                  });
+                    $('div[button*="countedbutton"]').show();
+                    //this.options.countcash.;
+                    //this.options.modeldaycash.ok();
+                  }
+                     })
+                   }
+                 ]}
+             ]}
+         ]},
+	        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
 	             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
 	                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 36%'}, content: [
 	                         OB.I18N.getLabel('OBPOS_ReceiptTotal')

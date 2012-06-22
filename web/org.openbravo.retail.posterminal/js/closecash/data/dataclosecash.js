@@ -1,4 +1,4 @@
-/*global B,_*/
+/*global B,_,$*/
 
 (function () {
 
@@ -17,9 +17,9 @@
         cashCloseInfo: me.modeldaycash.paymentmethods.serializeToJSON()
           }, function (data, message) {
             if (data && data.exception) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', ['444']));
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
             } else {
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', ['666']));
+              $('#modalFinishClose').modal('show');
             }
           });
         }, this);

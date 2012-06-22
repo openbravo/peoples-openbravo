@@ -80,6 +80,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/terminal",
         "components/modalprofile",
         "components/modallogout",
+        "components/modalcancel",
         "main",
         //
         "components/mockpayments",
@@ -122,13 +123,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
         "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
         "closecash/components/renderpaymentlines", "closecash/components/toolbarcountcash",
-        "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
-        "closecash/windows/closeinfo", "closecash/windows/tabcountcash",
-        "closecash/windows/tabpendingreceipts", "closecash/windows/tabpostprintclose",
-        "closecash/windows/closecash",
+        "closecash/components/modalfinishclose", "closecash/data/datamaster",
+        "closecash/model/daycash", "closecash/data/dataclosecash", "closecash/windows/closeinfo",
+        "closecash/windows/tabcountcash", "closecash/windows/tabpendingreceipts",
+        "closecash/windows/tabpostprintclose", "closecash/windows/closecash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
-        "../../org.openbravo.client.application/js/utilities/ob-utilities-date" };
+        "../../org.openbravo.client.application/js/utilities/ob-utilities-date"
+    };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

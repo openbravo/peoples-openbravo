@@ -14,7 +14,7 @@
           {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'}},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px;'}, content: [
-              {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
+              {kind: B.KindJQuery('a'), attr: {'data-toggle':'modal', 'href': '#modalCancel', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
                 OB.I18N.getLabel('OBPOS_LblCancel')
               ], init: function () {
                 this.$el.click(function(e) {
