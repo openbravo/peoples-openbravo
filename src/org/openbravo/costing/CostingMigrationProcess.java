@@ -353,7 +353,8 @@ public class CostingMigrationProcess implements Process {
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         BigDecimal cost = getLegacyProductCost(trx.getProduct());
         trx.setCostCalculated(true);
-        trx.setTransactionCost(cost);
+        trx.setTransactionCost(cost.multiply(trx.getMovementQuantity().abs()).setScale(
+            orgCurrency.getStandardPrecision().intValue()));
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
         if (!clientCurrency.getId().equals(orgCurrency.getId())) {
