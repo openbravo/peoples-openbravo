@@ -1347,16 +1347,6 @@ public class AdvancedQueryBuilder {
     return additionalProperties;
   }
 
-  public void clearCachedValues() {
-    joinClause = null;
-    whereClause = null;
-    orderByClause = null;
-    joinDefinitions.clear();
-    filterParameters.clear();
-    typedParameters.clear();
-    additionalProperties.clear();
-  }
-
   public void setAdditionalProperties(List<String> additionalProperties) {
     this.additionalProperties = additionalProperties;
   }

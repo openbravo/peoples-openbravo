@@ -469,14 +469,14 @@
                     M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                     AD_Org_ID, IsActive, Created, CreatedBy,
                     Updated, UpdatedBy, M_Product_ID, MovementQty,
-                    M_Locator_ID
+                    M_Locator_ID, C_UOM_ID
                   )
                   VALUES
                   (
                     NextNo, CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
                     CUR_PLineBOM.Org_ID, 'Y', now(), p_User,
                     now(), p_User, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
-                    CUR_PLineBOM.M_Locator_ID
+                    CUR_PLineBOM.M_Locator_ID, CUR_BOM_PRODUCT.C_UOM_ID
                   )
                   ;
               END LOOP;

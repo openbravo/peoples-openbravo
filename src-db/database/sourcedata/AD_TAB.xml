@@ -2712,6 +2712,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--242-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--242-->  <HQLORDERBYCLAUSE><![CDATA[accountingDate desc, accountingSchema.name]]></HQLORDERBYCLAUSE>
 <!--242-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--242-->  <EM_OBUIAPP_CAN_ADD><![CDATA[N]]></EM_OBUIAPP_CAN_ADD>
 <!--242-->  <EM_OBUIAPP_CAN_DELETE><![CDATA[N]]></EM_OBUIAPP_CAN_DELETE>

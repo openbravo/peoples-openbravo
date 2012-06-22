@@ -17,6 +17,9 @@
  ************************************************************************
  */
 
+OB = window.OB || {};
+OB.Utilities = window.OB.Utilities || {};
+
 // = Openbravo Date Utilities =
 // Defines utility methods related to handling date, incl. formatting.
 OB.Utilities.Date = {};

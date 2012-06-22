@@ -92,8 +92,7 @@ public class DefaultJsonDataService implements JsonDataService {
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-        final DataEntityQueryService queryService = createSetQueryService(parameters);
-
+        DataEntityQueryService queryService = createSetQueryService(parameters, true);
         queryService.setEntityName(entityName);
 
         // only do the count if a paging request is done and it has not been prevented
@@ -128,6 +127,9 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
+
+        queryService = createSetQueryService(parameters, false);
+        queryService.setEntityName(entityName);
 
         bobs = queryService.list();
 
@@ -180,7 +182,7 @@ public class DefaultJsonDataService implements JsonDataService {
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     long t = System.currentTimeMillis();
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
-    final DataEntityQueryService queryService = createSetQueryService(parameters);
+    final DataEntityQueryService queryService = createSetQueryService(parameters, false);
     queryService.setEntityName(entityName);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
@@ -204,7 +206,8 @@ public class DefaultJsonDataService implements JsonDataService {
     log.debug("Fetch took " + (System.currentTimeMillis() - t) + " ms");
   }
 
-  private DataEntityQueryService createSetQueryService(Map<String, String> parameters) {
+  private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
+      boolean forCountOperation) {
     final String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
@@ -291,10 +294,10 @@ public class DefaultJsonDataService implements JsonDataService {
         queryService.setFirstResult(startRow);
       }
     }
-    // do this after the getRowNumber above, the getRowNumber does not need the joins
-    queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-    queryService.setJoinAssociatedEntities(true);
-    queryService.clearCachedValues();
+    if (!forCountOperation) {
+      queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+      queryService.setJoinAssociatedEntities(true);
+    }
     return queryService;
   }
 
