@@ -94,7 +94,7 @@ public class CostingMigrationProcess implements Process {
         }
       }
 
-      // FIXME: Load functions in core
+      // FIXME: Remove when HQL based inserts are removed.
       OBDal.getInstance().registerSQLFunction("get_uuid",
           new StandardSQLFunction("get_uuid", new StringType()));
       OBDal.getInstance()

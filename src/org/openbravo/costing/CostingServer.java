@@ -92,7 +92,6 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
-      // OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
     }

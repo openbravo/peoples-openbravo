@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
@@ -40,6 +41,7 @@ import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class InventoryCountProcess implements Process {
+  private static final Logger log4j = Logger.getLogger(InventoryCountProcess.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -77,7 +79,7 @@ public class InventoryCountProcess implements Process {
       bundle.setResult(msg);
 
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
+      log4j.error(e);
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));

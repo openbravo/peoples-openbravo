@@ -244,7 +244,6 @@ public class FinancialUtils {
     }
     ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
     if (cr == null) {
-      // FIXME: improve message with context information.
       throw new OBException("@NoCurrencyConversion@ " + curFrom.getISOCode() + " @to@ "
           + curTo.getISOCode() + " @ForDate@ " + OBDateUtils.formatDate(date)
           + " @And@ @ACCS_AD_ORG_ID_D@ " + org.getIdentifier());

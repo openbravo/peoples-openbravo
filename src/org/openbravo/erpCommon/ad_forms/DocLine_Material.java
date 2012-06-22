@@ -88,9 +88,6 @@ public class DocLine_Material extends DocLine {
    * @param date
    *          String with the accounting date used in case there is no material transaction.
    * @param as
-   * @param conn
-   * @param con
-   * @return
    */
 
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {

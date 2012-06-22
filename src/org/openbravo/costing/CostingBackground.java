@@ -43,13 +43,6 @@ public class CostingBackground extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   private ProcessLogger logger;
 
-  // private ConnectionProvider connection;
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.service.db.DalBaseProcess#doExecute(org.openbravo.scheduling.ProcessBundle)
-   */
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
