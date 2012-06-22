@@ -27,16 +27,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.DocInvoice;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.financialmgmt.tax.TaxRegisterTypeLines;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateVatRegisters extends HttpSecureAppServlet {
@@ -147,9 +153,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       }
 
       // Select all active Register Type for create the Tax Registers
-      TaxRegisterType[] taxregistertypes = TaxRegisterType
-          .select(this, vars.getClient(), Utility.getInStrSet(new OrganizationStructureProvider()
-          .getNaturalTree(taxpayment[0].adOrgId)));
+      TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient(), Utility
+          .getInStrSet(new OrganizationStructureProvider().getNaturalTree(taxpayment[0].adOrgId)));
       log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
           + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
           + strGeneratePayment);
@@ -158,14 +163,21 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       for (TaxRegisterType taxRegisterType : taxregistertypes) {
         String strSequence = SequenceIdData.getUUID();
         log4j.info("Sequence: " + strSequence);
-
         try {
+          OBContext.setAdminMode(true);
+          // Check if the register types have document type
+          OBError msg = validateTaxRegisterType(taxRegisterType);
+          if (msg != null) {
+            return msg;
+          }
           TaxRegister.insert(this, taxpayment[0].adClientId, taxpayment[0].adOrgId, strSequence,
               strTaxpaymentID, taxRegisterType.cTaxregisterTypeId, "0",
               taxRegisterType.registername, strUser, strUser);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           return myMessage;
+        } finally {
+          OBContext.restorePreviousMode();
         }
       }
       // For every TaxRegister i select the invoices with a specific
@@ -347,6 +359,22 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private OBError validateTaxRegisterType(TaxRegisterType taxRegisterType) {
+    OBError myMessage = new OBError();
+    OBCriteria<TaxRegisterTypeLines> obCriteria = OBDal.getInstance().createCriteria(
+        TaxRegisterTypeLines.class);
+    obCriteria.add(Restrictions.eq(TaxRegisterTypeLines.PROPERTY_TAXREGISTERTYPE + ".id",
+        taxRegisterType.cTaxregisterTypeId));
+    obCriteria.add(Restrictions.isNull(TaxRegisterTypeLines.PROPERTY_DOCUMENTTYPE));
+    if (obCriteria.list().size() > 0) {
+      myMessage.setTitle("Error");
+      myMessage.setType("Error");
+      myMessage.setMessage(OBMessageUtils.messageBD("DocumentTypeInTaxRegisterType"));
+      return myMessage;
+    }
+    return null;
   }
 
   public String getServletInfo() {

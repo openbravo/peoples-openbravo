@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2009 Openbravo SLU
+* All portions are Copyright (C) 2008-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -57,6 +57,11 @@ BEGIN
   IF AD_IsJavaWord(:new.Name)='Y' THEN
     RAISE_APPLICATION_ERROR(-20000, '@NotAllowedColumnName@ "'||:new.name||'" @ReservedJavaWord@') ;
   END IF;
+  
+  IF AD_IsJavaScriptWord(:new.ColumnName)='Y' THEN
+    RAISE_APPLICATION_ERROR(-20000, '@NotAllowedDBColumnName@ "'||:new.ColumnName||'" @ReservedJavaWord@') ;
+  END IF;
+
   
   /**
   * Create Sequence for DocumentNo and Value columns

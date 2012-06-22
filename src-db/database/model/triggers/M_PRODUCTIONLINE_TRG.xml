@@ -29,7 +29,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -57,7 +57,7 @@ BEGIN
     OR p.Posted='Y') ;
   IF (v_RO > 0) THEN
     IF (DELETING OR INSERTING) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
     IF (UPDATING) THEN
       IF (:old.M_ProductionPlan_ID <> :new.M_ProductionPlan_ID
@@ -69,7 +69,7 @@ BEGIN
           OR :old.quantityorder <> :new.quantityorder
           OR :old.C_UOM_ID <> :new.C_UOM_ID
           OR :old.Productiontype <> :new.Productiontype) THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
     END IF;
   ELSIF (v_RO = 0) THEN

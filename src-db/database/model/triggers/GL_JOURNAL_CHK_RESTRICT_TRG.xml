@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2006 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -40,20 +40,20 @@ BEGIN
     OR(COALESCE(:old.CONTROLAMT, 0) <> COALESCE(:new.CONTROLAMT, 0))
     OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))))
-    THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_ACCTSCHEMA_ID, '0') <> COALESCE(:new.C_ACCTSCHEMA_ID, '0')) OR(COALESCE(:old.GL_CATEGORY_ID, '0') <> COALESCE(:new.GL_CATEGORY_ID, '0')) OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.')))) THEN
-   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
  END IF;
  IF(DELETING) THEN
   IF(:old.Processed='Y') THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
  END IF;
  IF(INSERTING) THEN
   IF(:NEW.Processed='Y') THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
  END IF;
 END GL_JOURNAL_CHK_RESTRICT_TRG

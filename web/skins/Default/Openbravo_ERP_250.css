@@ -2869,6 +2869,9 @@ table.FieldGroup {
   color: #404040;
 }
 
+.LabelTextAfterCheckbox {
+}
+
 .Label_ReadOnly_Text {
   font-size: 8pt;
   font-weight: bold;
@@ -3334,11 +3337,13 @@ table.MessageBoxERROR .MessageBox_Right {
 table.MessageBoxERROR .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxERROR .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxERROR td.MessageBox_BottomRight {
@@ -3510,11 +3515,13 @@ table.MessageBoxINFO .MessageBox_Right {
 table.MessageBoxINFO .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxINFO .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxINFO td.MessageBox_BottomRight {
@@ -3686,11 +3693,13 @@ table.MessageBoxSUCCESS .MessageBox_Right {
 table.MessageBoxSUCCESS .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxSUCCESS .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxSUCCESS td.MessageBox_BottomRight {
@@ -3862,11 +3871,13 @@ table.MessageBoxWARNING .MessageBox_Right {
 table.MessageBoxWARNING .MessageBox_RightTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxWARNING .MessageBox_LeftTrans {
   width: 9px;
   height: 100%;
+  vertical-align: top;
 }
 
 table.MessageBoxWARNING td.MessageBox_BottomRight {
@@ -4680,7 +4691,7 @@ td.DimensionUDArrows_ContentCell {
   font-size: 8pt;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4692,7 +4703,7 @@ td.DimensionUDArrows_ContentCell {
   color: #303030;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4704,7 +4715,7 @@ td.DimensionUDArrows_ContentCell {
   background-color: #FFFFFF;
   color: Red;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4715,7 +4726,7 @@ td.DimensionUDArrows_ContentCell {
   font-size: 8pt;
   background-color: #FFFFFF;
   padding: 1px;
-  padding-left: 4px;
+  padding-left: 4px; /*~RTL   padding-right: 4px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4729,7 +4740,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4743,7 +4754,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4757,7 +4768,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -4771,7 +4782,7 @@ td.DimensionUDArrows_ContentCell {
   background-image: url(Common/TextBox/textField.background.focused.png);
   background-color: #D9F0FB !important;
   padding: 0px;
-  padding-left: 3px;
+  padding-left: 3px; /*~RTL   padding-right: 3px; */
   height: 17px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
@@ -5697,9 +5708,9 @@ table.Login_ToolBar_bg {
   overflow: auto;
   height: 88px;
   bottom: 0;
-  left: 80px;
+  left: 80px; /*~RTL   right: 80px; */
   margin-bottom: 72px;
-  margin-right: 64px;
+  margin-right: 64px; /*~RTL   margin-left: 64px; */
 
 }
 
@@ -6001,6 +6012,10 @@ table.Main_ContentPane_LeftTabsBar {
   width: 100%;
 }
 
+.Main_ContentPane_Right_Container {
+  background-color: #505050;
+}
+
 .Main_ContentPane_Right {
   border: 0px none;
   text-indent: 0px;
@@ -6010,6 +6025,10 @@ table.Main_ContentPane_LeftTabsBar {
   height: 100%;
   width: 8px;
   border-collapse: collapse;
+  background-color: #505050;
+}
+
+.Main_ContentPane_Left_Container {
   background-color: #505050;
 }
 

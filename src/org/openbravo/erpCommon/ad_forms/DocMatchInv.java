@@ -56,8 +56,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -228,6 +228,11 @@ public class DocMatchInv extends AcctServer {
     // Calculate Difference amount in schema currency
     bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
         as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
+
+    if (ZERO.compareTo(bdCost) == 0) {
+      strMessage = "@MatchedInvIsZero@";
+      setStatus(STATUS_DocumentDisabled);
+    }
 
     dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
         costCurrency.getId(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),

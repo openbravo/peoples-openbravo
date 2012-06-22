@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -49,6 +49,7 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
@@ -249,7 +250,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
               || limitation == LicenseRestriction.MODULE_EXPIRED
               || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-              || limitation == LicenseRestriction.HB_NOT_ACTIVE || !correctSystemStatus) {
+              || limitation == LicenseRestriction.HB_NOT_ACTIVE
+              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM || !correctSystemStatus) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {
@@ -959,6 +961,29 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars,
+      String path, String tabTitle) throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: PopUp Response");
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/base/secureApp/PopUp_Response").createXmlDocument();
+    JSONObject js = new JSONObject();
+    try {
+      js.put("tabTitle", tabTitle);
+      js.put("addToRecents", false);
+    } catch (Exception e) {
+      js = null;
+    }
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
+    xmlDocument.setParameter("details", js == null ? "var newTabParams={};" : "var newTabParams="
+        + js.toString() + ";");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

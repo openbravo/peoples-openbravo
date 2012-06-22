@@ -88,6 +88,9 @@ BEGIN
     THEN
         UPDATE AD_Process_Trl
              SET IsTranslated = 'N',
+             name = :NEW.NAME,
+             description = :NEW.DESCRIPTION,
+             help = :NEW.HELP,
             Updated = now()
          WHERE AD_Process_ID = :NEW.AD_Process_ID;
 

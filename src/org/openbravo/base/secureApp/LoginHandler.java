@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2012 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -27,6 +27,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
@@ -90,8 +91,7 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
-
-          checkLicenseAndGo(res, vars, strUserAuth, sessionId, doRedirect);
+          checkLicenseAndGo(res, vars, strUserAuth, strUser, sessionId, doRedirect);
 
         } catch (AuthenticationException e) {
 
@@ -117,7 +117,7 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth, String sessionId, boolean doRedirect) throws IOException,
+      String strUserAuth, String username, String sessionId, boolean redirect) throws IOException,
       ServletException {
     OBContext.setAdminMode();
     try {
@@ -138,10 +138,17 @@ public class LoginHandler extends HttpBaseServlet {
         action = "../security/Login_FS.html";
       }
 
+      boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
+
+      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
+          forceNamedUserLogin);
+      boolean doRedirect = redirect
+          || (limitation == LicenseRestriction.NO_RESTRICTION && forceNamedUserLogin);
+
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      switch (ak.checkOPSLimitations(sessionId)) {
+      switch (limitation) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED",
             vars.getLanguage());
@@ -199,6 +206,22 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(myPool, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
         updateDBSession(sessionId, false, "IOBPS");
         goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html", doRedirect);
+        return;
+      case CONCURRENT_NAMED_USER:
+        msg = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER", vars.getLanguage());
+        title = Utility.messageBD(myPool, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
+        log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
+        vars.clearSession(true);
+        goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html",
+            doRedirect);
+
+        return;
+      case ON_DEMAND_OFF_PLATFORM:
+        msg = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
+        title = Utility.messageBD(myPool, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
+        log4j.warn("On demand off platform");
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
       case NO_RESTRICTION:
         break;
       }
@@ -232,6 +255,7 @@ public class LoginHandler extends HttpBaseServlet {
         switch (ak.checkNewWSCall(false)) {
         case NO_RESTRICTION:
         case EXPIRED:
+        case EXPIRED_MODULES:
           break;
         case EXCEEDED_WARN_WS_CALLS:
           msg = Utility.messageBD(myPool, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)
@@ -329,6 +353,9 @@ public class LoginHandler extends HttpBaseServlet {
         jsonMsg.put("messageTitle", title);
         jsonMsg.put("messageText", msg);
 
+        if ("Confirmation".equals(msgType)) {
+          jsonMsg.put("command", "FORCE_NAMED_USER");
+        }
         response.setContentType("application/json;charset=UTF-8");
         final PrintWriter out = response.getWriter();
         out.print(jsonMsg.toString());

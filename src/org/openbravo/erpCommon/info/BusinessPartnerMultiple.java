@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,6 +85,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String action = vars.getStringParameter("action");
       log4j.debug("command DATA - action: " + action);
 
+      if (vars.getStringParameter("clear").equals("true")) {
+        vars.removeSessionValue("BusinessPartnerMultiple.key");
+        vars.removeSessionValue("BusinessPartnerMultiple.name");
+      }
       String strKey = vars.getGlobalVariable("inpKey", "BusinessPartnerMultiple.key", "");
       String strName = vars.getGlobalVariable("inpName", "BusinessPartnerMultiple.name", "");
       String strContact = vars.getStringParameter("inpContact");

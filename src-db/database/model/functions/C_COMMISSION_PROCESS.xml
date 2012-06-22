@@ -213,19 +213,23 @@
           -- Invoice Basis
         ELSIF(v_DocBasisType='I') THEN
           IF(v_ListDetails='Y') THEN
-            v_Cmd:='SELECT h.C_Currency_ID, l.LineNetAmt, l.QtyInvoiced, '
+            v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
+            || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
             || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
-            || 'FROM C_Invoice h, C_InvoiceLine l LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
-            || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
-            || ' AND h.DocStatus IN (''CL'',''CO'')'
+            || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+            || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+            || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
+            || 'WHERE h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
             || ' AND h.AD_Client_ID = '':1'''
             || ' AND h.DateInvoiced >= to_date('':2'')'
             || ' AND h.DateInvoiced < to_date('':3'') +1';
           ELSE
-            v_Cmd:='SELECT h.C_Currency_ID, SUM(l.LineNetAmt) AS Amt, SUM(l.QtyInvoiced) AS Qty, '
+            v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
+            || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
             || 'NULL, NULL, NULL, NULL '
-            || 'FROM C_Invoice h, C_InvoiceLine l '
+            || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+            || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id '
             || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''

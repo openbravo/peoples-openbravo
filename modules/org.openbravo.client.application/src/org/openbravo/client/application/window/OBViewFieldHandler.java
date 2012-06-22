@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.reference.FKSearchUIDefinition;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Element;
@@ -1060,6 +1061,9 @@ public class OBViewFieldHandler {
     }
 
     public boolean getReadOnly() {
+      if (field.getProperty() != null && field.getProperty().contains(".")) {
+        return true;
+      }
       return getParentProperty() || field.isReadOnly();
     }
 
@@ -1133,6 +1137,9 @@ public class OBViewFieldHandler {
     }
 
     public String getName() {
+      if (field.getProperty() != null) {
+        return field.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
+      }
       return property.getName();
     }
 
@@ -1197,12 +1204,12 @@ public class OBViewFieldHandler {
     }
 
     public boolean getRequired() {
-      // booleans are never required as their input only allows 2 values
-      if (property.isBoolean()) {
+      if (field.getProperty() != null && field.getProperty().contains(DalUtil.DOT)) {
         return false;
       }
 
-      if (!getUpdatable()) {
+      // booleans are never required as their input only allows 2 values
+      if (property.isBoolean()) {
         return false;
       }
 

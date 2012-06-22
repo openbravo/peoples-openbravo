@@ -145,6 +145,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
               widgetQuery.setParameterList(namedParam, (Collection<?>) value);
             } else if (value instanceof Object[]) {
               widgetQuery.setParameterList(namedParam, (Object[]) value);
+            } else if (value instanceof String
+                && isDate(namedParam, widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList())) {
+              widgetQuery.setParameter(namedParam, convertToDate((String) value));
             } else {
               widgetQuery.setParameter(namedParam, value);
             }
@@ -179,8 +182,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
               if (value instanceof Date) {
                 value = xmlDateFormat.format(value);
               }
-
-              data.put(queryAliases[i], value);
+              if (!isExport) {
+                data.put(queryAliases[i], value);
+              } else {
+                data.put(QueryListUtils.getColumnLabel(column), value);
+              }
             }
           }
         }
@@ -193,6 +199,34 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       return result;
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  // Converts and object from String to Date
+  private Date convertToDate(String value) {
+    DateDomainType domainType = new DateDomainType();
+    return (Date) domainType.createFromString(value);
+  }
+
+  // Check if the reference of a parameter is a Date
+  private boolean isDate(String paramName, List<Parameter> parameterList) {
+    Parameter parameterToCheck = null;
+    for (Parameter p : parameterList) {
+      if (p.getDBColumnName().equals(paramName)) {
+        parameterToCheck = p;
+        break;
+      }
+    }
+    if (parameterToCheck == null) {
+      return false;
+    } else {
+      DomainType domainType = ModelProvider.getInstance()
+          .getReference(parameterToCheck.getReference().getId()).getDomainType();
+      if (domainType.getClass().equals(DateDomainType.class)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -251,6 +285,13 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       for (OBCQL_QueryColumn column : columns) {
         if (column.isCanBeFiltered()) {
           String value = parameters.get(column.getDisplayExpression());
+          if (column.getReference().getName().equals("YesNo") && value != null) {
+            if (value.equals("true")) {
+              value = "Y";
+            } else {
+              value = "N";
+            }
+          }
           String whereClause = " 1=1 ";
           if (value != null) {
             whereClause = getWhereClause(value, column, xmlDateFormat);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,7 +108,7 @@ class AuditTrailDeletedRecords {
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain information for all columns
         sql.append(", ");
-        sql.append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE))\n");
+        sql.append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE), TO_CHAR(OLD_TEXT))\n");
         sql.append("  FROM AD_AUDIT_TRAIL\n");
         sql.append(" WHERE AD_TABLE_ID='").append(tab.getTable().getId()).append("'\n");
         sql.append("   AND AD_COLUMN_ID='").append(col.getId()).append("'\n");

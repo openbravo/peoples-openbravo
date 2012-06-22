@@ -46,7 +46,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
   public void testUpdate() throws Exception {
     String description = "";
     {
-      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", "_identifier",
+      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", JsonConstants.IDENTIFIER,
           "GET", 200);
       description = jsonCountryObject.getString("description");
       jsonCountryObject.put("description", description + "T");
@@ -54,7 +54,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
       final JSONObject jsonResult = new JSONObject();
       jsonResult.put(JsonConstants.DATA, jsonCountryObject);
       final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country",
-          jsonResult.toString(), 200, "_identifier", "PUT");
+          jsonResult.toString(), 200, JsonConstants.IDENTIFIER, "PUT");
       assertEquals(
           JsonConstants.RPCREQUEST_STATUS_SUCCESS,
           resultJsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
@@ -64,7 +64,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
       assertEquals(1, jsonResultArray.length());
     }
     {
-      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", "_identifier",
+      final JSONObject jsonCountryObject = doRequest(URL_PART + "/Country/100", JsonConstants.IDENTIFIER,
           "GET", 200);
       assertEquals(description + "T", jsonCountryObject.getString("description"));
     }
@@ -89,7 +89,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
       final JSONObject jsonResult = new JSONObject();
       jsonResult.put(JsonConstants.DATA, jsonCountryObject);
       final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country",
-          jsonResult.toString(), 200, "_identifier", "POST");
+          jsonResult.toString(), 200, JsonConstants.IDENTIFIER, "POST");
 
       assertEquals(
           JsonConstants.RPCREQUEST_STATUS_SUCCESS,
@@ -107,7 +107,7 @@ public class JsonUpdateRestTest extends JsonRestTest {
     }
     {
       final JSONObject jsonResultDeleteObject = doRequest(URL_PART + "/Country/" + newId,
-          "_identifier", "DELETE", 200);
+          JsonConstants.IDENTIFIER, "DELETE", 200);
       assertEquals(
           JsonConstants.RPCREQUEST_STATUS_SUCCESS,
           jsonResultDeleteObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(

@@ -665,6 +665,15 @@ isc.OBStandardView.addProperties({
       this.lastFocusedItem = null;
     }
 
+    // Enable the shortcuts of the form and grid view
+    // See issue 20651 (https://issues.openbravo.com/view.php?id=20651)
+    if (this.viewForm && this.viewForm.enableShortcuts) {
+      this.viewForm.enableShortcuts();
+    }
+    if (this.viewGrid && this.viewGrid.enableShortcuts) {
+      this.viewGrid.enableShortcuts();
+    }
+
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
       object = this.viewForm.getFocusItem();
       functionName = 'focusInItem';
@@ -1008,7 +1017,9 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function (record, preventFocus, focusFieldName) {
-
+    var rowNum,
+    // at this point the time fields of the record are formatted in local time
+    localTime = true;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -1024,8 +1035,8 @@ isc.OBStandardView.addProperties({
 
       // also handle the case that there are unsaved values in the grid
       // show them in the form
-      var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName);
+      rowNum = this.viewGrid.getRecordIndex(record);
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
     }
   },
 
@@ -1319,7 +1330,7 @@ isc.OBStandardView.addProperties({
     // added check on tab as initially it is not set
     if (this.isRootView && tab) {
       // update the document title
-      document.title = 'Openbravo - ' + tab.title;
+      document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
     }
   },
 
@@ -1480,7 +1491,7 @@ isc.OBStandardView.addProperties({
     var msg, dialogTitle, view = this,
         deleteCount, callback;
 
-    if (!this.readOnly) {
+    if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
       if (!autoSaveDone) {
         var actionObject = {
@@ -1883,11 +1894,28 @@ isc.OBStandardView.addProperties({
   },
 
   convertContextValue: function (value, type) {
-    var isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+    var isTime;
+    // if a string is received, it is converted to a date so that the function
+    //   is able to return its UTC time in the HH:mm:ss format
+    if (isc.isA.String(value) && value.length > 0 && type && isc.SimpleType.getType(type).inheritsFrom === 'time') {
+      value = this.convertToDate(value);
+    }
+    isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
     if (isTime) {
       return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
     }
     return value;
+  },
+
+  convertToDate: function (stringValue) {
+    var today = new Date(),
+        dateValue = isc.Time.parseInput(stringValue);
+    // Only the time is relevant. In order to be able to convert it from UTC to local time
+    //   properly the date value should be today's date
+    dateValue.setYear(today.getFullYear());
+    dateValue.setMonth(today.getMonth());
+    dateValue.setDate(today.getDate());
+    return dateValue;
   },
 
   getPropertyDefinition: function (property) {
@@ -1973,10 +2001,10 @@ isc.OBStandardView.addProperties({
     return result;
   },
 
-  setFieldFormProperties: function (fld) {
+  setFieldFormProperties: function (fld, isGridField) {
     var onChangeFunction;
 
-    if (fld.displayed === false) {
+    if (fld.displayed === false && !isGridField) {
       fld.visible = false;
       fld.alwaysTakeSpace = false;
     }
@@ -2101,8 +2129,8 @@ isc.OBStandardView.addProperties({
       fld.escapeHTML = (fld.escapeHTML === false ? false : true);
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
-      this.setFieldFormProperties(fld.editorProperties);
-
+      //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
       }
@@ -2122,7 +2150,7 @@ isc.OBStandardView.addProperties({
       }
 
       if (fld.fkField) {
-        fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.displayField = fld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
         fld.valueField = fld.name;
       }
 

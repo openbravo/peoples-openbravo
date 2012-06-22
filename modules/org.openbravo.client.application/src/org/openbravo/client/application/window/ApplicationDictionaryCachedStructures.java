@@ -90,6 +90,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
     Table table = OBDal.getInstance().get(Table.class, tableId);
     Hibernate.initialize(table);
+    Hibernate.initialize(table.getADColumnList());
     tableMap.put(tableId, table);
     return table;
   }
@@ -148,9 +149,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   private void initializeReference(Reference reference) {
+    Hibernate.initialize(reference.getADReferencedTableList());
     for (ReferencedTable t : reference.getADReferencedTableList()) {
       Hibernate.initialize(t);
     }
+    Hibernate.initialize(reference.getOBUISELSelectorList());
     for (Selector s : reference.getOBUISELSelectorList()) {
       Hibernate.initialize(s);
       SelectorField displayField = s.getDisplayfield();

@@ -12,7 +12,7 @@
     * under the License. 
     * The Original Code is Openbravo ERP. 
     * The Initial Developer of the Original Code is Openbravo SLU 
-    * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU 
     * All Rights Reserved. 
     * Contributor(s):  ______________________________________.
     ************************************************************************
@@ -177,8 +177,8 @@
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN id.c_project_id ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
-                  THEN C_CURRENCY_CONVERT(il.linenetamt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)*C_Invoice_Percentage_Paid(id.C_Invoice_ID) 
-                  ELSE C_CURRENCY_CONVERT(ila.amt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID)*C_Invoice_Percentage_Paid(id.C_Invoice_ID) END AS amount
+                  THEN C_CURRENCY_CONVERT(il.linenetamt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID) * (CASE WHEN id.grandtotal=0 THEN 0 ELSE (id.totalpaid/id.grandtotal) END) 
+                  ELSE C_CURRENCY_CONVERT(ila.amt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID) * (CASE WHEN id.grandtotal=0 THEN 0 ELSE (id.totalpaid/id.grandtotal) END) END AS amount
            FROM C_Invoice id, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
              M_Product p
            WHERE id.C_Invoice_ID = il.C_Invoice_ID

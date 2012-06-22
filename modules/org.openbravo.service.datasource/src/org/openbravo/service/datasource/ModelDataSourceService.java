@@ -44,7 +44,7 @@ import org.openbravo.service.json.JsonUtils;
 public class ModelDataSourceService extends BaseDataSourceService {
 
   private static final String PROPERTY_FIELD = "inpproperty";
-  private static final String DATASOURCE_FIELD = "modelProperty";
+  private static final String DATASOURCE_FIELD = "property";
   private static final String FORM_FIELD = "inpadTableId";
 
   private static final long serialVersionUID = 1L;

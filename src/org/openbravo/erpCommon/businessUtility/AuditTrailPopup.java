@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1084,7 +1084,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   /**
    * Helper function which returns the old value from a audit row. Essentially
-   * coalesce(old_char,old_nchar,old_date,old_number)
+   * coalesce(old_char,old_nchar,old_date,old_number, old_text)
    * 
    * @param row
    *          audit record
@@ -1102,12 +1102,15 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if (result == null && row.getOldNumber() != null) {
       result = String.valueOf(row.getOldNumber());
     }
+    if (result == null && row.getOldText() != null) {
+      result = row.getOldText();
+    }
     return result;
   }
 
   /**
    * Helper function which returns the new value from a audit row. Essentially coalesce(new_char,
-   * new_nchar, new_date, new_number)
+   * new_nchar, new_date, new_number, new_text)
    * 
    * @param row
    *          audit record
@@ -1124,6 +1127,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     if (result == null && row.getNewNumber() != null) {
       result = String.valueOf(row.getNewNumber());
+    }
+    if (result == null && row.getNewText() != null) {
+      result = row.getNewText();
     }
     return result;
   }

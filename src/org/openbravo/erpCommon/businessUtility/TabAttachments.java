@@ -112,7 +112,8 @@ public class TabAttachments extends HttpSecureAppServlet {
             response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
             writer.write("<HTML><BODY><script type=\"text/javascript\">");
-            writer.write("top." + buttonId + ".callback(" + obj.toString() + ");");
+            writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
+                + ");");
             writer.write("</SCRIPT></BODY></HTML>");
           } finally {
             OBContext.restorePreviousMode();

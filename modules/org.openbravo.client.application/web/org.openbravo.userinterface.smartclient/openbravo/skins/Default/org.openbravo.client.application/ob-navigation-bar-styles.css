@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@
 ============================================================*/
 .OBNavBarToolStrip {
   margin-left: 4px;
+  margin-right: 0px;
   height: 26px;
   background-color: #FFFFFF;
 }
@@ -42,9 +43,10 @@
 .OBNavBarImgButtonSelectedFocusedDown,
 .OBNavBarImgButtonSelectedOver,
 .OBNavBarImgButtonSelectedFocusedOver {
-	cursor: pointer;
-	font-size: 11px;
+  cursor: pointer;
+  font-size: 11px;
   text-align: center;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBNavBarImgButtonDisabled,
@@ -92,11 +94,12 @@
 }
 
 .OBNavBarComponent:hover {
-  border-top: 1px solid #72ab10;
-  border-bottom: 1px solid #72ab10;
-  border-left: 1px solid #72ab10;
+  border-width: 1px 0px 1px 1px;
+  border-style: solid;
+  border-color: #72ab10;
 
   margin-left: -1px;
+  margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;
@@ -110,10 +113,12 @@
 }
 
 .OBNavBarComponentSelected {
-  border-top: 1px solid #72ab10;
-  border-left: 1px solid #72ab10;
+  border-width: 1px 0px 0px 1px;
+  border-style: solid;
+  border-color: #72ab10;
 
   margin-left: -1px;
+  margin-right: 0px;
 
   background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;

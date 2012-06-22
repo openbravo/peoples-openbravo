@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2009 Openbravo SLU 
+* All portions are Copyright (C) 2001-2012 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -39,8 +39,6 @@
   <PARAMETER id="inpElementValueIdFrom_DES" name="inpElementValueIdFrom_DES" attribute="value"/>
   <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
 
-  <PARAMETER id="parameterHide" name="all" default="1"/>
-  <PARAMETER id="paramHideMatched" name="paramHide0" boolean="checked" withId="parameterHide" default="0"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>

@@ -17,7 +17,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -50,7 +50,7 @@ BEGIN
       AND parent.C_ACCTSCHEMA_ID = node.C_ACCTSCHEMA_ID;
 
       IF (v_EqualAcctSchema=0) THEN
-        RAISE_APPLICATION_ERROR(-20517,'Wrong account schema parent');
+        RAISE_APPLICATION_ERROR(-20000,'@20517@');
       END IF;
     END IF;
   END IF;
@@ -62,7 +62,7 @@ BEGIN
     WHERE AD_Org.AD_Org_ID=:new.NODE_ID;
     
     IF (v_IsReady='Y') THEN
-        RAISE_APPLICATION_ERROR(-20543,'A ready organization can not be moved into the tree structure');
+        RAISE_APPLICATION_ERROR(-20000,'@20543@');
     END IF;
     
   END IF;

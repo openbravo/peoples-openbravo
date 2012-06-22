@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.lang.reflect.Field;
+
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Column;
@@ -123,8 +125,14 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
     }
 
     final BaseOBObjectDef obObject = (BaseOBObjectDef) value;
+
     // note object equalness is required!
-    if (getReferedEntity(property) != null && obObject.getEntity() != getReferedEntity(property)) {
+    // use a special way to get the entity name
+    // to prevent proxy loading
+    final String entityName = getEntityName(obObject);
+    final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+
+    if (getReferedEntity(property) != null && entity != getReferedEntity(property)) {
       final ValidationException ve = new ValidationException();
       ve.addMessage(property,
           "Property " + property + " only allows entity: " + getReferedEntity(property)
@@ -132,6 +140,22 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
       throw ve;
     }
     return;
+  }
+
+  // Note can't use DalUtil.getEntityName as then we get compile time
+  // dependencies on generated classes.
+  private String getEntityName(BaseOBObjectDef o) {
+    if (o instanceof org.hibernate.proxy.HibernateProxy) {
+      try {
+        final Class<?> clz = ((org.hibernate.proxy.HibernateProxy) o).getHibernateLazyInitializer()
+            .getPersistentClass();
+        final Field fld = clz.getField("ENTITY_NAME");
+        return (String) fld.get(null);
+      } catch (final Exception e) {
+        throw new OBException(e);
+      }
+    }
+    return o.getEntity().getName();
   }
 
   /**

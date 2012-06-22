@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -198,9 +198,12 @@ function updateDiffinTable(element){
               var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
               temp.innerHTML = newRows;
               tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-              temp.parentNode.removeChild(temp);
+              if (temp.parentNode) {
+                temp.parentNode.removeChild(temp);
+              }
+            } else {
+              tableBody.innerHTML = aux;
             }
-            tableBody.innerHTML = aux;
             
             updateAll();
             updateTotal();
@@ -438,7 +441,7 @@ function updateDiffinTable(element){
             <tr>
               <td class="Radio_Check_ContentCell" colspan="3">
                 <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>
-                <span class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments for alternative payment methods</label></span>
+                <span class="TitleCell LabelText"><label for="paramAlternativePaymentMethod" class="LabelTextAfterCheckbox">Show payments for alternative payment methods</label></span>
               </td>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>

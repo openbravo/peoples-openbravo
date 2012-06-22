@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,8 +34,8 @@
           p.value as searchkey, p.name as name,
           ad_column_identifier('C_Uom', p.c_uom_id, ?) as unit,
           w.ad_org_id, sd.m_product_id, sum(sd.qtyonhand) as qty,
-          c_currency_convert(c.cost, ?, ?, to_date(now()), w.ad_client_id, w.ad_org_id) as cost, 
-          c_currency_convert(sum(sd.qtyonhand*c.cost), ?, ?, to_date(now()), w.ad_client_id, w.ad_org_id) as value, 
+          c_currency_convert(c.cost, ?, ?, to_date(now()),'S', w.ad_client_id, w.ad_org_id) as cost, 
+          c_currency_convert(sum(sd.qtyonhand*c.cost), ?, ?, to_date(now()), 'S', w.ad_client_id, w.ad_org_id) as value, 
           100*sum(sd.qtyonhand*c.cost)/(
             select sum(c_aux.cost * sd_aux.qtyonhand)
             from m_locator l_aux, m_warehouse w_aux, m_storage_detail sd_aux, m_costing c_aux

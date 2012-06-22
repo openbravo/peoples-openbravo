@@ -95,7 +95,7 @@ public class ProductInfo {
    * @return Requested Product Account
    */
   public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 8)
+    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 10)
       return null;
     // No Product - get Default from Accounting Schema defaults then from default Product Category
     // and finally from oldest Product Category
@@ -132,6 +132,12 @@ public class ProductInfo {
         break;
       case 8:
         validCombination_ID = data[0].discountgrant;
+        break;
+      case 9:
+        validCombination_ID = data[0].revenuereturn;
+        break;
+      case 10:
+        validCombination_ID = data[0].cogsreturn;
         break;
       }
       if (validCombination_ID.equals(""))
@@ -185,6 +191,12 @@ public class ProductInfo {
         break;
       case 8:
         validCombination_ID = data[0].discountgrant;
+        break;
+      case 9:
+        validCombination_ID = data[0].revenuereturn;
+        break;
+      case 10:
+        validCombination_ID = data[0].cogsreturn;
         break;
       }
       if (validCombination_ID.equals(""))
@@ -343,5 +355,9 @@ public class ProductInfo {
   public static final String ACCTTYPE_P_TDiscountRec = "7";
   /** Trade Discount Costs */
   public static final String ACCTTYPE_P_TDiscountGrant = "8";
+  /** Product Revenue Return Acct */
+  public static final String ACCTTYPE_P_RevenueReturn = "9";
+  /** Product COGS Return Acct */
+  public static final String ACCTTYPE_P_CogsReturn = "10";
 
 } // ProductInfo

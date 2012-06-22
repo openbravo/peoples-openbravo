@@ -405,7 +405,7 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
         strLevelLabel[i] = dimensionLabel[2].name;
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
-            + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
+            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intProductLevel = i + 1;
         intDiscard++;
         intAuxDiscard = i;

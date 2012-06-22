@@ -342,9 +342,14 @@ public class Reconciliation extends HttpSecureAppServlet {
       xmlDocument.setParameter("calcTotalDeposit", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("calcDifferenceToClear", currentEndBalance.subtract(beginBalance)
           .toString());
-      xmlDocument.setParameter("calcCurrentlyCleared", BigDecimal.ZERO.toString());
-      xmlDocument.setParameter("calcDifference", currentEndBalance.subtract(beginBalance)
-          .toString());
+      xmlDocument.setParameter("calcCurrentlyCleared",
+          TransactionsDao.getCurrentlyClearedAmt(account.getId()).toString());
+      xmlDocument
+          .setParameter(
+              "calcDifference",
+              currentEndBalance.subtract(
+                  beginBalance.add(TransactionsDao.getCurrentlyClearedAmt(account.getId())))
+                  .toString());
 
       OBContext.setAdminMode();
       try {

@@ -11,9 +11,9 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_actionButton;
@@ -1461,9 +1461,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       for (int k = 0; k < ids.length; k++) {
         if (strType.equals("SHIPMENT")) {
           if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, ids[k]);
+            data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this,
+                vars.getLanguage(), ids[k]);
           else
-            data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, ids[k]);
+            data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
           dataAux = CreateFromInvoiceData
               .selectPriceList(conn, this, strDateInvoiced, strPriceList);
           if (dataAux == null || dataAux.length == 0) {
@@ -1476,9 +1478,11 @@ public class CreateFrom extends HttpSecureAppServlet {
         } else {
           strPO = vars.getStringParameter("inpPurchaseOrder");
           if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+            data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
+                ids[k]);
           else
-            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, strKey, ids[k]);
+            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, vars.getLanguage(), strKey,
+                ids[k]);
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
@@ -1528,14 +1532,20 @@ public class CreateFrom extends HttpSecureAppServlet {
             BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(
                 data[i].id));
             LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+
+            String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
+            BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
+                strTaxRate));
+            BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+                BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
               final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                   strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
-                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
-                  data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
-                  data[i].taxbaseamt);
+                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
+                  data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
+                  priceStd, LineNetAmt.toString());
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
@@ -1607,13 +1617,16 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (strType.equals("INVOICE")) {
           strInvoice = vars.getStringParameter("inpInvoice");
           if (!isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
+            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
         } else {
           strPO = vars.getStringParameter("inpPurchaseOrder");
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
+                ids[k]);
           else
-            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
+            data = CreateFromShipmentData
+                .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
@@ -1832,15 +1845,19 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (strType.equals("INVOICE")) {
           strInvoice = vars.getStringParameter("inpInvoice");
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, ids[k]);
+            data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this,
+                vars.getLanguage(), ids[k]);
           else
-            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
+            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
         } else {
           strPO = vars.getStringParameter("inpPurchaseOrder");
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
+                ids[k]);
           else
-            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
+            data = CreateFromShipmentData
+                .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {

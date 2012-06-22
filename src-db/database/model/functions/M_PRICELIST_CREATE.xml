@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -85,7 +85,7 @@
         AND p.C_Currency_ID=c.C_Currency_ID
         AND v.M_PriceList_Version_ID=v_PriceList_Version_ID;
       IF (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID='') THEN
-	    RAISE_APPLICATION_ERROR(-20102, 'Base Pricelist Version required to complete Create PriceList process.');
+	    RAISE_APPLICATION_ERROR(-20000, '@20102@');
       END IF;
 	
       IF(Cur_Parameter.ParameterName='DeleteOld') THEN

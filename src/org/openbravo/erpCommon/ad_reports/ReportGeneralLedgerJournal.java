@@ -356,7 +356,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         for (ReportGeneralLedgerJournalData i : dataCountLines)
           totalAcctEntries += Integer.parseInt(i.groupedlines);
 
-        int groupedLines[] = new int[intRecordRangePredefined];
+        int groupedLines[] = new int[intRecordRangePredefined + 1];
         int i = 1;
         while (groupedLines[i - 1] <= intRecordRangePredefined
             && dataCountLines.length >= acctEntries) {

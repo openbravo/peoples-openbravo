@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2011 Openbravo SLU
+* All portions are Copyright (C) 2011-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -27,7 +27,7 @@ BEGIN
 
   IF(v_count = 1) THEN
    IF(DELETING) THEN
-     RAISE_APPLICATION_ERROR(-20501, '@APRM_OldFlowDisabled@') ;
+     RAISE_APPLICATION_ERROR(-20000, '@APRM_OldFlowDisabled@') ;
    END IF;
    IF(UPDATING) THEN
      IF(:old.Processed <> :new.Processed) THEN

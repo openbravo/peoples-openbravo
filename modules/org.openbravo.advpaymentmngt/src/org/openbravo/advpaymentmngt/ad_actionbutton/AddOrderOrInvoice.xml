@@ -68,5 +68,10 @@
     <PARAMETER id="paramStrElement_SR" name="strElement_SR" attribute="value"/>
     <PARAMETER id="paramStrElement_MC" name="strElement_MC" attribute="value"/>   
 
+    <PARAMETER id="paramGLItems" name="glItems" attribute="value" default=""/>
+    
+    <PARAMETER id="paramUseCreditChecked" name="check" default="Y"/>
+    <PARAMETER id="paramUseCredit" name="useCredit" boolean="checked" withId="paramUseCreditChecked"/>
+
     <DISCARD id="discard"/>
 </REPORT>

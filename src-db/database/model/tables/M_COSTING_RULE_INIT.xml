@@ -67,6 +67,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_CR_INIT_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <index name="M_COSTING_RULE_INIT_CR" unique="false">
+        <index-column name="M_COSTING_RULE_ID"/>
+      </index>
       <check name="M_CR_INIT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

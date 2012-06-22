@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@
 
 .OBPopupHeaderIcon {
   margin: 0px 0px 0px 4px;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBPopupHeaderText {
@@ -47,6 +48,7 @@
 .OBPopupIconMinimizeDisabled {
   margin: 0px 4px 0px 0px;
   border: 1px solid #A2B48B;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBPopupIconMaximize,
@@ -55,6 +57,7 @@
 .OBPopupIconMaximizeDisabled {
   margin: 0px 4px 0px 0px;
   border: 1px solid #A2B48B;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBPopupIconRestore,
@@ -63,6 +66,7 @@
 .OBPopupIconRestoreDisabled {
   margin: 0px 4px 0px 0px;
   border: 1px solid #A2B48B;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 .OBPopupIconClose,
@@ -71,6 +75,7 @@
 .OBPopupIconCloseDisabled {
   margin: 0px 4px 0px 0px;
   border: 1px solid #FA962F;
+  line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 
 /* OBPopupHTMLFlow */

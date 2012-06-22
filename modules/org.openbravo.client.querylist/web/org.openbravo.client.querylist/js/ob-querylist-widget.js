@@ -198,7 +198,7 @@ isc.OBQueryListGrid.addProperties({
 
   // some common settings
   //showFilterEditor: false,
-  //filterOnKeypress: false,
+  filterOnKeypress: true,
   canEdit: false,
   alternateRecordStyles: true,
   canReorderFields: false,

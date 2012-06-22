@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ________________________________.
 ************************************************************************/
@@ -35,7 +35,7 @@ BEGIN
     FROM C_TAXPAYMENT
     WHERE C_TAXPAYMENT_ID=(:OLD.C_TAXPAYMENT_ID);
     IF(V_PROCESSED='Y' AND V_PROCESSING='N')
-    THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   IF(INSERTING) THEN
@@ -44,7 +44,7 @@ BEGIN
     FROM C_TAXPAYMENT
     WHERE C_TAXPAYMENT_ID=(:new.C_TAXPAYMENT_ID);
    IF(V_PROCESSED='Y' AND V_PROCESSING='N') THEN
-     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
    END IF;
   END IF;
   IF(DELETING) THEN
@@ -53,7 +53,7 @@ BEGIN
     FROM C_TAXPAYMENT
     WHERE C_TAXPAYMENT_ID=(:OLD.C_TAXPAYMENT_ID);
    IF(V_PROCESSED='Y' AND V_PROCESSING='N') THEN
-     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
    END IF;
   END IF;
 END C_TAXREGISTER_TRG

@@ -19,6 +19,8 @@
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   V_COUNT  NUMBER;
   v_ISSOTRX CHAR(1);
+  v_QTYVARIABLE CHAR(1);
+  v_OrderProduct VARCHAR2(32);
 /******************************************************************************
  * The contents of this file are subject to the   Compiere License  Version 1.1
  * ("License"); You may not use this file except in compliance with the License
@@ -47,10 +49,10 @@ BEGIN
        IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
          SELECT C_UOM_ID INTO v_UOM_ID FROM C_ORDERLINE WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID;
            IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
-             RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
+             RAISE_APPLICATION_ERROR(-20000, '@20111@');
            END IF;
        ELSE
-         RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
+         RAISE_APPLICATION_ERROR(-20000, '@20111@');
        END IF;
      END IF;
   END IF;
@@ -74,7 +76,13 @@ BEGIN
    FROM M_INOUT
    WHERE M_INOUT_ID = :NEW.M_INOUT_ID;
 
-   IF (v_ISSOTRX = 'Y' AND :NEW.C_ORDERLINE_ID IS NOT NULL) THEN
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
+     SELECT ISQUANTITYVARIABLE INTO v_QTYVARIABLE
+     FROM M_PRODUCT
+     WHERE M_PRODUCT_ID = :NEW.M_PRODUCT_ID;
+   END IF;
+
+   IF (v_QTYVARIABLE <> 'Y' AND v_ISSOTRX = 'Y' AND :NEW.C_ORDERLINE_ID IS NOT NULL) THEN
       SELECT COUNT(*) INTO V_COUNT FROM C_ORDERLINE ol 
       WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID 
       AND ABS(:NEW.MOVEMENTQTY) > ABS(ol.QTYORDERED);
@@ -92,10 +100,10 @@ BEGIN
         IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
           SELECT C_UOM_ID INTO v_UOM_ID FROM C_ORDERLINE WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID;
             IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
-              RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
+              RAISE_APPLICATION_ERROR(-20000, '@20111@');
             END IF;
         ELSE
-          RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
+          RAISE_APPLICATION_ERROR(-20000, '@20111@');
         END IF;
       END IF;
   END IF;
@@ -148,12 +156,23 @@ BEGIN
    AND (Processed='Y' OR Posted='Y');
  IF (v_RO > 0) THEN
   IF (INSERTING OR DELETING) THEN
-   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+   RAISE_APPLICATION_ERROR(-20000, '@20501@');
   ELSIF (:new.M_Product_ID<>:old.M_Product_ID OR :new.MovementQty<>:old.MovementQty
   OR COALESCE(:new.M_AttributeSetInstance_ID, '0') <> COALESCE(:old.M_AttributeSetInstance_ID, '0')
   OR COALESCE(:new.M_Locator_ID,'-1') <> COALESCE(:old.M_Locator_ID,'-1'))
  THEN
-  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+  RAISE_APPLICATION_ERROR(-20000, '@20501@');
+   END IF;
+ END IF;
+
+
+ -- Do not allow different product than the one in the related orderline.
+ IF ((UPDATING OR INSERTING)) THEN
+   IF (:new.C_OrderLine_ID is not null) THEN
+     SELECT m_product_id INTO v_OrderProduct FROM C_OrderLine WHERE C_OrderLine_ID = :new.C_OrderLine_ID;
+     IF (v_OrderProduct <> :new.M_Product_ID) THEN
+       RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByOrder@');
+     END IF;
    END IF;
  END IF;
 

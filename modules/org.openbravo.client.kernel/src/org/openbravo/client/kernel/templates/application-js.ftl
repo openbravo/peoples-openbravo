@@ -56,8 +56,10 @@ var OB = {
     },
 
     Constants : {
+        WINTITLE : 'Openbravo',
         IDENTIFIER : '_identifier',
         ID : 'id',
+        FIELDSEPARATOR : '$',
         WHERE_PARAMETER : '_where',
         ORG_PARAMETER : '_org',
         ORDERBY_PARAMETER : '_orderBy',

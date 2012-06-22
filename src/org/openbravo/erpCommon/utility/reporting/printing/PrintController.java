@@ -769,7 +769,7 @@ public class PrintController extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("New email id: " + newEmailId);
 
-      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), vars.getOrg(),
+      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
           vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
           recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
           report.getBPartnerId(),
@@ -1203,11 +1203,14 @@ public class PrintController extends HttpSecureAppServlet {
     // sales Rep. to choose one of the 3 possibilities
     // 1.- n customer n sales rep (hide "To" and "Reply-to" inputs)
     // 2.- n customers 1 sales rep (hide "To" input)
-    // 3.- Otherwise show both
+    // 3.- 1 customer n sales rep (hide Reply-to inputs)
+    // 4.- Otherwise show both
     if (moreThanOneCustomer && moreThanOnesalesRep) {
       discard = new String[] { "to", "to_bottomMargin", "replyTo", "replyTo_bottomMargin" };
     } else if (moreThanOneCustomer) {
       discard = new String[] { "to", "to_bottomMargin", "multSalesRep", "multSalesRepCount" };
+    } else if (moreThanOnesalesRep) {
+      discard = new String[] { "replyTo", "replyTo_bottomMargin" };
     } else {
       discard = new String[] { "multipleCustomer", "multipleCustomer_bottomMargin" };
     }
@@ -1220,7 +1223,7 @@ public class PrintController extends HttpSecureAppServlet {
       } else {
         final String[] discardAux = new String[discard.length + 1];
         for (int i = 0; i < discard.length; i++) {
-          discardAux[0] = discard[0];
+          discardAux[i] = discard[i];
         }
         discardAux[discard.length] = "discardSelect";
         return discardAux;
@@ -1294,8 +1297,8 @@ public class PrintController extends HttpSecureAppServlet {
    */
   private File prepareFile(AttachContent content, String documentId) throws ServletException {
     try {
-      final String attachPath = new OBPropertiesProvider().getOpenbravoProperties().getProperty(
-          "attach.path")
+      final String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("attach.path")
           + "/tmp";
       final File f = new File(attachPath, content.getFileName());
       final InputStream inputStream = content.getFileItem().getInputStream();

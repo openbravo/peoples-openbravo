@@ -19,6 +19,7 @@
 
 package org.openbravo.dal.service;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -302,6 +303,26 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Will return a non-loaded hibernate proxy if the object was not already loaded by hibernate.
+   * 
+   * NOTE/BEWARE: this method will not check if the object actually exists in the database. This
+   * will detected when persisting a referencing object or when this proxy gets initialized!
+   * 
+   * This method differs from other get methods in this class, these methods will always eagerly
+   * load the object and thereby also immediately check the existence of these referenced objects.
+   * 
+   * @param entityName
+   *          the type of object to search for
+   * @param id
+   *          the id of the object
+   * @return the object, or null if none found
+   */
+  public BaseOBObject getProxy(String entityName, Object id) {
+    return (BaseOBObject) ((SessionImplementor) getSession()).internalLoad(entityName,
+        (Serializable) id, false, false);
+  }
+
+  /**
    * Create a OBQuery object using a class and a specific where and order by clause.
    * 
    * @param fromClz
@@ -380,8 +401,9 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
     checkReadAccess(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName());
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(clz));
+    final Entity entity = ModelProvider.getInstance().getEntity(clz);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName());
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 
@@ -396,8 +418,9 @@ public class OBDal implements OBSingleton {
    */
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz, String alias) {
     checkReadAccess(clz);
-    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(), alias);
-    obCriteria.setEntity(ModelProvider.getInstance().getEntity(clz));
+    final Entity entity = ModelProvider.getInstance().getEntity(clz);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entity.getName(), alias);
+    obCriteria.setEntity(entity);
     return obCriteria;
   }
 

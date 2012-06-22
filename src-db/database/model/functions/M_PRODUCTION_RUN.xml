@@ -284,6 +284,7 @@
               WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                 AND pb.M_Product_ID=pp.M_PRODUCT_ID
                 AND pp.M_PRODUCTION_ID=v_Record_ID
+                AND pb.isactive='Y'
               ORDER BY pb.M_PRODUCTBOM_ID,
                 pb.Line
               )
@@ -388,6 +389,11 @@
                 ROLLBACK;
                 RAISE_APPLICATION_ERROR(-20000, v_Message);
               END IF;
+              IF (CUR_BOM.ProductionQty <= 0) THEN
+                v_Message := '@NegativeBOMProductionQty@';
+                ROLLBACK;
+                RAISE_APPLICATION_ERROR(-20000, v_Message);
+              END IF;
             END LOOP;
             IF(CUR_STOCK_ISOPEN) THEN
               CLOSE CUR_STOCK;
@@ -446,6 +452,7 @@
                   M_PRODUCT p
                 WHERE pb.M_ProductBOM_ID=p.M_Product_ID
                   AND pb.M_Product_ID=CUR_PLineBOM.M_Product_ID
+                  AND pb.isactive='Y'
                 ORDER BY pb.M_PRODUCTBOM_ID,
                   pb.Line
                 )
@@ -462,14 +469,14 @@
                     M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                     AD_Org_ID, IsActive, Created, CreatedBy,
                     Updated, UpdatedBy, M_Product_ID, MovementQty,
-                    M_Locator_ID
+                    M_Locator_ID, C_UOM_ID
                   )
                   VALUES
                   (
                     NextNo, CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
                     CUR_PLineBOM.Org_ID, 'Y', now(), p_User,
                     now(), p_User, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
-                    CUR_PLineBOM.M_Locator_ID
+                    CUR_PLineBOM.M_Locator_ID, CUR_BOM_PRODUCT.C_UOM_ID
                   )
                   ;
               END LOOP;

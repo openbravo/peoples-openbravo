@@ -514,8 +514,18 @@ function depurarSelector_validateSelector_wrapper(action) {
 function calculateNumRows() {
    resizeAreaInfo();
    document.getElementById("grid_sample").style.display = "block";
-   var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
-   var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   var grid_header = document.getElementById("grid_sample_header");
+   var grid_row = document.getElementById("grid_sample_row");
+   var grid_header_height, grid_row_height;
+
+   if (isIE9Strict) {
+     grid_header_height = parseInt(getComputedStyle(grid_header, null).getPropertyValue("height").replace('px', ''), 10) + 4;
+     grid_row_height = parseInt(getComputedStyle(grid_row, null).getPropertyValue("height").replace('px', ''), 10) + 1;
+   } else {
+     grid_header_height = grid_header.clientHeight + 1;
+     grid_row_height = grid_row.clientHeight + 1;
+   }
+
    if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
      grid_header_height = grid_header_height + 1;
      grid_row_height = grid_row_height - 1;

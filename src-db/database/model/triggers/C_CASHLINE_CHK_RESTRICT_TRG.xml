@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2009 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -52,11 +52,11 @@ BEGIN
           AND(:OLD.C_ORDER_ID IS NULL))
         OR(COALESCE(:OLD.C_ORDER_ID, '0') <> COALESCE(:NEW.C_ORDER_ID, '0'))
         OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
   END IF;
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
 END C_CASHLINE_CHK_RESTRICT_TRG
 ]]></body>

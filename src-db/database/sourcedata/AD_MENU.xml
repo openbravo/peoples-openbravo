@@ -96,8 +96,8 @@
 <!--109-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--109-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--109-->  <NAME><![CDATA[Country Region and City]]></NAME>
-<!--109-->  <DESCRIPTION><![CDATA[Define countries with regions and cities to be used in the application.]]></DESCRIPTION>
+<!--109-->  <NAME><![CDATA[Country and Region]]></NAME>
+<!--109-->  <DESCRIPTION><![CDATA[Define countries with regions to be used in the application.]]></DESCRIPTION>
 <!--109-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--109-->  <ACTION><![CDATA[W]]></ACTION>
 <!--109-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
@@ -2501,7 +2501,7 @@
 <!--800086-->  <AD_MENU_ID><![CDATA[800086]]></AD_MENU_ID>
 <!--800086-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800086-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800086-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800086-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800086-->  <NAME><![CDATA[Create Purchase Invoices from Deliveries]]></NAME>
 <!--800086-->  <DESCRIPTION><![CDATA[Create purchase invoices from deliveries]]></DESCRIPTION>
 <!--800086-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -3995,7 +3995,7 @@
 <!--800282-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800282-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800282-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800282-->  <NAME><![CDATA[Stock for open orders]]></NAME>
+<!--800282-->  <NAME><![CDATA[Stock for Open Orders]]></NAME>
 <!--800282-->  <DESCRIPTION><![CDATA[Show the lines of the pending orders with the actual stock of each product.]]></DESCRIPTION>
 <!--800282-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800282-->  <ACTION><![CDATA[R]]></ACTION>

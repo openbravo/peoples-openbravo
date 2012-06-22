@@ -132,3 +132,13 @@ isc.OBAlertIcon.addProperties({
   iconWidth: 11,
   iconHeight: 13
 });
+
+
+OB.Styles.TopLayout.LogosContainer = {
+  width: '100%',
+  align: 'right',
+  layoutLeftMargin: 10,
+  layoutRightMargin: 10,
+  membersMargin: 20,
+  defaultLayoutAlign: 'center'
+};

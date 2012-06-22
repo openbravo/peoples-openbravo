@@ -43,7 +43,6 @@ import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -190,19 +189,18 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         orgValueMap.put(orgValueMapItem);
       }
       jsonRole.put("organizationValueMap", orgValueMap);
-      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId()));
+      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId(), orgs));
       jsonRoles.put(jsonRole);
     }
     formItemInfo.put("roles", jsonRoles);
     return formItemInfo;
   }
 
-  private JSONArray getWarehouses(String clientId) throws JSONException {
+  private JSONArray getWarehouses(String clientId, List<Organization> orgs) throws JSONException {
     List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
-    for (Organization org : orgs.list()) {
+    for (Organization org : orgs) {
       JSONObject orgWarehouse = new JSONObject();
       orgWarehouse.put("orgId", org.getId());
       final OBQuery<Warehouse> warehouses = OBDal
@@ -293,7 +291,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
           || limitation == LicenseRestriction.MODULE_EXPIRED
           || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-          || limitation == LicenseRestriction.HB_NOT_ACTIVE) {
+          || limitation == LicenseRestriction.HB_NOT_ACTIVE
+          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
         return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
       }
     }
@@ -327,11 +326,25 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     final HttpServletRequest request = (HttpServletRequest) parameters
         .get(KernelConstants.HTTP_REQUEST);
     final JSONObject json = new JSONObject(content);
-    final String orgId = getStringValue(json, "organization");
-    final String roleId = getStringValue(json, "role");
+
+    String orgId = getStringValue(json, "organization");
+    if (orgId == null) {
+      orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    }
+
+    String roleId = getStringValue(json, "role");
+    if (roleId == null) {
+      roleId = OBContext.getOBContext().getRole().getId();
+    }
+
     final Role role = OBDal.getInstance().get(Role.class, roleId);
     final String clientId = role.getClient().getId();
-    final String warehouseId = getStringValue(json, "warehouse");
+
+    String warehouseId = getStringValue(json, "warehouse");
+    if (warehouseId == null && OBContext.getOBContext().getWarehouse() != null) {
+      warehouseId = OBContext.getOBContext().getWarehouse().getId();
+    }
+
     String languageId = getStringValue(json, "language");
     if (languageId == null) {
       // If the default language the user has is not a system language, then another language will

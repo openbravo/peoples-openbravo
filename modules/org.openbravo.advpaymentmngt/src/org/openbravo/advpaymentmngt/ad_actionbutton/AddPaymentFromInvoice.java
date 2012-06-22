@@ -342,6 +342,14 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
         strPaymentMethodId, strOrgId, strCurrencyId,
         isReceipt ? AdvPaymentMngtDao.PaymentDirection.IN : AdvPaymentMngtDao.PaymentDirection.OUT);
+
+    if (financialAccounts.size() == 0) {
+      final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+          Utility.messageBD(this, "APRM_NoFinancialAccountDefined", vars.getLanguage()));
+      vars.setMessage(strTabId, myMessage);
+      printPageClosePopUp(response, vars);
+    }
+
     String finAccountComboHtml = FIN_Utility.getOptionsList(financialAccounts,
         strFinancialAccountId, true);
     if (financialAccounts.size() > 0 && account == null) {

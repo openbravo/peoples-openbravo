@@ -375,9 +375,9 @@
     <Sql>
     <![CDATA[
         SELECT TO_CHAR(?) AS VALUE, 
-        SUM(C_CURRENCY_CONVERT(PS.EXPECTED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS EXPECTEDHEAD,
-        SUM(C_CURRENCY_CONVERT(PS.RECEIVED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS PAIDHEAD,
-        SUM(C_CURRENCY_CONVERT(PS.OUTSTANDING, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS OUTSTANDINGHEAD,
+        SUM(C_CURRENCY_CONVERT(PS.EXPECTED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL, ?, ?)) AS EXPECTEDHEAD,
+        SUM(C_CURRENCY_CONVERT(PS.RECEIVED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL, ?, ?)) AS PAIDHEAD,
+        SUM(C_CURRENCY_CONVERT(PS.OUTSTANDING, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL, ?, ?)) AS OUTSTANDINGHEAD,
         TO_CHAR('datawarehouseclose') AS CLASS_TREE
         FROM FIN_PAYMENT_SCHED_INV_V PS, C_INVOICE I
         WHERE PS.C_INVOICE_ID = I.C_INVOICE_ID
@@ -389,8 +389,14 @@
     <Field name="position" value="count"/>
     <Parameter name="typeDoc"/>
     <Parameter name="curTo"/>
+    <Parameter name="clientId"/>
+    <Parameter name="orgId"/>
     <Parameter name="curTo"/>
+    <Parameter name="clientId"/>
+    <Parameter name="orgId"/>
     <Parameter name="curTo"/>
+    <Parameter name="clientId"/>
+    <Parameter name="orgId"/>
     <Parameter name="issotrx"/>
     <Parameter name="bPartner" optional="true" type="replace" after="I.C_BPARTNER_ID IN " text="('x')"/>
     <Parameter name="typeDoc"/>

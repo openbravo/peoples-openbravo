@@ -91,7 +91,9 @@ isc.OBToolbarActionButton.addProperties({
           windowId: me.windowId,
           windowTitle: me.windowTitle,
           actionHandler: me.command,
-          buttons: me.labelValue
+          button: me,
+          buttons: me.labelValue,
+          uiPattern: me.uiPattern
         });
         me.opening = false; // Activate again the button
       };
@@ -135,18 +137,18 @@ isc.OBToolbarActionButton.addProperties({
     theView.setContextInfo(sessionProperties, callbackFunction, true);
   },
 
-  closeProcessPopup: function (newWindow) {
+  closeProcessPopup: function (newWindow, params) {
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh;
+        afterRefresh, parsePathPart, parts;
 
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh);
 
       // Refresh context view
       contextView.getTabMessage();
-      currentView.toolBar.refreshCustomButtons();
+      contextView.toolBar.refreshCustomButtons();
 
       if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
         // Executing an action defined in parent tab, current tab is maximized,
@@ -182,6 +184,13 @@ isc.OBToolbarActionButton.addProperties({
     OB.ActionButton.executingProcess = null;
 
     if (newWindow) {
+      // Split path into protocol, server, port part and the rest (pathname, query, etc)
+      parsePathPart = /^((?:[A-Za-z]+:)?\/\/[^\/]+)?(\/.*)$/;
+      parts = parsePathPart.exec(newWindow);
+      if (parts && parts[2]) {
+        newWindow = parts[2];
+      }
+
       if (OB.Application.contextUrl && newWindow.indexOf(OB.Application.contextUrl) !== -1) {
         newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length - 1);
       }
@@ -194,11 +203,20 @@ isc.OBToolbarActionButton.addProperties({
         // Refreshing current tab, do not open it again.
         return;
       }
+
       var windowParams = {
         viewId: this.title,
         tabTitle: this.title,
         obManualURL: newWindow
       };
+      if (params) {
+        if (params.tabTitle) {
+          windowParams.tabTitle = params.tabTitle;
+        }
+        if (params.addToRecents !== null && params.addToRecents !== undefined) {
+          windowParams.addToRecents = params.addToRecents;
+        }
+      }
       OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
     }
   },
@@ -208,17 +226,58 @@ isc.OBToolbarActionButton.addProperties({
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
+    var multiSelect = false,
+        readonly, i, selection;
+
     if (hideButton || !record) {
-      this.hide();
-      return;
+      multiSelect = this.multiRecord && this.contextView.viewGrid.getSelectedRecords().length > 1;
+      if (!multiSelect) {
+        this.hide();
+        return;
+      }
     }
 
     context = context || this.contextView.getContextInfo(false, true, true);
 
 
-    OB.Utilities.fixNull250(currentValues);
+    if (!multiSelect) {
+      OB.Utilities.fixNull250(currentValues);
 
-    this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
+      this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, record, context));
+      readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
+
+      var buttonValue = record[this.property];
+      if (buttonValue === '--') {
+        buttonValue = 'CL';
+      }
+
+      // Changing button name associated with a list is not allowed in multi record buttons.
+      var label = this.labelValue[buttonValue];
+      if (!label) {
+        if (this.realTitle) {
+          label = this.realTitle;
+        } else {
+          label = this.title;
+        }
+      }
+      this.realTitle = label;
+      this.setTitle(label);
+
+    } else {
+      // For multi selection processes:
+      //   -Button is displayed in case it should be displayed in ALL selected records
+      //   -Button is readonly in case it should be readonly in ALL sected records
+      selection = this.contextView.viewGrid.getSelectedRecords();
+      readonly = false;
+      this.visible = true;
+      for (i = 0; i < selection.length; i++) {
+        currentValues = selection[i];
+        OB.Utilities.fixNull250(currentValues);
+        this.visible = this.visible && (!this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context)));
+        readonly = readonly || (this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context));
+      }
+
+    }
 
     // Even visible is correctly set, it is necessary to execute show() or hide()
     if (this.visible) {
@@ -226,28 +285,12 @@ isc.OBToolbarActionButton.addProperties({
     } else {
       this.hide();
     }
-
-    var readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, record, context);
     if (readonly) {
       this.disable();
     } else {
       this.enable();
     }
 
-    var buttonValue = record[this.property];
-    if (buttonValue === '--') {
-      buttonValue = 'CL';
-    }
 
-    var label = this.labelValue[buttonValue];
-    if (!label) {
-      if (this.realTitle) {
-        label = this.realTitle;
-      } else {
-        label = this.title;
-      }
-    }
-    this.realTitle = label;
-    this.setTitle(label);
   }
 });

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,8 +72,15 @@ public class DateUIDefinition extends UIDefinition {
   public String getFieldProperties(Field field) {
     String fieldProperties = super.getFieldProperties(field);
     try {
-      JSONObject o = new JSONObject(fieldProperties);
+      JSONObject o = new JSONObject(
+          fieldProperties != null && fieldProperties.length() > 0 ? fieldProperties : "{}");
       o.put("width", "50%");
+      if (field != null && field.getColumn() != null) {
+        final Long length = field.getColumn().getLength();
+        if (length != null) {
+          o.put("length", length);
+        }
+      }
       return o.toString();
     } catch (Exception e) { // ignore
       return fieldProperties;

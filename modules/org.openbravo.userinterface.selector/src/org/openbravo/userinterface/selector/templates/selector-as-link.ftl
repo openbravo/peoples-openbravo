@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,7 @@
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
     suggestionTextMatchStyle: '${data.selector.suggestiontextmatchstyle}',
     defaultPopupFilterField : '${data.defaultPopupFilterField}',
-    displayField: '${data.targetPropertyName?js_string}._identifier',
+    displayField: '${data.targetPropertyName?js_string}${Constants_FIELDSEPARATOR}${Constants_IDENTIFIER}',
     valueField: '${data.targetPropertyName?js_string}',
     gridDisplayField: '${data.displayField?js_string}',
     gridValueField: '${data.valueField?js_string}',    

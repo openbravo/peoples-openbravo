@@ -26,15 +26,21 @@
  * Code that will be executed once the file is parsed
 */
 function utilsJSDirectExecution() {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 9 && parseInt(getBrowserInfo('majorVersion'), 10) >= 9) {
+    isIE9Strict = true;
+  }
   isWindowInMDIPopup = checkWindowInMDIPopup();
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIPage = checkWindowInMDIPage();
   isWindowInMDIContext = checkWindowInMDIContext();
+  isRTL = checkWindowInRTLMode();
   if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
   }
 }
 
+var isIE9Strict = false;
+var isRTL = false;
 var isWindowInMDIPopup = false;
 var isWindowInMDITab = false;
 var isWindowInMDIPage = false;
@@ -95,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '16049';
+  var number = '16452';
   return number;
 }
 
@@ -175,6 +181,12 @@ function getBrowserInfo(param) {
     return browserMajorVersion;
   } else if (param == "nameAndVersion" || typeof param == "undefined" || param == "" || param == null) {
     return browserNameAndVersion;
+  } else if (param == "documentMode") {
+    if (document.documentMode) {
+      return document.documentMode;
+    } else {
+      return null;
+    }
   } else {
     return false;
   }
@@ -203,7 +215,7 @@ function checkBrowserCompatibility250() {
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
   var attribute_text = "";
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1 || isIE9Strict) {
     attribute_text = obj.getAttribute(attribute);
   } else {
     attribute_text = obj.getAttribute(attribute).toString();
@@ -221,7 +233,7 @@ function setObjAttribute(obj, attribute, attribute_text) {
   attribute = attribute.toLowerCase();
   attribute_text = attribute_text.toString();
   attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1 || isIE9Strict) {
     obj.setAttribute(attribute, attribute_text);
   } else {
     obj[attribute]=new Function(attribute_text);
@@ -266,13 +278,13 @@ function getElementsByName(name, tag) {
 */
 function getElementsByClassName(className, tag) {
   var resultArray = [], classAttributeName;
-  if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+  if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1 && !isIE9Strict) {
     classAttributeName = 'className';
   } else {
     classAttributeName = 'class';
   }
   if (!tag) {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
+    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1 && !isIE9Strict) {
       var inputs = document.all;
       for (var i=0; i<inputs.length; i++) {
         if (inputs.item(i).getAttribute(classAttributeName) === className){
@@ -3390,6 +3402,38 @@ function adaptSkinToMDIEnvironment() {
     addStyleRule(".Popup_ContentPane_SeparatorBar", "display: none;");
     addStyleRule(".Popup_ContentPane_CircleLogo", "display: none;");
   }
+  if (isIE9Strict) {
+    addStyleRule("th.DataGrid_Header_Cell", "height: 20px;");
+
+    if (!isRTL) {
+      addStyleRule('.LabelTextAfterCheckbox', 'margin-left: 15px;');
+    } else {
+      addStyleRule('.LabelTextAfterCheckbox', 'margin-right: 15px;');
+    }
+
+    var messageType = {};
+    messageType.name = ['ERROR', 'INFO', 'SUCCESS', 'WARNING'];
+    messageType.backgroundColor = ['C72F15', '5886BF', '7BBF58', 'ECE274'];
+    messageType.borderColor = ['461107', '1F3044', '2C441F', '535029'];
+    messageType.image = ['Error', 'Info', 'Success', 'Warning'];
+
+    for (var i=0; i < messageType.name.length; i++) {
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'border-top-left-radius: 20px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-color: #' + messageType.backgroundColor[i] + ';');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-image: url(../../Default/Common/MessageBox/message' + messageType.image[i] + 'Left.png);');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_LeftTrans', 'background-repeat: repeat-y;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_TopLeft', 'border-top-left-radius: 20px;');
+
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'border-top-right-radius: 20px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-color: #' + messageType.backgroundColor[i] + ';');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-image: url(../../Default/Common/MessageBox/message' + messageType.image[i] + 'Right.png);');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_RightTrans', 'background-repeat: repeat-y;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_TopRight', 'border-top-right-radius: 20px;');
+
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' td.MessageBox_Icon_ContentCell', 'padding-top: 10px;');
+      addStyleRule('table.MessageBox' + messageType.name[i] + ' .MessageBox_Body_ContentCell #messageBoxIDContent', 'padding-top: 10px;');
+    }
+  }
 }
 
 /**
@@ -4449,17 +4493,23 @@ function resizeArea(isOnResize) {
   var mbottombut = document.getElementById("tdbottomButtons");
   var mbottom = document.getElementById("tdbottomSeparator");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-  var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-  var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
+  var name = window.navigator.userAgent;
+  var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("MSIE")==-1)?2:0);
+  var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
   if (mnuWidth < 0) { mnuWidth = 0; }
   if (mnuHeight < 0) { mnuHeight = 0; }
   mnu.style.width = mnuWidth;
   mnu.style.height = mnuHeight;
   var mbottomButtons = document.getElementById("tdbottomButtons");
-  if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
+  if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("MSIE")==-1)?2:0);
 
 /*  try {
     dojo.addOnLoad(dijit.byId('grid').onResize);
@@ -4479,10 +4529,16 @@ function resizeAreaHelp() {
   var mTopSeparator = document.getElementById("tdSeparator");
   var mTopNavigation = document.getElementById("tdNavigation");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-//  var mnuWidth = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
+  var name = window.navigator.userAgent;
+//  var mnuWidth = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   var mnuHeight =  h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
 //  if (mnuWidth < 0) { mnuWidth = 0; }
   if (mnuHeight < 0) { mnuHeight = 0; }
@@ -4504,10 +4560,16 @@ function resizeAreaUserOps() {
   var mVerSeparator = document.getElementById("tdVerSeparator");
   var mTopNavigation = document.getElementById("tdNavigation");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
-  var name = window.navigator.appName;
-//  mnu.style.width = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
+  var name = window.navigator.userAgent;
+//  mnu.style.width = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
   mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
   mnuIndex.style.height = mnu.style.height;
 
@@ -4528,11 +4590,17 @@ function resizeAreaInfo(isOnResize) {
   var client_middle = document.getElementById("client_middle");
   var client_bottom = document.getElementById("client_bottom");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
-  var name = window.navigator.appName;
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
+  var name = window.navigator.userAgent;
   var client_middleWidth = w;
-  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:0);
   if (client_middleWidth < 0) { client_middleWidth = 0; }
   if (client_middleHeight < 170) { client_middleHeight = 170; } // To avoid middle area (usually a grid) disappear completly in small windows.
   client_middle.style.height = client_middleHeight;
@@ -4560,11 +4628,17 @@ function resizeAreaCreateFrom(isOnResize) {
   var client_middle = document.getElementById("client_middle");
   var client_bottom = document.getElementById("client_bottom");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.appName;
   var client_middleWidth = w - 0;
-  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:1);
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("MSIE")==-1)?1:1);
   if (client_middleWidth < 0) { client_middleWidth = 0; }
   if (client_middleHeight < 80) { client_middleHeight = 80; } // To avoid middle area (usually a grid) disappear completly in small windows.
   client_middle.style.height = client_middleHeight;
@@ -4584,8 +4658,8 @@ function resizeAreaInstallationHistoryGrid(isOnResize) {
   var client = document.getElementById("client");
   var client_top = document.getElementById("client_top");
   var installationHistoryGrid = document.getElementById("installationHistoryGrid");
-  var name = window.navigator.appName;
-  installationHistoryGrid.style.height = client.clientHeight -((client_top?client_top.clientHeight:0) -((name.indexOf("Microsoft")==-1)?1:0) + 8);
+  var name = window.navigator.userAgent;
+  installationHistoryGrid.style.height = client.clientHeight -((client_top?client_top.clientHeight:0) -((name.indexOf("MSIE")==-1)?1:0) + 8);
 
 /*  try {
     dojo.addOnLoad(dijit.byId('grid').onResize);
@@ -4602,8 +4676,14 @@ function resizePopup() {
   var mnu = document.getElementById("client");
   var table_header = document.getElementById("table_header");
   var body = document.getElementsByTagName("BODY");
-  var h = body[0].clientHeight;
-  var w = body[0].clientWidth;
+  var h, w;
+  if (isIE9Strict) {
+    h = window.innerHeight;
+    w = window.innerWidth;
+  } else {
+    h = body[0].clientHeight;
+    w = body[0].clientWidth;
+  }
   var name = window.navigator.appName;
   var mnuHeight = h -(table_header?table_header.clientHeight:0);
   var mnuWidth = w;
@@ -5654,6 +5734,55 @@ function sendWindowInfoToMDI() {
       }
     }
   } catch (e) { }
+}
+
+/*
+ * Function that checks if the rendered html is rendered in RTL mode or not.
+ */
+function checkWindowInRTLMode() {
+  var strDirection = '';
+  var htmlTag = document.getElementsByTagName('html')[0];
+
+  if (htmlTag) {
+    if(document.defaultView && document.defaultView.getComputedStyle){
+      strDirection = document.defaultView.getComputedStyle(htmlTag, '').getPropertyValue('direction');
+    } else if(htmlTag.currentStyle){
+      strDirection = htmlTag.currentStyle['direction'];
+    }
+  }
+
+  if (strDirection.toLowerCase() === 'rtl') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function fixIE9WindowBorders() {
+  if (isIE9Strict) {
+    var leftContentPane = getElementsByClassName('Main_ContentPane_Left', 'table');
+    if (leftContentPane[0]) {
+      leftContentPane = leftContentPane[0];
+      leftContentPane = leftContentPane.parentNode;
+      if (leftContentPane && !leftContentPane.className) {
+        leftContentPane.className='Main_ContentPane_Left_Container';
+      }
+    }
+
+    var rightContentPane = getElementsByClassName('Main_ContentPane_Right', 'table');
+    if (rightContentPane[0]) {
+      rightContentPane = rightContentPane[0];
+      rightContentPane = rightContentPane.parentNode;
+      if (rightContentPane && !rightContentPane.className) {
+        rightContentPane.className='Main_ContentPane_Right_Container';
+      }
+    }
+  }
+}
+
+function moreOnLoadDoFunctions() {
+  setMDIEnvironment();
+  fixIE9WindowBorders();
 }
 
 

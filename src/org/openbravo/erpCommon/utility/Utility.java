@@ -2135,6 +2135,11 @@ public class Utility {
           img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
         }
         if (img == null) {
+          img = OBDal.getInstance()
+              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+              .getYourCompanyDocumentImage();
+        }
+        if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
         }
       } else if ("banner-production".equals(logo)) {

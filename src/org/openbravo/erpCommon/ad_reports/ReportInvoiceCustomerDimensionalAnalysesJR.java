@@ -529,7 +529,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( '"
-            + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
+            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intAuxDiscard = i;
         intOrder++;
         intProductLevel = i + 1;

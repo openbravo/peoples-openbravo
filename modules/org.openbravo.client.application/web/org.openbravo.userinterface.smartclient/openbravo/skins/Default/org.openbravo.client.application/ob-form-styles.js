@@ -129,7 +129,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   // is 20
   pickListCellHeight: 22,
 
-  quickRunWidth: 210,
+  quickRunWidth: 267,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
   pickListHeight: 200,
@@ -278,6 +278,9 @@ OB.Styles.OBFormField.DefaultDateInput = {
 };
 
 isc.OBDateItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
+isc.OBDateItem.addProperties({
+  textAlign: 'left'
+});
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 

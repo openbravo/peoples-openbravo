@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,10 +33,13 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.personalization.PersonalizationHandler;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.TabAccess;
 import org.openbravo.model.ad.access.WindowAccess;
@@ -110,12 +113,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             jTab.put("fields", jFields);
             final Set<String> fields = new TreeSet<String>();
             for (Field field : tabAccess.getTab().getADFieldList()) {
-              fields.add(entity.getPropertyByColumnName(
-                  field.getColumn().getDBColumnName().toLowerCase()).getName());
+              fields.add(KernelUtils.getProperty(entity, field).getName());
             }
             for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-              final String name = entity.getPropertyByColumnName(
-                  fieldAccess.getField().getColumn().getDBColumnName().toLowerCase()).getName();
+              final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
               jFields.put(name, fieldAccess.isEditableField());
               fields.remove(name);
             }
@@ -123,6 +124,49 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
               jFields.put(name, tabEditable);
             }
           }
+        }
+      }
+
+      // Processes without access
+      boolean securedProcess = false;
+      try {
+        securedProcess = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), window));
+      } catch (PropertyException e) {
+        // do nothing, property is not set so securedProcess is false
+      }
+
+      if (securedProcess) {
+        OBQuery<Field> q = OBDal.getInstance().createQuery(
+            Field.class,
+            " as f where  tab.window = :window " + "and ( (column.oBUIAPPProcess is not null"
+                + " and not exists (select 1 from " + " OBUIAPP_Process_Access a"
+                + " where a.obuiappProcess = f.column.oBUIAPPProcess"
+                + " and a.role.id = :role and a.active=true))" + "or (column.process is not null))"
+                + " order by f.tab");
+
+        q.setNamedParameter("window", window);
+        q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
+
+        final JSONArray processes = new JSONArray();
+        json.put("notAccessibleProcesses", processes);
+        Tab tab = null;
+        JSONObject t;
+        JSONArray ps = null;
+        for (Field f : q.list()) {
+          if (tab == null || !tab.getId().equals(f.getTab().getId())) {
+            t = new JSONObject();
+            tab = f.getTab();
+            ps = new JSONArray();
+            t.put("tabId", tab.getId());
+            t.put("processes", ps);
+            processes.put(t);
+          }
+          final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+              f.getTab().getTable().getId());
+          ps.put(KernelUtils.getProperty(f).getName());
         }
       }
 

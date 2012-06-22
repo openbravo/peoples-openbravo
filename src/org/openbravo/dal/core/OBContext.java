@@ -545,7 +545,7 @@ public class OBContext implements OBNotSingleton {
   @SuppressWarnings("unchecked")
   private List<Organization> getOrganizationList(Role thisRole) {
     if (organizationList != null) {
-      return organizationList;
+      return new ArrayList<Organization>(organizationList);
     }
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o from " + Organization.class.getName() + " o, " + RoleOrganization.class.getName()
@@ -561,7 +561,7 @@ public class OBContext implements OBNotSingleton {
         organizationList.add(org);
       }
     }
-    return organizationList;
+    return new ArrayList<Organization>(organizationList);
   }
 
   @SuppressWarnings("unchecked")
@@ -972,21 +972,21 @@ public class OBContext implements OBNotSingleton {
     if (readableOrganizations == null) {
       setReadableOrganizations(getRole());
     }
-    return readableOrganizations;
+    return readableOrganizations.clone();
   }
 
   public Set<String> getWritableOrganizations() {
     if (writableOrganizations == null) {
       setWritableOrganizations(getRole());
     }
-    return writableOrganizations;
+    return new HashSet<String>(writableOrganizations);
   }
 
   public String[] getReadableClients() {
     if (readableClients == null) {
       setReadableClients(getRole());
     }
-    return readableClients;
+    return readableClients.clone();
   }
 
   public EntityAccessChecker getEntityAccessChecker() {
@@ -1123,9 +1123,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRTL(boolean isRTL) {
-    // Forced to false until RTL project be completed
-    // this.isRTL = isRTL;
-    this.isRTL = false;
+    this.isRTL = isRTL;
   }
 
   private boolean isTranslationInstalled() {

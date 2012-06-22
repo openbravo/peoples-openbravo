@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -70,9 +70,12 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
           var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
           temp.innerHTML = newRows;
           tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-          temp.parentNode.removeChild(temp);
+          if (temp.parentNode) {
+            temp.parentNode.removeChild(temp);
+          }
+        } else {
+          tableBody.innerHTML = aux;
         }
-        tableBody.innerHTML = aux;
         
         updateAll();
         updateTotal();
@@ -101,7 +104,9 @@ function loadGridList() {
       OB.APRM.APFT_dt !== frmMain['inpDocumentType'].value ||
       OB.APRM.APFT_cu !== frmMain['inpCurrencyId'].value ||
       OB.APRM.APFT_dn !== frmMain['inpDocumentNo'].value ||
-      OB.APRM.APFT_re !== frmMain['isReceipt'].value) {
+      OB.APRM.APFT_re !== frmMain['isReceipt'].value ||
+      OB.APRM.APFT_af !== frmMain['inpAmountFrom'].value ||
+      OB.APRM.APFT_at !== frmMain['inpAmountTo'].value) {
 
     OB.APRM.APFT_bp = frmMain['inpcBpartnerId'].value;
     OB.APRM.APFT_fa = frmMain['inpFinancialAccountId'].value;
@@ -113,6 +118,8 @@ function loadGridList() {
     OB.APRM.APFT_cu = frmMain['inpCurrencyId'].value;
     OB.APRM.APFT_dn = frmMain['inpDocumentNo'].value;
     OB.APRM.APFT_re = frmMain['isReceipt'].value;
+    OB.APRM.APFT_af = frmMain['inpAmountFrom'].value;
+    OB.APRM.APFT_at = frmMain['inpAmountTo'].value;
 
     try {
       var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
@@ -620,17 +627,25 @@ function displayMulticurrencyControls() {
 
 function currencyOnChange() {
   if( isPaymentMethodMulticurrency() ) {
-    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ')
+    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
     loadGridList();
     return refreshExchangeRate();
   } else {
     // Reset currency
-    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ');
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
     selectCombo(document.getElementById('paramCurrencyId'), document.getElementById('paramFinancialAccountCurrencyId').value);
     document.getElementById('paramExchangeRate').value='1';
     updateConvertedAmounts();
     displayMulticurrencyControls();
     loadGridList();
+  }
+}
+
+function currencyOnChangeOnLoad() {
+  if( isPaymentMethodMulticurrency() ) {
+    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
+  } else {
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
   }
 }
 
@@ -711,6 +726,7 @@ function onLoadDo(){
   displayLogicElement('sectionDifference', false);
   displayLogicElement('sectionDifferenceBox', false);
   displayLogicForCredit();
+  currencyOnChangeOnLoad();
   displayMulticurrencyControls();
 
   resizeAreaCreateFrom();
@@ -1028,7 +1044,7 @@ function closeProcessPayment() {
 
             <!-- Line 1 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPDocNo" class="LabelText">Payment Out Document No.</span><span name="lblR" id="lblRDocNo" class="LabelText">Payment In Document No.</span></td>
+              <td class="TitleCell"><span id="lblPDocNo" class="LabelText">Payment Document No.</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid required TextBox_TwoCells_width" type="text" name="inpDocNumber" value="" id="paramDocNumber"></input></td>
               <td class="TitleCell"><span class="LabelText">Document Type</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width" type="text" name="inpDocType" value="" id="paramDocType"></input></td>
@@ -1104,7 +1120,7 @@ function closeProcessPayment() {
             
             <!-- Line 6 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
+              <td class="TitleCell"><span id="lblPExpectedPaym" class="LabelText">Expected Payment</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid required TextBox_OneCell_width number" readonly type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input></td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" id="lblExpectedConverted">Expected Converted</span></td>
@@ -1115,7 +1131,7 @@ function closeProcessPayment() {
 
             <!-- Line 7 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPActualPaym"class="LabelText">Actual Payment Out</span><span name="lblR" id="lblRActualPaym" class="LabelText">Actual Payment In</span></td>
+              <td class="TitleCell"><span id="lblPActualPaym"class="LabelText">Actual Payment</span></td>
               <td class="TextBox_btn_ContentCell">
                   <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                     <tr>
@@ -1192,7 +1208,7 @@ function closeProcessPayment() {
             
             <!-- Line 8 -->
             <tr>
-              <td class="TitleCell"><span name="lblP" id="lblPPaymDate" class="LabelText">Payment Out Date</span><span name="lblR" id="lblRPaymDate"class="LabelText">Payment In Date</span></td>
+              <td class="TitleCell"><span id="lblPPaymDate" class="LabelText">Payment Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
@@ -1247,8 +1263,8 @@ function closeProcessPayment() {
             <!-- Text -->
             <tr>
                 <td colspan="6" class="LabelText" style="font-weight: bold;">
-                    <span name="lblP" id="lblPText">Select additional purchase invoices, purchase orders or gl items that you want to add to this payment out</span>
-                    <span name="lblR" id="lblRText">Select additional sales invoices, sales orders or gl items that you want to add to this payment in</span>
+                    <span name="lblP" id="lblPText">Select additional purchase invoices, purchase orders or gl items that you want to add to this payment</span>
+                    <span name="lblR" id="lblRText">Select additional sales invoices, sales orders or gl items that you want to add to this payment</span>
                 </td>
             </tr>
             
@@ -1354,7 +1370,21 @@ function closeProcessPayment() {
                     <td class="TextBox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" id="paramTransDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpTransDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id);  validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                          <input type="text" id="paramTransDateFrom" 
+                                 class="dojoValidateValid TextBox_btn_OneCell_width" 
+                                 value="" 
+                                 maxlength="10" 
+                                 name="inpTransDateFrom" 
+                                 onkeyup="autoCompleteDate(this);" 
+                                 onkeydown="changeToEditingMode('onkeydown');" 
+                                 onkeypress="changeToEditingMode('onkeypress');" 
+                                 oncut="changeToEditingMode('oncut');" 
+                                 onpaste="changeToEditingMode('onpaste');" 
+                                 oncontextmenu="changeToEditingMode('oncontextmenu');" 
+                                 onblur="expandDateYear(this.id);" 
+                                 onchange="validateDateTextBox(this.id);  validateDate(this);return true;" 
+                                 displayFormat="xx" 
+                                 saveFormat="xx"></input>
                         </td></tr>
                       </table>
                       <span id="paramTransDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -1410,6 +1440,78 @@ function closeProcessPayment() {
                 </table>
               </td>
             </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText" id="lblAmountFrom">Amount From</span></td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;" id="paramAmountFromCell">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="loadGridList();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpAmountFrom" maxlength="22" value="" required="false" class="dojoValidateValid TextBox_btn_OneCell_width number" id="paramAmountFrom"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramAmountFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramAmountFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpAmountFrom', document.frmMain.inpAmountFrom.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>
+              <td class="TitleCell"><span class="LabelText" id="lblAmountTo">Amount To</span></td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;" id="paramAmountToCell">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="loadGridList();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpAmountTo" maxlength="22" value="" required="false" class="dojoValidateValid TextBox_btn_OneCell_width number" id="paramAmountTo"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramAmountToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramAmountToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount To'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpAmountTo', document.frmMain.inpAmountTo.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>              
+            </tr>            
             <tr id="glitemRow">
               <td class="TitleCell"><span class="LabelText">Received In</span></td>
               <td class="TextBox_btn_ContentCell">
@@ -1649,7 +1751,7 @@ function closeProcessPayment() {
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span name="lblP" id="lblPPayment">Payment Out</span><span name="lblR" id="lblRPayment">Payment In</span></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span id="lblPPayment">Payment</span></th>
                       </tr>
                     </thead>
                     <tbody id="sectionGrid">

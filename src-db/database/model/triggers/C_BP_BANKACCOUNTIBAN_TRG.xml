@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -77,14 +77,14 @@ BEGIN
         INTO v_IBAN_check
         FROM DUAL;
         IF (v_IBAN_check <> 1) THEN
-          RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
+          RAISE_APPLICATION_ERROR(-20000, '@20257@');
         END IF;
         SELECT IBANCOUNTRY, IBANNODIGITS
         INTO v_CountryId, v_Length
         FROM C_COUNTRY
         WHERE C_COUNTRY_ID=:NEW.C_COUNTRY_ID;
         IF ((v_CountryId IS NULL OR v_Length IS NULL) OR (v_CountryId <> SUBSTR(UPPER(:NEW.IBAN),1,2) OR v_Length <> LENGTH(:NEW.IBAN))) THEN
-          RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
+          RAISE_APPLICATION_ERROR(-20000, '@20259@');
         END IF;
       END IF;
     IF (:NEW.SHOWIBAN='Y') THEN
@@ -94,7 +94,7 @@ BEGIN
     END IF;
   END IF;
 EXCEPTION WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.') ;
+  RAISE_APPLICATION_ERROR(-20000, '@20257@') ;
 END C_BP_BANKACCOUNTIBAN_TRG
 ]]></body>
     </trigger>

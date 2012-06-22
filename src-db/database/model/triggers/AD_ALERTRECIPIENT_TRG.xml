@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2006 Openbravo SLU
+    * All portions are Copyright (C) 2001-2012 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -38,7 +38,7 @@ BEGIN
       where ad_user_id = :new.ad_user_id
         and ad_role_id = :new.ad_role_id;
      IF :new.AD_USER_ID is not null and n=0 then
-       RAISE_APPLICATION_ERROR(-20515, 'User not in role') ;
+       RAISE_APPLICATION_ERROR(-20000, '@20515@') ;
      end if;
    END IF;
 END AD_ALERTRECIPIENT_TRG

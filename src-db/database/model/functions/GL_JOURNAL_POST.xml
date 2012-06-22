@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -58,11 +58,13 @@
     v_ControlAmt GL_Journal.ControlAmt%TYPE;
     FINISH_PROCESS BOOLEAN:=false;
     v_is_included NUMBER:=0;
+    v_has_lines NUMBER:=-1;
     v_available_period NUMBER:=0;
     v_is_ready AD_Org.IsReady%TYPE;
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
     v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
+    v_documentNo GL_Journal.DocumentNo%TYPE;
     
   BEGIN
     --  Update AD_PInstance
@@ -202,6 +204,18 @@
       END IF;
       IF (v_is_tr_allow='N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+
+      -- Check if the gl journal has lines.
+     
+      SELECT 1, documentNo INTO v_has_lines, v_documentNo
+      FROM GL_Journal
+      WHERE EXISTS (SELECT 1
+                    FROM GL_JournalLine
+                    WHERE GL_JournalLine.GL_Journal_ID = GL_Journal.GL_Journal_ID
+                    AND GL_JournalLine.GL_Journal_ID = v_Record_ID);
+      IF (v_has_lines=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@GLJournalHasNoLines@' || ' ' || v_DocumentNo);
       END IF;
       
       SELECT AD_ORG_CHK_DOCUMENTS('GL_JOURNAL', 'GL_JOURNALLINE', v_Record_ID, 'GL_JOURNAL_ID', 'GL_JOURNAL_ID') INTO v_is_included FROM dual;

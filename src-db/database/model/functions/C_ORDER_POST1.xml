@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2011 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -814,6 +814,7 @@
                 FROM M_PRODUCT_BOM b
                       INNER JOIN M_PRODUCT p ON (b.M_ProductBOM_ID=p.M_Product_ID)
                 WHERE b.M_Product_ID=CUR_BOM_Line.M_Product_ID
+                AND b.isactive='Y'
                 ORDER BY Line
                )
             LOOP
@@ -951,7 +952,7 @@
               RAISE NO_DATA_FOUND;
               COMMIT;
             END IF;
-            RAISE_APPLICATION_ERROR(-20011, 'Did not update Line');
+            RAISE_APPLICATION_ERROR(-20000, '@20011@');
           END IF;
         END LOOP; -- For all lines needing reservation
       END; -- Reserve Inventory

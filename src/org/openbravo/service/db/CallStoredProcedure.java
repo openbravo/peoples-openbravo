@@ -62,9 +62,11 @@ public class CallStoredProcedure {
    * @param types
    *          the list of types of the parameters, only needs to be set if there are null values and
    *          if the null value is something else than a String (which is handled as a default type)
+   * @param doFlush
+   *          do flush before calling stored procedure
    * @return the stored procedure result.
    */
-  public Object call(String name, List<Object> parameters, List<Class<?>> types) {
+  public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush) {
     final StringBuilder sb = new StringBuilder();
     sb.append("SELECT " + name);
     for (int i = 0; i < parameters.size(); i++) {
@@ -79,7 +81,7 @@ public class CallStoredProcedure {
       sb.append(")");
     }
     sb.append(" AS RESULT FROM DUAL");
-    final Connection conn = OBDal.getInstance().getConnection();
+    final Connection conn = OBDal.getInstance().getConnection(doFlush);
     try {
       final PreparedStatement ps = conn.prepareStatement(sb.toString(),
           ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -145,5 +147,9 @@ public class CallStoredProcedure {
     } else {
       throw new IllegalStateException("Type not supported, please add it here " + clz.getName());
     }
+  }
+
+  public Object call(String name, List<Object> parameters, List<Class<?>> types) {
+    return call(name, parameters, types, true);
   }
 }

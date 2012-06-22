@@ -47,8 +47,6 @@ OB.DateItemProperties = {
   validateOnChange: false,
   stopOnError: false,
 
-  textAlign: 'left',
-
   dateParts: [],
 
   doInit: function () {
@@ -80,6 +78,9 @@ OB.DateItemProperties = {
     this.Super('init', arguments);
 
     if (this.textField) {
+      if (this.length) {
+        this.textField.length = this.length;
+      }
       this.textField.changed = function () {
         // when the textfield of the date is updated, the date
         // field should be flagged as changed
@@ -243,7 +244,13 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   // update the value in update value as this is called from cellEditEnd in the
   // grid, after losing the focus on the form and when autosaving
   updateValue: function () {
-    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving) {
+    var savingWithShortcut;
+    if (this.grid && this.grid.view && this.grid.view.savingWithShortcut) {
+      savingWithShortcut = this.grid.view.savingWithShortcut;
+    } else {
+      savingWithShortcut = false;
+    }
+    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving && !savingWithShortcut) {
       return;
     }
     if (this.textField._textChanged) {
@@ -253,8 +260,8 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       //  the grid does not save the value before making the FIC call, so the value has to 
       //  be saved explicitly
       //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
-      if (this.grid && this.grid.getEditRow()) {
-        this.grid.getEditValues(this.grid.getEditRow())[this.name] = this.getValue();
+      if (this.grid && this.grid.isEditing()) {
+        this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
       }
       this.textField._textChanged = false;
     }

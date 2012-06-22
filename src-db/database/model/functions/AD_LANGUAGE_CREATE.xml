@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -38,6 +38,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
+  v_Core_Language VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -237,6 +238,7 @@
     WHERE AD_Language.IsActive='Y'  
     AND AD_Language.IsSystemLanguage='Y'  
     AND M.AD_MODULE_ID = AD_Message.AD_MODULE_ID
+    AND M.AD_Language != AD_Language.AD_Language
     AND NOT EXISTS (SELECT 1 FROM AD_Message_trl
                  WHERE AD_Message_ID = AD_Message.AD_Message_id
                    AND AD_LANGUAGE = AD_Language.AD_Language);
@@ -370,6 +372,10 @@
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Window ' || v_rowcount) ;
     
+
+    SELECT ad_language INTO v_Core_Language
+    FROM ad_module
+    WHERE ad_module_id = '0';
     
     --No module
     INSERT
@@ -382,6 +388,7 @@
     SELECT get_uuid(), AD_Month_ID, AD_Language.AD_Language, AD_Month.Name, 'N', '0', '0', AD_Month.AD_Client_ID, AD_Month.AD_Org_ID
     FROM AD_Month, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND AD_Language.AD_Language != v_Core_Language
      AND NOT EXISTS (SELECT 1 FROM AD_Month_TRL
                  WHERE AD_Month_ID = AD_Month.AD_Month_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -400,7 +407,8 @@
       )
     SELECT get_uuid(), C_Country_ID, AD_Language.AD_Language, C_Country.Name, C_Country.Description, C_Country.RegionName, C_Country.DisplaySequence, 'N', '0', '0', C_Country.AD_Client_ID, C_Country.AD_Org_ID
     FROM C_Country, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y' 
+    AND AD_Language.AD_Language != v_Core_Language
     AND NOT EXISTS (SELECT 1 FROM C_Country_TRL
                  WHERE C_Country_ID = C_Country.C_Country_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -420,6 +428,7 @@
     SELECT get_uuid(), C_Currency_ID, AD_Language.AD_Language, C_Currency.CurSymbol, C_Currency.Description, 'N', '0', '0', C_Currency.AD_Client_ID, C_Currency.AD_Org_ID
     FROM C_Currency, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND AD_Language.AD_Language != v_Core_Language    
     AND NOT EXISTS (SELECT 1 FROM C_Currency_TRL
                  WHERE C_Currency_ID = C_Currency.C_Currency_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -438,10 +447,11 @@
         DocumentNote, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid(), C_DocType_ID, AD_Language, C_DocType.Name, C_DocType.PrintName, C_DocType.DocumentNote, 'N', '0', '0', C_DocType.AD_Client_ID, C_DocType.AD_Org_ID
+    SELECT get_uuid(), C_DocType_ID, AD_Language.AD_Language, C_DocType.Name, C_DocType.PrintName, C_DocType.DocumentNote, 'N', '0', '0', C_DocType.AD_Client_ID, C_DocType.AD_Org_ID
     FROM C_DocType, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
-     AND NOT EXISTS (SELECT 1 FROM C_DocType_TRL
+    AND AD_Language.AD_Language != v_Core_Language          
+    AND NOT EXISTS (SELECT 1 FROM C_DocType_TRL
                  WHERE C_DocType_ID = C_DocType.C_DocType_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
 
@@ -456,10 +466,11 @@
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT get_uuid(), C_ElementValue_ID, AD_Language, C_ElementValue.Name, C_ElementValue.Description, 'N', '0', '0', C_ElementValue.AD_Client_ID, C_ElementValue.AD_Org_ID
+    SELECT get_uuid(), C_ElementValue_ID, AD_Language.AD_Language, C_ElementValue.Name, C_ElementValue.Description, 'N', '0', '0', C_ElementValue.AD_Client_ID, C_ElementValue.AD_Org_ID
     FROM C_ElementValue, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
-     AND NOT EXISTS (SELECT 1 FROM C_ElementValue_TRL
+    AND AD_Language.AD_Language != v_Core_Language      
+    AND NOT EXISTS (SELECT 1 FROM C_ElementValue_TRL
                  WHERE C_ElementValue_ID = C_ElementValue.C_ElementValue_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
 
@@ -473,9 +484,10 @@
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT get_uuid(), C_Greeting_ID, AD_Language, C_Greeting.Name, C_Greeting.Greeting, 'N', '0', '0', C_Greeting.AD_Client_ID, C_Greeting.AD_Org_ID
+    SELECT get_uuid(), C_Greeting_ID, AD_Language.AD_Language, C_Greeting.Name, C_Greeting.Greeting, 'N', '0', '0', C_Greeting.AD_Client_ID, C_Greeting.AD_Org_ID
     FROM C_Greeting, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'
+    AND AD_Language.AD_Language != v_Core_Language    
     AND NOT EXISTS (SELECT 1 FROM C_Greeting_TRL
                  WHERE C_Greeting_ID = C_Greeting.C_Greeting_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -490,9 +502,10 @@
         DocumentNote, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid(), C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
+    SELECT get_uuid(), C_PaymentTerm_ID, AD_Language.AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
     FROM C_PaymentTerm, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y' 
+    AND AD_Language.AD_Language != v_Core_Language  
     AND NOT EXISTS (SELECT 1 FROM C_PaymentTerm_TRL
                  WHERE C_PaymentTerm_ID = C_PaymentTerm.C_PaymentTerm_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -507,9 +520,10 @@
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT get_uuid(), C_TaxCategory_ID, AD_Language, C_TaxCategory.Name, C_TaxCategory.Description, 'N', '0', '0', C_TaxCategory.AD_Client_ID, C_TaxCategory.AD_Org_ID
+    SELECT get_uuid(), C_TaxCategory_ID, AD_Language.AD_Language, C_TaxCategory.Name, C_TaxCategory.Description, 'N', '0', '0', C_TaxCategory.AD_Client_ID, C_TaxCategory.AD_Org_ID
     FROM C_TaxCategory, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'
+    AND AD_Language.AD_Language != v_Core_Language  
      AND NOT EXISTS (SELECT 1 FROM C_TaxCategory_TRL
                  WHERE C_TaxCategory_ID = C_TaxCategory.C_TaxCategory_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -524,9 +538,10 @@
         UOMSymbol, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid(), C_UOM_ID, AD_Language, C_UOM.Name, C_UOM.Description, C_UOM.UOMSymbol, 'N', '0', '0', C_UOM.AD_Client_ID, C_UOM.AD_Org_ID
+    SELECT get_uuid(), C_UOM_ID, AD_Language.AD_Language, C_UOM.Name, C_UOM.Description, C_UOM.UOMSymbol, 'N', '0', '0', C_UOM.AD_Client_ID, C_UOM.AD_Org_ID
     FROM C_UOM, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND AD_Language.AD_Language != v_Core_Language  
     AND NOT EXISTS (SELECT 1 FROM C_UOM_TRL
                  WHERE C_UOM_ID = C_UOM.C_UOM_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 
@@ -541,9 +556,10 @@
         TaxIndicator, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid(), C_Tax_ID, AD_Language, C_Tax.Name, C_Tax.Description, C_Tax.TaxIndicator, 'N', '0', '0', C_Tax.AD_Client_ID, C_Tax.AD_Org_ID
+    SELECT get_uuid(), C_Tax_ID, AD_Language.AD_Language, C_Tax.Name, C_Tax.Description, C_Tax.TaxIndicator, 'N', '0', '0', C_Tax.AD_Client_ID, C_Tax.AD_Org_ID
     FROM C_Tax, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND AD_Language.AD_Language != v_Core_Language  
     AND NOT EXISTS (SELECT 1 FROM C_Tax_TRL
                  WHERE C_Tax_ID = C_Tax.C_Tax_ID
                    AND AD_LANGUAGE = AD_Language.AD_Language); 

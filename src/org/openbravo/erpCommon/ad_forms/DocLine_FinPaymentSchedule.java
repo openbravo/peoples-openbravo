@@ -37,7 +37,7 @@ public class DocLine_FinPaymentSchedule extends DocLine {
   public DocLine_FinPaymentSchedule(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
     Line_ID = TrxLine_ID;
-    m_Record_Id2 = Line_ID;
+    // m_Record_Id2 = Line_ID;
   }
 
   public String getLine_ID() {

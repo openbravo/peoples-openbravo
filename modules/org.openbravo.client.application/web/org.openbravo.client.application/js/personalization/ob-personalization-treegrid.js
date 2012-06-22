@@ -46,6 +46,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   dropIconSuffix: 'open',
   closedIconSuffix: 'closed',
   openIconSuffix: 'open',
+  selectionType: 'single',
 
   fields: [{
     name: 'title',
@@ -246,6 +247,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // no context menu on folders
   folderContextClick: function (me, record, recordNum) {
     return false;
+  },
+
+  // Overridden as it seems that the 8.3 version
+  // of SC does not call the selectionUpdated event anymore
+  cellClick: function (record, rowNum, colNum) {
+    this.deselectAllRecords();
+    this.selectRecord(record);
   },
 
   // overridden to create context menu items specific 

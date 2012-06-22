@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,14 +49,11 @@ import org.openbravo.base.util.Check;
 public class OBTuplizer extends PojoEntityTuplizer {
   private static final Logger log = Logger.getLogger(OBTuplizer.class);
 
-  private final PersistentClass persistentClass;
-
   public OBTuplizer(EntityMetamodel entityMetamodel, PersistentClass mappedEntity) {
     super(entityMetamodel, mappedEntity);
     log.debug("Created tuplizer for "
         + (mappedEntity.getMappedClass() != null ? mappedEntity.getMappedClass().getName()
             : mappedEntity.getEntityName()));
-    persistentClass = mappedEntity;
   }
 
   // this is done in the generated mapping
@@ -141,12 +138,8 @@ public class OBTuplizer extends PojoEntityTuplizer {
   }
 
   @Override
-  public Class<?> getMappedClass() {
-    return persistentClass.getMappedClass();
+  public Class<?> getConcreteProxyClass() {
+    return getMappedClass();
   }
 
-  @Override
-  public Class<?> getConcreteProxyClass() {
-    return persistentClass.getMappedClass();
-  }
 }

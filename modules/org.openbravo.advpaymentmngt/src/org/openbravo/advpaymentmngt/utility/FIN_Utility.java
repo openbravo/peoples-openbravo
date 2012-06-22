@@ -44,6 +44,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -59,6 +60,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -228,13 +230,14 @@ public class FIN_Utility {
   }
 
   /**
-   * Creates a comma separated string with the Id's of the Set of Strings.
-   * This method is deprecated as it has been added to Utility (core)
+   * Creates a comma separated string with the Id's of the Set of Strings. This method is deprecated
+   * as it has been added to Utility (core)
+   * 
    * @param set
    *          Set of Strings
    * @return Comma separated string of Id's
    */
-  @Deprecated 
+  @Deprecated
   public static String getInStrSet(Set<String> set) {
     return Utility.getInStrSet(set);
   }
@@ -924,7 +927,8 @@ public class FIN_Utility {
       // By default take the invoice document number
       invoiceDocNo = invoice.getDocumentNo();
 
-      final String paymentDescription = organization.getOrganizationInformationList().get(0)
+      final String paymentDescription = OBDal.getInstance()
+          .get(OrganizationInformation.class, ((String) DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
@@ -953,6 +957,51 @@ public class FIN_Utility {
         parameters, null);
 
     return "Y".equals(result);
+  }
+
+  /**
+   * Returns a list of Payment Status. If isConfirmed equals true, then the status returned are
+   * confirmed payments. Else they are pending of execution
+   * 
+   */
+  private static List<String> getListPaymentConfirmedOrNot(Boolean isConfirmed) {
+
+    List<String> listPaymentConfirmedOrNot = new ArrayList<String>();
+    OBContext.setAdminMode(true);
+    try {
+      final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
+          "575BCB88A4694C27BC013DE9C73E6FE7"));
+      List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
+      for (org.openbravo.model.ad.domain.List adRef : adRefList) {
+        if (isConfirmed.equals(isPaymentConfirmed(adRef.getSearchKey(), null))) {
+          listPaymentConfirmedOrNot.add(adRef.getSearchKey());
+        }
+      }
+      return listPaymentConfirmedOrNot;
+    } catch (Exception e) {
+      log4j.error(e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns a list confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentConfirmed() {
+    return getListPaymentConfirmedOrNot(true);
+  }
+
+  /**
+   * Returns a list not confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentNotConfirmed() {
+    return getListPaymentConfirmedOrNot(false);
   }
 
   /**

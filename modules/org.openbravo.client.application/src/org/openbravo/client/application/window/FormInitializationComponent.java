@@ -257,7 +257,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
-      analyzeResponse(columnValues);
+      analyzeResponse(tab, columnValues);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -278,7 +278,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
-  private void analyzeResponse(Map<String, JSONObject> columnValues) {
+  private void analyzeResponse(Tab tab, Map<String, JSONObject> columnValues) {
     int maxEntries = 1000;
     int i = 0;
     String heavyCols = "";
@@ -299,7 +299,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     if (!"".equals(heavyCols)) {
-      log.warn("Warning: the combo fields "
+      log.warn("Warning: In the window "
+          + tab.getWindow().getName()
+          + ", in tab "
+          + tab.getName()
+          + " the combo fields "
           + heavyCols
           + " contain more than "
           + maxEntries
@@ -781,7 +785,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (field.getColumn() == null) {
           continue;
         }
-        setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
+        setValueOfColumnInRequest(row, field, field.getColumn().getDBColumnName());
       }
     }
     // and then overwrite with what gets passed in
@@ -852,7 +856,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     Entity parentEntity = parentRecord.getEntity();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         field.getTab().getTable().getId());
-    Property property = entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
+    Property property = KernelUtils.getProperty(field);
     Entity referencedEntity = property.getReferencedProperty().getEntity();
     return referencedEntity.equals(parentEntity);
   }
@@ -999,10 +1003,21 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
+  private void setValueOfColumnInRequest(BaseOBObject obj, Field field, String columnName) {
     Entity entity = obj.getEntity();
-    Property prop = entity.getPropertyByColumnName(columnName);
-    Object currentValue = obj.get(prop.getName());
+    final Property prop;
+    Object currentValue;
+    if (field != null) {
+      prop = KernelUtils.getProperty(field);
+      if (field.getProperty() != null) {
+        currentValue = DalUtil.getValueFromPath(obj, field.getProperty());
+      } else {
+        currentValue = obj.get(prop.getName());
+      }
+    } else {
+      prop = entity.getPropertyByColumnName(columnName);
+      currentValue = obj.get(prop.getName());
+    }
 
     if (currentValue != null && !currentValue.toString().equals("null")) {
       if (currentValue instanceof BaseOBObject) {
@@ -1043,7 +1058,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         // We also set the value of every column in the RequestContext so that it is available for
         // the Auxiliary Input computation
-        setValueOfColumnInRequest(object, col.getDBColumnName());
+        setValueOfColumnInRequest(object, null, col.getDBColumnName());
       }
     }
     List<AuxiliaryInput> auxInputs = getAuxiliaryInputList(tab.getId());

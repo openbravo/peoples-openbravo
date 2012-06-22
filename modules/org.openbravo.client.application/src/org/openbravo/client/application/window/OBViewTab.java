@@ -57,6 +57,7 @@ import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -104,6 +105,20 @@ public class OBViewTab extends BaseTemplateComponent {
       dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
     }
     dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
+
+    final StringBuilder sb = new StringBuilder();
+    for (Field fld : tab.getADFieldList()) {
+      if (fld.getProperty() != null && fld.getProperty().contains(".")) {
+        if (sb.length() > 0) {
+          sb.append(",");
+        }
+        sb.append(fld.getProperty());
+      }
+    }
+
+    if (sb.length() > 0) {
+      dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, sb.toString());
+    }
     final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }
@@ -514,6 +529,8 @@ public class OBViewTab extends BaseTemplateComponent {
     private String windowId = "";
     private String windowTitle = "";
     private boolean newDefinition = false;
+    private String uiPattern = "";
+    private boolean multiRecord = false;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -533,8 +550,10 @@ public class OBViewTab extends BaseTemplateComponent {
         url = "/";
         command = newProcess.getJavaClassName();
         newDefinition = true;
+        uiPattern = newProcess.getUIPattern();
+        multiRecord = newProcess.isMultiRecord();
 
-        if ("OBUIAPP_PickAndExecute".equals(newProcess.getUIPattern())) {
+        if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
           for (org.openbravo.client.application.Parameter p : newProcess.getOBUIAPPParameterList()) {
@@ -702,6 +721,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public boolean isNewDefinition() {
       return newDefinition;
+    }
+
+    public String getUiPattern() {
+      return uiPattern;
+    }
+
+    public boolean isMultiRecord() {
+      return multiRecord;
     }
 
     public void setNewDefinition(boolean newDefinition) {

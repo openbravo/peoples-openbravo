@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -240,7 +241,7 @@ public class DataQueryServiceTest extends BaseTest {
     queryService.setTextMatching(TextMatching.startsWith.name());
 
     // test simple sorting
-    queryService.setOrderBy(Column.PROPERTY_TABLE + "._identifier");
+    queryService.setOrderBy(Column.PROPERTY_TABLE + DalUtil.DOT + JsonConstants.IDENTIFIER);
 
     final List<BaseOBObject> list = queryService.list();
 
