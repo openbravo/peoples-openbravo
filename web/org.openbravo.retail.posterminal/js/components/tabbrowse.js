@@ -16,8 +16,7 @@
   OB.COMP.BrowseCategories = Backbone.View.extend({
     tagName: 'div',
     attributes: {
-      'id': 'edition',
-      'class': 'tab-pane'
+      'style': 'overflow:auto; height: 500px; margin: 5px;'
     },
     initialize: function() {
       var $child = $('<div/>');
