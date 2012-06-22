@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION AD_ISJAVAWORD">
-    <function name="AD_ISJAVAWORD" type="CHAR">
+  <database name="FUNCTION AD_ISJAVASCRIPTWORD">
+    <function name="AD_ISJAVASCRIPTWORD" type="CHAR">
       <parameter name="word" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -16,15 +16,15 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
   --Prevents column names to generate conflicts with DAL's getters and setters
-  RETURN case when lower(WORD) in ('class')
+  RETURN case when lower(WORD) in ('length')
     THEN 'Y' ELSE 'N' END;
-END AD_ISJAVAWORD
+END AD_ISJAVASCRIPTWORD
 ]]></body>
     </function>
   </database>

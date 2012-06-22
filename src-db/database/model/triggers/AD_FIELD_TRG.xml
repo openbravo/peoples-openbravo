@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -29,10 +29,6 @@
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
-    END IF;
-
-    IF AD_IsJavaWord(:new.Name)='Y' THEN
-    RAISE_APPLICATION_ERROR(-20000, '@NotAllowedFieldName@ "'||:new.Name||'" @ReservedJavaWord@') ;
     END IF;
 
   IF INSERTING
