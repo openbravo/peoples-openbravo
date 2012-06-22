@@ -752,7 +752,7 @@ public class CostingMigrationProcess implements Process {
     for (CostingRuleInit cri : criList) {
       if (!client.equals(cri.getClient().getIdentifier())) {
         client = cri.getClient().getIdentifier();
-        msg = msg + "CLIENT: " + cri.getClient().getIdentifier() + "<br>";
+        msg = msg + "@Client@: " + cri.getClient().getIdentifier() + "<br>";
       }
       msg = msg + cri.getOrganization().getIdentifier() + " - "
           + cri.getWarehouse().getIdentifier();
