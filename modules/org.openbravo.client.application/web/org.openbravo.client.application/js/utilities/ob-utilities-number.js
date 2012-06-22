@@ -293,7 +293,7 @@ OB.Utilities.Number.OBMaskedToJS = function (numberStr, decSeparator, groupSepar
 OB.Utilities.Number.JSToOBMasked = function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
   var isANumber = Object.prototype.toString.call(number) === '[object Number]';
   if (!isANumber) {
-    return null;
+    return number;
   }
   var formattedNumber = number;
   formattedNumber = formattedNumber.toString();
