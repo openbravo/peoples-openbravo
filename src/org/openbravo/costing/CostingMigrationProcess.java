@@ -353,6 +353,7 @@ public class CostingMigrationProcess implements Process {
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         BigDecimal cost = getLegacyProductCost(trx.getProduct());
         trx.setCostCalculated(true);
+        trx.setTransactionCost(cost);
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
         if (!clientCurrency.getId().equals(orgCurrency.getId())) {
@@ -734,8 +735,9 @@ public class CostingMigrationProcess implements Process {
     where.append(" as cri ");
     where.append("   join cri." + CostingRuleInit.PROPERTY_INITINVENTORY + " as ipi");
     where.append(" where ipi." + InventoryCount.PROPERTY_PROCESSED + " = false");
-    where.append(" order by ipi." + InventoryCount.PROPERTY_CLIENT + ", ipi." + InventoryCount.PROPERTY_ORGANIZATION);
-    
+    where.append(" order by ipi." + InventoryCount.PROPERTY_CLIENT + ", ipi."
+        + InventoryCount.PROPERTY_ORGANIZATION);
+
     OBQuery<CostingRuleInit> criQry = OBDal.getInstance().createQuery(CostingRuleInit.class,
         where.toString());
     criQry.setFilterOnReadableClients(false);
@@ -746,17 +748,18 @@ public class CostingMigrationProcess implements Process {
     }
     List<String> inventoryList = new ArrayList<String>();
     String client = "";
-    String msg = ""; 
+    String msg = "";
     for (CostingRuleInit cri : criList) {
-      if (!client.equals(cri.getClient().getIdentifier())){
-    	  client = cri.getClient().getIdentifier();
-    	  msg = msg + "CLIENT: " + cri.getClient().getIdentifier() + "<br>";
+      if (!client.equals(cri.getClient().getIdentifier())) {
+        client = cri.getClient().getIdentifier();
+        msg = msg + "CLIENT: " + cri.getClient().getIdentifier() + "<br>";
       }
-      msg = msg + cri.getOrganization().getIdentifier() + " - " + cri.getWarehouse().getIdentifier();
+      msg = msg + cri.getOrganization().getIdentifier() + " - "
+          + cri.getWarehouse().getIdentifier();
       inventoryList.add(msg);
       msg = "<br>";
     }
-    throw new OBException("@unprocessedInventories@: <br>"  + inventoryList.toString());
+    throw new OBException("@unprocessedInventories@: <br>" + inventoryList.toString());
   }
 
   private List<CostingRule> getRules() {
