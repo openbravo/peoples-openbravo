@@ -94,6 +94,8 @@ public class Property {
   private boolean translatable = false;
   private Property translationProperty;
 
+  private String sqlLogic;
+
   private PropertyValidator validator;
 
   private boolean isCompositeId;
@@ -174,6 +176,7 @@ public class Property {
     setUpdatable(fromColumn.isUpdatable());
     setFieldLength(fromColumn.getFieldLength());
     setAllowedValues(fromColumn.getAllowedValues());
+    setSqlLogic(fromColumn.getSqlLogic());
     final String columnname = fromColumn.getColumnName().toLowerCase();
     if (columnname.equals("line") || columnname.equals("seqno") || columnname.equals("lineno")) {
       setOrderByProperty(true);
@@ -1251,5 +1254,13 @@ public class Property {
     this.usedSequence = "documentno".equalsIgnoreCase(columnName)
         || (usedSequence && "Value".equals(columnName));
     ;
+  }
+
+  public String getSqlLogic() {
+    return sqlLogic;
+  }
+
+  public void setSqlLogic(String sqlLogic) {
+    this.sqlLogic = sqlLogic;
   }
 }
