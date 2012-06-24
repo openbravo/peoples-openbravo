@@ -32,6 +32,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -85,11 +86,23 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     String strPrecision = "0";
     String strPricePrecision = "0";
     String strDiscount = "";
+    String strGrossUnitPrice = "0";
+    String strGrossAmount = "0";
+    String isTaxIncluded = "";
     Connection conn = null;
     try {
       conn = getTransactionConnection();
       CopyFromPOOrderData[] data = CopyFromPOOrderData.selectLines(this, strOrder);
       CopyFromPOOrderData[] order = CopyFromPOOrderData.select(this, strKey);
+      CopyFromPOOrderData[] data4 = CopyFromPOOrderData.selectOrderPricelist(this, strKey);
+      if (data4 != null && data4.length > 0) {
+        strPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
+        strPricePrecision = data4[0].priceprecision.equals("") ? "0" : data4[0].priceprecision;
+        isTaxIncluded = data4[0].istaxincluded.equals("") ? "N" : data4[0].istaxincluded;
+      }
+      int StdPrecision = Integer.valueOf(strPrecision).intValue();
+      int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
+
       for (i = 0; data != null && i < data.length; i++) {
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
             data[i].mProductId,
@@ -103,16 +116,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             priceactual = data3[j].pricestd;
             pricelist = data3[j].pricelist;
             pricelimit = data3[j].pricelimit;
-            CopyFromPOOrderData[] data4 = CopyFromPOOrderData.selectOrderPricelist(this, strKey);
-            if (data4 != null && data4.length > 0) {
-              strPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
-              strPricePrecision = data4[0].priceprecision.equals("") ? "0"
-                  : data4[0].priceprecision;
-            }
-            int StdPrecision = Integer.valueOf(strPrecision).intValue();
-            int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-            BigDecimal priceActual, priceList, discount;
+            BigDecimal priceActual, priceList, discount, grossUnitPrice;
 
             priceActual = (priceactual.equals("") ? ZERO : (new BigDecimal(priceactual))).setScale(
                 PricePrecision, BigDecimal.ROUND_HALF_UP);
@@ -147,6 +152,28 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
           return myError;
         }
+        // Processing for taxincluded
+        if (isTaxIncluded.equals("Y")) {
+          BigDecimal grossAmount, grossUnitPrice, qtyOrdered, lineAmount, priceActual;
+
+          strGrossUnitPrice = priceactual;
+          grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO
+              : (new BigDecimal(strGrossUnitPrice))).setScale(PricePrecision,
+              BigDecimal.ROUND_HALF_UP);
+          qtyOrdered = (data[i].qtyordered.equals("") ? ZERO : new BigDecimal(data[i].qtyordered));
+          grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(PricePrecision,
+              BigDecimal.ROUND_HALF_UP);
+          lineAmount = GrossPriceBasedCalculator.calculateNetFromGross(strCTaxID, grossAmount,
+              PricePrecision, grossAmount, qtyOrdered);
+          priceActual = lineAmount.divide(qtyOrdered).setScale(PricePrecision,
+              BigDecimal.ROUND_HALF_UP);
+
+          priceactual = priceActual.toString();
+          pricelist = priceActual.toString();
+          pricelimit = priceActual.toString();
+          strGrossAmount = grossAmount.toString();
+        }
+
         line = Integer.valueOf(order[0].line.equals("") ? "0" : order[0].line).intValue()
             + ((i + 1) * 10);
         String strCOrderlineID = SequenceIdData.getUUID();
@@ -161,23 +188,25 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 vars.getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
             data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
           }
-          CopyFromPOOrderData.insertCOrderline(
-              conn,
-              this,
-              strCOrderlineID,
-              order[0].adClientId,
-              order[0].adOrgId,
-              vars.getUser(),
-              strKey,
-              Integer.toString(line),
-              order[0].cBpartnerId,
-              order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData.cBPartnerLocationId(this,
-                  order[0].cBpartnerId) : order[0].cBpartnerLocationId, order[0].dateordered,
-              order[0].datepromised, data[i].description, data[i].mProductId, order[0].mWarehouseId
-                  .equals("") ? vars.getWarehouse() : order[0].mWarehouseId, data[i].cUomId,
-              data[i].qtyordered, data[i].quantityorder, data[i].cCurrencyId, pricelist,
-              priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId,
-              data[i].orderline, data[i].mAttributesetinstanceId);
+          CopyFromPOOrderData
+              .insertCOrderline(
+                  conn,
+                  this,
+                  strCOrderlineID,
+                  order[0].adClientId,
+                  order[0].adOrgId,
+                  vars.getUser(),
+                  strKey,
+                  Integer.toString(line),
+                  order[0].cBpartnerId,
+                  order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData.cBPartnerLocationId(
+                      this, order[0].cBpartnerId) : order[0].cBpartnerLocationId,
+                  order[0].dateordered, order[0].datepromised, data[i].description,
+                  data[i].mProductId, order[0].mWarehouseId.equals("") ? vars.getWarehouse()
+                      : order[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
+                  data[i].quantityorder, data[i].cCurrencyId, pricelist, priceactual, pricelimit,
+                  strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
+                  data[i].mAttributesetinstanceId, strGrossUnitPrice, strGrossAmount);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
