@@ -6,6 +6,12 @@
   OB.COMP = window.OB.COMP || {};
 
   var parseNumber = function (s) {
+    if (OB.Format.defaultDecimalSymbol !== '.') {
+      s = s.toString();
+      while (s.indexOf(OB.Format.defaultDecimalSymbol) !== -1) {
+        s = s.replace(OB.Format.defaultDecimalSymbol, '.');
+      }
+    }
     return OB.DEC.number(parseFloat(s, 10));
   };
 
@@ -20,7 +26,7 @@
         if (attr.command === '---') {
           // It is the null command
           this.command = false;
-        } else if (!cmd.match(/^([0-9]|\.|[a-z])$/) && cmd !== 'OK' && cmd !== 'del' && cmd !== String.fromCharCode(13) && !kb.commands[cmd]) {
+        } else if (!cmd.match(/^([0-9]|\.|,|[a-z])$/) && cmd !== 'OK' && cmd !== 'del' && cmd !== String.fromCharCode(13) && !kb.commands[cmd]) {
           // is not a key and does not exists the command
           this.command = false;
         } else if (attr.permission && !OB.POS.modelterminal.hasPermission(attr.permission)) {
@@ -131,7 +137,7 @@
                     {kind: BtnAction(this), attr: {'command': '0'}, content: ['0']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '.'}, content: ['.']}
+                    {kind: BtnAction(this), attr: {'command': OB.Format.defaultDecimalSymbol}, content: [OB.Format.defaultDecimalSymbol]}
                   ]}
                 ]}
               ]},
@@ -213,9 +219,23 @@
         }
       }, this);
 
+      //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
+      $(window).keydown(function(e) {
+        if (window.fixFocus() && OB.Format.defaultDecimalSymbol !== '.') {
+          if (e.keyCode === 110) { //Numeric keypad dot (.)
+            me.keyPressed(OB.Format.defaultDecimalSymbol);
+          } else if (e.keyCode === 190) { //Character keyboard dot (.)
+            me.keyPressed('.');
+          }
+        }
+        return true;
+      });
+
       $(window).keypress(function(e) {
         if (window.fixFocus()) {
-          me.keyPressed(String.fromCharCode(e.which));
+          if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
+            me.keyPressed(String.fromCharCode(e.which));
+          }
         }
       });
     },
@@ -290,7 +310,7 @@
     keyPressed: function (key) {
 
       var t;
-      if (key.match(/^([0-9]|\.|[a-z])$/)) {
+      if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
         t = this.editbox.text();
         this.editbox.text(t + key);
       } else if (key === 'del') {
