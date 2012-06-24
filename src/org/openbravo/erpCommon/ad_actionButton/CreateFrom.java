@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -40,12 +38,12 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -1550,8 +1548,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceLimit = price[0].pricelimit;
                   priceGross = price[0].pricestd;
                   BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
-                  final BigDecimal netUnitPrice = calculateNetFromGross(C_Tax_ID, grossAmount,
-                      curPrecision, grossAmount, qty);
+                  final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(
+                      strTableId, grossAmount, curPrecision, grossAmount, qty);
                   priceActual = netUnitPrice.toString();
                 }
               }
@@ -2262,24 +2260,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
     return ids;
 
-  }
-
-  private BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
-      int pricePrecision, BigDecimal alternateAmount, BigDecimal invoicedQty) {
-    if (grossAmount.compareTo(BigDecimal.ZERO) == 0)
-      return BigDecimal.ZERO;
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(strTaxId);
-    parameters.add(grossAmount);
-    // TODO: Alternate Base Amount
-    parameters.add(alternateAmount);
-    parameters.add(pricePrecision);
-    parameters.add(invoicedQty);
-
-    final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
-    final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
-        procedureName, parameters, null);
-    return lineUnitAmount;
   }
 
   @Override

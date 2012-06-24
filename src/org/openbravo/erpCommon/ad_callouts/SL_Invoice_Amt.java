@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,9 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -178,8 +176,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             .isPriceIncludesTax())) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, PricePrecision,
-          taxBaseAmt, qtyInvoice);
+      BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
+          grossAmount, PricePrecision, taxBaseAmt, qtyInvoice);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
@@ -192,8 +190,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inpgrossUnitPrice")) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      final BigDecimal netUnitPrice = calculateNetFromGross(strTaxId, grossAmount, PricePrecision,
-          taxBaseAmt, qtyInvoice);
+      final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
+          grossAmount, PricePrecision, taxBaseAmt, qtyInvoice);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
@@ -257,21 +255,4 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     out.close();
   }
 
-  private BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
-      int pricePrecision, BigDecimal alternateAmount, BigDecimal invoicedQty) {
-    if (grossAmount.compareTo(BigDecimal.ZERO) == 0)
-      return BigDecimal.ZERO;
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(strTaxId);
-    parameters.add(grossAmount);
-    // TODO: Alternate Base Amount
-    parameters.add(alternateAmount);
-    parameters.add(pricePrecision);
-    parameters.add(invoicedQty);
-
-    final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
-    final BigDecimal lineUnitAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
-        procedureName, parameters, null);
-    return lineUnitAmount;
-  }
 }
