@@ -279,7 +279,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
     // compute a new startrow if the targetrecordid was passed in
     int targetRowNumber = -1;
-    if (!directNavigation && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+    if (!forCountOperation && !directNavigation
+        && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
       targetRowNumber = queryService.getRowNumber(targetRecordId);
       if (targetRowNumber != -1) {
@@ -293,6 +294,7 @@ public class DefaultJsonDataService implements JsonDataService {
         }
         queryService.setFirstResult(startRow);
       }
+      queryService.clearCachedValues();
     }
     if (!forCountOperation) {
       queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));

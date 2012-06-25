@@ -32,6 +32,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
@@ -229,6 +230,18 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   /**
+   * Returns the parent organization of an organization.
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization is determined.
+   * @return the parent organization.
+   */
+  public Organization getParentOrg(Organization org) {
+    initialize();
+    return OBDal.getInstance().get(Organization.class, parentByOrganizationID.get(org.getId()));
+  }
+
+  /**
    * Returns the child organization tree of an organization.
    * 
    * @param orgId
@@ -369,5 +382,73 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  /**
+   * Returns the legal entity of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntity(final Organization org) {
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the legal entity or Business Unit of the given organization
+   * 
+   * @param org
+   *          organization to get its legal entity or business unit
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public Organization getLegalEntityOrBusinessUnit(final Organization org) {
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      for (final String orgId : getParentList(org.getId(), true)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getOrganizationType().isLegalEntity()
+            || parentOrg.getOrganizationType().isBusinessUnit()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the organization that is period control allowed for the org Organization. If no
+   * organization is found, it returns NULL.
+   * 
+   * @param org
+   *          Organization to get its period control allowed organization.
+   * @return
+   */
+  public Organization getPeriodControlAllowedOrganization(final Organization org) {
+    if (org.isAllowPeriodControl()) {
+      return org;
+    }
+    for (final String orgId : getParentList(org.getId(), false)) {
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.isAllowPeriodControl()) {
+        return parentOrg;
+      }
+    }
+    return null;
   }
 }

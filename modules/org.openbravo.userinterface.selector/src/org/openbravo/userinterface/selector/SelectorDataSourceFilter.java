@@ -38,6 +38,7 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -155,7 +156,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           } else {
             // A property in the entity is searched for this fieldName
             // If the property is numeric or date, then it is filtered
-            String[] fieldNameSplit = fieldName.split("\\.");
+            String[] fieldNameSplit;
+            if (fieldName.contains(DalUtil.FIELDSEPARATOR)) {
+              fieldNameSplit = fieldName.split("\\" + DalUtil.FIELDSEPARATOR);
+            } else {
+              fieldNameSplit = fieldName.split("\\" + DalUtil.DOT);
+            }
             Property fProp = null;
             if (fieldNameSplit.length == 1) {
               fProp = entity.getProperty(fieldName);
@@ -286,7 +292,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(),
             sf.getDefaultExpression());
 
-        if (result == null || result.toString().equals("")) {
+        if (result == null || result.toString().equals("") || result.toString().equals("''")) {
           continue;
         }
 
