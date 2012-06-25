@@ -15,6 +15,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class Terminal extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "from OBPOS_Applications where $readableCriteria and searchKey = :terminal";
   }
