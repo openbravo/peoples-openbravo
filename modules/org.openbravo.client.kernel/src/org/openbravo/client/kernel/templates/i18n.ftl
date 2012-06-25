@@ -62,7 +62,9 @@ OB.I18N.getLabel = function(key, params, object, property) {
 };
 
 OB.I18N.getLabelFromServer = function(key, params, object, property) {
-    if (isc) {
+  if (!isc) {
+    return 'UNDEFINED ' + key;
+  }
       var requestParameters = {};
       requestParameters._action = 'org.openbravo.client.kernel.GetLabelActionHandler';
       requestParameters.key = key;
@@ -89,7 +91,4 @@ OB.I18N.getLabelFromServer = function(key, params, object, property) {
       rpcRequest.params = requestParameters;
       rpcRequest.clientContext = {'key' : key, 'object': object, 'params': params, 'property': property};
       isc.RPCManager.sendRequest(rpcRequest);
-    } else {
-      return 'UNDEFINED ' + key;
-    }
 };
