@@ -29,7 +29,7 @@
         '' AS QTYORDERED, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
         '' as stdprecision, '' as priceprecision, '' as enforcepricelimit, '' as pricelist, '' as pricelimit, '' as validfrom,
         '' AS DESCRIPTION, '' AS PRICESTD, '' AS M_OFFER_ID, '' as orderline, O.DATEPROMISED AS DATEPROMISED, O.DATEORDERED AS DATEORDERED,
-        O.ISSOTRX AS ISSOTRX, '' AS M_ATTRIBUTESETINSTANCE_ID , '' as istaxincluded
+        O.ISSOTRX AS ISSOTRX, '' AS M_ATTRIBUTESETINSTANCE_ID 
         FROM C_ORDER O LEFT JOIN C_ORDERLINE OL ON O.C_ORDER_ID = OL.C_ORDER_ID
         WHERE O.C_ORDER_ID = ?
         GROUP BY O.C_BPARTNER_ID, O.C_BPARTNER_LOCATION_ID, O.M_WAREHOUSE_ID, O.C_CURRENCY_ID, O.C_PROJECT_ID,
@@ -61,14 +61,16 @@
         DATEORDERED, DATEPROMISED, DESCRIPTION, M_PRODUCT_ID, 
         M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, QUANTITYORDER, QTYINVOICED, QTYDELIVERED, QTYRESERVED, 
         C_CURRENCY_ID, PRICELIST, PRICEACTUAL, 
-        PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT) 
+        PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID, M_ATTRIBUTESETINSTANCE_ID,
+          GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT) 
         VALUES 
           (?,?,?,TO_DATE(NOW()),?,TO_DATE(NOW()),?,
            ?,TO_NUMBER(?),?,?,
            TO_DATE(?),TO_DATE(?),?,?,
            ?,?,TO_NUMBER(?),TO_NUMBER(?),0,0,0,
            ?,TO_NUMBER(?),M_GET_OFFERS_PRICE(TO_DATE(now()), ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?),
-           TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?,TO_NUMBER(?),TO_NUMBER(?))
+           TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?,
+           TO_NUMBER(?),TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -133,8 +135,7 @@
   <SqlMethod name="selectOrderPricelist" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision, M_PriceList.EnforcePriceLimit, 
-      M_PriceList.M_PriceList_ID, M_PriceList.IsTaxIncluded   
+      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision, M_PriceList.EnforcePriceLimit, M_PriceList.M_PriceList_ID
       FROM C_Order, M_PriceList, C_Currency 
       WHERE C_Order.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
