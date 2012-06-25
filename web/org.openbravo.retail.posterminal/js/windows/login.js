@@ -26,8 +26,10 @@
         var u = me.$user,
             p = me.$defaultPassword;
         $('#username').val(u);
-        $('#password').val(p);
-        OB.POS.modelterminal.login(u, p, 'userImgPress');
+        //$('#password').val(p); // Disable 'openbravo' autologin feature
+        $('#password').val(''); // Disable 'openbravo' autologin feature
+        $('#password').focus(); // Disable 'openbravo' autologin feature
+        //OB.POS.modelterminal.login(u, p, 'userImgPress'); // Disable 'openbravo' autologin feature
       });
     },
     append: function (child) {
