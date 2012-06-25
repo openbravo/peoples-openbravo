@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -315,8 +315,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
-      final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
-          grossAmount, PricePrecision, taxBaseAmt, qtyOrdered);
+      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
+          PricePrecision, taxBaseAmt, qtyOrdered);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
       resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
@@ -331,8 +331,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(StdPrecision,
           RoundingMode.HALF_UP);
 
-      final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
-          grossAmount, PricePrecision, taxBaseAmt, qtyOrdered);
+      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
+          PricePrecision, taxBaseAmt, qtyOrdered);
 
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;

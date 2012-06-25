@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -176,8 +176,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             .isPriceIncludesTax())) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
-          grossAmount, PricePrecision, taxBaseAmt, qtyInvoice);
+      BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
+          PricePrecision, taxBaseAmt, qtyInvoice);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
@@ -190,8 +190,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inpgrossUnitPrice")) {
       BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyInvoice);
-      final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(strTaxId,
-          grossAmount, PricePrecision, taxBaseAmt, qtyInvoice);
+      final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
+          PricePrecision, taxBaseAmt, qtyInvoice);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 

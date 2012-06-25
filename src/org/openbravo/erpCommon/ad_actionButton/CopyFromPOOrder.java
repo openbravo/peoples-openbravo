@@ -33,10 +33,10 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -113,8 +113,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
 
             BigDecimal priceActual, priceList, discount;
 
-            priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
-                pricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual)))
+                .setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
             priceList = (strPriceList.equals("") ? ZERO : new BigDecimal(strPriceList));
             if (priceList.compareTo(ZERO) == 0)
               discount = ZERO;
@@ -157,7 +157,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           qtyOrdered = (data[i].qtyordered.equals("") ? ZERO : new BigDecimal(data[i].qtyordered));
           grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
               BigDecimal.ROUND_HALF_UP);
-          priceActual = GrossPriceBasedCalculator.calculateNetFromGross(strCTaxID, grossAmount,
+          priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, grossAmount,
               pricePrecision, grossAmount, qtyOrdered);
 
           strPriceActual = priceActual.toString();
@@ -195,8 +195,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               orderData[0].dateordered, orderData[0].datepromised, data[i].description,
               data[i].mProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
                   : orderData[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
-              data[i].quantityorder, data[i].cCurrencyId, strPriceList, strPriceActual, strPriceLimit,
-              strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
+              data[i].quantityorder, data[i].cCurrencyId, strPriceList, strPriceActual,
+              strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
               data[i].mAttributesetinstanceId, strGrossUnitPrice, strGrossAmount);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());

@@ -20,6 +20,7 @@ package org.openbravo.financial;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.service.db.CallStoredProcedure;
 
 public class FinancialUtils {
   private static final Logger log4j = Logger.getLogger(FinancialUtils.class);
@@ -269,5 +271,39 @@ public class FinancialUtils {
     Currency currency = (legalEntity.getCurrency() != null) ? legalEntity.getCurrency()
         : organization.getClient().getCurrency();
     return currency;
+  }
+
+  /**
+   * Calculates the net unit price using the C_GET_NET_PRICE_FROM_GROSS stored procedure.
+   * 
+   * @param strTaxId
+   *          Tax that applies to the price.
+   * @param grossAmount
+   *          Gross Amount to calculate the net unit price from.
+   * @param pricePrecision
+   *          Precision to round the result to.
+   * @param alternateAmount
+   *          alternate amount in case the tax uses it.
+   * @param quantity
+   *          number of units to divide the amount to get the price.
+   * @return the net unit price
+   */
+  public static BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
+      int pricePrecision, BigDecimal alternateAmount, BigDecimal quantity) {
+    if (grossAmount.compareTo(BigDecimal.ZERO) == 0) {
+      return BigDecimal.ZERO;
+    }
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(strTaxId);
+    parameters.add(grossAmount);
+    // TODO: Alternate Base Amount
+    parameters.add(alternateAmount);
+    parameters.add(pricePrecision);
+    parameters.add(quantity);
+
+    final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
+    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
+        procedureName, parameters, null);
+    return lineNetAmount;
   }
 }

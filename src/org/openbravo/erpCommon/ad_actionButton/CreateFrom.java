@@ -38,10 +38,10 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.GrossPriceBasedCalculator;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.Replace;
@@ -1548,8 +1548,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceLimit = price[0].pricelimit;
                   priceGross = price[0].pricestd;
                   BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
-                  final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(
-                      C_Tax_ID, grossAmount, curPrecision, grossAmount, qty);
+                  final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(C_Tax_ID,
+                      grossAmount, curPrecision, grossAmount, qty);
                   priceActual = netUnitPrice.toString();
                 }
               }
