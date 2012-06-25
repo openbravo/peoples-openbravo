@@ -45,8 +45,8 @@
             {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
             {kind: OB.COMP.MenuAction.extend({clickEvent: function() { $('#profileDialog').modal('show'); }, label: OB.I18N.getLabel('OBPOS_LblProfile')})},
             {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
-            {kind: OB.COMP.MenuAction.extend({clickEvent: function() { OB.POS.lock(); }, label: OB.I18N.getLabel('OBPOS_LogoutDialogLock')})},
-            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},
+            /*{kind: OB.COMP.MenuAction.extend({clickEvent: function() { OB.POS.lock(); }, label: OB.I18N.getLabel('OBPOS_LogoutDialogLock')})},
+            {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}},*/ //Disabled until feature be ready
             {kind: OB.COMP.MenuAction.extend({clickEvent: function() { $('#logoutDialog').modal('show'); }, label: OB.I18N.getLabel('OBPOS_LogoutDialogLogout')})},
             {kind: B.KindJQuery('div'), attr: {style: 'height: 5px;'}}
           ]}

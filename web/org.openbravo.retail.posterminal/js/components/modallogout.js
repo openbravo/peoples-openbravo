@@ -26,7 +26,7 @@
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-text'}, content: [OB.I18N.getLabel('OBPOS_LogoutDialogText')]},
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-buttons-container'}, content: [
             {kind: OB.COMP.LogoutDialogLogout},
-            {kind: OB.COMP.LogoutDialogLock},
+          //{kind: OB.COMP.LogoutDialogLock}, //Disabled until feature be ready
             {kind: OB.COMP.LogoutDialogCancel}
           ]}
         ]}
