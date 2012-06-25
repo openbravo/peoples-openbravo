@@ -1549,7 +1549,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   priceGross = price[0].pricestd;
                   BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
                   final BigDecimal netUnitPrice = GrossPriceBasedCalculator.calculateNetFromGross(
-                      strTableId, grossAmount, curPrecision, grossAmount, qty);
+                      C_Tax_ID, grossAmount, curPrecision, grossAmount, qty);
                   priceActual = netUnitPrice.toString();
                 }
               }
