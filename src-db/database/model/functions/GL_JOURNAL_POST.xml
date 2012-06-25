@@ -58,7 +58,6 @@
     v_ControlAmt GL_Journal.ControlAmt%TYPE;
     FINISH_PROCESS BOOLEAN:=false;
     v_is_included NUMBER:=0;
-    v_has_lines NUMBER:=-1;
     v_available_period NUMBER:=0;
     v_is_ready AD_Org.IsReady%TYPE;
     v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
@@ -208,13 +207,18 @@
 
       -- Check if the gl journal has lines.
      
-      SELECT 1, documentNo INTO v_has_lines, v_documentNo
+      SELECT max(documentNo) INTO v_documentNo
       FROM GL_Journal
       WHERE EXISTS (SELECT 1
                     FROM GL_JournalLine
                     WHERE GL_JournalLine.GL_Journal_ID = GL_Journal.GL_Journal_ID
                     AND GL_JournalLine.GL_Journal_ID = v_Record_ID);
-      IF (v_has_lines=-1) THEN
+
+      IF (v_documentno IS NULL) THEN
+        SELECT documentNo INTO v_documentNo
+        FROM GL_Journal
+        WHERE GL_Journal_ID = v_Record_ID;
+        
         RAISE_APPLICATION_ERROR(-20000, '@GLJournalHasNoLines@' || ' ' || v_DocumentNo);
       END IF;
       
