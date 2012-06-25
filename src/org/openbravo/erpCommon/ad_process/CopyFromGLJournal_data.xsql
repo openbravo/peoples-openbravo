@@ -56,7 +56,7 @@
       <![CDATA[
         SELECT LINE, ISGENERATED, DESCRIPTION, AMTSOURCEDR, AMTSOURCECR, C_CURRENCY_ID, CURRENCYRATETYPE, CURRENCYRATE,
         AMTACCTDR, AMTACCTCR, C_UOM_ID, QTY, C_VALIDCOMBINATION_ID,USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, 
-        C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID
+        C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID, AD_ORG_ID
         FROM GL_JOURNALLINE
         WHERE GL_JOURNAL_ID = ?
       ]]>
@@ -78,6 +78,7 @@
         AND 1=1
         AND G.AD_CLIENT_ID IN('1') 
         AND G.AD_ORG_ID IN('1') 
+        and ad_isorgincluded(g.ad_org_id,(select ad_org_id from GL_JOURNALBATCH where GL_JOURNALBATCH_id = ?) , g.ad_client_id) <> -1
         AND EXISTS (SELECT 1 FROM GL_JOURNAL WHERE GL_JOURNALBATCH_ID = G.GL_JOURNALBATCH_ID)
         ORDER BY 2
       ]]>
@@ -86,7 +87,8 @@
     <Parameter name="description" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(COALESCE(TO_CHAR(G.DESCRIPTION),' ')) LIKE UPPER(?) ]]></Parameter>
     <Parameter name="documentNo" ignoreValue="%" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(G.DOCUMENTNO) LIKE UPPER(?) ]]></Parameter>
     <Parameter name="adUserClient" type="replace" optional="true" after="G.AD_CLIENT_ID IN('" text="1"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="G.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="G.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="key"/>
   </SqlMethod>
   <SqlMethod name="insertGLJournal" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

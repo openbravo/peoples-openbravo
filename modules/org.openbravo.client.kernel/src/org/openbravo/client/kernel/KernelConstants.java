@@ -68,6 +68,8 @@ public class KernelConstants {
   public static final String MODE_PARAMETER_300 = "3.00";
   public static final String MODE_PARAMETER_CLASSIC = "classic";
 
+  public static final String APP_NAME_PARAMETER = "_appName";
+
   public static final String STYLE_SHEET_COMPONENT_ID = "StyleSheetResources";
   public static final String RESOURCE_COMPONENT_ID = "StaticResources";
   public static final String TEST_COMPONENT_ID = "TestResources";
@@ -130,4 +132,11 @@ public class KernelConstants {
    * Name of dateFormat.sql property in Openbravo.properties.
    */
   public static final String DATETIME_SQL_FORMAT_PROPERTY = "dateTimeFormat.sql";
+
+  /**
+   * Function name used in index.jsp as window.onerror handler. This function needs to be removed at
+   * the end of StaticResources process
+   */
+  public static final String BOOTSTRAP_ERROR_HANDLER_NAME = "indexErrorHandler";
+
 }

@@ -96,8 +96,8 @@
 <!--109-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--109-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--109-->  <NAME><![CDATA[Country Region and City]]></NAME>
-<!--109-->  <DESCRIPTION><![CDATA[Define countries with regions and cities to be used in the application.]]></DESCRIPTION>
+<!--109-->  <NAME><![CDATA[Country and Region]]></NAME>
+<!--109-->  <DESCRIPTION><![CDATA[Define countries with regions to be used in the application.]]></DESCRIPTION>
 <!--109-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--109-->  <ACTION><![CDATA[W]]></ACTION>
 <!--109-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>

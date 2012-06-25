@@ -45,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
@@ -127,6 +128,8 @@ public class AdvancedQueryBuilder {
 
   // keeps track if during parsing the criteria one or more or's are encountered.
   private int orNesting = 0;
+
+  private int minutesTimeZoneDiff = 0;
 
   private SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
 
@@ -291,6 +294,17 @@ public class AdvancedQueryBuilder {
 
     String fieldName = jsonCriteria.getString("fieldName");
     Object value = jsonCriteria.has("value") ? jsonCriteria.get("value") : null;
+    // Retrieves the UTC time zone offset of the client
+    if (jsonCriteria.has("minutesTimezoneOffset")) {
+      int clientMinutesTimezoneOffset = Integer.parseInt(jsonCriteria.get("minutesTimezoneOffset")
+          .toString());
+      Calendar now = Calendar.getInstance();
+      // Obtains the UTC time zone offset of the server
+      int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET) + now
+          .get(Calendar.DST_OFFSET)) / (1000 * 60);
+      // Obtains the time zone offset between the server and the client
+      minutesTimeZoneDiff = serverMinutesTimezoneOffset - clientMinutesTimezoneOffset;
+    }
 
     if (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL)) {
       value = null;
@@ -490,11 +504,24 @@ public class AdvancedQueryBuilder {
       throws JSONException {
     Object localValue = value;
 
-    // if the value consists of multiple parts then filtering won't work
-    // only search on the first part then, is pragmatic but very workable
-    if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
-      final int separatorIndex = localValue.toString().indexOf(IdentifierProvider.SEPARATOR);
-      localValue = localValue.toString().substring(0, separatorIndex);
+    // Related to issue 20643: Because multi-identifiers are a concatenation of
+    // values separated by ' - '
+    // With this fix hyphens are supported in the filter when
+    // property is not part of the identifier. Also hyphen is accepted if
+    // the property is the unique property of the identifier
+    if (property.isIdentifier()) {
+      // column associated with the property
+      final Column relatedColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
+      final Table relatedTable = relatedColumn.getTable();
+
+      if (isTableWithMultipleIdentifierColumns(relatedTable)) {
+        // if the value consists of multiple parts then filtering won't work
+        // only search on the first part then, is pragmatic but very workable
+        if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
+          final int separatorIndex = localValue.toString().indexOf(IdentifierProvider.SEPARATOR);
+          localValue = localValue.toString().substring(0, separatorIndex);
+        }
+      }
     }
 
     if (ignoreCase(property, operator)) {
@@ -531,6 +558,22 @@ public class AdvancedQueryBuilder {
     }
     typedParameters.add(localValue);
     return clause;
+  }
+
+  /* Return true if the identifier of the table is composed of more than one column */
+  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
+    int identifierCounter = 0;
+    for (Column curColumn : relatedTable.getADColumnList()) {
+      if (curColumn.isIdentifier()) {
+        identifierCounter += 1;
+        if (identifierCounter > 1) {
+          // if there are more than one identifier return true
+          return true;
+        }
+      }
+    }
+    // only one identifier. Is not multiple
+    return false;
   }
 
   private Object getTypeSafeValue(String operator, Property property, Object value)
@@ -590,27 +633,24 @@ public class AdvancedQueryBuilder {
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
         final Date date = simpleDateFormat.parse(value.toString());
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
-          final Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
           calendar.set(Calendar.HOUR, 0);
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
           calendar.set(Calendar.MILLISECOND, 0);
-          return calendar.getTime();
         } else if (isLesserOperator(operator)) {
           // move the data to the end of the day
-          final Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
           calendar.set(Calendar.HOUR, 23);
           calendar.set(Calendar.MINUTE, 59);
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
-          return calendar.getTime();
-        } else {
-          return date;
         }
+        // Applies the time zone offset difference between the client and the server
+        calendar.add(Calendar.MINUTE, minutesTimeZoneDiff);
+        return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
       }
@@ -623,7 +663,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
             || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
             || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-            .equals(OPERATOR_GREATEROREQUALFIELD));
+              .equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
@@ -631,7 +671,7 @@ public class AdvancedQueryBuilder {
         && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
             || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
             || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-            .equals(OPERATOR_LESSOREQUALFIElD));
+              .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,

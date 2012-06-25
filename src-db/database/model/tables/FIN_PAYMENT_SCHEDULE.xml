@@ -97,6 +97,9 @@
       <index name="FIN_PAYM_SCH_INV_IDX" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
+      <index name="FIN_PAYMENT_SCHEDULE_OUTAMT" unique="false">
+        <index-column name="OUTSTANDINGAMT"/>
+      </index>
       <check name="FIN_PAYSCHED_UPP_CHK"><![CDATA[UPDATE_PAYMENT_PLAN IN ('Y', 'N')]]></check>
     </table>
   </database>

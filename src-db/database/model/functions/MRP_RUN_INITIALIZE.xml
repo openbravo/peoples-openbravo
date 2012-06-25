@@ -99,6 +99,7 @@ BEGIN
                                             AND M_PRODUCT_PO.C_BPARTNER_ID = p_Vendor_ID
                                             AND M_PRODUCT_PO.ISCURRENTVENDOR = 'Y'
                                             AND M_PRODUCT_PO.ISACTIVE = 'Y'
+                                            AND M_PRODUCT_PO.DISCONTINUED = 'N'
                                           )))
                           AND (p_BPartner_ID IS NULL
                                OR EXISTS (SELECT 1

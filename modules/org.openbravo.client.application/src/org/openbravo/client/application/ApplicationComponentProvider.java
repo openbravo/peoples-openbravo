@@ -80,6 +80,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
   @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-utilities.js", true));
     globalResources.add(createStaticResource(

@@ -118,14 +118,14 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
           String strLineSequence = SequenceIdData.getUUID();
           try {
             if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence,
-                vars.getClient(), data[i].adOrgId, vars.getUser(), strSequence, dataLines[j].line,
-                dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr,
-                dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype,
-                dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr,
-                dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId,
-                dataLines[j].user1Id, dataLines[j].user2Id, dataLines[j].cCampaignId,
-                dataLines[j].cProjectId, dataLines[j].cActivityId, dataLines[j].cSalesregionId,
-                dataLines[j].mProductId, dataLines[j].cBpartnerId) == 0)
+                vars.getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence,
+                dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description,
+                dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId,
+                dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr,
+                dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty,
+                dataLines[j].cValidcombinationId, dataLines[j].user1Id, dataLines[j].user2Id,
+                dataLines[j].cCampaignId, dataLines[j].cProjectId, dataLines[j].cActivityId,
+                dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId) == 0)
               log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
                   + strLineSequence);
           } catch (ServletException ex) {
@@ -162,7 +162,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_process/CopyFromGLJournal").createXmlDocument();
     CopyFromGLJournalData[] data = CopyFromGLJournalData.selectFrom(this, strDescription,
         strDocumentNo, vars.getClient(),
-        Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"));
+        Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"), strKey);
     xmlDocument.setData("structure1", data);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

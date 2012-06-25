@@ -126,6 +126,7 @@ public class JsonToDataConverter {
   private final static SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final static SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
+  private final static SimpleDateFormat jsTimeFormat = JsonUtils.createJSTimeFormat();
 
   private final List<JsonConversionError> errors = new ArrayList<JsonConversionError>();
 
@@ -161,7 +162,13 @@ public class JsonToDataConverter {
               strValue = JsonUtils.convertFromXSDToJavaFormat(strValue);
             }
 
-            return new Timestamp(xmlTimeFormat.parse(strValue).getTime());
+            Calendar now = Calendar.getInstance();
+            strValue = xmlDateFormat.format(now.getTime()) + "T" + strValue;
+            Date UTCTime = new Timestamp(jsTimeFormat.parse(strValue).getTime());
+
+            Date localTime = convertToLocalTime(UTCTime);
+
+            return new Timestamp(localTime.getTime());
           } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
@@ -216,6 +223,17 @@ public class JsonToDataConverter {
     } catch (Exception e) {
       throw new OBException("Error when converting value " + value + " for prop " + property, e);
     }
+  }
+
+  private static Date convertToLocalTime(Date UTCTime) {
+    Calendar localTime = Calendar.getInstance();
+    localTime.setTime(UTCTime);
+
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
+        .get(Calendar.DST_OFFSET));
+    localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
+
+    return localTime.getTime();
   }
 
   private static boolean isEmptyOrNull(Object value) {
@@ -556,7 +574,9 @@ public class JsonToDataConverter {
       if (keyToObject.get(key) != null) {
         value = keyToObject.get(key);
       } else {
-        if (property.getReferencedProperty() != null) {
+        // if an id we should use the get method as it loads from the first level
+        // cache
+        if (property.getReferencedProperty() != null && !property.getReferencedProperty().isId()) {
           final OBQuery<BaseOBObject> qry = OBDal.getInstance().createQuery(entity.getName(),
               property.getReferencedProperty().getName() + "=:reference");
           qry.setNamedParameter("reference", referencedId);

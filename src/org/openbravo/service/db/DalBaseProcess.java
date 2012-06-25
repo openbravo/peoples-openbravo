@@ -65,9 +65,19 @@ public abstract class DalBaseProcess implements Process {
       errorOccured = false;
     } finally {
       if (errorOccured) {
-        OBDal.getInstance().rollbackAndClose();
+        if (bundle.getCloseConnection()) {
+          OBDal.getInstance().rollbackAndClose();
+        } else {
+          bundle.getConnection().releaseRollbackConnection(bundle.getConnection().getConnection());
+        }
+
       } else {
-        OBDal.getInstance().commitAndClose();
+        if (bundle.getCloseConnection()) {
+          OBDal.getInstance().commitAndClose();
+        } else {
+          bundle.getConnection().releaseCommitConnection(bundle.getConnection().getConnection());
+        }
+
       }
 
       // remove the context at the end, maybe the process scheduler

@@ -283,7 +283,9 @@ function updateConvertedAmounts(recalcExchangeRate) {
   if (actualConverted && expectedConverted && exchangeRate) {
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
-        exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        if (compare(actualPayment.value, '!=', 0)) {
+          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        }
       } else {
         exchangeRate.value = '';
       }
@@ -484,6 +486,8 @@ function updateTotal() {
 
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
+  var distributedAmount = 0;
+  var keepSelection = false;
   var chk = frm.inpScheduledPaymentDetailId;
   var scheduledPaymentDetailId, outstandingAmount, j, i;
   if (isGLItemEnabled) {
@@ -496,21 +500,45 @@ function distributeAmount(_amount) {
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-    if (compare(outstandingAmount, '>', amount)) {
-      outstandingAmount = amount;
+    if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+      if (compare(abs(outstandingAmount), '>', abs(amount))) {
+        outstandingAmount = amount;
+      }
+    } else {
+      if (compare(outstandingAmount, '>', amount)) {
+        outstandingAmount = amount;
+      }
     }
     frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
-    if (!chk.checked) {
+    if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
       chk.checked = true;
       updateData(chk.value, chk.checked);
     }
   } else {
     var total = chk.length;
     for (i = 0; i < total; i++) {
+      if (chk[i].checked) {
+        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+      }
+    }
+    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+      amount = subtract(amount, distributedAmount);
+      keepSelection = true;
+    }
+    for (i = 0; i < total; i++) {
+      if (chk[i].checked && keepSelection) {
+        continue;
+      }
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-      if (compare(outstandingAmount, '>', amount)) {
-        outstandingAmount = amount;
+      if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
+        if (compare(abs(outstandingAmount), '>', abs(amount))) {
+          outstandingAmount = amount;
+        }
+      } else {
+        if (compare(outstandingAmount, '>', amount)) {
+          outstandingAmount = amount;
+        }
       }
       if (compare(amount, '==', 0)) {
         frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";

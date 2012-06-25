@@ -182,10 +182,19 @@ OB.ViewFormProperties = {
     }
   },
 
-  editRecord: function (record, preventFocus, hasChanges, focusFieldName) {
+  editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime) {
+    var timeFields, ret;
     this.clearValues();
+    // if editRecord is called from OBStandardView.editRecord, then the time fields have already
+    //   be converted from UTC to local time
+    // if editRecord is called from fetchDataReply (ActionMethod.js) then the record comes directly  
+    //   from the datasource, so it has to be converted from UTC to local time
+    // see issue https://issues.openbravo.com/view.php?id=20684
+    if (!isLocalTime) {
+      OB.Utilities.Date.convertUTCTimeToLocalTime([record], this.fields);
+    }
 
-    var ret = this.Super('editRecord', arguments);
+    ret = this.Super('editRecord', arguments);
 
     // used when clicking on a cell in a grid
     if (!preventFocus && focusFieldName) {
@@ -909,7 +918,7 @@ OB.ViewFormProperties = {
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, i, valueMap = {},
+    var isDate, isDateTime, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -962,9 +971,12 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       this.setValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'datetime' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
+      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
+      isDateTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'datetime';
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+      } else if (isDateTime) {
+        this.setItemValue(field.name, isc.Date.parseStandardDate(columnValue.value));
       } else if (columnValue.hasDateDefault) {
         this.setItemValue(field.name, columnValue.classicValue);
       } else {

@@ -4,6 +4,7 @@
 <%@ page import="org.openbravo.base.util.OBClassLoader" %>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
+<%@ page import="org.openbravo.client.kernel.KernelConstants" %>
 <%@ page import="org.openbravo.dal.core.OBContext" %>
 <%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
@@ -30,15 +31,10 @@
 
 Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class); 
 
-HttpBaseServlet s = new HttpBaseServlet(); // required for ConnectionProvider
-s.init(getServletConfig());
-s.initialize(request, response);
-
-AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(s);
-    
-authManager.init(s);
+AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
 String userId = authManager.authenticate(request, response);
+
 if(userId == null){
   return;
 }
@@ -91,7 +87,7 @@ response.addHeader("Expires", "0");
 <meta name="keywords" content="openbravo">
 <meta name="description" content="Openbravo S.L.U.">
 <link rel="shortcut icon" href="./web/images/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
+<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=OB3&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
 
 <title>Openbravo</title>
 <script src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
@@ -150,6 +146,14 @@ response.addHeader("Expires", "0");
 </div>
 <!-- load the rest -->
 <script>
+// Bootstrap error handling: Shows an alert to the user when an error occurs loading static resources
+// This error handler gets removed at the end of static resources
+window.onerror = function <%=KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME%> (errorMsg, url, lineNumber) {
+  var msg = errorMsg + ' - ' + url + ':' + lineNumber;
+  document.body.removeChild(document.getElementById('OBLoadingDiv'));
+  alert(msg);
+};
+
 $LAB.setGlobalDefaults({AppendTo: 'body'});
 
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
@@ -177,7 +181,7 @@ function OBStartApplication() {
 </script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
 <script src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History<%=(uncompSC ? ".uncompressed" : "")%>.js"></script>
-<script src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
+<script src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=OB3&_skinVersion=Default"></script>
 <iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>

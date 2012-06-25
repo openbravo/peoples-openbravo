@@ -357,31 +357,6 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
-CREATE OR REPLACE FUNCTION AD_GET_RDBMS()
-  RETURNS varchar AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-BEGIN
-  return 'POSTGRE';
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-/-- END
-
 CREATE OR REPLACE VIEW AD_INTEGER AS
 SELECT a.value::numeric AS value
    FROM generate_series(1, 1024) a(value);
@@ -490,7 +465,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2010 Openbravo SLU
+* All portions are Copyright (C) 2009-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -569,6 +544,8 @@ DECLARE
   V_NEW_NUMBER NUMERIC := NULL;
   V_OLD_DATE TIMESTAMP := NULL;
   V_NEW_DATE TIMESTAMP := NULL;
+  V_OLD_TEXT TEXT := NULL;
+  V_NEW_TEXT TEXT := NULL;
   V_TIME TIMESTAMP;
   V_ORG VARCHAR(32); 
   V_CLIENT VARCHAR(32); 
@@ -648,7 +625,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         order by c.position) loop
       code := code || '
     V_Change := false;';
-      if (cur_cols.data_type in ('VARCHAR', 'BPCHAR', 'TEXT')) then
+      if (cur_cols.data_type in ('VARCHAR', 'BPCHAR')) then
         datatype := 'CHAR';
         code := code || '
    IF TG_OP = ''UPDATE'' THEN
@@ -659,6 +636,12 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
 code := code || '
    IF TG_OP = ''UPDATE'' THEN
      V_CHANGE = COALESCE(new.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(old.'||cur_cols.COLUMN_NAME||', now());
+   END IF;';
+      elsif (cur_cols.data_type in ('TEXT')) then
+        datatype := 'TEXT';
+        code := code || '
+   IF TG_OP = ''UPDATE'' THEN
+     V_CHANGE = (COALESCE(new.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(old.'||cur_cols.COLUMN_NAME||',''.'') OR (new.'||cur_cols.COLUMN_NAME||' IS NULL AND old.'||cur_cols.COLUMN_NAME||'=''.'') OR (old.'||cur_cols.COLUMN_NAME||' IS NULL AND new.'||cur_cols.COLUMN_NAME||'=''.'') );
    END IF;';
       else
         datatype := 'NUMBER';

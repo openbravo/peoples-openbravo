@@ -11,13 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.dal.core;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -72,6 +76,41 @@ public class TriggerHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public void disableSql() {
+    Connection con = OBDal.getInstance().getConnection();
+    PreparedStatement ps = null;
+    try {
+      ps = con
+          .prepareStatement("INSERT INTO AD_SESSION_STATUS VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
+      ps.executeUpdate();
+    } catch (Exception e) {
+      log.error("Couldn't disable triggers: ", e);
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+      }
+    }
+
+  }
+
+  public void enableSql() {
+    Connection con = OBDal.getInstance().getConnection();
+    PreparedStatement ps = null;
+    try {
+      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS");
+      ps.executeUpdate();
+    } catch (Exception e) {
+      log.error("Couldn't enable triggers: ", e);
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+      }
+    }
+
   }
 
   /**

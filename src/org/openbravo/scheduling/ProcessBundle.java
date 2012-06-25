@@ -70,6 +70,8 @@ public class ProcessBundle {
 
   private String processRequestId;
 
+  private boolean closeConnection;
+
   private String impl;
 
   private Map<String, Object> params;
@@ -121,6 +123,7 @@ public class ProcessBundle {
     this.processId = processId;
     this.context = new ProcessContext(vars, client, organization, roleSecurity);
     this.channel = channel;
+    this.closeConnection = true;
   }
 
   /**
@@ -270,6 +273,14 @@ public class ProcessBundle {
 
   public void setChannel(Channel channel) {
     this.channel = channel;
+  }
+
+  public boolean getCloseConnection() {
+    return closeConnection;
+  }
+
+  public void setCloseConnection(boolean closeConnection) {
+    this.closeConnection = closeConnection;
   }
 
   /**

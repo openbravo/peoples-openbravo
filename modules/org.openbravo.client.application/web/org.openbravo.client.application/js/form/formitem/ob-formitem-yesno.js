@@ -55,15 +55,15 @@ isc.OBYesNoItem.addProperties({
   },
   formatPickListValue: function (value, record, field, rowNum, colNum) {
     return OB.Utilities.getYesNoDisplayValue(value);
-  }, 
-  
-  getCriterion: function() {
-	  var criterion = this.Super('getCriterion', arguments);
-	  if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_Yes) {
-		  criterion.value = true;
-	  } else if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_No) {
-		  criterion.value = false;
-	  }
-	  return criterion;
+  },
+
+  getCriterion: function () {
+    var criterion = this.Super('getCriterion', arguments);
+    if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_Yes) {
+      criterion.value = true;
+    } else if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_No) {
+      criterion.value = false;
+    }
+    return criterion;
   }
 });

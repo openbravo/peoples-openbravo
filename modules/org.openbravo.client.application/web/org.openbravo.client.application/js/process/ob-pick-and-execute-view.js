@@ -174,6 +174,7 @@ isc.OBPickAndExecuteView.addProperties({
     })];
 
     this.Super('initWidget', arguments);
+    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.popup', this);
 
     if (this.viewGrid.saveLocally) {
       // Using "disconnected" data to avoid update/remove/add operations to the back-end

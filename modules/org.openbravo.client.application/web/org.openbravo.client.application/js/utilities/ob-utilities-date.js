@@ -223,3 +223,50 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
 
   return OBDate;
 };
+
+//** {{{ OB.Utilities.Date.getTimeFields }}} **
+//
+// Returns an array with the names of the time fields.
+//
+// Parameters:
+// * {{{allFields}}}: complete list of fields
+// Return:
+// * an array with the names of the time fields contained in allFields.
+OB.Utilities.Date.getTimeFields = function (allFields) {
+  var i, field, timeFields = [],
+      length = allFields.length;
+  for (i = 0; i < length; i++) {
+    field = allFields[i];
+    if (field.type === '_id_24') {
+      timeFields.push(field.name);
+    }
+  }
+  return timeFields;
+};
+
+//** {{{ OB.Utilities.Date.convertUTCTimeToLocalTime }}} **
+//
+// Converts the value of time fields from UTC to local time
+//
+// Parameters:
+// * {{{newData}}}: records to be converted
+// * {{{allFields}}}: array with the fields of the records
+// Return:
+// * Nothing. newData is modified, its time fields are converted from UTC to local time
+OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
+  var textField, fieldToDate, i, j, newDataLength = newData.length,
+      UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
+      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date()),
+      timeFields = OB.Utilities.Date.getTimeFields(allFields),
+      timeFieldsLength = timeFields.length;
+  for (i = 0; i < timeFieldsLength; i++) {
+    for (j = 0; j < newDataLength; j++) {
+      textField = newData[j][timeFields[i]];
+      if (textField && textField.length > 0) {
+        fieldToDate = isc.Time.parseInput(textField);
+        fieldToDate.setTime(fieldToDate.getTime() + (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000));
+        newData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+      }
+    }
+  }
+};

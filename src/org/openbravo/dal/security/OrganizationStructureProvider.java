@@ -268,7 +268,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     if (childByOrganizationID.get(orgId) == null) {
       reInitialize();
     }
-    return new HashSet<String>(childByOrganizationID.get(orgId));
+    if (childByOrganizationID.get(orgId) == null) {
+      return new HashSet<String>();
+    } else {
+      return new HashSet<String>(childByOrganizationID.get(orgId));
+    }
   }
 
   class OrgNode {

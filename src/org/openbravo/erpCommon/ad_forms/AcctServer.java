@@ -54,6 +54,7 @@ import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.ReversedInvoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -647,8 +648,11 @@ public abstract class AcctServer {
         e.printStackTrace();
       }
       FieldProvider data[] = getObjectFieldProvider();
+      // If there is any template active for current document in any accounting schema, skip this
+      // step as getDocumentConfirmation can lock template
       try {
-        if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
+        if ((disableDocumentConfirmation() || getDocumentConfirmation(conn, Record_ID))
+            && post(data, force, vars, conn, con)) {
           success++;
         } else {
           errors++;
@@ -2425,5 +2429,52 @@ public abstract class AcctServer {
       log4j.error(e);
       return 6; // by default precision of 6 decimals as is defaulted in Format.xml
     }
+  }
+
+  /**
+   * If there is any template active for current document in any accounting schema, it returns true
+   * to skip this step as getDocumentConfirmation can lock template
+   * 
+   * @return
+   */
+  boolean disableDocumentConfirmation() {
+    OBContext.setAdminMode();
+    String strClassname = "";
+    C_DocType_ID = objectFieldProvider[0].getField("cDoctypeId");
+    loadDocumentType();
+    try {
+      for (int i = 0; i < m_as.length; i++) {
+        StringBuffer whereClause = new StringBuffer();
+        whereClause.append(" as astdt ");
+        whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
+            + m_as[i].m_C_AcctSchema_ID + "'");
+        whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
+        whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
+        final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
+            AcctSchemaTableDocType.class, whereClause.toString());
+        final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
+        if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+          strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+        if (strClassname.equals("")) {
+          final StringBuilder whereClause2 = new StringBuilder();
+          whereClause2.append(" as ast ");
+          whereClause2.append(" where ast.accountingSchema.id = '" + m_as[i].m_C_AcctSchema_ID
+              + "'");
+          whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
+          final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
+              AcctSchemaTable.class, whereClause2.toString());
+          final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
+          if (acctSchemaTables != null && acctSchemaTables.size() > 0
+              && acctSchemaTables.get(0).getCreatefactTemplate() != null)
+            strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
+        }
+        if (!strClassname.equals("")) {
+          return true;
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return false;
   }
 }

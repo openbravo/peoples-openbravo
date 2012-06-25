@@ -22,6 +22,7 @@ package org.openbravo.service.json;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class DataToJsonConverter {
   private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
+  private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
+      .createTimeFormatWithoutGMTOffset();
 
   // additional properties to return as a flat list
   private List<String> additionalProperties = new ArrayList<String>();
@@ -269,8 +272,11 @@ public class DataToJsonConverter {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
       if (property.getDomainType() instanceof TimestampDomainType) {
-        final String formattedValue = xmlTimeFormat.format(value);
-        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
+
+        Timestamp localTime = (Timestamp) value;
+        Date UTCTime = convertToUTC(localTime);
+
+        return xmlTimeFormatWithoutMTOffset.format(UTCTime.getTime());
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String formattedValue = xmlDateTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
@@ -285,6 +291,20 @@ public class DataToJsonConverter {
       return Base64.encodeBase64String((byte[]) value);
     }
     return value;
+  }
+
+  private static Date convertToUTC(Date localTime) {
+    Calendar now = Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(localTime);
+    calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+    calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+    calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+    int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+    calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+
+    return calendar.getTime();
   }
 
   protected Object convertPrimitiveValue(Object value) {

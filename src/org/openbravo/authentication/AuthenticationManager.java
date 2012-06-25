@@ -82,6 +82,7 @@ public abstract class AuthenticationManager {
       log4j
           .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       authManager = new DefaultAuthenticationManager(s);
+      authManager.init(s);
     }
     return authManager;
   }
@@ -144,8 +145,15 @@ public abstract class AuthenticationManager {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
+    // A restricted resource can define a custom login URL
+    // It just need to set an the attribute loginURL in the request
+    final String customLoginURL = (String) request.getAttribute("loginURL");
+
+    final String loginURL = localAdress
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
+
     if (userId == null && !response.isCommitted()) {
-      response.sendRedirect(localAdress + defaultServletUrl);
+      response.sendRedirect(loginURL);
       return null;
     }
 
