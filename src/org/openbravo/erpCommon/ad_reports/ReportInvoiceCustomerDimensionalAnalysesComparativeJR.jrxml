@@ -30,6 +30,10 @@
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
 	</style>
 	<style name="Level2_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
@@ -39,6 +43,10 @@
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
 	<style name="Level3_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
@@ -50,6 +58,10 @@
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
 	</style>
 	<style name="Level4_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
@@ -59,6 +71,10 @@
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
 	<style name="Level5_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
@@ -70,6 +86,10 @@
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
 	</style>
 	<style name="Level6_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
@@ -79,6 +99,10 @@
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==6)&&($V{NIVEL5_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
 	<style name="Level7_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
@@ -90,6 +114,10 @@
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==7)&&($V{NIVEL6_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
 	</style>
 	<style name="Level8_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
@@ -99,6 +127,10 @@
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==8)&&($V{NIVEL7_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
 	<style name="Level9_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
@@ -110,6 +142,10 @@
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==9)&&($V{NIVEL8_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
 	</style>
 	<style name="Level10_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
@@ -119,6 +155,10 @@
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==10)&&($V{NIVEL9_COUNT}.intValue()%2==1))]]></conditionExpression>
 			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
+			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
 	<style name="Report_Footer" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
@@ -312,6 +352,7 @@
 	<field name="CONVCOSTREF" class="java.math.BigDecimal"/>
 	<field name="CONVSYM" class="java.lang.String"/>
 	<field name="CONVISOSYM" class="java.lang.String"/>
+	<field name="COSTCALCULATED" class="java.lang.Integer"/>
 	<variable name="QTY_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
 		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
 	</variable>

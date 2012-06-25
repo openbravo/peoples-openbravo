@@ -31,6 +31,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -101,10 +102,10 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       else
         strComparative = vars.getGlobalVariable("inpComparative",
             "ReportInvoiceCustomerDimensionalAnalysesJR|comparative", "N");
-      printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup,
-          strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef,
-          strDateToRef, strOrg, strsalesrepId, strcProjectId, strProducttype, strOrder, strMayor,
-          strMenor, strPartnerSalesRepId, strCurrencyId);
+      printPageDataSheet(request, response, vars, strComparative, strDateFrom, strDateTo,
+          strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
+          strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId,
+          strProducttype, strOrder, strMayor, strMenor, strPartnerSalesRepId, strCurrencyId);
     } else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
@@ -191,13 +192,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       pageErrorPopUp(response);
   }
 
-  private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup,
-      String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown,
-      String strShown, String strDateFromRef, String strDateToRef, String strOrg,
-      String strsalesrepId, String strcProjectId, String strProducttype, String strOrder,
-      String strMayor, String strMenor, String strPartnerSalesrepId, String strCurrencyId)
-      throws IOException, ServletException {
+  private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo,
+      String strPartnerGroup, String strcBpartnerId, String strProductCategory,
+      String strmProductId, String strNotShown, String strShown, String strDateFromRef,
+      String strDateToRef, String strOrg, String strsalesrepId, String strcProjectId,
+      String strProducttype, String strOrder, String strMayor, String strMenor,
+      String strPartnerSalesrepId, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String discard[] = { "selEliminarHeader1" };
@@ -238,6 +239,11 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+      if (CostingStatus.getInstance().isMigrated() == false) {
+        advise(request, response, "ERROR",
+            Utility.messageBD(this, "NotUsingNewCost", vars.getLanguage()), "");
+        return;
       }
     }
 
