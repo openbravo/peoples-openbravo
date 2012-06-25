@@ -193,7 +193,9 @@ public class DalMappingGenerator implements OBSingleton {
 
     if (p.getSqlLogic() != null) {
       sb.append(" formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
-      sb.append(" update=\"false\" insert=\"false\" ");
+      if (!p.isInactive()) {
+        sb.append(" update=\"false\" insert=\"false\" ");
+      }
     } else {
       sb.append(" column=\"" + p.getColumnName() + "\"");
     }
