@@ -107,7 +107,10 @@
   }  
   button.btnlink:active {
     background-color: #cccccc;
-  } 
+  }
+  button.btnlink:disabled {
+    background-color: #cccccc;
+  }
   button.btnlink-small {
     padding: 5px 15px 5px 15px;    
   } 

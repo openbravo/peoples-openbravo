@@ -27,17 +27,8 @@
           {kind: OB.COMP.ModalCancel},
           {kind: OB.COMP.ModalDropDestinations},
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
-//              {kind: OB.COMP.ButtonTabPendingReceipts},
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-            ]}
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-               {kind: OB.COMP.DepositsDrops},
-               {kind: OB.COMP.CashChange}
+               {kind: OB.COMP.DepositsDrops}
              ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), content: [

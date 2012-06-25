@@ -9,7 +9,7 @@
     return ({
       'permission': key,
       'action': function (txt) {
-        this.options.cashchangebutton.$el.click();
+         $('#modaldropdestinations').modal('show');
       }
     });
   };
@@ -22,8 +22,8 @@
     payments = OB.POS.modelterminal.get('payments');
 
     for (i = 0, max = payments.length; i < max; i++) {
-      this.toolbar.push({command: payments[i].searchKey+' Deposit', definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier), label: payments[i]._identifier+' Deposit'});
-      this.toolbar.push({command: payments[i].searchKey+' Drop', definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier), label: payments[i]._identifier+' Drop'});
+      this.toolbar.push({command: payments[i].searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDeposit'), definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier), label: payments[i]._identifier+' '+OB.I18N.getLabel('OBPOS_LblDeposit')});
+      this.toolbar.push({command: payments[i].searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDrop'), definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier), label: payments[i]._identifier+' '+OB.I18N.getLabel('OBPOS_LblDrop')});
     }
   };
 }());

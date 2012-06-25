@@ -116,7 +116,7 @@
                       payment.get('name')+ ' difference'
                 ]},
                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                          (payment.get('counted')-payment.get('expected')).toString()
+                          (OB.DEC.sub(payment.get('counted'),payment.get('expected'))).toString()
               ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
            ]},

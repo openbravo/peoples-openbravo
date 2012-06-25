@@ -6,14 +6,12 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.SearchDropDestinations = function (context) {
-	  var me = this;
-
+	    var me = this;
 	    this._id = 'SearchDropDestinations';
-
 //	    this.destinations = context.DataDestinations.destinations;
 	    this.destinations = new Backbone.Collection();
 //	    this.destination.on('click', function (model, index) {
-//	      this.receiptlist.load(model);
+//	      this.destination.add(model);
 //	    }, this);
 
 
@@ -38,8 +36,10 @@
 	    );
 	    this.$el = this.component.$el;
 	    this.tableview = this.component.context.tableview;
+	    //********TEMP*******************************
 	    this.destinations.add({'name':'Envelope 1'});
 	    this.destinations.add({'name':'Envelope 2'});
 	    this.destinations.add({'name':'Envelope 3'});
+	    //*******************************************
   };
 }());

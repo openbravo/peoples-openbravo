@@ -12,8 +12,6 @@
         var me = this;
 	    this._id = 'ListPaymentMethods';
 	    this.paymentmethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
-//	    this.paymentmethods.ds.load();
-
 	    this.component = B(
 	      {kind: B.KindJQuery('div'), content: [
 	       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -46,20 +44,18 @@
              {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; float: left;'}, content: [
                  {kind: B.KindJQuery('div'), attr: {'style': 'padding-right: 88px; float: right;' }, content: [
                    {kind: OB.COMP.ButtonOk.extend({
-//                   rowid :this.model.get('id'), searchKey :this.model.get('searchKey'), _id :'ok_'+this.model.get('id'), me:this.me
                    me:me,
+                   attributes:{'button':'allokbutton'},
                    clickEvent: function (e) {
-                    var me = this;
-                    $('a[button*="okbutton"]').hide();
+                    var that = this;
+                    $('a[button="okbutton"]').hide();
                     this.$el.css('visibility', 'hidden');
                     this.me.options.modeldaycash.paymentmethods.each(function(elem){
-                    $('div[searchKey*="'+elem.get("_id")+'"]').text(elem.get('expected').toString());
-                    elem.set('counted',OB.DEC.add(0,elem.get('expected')));
-                    me.me.options.modeldaycash.set('totalCounted',OB.DEC.add(me.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
+                      $('div[searchKey*="'+elem.get("_id")+'"]').text(elem.get('expected').toString());
+                      elem.set('counted',OB.DEC.add(0,elem.get('expected')));
+                      that.me.options.modeldaycash.set('totalCounted',OB.DEC.add(that.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
                   });
                     $('div[button*="countedbutton"]').show();
-                    //this.options.countcash.;
-                    //this.options.modeldaycash.ok();
                   }
                      })
                    }
@@ -91,24 +87,24 @@
 					    tagName: 'span',
 					    attributes: {'style': 'padding-left: 60px'},
 					    initialize: function () {
-					            this.total = $('<strong/>');
-					            this.$el.append(this.total);
-					            // Set Model
-					            me.options.modeldaycash.on('change:totalCounted', function() {
-					              this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
-					              if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
-							        this.$el.css("color","red");
-							      }else{
-							        this.$el.css("color","black");
-							      }
-					            }, this);
-					            // Initial total display
-					            this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
-					            if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
-							      this.$el.css("color","red");
-							    }else{
-							      this.$el.css("color","black");
-							    }
+				            this.total = $('<strong/>');
+				            this.$el.append(this.total);
+				            // Set Model
+				            me.options.modeldaycash.on('change:totalCounted', function() {
+				              this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+				              if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+						        this.$el.css("color","red");//negative value
+						      }else{
+						        this.$el.css("color","black");
+						      }
+				            }, this);
+				            // Initial total display
+				            this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+				            if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+						      this.$el.css("color","red");//negative value
+						    }else{
+						      this.$el.css("color","black");
+						    }
 					    }
 					  })}
 	                 ]}

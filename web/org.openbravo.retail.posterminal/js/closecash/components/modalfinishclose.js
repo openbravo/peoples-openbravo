@@ -31,8 +31,6 @@
       );
     }
   });
-
-
   // Exit
   OB.COMP.CloseDialogOk = OB.COMP.Button.extend({
     render: function () {

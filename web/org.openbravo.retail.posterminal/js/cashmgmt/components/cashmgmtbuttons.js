@@ -21,10 +21,4 @@
 		      return this;
 		    }
 	  });
-  OB.COMP.CashChange =Backbone.View.extend({
-	  _id: 'cashchangebutton',
-	  tagName: 'a',
-	  label: OB.I18N.getLabel('OBPOS_LblDone'),
-	  attributes: {'href': '#modaldropdestinations', 'data-toggle': 'modal'}
-  });
 }());
