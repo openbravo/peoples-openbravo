@@ -33,8 +33,9 @@ public class ProcessCashMgmt extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
     OBContext.setAdminMode(true);
+    final JSONObject jsonData = new JSONObject();
     try {
-      String name = jsonsent.getString("name");
+      String description = jsonsent.getString("description");
       BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
       String key = jsonsent.getString("key");
       String type = jsonsent.getString("type");
@@ -60,16 +61,28 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       }
       transaction.setProcessed(true);
       transaction.setTransactionType("BPW");
-      transaction.setDescription(name);
+      transaction.setDescription(description);
       transaction.setTransactionDate(new Date());
       transaction.setStatus("RPPC");
 
       OBDal.getInstance().save(transaction);
+
+      if (type.equals("drop")) {
+        jsonData.put("drop", amount);
+        jsonData.put("deposit", 0);
+      } else {
+        jsonData.put("drop", 0);
+        jsonData.put("deposit", amount);
+      }
+      jsonData.put("name", paymentMethod.getCommercialName());
+      jsonData.put("description", description);
+
     } finally {
       OBContext.restorePreviousMode();
     }
 
     JSONObject result = new JSONObject();
+    result.put(JsonConstants.RESPONSE_DATA, jsonData);
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
 

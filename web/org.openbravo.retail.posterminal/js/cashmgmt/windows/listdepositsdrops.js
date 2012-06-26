@@ -45,7 +45,7 @@
                   {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; border-bottom: 1px solid #cccccc; float: left; width: 24%'}, content: [
                    {kind: Backbone.View.extend({
                      tagName: 'span',
-                     attributes: {'style': 'float:left; padding-left: 77px'},
+                     attributes: {'style': 'float:right; padding-right: 10px'},
                      initialize: function () {
                           this.total = $('<strong/>');
                           this.$el.append(this.total);

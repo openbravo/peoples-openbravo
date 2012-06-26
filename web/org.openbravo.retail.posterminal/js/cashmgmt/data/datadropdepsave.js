@@ -13,14 +13,16 @@
     this.context.destinations.on('click', function (model, index) {
         this.proc.exec({
 //      terminalId: OB.POS.modelterminal.get('terminal').id,
-          name: model.get('name'),
+          description: model.get('name'),
           amount: me.context.amountToDrop,
           key: me.context.destinationKey,
           type: me.context.type
         }, function (data, message) {
         if (data && data.exception) {
-          OB.UTIL.showError("ERROR");
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgDropDepNotSaved'));
         } else {
+//        add from data the new drop or deposit created
+          me.context.ListDepositsDrops.listdepositsdrops.add(data);
           OB.UTIL.showSuccess("OK");
         }
        });

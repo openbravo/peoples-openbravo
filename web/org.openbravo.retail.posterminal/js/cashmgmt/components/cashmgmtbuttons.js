@@ -5,7 +5,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.Done =Backbone.View.extend({
+  OB.COMP.Done = OB.COMP.ToolbarButton.extend({
 		_id: 'donebutton',
 	    iconright: 'icon-white',
 	    tagName: 'a',
@@ -19,6 +19,9 @@
 		      }
 		      this.$el.append($('<span>' + this.label + '</span>'));
 		      return this;
-		    }
+		  },
+		  clickEvent: function (e) {
+		      window.location=OB.POS.hrefWindow('retail.pointofsale');
+		  }
 	  });
 }());
