@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION M_GET_PARETO_ABC">
-    <function name="M_GET_PARETO_ABC" type="VARCHAR">
+  <database name="FUNCTION M_GET_PARETO_ABC_LEGACY">
+    <function name="M_GET_PARETO_ABC_LEGACY" type="VARCHAR">
       <parameter name="p_warehouse_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -38,50 +38,34 @@
   v_percentange NUMBER:=0;
   varComprobadoA NUMBER:=0;
   varComprobadoB NUMBER:=0;
-  v_totalCost NUMBER;
   TYPE RECORD IS REF CURSOR;
   Cur_Cursor RECORD;
 BEGIN
-
-  -- Checks if Sum of all Product's cost are zero
-  SELECT SUM(CASE WHEN T1.MOVEMENTQTY>=0 THEN T1.TRANSACTIONCOST ELSE -T1.TRANSACTIONCOST END)
-           FROM M_TRANSACTION T1
-             LEFT JOIN M_LOCATOR L1 ON (T1.M_LOCATOR_ID=L1.M_LOCATOR_ID)
-             LEFT JOIN M_WAREHOUSE W1 ON (L1.M_WAREHOUSE_ID=W1.M_WAREHOUSE_ID)
-           WHERE T1.ISCOSTCALCULATED = 'Y'
-             AND (p_warehouse_ID IS NULL OR L1.M_WAREHOUSE_ID = p_warehouse_ID)
-             AND (p_org_ID IS NULL OR W1.AD_ORG_ID = p_org_ID)
-             AND (p_client_id IS NULL OR T1.AD_CLIENT_ID = p_client_id)
-           HAVING SUM(T1.MOVEMENTQTY) > 0 INTO v_totalCost;
-  IF (v_totalCost = 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@ZeroSumCost@');
-  END IF;
-
   v_percentange := trunc(p_percentageactual,6);
   varAcum :=0;
   varComprobadoA := 0;
   for Cur_Cursor in (
    SELECT
-   100*(SUM(CASE WHEN T.MOVEMENTQTY>=0 THEN T.TRANSACTIONCOST ELSE -T.TRANSACTIONCOST END) / 
-          (SELECT SUM(CASE WHEN T1.MOVEMENTQTY>=0 THEN T1.TRANSACTIONCOST ELSE -T1.TRANSACTIONCOST END)
-           FROM M_TRANSACTION T1
-             LEFT JOIN M_LOCATOR L1 ON (T1.M_LOCATOR_ID=L1.M_LOCATOR_ID)
-             LEFT JOIN M_WAREHOUSE W1 ON (L1.M_WAREHOUSE_ID=W1.M_WAREHOUSE_ID)
-           WHERE T1.ISCOSTCALCULATED = 'Y'
-             AND (p_warehouse_ID IS NULL OR L1.M_WAREHOUSE_ID = p_warehouse_ID)
-             AND (p_org_ID IS NULL OR W1.AD_ORG_ID = p_org_ID)
-             AND (p_client_id IS NULL OR T1.AD_CLIENT_ID = p_client_id)
-           HAVING SUM(T1.MOVEMENTQTY) > 0)) AS PERCENTAGE
-   FROM M_TRANSACTION T
-     LEFT JOIN M_LOCATOR L ON (T.M_LOCATOR_ID=L.M_LOCATOR_ID)
-     LEFT JOIN M_WAREHOUSE W ON (L.M_WAREHOUSE_ID=W.M_WAREHOUSE_ID)
-   WHERE T.ISCOSTCALCULATED = 'Y'
-     AND (p_warehouse_ID IS NULL OR L.M_WAREHOUSE_ID = p_warehouse_ID)
-     AND (p_org_ID IS NULL OR W.AD_ORG_ID = p_org_ID)
-     AND (p_client_id IS NULL OR T.AD_CLIENT_ID = p_client_id)
-   GROUP BY T.M_PRODUCT_ID
-   HAVING SUM(T.MOVEMENTQTY) > 0
-   ORDER BY PERCENTAGE DESC) loop
+  100*SUM(msd.qtyonhand*M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV'))/ (select SUM(msd1.qtyonhand*M_GET_PRODUCT_COST(MSD1.M_PRODUCT_ID,TO_DATE(now()),'AV'))
+                                                       from M_WAREHOUSE MW1
+                                                       LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
+                                                       LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
+                                                       WHERE (p_warehouse_ID IS NULL OR MW1.M_WAREHOUSE_ID=p_warehouse_ID)
+                                                       AND (p_org_ID IS NULL OR MW1.AD_ORG_ID=p_org_ID)
+                                                       AND (p_client_id IS NULL OR MW1.AD_CLIENT_ID=p_client_id) 
+                                                       AND MSD1.QTYONHAND>0) as PERCENTAGE
+  FROM
+   M_WAREHOUSE MW
+     LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
+     LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
+  WHERE (p_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID=p_warehouse_ID)
+     AND (p_org_ID IS NULL OR MW.AD_ORG_ID=p_org_ID)
+     AND (p_client_id IS NULL OR MW.AD_CLIENT_ID=p_client_id)
+     AND MSD.QTYONHAND>0
+     AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),null) IS NOT NULL
+     AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),null) <> 0
+  GROUP BY MSD.M_PRODUCT_ID
+  ORDER BY PERCENTAGE DESC) loop
   varAcum := varAcum+Cur_Cursor.percentage;
    if(varComprobadoA=0)then
      if (varAcum>=v_limitA) then
@@ -105,7 +89,7 @@ BEGIN
 
  end loop;
  return 'C';
-END M_GET_PARETO_ABC
+END M_GET_PARETO_ABC_LEGACY
 ]]></body>
     </function>
   </database>

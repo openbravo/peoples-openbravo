@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION M_UPDATE_PARETO_PRODUCT">
-    <function name="M_UPDATE_PARETO_PRODUCT" type="NULL">
+  <database name="FUNCTION M_UPDATE_PARETO_PRODUCT_LEGACY">
+    <function name="M_UPDATE_PARETO_PRODUCT_LEGACY" type="NULL">
       <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -70,7 +70,7 @@ BEGIN
       END LOOP; --Get Parameter
 
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT>>') ;
+      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT_LEGACY>>') ;
       v_warehouse_ID:=p_warehouse_ID;
       v_org_ID:=p_org_ID;
       v_client_ID := p_client_id;
@@ -78,33 +78,34 @@ BEGIN
     BEGIN --BODY
 
   for Cur_Cursor in (
-     SELECT M_GET_PARETO_ABC(v_warehouse_ID, AD_ORG_ID, v_client_ID, PERCENTAGE) AS ISABC,
-       AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
+     SELECT M_GET_PARETO_ABC_LEGACY(v_warehouse_ID, AD_ORG_ID, v_client_ID, PERCENTAGE) AS ISABC,
+     AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
      FROM
      (
-       SELECT
-         100*ABS(SUM(CASE WHEN T.MOVEMENTQTY>=0 THEN T.TRANSACTIONCOST ELSE -T.TRANSACTIONCOST END) / 
-                   (SELECT SUM(CASE WHEN T1.MOVEMENTQTY>=0 THEN T1.TRANSACTIONCOST ELSE -T1.TRANSACTIONCOST END)
-                    FROM M_TRANSACTION T1
-                      LEFT JOIN M_LOCATOR L1 ON (T1.M_LOCATOR_ID=L1.M_LOCATOR_ID)
-                      LEFT JOIN M_WAREHOUSE W1 ON (L1.M_WAREHOUSE_ID=W1.M_WAREHOUSE_ID)
-                    WHERE T1.ISCOSTCALCULATED = 'Y'
-                      AND (p_warehouse_ID IS NULL OR L1.M_WAREHOUSE_ID = p_warehouse_ID)
-                      AND (p_org_ID IS NULL OR W1.AD_ORG_ID = p_org_ID)
-                      AND (p_client_id IS NULL OR T1.AD_CLIENT_ID = p_client_id)
-                    HAVING SUM(T1.MOVEMENTQTY) > 0)) AS PERCENTAGE,
-         T.AD_ORG_ID,
-         T.AD_CLIENT_ID,
-         T.M_PRODUCT_ID
-       FROM M_TRANSACTION T
-         LEFT JOIN M_LOCATOR L ON (T.M_LOCATOR_ID=L.M_LOCATOR_ID)
-         LEFT JOIN M_WAREHOUSE W ON (L.M_WAREHOUSE_ID=W.M_WAREHOUSE_ID)
-       WHERE T.ISCOSTCALCULATED = 'Y'
-         AND (p_warehouse_ID IS NULL OR L.M_WAREHOUSE_ID = p_warehouse_ID)
-         AND (p_org_ID IS NULL OR W.AD_ORG_ID = p_org_ID)
-         AND (p_client_id IS NULL OR T.AD_CLIENT_ID = p_client_id)
-       GROUP BY T.AD_ORG_ID, T.AD_CLIENT_ID, T.M_PRODUCT_ID
-       HAVING SUM(T.MOVEMENTQTY) > 0
+     SELECT
+      100*SUM(MSD.QTYONHAND)*(M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (SELECT SUM(msd1.qtyonhand*M_GET_PRODUCT_COST(MSD1.M_PRODUCT_ID,TO_DATE(now()),'AV'))
+                                                           from M_WAREHOUSE MW1
+                                                           LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
+                                                           LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
+                                                           WHERE MSD1.QTYONHAND>0
+                                                           AND (v_warehouse_ID IS NULL OR MW1.M_WAREHOUSE_ID = v_warehouse_ID)
+                                                           AND (v_org_ID IS NULL OR MW1.AD_ORG_ID = v_org_ID)
+                                                           AND (v_client_ID IS NULL OR MW1.AD_CLIENT_ID = v_client_ID)
+                                                           ) ) as PERCENTAGE,
+      MW.AD_ORG_ID,
+      MW.AD_CLIENT_ID,
+      MSD.M_PRODUCT_ID
+     FROM
+     M_WAREHOUSE MW
+       LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
+       LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
+     WHERE (v_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID = v_warehouse_ID)
+       AND (v_org_ID IS NULL OR MW.AD_ORG_ID = v_org_ID)
+       AND (v_client_ID IS NULL OR MW.AD_CLIENT_ID = v_client_ID)
+       AND MSD.QTYONHAND>0
+       AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV') IS NOT NULL
+       AND M_GET_PRODUCT_COST(MSD.M_PRODUCT_ID,TO_DATE(now()),'AV') <> 0
+     GROUP BY MW.AD_ORG_ID, MW.AD_CLIENT_ID, MSD.M_PRODUCT_ID
      ) BBB
      ORDER BY PERCENTAGE DESC) loop
 
@@ -135,7 +136,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT finished>>') ;
+      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT_LEGACY finished>>') ;
     END IF;
     RETURN;
   END; --BODY
@@ -150,7 +151,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END M_UPDATE_PARETO_PRODUCT
+END M_UPDATE_PARETO_PRODUCT_LEGACY
 ]]></body>
     </function>
   </database>

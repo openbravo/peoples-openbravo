@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2012 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
-public class ReportParetoProduct extends HttpSecureAppServlet {
+public class ReportParetoProductLegacy extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -50,37 +50,37 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
-          "ReportParetoProduct|M_Warehouse_ID", "");
+          "ReportParetoProductLegacy|M_Warehouse_ID", "");
       String strClient = vars.getClient();
-      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID",
-          "");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
+          "ReportParetoProductLegacy|AD_Org_ID", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+          "ReportParetoProductLegacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
-          "ReportParetoProduct|M_Warehouse_ID");
+          "ReportParetoProductLegacy|M_Warehouse_ID");
       String strClient = vars.getClient();
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
-          "ReportParetoProduct|AD_Org_ID");
+          "ReportParetoProductLegacy|AD_Org_ID");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+          "ReportParetoProductLegacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("GENERATE")) {
       String strClient = vars.getClient();
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
-          "ReportParetoProduct|M_Warehouse_ID");
+          "ReportParetoProductLegacy|M_Warehouse_ID");
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
-          "ReportParetoProduct|AD_Org_ID");
+          "ReportParetoProductLegacy|AD_Org_ID");
       OBError myMessage = mUpdateParetoProduct(vars, strWarehouse, strAD_Org_ID, strClient);
       myMessage.setTitle("");
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      vars.setMessage("ReportParetoProduct", myMessage);
+      vars.setMessage("ReportParetoProductLegacy", myMessage);
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+          "ReportParetoProductLegacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else
@@ -95,20 +95,21 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    ReportParetoProductData[] data = null;
+    ReportParetoProductLegacyData[] data = null;
     String strConvRateErrorMsg = "";
 
     String discard[] = { "discard" };
 
-    // If the instance is not migrated the user should use the Legacy report
-    if (CostingStatus.getInstance().isMigrated() == false) {
+    // If the instance is migrated the user should use the normal report
+    if (CostingStatus.getInstance().isMigrated()) {
       advise(request, response, "ERROR",
-          Utility.messageBD(this, "NotUsingNewCost", vars.getLanguage()), "");
+          Utility.messageBD(this, "NotUsingOldCost", vars.getLanguage()), "");
       return;
     }
 
     xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard).createXmlDocument();
+        "org/openbravo/erpCommon/ad_reports/ReportParetoProductLegacy", discard)
+        .createXmlDocument();
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
       // of the report
@@ -116,8 +117,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(),
-            strBaseCurrencyId, strCurrencyId, strAD_Org_ID);
+        data = ReportParetoProductLegacyData.select(this, strWarehouse, strClient,
+            vars.getLanguage(), strBaseCurrencyId, strCurrencyId, strAD_Org_ID);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -131,7 +132,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       } else { // Otherwise, the report is launched
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar";
-          data = ReportParetoProductData.set();
+          data = ReportParetoProductLegacyData.set();
         } else {
           xmlDocument.setData("structure1", data);
         }
@@ -141,30 +142,31 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     else {
       if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
         discard[0] = "selEliminar";
-        data = ReportParetoProductData.set();
+        data = ReportParetoProductLegacyData.set();
       }
     }
 
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       // Load Toolbar
-      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportParetoProduct", false, "", "",
-          "", false, "ad_reports", strReplaceWith, false, true);
+      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportParetoProductLegacy", false,
+          "", "", "", false, "ad_reports", strReplaceWith, false, true);
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
 
       // Create WindowTabs
       try {
         WindowTabs tabs = new WindowTabs(this, vars,
-            "org.openbravo.erpCommon.ad_reports.ReportParetoProduct");
+            "org.openbravo.erpCommon.ad_reports.ReportParetoProductLegacy");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
-        NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportParetoProduct.html",
-            classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+        NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+            "ReportParetoProductLegacy.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
-        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportParetoProduct.html",
-            strReplaceWith);
+        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+            "ReportParetoProductLegacy.html", strReplaceWith);
         xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
       } catch (Exception ex) {
         throw new ServletException(ex);
@@ -172,8 +174,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       // Load Message Area
       {
-        OBError myMessage = vars.getMessage("ReportParetoProduct");
-        vars.removeMessage("ReportParetoProduct");
+        OBError myMessage = vars.getMessage("ReportParetoProductLegacy");
+        vars.removeMessage("ReportParetoProductLegacy");
         if (myMessage != null) {
           xmlDocument.setParameter("messageType", myMessage.getType());
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -190,9 +192,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
             "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportParetoProduct"), Utility.getContext(this, vars, "#User_Client",
-                "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+                "ReportParetoProductLegacy"), Utility.getContext(this, vars, "#User_Client",
+                "ReportParetoProductLegacy"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProductLegacy",
             strWarehouse);
         xmlDocument.setData("reportM_Warehouse_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -202,9 +204,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
-            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProductLegacy"),
+            Utility.getContext(this, vars, "#User_Client", "ReportParetoProductLegacy"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProductLegacy",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -215,9 +217,10 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
-            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportParetoProductLegacy"), Utility.getContext(this, vars, "#User_Client",
+                "ReportParetoProductLegacy"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProductLegacy",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -229,8 +232,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           "warehouseArray",
           Utility.arrayDobleEntrada(
               "arrWarehouse",
-              ReportParetoProductData.selectWarehouseDouble(this,
-                  Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"))));
+              ReportParetoProductLegacyData.selectWarehouseDouble(this,
+                  Utility.getContext(this, vars, "#User_Client", "ReportParetoProductLegacy"))));
 
       xmlDocument.setParameter("mWarehouseId", strWarehouse);
       xmlDocument.setParameter("adOrg", strAD_Org_ID);
@@ -245,15 +248,15 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strAD_Org_ID, String strAD_Client_ID) throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
-    PInstanceProcessData.insertPInstance(this, pinstance, "1000500001", "0", "N", vars.getUser(),
-        vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(this, pinstance, "9CD67D41E43242CDA034FB994B75812A", "0",
+        "N", vars.getUser(), vars.getClient(), vars.getOrg());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "m_warehouse_id", strWarehouse,
         vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID,
         vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id",
         strAD_Client_ID, vars.getClient(), vars.getOrg(), vars.getUser());
-    ReportParetoProductData.mUpdateParetoProduct0(this, pinstance);
+    ReportParetoProductLegacyData.mUpdateParetoProduct0Legacy(this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
     OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
@@ -261,6 +264,6 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
   }
 
   public String getServletInfo() {
-    return "Servlet ReportParetoProduct info. Insert here any relevant information";
+    return "Servlet ReportParetoProductLegacy info. Insert here any relevant information";
   } // end of getServletInfo() method
 }
