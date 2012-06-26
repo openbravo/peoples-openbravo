@@ -39,13 +39,17 @@ OB.I18N.labels = {
 // then a call to the server is done to request the label.
 -->
 OB.I18N.getLabel = function(key, params, object, property) {
+  var label, i;
+
   if (!OB.I18N.labels[key]) {
     if (object && property) {
       OB.I18N.getLabelFromServer(key, params, object, property);
     }
     return 'UNDEFINED ' + key;
   }
-  var label = OB.I18N.labels[key], i;
+
+  label = OB.I18N.labels[key];
+
   if (params && params.length && params.length > 0) {
       for (i = 0; i < params.length; i++) {
           label = label.replace("%" + i, params[i]);
@@ -62,14 +66,17 @@ OB.I18N.getLabel = function(key, params, object, property) {
 };
 
 OB.I18N.getLabelFromServer = function(key, params, object, property) {
+  var requestParameters, rpcRequest;
+
   if (!isc) {
     return 'UNDEFINED ' + key;
   }
-  var requestParameters = {};
+
+  requestParameters = {};
   requestParameters._action = 'org.openbravo.client.kernel.GetLabelActionHandler';
   requestParameters.key = key;
 
-  var rpcRequest = {};
+  rpcRequest = {};
   rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
   rpcRequest.callback = function (response, data, request) {
     var clientContext = response.clientContext;
