@@ -39,57 +39,56 @@ OB.I18N.labels = {
 // then a call to the server is done to request the label.
 -->
 OB.I18N.getLabel = function(key, params, object, property) {
-    if (!OB.I18N.labels[key]) {
-      if (object && property) {
-        OB.I18N.getLabelFromServer(key, params, object, property);
-      }
-      return 'UNDEFINED ' + key;      
-    }
-    var label = OB.I18N.labels[key], i;
-    if (params && params.length && params.length > 0) {
-        for (i = 0; i < params.length; i++) {
-            label = label.replace("%" + i, params[i]);
-        }
-    }
+  if (!OB.I18N.labels[key]) {
     if (object && property) {
-      if (Object.prototype.toString.call(object[property]) === '[object Function]') {
-        object[property](label);
-      } else {
-        object[property] = label;
-      }
+      OB.I18N.getLabelFromServer(key, params, object, property);
     }
-    return label;
+    return 'UNDEFINED ' + key;
+  }
+  var label = OB.I18N.labels[key], i;
+  if (params && params.length && params.length > 0) {
+      for (i = 0; i < params.length; i++) {
+          label = label.replace("%" + i, params[i]);
+      }
+  }
+  if (object && property) {
+    if (Object.prototype.toString.call(object[property]) === '[object Function]') {
+      object[property](label);
+    } else {
+      object[property] = label;
+    }
+  }
+  return label;
 };
 
 OB.I18N.getLabelFromServer = function(key, params, object, property) {
-    if (isc) {
-      var requestParameters = {};
-      requestParameters._action = 'org.openbravo.client.kernel.GetLabelActionHandler';
-      requestParameters.key = key;
+  if (!isc) {
+    return 'UNDEFINED ' + key;
+  }
+  var requestParameters = {};
+  requestParameters._action = 'org.openbravo.client.kernel.GetLabelActionHandler';
+  requestParameters.key = key;
 
-      var rpcRequest = {};
-      rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
-      rpcRequest.callback = function (response, data, request) {
-        var clientContext = response.clientContext;
-        if (data.label) {
-          OB.I18N.labels[clientContext.key] = data.label;
-          OB.I18N.getLabel(clientContext.key, clientContext.params, clientContext.object, clientContext.property);
-        } else {
-          if (isc.isA.Function(clientContext.object[clientContext.property])) {
-            clientContext.object[clientContext.property]('LABEL NOT FOUND ' + clientContext.key);
-          } else {
-            clientContext.object[clientContext.property] = 'LABEL NOT FOUND ' + clientContext.key;
-          }          
-        }
-      };
-      rpcRequest.httpMethod = 'GET';
-      rpcRequest.contentType = 'application/json;charset=UTF-8';
-      rpcRequest.useSimpleHttp = true;
-      rpcRequest.evalResult = true;
-      rpcRequest.params = requestParameters;
-      rpcRequest.clientContext = {'key' : key, 'object': object, 'params': params, 'property': property};
-      isc.RPCManager.sendRequest(rpcRequest);
+  var rpcRequest = {};
+  rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
+  rpcRequest.callback = function (response, data, request) {
+    var clientContext = response.clientContext;
+    if (data.label) {
+      OB.I18N.labels[clientContext.key] = data.label;
+      OB.I18N.getLabel(clientContext.key, clientContext.params, clientContext.object, clientContext.property);
     } else {
-      return 'UNDEFINED ' + key;
+      if (isc.isA.Function(clientContext.object[clientContext.property])) {
+        clientContext.object[clientContext.property]('LABEL NOT FOUND ' + clientContext.key);
+      } else {
+        clientContext.object[clientContext.property] = 'LABEL NOT FOUND ' + clientContext.key;
+      }
     }
+  };
+  rpcRequest.httpMethod = 'GET';
+  rpcRequest.contentType = 'application/json;charset=UTF-8';
+  rpcRequest.useSimpleHttp = true;
+  rpcRequest.evalResult = true;
+  rpcRequest.params = requestParameters;
+  rpcRequest.clientContext = {'key' : key, 'object': object, 'params': params, 'property': property};
+  isc.RPCManager.sendRequest(rpcRequest);
 };
