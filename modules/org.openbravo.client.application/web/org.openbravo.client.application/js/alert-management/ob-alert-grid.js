@@ -193,7 +193,7 @@ isc.OBAlertGrid.addProperties({
       }
     }
     if (alertRuleIds !== '') {
-      whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+      whereClause += ' and e.alertRule.id in (' + alertRuleIds + ')';
     } else {
       whereClause += ' and 1=2';
     }
