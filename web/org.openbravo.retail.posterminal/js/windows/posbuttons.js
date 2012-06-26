@@ -27,7 +27,10 @@
     icon: 'icon-print icon-white btn-icon-left',
     label: OB.I18N.getLabel('OBPOS_LblPrint'),
     clickEvent: function (e) {
-      this.options.modelorder.trigger('print');
+      var receipt = this.options.modelorder;
+      receipt.calculateTaxes(function () {
+        receipt.trigger('print');                        
+      });      
     }
   });
 
