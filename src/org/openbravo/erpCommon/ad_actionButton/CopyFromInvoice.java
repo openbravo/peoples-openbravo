@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,8 +41,10 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
@@ -95,6 +97,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Org", windowId));
       CopyFromInvoiceData[] dataInvoice = CopyFromInvoiceData.selectInvoice(conn, this, strKey);
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
+      Invoice invToCopy = OBDal.getInstance().get(Invoice.class, strInvoice);
+      int pricePrecision = invoice.getPriceList().getCurrency().getPricePrecision().intValue();
+      int stdPrecision = invoice.getPriceList().getCurrency().getStandardPrecision().intValue();
+
       if (data == null || data.length == 0) {
         myError = new OBError();
         myError.setType("Success");
@@ -105,22 +111,20 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       for (i = 0; i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         try {
+          InvoiceLine invLine = OBDal.getInstance().get(InvoiceLine.class, data[i].cInvoicelineId);
           String strDateInvoiced = "";
           String strInvPriceList = "";
           String strBPartnerId = "";
-          String strPricePrecision = "0";
           String strmProductId = "";
-          String strQty = "";
-          String strPriceactual = "";
-          String strPriceStd = "";
-          String strPriceList = "";
-          String strPriceLimit = "";
-          String strLinenetamt = "";
+          BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross;
+          priceActual = priceStd = priceList = priceLimit = priceGross = BigDecimal.ZERO;
+          BigDecimal lineNetAmt, lineGrossAmt;
+          lineNetAmt = lineGrossAmt = BigDecimal.ZERO;
           strDateInvoiced = dataInvoice[0].dateinvoiced;
           strInvPriceList = dataInvoice[0].mPricelistId;
           strBPartnerId = dataInvoice[0].mPricelistId;
           strmProductId = data[i].productId;
-          strQty = data[i].qtyinvoiced;
+
           String strWindowId = vars.getStringParameter("inpwindowId");
           String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
@@ -130,7 +134,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
               dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
               strIsSOTrx.equals("Y"), data[i].accountId);
 
-          if ("Y".equals(strPriceListCheck)) {
+          // force get price list price if mixing tax including price lists.
+          boolean forcePriceList = (invoice.getPriceList().isPriceIncludesTax() != invToCopy
+              .getPriceList().isPriceIncludesTax());
+          if ("Y".equals(strPriceListCheck) || forcePriceList) {
 
             CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(
                 this, strmProductId, strInvPriceList);
@@ -139,55 +146,46 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                   || invoicelineprice[j].validfrom.equals("")
                   || !DateTimeData.compare(this, DateTimeData.today(this),
                       invoicelineprice[j].validfrom).equals("-1")) {
-                strPriceStd = invoicelineprice[j].pricestd;
-                strPriceList = invoicelineprice[j].pricelist;
-                strPriceLimit = invoicelineprice[j].pricelimit;
-                int pricePrecision = invoice.getPriceList().getCurrency().getPricePrecision()
-                    .intValue();
-
-                BigDecimal priceStd, priceActual, qtyInvoiced, lineNetAmt;
-
-                priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO
-                    : (new BigDecimal(strPriceStd))).setScale(pricePrecision,
+                priceList = new BigDecimal(invoicelineprice[j].pricelist);
+                priceLimit = new BigDecimal(invoicelineprice[j].pricelimit);
+                priceStd = (invoicelineprice[j].pricestd.equals("") ? BigDecimal.ZERO
+                    : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                     BigDecimal.ROUND_HALF_UP);
-                qtyInvoiced = (data[i].qtyinvoiced.equals("") ? BigDecimal.ZERO : new BigDecimal(
-                    data[i].qtyinvoiced));
-                // Calculate price adjustments (offers)
-                priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
-                    strBPartnerId, strPriceStd, strmProductId, strDateInvoiced, strQty,
-                    strInvPriceList, strKey));
-                if (priceActual.scale() > pricePrecision) {
-                  priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+
+                if (invoice.getPriceList().isPriceIncludesTax()) {
+                  priceGross = priceStd;
+                  lineGrossAmt = priceGross.multiply(invLine.getInvoicedQuantity()).setScale(
+                      stdPrecision, BigDecimal.ROUND_HALF_UP);
+                  priceActual = FinancialUtils.calculateNetFromGross(strCTaxID, lineGrossAmt,
+                      pricePrecision, lineGrossAmt, invLine.getInvoicedQuantity());
+                } else {
+                  // Calculate price adjustments (offers)
+                  priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
+                      strBPartnerId, priceStd.toString(), strmProductId, strDateInvoiced, invLine
+                          .getInvoicedQuantity().toString(), strInvPriceList, strKey));
+                  if (priceActual.scale() > pricePrecision) {
+                    priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+                  }
                 }
                 // Calculate line net amount
-                lineNetAmt = qtyInvoiced.multiply(priceActual);
+                lineNetAmt = invLine.getInvoicedQuantity().multiply(priceActual);
                 if (lineNetAmt.scale() > pricePrecision) {
                   lineNetAmt = lineNetAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
                 }
-                strPriceStd = priceStd.toString();
-                strPriceactual = priceActual.toString();
-                strLinenetamt = lineNetAmt.toString();
                 break;
               }
             }
-            if (strPriceStd.equals(""))
-              strPriceStd = "0";
-            if (strPriceList.equals(""))
-              strPriceList = "0";
-            if (strPriceLimit.equals(""))
-              strPriceLimit = "0";
-            if (strPriceactual.equals(""))
-              strPriceactual = "0";
           } else {
-            strPriceList = data[i].pricelist;
-            strPriceLimit = data[i].pricelimit;
-            strPriceactual = data[i].priceactual;
-            strLinenetamt = data[i].linenetamt;
+            priceList = invLine.getListPrice();
+            priceLimit = invLine.getPriceLimit();
+            priceActual = invLine.getUnitPrice();
+            priceGross = invLine.getGrossUnitPrice();
+            lineNetAmt = invLine.getLineNetAmount();
+            lineGrossAmt = invLine.getGrossAmount();
           }
 
           // Checking, why is not possible to get a tax
-          BigDecimal linenetamt = new BigDecimal(strLinenetamt);
-          if ("".equals(strCTaxID) && linenetamt.compareTo(BigDecimal.ZERO) != 0) {
+          if ("".equals(strCTaxID) && lineNetAmt.compareTo(BigDecimal.ZERO) != 0) {
             if (!"".equals(data[i].accountId)) {
               GLItem glItem = OBDal.getInstance().get(GLItem.class, data[i].accountId);
 
@@ -230,8 +228,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           }
 
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), strPriceList, strPriceactual, strPriceLimit,
-              strLinenetamt, strCTaxID, data[i].cInvoicelineId);
+              dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
+              priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
+              lineGrossAmt.toString(), data[i].cInvoicelineId);
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,
