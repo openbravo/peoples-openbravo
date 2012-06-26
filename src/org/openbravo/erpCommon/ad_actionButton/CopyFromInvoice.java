@@ -38,9 +38,11 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
@@ -92,151 +94,154 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", windowId),
           Utility.getContext(this, vars, "#User_Org", windowId));
       CopyFromInvoiceData[] dataInvoice = CopyFromInvoiceData.selectInvoice(conn, this, strKey);
-      if (data != null && data.length != 0) {
-        for (i = 0; i < data.length; i++) {
-          String strSequence = SequenceIdData.getUUID();
-          try {
-            String strDateInvoiced = "";
-            String strInvPriceList = "";
-            String strBPartnerId = "";
-            String strPricePrecision = "0";
-            String strmProductId = "";
-            String strQty = "";
-            String priceactual = "";
-            String pricestd = "";
-            String pricelist = "";
-            String pricelimit = "";
-            String linenetamt = "";
-            strDateInvoiced = dataInvoice[0].dateinvoiced;
-            strInvPriceList = dataInvoice[0].mPricelistId;
-            strBPartnerId = dataInvoice[0].mPricelistId;
-            strmProductId = data[i].productId;
-            strQty = data[i].qtyinvoiced;
-            String strWindowId = vars.getStringParameter("inpwindowId");
-            String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
-            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
+      if (data == null || data.length == 0) {
+        myError = new OBError();
+        myError.setType("Success");
+        myError.setTitle(OBMessageUtils.messageBD("Success"));
+        myError.setMessage(OBMessageUtils.messageBD("RecordsCopied") + " " + i);
+        return myError;
+      }
+      for (i = 0; i < data.length; i++) {
+        String strSequence = SequenceIdData.getUUID();
+        try {
+          String strDateInvoiced = "";
+          String strInvPriceList = "";
+          String strBPartnerId = "";
+          String strPricePrecision = "0";
+          String strmProductId = "";
+          String strQty = "";
+          String strPriceactual = "";
+          String strPriceStd = "";
+          String strPriceList = "";
+          String strPriceLimit = "";
+          String strLinenetamt = "";
+          strDateInvoiced = dataInvoice[0].dateinvoiced;
+          strInvPriceList = dataInvoice[0].mPricelistId;
+          strBPartnerId = dataInvoice[0].mPricelistId;
+          strmProductId = data[i].productId;
+          strQty = data[i].qtyinvoiced;
+          String strWindowId = vars.getStringParameter("inpwindowId");
+          String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+          String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
-            String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
-                dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
-                dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
-                strIsSOTrx.equals("Y"), data[i].accountId);
+          String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
+              dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
+              dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
+              strIsSOTrx.equals("Y"), data[i].accountId);
 
-            if ("Y".equals(strPriceListCheck)) {
+          if ("Y".equals(strPriceListCheck)) {
 
-              CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(
-                  this, strmProductId, strInvPriceList);
-              for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
-                if (invoicelineprice[j].validfrom == null
-                    || invoicelineprice[j].validfrom.equals("")
-                    || !DateTimeData.compare(this, DateTimeData.today(this),
-                        invoicelineprice[j].validfrom).equals("-1")) {
-                  pricestd = invoicelineprice[j].pricestd;
-                  pricelist = invoicelineprice[j].pricelist;
-                  pricelimit = invoicelineprice[j].pricelimit;
-                  CopyFromInvoiceData[] invoicePriceList = CopyFromInvoiceData
-                      .selectInvoicePricelist(this, strKey);
-                  if (invoicePriceList != null && invoicePriceList.length > 0) {
-                    strPricePrecision = invoicePriceList[0].priceprecision.equals("") ? "0"
-                        : invoicePriceList[0].priceprecision;
-                  }
-                  int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
+            CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(
+                this, strmProductId, strInvPriceList);
+            for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
+              if (invoicelineprice[j].validfrom == null
+                  || invoicelineprice[j].validfrom.equals("")
+                  || !DateTimeData.compare(this, DateTimeData.today(this),
+                      invoicelineprice[j].validfrom).equals("-1")) {
+                strPriceStd = invoicelineprice[j].pricestd;
+                strPriceList = invoicelineprice[j].pricelist;
+                strPriceLimit = invoicelineprice[j].pricelimit;
+                int pricePrecision = invoice.getPriceList().getCurrency().getPricePrecision()
+                    .intValue();
 
-                  BigDecimal priceStd, priceActual, qtyInvoiced, lineNetAmt;
+                BigDecimal priceStd, priceActual, qtyInvoiced, lineNetAmt;
 
-                  priceStd = (pricestd.equals("") ? BigDecimal.ZERO : (new BigDecimal(pricestd)))
-                      .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-                  qtyInvoiced = (data[i].qtyinvoiced.equals("") ? BigDecimal.ZERO : new BigDecimal(
-                      data[i].qtyinvoiced));
-                  // Calculate price adjustments (offers)
-                  priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
-                      strBPartnerId, pricestd, strmProductId, strDateInvoiced, strQty,
-                      strInvPriceList, strKey));
-                  if (priceActual.scale() > PricePrecision)
-                    priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-                  // Calculate line net amount
-                  lineNetAmt = qtyInvoiced.multiply(priceActual);
-                  if (lineNetAmt.scale() > PricePrecision)
-                    lineNetAmt = lineNetAmt.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-                  pricestd = priceStd.toString();
-                  priceactual = priceActual.toString();
-                  linenetamt = lineNetAmt.toString();
+                priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO
+                    : (new BigDecimal(strPriceStd))).setScale(pricePrecision,
+                    BigDecimal.ROUND_HALF_UP);
+                qtyInvoiced = (data[i].qtyinvoiced.equals("") ? BigDecimal.ZERO : new BigDecimal(
+                    data[i].qtyinvoiced));
+                // Calculate price adjustments (offers)
+                priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
+                    strBPartnerId, strPriceStd, strmProductId, strDateInvoiced, strQty,
+                    strInvPriceList, strKey));
+                if (priceActual.scale() > pricePrecision) {
+                  priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
                 }
-              }
-              if (pricestd.equals(""))
-                pricestd = "0";
-              if (pricelist.equals(""))
-                pricelist = "0";
-              if (pricelimit.equals(""))
-                pricelimit = "0";
-              if (priceactual.equals(""))
-                priceactual = "0";
-            } else {
-              pricelist = data[i].pricelist;
-              pricelimit = data[i].pricelimit;
-              priceactual = data[i].priceactual;
-              linenetamt = data[i].linenetamt;
-            }
-
-            // Checking, why is not possible to get a tax
-            BigDecimal linenetamtBD = new BigDecimal(linenetamt);
-            if ("".equals(strCTaxID)
-                && !linenetamtBD.equals(BigDecimal.ZERO.setScale(linenetamtBD.scale()))) {
-              if (!"".equals(data[i].accountId)) {
-                GLItem glItem = OBDal.getInstance().get(GLItem.class, data[i].accountId);
-
-                OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
-                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
-                    glItem.getTaxCategory()));
-                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
-                List<TaxRate> taxRates = obcriteria.list();
-                if (taxRates.size() == 0) {
-                  throw new OBException(String.format(
-                      Utility.messageBD(this, "NotExistTaxRateForTaxCategory", vars.getLanguage()),
-                      glItem.getTaxCategory().getIdentifier(), glItem.getIdentifier()));
-                } else {
-                  Location location = OBDal.getInstance().get(Location.class,
-                      dataInvoice[0].cBpartnerLocationId);
-                  throw new OBException(String.format(
-                      Utility.messageBD(this, "NotExistTaxRateForTaxZone", vars.getLanguage()),
-                      glItem.getIdentifier(), glItem.getTaxCategory().getIdentifier(),
-                      location.getIdentifier()));
+                // Calculate line net amount
+                lineNetAmt = qtyInvoiced.multiply(priceActual);
+                if (lineNetAmt.scale() > pricePrecision) {
+                  lineNetAmt = lineNetAmt.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
                 }
-              } else if (!"".equals(data[i].productId)) {
-                Product product = OBDal.getInstance().get(Product.class, data[i].productId);
-
-                OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
-                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
-                    product.getTaxCategory()));
-                obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
-                List<TaxRate> taxRates = obcriteria.list();
-                if (taxRates.size() == 0) {
-                  throw new OBException(String.format(
-                      Utility.messageBD(this, "NotExistTaxRateForTaxCategory", vars.getLanguage()),
-                      product.getTaxCategory().getIdentifier(), product.getIdentifier()));
-                } else {
-                  Location location = OBDal.getInstance().get(Location.class,
-                      dataInvoice[0].cBpartnerLocationId);
-                  throw new OBException(String.format(
-                      Utility.messageBD(this, "NotExistTaxRateForTaxZone", vars.getLanguage()),
-                      product.getIdentifier(), product.getTaxCategory().getIdentifier(),
-                      location.getIdentifier()));
-                }
+                strPriceStd = priceStd.toString();
+                strPriceactual = priceActual.toString();
+                strLinenetamt = lineNetAmt.toString();
+                break;
               }
             }
-
-            CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-                dataInvoice[0].adOrgId, vars.getUser(), pricelist, priceactual, pricelimit,
-                linenetamt, strCTaxID, data[i].cInvoicelineId);
-
-            // Copy accounting dimensions
-            CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,
-                dataInvoice[0].adOrgId, vars.getUser(), strSequence, data[i].cInvoicelineId);
-          } catch (ServletException ex) {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
+            if (strPriceStd.equals(""))
+              strPriceStd = "0";
+            if (strPriceList.equals(""))
+              strPriceList = "0";
+            if (strPriceLimit.equals(""))
+              strPriceLimit = "0";
+            if (strPriceactual.equals(""))
+              strPriceactual = "0";
+          } else {
+            strPriceList = data[i].pricelist;
+            strPriceLimit = data[i].pricelimit;
+            strPriceactual = data[i].priceactual;
+            strLinenetamt = data[i].linenetamt;
           }
+
+          // Checking, why is not possible to get a tax
+          BigDecimal linenetamt = new BigDecimal(strLinenetamt);
+          if ("".equals(strCTaxID) && linenetamt.compareTo(BigDecimal.ZERO) != 0) {
+            if (!"".equals(data[i].accountId)) {
+              GLItem glItem = OBDal.getInstance().get(GLItem.class, data[i].accountId);
+
+              OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+              obcriteria
+                  .add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, glItem.getTaxCategory()));
+              obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+              List<TaxRate> taxRates = obcriteria.list();
+              if (taxRates.size() == 0) {
+                throw new OBException(String.format(OBMessageUtils
+                    .messageBD("NotExistTaxRateForTaxCategory"), glItem.getTaxCategory()
+                    .getIdentifier(), glItem.getIdentifier()));
+              } else {
+                Location location = OBDal.getInstance().get(Location.class,
+                    dataInvoice[0].cBpartnerLocationId);
+                throw new OBException(String.format(
+                    OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"), glItem.getIdentifier(),
+                    glItem.getTaxCategory().getIdentifier(), location.getIdentifier()));
+              }
+            } else if (!"".equals(data[i].productId)) {
+              Product product = OBDal.getInstance().get(Product.class, data[i].productId);
+
+              OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+              obcriteria
+                  .add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, product.getTaxCategory()));
+              obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+              List<TaxRate> taxRates = obcriteria.list();
+              if (taxRates.size() == 0) {
+                throw new OBException(String.format(OBMessageUtils
+                    .messageBD("NotExistTaxRateForTaxCategory"), product.getTaxCategory()
+                    .getIdentifier(), product.getIdentifier()));
+              } else {
+                Location location = OBDal.getInstance().get(Location.class,
+                    dataInvoice[0].cBpartnerLocationId);
+                throw new OBException(String.format(
+                    OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"), product.getIdentifier(),
+                    product.getTaxCategory().getIdentifier(), location.getIdentifier()));
+              }
+            }
+          }
+
+          CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
+              dataInvoice[0].adOrgId, vars.getUser(), strPriceList, strPriceactual, strPriceLimit,
+              strLinenetamt, strCTaxID, data[i].cInvoicelineId);
+
+          // Copy accounting dimensions
+          CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,
+              dataInvoice[0].adOrgId, vars.getUser(), strSequence, data[i].cInvoicelineId);
+        } catch (ServletException ex) {
+          myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
         }
       }
+
       releaseCommitConnection(conn);
     } catch (OBException obe) {
       try {
@@ -245,7 +250,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       }
       myError = new OBError();
       myError.setType("Error");
-      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myError.setTitle(OBMessageUtils.messageBD("Error"));
       myError.setMessage(obe.getMessage());
       return myError;
     } catch (Exception e) {
@@ -256,44 +261,44 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       log4j.warn("Rollback in transaction", e);
       myError = new OBError();
       myError.setType("Error");
-      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      myError.setTitle(OBMessageUtils.messageBD("Error"));
+      myError.setMessage(OBMessageUtils.messageBD("ProcessRunError"));
       return myError;
     }
     myError = new OBError();
     myError.setType("Success");
-    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + i);
+    myError.setTitle(OBMessageUtils.messageBD("Success"));
+    myError.setMessage(OBMessageUtils.messageBD("RecordsCopied") + " " + i);
     return myError;
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Button process Copy from Invoice");
+    log4j.debug("Output: Button process Copy from Invoice");
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CopyFromInvoice", discard).createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question",
-        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
+    xmlDocument.setParameter("question", OBMessageUtils.messageBD("StartProcess?"));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
