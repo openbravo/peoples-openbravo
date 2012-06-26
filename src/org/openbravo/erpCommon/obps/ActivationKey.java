@@ -222,6 +222,14 @@ public class ActivationKey {
   private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
   private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
+  private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
+    {
+      add("S");
+      add("CUR");
+      add("SUR");
+    }
+  };
+
   private static ActivationKey instance = new ActivationKey();
 
   /**
@@ -986,6 +994,8 @@ public class ActivationKey {
   private int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }
