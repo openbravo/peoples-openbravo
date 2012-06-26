@@ -139,7 +139,7 @@ public class CashCloseProcessor {
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
-    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account));
+    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
     transaction.setGLItem(glItem);
     if (difference.compareTo(BigDecimal.ZERO) < 0) {
       transaction.setPaymentAmount(difference.abs());
@@ -165,7 +165,7 @@ public class CashCloseProcessor {
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
-    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account));
+    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
     transaction.setGLItem(glItem);
     transaction.setPaymentAmount(reconciliationTotal);
     transaction.setProcessed(true);
@@ -188,7 +188,7 @@ public class CashCloseProcessor {
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
-    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account));
+    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
     transaction.setGLItem(glItem);
     transaction.setDepositAmount(reconciliationTotal);
     transaction.setProcessed(true);
