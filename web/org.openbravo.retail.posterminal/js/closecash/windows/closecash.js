@@ -29,7 +29,8 @@
           {kind: OB.COMP.ModalFinishClose},
           {kind: OB.DATA.Container, content: [
                {kind: OB.DATA.PaymentMethod},
-               {kind: OB.DATA.CloseCashPaymentMethod}
+               {kind: OB.DATA.CloseCashPaymentMethod},
+               {kind: OB.DATA.CashCloseReport}
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
