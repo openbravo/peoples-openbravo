@@ -12,7 +12,7 @@
 	        this._id = 'ListDepositsDrops';
 	        this.total= OB.DEC.Zero;
 	        this.listdepositsdrops = new OB.MODEL.Collection(this.options.DataDepositsDrops);
-	       this.component = B(
+	        this.component = B(
 	        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
 	          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
 	            {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
@@ -45,7 +45,7 @@
                   {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; border-bottom: 1px solid #cccccc; float: left; width: 24%'}, content: [
                    {kind: Backbone.View.extend({
                      tagName: 'span',
-                     attributes: {'style': 'padding-left: 10px'},
+                     attributes: {'style': 'float:left; padding-left: 77px'},
                      initialize: function () {
                           this.total = $('<strong/>');
                           this.$el.append(this.total);
