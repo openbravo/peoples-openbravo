@@ -9,16 +9,24 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginHandler;
+import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.dal.core.DalUtil;
@@ -31,6 +39,10 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class POSLoginHandler extends LoginHandler {
 
@@ -53,7 +65,6 @@ public class POSLoginHandler extends LoginHandler {
       final VariablesSecureApp vars = new VariablesSecureApp(req);
 
       final String sessionId = vars.getSessionValue("#AD_Session_ID");
-      System.out.println("Session " + sessionId);
       OBContext.setAdminMode();
 
       Session session = null;
@@ -80,29 +91,34 @@ public class POSLoginHandler extends LoginHandler {
 
       final String userId = (String) req.getSession().getAttribute("#Authenticated_user");
       Role role = getPOSRole(userId);
+      JSONObject jsonMsg = new JSONObject();
       if (role != null) {
+        completeLogin(vars, role, userId);
+
         vars.setSessionValue("#AD_Role_ID", (String) DalUtil.getId(role));
         session.setLoginStatus(WEB_POS_SESSION);
-        OBDal.getInstance().flush();
+        session.setSessionActive(true);
+
+        jsonMsg.put("showMessage", false);
       } else {
         session.setSessionActive(false);
         session.setLoginStatus("F");
-        OBDal.getInstance().flush();
 
         vars.clearSession(true);
 
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
         String language = systemClient.getLanguage().getLanguage();
 
-        JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("showMessage", true);
         jsonMsg.put("messageType", "Error");
         jsonMsg.put("messageTitle", Utility.messageBD(this, "OBPOS_NO_POS_ROLE_TITLE", language));
         jsonMsg.put("messageText", Utility.messageBD(this, "OBPOS_NO_POS_ROLE_MSG", language));
-        final PrintWriter out = res.getWriter();
-        out.print(jsonMsg.toString());
-        out.close();
       }
+
+      OBDal.getInstance().flush();
+      final PrintWriter out = res.getWriter();
+      out.print(jsonMsg.toString());
+      out.close();
     } catch (Exception e) {
       log4j.error("Error in POS login", e);
       try {
@@ -119,6 +135,139 @@ public class POSLoginHandler extends LoginHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void completeLogin(VariablesSecureApp vars, Role role, String userId)
+      throws ServletException {
+    String strLanguage = "";
+    String strIsRTL = "";
+    String strRole = "";
+    String strClient = "";
+    String strOrg = "";
+    String strWarehouse = "";
+
+    strRole = role.getId();
+    strClient = (String) DalUtil.getId(role.getClient());
+    strOrg = (String) DalUtil.getId(role.getOrganization());
+    strWarehouse = null; // XXX: should we set warehouse?
+
+    final User user = OBDal.getInstance().get(User.class, userId);
+
+    if (user.getDefaultLanguage() != null) {
+      strLanguage = user.getDefaultLanguage().getLanguage();
+      strIsRTL = user.getDefaultLanguage().isRTLLanguage() ? "Y" : "N";
+    } else {
+      strLanguage = "en_US";
+      strIsRTL = "N";
+    }
+
+    // note fill session arguments will set the LOGGINGIN session var
+    // to N
+    if (LoginUtils.fillSessionArguments(this, vars, userId, strLanguage, strIsRTL, strRole,
+        strClient, strOrg, strWarehouse)) {
+      readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
+      readNumberFormat(vars, globalParameters.getFormatPath());
+    } else {
+      // Re-login
+      log4j.error("Unable to fill session Arguments for: " + userId);
+      throw new OBException("Unable to do login");
+    }
+
+    // Login process if finished, set the flag as not logging in
+    // this flag may not be removed from the session, it must be set
+    // to N to prevent re-initializing the session continuously
+    vars.setSessionValue("#loggingIn", "N");
+  }
+
+  protected void readProperties(VariablesSecureApp vars, String strFileProperties) {
+    // Read properties file.
+    final Properties properties = new Properties();
+    try {
+
+      properties.load(new FileInputStream(strFileProperties));
+      final String javaDateFormat = properties.getProperty("dateFormat.java");
+      vars.setSessionValue("#AD_JavaDateFormat", javaDateFormat);
+
+      final String javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
+      vars.setSessionValue("#AD_JavaDateTimeFormat", javaDateTimeFormat);
+
+      final String sqlDateTimeFormat = properties.getProperty("dateTimeFormat.sql");
+      vars.setSessionValue("#AD_SqlDateTimeFormat", sqlDateTimeFormat);
+
+      final String jsDateFormat = properties.getProperty("dateFormat.js");
+      vars.setSessionValue("#AD_JsDateFormat", jsDateFormat);
+
+      final String sqlDateFormat = properties.getProperty("dateFormat.sql");
+      vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
+
+      final String pentahoServer = properties.getProperty("pentahoServer");
+      vars.setSessionValue("#pentahoServer", pentahoServer);
+
+      final String sourcePath = properties.getProperty("source.path");
+      vars.setSessionValue("#sourcePath", sourcePath);
+
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("strFileProperties: " + strFileProperties);
+        log4j.debug("javaDateFormat: " + javaDateFormat);
+        log4j.debug("javaDateTimeFormat: " + javaDateTimeFormat);
+        log4j.debug("jsDateFormat: " + jsDateFormat);
+        log4j.debug("sqlDateFormat: " + sqlDateFormat);
+        log4j.debug("pentahoServer: " + pentahoServer);
+        log4j.debug("sourcePath: " + sourcePath);
+      }
+    } catch (final IOException e) {
+      // catch possible io errors from readLine()
+      log4j.error("Error reading properties", e);
+    }
+  }
+
+  protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
+    String strNumberFormat = "###,##0.00"; // Default number format
+    String strGroupingSeparator = ","; // Default grouping separator
+    String strDecimalSeparator = "."; // Default decimal separator
+    final String formatNameforJrxml = "euroInform"; // Name of the format to use
+    final HashMap<String, String> formatMap = new HashMap<String, String>();
+
+    try {
+      // Reading number format configuration
+      final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      final Document doc = docBuilder.parse(new File(strFormatFile));
+      doc.getDocumentElement().normalize();
+      final NodeList listOfNumbers = doc.getElementsByTagName("Number");
+      final int totalNumbers = listOfNumbers.getLength();
+      for (int s = 0; s < totalNumbers; s++) {
+        final Node NumberNode = listOfNumbers.item(s);
+        if (NumberNode.getNodeType() == Node.ELEMENT_NODE) {
+          final Element NumberElement = (Element) NumberNode;
+          final String strNumberName = NumberElement.getAttributes().getNamedItem("name")
+              .getNodeValue();
+          // store in session all the formats
+          final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
+              .getNodeValue();
+          formatMap.put(strNumberName, strFormatOutput);
+          vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
+          vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
+              .getNamedItem("decimal").getNodeValue());
+          vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
+              .getNamedItem("grouping").getNodeValue());
+          // set the numberFormat to be used in the renderJR function
+          if (strNumberName.equals(formatNameforJrxml)) {
+            strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
+                .getNodeValue();
+            strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
+                .getNodeValue();
+            strNumberFormat = strFormatOutput;
+          }
+        }
+      }
+    } catch (final Exception e) {
+      log4j.error("error reading number format", e);
+    }
+    vars.setSessionObject("#FormatMap", formatMap);
+    vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
+    vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
+    vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);
   }
 
   private Role getPOSRole(String userId) {
