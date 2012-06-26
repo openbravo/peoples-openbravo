@@ -168,7 +168,8 @@
                 postData = {
                   'language': newLanguageId,
                   'role': newRoleId,
-                  'default': isDefault
+                  'default': isDefault,
+                  'defaultRoleProperty': 'oBPOSDefaultPOSRole'
                 };
             $.ajax({
               url: actionURL,
