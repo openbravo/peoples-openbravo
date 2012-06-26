@@ -78,7 +78,7 @@ public class POSLoginHandler extends LoginHandler {
 
         if (session != null
             && (LOGIN_CONCURRENT_USERS_ERROR.equals(session.getLoginStatus()) || LOGIN_SOFT_USERS_WARN
-                .equals(session))) {
+                .equals(session.getLoginStatus()))) {
           // no problem continue, mark this session to be POS
         } else {
           // other errors should be rose
