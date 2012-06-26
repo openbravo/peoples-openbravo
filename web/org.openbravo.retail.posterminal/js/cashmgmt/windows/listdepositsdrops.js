@@ -5,10 +5,13 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.DepositsDrops = OB.COMP.CustomView.extend({
-	  _id: 'depositsdrops',
-	    createView: function () {
-	      return (
+  OB.COMP.ListDepositsDrops = OB.COMP.CustomView.extend({
+	  _id: 'listdepositsdrops',
+	  initialize: function () {
+	        var me = this;
+	        this._id = 'ListDepositsDrops';
+	        this.listdepositsdrops = new OB.MODEL.Collection(this.options.DataDepositsDrops);
+	       this.component = B(
 	        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
 	          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
 	            {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
@@ -43,7 +46,8 @@
 	            ]}
 	          ]}
 	        ]}
-	      );
+	        );
+	       this.$el = this.component.$el;
 	    }
 	  });
 }());

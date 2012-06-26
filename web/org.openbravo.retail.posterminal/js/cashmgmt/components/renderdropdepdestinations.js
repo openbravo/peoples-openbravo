@@ -5,7 +5,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.RenderDropDestinations =  OB.COMP.SelectButton.extend({
+  OB.COMP.RenderDropDepDestinations =  OB.COMP.SelectButton.extend({
 	attributes: {'style':'background-color:#dddddd;  border: 1px solid #ffffff;'},
     render: function() {
       this.$el.append(B(

@@ -90,7 +90,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
         "components/listreceipts", "components/modalreceipts", "components/renderbusinesspartner",
         "components/searchbps", "components/modalbps", "components/scan", "components/tabscan",
-        "components/rendercategory", "components/listcategories", "components/renderproduct",
+        "components/rendercategory", "components/listcategories",
+        "components/renderproduct",
         "components/listproducts",
         "components/tabbrowse",
         "components/searchproducts",
@@ -109,15 +110,18 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/listreceiptscounter",
         "windows/pointofsale",
         // Cash Management window
+        "cashmgmt/data/datadropdepsave",
         "cashmgmt/components/cashmgmtbuttons",
         "cashmgmt/components/cashmgmtkeyboard",
-        "cashmgmt/components/destinations",
-        "cashmgmt/components/renderdropdestinations",
-        "cashmgmt/components/searchdropdestinations",
-        "cashmgmt/components/modaldropdestinations",
+        "cashmgmt/components/depositdestinations",
+        "cashmgmt/components/dropdestinations",
+        "cashmgmt/components/renderdropdepdestinations",
+        "cashmgmt/components/searchdropdepdestinations",
+        "cashmgmt/components/modaldropdepdestinations",
         "cashmgmt/components/toolbarcashmgmt",
+        "cashmgmt/data/datamaster",
         "cashmgmt/windows/cashmgmtinfo",
-        "cashmgmt/windows/depositsdrops",
+        "cashmgmt/windows/listdepositsdrops",
         "cashmgmt/windows/cashmgmt",
         // Cash Up window
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
@@ -129,8 +133,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/windows/tabpostprintclose", "closecash/windows/closecash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
-        "../../org.openbravo.client.application/js/utilities/ob-utilities-date"
-    };
+        "../../org.openbravo.client.application/js/utilities/ob-utilities-date" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

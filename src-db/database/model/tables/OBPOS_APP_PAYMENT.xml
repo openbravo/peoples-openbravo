@@ -65,6 +65,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_GLITEM_CHANGES_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="OBPOS_APP_PAYMENT_SECACCOUNT">
         <reference local="FIN_FINANCIAL_ACCOUNT_SEC_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
@@ -82,6 +86,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPPAY_DOCTYPE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAY_GLITEM_CHANGES">
+        <reference local="C_GLITEM_CHANGES_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="OBPOS_APPPAY_PAYMENT_METHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>

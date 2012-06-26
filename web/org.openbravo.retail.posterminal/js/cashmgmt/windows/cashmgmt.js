@@ -16,19 +16,23 @@
 
   OB.COMP.CashManagement = OB.COMP.CustomView.extend({
     createView: function () {
-
       return (
         {kind: B.KindJQuery('section'), content: [
 
+          {kind: OB.DATA.Container, content: [
+            {kind: OB.DATA.DepositsDrops}
+          ]},
+          {kind: OB.DATA.DropDepSave},
           {kind: OB.MODEL.DayCash},
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
-          {kind: OB.DATA.Destinations},
+          {kind: OB.DATA.DepositDestinations},
+          {kind: OB.DATA.DropDestinations},
           {kind: OB.COMP.ModalCancel},
-          {kind: OB.COMP.ModalDropDestinations},
+          {kind: OB.COMP.ModalDropDepDestinations},
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-               {kind: OB.COMP.DepositsDrops}
+               {kind: OB.COMP.ListDepositsDrops}
              ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), content: [

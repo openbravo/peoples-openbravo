@@ -5,15 +5,15 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ModalDropDestinations = OB.COMP.Modal.extend({
-    id: 'modaldropdestinations',
+  OB.COMP.ModalDropDepDestinations = OB.COMP.Modal.extend({
+    id: 'modaldropdepdestinations',
     header: 'Select Destinations',
     initialize: function () {
         OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
         var theModal = this.$el,
-        theHeader = theModal.children(':first'),
-        theBody = theModal.children(':nth-child(2)'),
-        theHeaderText = theHeader.children(':nth-child(2)');
+            theHeader = theModal.children(':first'),
+            theBody = theModal.children(':nth-child(2)'),
+            theHeaderText = theHeader.children(':nth-child(2)');
         theModal.addClass('modal-dialog');
         theBody.addClass('modal-dialog-body');
         theHeaderText.attr('text-align','left');
@@ -22,7 +22,7 @@
         theHeaderText.attr('color', 'black');
       },
     getContentView: function () {
-      return ({kind:OB.COMP.SearchDropDestinations});
+      return ({kind:OB.COMP.SearchDropDepDestinations});
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default
