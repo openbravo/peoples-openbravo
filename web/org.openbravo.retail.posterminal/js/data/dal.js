@@ -25,9 +25,17 @@
 
   function transform(model, obj) {
     var tmp = {},
-        modelProto = model.prototype;
+        modelProto = model.prototype,
+        val;
     _.each(modelProto.properties, function (prop) {
-      tmp[prop] = obj[modelProto.propertyMap[prop]];
+      val = obj[modelProto.propertyMap[prop]];
+      if (val === 'false') {
+        tmp[prop] = false;
+      } else if (val === 'true') {
+        tmp[prop] = true;
+      } else {
+        tmp[prop] = val;
+      }
     });
     return tmp;
   }
@@ -103,7 +111,7 @@
               collection = new collectionType(),
               len = result.rows.length;
           if (len === 0) {
-            return null;
+            success(null);
           } else {
             for (i = 0; i < len; i++) {
               collection.add(transform(model, result.rows.item(i)));
