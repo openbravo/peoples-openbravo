@@ -263,7 +263,7 @@
         END IF;
         -- CommissionOrders/Invoices
         IF(CUR_CLine.CommissionOrders='Y') THEN
-          v_Cmd:=v_Cmd || ' AND h.SalesRep_ID = (SELECT AD_User_ID FROM AD_User WHERE C_BPartner_ID=''' || v_SalesRep_ID || ''')';
+          v_Cmd:=v_Cmd || ' AND h.SalesRep_ID IN (SELECT AD_User_ID FROM AD_User WHERE IsActive=''Y'' AND C_BPartner_ID=''' || v_SalesRep_ID || ''')';
         END IF;
         -- Organization
         IF(CUR_CLine.Org_ID IS NOT NULL) THEN
