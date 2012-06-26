@@ -199,6 +199,7 @@
     tagName: 'div',
     className: 'modal hide fade',
     attributes: {'style': 'display: none;'},
+    maxheight: null,
     initialize: function () {
       this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
@@ -209,6 +210,9 @@
           ]}
       , this.options).$el);
       var body = $('<div/>').addClass('modal-body');
+      if (this.maxheight) {
+        body.css('max-height', this.maxheight);
+      }
       this.$el.append(body);
       
       var getcv = this.getContentView();

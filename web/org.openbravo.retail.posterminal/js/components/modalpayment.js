@@ -8,16 +8,17 @@
   OB.COMP.ModalPayment = OB.COMP.Modal.extend({
 
     header: OB.I18N.getLabel('OBPOS_LblModalPayment'),
+    maxheight: '600px',
     getContentView: function () {
-      return OB.COMP.ContentPayment;
+      return Backbone.View.extend({tagName: 'div'});
     },
     show: function (receipt, key, name, providerview, amount) {
       
       this.paymentcomponent = new providerview().render();      
-      this.contentview.$paymentcontainer.empty().append(this.paymentcomponent.$el);
-        
-      this.contentview.$paymenttype.text(name);
-      this.contentview.$paymentamount.text(OB.I18N.formatCurrency(amount));
+      this.contentview.$el.empty().append(this.paymentcomponent.$el);
+//        
+//      this.contentview.$paymenttype.text(name);
+//      this.contentview.$paymentamount.text(OB.I18N.formatCurrency(amount));
       this.paymentcomponent.show(receipt, key, name, amount);       
       this.$el.modal();
     }
