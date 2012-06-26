@@ -62,13 +62,13 @@
       this.set('pricelistversion', null);
       this.set('currency', null);
       $.ajax({
-        url: '../../secureApp/LoginHandler.html',
+        url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
         type: 'POST',
         success: function (data, textStatus, jqXHR) {
           var pos, baseUrl;
           if(data && data.showMessage) {
-            me.triggerLoginFail(401, mode);
+            me.triggerLoginFail(401, mode, data);
             return;
           }
           pos = location.pathname.indexOf('login.jsp');
@@ -279,12 +279,12 @@
       this.trigger('loginsuccess');
     },
 
-    triggerLoginFail: function (e, mode) {
+    triggerLoginFail: function (e, mode, data) {
       OB.UTIL.showLoading(false);
       if (mode === 'userImgPress') {
         this.trigger('loginUserImgPressfail', e);
       } else {
-        this.trigger('loginfail', e);
+        this.trigger('loginfail', e, data);
       }
     },
 

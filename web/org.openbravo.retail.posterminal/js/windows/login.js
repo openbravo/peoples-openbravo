@@ -86,8 +86,18 @@
                     {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: [OB.I18N.getLabel('OBPOS_LoginButton')],
                       init: function () {
 
-                        OB.POS.modelterminal.on('loginfail', function (status) {
-                          alert('Invalid user name or password.\nPlease try again.');
+                        OB.POS.modelterminal.on('loginfail', function (status, data) {
+                          var msg;
+                          if (data && data.messageTitle) {
+                            msg = data.messageTitle;
+                          }
+
+                          if (data && data.messageText) {
+                            msg += (msg?'\n':'')+data.messageText;
+                          }
+
+                          msg = msg || 'Invalid user name or password.\nPlease try again.';
+                          alert(msg);
                           $('#password').val('');
                           $('#username').focus();
                         });
