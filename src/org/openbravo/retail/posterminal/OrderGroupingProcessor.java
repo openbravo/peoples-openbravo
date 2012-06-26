@@ -1,0 +1,315 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+package org.openbravo.retail.posterminal;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.TriggerHandler;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.InvoiceLineTax;
+import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceTax;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
+import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.service.json.JsonConstants;
+
+public class OrderGroupingProcessor {
+
+  private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
+
+  public JSONObject groupOrders(OBPOSApplications posTerminal) throws JSONException, SQLException {
+    String hqlWhereClause = "as line where line.salesOrder.obposApplications=:terminal"
+        + " and salesOrder not in (select ord.salesOrder from OrderLine as ord where invoicedQuantity<>0)"
+        + " order by line.businessPartner.id";
+    OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
+    query.setNamedParameter("terminal", posTerminal);
+
+    long t1 = System.currentTimeMillis();
+    ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
+    Invoice invoice = null;
+    FIN_PaymentSchedule paymentSchedule = null;
+    Fin_OrigPaymentSchedule origPaymentSchedule = null;
+    String currentbpId = "";
+    BusinessPartner currentBp = null;
+    HashMap<String, InvoiceTax> invoiceTaxes = null;
+    BigDecimal totalNetAmount = BigDecimal.ZERO;
+    List<String> processedOrders = new ArrayList<String>();
+    long lineno = 10;
+    long taxLineNo = 0;
+    TriggerHandler.getInstance().disable();
+    OBContext.setAdminMode(true);
+    try {
+      while (orderLines.next()) {
+        long t = System.currentTimeMillis();
+        OrderLine orderLine = (OrderLine) orderLines.get(0);
+        log.debug("Line id:" + orderLine.getId());
+        String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
+        if (bpId == null) {
+          bpId = (String) DalUtil.getId(orderLine.getSalesOrder().getBusinessPartner());
+        }
+        if (!bpId.equals(currentbpId)) {
+          // New business partner. We need to finish current invoice, and create a new one
+          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+          currentbpId = bpId;
+          currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
+          invoice = createNewInvoice(posTerminal, currentBp, orderLine);
+          paymentSchedule = createNewPaymentSchedule(invoice);
+          origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
+          invoiceTaxes = new HashMap<String, InvoiceTax>();
+          totalNetAmount = BigDecimal.ZERO;
+          taxLineNo = 10;
+          OBDal.getInstance().save(invoice);
+          OBDal.getInstance().save(paymentSchedule);
+          OBDal.getInstance().save(origPaymentSchedule);
+          OBDal.getInstance().flush();
+        }
+        if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))) {
+          boolean success = processPaymentsFromOrder(invoice, orderLine.getSalesOrder(),
+              paymentSchedule, origPaymentSchedule);
+          if (!success) {
+            continue;
+          }
+          processedOrders.add((String) DalUtil.getId(orderLine.getSalesOrder()));
+          log.debug("processed payment");
+        }
+
+        InvoiceLine invoiceLine = createInvoiceLine(orderLine);
+        invoiceLine.setLineNo(lineno);
+        lineno += 10;
+        invoiceLine.setInvoice(invoice);
+        OBDal.getInstance().save(invoiceLine);
+        totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
+
+        List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(orderLine);
+        for (InvoiceLineTax tax : lineTaxes) {
+          String taxId = (String) DalUtil.getId(tax.getTax());
+          InvoiceTax invoiceTax = null;
+          if (invoiceTaxes.containsKey(taxId)) {
+            invoiceTax = invoiceTaxes.get(taxId);
+          } else {
+            invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
+            invoiceTax.setTax(tax.getTax());
+            invoiceTax.setTaxableAmount(BigDecimal.ZERO);
+            invoiceTax.setTaxAmount(BigDecimal.ZERO);
+            invoiceTax.setLineNo(taxLineNo);
+            taxLineNo += 10;
+            invoiceTaxes.put(taxId, invoiceTax);
+          }
+          invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
+          invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
+
+          tax.setInvoiceLine(invoiceLine);
+          tax.setInvoice(invoice);
+          invoiceLine.getInvoiceLineTaxList().add(tax);
+          invoice.getInvoiceLineTaxList().add(tax);
+          OBDal.getInstance().save(tax);
+          invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
+              : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
+        }
+        log.debug("Line time: " + (System.currentTimeMillis() - t));
+        if (lineno % 500 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+      finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+      OBDal.getInstance().getConnection().commit();
+    } finally {
+      OBContext.restorePreviousMode();
+      OBDal.getInstance().rollbackAndClose();
+      if (TriggerHandler.getInstance().isDisabled()) {
+        TriggerHandler.getInstance().enable();
+      }
+    }
+    log.info("Total time: " + (System.currentTimeMillis() - t1));
+    JSONObject jsonResponse = new JSONObject();
+    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    return jsonResponse;
+  }
+
+  protected FIN_PaymentSchedule createNewPaymentSchedule(Invoice invoice) {
+    FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
+        FIN_PaymentSchedule.class);
+    paymentScheduleInvoice.setCurrency(invoice.getCurrency());
+    paymentScheduleInvoice.setInvoice(invoice);
+    paymentScheduleInvoice.setFinPaymentmethod(invoice.getPaymentMethod());
+    paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
+    paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+    paymentScheduleInvoice.setDueDate(new Date());
+    paymentScheduleInvoice.setFINPaymentPriority(invoice.getFINPaymentPriority());
+    return paymentScheduleInvoice;
+  }
+
+  protected Fin_OrigPaymentSchedule createOriginalPaymentSchedule(Invoice invoice,
+      FIN_PaymentSchedule paymentScheduleInvoice) {
+
+    Fin_OrigPaymentSchedule origPaymentSchedule = OBProvider.getInstance().get(
+        Fin_OrigPaymentSchedule.class);
+    origPaymentSchedule.setCurrency(invoice.getCurrency());
+    origPaymentSchedule.setInvoice(invoice);
+    origPaymentSchedule.setPaymentMethod(invoice.getPaymentMethod());
+    origPaymentSchedule.setAmount(BigDecimal.ZERO);
+    origPaymentSchedule.setDueDate(invoice.getOrderDate());
+    origPaymentSchedule.setPaymentPriority(paymentScheduleInvoice.getFINPaymentPriority());
+    return origPaymentSchedule;
+
+  }
+
+  protected boolean processPaymentsFromOrder(Invoice invoice, Order order,
+      FIN_PaymentSchedule paymentScheduleInvoice, Fin_OrigPaymentSchedule originalPaymentSchedule) {
+    FIN_PaymentSchedule orderPaymentSchedule = null;
+    for (FIN_PaymentSchedule sched : order.getFINPaymentScheduleList()) {
+      orderPaymentSchedule = sched;
+    }
+    if (orderPaymentSchedule == null) {
+      log.error("Couldn't find payment schedule for order: " + order.getDocumentNo()
+          + ". Ignoring order");
+      return false;
+    }
+    FIN_PaymentScheduleDetail paymentScheduleDetail = null;
+    for (FIN_PaymentScheduleDetail detail : orderPaymentSchedule
+        .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+      paymentScheduleDetail = detail;
+    }
+    if (paymentScheduleDetail == null) {
+      log.error("Couldn't find payment schedule detail for order: " + order.getDocumentNo()
+          + ". Ignoring order");
+      return false;
+    }
+    paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+        paymentScheduleDetail);
+    paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+
+    FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
+        FIN_OrigPaymentScheduleDetail.class);
+    origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
+    origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
+    origDetail.setAmount(order.getGrandTotalAmount());
+    origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
+
+    OBDal.getInstance().save(origDetail);
+    return true;
+  }
+
+  protected List<InvoiceLineTax> createInvoiceLineTaxes(OrderLine orderLine) {
+    List<InvoiceLineTax> taxes = new ArrayList<InvoiceLineTax>();
+    for (OrderLineTax orgTax : orderLine.getOrderLineTaxList()) {
+      InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);
+      tax.setTax(orgTax.getTax());
+      tax.setTaxableAmount(orgTax.getTaxableAmount());
+      tax.setTaxAmount(orgTax.getTaxAmount());
+      taxes.add(tax);
+    }
+    return taxes;
+  }
+
+  protected InvoiceLine createInvoiceLine(OrderLine orderLine) {
+    InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
+    copyObject(orderLine, invoiceLine);
+    invoiceLine.setTaxableAmount(BigDecimal.ZERO);
+    invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+    orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+
+    return invoiceLine;
+  }
+
+  private void copyObject(BaseOBObject sourceObj, BaseOBObject targetObj) {
+    Entity sourceEntity = sourceObj.getEntity();
+    Entity targetEntity = targetObj.getEntity();
+    for (Property p : sourceEntity.getProperties()) {
+      if (targetEntity.hasProperty(p.getName()) && !p.isOneToMany() && !p.isId()) {
+        targetObj.set(p.getName(), sourceObj.get(p.getName()));
+      }
+    }
+
+  }
+
+  protected Invoice createNewInvoice(OBPOSApplications terminal, BusinessPartner bp,
+      OrderLine firstLine) {
+    Invoice invoice = OBProvider.getInstance().get(Invoice.class);
+    invoice.setBusinessPartner(bp);
+    if (bp.getBusinessPartnerLocationList().size() == 0) {
+      throw new OBException("No addresses defined for the business partner " + bp.getName());
+    }
+    invoice.setPartnerAddress(bp.getBusinessPartnerLocationList().get(0));
+    invoice.setCurrency(firstLine.getCurrency());
+    invoice.setDocumentNo(null);
+    invoice.setSalesTransaction(true);
+    invoice.setDocumentStatus("CO");
+    invoice.setDocumentAction("RE");
+    invoice.setAPRMProcessinvoice("RE");
+    invoice.setProcessed(true);
+    invoice.setPaymentMethod(bp.getPaymentMethod());
+    invoice.setPaymentTerms(bp.getPaymentTerms());
+    invoice.setDocumentType(terminal.getDocumentType().getDocumentTypeForInvoice());
+    invoice.setTransactionDocument(terminal.getDocumentType().getDocumentTypeForInvoice());
+    invoice.setAccountingDate(new Date());
+    invoice.setInvoiceDate(new Date());
+    invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
+    return invoice;
+  }
+
+  protected void finishInvoice(Invoice oriInvoice, BigDecimal totalNetAmount,
+      HashMap<String, InvoiceTax> invoiceTaxes, FIN_PaymentSchedule paymentSchedule,
+      Fin_OrigPaymentSchedule origPaymentSchedule) throws SQLException {
+    if (oriInvoice == null) {
+      return;
+    }
+    long tf = System.currentTimeMillis();
+    Invoice invoice = OBDal.getInstance().get(Invoice.class, oriInvoice.getId());
+
+    OBDal.getInstance().save(invoice);
+    BigDecimal grossamount = totalNetAmount;
+    for (String taxId : invoiceTaxes.keySet()) {
+      InvoiceTax tax = invoiceTaxes.get(taxId);
+      tax.setInvoice(invoice);
+      invoice.getInvoiceTaxList().add(tax);
+      OBDal.getInstance().save(tax);
+      grossamount = grossamount.add(tax.getTaxAmount());
+    }
+    invoice.setGrandTotalAmount(grossamount);
+    invoice.setSummedLineAmount(totalNetAmount);
+    invoice.setPaymentComplete(true);
+    invoice.setTotalPaid(grossamount);
+    invoice.setOutstandingAmount(BigDecimal.ZERO);
+
+    paymentSchedule.setAmount(grossamount);
+    origPaymentSchedule.setAmount(grossamount);
+
+    OBDal.getInstance().flush();
+    log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));
+  }
+
+}
