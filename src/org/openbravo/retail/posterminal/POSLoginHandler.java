@@ -146,12 +146,21 @@ public class POSLoginHandler extends LoginHandler {
     String strOrg = "";
     String strWarehouse = "";
 
-    strRole = role.getId();
-    strClient = (String) DalUtil.getId(role.getClient());
-    strOrg = (String) DalUtil.getId(role.getOrganization());
-    strWarehouse = null; // XXX: should we set warehouse?
-
     final User user = OBDal.getInstance().get(User.class, userId);
+
+    strRole = role.getId();
+
+    strClient = (String) DalUtil.getId(role.getClient());
+
+    if (user.getDefaultOrganization() != null) {
+      // TODO: Organization should be taken from POS-Terminal
+      // Using now user default org till pos terminal one is used
+      strOrg = (String) DalUtil.getId(user.getDefaultOrganization());
+    } else {
+      strOrg = (String) DalUtil.getId(role.getOrganization());
+    }
+
+    strWarehouse = null; // XXX: should we set warehouse? POS terminal has one...
 
     if (user.getDefaultLanguage() != null) {
       strLanguage = user.getDefaultLanguage().getLanguage();
@@ -179,6 +188,9 @@ public class POSLoginHandler extends LoginHandler {
     vars.setSessionValue("#loggingIn", "N");
   }
 
+  /**
+   * Copied from HSAS
+   */
   protected void readProperties(VariablesSecureApp vars, String strFileProperties) {
     // Read properties file.
     final Properties properties = new Properties();
@@ -221,6 +233,9 @@ public class POSLoginHandler extends LoginHandler {
     }
   }
 
+  /**
+   * Copied from HSAS
+   */
   protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
     String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
