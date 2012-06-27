@@ -33,9 +33,11 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationType;
 
 /**
  * Builds a tree of organizations to compute the accessible organizations for the current
@@ -382,6 +384,23 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  /*
+   * Returns the legal entities of the client.
+   */
+  public List<Organization> getLegalEntitiesList() {
+    StringBuffer where = new StringBuffer();
+    where.append(" as org");
+    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
+    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+        where.toString());
+    orgQry.setFilterOnReadableClients(false);
+    orgQry.setFilterOnReadableOrganization(false);
+    orgQry.setNamedParameter("client", clientId);
+    return orgQry.list();
   }
 
   /**
