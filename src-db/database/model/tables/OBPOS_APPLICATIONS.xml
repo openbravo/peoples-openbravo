@@ -122,7 +122,7 @@
       <index name="OBPOS_APPLICATIONS_NAME" unique="true">
         <index-column name="NAME"/>
       </index>
-      <unique name="OBPOS_APP_PREF">
+      <unique name="OBPOS_APP_PREFIX">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="ORDERDOCNO_PREFIX"/>
       </unique>
