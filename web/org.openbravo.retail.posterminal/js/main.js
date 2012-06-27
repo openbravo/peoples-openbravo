@@ -39,11 +39,21 @@
     var webwindow, w,
         c = _.extend({}, Backbone.Events),
         terminal = OB.POS.modelterminal.get('terminal'),
-        queue = {}, createWindow = false;
+        queue = {}, emptyQueue = false;
 
     // We are Logged !!!
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'visible');
+
+    function createWindow() {
+      w = new webwindow(c);
+      if (w.render) {
+        w = w.render();
+      }
+      $("#containerWindow").empty().append(w.$el);
+      c.trigger('domready');
+      OB.UTIL.showLoading(false);
+    }
 
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl, modelterminal.get('terminal').scaleurl);
@@ -54,27 +64,25 @@
     webwindow = OB.POS.windows[OB.POS.paramWindow];
 
     if (webwindow) {
-      // loading/refreshing required data/models for window
-      _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-        var ds = new OB.DS.DataSource(new OB.DS.Query(model, terminal.client, terminal.organization));
-        ds.on('ready', function () {
+      if (OB.DATA[OB.POS.paramWindow]) {
+        // loading/refreshing required data/models for window
+        _.each(OB.DATA[OB.POS.paramWindow], function (model) {
+          var ds = new OB.DS.DataSource(new OB.DS.Query(model, terminal.client, terminal.organization));
+          ds.on('ready', function () {
 
-          queue[model.prototype.source] = true;
-          createWindow = OB.UTIL.queueStatus(queue);
+            queue[model.prototype.source] = true;
+            emptyQueue = OB.UTIL.queueStatus(queue);
 
-          if(createWindow) {
-            w = new webwindow(c);
-            if (w.render) {
-              w = w.render();
+            if(emptyQueue) {
+              createWindow();
             }
-            $("#containerWindow").empty().append(w.$el);
-            c.trigger('domready');
-            OB.UTIL.showLoading(false);
-          }
+          });
+          ds.load();
+          queue[model.prototype.source] = false;
         });
-        ds.load();
-        queue[model.prototype.source] = false;
-      });
+      } else {
+        createWindow();
+      }
     } else {
       OB.UTIL.showLoading(false);
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
