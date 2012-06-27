@@ -66,6 +66,7 @@ public class TriggerHandler {
       ps = con
           .prepareStatement("INSERT INTO AD_SESSION_STATUS VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
       ps.executeUpdate();
+      sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
       log.error("Couldn't disable triggers: ", e);
     } finally {
@@ -74,7 +75,6 @@ public class TriggerHandler {
       } catch (SQLException e) {
       }
     }
-    sessionStatus.set(Boolean.TRUE);
   }
 
   /**
@@ -105,6 +105,7 @@ public class TriggerHandler {
     try {
       ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS");
       ps.executeUpdate();
+      sessionStatus.set(null);
     } catch (Exception e) {
       log.error("Couldn't enable triggers: ", e);
     } finally {
@@ -113,6 +114,5 @@ public class TriggerHandler {
       } catch (SQLException e) {
       }
     }
-    sessionStatus.set(null);
   }
 }

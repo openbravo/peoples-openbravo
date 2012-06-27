@@ -1033,8 +1033,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (currentValue != null && currentValue.equals("null")) {
         currentValue = null;
       }
-      RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
-          currentValue.toString());
+      if (currentValue == null) {
+        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
+            null);
+      } else {
+        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
+            currentValue.toString());
+      }
     }
   }
 

@@ -84,7 +84,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           if (sel.isCustomQuery()) {
             result.put(f.getDisplayColumnAlias().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
                 exprResult);
-          } else {
+          } else if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
             String fieldName = f.getProperty();
             result.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR), exprResult);
           }

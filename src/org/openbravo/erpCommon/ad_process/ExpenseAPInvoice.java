@@ -234,6 +234,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         strCCurrencyId = data[i].cCurrencyId;
 
         String strPricePrecision = "0";
+        String strStdPrecision = "0";
 
         BigDecimal priceActual, priceList, priceLimit;
 
@@ -270,6 +271,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             .selectPrecisions(this, strBPCCurrencyId);
         if (data4 != null && data4.length > 0) {
           strPricePrecision = data4[0].priceprecision.equals("") ? "0" : data4[0].priceprecision;
+          strStdPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
         }
         int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
         priceActual = (strPricestd.equals("") ? ZERO : (new BigDecimal(strPricestd)));
@@ -346,15 +348,17 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(conn,
               this, data[i].adClientId, data[i].adOrgId, strcInvoiceLineId, data[i].cProjectId,
               data[i].cCampaignId);
+          int StdPrecision = Integer.valueOf(strStdPrecision).intValue();
           if (dataAcctdimension == null || dataAcctdimension.length == 0) {
             String strcInvoicelineAcctdimension = SequenceIdData.getUUID();
             // Catch database error message
             try {
+              BigDecimal roundPriceStd = qty.multiply(new BigDecimal(strPricestd));
+              roundPriceStd = roundPriceStd.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
               ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this,
                   strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y",
-                  vars.getUser(), vars.getUser(), strcInvoiceLineId,
-                  (qty.multiply(new BigDecimal(strPricestd))).toPlainString(), data[i].cProjectId,
-                  data[i].cCampaignId, "", "");
+                  vars.getUser(), vars.getUser(), strcInvoiceLineId, roundPriceStd.toPlainString(),
+                  data[i].cProjectId, data[i].cCampaignId, "", "");
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
@@ -365,6 +369,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             // requirements, adds the new amount to the old
             amount = new BigDecimal(dataAcctdimension[0].amt).add(new BigDecimal(data[i].qty)
                 .multiply(new BigDecimal(strPricestd)));
+            amount = amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
             // Catch database error message
             try {
               ExpenseAPInvoiceData.updateAcctdimension(conn, this, String.valueOf(amount),

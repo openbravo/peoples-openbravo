@@ -1064,6 +1064,9 @@ public class OBViewFieldHandler {
       if (field.getProperty() != null && field.getProperty().contains(".")) {
         return true;
       }
+      if (field.getColumn().getSqllogic() != null) {
+        return true;
+      }
       return getParentProperty() || field.isReadOnly();
     }
 

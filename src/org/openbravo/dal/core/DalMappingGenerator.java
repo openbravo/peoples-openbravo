@@ -191,7 +191,14 @@ public class DalMappingGenerator implements OBSingleton {
     }
     sb.append(" type=\"" + type + "\"");
 
-    sb.append(" column=\"" + p.getColumnName() + "\"");
+    if (p.getSqlLogic() != null) {
+      sb.append(" formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
+      if (!p.isInactive()) {
+        sb.append(" update=\"false\" insert=\"false\" ");
+      }
+    } else {
+      sb.append(" column=\"" + p.getColumnName() + "\"");
+    }
 
     if (p.isMandatory()) {
       sb.append(" not-null=\"true\"");
@@ -385,5 +392,19 @@ public class DalMappingGenerator implements OBSingleton {
     } catch (final IOException e) {
       throw new OBException(e);
     }
+  }
+
+  private String processSqlLogic(String val) {
+    String localVal = val.trim();
+    if (val.contains("\"")) {
+      localVal = localVal.replace("\"", "");
+    }
+    if (!localVal.startsWith("(")) {
+      localVal = "(" + localVal;
+    }
+    if (!localVal.endsWith(")")) {
+      localVal = localVal + ")";
+    }
+    return localVal;
   }
 }

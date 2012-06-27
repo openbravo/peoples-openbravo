@@ -62,6 +62,7 @@ public class Column extends ModelObject {
   private boolean identifier;
   private String valueMin;
   private String valueMax;
+  private String sqlLogic;
   private String developmentStatus;
   private Boolean isTransient;
   private String isTransientCondition;
@@ -472,4 +473,13 @@ public class Column extends ModelObject {
   public void setUsedSequence(boolean usedSequence) {
     this.usedSequence = usedSequence;
   }
+
+  public String getSqlLogic() {
+    return sqlLogic;
+  }
+
+  public void setSqlLogic(String sqlLogic) {
+    this.sqlLogic = sqlLogic;
+  }
+
 }

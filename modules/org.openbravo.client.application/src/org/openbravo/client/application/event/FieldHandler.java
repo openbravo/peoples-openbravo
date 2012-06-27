@@ -50,6 +50,7 @@ public class FieldHandler extends EntityPersistenceEventObserver {
       return;
     }
     setColumn(event);
+    setIgnoreInWad(event);
   }
 
   public void onNew(@Observes EntityNewEvent event) {
@@ -57,6 +58,15 @@ public class FieldHandler extends EntityPersistenceEventObserver {
       return;
     }
     setColumn(event);
+    setIgnoreInWad(event);
+  }
+
+  // must be called after setcolumn
+  private void setIgnoreInWad(EntityPersistenceEvent event) {
+    final Column column = (Column) event.getCurrentState(getColumnProperty());
+    if (column.getSqllogic() != null) {
+      event.setCurrentState(getIgnoreInWadProperty(), true);
+    }
   }
 
   private void setColumn(EntityPersistenceEvent event) {

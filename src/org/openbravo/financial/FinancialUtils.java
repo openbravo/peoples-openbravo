@@ -42,7 +42,7 @@ import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 public class FinancialUtils {
-  protected static Logger log4j = Logger.getLogger(FinancialUtils.class);
+  private static final Logger log4j = Logger.getLogger(FinancialUtils.class);
 
   public static final String PRECISION_STANDARD = "A";
   public static final String PRECISION_COSTING = "C";

@@ -276,4 +276,34 @@ public class DalPerformanceExampleTest extends BaseTest {
         .executeUpdate();
     System.err.println(updatedEntities);
   }
+
+  /**
+   * Scrollable results
+   */
+  public void testInsertSalesOrders() {
+    setTestUserContext();
+    final int cnt = 100;
+    final String[] names = new String[cnt];
+    for (int i = 0; i < cnt; i++) {
+      names[i] = UUID.randomUUID().toString();
+    }
+    final Order baseOrder = OBDal.getInstance()
+        .get(Order.class, "FD4E0C67A9454A4D983BB2F4E0D3E8BC");
+    for (int i = 0; i < 1000000; i++) {
+      final Order copy = (Order) DalUtil.copy(baseOrder, true, true);
+      copy.getOrderLineTaxList().clear();
+      copy.getOrderTaxList().clear();
+      for (OrderLine ol : copy.getOrderLineList()) {
+        ol.getOrderLineTaxList().clear();
+      }
+      OBDal.getInstance().save(copy);
+      if ((i % 100) == 0) {
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+        System.err.println(i);
+      }
+      i++;
+    }
+    OBDal.getInstance().commitAndClose();
+  }
 }

@@ -1253,7 +1253,7 @@ public class AdvancedQueryBuilder {
     private Property property;
     private String joinAlias = getNewUniqueJoinAlias();
     private String ownerAlias;
-    private boolean fetchJoin = true;
+    private boolean fetchJoin = AdvancedQueryBuilder.this.isJoinAssociatedEntities();
 
     public boolean appliesTo(String checkAlias, Property checkProperty) {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
@@ -1345,6 +1345,14 @@ public class AdvancedQueryBuilder {
 
   public List<String> getAdditionalProperties() {
     return additionalProperties;
+  }
+
+  public void clearCachedValues() {
+    joinClause = null;
+    whereClause = null;
+    orderByClause = null;
+    joinDefinitions.clear();
+    typedParameters.clear();
   }
 
   public void setAdditionalProperties(List<String> additionalProperties) {

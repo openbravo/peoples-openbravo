@@ -57,6 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_IMAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="A_ASSET_GROUP" name="M_PRODUCT_CATEGORY_A_ASSET_GRO">
         <reference local="A_ASSET_GROUP_ID" foreign="A_ASSET_GROUP_ID"/>
       </foreign-key>
@@ -65,6 +69,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_CATEGORY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="M_PRODUCT_CATEGORY_IMAGE">
+        <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_CATEGORY_VALUE">
         <unique-column name="AD_CLIENT_ID"/>
