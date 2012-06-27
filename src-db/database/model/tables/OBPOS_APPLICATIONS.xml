@@ -45,15 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_WAREHOUSE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -66,10 +58,6 @@
         <onCreateDefault/>
       </column>
       <column name="HARDWAREURL" primaryKey="false" required="false" type="NVARCHAR" size="1024" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -93,17 +81,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_ORG_ID_STORE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ORDERDOCNO_PREFIX" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="OBPOS_APP_BPARTNER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="OBPOS_APP_BPLOCATION">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APP_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
@@ -117,14 +107,14 @@
       <foreign-key foreignTable="M_PRICELIST" name="OBPOS_APP_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="OBPOS_APP_WAREHOUSE">
-        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPLICATIONS_GLITEM_DIFF">
         <reference local="C_GLITEM_DIFF_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPLICATIONS_GLITEM_TR">
         <reference local="C_GLITEM_TRANSFER_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_APPLICATIONS_ORG">
+        <reference local="AD_ORG_ID_STORE" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPLICATIONS_RECON">
         <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
@@ -132,6 +122,10 @@
       <index name="OBPOS_APPLICATIONS_NAME" unique="true">
         <index-column name="NAME"/>
       </index>
+      <unique name="OBPOS_APP_PREF">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="ORDERDOCNO_PREFIX"/>
+      </unique>
       <check name="OBPOS_APP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

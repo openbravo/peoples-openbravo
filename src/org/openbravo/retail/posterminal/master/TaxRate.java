@@ -38,8 +38,8 @@ public class TaxRate extends ProcessHQLQuery {
     final Region fromRegion = orgInfo.getLocationAddress().getRegion();
 
     // TO
-    final Country toCountry = posDetail.getPartnerAddress().getLocationAddress().getCountry();
-    final Region toRegion = posDetail.getPartnerAddress().getLocationAddress().getRegion();
+    final Country toCountry = null; // posDetail.getPartnerAddress().getLocationAddress().getCountry();
+    final Region toRegion = null; // posDetail.getPartnerAddress().getLocationAddress().getRegion();
 
     return "from FinancialMgmtTaxRate where active = true "
         + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') and (country.id = '"
