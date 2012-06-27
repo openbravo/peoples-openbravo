@@ -26,17 +26,17 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.costing.CostingServer;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
@@ -165,23 +165,14 @@ public class DocProduction extends AcctServer {
     Fact fact = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocProduction.debug("createFact - object created");
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      try {
-        costCurrency = new CostingServer(line.transaction).getCostCurrency();
-      } catch (OBException e) {
-        // CostingRule not found exception. Ignore it.
-        log4j.debug("CostingRule not found to retrieve organization's currency");
+      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
+          Organization.class, line.m_AD_Org_ID));
+      if (!CostingStatus.getInstance().isMigrated()) {
+        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       }
       if (CostingStatus.getInstance().isMigrated() && line.transaction != null
           && !line.transaction.isCostCalculated()) {

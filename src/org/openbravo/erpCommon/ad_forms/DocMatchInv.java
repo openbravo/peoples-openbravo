@@ -20,20 +20,22 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.costing.CostingServer;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
@@ -56,8 +58,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -183,18 +185,23 @@ public class DocMatchInv extends AcctServer {
     boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
     MaterialTransaction transaction = getTransaction(Record_ID);
-    Currency costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-    try {
-      costCurrency = new CostingServer(transaction).getCostCurrency();
-    } catch (OBException e) {
-      // CostingRule not found exception. Ignore it.
-      log4j.debug("CostingRule not found to retrieve organization's currency");
+    Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
+        Organization.class, AD_Org_ID));
+    if (!CostingStatus.getInstance().isMigrated()) {
+      costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+    }
+    if (CostingStatus.getInstance().isMigrated() && transaction != null
+        && !transaction.isCostCalculated()) {
+      Map<String, String> parameters = getNotCalculatedCostParameters(transaction);
+      setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+      throw new IllegalStateException();
     }
     BigDecimal trxCost = transaction.getTransactionCost();
     // Cost is retrieved from the transaction and if it does not exist It calls the old way
-    BigDecimal bdCost = trxCost != null ? trxCost.divide(transaction.getMovementQuantity())
-        : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
-            data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+    BigDecimal bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
+        transaction.getMovementQuantity(), costCurrency.getCostingPrecision().intValue(),
+        RoundingMode.HALF_UP) : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
+        data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
     Long scale = costCurrency.getStandardPrecision();
     BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
     bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);

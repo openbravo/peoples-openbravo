@@ -183,13 +183,6 @@ public class DocInOut extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     String strScale = DocInOutData.selectClientCurrencyPrecission(conn, vars.getClient());
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     // Sales or Return from Customer
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
       Boolean matReturn = IsReturn.equals("Y");
@@ -199,6 +192,9 @@ public class DocInOut extends AcctServer {
             .getOrganizationStructureProvider(AD_Client_ID)
             .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
         Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
+        if (!CostingStatus.getInstance().isMigrated()) {
+          costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        }
         C_Currency_ID = costCurrency.getId();
         Account cogsAccount = null;
         if (matReturn) {
