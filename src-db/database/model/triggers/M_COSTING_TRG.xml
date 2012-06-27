@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_COSTING_TRG">
-    <trigger name="M_COSTING_TRG" table="M_COSTING" fires="after" insert="false" update="false" delete="true" foreach="row">
+    <trigger name="M_COSTING_TRG" table="M_COSTING" fires="after" insert="false" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -26,6 +26,12 @@ BEGIN
   IF (DELETING) THEN
     IF (:OLD.ISPERMANENT = 'Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
+    END IF;
+  ELSIF (UPDATING) THEN
+    IF (:OLD.ISPERMANENT = 'Y' 
+        AND (:OLD.COST <> :NEW.COST
+             OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
     END IF;
   END IF;
 END M_COSTING_TRG

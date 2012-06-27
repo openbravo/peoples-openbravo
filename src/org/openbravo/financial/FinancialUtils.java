@@ -207,10 +207,10 @@ public class FinancialUtils {
         return null;
       } else {
         return getConversionRate(date, fromCurrency, toCurrency, OBContext.getOBContext()
-            .getOrganizationStructureProvider(org.getClient().getId()).getParentOrg(org), client);
+            .getOrganizationStructureProvider(client.getId()).getParentOrg(org), client);
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Exception calculating conversion rate.", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();

@@ -114,7 +114,7 @@ public class CostingRuleProcess implements Process {
                 .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
 
             trx.setCostCalculated(true);
-            trx.setTransactionCost(cost);
+            trx.setTransactionCost(trxCost);
             OBDal.getInstance().save(trx);
             InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
             initICL.setCost(cost);
@@ -351,11 +351,15 @@ public class CostingRuleProcess implements Process {
     insert.append(", p");
     insert.append(", sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE);
     if (isClosing) {
+      // Closing inventories set qty count to zero to empty the stock
+      // O is multiplied to force a cast to BigDecimal
       insert.append(", 0 * sd." + StorageDetail.PROPERTY_QUANTITYONHAND);
       insert.append(", sd." + StorageDetail.PROPERTY_QUANTITYONHAND);
       insert.append(", 0 * sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY);
       insert.append(", sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY);
     } else {
+      // Init inventories set qty book to zero to restore the stock
+      // O is multiplied to force a cast to BigDecimal
       insert.append(", sd." + StorageDetail.PROPERTY_QUANTITYONHAND);
       insert.append(", 0 * sd." + StorageDetail.PROPERTY_QUANTITYONHAND);
       insert.append(", sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY);
@@ -376,7 +380,7 @@ public class CostingRuleProcess implements Process {
     insert.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     insert.append("   and inv.id = :inv");
     insert.append("   and u.id = :user");
-    insert.append("\n order by p." + Product.PROPERTY_NAME);
+    // insert.append("\n order by p." + Product.PROPERTY_NAME);
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("orgId", orgId);
     queryInsert.setString("wh", whId);
@@ -392,7 +396,7 @@ public class CostingRuleProcess implements Process {
     trxQry.setFilterOnReadableClients(false);
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("invline", icl.getId());
-    MaterialTransaction trx = trxQry.list().get(0);
+    MaterialTransaction trx = trxQry.uniqueResult();
     return trx;
   }
 

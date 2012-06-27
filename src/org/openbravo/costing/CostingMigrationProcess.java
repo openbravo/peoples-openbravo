@@ -88,10 +88,8 @@ public class CostingMigrationProcess implements Process {
 
       if (CostingStatus.getInstance().isMigrated()) {
         throw new OBException("@CostMigratedInstance@");
-      } else {
-        if (isCostingMigrationNotNeeded()) {
-          throw new OBException("@CostMigrationNoNeeded@");
-        }
+      } else if (isCostingMigrationNotNeeded()) {
+        throw new OBException("@CostMigrationNoNeeded@");
       }
 
       // FIXME: Remove when HQL based inserts are removed.
@@ -251,7 +249,7 @@ public class CostingMigrationProcess implements Process {
       Currency clientCur = client.getCurrency();
       log4j.debug("** Processing client: " + client.getIdentifier() + " with currency: "
           + clientCur.getIdentifier());
-      for (Organization legalEntity : getLegalEntitiesOfClient(client)) {
+      for (Organization legalEntity : osp.getLegalEntitiesList()) {
         Currency orgCur = legalEntity.getCurrency() != null ? legalEntity.getCurrency() : clientCur;
         log4j.debug("** Processing organization: " + legalEntity.getIdentifier()
             + " with currency: " + orgCur.getIdentifier());
@@ -305,7 +303,7 @@ public class CostingMigrationProcess implements Process {
       }
     }
 
-    updateWithCeroCostRemainingTrx();
+    updateWithZeroCostRemainingTrx();
 
     insertTrxCosts();
     insertStandardCosts();
@@ -319,19 +317,19 @@ public class CostingMigrationProcess implements Process {
 
     List<Client> clients = getClients();
     for (Client client : clients) {
-      List<Organization> legalEntities = getLegalEntitiesOfClient(client);
       Currency clientCurrency = client.getCurrency();
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(client.getId());
-      for (Organization org : legalEntities) {
+      for (Organization org : osp.getLegalEntitiesList()) {
         CostingRule rule = createCostingRule(org);
-        processRule(rule, osp, clientCurrency);
+        processRule(rule, clientCurrency);
       }
     }
   }
 
-  private void processRule(CostingRule rule, OrganizationStructureProvider osp,
-      Currency clientCurrency) {
+  private void processRule(CostingRule rule, Currency clientCurrency) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        (String) DalUtil.getId(rule.getClient()));
     final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
     Currency orgCurrency = rule.getOrganization().getCurrency() != null ? rule.getOrganization()
         .getCurrency() : clientCurrency;
@@ -462,7 +460,8 @@ public class CostingMigrationProcess implements Process {
     whereQry.setNamedParameter("minDate", minDate);
     whereQry.setNamedParameter("maxDate", maxDate);
 
-    return whereQry.count() > 0;
+    whereQry.setMaxResult(0);
+    return whereQry.uniqueResult() != null;
   }
 
   private List<ConversionRate> getConversionRates(Organization organization, Currency fromCur,
@@ -472,8 +471,8 @@ public class CostingMigrationProcess implements Process {
     where.append(" where cr." + ConversionRate.PROPERTY_ORGANIZATION + ".id = :organizationId");
     where.append("   and cr." + ConversionRate.PROPERTY_CURRENCY + ".id = :fromCur");
     where.append("   and cr." + ConversionRate.PROPERTY_TOCURRENCY + ".id = :toCur");
-    where.append("   and cr." + ConversionRate.PROPERTY_VALIDFROMDATE + " < :maxDate");
-    where.append("   and cr." + ConversionRate.PROPERTY_VALIDTODATE + " > :minDate");
+    where.append("   and cr." + ConversionRate.PROPERTY_VALIDFROMDATE + " <= :maxDate");
+    where.append("   and cr." + ConversionRate.PROPERTY_VALIDTODATE + " >= :minDate");
     where.append("   and cr." + ConversionRate.PROPERTY_ACTIVE + " = true");
     where.append(" order by cr." + ConversionRate.PROPERTY_VALIDFROMDATE);
 
@@ -513,7 +512,13 @@ public class CostingMigrationProcess implements Process {
     log4j.debug("****** ConvertTrxLegacyCosts updated: " + updated);
   }
 
-  private void updateWithCeroCostRemainingTrx() {
+  /**
+   * Initializes with zero cost those transactions that haven't been calculated by previous methods
+   * because they don't have any cost available. This transactions are checked by the alert rule.
+   * But if this alert is deactivated the process continues forcing to initialize the transactions
+   * with zero cost.
+   */
+  private void updateWithZeroCostRemainingTrx() {
     log4j.debug("****** updateWithCeroRemainingTrx");
 
     // FIXME: Update should be done with a loop based on scroll.
@@ -801,20 +806,6 @@ public class CostingMigrationProcess implements Process {
     if (!prefQry.list().isEmpty()) {
       OBDal.getInstance().remove(prefQry.list().get(0));
     }
-  }
-
-  private List<Organization> getLegalEntitiesOfClient(Client client) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as org");
-    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
-    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
-    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
-    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-        where.toString());
-    orgQry.setFilterOnReadableClients(false);
-    orgQry.setFilterOnReadableOrganization(false);
-    orgQry.setNamedParameter("client", client.getId());
-    return orgQry.list();
   }
 
   private static CostingAlgorithm getAverageAlgorithm() {

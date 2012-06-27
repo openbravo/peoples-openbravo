@@ -104,13 +104,6 @@ BEGIN --BODY
   IF (v_Count <> 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
   END IF;
-  -- Start Processing ------------------------------------------------------
-  v_ResultStr:='LockingInternal_Consumption';
-  UPDATE M_Internal_Consumption
-  SET Processing = 'Y',
-      Updated = now(),
-      UpdatedBy = v_User
-  WHERE M_Internal_Consumption_ID = Record_ID;
   IF (v_action IN ('CO')) THEN
     /**
     * Complete action: Create records on m_transaction and update status
@@ -215,11 +208,6 @@ BEGIN --BODY
   END IF;
    v_ResultStr := 'UnLockingMovement';
   --<<END_PROCESSING>>
-  UPDATE M_Internal_Consumption
-  SET Processing = 'N',
-      Updated = now(),
-      UpdatedBy = v_User
-  WHERE M_Internal_Consumption_ID = Record_ID;
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
   IF (pinstance_id IS NOT NULL) THEN

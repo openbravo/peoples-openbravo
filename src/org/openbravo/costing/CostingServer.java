@@ -30,7 +30,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -112,7 +111,7 @@ public class CostingServer {
                   + " = 'org.openbravo.costing.AverageAlgorithm'");
       caQry.setFilterOnReadableClients(false);
       caQry.setFilterOnReadableOrganization(false);
-      costAlgorithm = caQry.list().get(0);
+      costAlgorithm = caQry.uniqueResult();
     }
     transaction.setCostingAlgorithm(costAlgorithm);
 
@@ -155,6 +154,7 @@ public class CostingServer {
     crQry.setNamedParameter("organization", organization);
     crQry.setNamedParameter("startdate", transaction.getTransactionProcessDate());
     crQry.setNamedParameter("enddate", transaction.getTransactionProcessDate());
+    crQry.setMaxResult(1);
     List<CostingRule> costRules = crQry.list();
     if (costRules.size() == 0) {
       throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
@@ -171,17 +171,13 @@ public class CostingServer {
     // FIXME: remove when manufacturing costs are fully migrated
     // Production product costs are calculated in clients currency
     if (transaction.getProduct().isProduction()) {
-      Client client = OBDal.getInstance().get(Client.class,
-          OBContext.getOBContext().getCurrentClient().getId());
-      return client.getCurrency();
+      return transaction.getClient().getCurrency();
     }
     if (organization != null) {
       if (organization.getCurrency() != null) {
         return organization.getCurrency();
       }
-      Client client = OBDal.getInstance().get(Client.class,
-          OBContext.getOBContext().getCurrentClient().getId());
-      return client.getCurrency();
+      return organization.getClient().getCurrency();
     } else {
       init();
       return getCostCurrency();

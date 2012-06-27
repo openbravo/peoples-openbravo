@@ -27,9 +27,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  IF (AD_ISORGINCLUDED(p_orga, p_orgb, p_clientid) <> -1) THEN
-   RETURN 'Y';
-  ELSIF (AD_ISORGINCLUDED(p_orga, p_orgb, p_clientid) <> -1) THEN
+  IF (AD_ISORGINCLUDED(p_orga, p_orgb, p_clientid) <> -1
+      OR AD_ISORGINCLUDED(p_orgb, p_orga, p_clientid) <> -1) THEN
    RETURN 'Y';
   ELSE
    RETURN 'N';

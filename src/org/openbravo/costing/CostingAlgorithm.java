@@ -56,7 +56,7 @@ public abstract class CostingAlgorithm {
   protected static Logger log4j = Logger.getLogger(CostingAlgorithm.class);
 
   /**
-   * Initializes the instance of the CostingAlgorith with the MaterailTransaction that is being to
+   * Initializes the instance of the CostingAlgorith with the MaterialTransaction that is being to
    * be calculated and the cost dimensions values in case they have to be used.
    * 
    * It initializes several values: <list><li>Organization, it's used the Legal Entity dimension. If
@@ -209,10 +209,10 @@ public abstract class CostingAlgorithm {
   }
 
   /*
-   * Calculates the cost of a Receipt line based on its related order price. When no related order
-   * is found its returned the cost based on the newer of the following three values: 1. Last
-   * purchase order price of the receipt's vendor for the product, 2. Purchase pricelist of the
-   * product and 3. Default Cost of the product.
+   * Calculates the cost of a Receipt line based on its related order price. When no order is found,
+   * the cost based on the newer of the following three values is returned: 1. Last purchase order
+   * price of the receipt's vendor for the product, 2. Purchase pricelist of the product and 3.
+   * Default Cost of the product.
    * 
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
@@ -228,7 +228,7 @@ public abstract class CostingAlgorithm {
       BigDecimal orderAmt = matchPO.getQuantity().multiply(
           matchPO.getSalesOrderLine().getUnitPrice());
       trxCost = trxCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO.getSalesOrderLine()
-          .getSalesOrder().getCurrency(), costCurrency, transaction.getMovementDate(), costOrg,
+          .getCurrency(), costCurrency, transaction.getMovementDate(), costOrg,
           FinancialUtils.PRECISION_STANDARD));
     }
     return trxCost;
@@ -293,19 +293,18 @@ public abstract class CostingAlgorithm {
     }
     Date olDate = new Date(0L);
     if (orderLine != null) {
-      olDate = orderLine.getSalesOrder().getOrderDate();
+      olDate = orderLine.getOrderDate();
     }
 
     if (ppDate.before(olDate) && stdCostDate.before(olDate)) {
       // purchase order
       @SuppressWarnings("null")
       BigDecimal cost = transaction.getMovementQuantity().abs().multiply(orderLine.getUnitPrice());
-      if (costCurrency.getId().equals(orderLine.getSalesOrder().getCurrency().getId())) {
+      if (costCurrency.getId().equals(orderLine.getCurrency().getId())) {
         return cost;
       } else {
-        return FinancialUtils
-            .getConvertedAmount(cost, orderLine.getSalesOrder().getCurrency(), costCurrency,
-                transaction.getMovementDate(), costOrg, FinancialUtils.PRECISION_STANDARD);
+        return FinancialUtils.getConvertedAmount(cost, orderLine.getCurrency(), costCurrency,
+            transaction.getMovementDate(), costOrg, FinancialUtils.PRECISION_STANDARD);
       }
     } else {
       return getDefaultCost();
@@ -465,8 +464,7 @@ public abstract class CostingAlgorithm {
     List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
-    List<ProductionLine> parts = new ArrayList<ProductionLine>();
-    parts.addAll(productionLines);
+    List<ProductionLine> parts = new ArrayList<ProductionLine>(productionLines);
     parts.remove(transaction.getProductionLine());
     BigDecimal totalCost = BigDecimal.ZERO;
     for (ProductionLine prodLine : parts) {

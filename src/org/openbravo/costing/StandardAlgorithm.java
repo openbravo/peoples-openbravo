@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 public class StandardAlgorithm extends CostingAlgorithm {
 
+  @Override
   public BigDecimal getTransactionCost() {
     return getOutgoingTransactionCost();
   }

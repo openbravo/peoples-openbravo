@@ -45,8 +45,9 @@ public class CostingStatus implements OBSingleton {
             CostingRule.PROPERTY_VALIDATED + " = true");
         crQry.setFilterOnReadableClients(false);
         crQry.setFilterOnReadableOrganization(false);
+        crQry.setMaxResult(1);
 
-        isMigrated = crQry.count() > 0;
+        isMigrated = crQry.uniqueResult() != null;
       } finally {
         OBContext.restorePreviousMode();
       }

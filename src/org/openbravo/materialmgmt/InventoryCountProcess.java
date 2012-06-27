@@ -3,6 +3,7 @@ package org.openbravo.materialmgmt;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -25,7 +26,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
@@ -79,9 +79,9 @@ public class InventoryCountProcess implements Process {
       bundle.setResult(msg);
 
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Exception processing physical inventory", e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
@@ -202,9 +202,11 @@ public class InventoryCountProcess implements Process {
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
     iclQry.setNamedParameter("inventory", inventory.getId());
-    if (!iclQry.list().isEmpty()) {
+    iclQry.setMaxResult(1);
+    Object icl = iclQry.uniqueResult();
+    if (icl != null) {
       throw new OBException(OBMessageUtils.parseTranslation("@Inline@ "
-          + iclQry.list().get(0).getLineNo() + " @productWithoutAttributeSet@"));
+          + ((InventoryCountLine) icl).getLineNo() + " @productWithoutAttributeSet@"));
     }
 
     // duplicated product
@@ -231,10 +233,11 @@ public class InventoryCountProcess implements Process {
     where.append(", icl." + InventoryCountLine.PROPERTY_LINENO);
     iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class, where.toString());
     iclQry.setNamedParameter("inventory", inventory.getId());
-    if (!iclQry.list().isEmpty()) {
+    List<InventoryCountLine> iclList = iclQry.list();
+    if (!iclList.isEmpty()) {
       String lines = "";
-      for (InventoryCountLine icl : iclQry.list()) {
-        lines += icl.getLineNo().toString() + ", ";
+      for (InventoryCountLine icl2 : iclList) {
+        lines += icl2.getLineNo().toString() + ", ";
       }
       throw new OBException(OBMessageUtils.parseTranslation("@Thelines@ " + lines
           + "@sameInventorylines@"));
@@ -256,10 +259,11 @@ public class InventoryCountProcess implements Process {
             + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
     iclQry.setNamedParameter("inventory", inventory.getId());
     iclQry.setNamedParameter("organization", org.getId());
-    if (!iclQry.list().isEmpty()) {
-      for (InventoryCountLine icl : iclQry.list()) {
+    iclList = iclQry.list();
+    if (!iclList.isEmpty()) {
+      for (InventoryCountLine icl2 : iclList) {
         if (!headerLEorBU.getId().equals(
-            DalUtil.getId(osp.getLegalEntityOrBusinessUnit(icl.getOrganization())))) {
+            DalUtil.getId(osp.getLegalEntityOrBusinessUnit(icl2.getOrganization())))) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
         }
       }
@@ -281,7 +285,8 @@ public class InventoryCountProcess implements Process {
       pQry.setNamedParameter("dateEnding",
           DateUtils.truncate(inventory.getMovementDate(), Calendar.DATE));
       pQry.setNamedParameter("org", osp.getPeriodControlAllowedOrganization(org).getId());
-      if (pQry.list().isEmpty()) {
+      pQry.setMaxResult(1);
+      if (pQry.uniqueResult() == null) {
         throw new OBException(OBMessageUtils.parseTranslation("@PeriodNotAvailable@"));
       }
     }

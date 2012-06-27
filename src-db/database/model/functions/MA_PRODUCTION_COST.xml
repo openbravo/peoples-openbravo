@@ -39,6 +39,7 @@
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
   v_count3                              VARCHAR2(32);
+  v_productName                         M_Product.Name%TYPE;
   v_ProductionDate                      DATE;
   v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
@@ -212,13 +213,13 @@ BEGIN
         v_ProductionCost_Tmp := 0;
         
         IF (v_iscostmigrated = 'Y') THEN
-          SELECT count(1), max(p.name) INTO v_count2, v_count3
+          SELECT count(1), max(p.name) INTO v_count2, v_productname
           FROM m_productionline pl JOIN m_product p ON pl.m_product_id = p.m_product_id
           WHERE pl.m_productionplan_id = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
             AND pl.productiontype = '-'
             AND pl.calccost IS NULL;
           IF (v_count2 > 0) THEN
-            v_message := '@NoAvgCostDefined@ @Product@: ' || v_count3 || ', @Date@:' || v_ProductionDate;
+            v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_ProductionDate;
             RAISE_APPLICATION_ERROR(-20000, v_message);
           END IF;
         END IF;
