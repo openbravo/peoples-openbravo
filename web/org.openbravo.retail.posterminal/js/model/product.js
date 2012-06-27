@@ -22,7 +22,7 @@
     },
     createStatement: 'CREATE TABLE IF NOT EXISTS m_product (m_product_id TEXT PRIMARY KEY , upc TEXT, c_uom_id TEXT, m_product_category_id TEXT, c_taxcategory_id TEXT, img TEXT, em_obpos_scale TEXT, _identifier TEXT, _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product',
-    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, m_product_category_id, img, em_obpos_scale, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO m_product(m_product_id, upc, c_uom_id, m_product_category_id, c_taxcategory_id, img, em_obpos_scale, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
     updateStatement: ''
   });
 

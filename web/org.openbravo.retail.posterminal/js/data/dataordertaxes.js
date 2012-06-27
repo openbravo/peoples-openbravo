@@ -26,7 +26,7 @@
 
         // OB.Dal.find(model, criteria, success, error);
         OB.Dal.find(OB.Model.TaxRate, {
-          taxCategory: product.get('product').taxCategory,
+          taxCategory: product.get('taxCategory'),
           businessPartnerTaxCategory: bpTaxCategory
         }, function (coll) { // success
           var taxRate, rate, taxAmt, net, pricenet, amount, taxId;

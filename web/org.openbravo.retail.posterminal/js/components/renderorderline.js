@@ -10,7 +10,7 @@
       this.$el.append(B(
         {kind: B.KindJQuery('div'), content: [
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 40%'}, content: [
-            this.model.get('product').get('product')._identifier
+            this.model.get('product').get('_identifier')
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [
             this.model.printQty()

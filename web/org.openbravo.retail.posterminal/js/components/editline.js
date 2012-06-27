@@ -128,9 +128,9 @@
       this.msgaction.hide();
       this.msgedit.show();
       this.editlineimage.empty().append(B(
-          {kind: OB.UTIL.Thumbnail, attr: {img: this.line.get('product').get('img'), width: 128, height: 128}}
+          {kind: OB.UTIL.Thumbnail, attr: {img: this.line.get('img'), width: 128, height: 128}}
       ).$el);
-      this.editlinename.text(this.line.get('product').get('product')._identifier);
+      this.editlinename.text(this.line.get('product').get('_identifier'));
       this.editlineqty.text(this.line.printQty());
       this.editlineprice.text(this.line.printPrice());
       this.editlinegross.text(this.line.printGross());

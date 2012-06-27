@@ -207,7 +207,7 @@
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.sub(line.get('qty'), qty),
-          OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('product')._identifier]));
+          OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
     },
 
     addUnit: function (line, qty) {
@@ -215,7 +215,7 @@
         qty = OB.DEC.One;
       }
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty),
-          OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('product')._identifier]));
+          OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('_identifier')]));
     },
 
     setUnit: function (line, qty, text) {
@@ -230,7 +230,7 @@
           this.calculateGross();
           // sets the undo action
           this.set('undo', {
-            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('product')._identifier]),
+            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
             oldqty: oldqty,
             line: line,
             undo: function () {
@@ -259,7 +259,7 @@
           this.calculateGross();
           // sets the undo action
           this.set('undo', {
-            text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('product')._identifier]),
+            text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
             oldprice: oldprice,
             line: line,
             undo: function () {
@@ -282,7 +282,7 @@
       this.calculateGross();
       // set the undo action
       this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('product')._identifier]),
+        text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
         line: line,
         undo: function() {
           me.get('lines').add(line, {at: index});
@@ -295,7 +295,7 @@
 
     addProduct: function (p) {
       var me = this;
-      if (p.get('product').obposScale) {
+      if (p.get('obposScale')) {
         OB.POS.hwserver.getWeight(function (data) {
           if (data.exception) {
             alert(data.exception.message);
@@ -307,7 +307,7 @@
         });
       } else {
         var line = this.get('lines').find( function (l) {
-          return l.get('product').get('product').id === p.get('product').id;
+          return l.get('product').id === p.id;
         });
         if (line) {
           this.addUnit(line);
@@ -322,9 +322,9 @@
       var me = this;
       var newline = new OB.MODEL.OrderLine({
         product: p,
-        uOM: p.get('product').uOM,
+        uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
-        price: OB.DEC.number(p.get('price').listPrice)
+        price: OB.DEC.number(p.get('price').get('listPrice'))
       });
       newline.calculateGross();
 
@@ -333,7 +333,7 @@
       this.calculateGross();
       // set the undo action
       this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('product')._identifier]),
+        text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
         line: newline,
         undo: function() {
           me.get('lines').remove(newline);

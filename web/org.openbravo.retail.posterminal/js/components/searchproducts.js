@@ -1,4 +1,4 @@
-/*global B , Backbone */
+/*global B , Backbone, _ */
 
 (function () {
 
@@ -6,15 +6,13 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.SearchProduct = Backbone.View.extend({
-	  initialize: function(){
+	initialize: function(){
 	  var me = this;
-
-    //this._id = 'SearchProducts';
 
     this.receipt = this.options.modelorder;
 
     this.categories = new OB.MODEL.Collection(this.options.DataCategory);
-    this.products = new OB.MODEL.Collection(this.options.DataProductPrice);
+    this.products = new OB.MODEL.Collection({ds: null});
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(model);
@@ -23,7 +21,8 @@
     this.receipt.on('clear', function() {
       this.productname.val('');
       this.productcategory.val('');
-      this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
+      //A filter should be set before show products. -> Big data!!
+      //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
     }, this);
 
     this.component = B(
@@ -62,24 +61,56 @@
                 {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
                   {kind: B.KindJQuery('i'), attr: {'class': 'icon-search btn-icon-left'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
                 ], init: function () {
+                  var that = me;
                   this.$el.click(function (e) {
+                    var criteria = {};
+
+                    function successCallbackPrices(dataPrices, dataProducts) {
+                      if(dataPrices){
+                        _.each(dataPrices.models, function(currentPrice){
+                          if(dataProducts.get(currentPrice.get('product'))){
+                            dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
+                          }
+                        });
+                      }else{
+                        OB.UTIL.showWarning("OBDAL No prices found for products");
+                        _.each(dataProducts.models, function(currentProd){
+                          currentProd.set('price', 0);
+                        });
+                      }
+                      that.products.reset(dataProducts.models);
+                    }
+                    
+                    function errorCallback(tx, error) {
+                      OB.UTIL.showError("OBDAL error: " + error );
+                    }
+
+                    function successCallbackProducts(dataProducts) {
+                      if(dataProducts && dataProducts.length > 0){
+                        criteria = {'priceListVersion' : OB.POS.modelterminal.get('pricelistversion').id};
+                        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
+                      }else{
+                        OB.UTIL.showWarning("No products found");
+                        that.products.reset();
+                      }
+                    }
+                    
                     e.preventDefault();
-                    var filter = {};
-                    if (me.productname.val() && me.productname.val() !== '') {
-                      filter.product = filter.product || {};
-                      filter.product._identifier = '%i' + OB.UTIL.escapeRegExp(me.productname.val());
+                    if (that.productname.val() && that.productname.val() !== '') {
+                      criteria._identifier  = {
+                        operator: OB.Dal.CONTAINS,
+                        value: that.productname.val()
+                      };
                     }
-                    if (me.productcategory.val() && me.productcategory.val() !== '') {
-                      filter.product = filter.product || {};
-                      filter.product.productCategory = me.productcategory.val();
+                    if (that.productcategory.val() && that.productcategory.val() !== '') {
+                      criteria.productCategory  = that.productcategory.val();
                     }
-                    me.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: filter});
+                    OB.Dal.find(OB.Model.Product, criteria , successCallbackProducts, errorCallback);
                   });
                 }}
               ]}
             ]}
           ]},
-
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
               {kind: B.KindJQuery('div'), content: [

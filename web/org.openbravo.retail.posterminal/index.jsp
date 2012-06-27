@@ -130,7 +130,8 @@ if(userId == null){
 
   <!-- Models -->
   <script src="../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate"></script>
-
+  <script src="../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice"></script>
+  <script src="js/model/product.js"></script>
   <!-- Web POS Application -->
   <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
 

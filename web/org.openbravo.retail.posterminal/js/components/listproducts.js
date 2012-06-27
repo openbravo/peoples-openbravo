@@ -1,4 +1,4 @@
-/*global B */
+/*global B, _ */
 
 (function () {
 
@@ -10,7 +10,7 @@
 
     this._id = 'ListProducts';
     this.receipt = context.modelorder;
-    this.products = new OB.MODEL.Collection(context.DataProductPrice);
+    this.products = new OB.MODEL.Collection({ds: null});
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(model);
@@ -40,9 +40,41 @@
   };
 
   OB.COMP.ListProducts.prototype.loadCategory = function (category) {
+    var criteria, me = this;
+
+    function successCallbackPrices(dataPrices, dataProducts) {
+      if(dataPrices){
+        _.each(dataPrices.models, function(currentPrice){
+          if(dataProducts.get(currentPrice.get('product'))){
+            dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
+          }
+        });
+      }else{
+        OB.UTIL.showWarning("OBDAL No prices found for products");
+        _.each(dataProducts.models, function(currentProd){
+          currentProd.set('price', 0);
+        });
+      }
+      me.products.reset(dataProducts.models);
+    }
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackProducts(dataProducts) {
+      if(dataProducts && dataProducts.length > 0){
+        criteria = {'priceListVersion' : OB.POS.modelterminal.get('pricelistversion').id};
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
+      }else{
+        me.products.reset();
+      }
+      me.titleProd.text(category.get('category')._identifier);
+    }
+
     if (category) {
-      this.products.exec({ priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {product: { 'productCategory': category.get('category').id }}});
-      this.titleProd.text(category.get('category')._identifier);
+      criteria = {'productCategory': category.get('category').id};
+      OB.Dal.find(OB.Model.Product, criteria , successCallbackProducts, errorCallback);
     } else {
       this.products.reset();
       this.titleProd.text(OB.I18N.getLabel('OBPOS_LblNoCategory'));

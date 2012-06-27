@@ -16,7 +16,7 @@ public class Product extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p as product, img.bindaryData as img "
+    return "select p.id as id, p.name as _identifier, p.taxCategory.id as taxCategory, p.productCategory.id as productCategory, p.obposScale as obposScale, p.uOM.id as uOM, p.uPCEAN as uPCEAN, img.bindaryData as img "
         + "from Product p left outer join p.image img "
         + "where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.name";
   }

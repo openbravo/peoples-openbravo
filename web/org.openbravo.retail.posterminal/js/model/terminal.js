@@ -17,6 +17,7 @@
     },
     exec : function (filter) {
       var me = this;
+      if(this.ds){
       this.ds.exec(filter, function (data, info) {
         var i;
         me.reset();
@@ -31,6 +32,7 @@
           }
         }
       });
+      }
     }
   });
 
