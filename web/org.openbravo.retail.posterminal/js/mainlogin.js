@@ -61,7 +61,7 @@
 
     function preRenderActions() {
       $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.loginutils',
+        url: '../../org.openbravo.retail.posterminal.service.loginutils',
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         data: {

@@ -96,7 +96,7 @@
       this.set('currency', null);
 
       $.ajax({
-        url: '../../org.openbravo.service.retail.posterminal.logout',
+        url: '../../org.openbravo.retail.posterminal.service.logout',
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         type: 'GET',

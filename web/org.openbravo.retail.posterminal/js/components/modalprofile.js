@@ -27,7 +27,7 @@
       var RoleModel = Backbone.Model.extend({});
       var RoleCollection = Backbone.Collection.extend({
         model: RoleModel,
-        url: '../../org.openbravo.service.retail.posterminal.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
+        url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
         parse: function (response, error) {
           if (response && response.response[0] && response.response[0].data) {
             return response.response[0].data;
@@ -42,7 +42,7 @@
       var LanguageModel = Backbone.Model.extend({});
       var LanguageCollection = Backbone.Collection.extend({
         model: LanguageModel,
-        url: '../../org.openbravo.service.retail.posterminal.profileutils?command=availableLanguages',
+        url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableLanguages',
         parse: function (response, error) {
           if (response && response.response[0] && response.response[0].data) {
             return response.response[0].data;
