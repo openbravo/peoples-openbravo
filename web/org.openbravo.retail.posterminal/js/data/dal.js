@@ -50,7 +50,7 @@
     }
   }
 
-  function find(model, whereClause, success, error) {
+  function find(model, whereClause, success, error, args) {
     var tableName = model.prototype.tableName,
         propertyMap = model.prototype.propertyMap,
         sql = 'SELECT * FROM ' + tableName,
@@ -111,12 +111,12 @@
               collection = new collectionType(),
               len = result.rows.length;
           if (len === 0) {
-            success(null);
+            success(null, args);
           } else {
             for (i = 0; i < len; i++) {
               collection.add(transform(model, result.rows.item(i)));
             }
-            success(collection);
+            success(collection, args);
           }
         }, error);
       });
@@ -176,7 +176,7 @@
           }
           params.push(model.get(property) === undefined ? null : model.get(property));
         });
-        console.log(params.length);
+        //console.log(params.length);
       }
 
       //console.log(sql);
@@ -210,7 +210,7 @@
     }
   }
 
-  function initCache(model, initialData, successCallback, errorCallback) {
+  function initCache(model, initialData, success, error) {
 
     if (db) {
       if (!model.prototype.createStatement || !model.prototype.dropStatement) {
@@ -223,11 +223,11 @@
 
       db.transaction(function (tx) {
         tx.executeSql(model.prototype.dropStatement);
-      }, errorCallback);
+      }, error);
 
       db.transaction(function (tx) {
         tx.executeSql(model.prototype.createStatement);
-      }, errorCallback);
+      }, error);
 
       if (_.isArray(initialData)) {
         db.transaction(function (tx) {
@@ -246,13 +246,13 @@
             });
             values.push(_idx);
 
-            tx.executeSql(model.prototype.insertStatement, values, null, errorCallback);
+            tx.executeSql(model.prototype.insertStatement, values, null, error);
             _idx++;
           });
-        }, errorCallback, function () {
+        }, error, function () {
           // transaction success, execute callback
-          if (_.isFunction(successCallback)) {
-            successCallback();
+          if (_.isFunction(success)) {
+            success();
           }
         });
       } else { // no initial data
