@@ -112,7 +112,8 @@ public class CashCloseReport extends JSONProcessSimple {
 
     String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount "
         + "from org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-        + "where trans.gLItem=payment.glitemChanges and trans.reconciliation is null and payment.obposApplications=?";
+        + "where trans.gLItem=payment.glitemChanges and trans.reconciliation is null "
+        + "and payment.obposApplications=? and trans.account=payment.financialAccount";
     Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
     dropsDepositsQuery.setString(0, posTerminalId);
     BigDecimal totalDrops = BigDecimal.ZERO;
@@ -123,7 +124,7 @@ public class CashCloseReport extends JSONProcessSimple {
       dropDeposit.put("description", objdropdeposit[0]);
       BigDecimal drop = (BigDecimal) objdropdeposit[1];
       BigDecimal deposit = (BigDecimal) objdropdeposit[2];
-      if (drop.compareTo(deposit) > 1) {
+      if (drop.compareTo(deposit) > 0) {
         dropDeposit.put("amount", drop);
         drops.put(dropDeposit);
         totalDrops = totalDrops.add(drop);
