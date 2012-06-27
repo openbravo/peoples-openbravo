@@ -58,11 +58,12 @@ public class POSLoginHandler extends LoginHandler {
     try {
       res.setContentType("application/json;charset=UTF-8");
       CalloutHttpServletResponse loginHandlerResponse = new CalloutHttpServletResponse(res);
+      final VariablesSecureApp vars = new VariablesSecureApp(req);
+      vars.clearSession(true);
+
       super.doPost(req, loginHandlerResponse);
 
       JSONObject originalResult = new JSONObject(loginHandlerResponse.getOutputFromWriter());
-
-      final VariablesSecureApp vars = new VariablesSecureApp(req);
 
       final String sessionId = vars.getSessionValue("#AD_Session_ID");
       OBContext.setAdminMode();
@@ -300,7 +301,7 @@ public class POSLoginHandler extends LoginHandler {
     }
 
     // get standard default role
-    user.getDefaultRole();
+    role = user.getDefaultRole();
     if (role != null) {
       if (hasPOSAccess(role)) {
         return role;
