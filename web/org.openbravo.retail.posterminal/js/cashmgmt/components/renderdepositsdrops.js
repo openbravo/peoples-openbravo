@@ -10,11 +10,11 @@
       if(this.model.get('drop')!==0){
         this.$el.append(B(
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
               'A '+this.model.get('name')+' drop to: '+this.model.get('description')
             ]},
-            {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: right; width: 20%'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
               '-'+this.model.get('drop').toString()
             ]}
            ]}
@@ -23,11 +23,11 @@
       }else{
         this.$el.append(B(
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 69%'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 70%'}, content: [
                 'A '+this.model.get('name')+' deposit from: '+this.model.get('description')
               ]},
-              {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: right; width: 20%'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
                 this.model.get('deposit').toString()
               ]}
              ]}

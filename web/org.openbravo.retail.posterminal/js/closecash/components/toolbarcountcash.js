@@ -25,7 +25,7 @@
         this.options.modeldaycash.set('totalCounted',totalCounted);
         this.options.modeldaycash.set('totalDifference',OB.DEC.sub(totalCounted,this.options.modeldaycash.get('totalExpected')));
         $('a[button*="allokbutton"]').css('visibility','hidden');
-        $('div[searchKey*="'+key+'"]').prev().hide();
+        $('a[key*="'+key+'"]').hide();
         $('div[searchKey*="'+key+'"]').text(counted.toString());
         $('div[searchKey*="'+key+'"]').show();
         }

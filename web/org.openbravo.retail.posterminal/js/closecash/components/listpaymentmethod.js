@@ -15,14 +15,14 @@
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-        {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 36%'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
              OB.I18N.getLabel('OBPOS_LblPaymentMethod')
           ]},
-        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                OB.I18N.getLabel('OBPOS_LblExpected')
           ]},
-          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 0px 10px 0px; border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 0px 10px 0px;  float: left;'}, content: [
                OB.I18N.getLabel('OBPOS_LblCounted')
           ]}
         ]}
@@ -42,7 +42,7 @@
         }},
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
              {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; float: left;'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding-right: 88px; float: right;' }, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding-left: 298px; float: left;' }, content: [
                    {kind: OB.COMP.ButtonOk.extend({
                    me:me,
                    attributes:{'button':'allokbutton'},
@@ -64,7 +64,7 @@
          ]},
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 36%'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
                          OB.I18N.getLabel('OBPOS_ReceiptTotal')
                  ]},
                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
