@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -44,101 +44,110 @@
   Cur_Cursor RECORD;
   Cur_Parameter RECORD;
   v_AD_Client_ID VARCHAR2(32);
+  v_totalCost NUMBER;
 BEGIN
 
   IF(p_PInstance_ID IS NOT NULL) THEN
-      --  Update AD_PInstance
-      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
-      v_ResultStr:='PInstanceNotFound';
-      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
-      -- Get Parameters
-      v_ResultStr:='ReadingParameters';
-      FOR Cur_Parameter IN (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, i.UpdatedBy
-                            FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID
-                            WHERE i.AD_PInstance_ID=p_PInstance_ID
-                            ORDER BY p.SeqNo) LOOP
-        IF (Cur_Parameter.ParameterName = 'm_warehouse_id') THEN
-          v_warehouse_ID := Cur_Parameter.P_String;
-          DBMS_OUTPUT.PUT_LINE('  m_warehouse_id=' || v_warehouse_ID) ;
-        ELSIF (Cur_Parameter.ParameterName = 'ad_org_id') THEN
-          v_org_ID := Cur_Parameter.P_String;
-          DBMS_OUTPUT.PUT_LINE('  ad_org_id=' || v_org_ID) ;
-        ELSIF (Cur_Parameter.ParameterName = 'ad_client_id') THEN
-          v_client_ID := Cur_Parameter.P_String;
-          DBMS_OUTPUT.PUT_LINE('  ad_client_id=' || v_client_ID) ;
-        END IF;
-      END LOOP; --Get Parameter
+    --  Update AD_PInstance
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
+    v_ResultStr:='PInstanceNotFound';
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    -- Get Parameters
+    v_ResultStr:='ReadingParameters';
+    FOR Cur_Parameter IN (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, i.UpdatedBy
+                          FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID
+                          WHERE i.AD_PInstance_ID=p_PInstance_ID
+                          ORDER BY p.SeqNo) LOOP
+      IF (Cur_Parameter.ParameterName = 'm_warehouse_id') THEN
+        v_warehouse_ID := Cur_Parameter.P_String;
+        DBMS_OUTPUT.PUT_LINE('  m_warehouse_id=' || v_warehouse_ID) ;
+      ELSIF (Cur_Parameter.ParameterName = 'ad_org_id') THEN
+        v_org_ID := Cur_Parameter.P_String;
+        DBMS_OUTPUT.PUT_LINE('  ad_org_id=' || v_org_ID) ;
+      ELSIF (Cur_Parameter.ParameterName = 'ad_client_id') THEN
+        v_client_ID := Cur_Parameter.P_String;
+        DBMS_OUTPUT.PUT_LINE('  ad_client_id=' || v_client_ID) ;
+      END IF;
+    END LOOP; --Get Parameter
 
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT>>') ;
+    v_warehouse_ID:=p_warehouse_ID;
+    v_org_ID:=p_org_ID;
+    v_client_ID := p_client_id;
+  END IF;
+BEGIN --BODY
+
+  -- Checks if Sum of all Product's cost are zero
+  SELECT SUM(CASE WHEN T1.MOVEMENTQTY>=0 THEN T1.TRANSACTIONCOST ELSE -T1.TRANSACTIONCOST END) INTO v_totalCost
+  FROM M_TRANSACTION T1
+    LEFT JOIN M_LOCATOR L1 ON (T1.M_LOCATOR_ID=L1.M_LOCATOR_ID)
+    LEFT JOIN M_WAREHOUSE W1 ON (L1.M_WAREHOUSE_ID=W1.M_WAREHOUSE_ID)
+  WHERE T1.ISCOSTCALCULATED = 'Y'
+    AND (p_warehouse_ID IS NULL OR L1.M_WAREHOUSE_ID = p_warehouse_ID)
+    AND (p_org_ID IS NULL OR W1.AD_ORG_ID = p_org_ID)
+    AND (p_client_id IS NULL OR T1.AD_CLIENT_ID = p_client_id)
+  HAVING SUM(T1.MOVEMENTQTY) > 0;
+  IF (v_totalCost = 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@ZeroSumCost@');
+  END IF;
+
+  FOR Cur_Cursor IN (
+      SELECT M_GET_PARETO_ABC(v_warehouse_ID, AD_ORG_ID, v_client_ID, PERCENTAGE) AS ISABC,
+          AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
+      FROM (SELECT 100*ABS(SUM(CASE WHEN T.MOVEMENTQTY>=0 THEN T.TRANSACTIONCOST ELSE -T.TRANSACTIONCOST END) / v_totalCost) AS PERCENTAGE,
+                T.AD_ORG_ID, T.AD_CLIENT_ID, T.M_PRODUCT_ID
+            FROM M_TRANSACTION T
+              LEFT JOIN M_LOCATOR L ON (T.M_LOCATOR_ID=L.M_LOCATOR_ID)
+              LEFT JOIN M_WAREHOUSE W ON (L.M_WAREHOUSE_ID=W.M_WAREHOUSE_ID)
+            WHERE T.ISCOSTCALCULATED = 'Y'
+              AND (p_warehouse_ID IS NULL OR L.M_WAREHOUSE_ID = p_warehouse_ID)
+              AND (p_org_ID IS NULL OR W.AD_ORG_ID = p_org_ID)
+              AND (p_client_id IS NULL OR T.AD_CLIENT_ID = p_client_id)
+            GROUP BY T.AD_ORG_ID, T.AD_CLIENT_ID, T.M_PRODUCT_ID
+            HAVING SUM(T.MOVEMENTQTY) > 0
+           ) BBB
+     ORDER BY PERCENTAGE DESC
+  ) LOOP
+
+    SELECT COUNT(*)
+      INTO v_exist
+    FROM M_PRODUCT_ORG
+    WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
+      AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
+
+    IF (v_exist > 0) THEN
+      UPDATE M_PRODUCT_ORG
+      SET ABC = Cur_Cursor.ISABC
+      WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
+        AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
+      v_count_update := v_count_update + 1;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT>>') ;
-      v_warehouse_ID:=p_warehouse_ID;
-      v_org_ID:=p_org_ID;
-      v_client_ID := p_client_id;
+      AD_Sequence_Next('M_Product_Org', Cur_Cursor.AD_CLIENT_ID, v_M_Product_Org_ID) ;
+      INSERT INTO M_PRODUCT_ORG (
+          M_PRODUCT_ORG_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+          CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+          M_PRODUCT_ID, ABC
+      ) VALUES (
+          v_M_Product_Org_ID, Cur_Cursor.AD_CLIENT_ID, Cur_Cursor.AD_ORG_ID,
+          'Y', now(), '100', now(), '100',
+          Cur_Cursor.M_PRODUCT_ID, Cur_Cursor.ISABC
+      );
+      v_count_insert := v_count_insert + 1;
     END IF;
-    BEGIN --BODY
 
-  for Cur_Cursor in (
-     SELECT M_GET_PARETO_ABC(v_warehouse_ID, AD_ORG_ID, v_client_ID, PERCENTAGE) AS ISABC,
-       AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
-     FROM
-     (
-       SELECT
-         100*ABS(SUM(CASE WHEN T.MOVEMENTQTY>=0 THEN T.TRANSACTIONCOST ELSE -T.TRANSACTIONCOST END) / 
-                   (SELECT SUM(CASE WHEN T1.MOVEMENTQTY>=0 THEN T1.TRANSACTIONCOST ELSE -T1.TRANSACTIONCOST END)
-                    FROM M_TRANSACTION T1
-                      LEFT JOIN M_LOCATOR L1 ON (T1.M_LOCATOR_ID=L1.M_LOCATOR_ID)
-                      LEFT JOIN M_WAREHOUSE W1 ON (L1.M_WAREHOUSE_ID=W1.M_WAREHOUSE_ID)
-                    WHERE T1.ISCOSTCALCULATED = 'Y'
-                      AND (p_warehouse_ID IS NULL OR L1.M_WAREHOUSE_ID = p_warehouse_ID)
-                      AND (p_org_ID IS NULL OR W1.AD_ORG_ID = p_org_ID)
-                      AND (p_client_id IS NULL OR T1.AD_CLIENT_ID = p_client_id)
-                    HAVING SUM(T1.MOVEMENTQTY) > 0)) AS PERCENTAGE,
-         T.AD_ORG_ID,
-         T.AD_CLIENT_ID,
-         T.M_PRODUCT_ID
-       FROM M_TRANSACTION T
-         LEFT JOIN M_LOCATOR L ON (T.M_LOCATOR_ID=L.M_LOCATOR_ID)
-         LEFT JOIN M_WAREHOUSE W ON (L.M_WAREHOUSE_ID=W.M_WAREHOUSE_ID)
-       WHERE T.ISCOSTCALCULATED = 'Y'
-         AND (p_warehouse_ID IS NULL OR L.M_WAREHOUSE_ID = p_warehouse_ID)
-         AND (p_org_ID IS NULL OR W.AD_ORG_ID = p_org_ID)
-         AND (p_client_id IS NULL OR T.AD_CLIENT_ID = p_client_id)
-       GROUP BY T.AD_ORG_ID, T.AD_CLIENT_ID, T.M_PRODUCT_ID
-       HAVING SUM(T.MOVEMENTQTY) > 0
-     ) BBB
-     ORDER BY PERCENTAGE DESC) loop
-
-     SELECT COUNT(*)
-     INTO v_exist
-     FROM M_PRODUCT_ORG
-     WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
-     AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
-
-     IF (v_exist > 0) THEN
-       UPDATE M_PRODUCT_ORG SET
-       ABC = Cur_Cursor.ISABC
-       WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
-       AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
-       v_count_update := v_count_update + 1;
-     ELSE
-       AD_Sequence_Next('M_Product_Org', Cur_Cursor.AD_CLIENT_ID, v_M_Product_Org_ID) ;
-       INSERT INTO M_PRODUCT_ORG (M_PRODUCT_ORG_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, M_PRODUCT_ID, ABC) VALUES
-       (v_M_Product_Org_ID, Cur_Cursor.AD_CLIENT_ID, Cur_Cursor.AD_ORG_ID, 'Y', now(), '100', now(), '100', Cur_Cursor.M_PRODUCT_ID, Cur_Cursor.ISABC);
-       v_count_insert := v_count_insert + 1;
-     END IF;
-
-  end loop;
+  END LOOP;
   v_Message:='@Created@=' || v_count_insert || ', @Updated@=' || v_count_update;
 --<<FINISH_PROCESS>>
-    IF(p_PInstance_ID IS NOT NULL) THEN
-      --  Update AD_PInstance
-      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
-    ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT finished>>') ;
-    END IF;
-    RETURN;
-  END; --BODY
+  IF (p_PInstance_ID IS NOT NULL) THEN
+    --  Update AD_PInstance
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT finished>>') ;
+  END IF;
+  RETURN;
+END; --BODY
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;

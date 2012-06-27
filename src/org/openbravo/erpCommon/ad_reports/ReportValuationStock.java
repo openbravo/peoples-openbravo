@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -36,6 +38,8 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportValuationStock extends HttpSecureAppServlet {
@@ -86,7 +90,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     // Checks if there is a conversion rate for each of the transactions of
     // the report
     ReportValuationStockData[] data = null;
-    String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    Warehouse wh = OBDal.getInstance().get(Warehouse.class, strWarehouse);
+    String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(wh
+        .getOrganization()));
     OBError myMessage = null;
     myMessage = new OBError();
     String strConvRateErrorMsg = "";

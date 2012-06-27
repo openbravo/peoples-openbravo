@@ -32,6 +32,8 @@ import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -43,6 +45,8 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -314,7 +318,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars,
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -535,7 +539,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( '"
-            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
+            + vars.getLanguage()
+            + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intAuxDiscard = i;
         intOrder++;
         intProductLevel = i + 1;
@@ -676,7 +681,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strConvRateErrorMsg = "";
       OBError myMessage = null;
       myMessage = new OBError();
-      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(OBDal
+          .getInstance().get(Organization.class, strOrg)));
       if (strComparative.equals("Y")) {
         try {
           data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(this, strCurrencyId,
