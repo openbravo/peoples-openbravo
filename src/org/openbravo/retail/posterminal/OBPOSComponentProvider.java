@@ -67,6 +67,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Common components
         "builder",
         "datasource",
+        "data/dal",
         "utilities",
         "utilitiesui",
         "arithmetic",
@@ -86,7 +87,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
         // Web POS window
         "components/toolbarpayment", "components/toolbarscan", "components/keyboard",
-        "windows/login", "windows/posbuttons", "data/datamaster", "data/dal", "data/dataordersave",
+        "windows/login", "windows/posbuttons", "data/datamaster", "data/dataordersave",
         "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
         "components/listreceipts", "components/modalreceipts", "components/renderbusinesspartner",
         "components/searchbps", "components/modalbps", "components/scan", "components/tabscan",

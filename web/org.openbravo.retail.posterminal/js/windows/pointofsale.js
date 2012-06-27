@@ -18,7 +18,6 @@
             {kind: OB.DATA.BPs},
             {kind: OB.DATA.ProductPrice},
             {kind: OB.DATA.Category},
-            {kind: OB.DATA.TaxRate},
             {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
           ]},
 
@@ -115,6 +114,9 @@
     }
   });
 
-  // register
+  // Register window
   OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
+
+  // Register required models/data
+  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate];
 }());

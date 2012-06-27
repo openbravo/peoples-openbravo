@@ -36,6 +36,11 @@
   };
 
   modelterminal.on('ready', function () {
+    var webwindow, w,
+        c = _.extend({}, Backbone.Events),
+        terminal = OB.POS.modelterminal.get('terminal'),
+        queue = {}, createWindow = false;
+
     // We are Logged !!!
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'visible');
@@ -46,20 +51,34 @@
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
 
-    var webwindow = OB.POS.windows[OB.POS.paramWindow];
+    webwindow = OB.POS.windows[OB.POS.paramWindow];
 
     if (webwindow) {
-      var c = _.extend({}, Backbone.Events);
-      var w = new webwindow(c);
-      if (w.render) {
-        w = w.render();
-      }
-      $("#containerWindow").empty().append(w.$el);
-      c.trigger('domready');
+      // loading/refreshing required data/models for window
+      _.each(OB.DATA[OB.POS.paramWindow], function (model) {
+        var ds = new OB.DS.DataSource(new OB.DS.Query(model, terminal.client, terminal.organization));
+        ds.on('ready', function () {
+
+          queue[model.prototype.source] = true;
+          createWindow = OB.UTIL.queueStatus(queue);
+
+          if(createWindow) {
+            w = new webwindow(c);
+            if (w.render) {
+              w = w.render();
+            }
+            $("#containerWindow").empty().append(w.$el);
+            c.trigger('domready');
+            OB.UTIL.showLoading(false);
+          }
+        });
+        ds.load();
+        queue[model.prototype.source] = false;
+      });
     } else {
+      OB.UTIL.showLoading(false);
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     }
-    OB.UTIL.showLoading(false);
   });
 
   modelterminal.on('loginsuccess', function () {

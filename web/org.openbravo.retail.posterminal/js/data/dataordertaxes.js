@@ -67,9 +67,7 @@
           queue[element.cid] = true;
 
           // checking queue status
-          triggerNext = _.reduce(queue, function (memo, val) {
-            return memo && val;
-          }, true);
+          triggerNext = OB.UTIL.queueStatus(queue);
 
           // triggering next steps
           if (triggerNext) {

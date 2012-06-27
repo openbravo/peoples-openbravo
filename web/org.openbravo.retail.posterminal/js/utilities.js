@@ -43,6 +43,16 @@
     });
   };
 
+  OB.UTIL.queueStatus = function (queue) {
+    // Expects an object where the value element is true/false depending if is processed or not
+    if(!_.isObject(queue)) {
+      throw 'Object expected';
+    }
+    return _.reduce(queue, function (memo, val) {
+      return memo && val;
+    }, true);
+  };
+
 }());
 
 
