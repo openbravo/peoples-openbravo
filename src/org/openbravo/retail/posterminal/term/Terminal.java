@@ -10,7 +10,9 @@ package org.openbravo.retail.posterminal.term;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends ProcessHQLQuery {
 
@@ -21,6 +23,14 @@ public class Terminal extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "from OBPOS_Applications where $readableCriteria and searchKey = :terminal";
+    return "select pos.id as id, pos.store.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.store.obretcoCBpLocation.id as partnerAddress, "
+        + " pos.organization.id as organization, pos.organization.name as organization"
+        + DalUtil.FIELDSEPARATOR
+        + JsonConstants.IDENTIFIER
+        + ", pos.client.id as client, pos.client.name as client"
+        + DalUtil.FIELDSEPARATOR
+        + JsonConstants.IDENTIFIER
+        + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl "
+        + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
   }
 }
