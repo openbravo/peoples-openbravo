@@ -298,7 +298,9 @@ public class DefaultJsonDataService implements JsonDataService {
     }
     if (!forCountOperation) {
       queryService.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-      queryService.setJoinAssociatedEntities(true);
+      // joining associated entities actually proved to be slower than doing
+      // individual queries for them... so disabling this functionality for now
+      // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
   }

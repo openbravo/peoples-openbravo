@@ -84,6 +84,7 @@ BEGIN
         COALESCE(:NEW.IsMandatory , '.') != COALESCE(:OLD.IsMandatory , '.') OR
         COALESCE(:NEW.IsUpdateable , '.') != COALESCE(:OLD.IsUpdateable , '.') OR
         COALESCE(:NEW.ReadOnlyLogic , '.') != COALESCE(:OLD.ReadOnlyLogic , '.') OR
+        COALESCE(:NEW.SqlLogic , '.') != COALESCE(:OLD.SqlLogic , '.') OR
         COALESCE(:NEW.IsIdentifier , '.') != COALESCE(:OLD.IsIdentifier , '.') OR
         COALESCE(:NEW.SeqNo , 0) != COALESCE(:OLD.SeqNo , 0) OR
         COALESCE(:NEW.IsTranslated , '.') != COALESCE(:OLD.IsTranslated , '.') OR

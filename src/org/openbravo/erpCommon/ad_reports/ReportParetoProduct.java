@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,15 +27,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingStatus;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportParetoProduct extends HttpSecureAppServlet {
@@ -99,12 +105,20 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
     String discard[] = { "discard" };
 
+    // If the instance is not migrated the user should use the Legacy report
+    if (CostingStatus.getInstance().isMigrated() == false) {
+      advise(request, response, "ERROR", OBMessageUtils.messageBD("NotUsingNewCost"), "");
+      return;
+    }
+
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard).createXmlDocument();
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
       // of the report
-      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(OBDal
+          .getInstance().get(Organization.class, strAD_Org_ID)));
+      ;
       OBError myMessage = null;
       myMessage = new OBError();
       try {
@@ -194,8 +208,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
-            Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"), 0);
+            "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "ReportParetoProduct"), Utility.getContext(this, vars,
+                "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));

@@ -27,13 +27,18 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -100,6 +105,17 @@ public class DocProduction extends AcctServer {
       // Qty
       docLine.m_Productiontype = data[i].getField("PRODUCTIONTYPE");
       docLine.m_M_Warehouse_ID = data[i].getField("M_WAREHOUSE_ID");
+      OBContext.setAdminMode(false);
+      try {
+        // Get related M_Transaction_ID
+        ProductionLine prodLine = OBDal.getInstance().get(ProductionLine.class, Line_ID);
+        if (prodLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+          // Internal movement lines have 2 related transactions, both of them with the same cost
+          docLine.setTransaction(prodLine.getMaterialMgmtMaterialTransactionList().get(0));
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       list.add(docLine);
     }
 
@@ -149,20 +165,24 @@ public class DocProduction extends AcctServer {
     Fact fact = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocProduction.debug("createFact - object created");
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
+      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
+          Organization.class, line.m_AD_Org_ID));
+      if (!CostingStatus.getInstance().isMigrated()) {
+        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      }
+      if (CostingStatus.getInstance().isMigrated() && line.transaction != null
+          && !line.transaction.isCostCalculated()) {
+        Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
+        setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+        throw new IllegalStateException();
+      }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
-      if (BigDecimal.ZERO.compareTo(dCosts) == 0
+      if (BigDecimal.ZERO.compareTo(dCosts) == 0 && !CostingStatus.getInstance().isMigrated()
           && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
         Map<String, String> parameters = getInvalidCostParameters(
             OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
@@ -173,14 +193,18 @@ public class DocProduction extends AcctServer {
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
         fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            costCurrencyId, costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn), costCurrencyId,
-            "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            costCurrency.getId(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+            costCurrency.getId(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
       } else {
         fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            costCurrencyId, "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn), costCurrencyId,
-            costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            costCurrency.getId(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+            costCurrency.getId(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
       }
     }
     SeqNo = "0";

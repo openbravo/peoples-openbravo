@@ -93,7 +93,8 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
             distributeAmount(amount);
           }
         }
-        updateAll();
+        //updateAll();
+        updateGridReadOnly();
         updateTotal();
       } else {
         document.getElementById('sectionGrid').innerHTML = '';
@@ -615,6 +616,15 @@ function closeProcessPayment() {
   document.getElementById('client_middle').style.display = 'block';
   document.getElementById('client_bottom').style.display = 'block';
   setGLItemMode(isTrue('isInGLItemMode'));
+}
+function updateGridReadOnly() {
+  var chk = frm.inpScheduledPaymentDetailId;
+  var total = chk.length;
+  var recordAmount, i;
+
+  for (i = 0; i < total; i++) {
+	updateReadOnly(chk[i].value, chk[i].checked);
+  }
 }
 </script>
 </head>

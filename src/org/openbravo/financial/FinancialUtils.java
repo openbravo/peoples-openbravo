@@ -212,7 +212,7 @@ public class FinancialUtils {
             .getOrganizationStructureProvider(client.getId()).getParentOrg(org), client);
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Exception calculating conversion rate.", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();

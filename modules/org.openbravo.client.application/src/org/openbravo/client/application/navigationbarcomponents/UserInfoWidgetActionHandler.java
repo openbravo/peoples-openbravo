@@ -27,6 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -352,14 +353,25 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       languageId = pickLanguage();
     }
     final boolean isDefault;
+    String defaultRoleProperty = null;
+    boolean setOnlyRole = false;
     if (json.has("default")) {
       isDefault = json.getBoolean("default");
+      if (json.has("defaultRoleProperty")) {
+        setOnlyRole = true;
+        defaultRoleProperty = json.getString("defaultRoleProperty");
+      }
     } else {
       isDefault = false;
     }
 
+    if (StringUtils.isEmpty(defaultRoleProperty)) {
+      defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
+    }
+
     new UserSessionSetter().resetSession(request, isDefault, OBContext.getOBContext().getUser()
-        .getId(), roleId, clientId, orgId, languageId, warehouseId);
+        .getId(), roleId, clientId, orgId, languageId, warehouseId, defaultRoleProperty,
+        setOnlyRole);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
@@ -397,8 +409,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     private static final long serialVersionUID = 1L;
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
-        String roleId, String clientId, String organizationId, String languageId, String warehouseId)
-        throws Exception {
+        String roleId, String clientId, String organizationId, String languageId,
+        String warehouseId, String defaultRoleProperty, boolean setOnlyRole) throws Exception {
       final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
       final Language language = OBDal.getInstance().get(Language.class, languageId);
       if (language.isRTLLanguage()) {
@@ -409,10 +421,13 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
 
       if (isDefault) {
         final User user = OBDal.getInstance().get(User.class, userId);
-        user.setDefaultClient(OBDal.getInstance().get(Client.class, clientId));
-        user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, organizationId));
-        user.setDefaultRole(OBDal.getInstance().get(Role.class, roleId));
+        user.set(defaultRoleProperty, OBDal.getInstance().get(Role.class, roleId));
         user.setDefaultLanguage(OBDal.getInstance().get(Language.class, languageId));
+        if (!setOnlyRole) {
+          user.setDefaultClient(OBDal.getInstance().get(Client.class, clientId));
+          user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, organizationId));
+        }
+
         if (warehouseId != null) {
           user.setDefaultWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseId));
         }

@@ -46,13 +46,18 @@
 <script language="JavaScript" type="text/javascript">
 function validate()
 {
-	var frm=document.frmMain;
-	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
-    	setWindowElementFocus(frm.inpCurrencyId);
-    	showJSMessage(7);
-    	return false;
-	}
-	return true;
+    var frm=document.frmMain;
+    if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+        setWindowElementFocus(frm.inpCurrencyId);
+        showJSMessage(7);
+        return false;
+    }
+    if (frm.inpadOrgId.value == null || frm.inpadOrgId.value == "") {
+        setWindowElementFocus(frm.inpadOrgId);
+        showJSMessage(7);
+        return false;
+    }
+    return true;
 }
 function onloadFunctions() {
 }
@@ -255,7 +260,7 @@ var arrWarehouse=null;
             <tr>
             <td class="TitleCell"><span class="LabelText">Organization</span></td>		
               <td class="Combo_ContentCell" colspan="2"> 
-                <select name="inpadOrgId"  id="inpadOrgId" class="Combo Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;">
+                <select name="inpadOrgId"  id="inpadOrgId" class="ComboKey Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;" required="true">
                   <option value=""> <div id="reportAD_Org_ID"></div></option>
                 </select>
               </td>

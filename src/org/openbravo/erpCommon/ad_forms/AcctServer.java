@@ -21,8 +21,10 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -64,6 +67,7 @@ import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -72,7 +76,7 @@ public abstract class AcctServer {
 
   public String batchSize = "100";
 
-  public BigDecimal ZERO = new BigDecimal("0");
+  public BigDecimal ZERO = BigDecimal.ZERO;
 
   public String groupLines = "";
   public String Qty = null;
@@ -97,6 +101,7 @@ public abstract class AcctServer {
   public String Name = "";
   public String DocumentNo = "";
   public String DateAcct = "";
+  public Date dateAcct = null;
   public String DateDoc = "";
   public String C_Period_ID = "";
   public String C_Currency_ID = "";
@@ -165,6 +170,8 @@ public abstract class AcctServer {
   public static final String STATUS_Error = "E";
   /** Document Status */
   public static final String STATUS_InvalidCost = "C";
+  /** Document Status */
+  public static final String STATUS_NotCalculatedCost = "NC";
   /** Document Status */
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
@@ -924,6 +931,11 @@ public abstract class AcctServer {
       log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Mandatory info missing: "
           + error);
       return false;
+    }
+    try {
+      dateAcct = OBDateUtils.getDate(DateAcct);
+    } catch (ParseException e1) {
+      // Do nothing
     }
 
     // Delete existing Accounting
@@ -1903,8 +1915,13 @@ public abstract class AcctServer {
     else if (strStatus.equals(STATUS_DocumentLocked)) {
       strTitle = "@OtherPostingProcessActive@";
       messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_NotCalculatedCost)) {
+      if (parameters.isEmpty()) {
+        strTitle = "@NotCalculatedCost@";
+      } else {
+        strTitle = "@NotCalculatedCostWithTransaction@";
+      }
     } else if (strStatus.equals(STATUS_InvalidCost)) {
-      strTitle = "@InvalidCost@";
       if (parameters.isEmpty()) {
         strTitle = "@InvalidCost@";
       } else {
@@ -1965,6 +1982,13 @@ public abstract class AcctServer {
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("Product", strProduct);
     parameters.put("Date", strDate);
+    return parameters;
+  }
+
+  public Map<String, String> getNotCalculatedCostParameters(MaterialTransaction trx) {
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("trx", trx.getIdentifier());
+    parameters.put("product", trx.getProduct().getIdentifier());
     return parameters;
   }
 

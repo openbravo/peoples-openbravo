@@ -105,8 +105,13 @@ public class AccountingTabs extends BuildValidation {
       StringBuilder msg = new StringBuilder();
 
       for (int i = 0; i < alert.length; i++) {
-        if (AccountingTabsData.existsReference(cp, adAlertruleId, alert[i].referencekeyId).equals(
-            "0")) {
+        boolean existsReference = false;
+        if (AccountingTabsData.existsStatusColumn(cp)) {
+          existsReference = AccountingTabsData.existsReference(cp, adAlertruleId, alert[i].referencekeyId);
+        } else {
+          existsReference = AccountingTabsData.existsReferenceOld(cp, adAlertruleId, alert[i].referencekeyId);
+        }
+        if (!existsReference) {
           AccountingTabsData.insertAlert(cp, alert[i].description, alertRule[0].adAlertruleId,
               alert[i].recordId, alert[i].referencekeyId);
         }
