@@ -13,7 +13,6 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.config.OBRETCOProductList;
-import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -21,8 +20,8 @@ public class Category extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    final OBPOSApplications pos = POSUtils.getTerminalById(jsonsent.getString("terminal"));
-    final List<String> lstOrganizations = POSUtils.getStoreListByTerminalId(pos.getId());
+    final List<String> lstOrganizations = POSUtils.getStoreListByTerminalId(jsonsent
+        .getString("terminal"));
     final OBRETCOProductList productList = POSUtils
         .getProductListFromRetailOrganizations(lstOrganizations);
 
