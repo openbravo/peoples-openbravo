@@ -90,7 +90,7 @@
   };
 
   // Source object
-  OB.DS.Query = function (source, client, org) {
+  OB.DS.Query = function (source, client, org, terminal) {
     this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
@@ -98,6 +98,7 @@
     }
     this.client = client;
     this.org = org;
+    this.terminal = terminal;
   };
 
   OB.DS.Query.prototype.exec = function (params, callback) {
@@ -144,6 +145,10 @@
 
     if (this.org) {
       data.organization = this.org;
+    }
+
+    if (this.terminal) {
+      data.terminal = this.terminal;
     }
 
     serviceGET(this.source, data, callback);
@@ -416,15 +421,6 @@
           }
         }
       });
-      //    } else {
-      //      if (callback) {
-      //        callback({
-      //          exception: {
-      //            status: 0,
-      //            message: OB.I18N.getLabel('OBPOS_MsgHardwareServerNotDefined')
-      //          }
-      //        });
-      //      }
     }
   };
 }());

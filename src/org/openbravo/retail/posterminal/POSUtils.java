@@ -58,6 +58,23 @@ public class POSUtils {
     return null;
   }
 
+  public static OBPOSApplications getTerminalById(String posTerminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          posTerminalId);
+
+      return posTerminal;
+
+    } catch (Exception e) {
+      log.error("Error getting terminal by id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
   public static List<String> getStoreList(String searchKey) {
     try {
       OBContext.setAdminMode();
@@ -73,6 +90,27 @@ public class POSUtils {
 
     } catch (Exception e) {
       log.error("Error getting store list: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
+  public static List<String> getStoreListByTerminalId(String posTerminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      OBPOSApplications terminal = getTerminalById(posTerminalId);
+
+      if (terminal == null) {
+        throw new OBException("No terminal with ID: " + posTerminalId);
+      }
+
+      return OBContext.getOBContext().getOrganizationStructureProvider()
+          .getParentList(terminal.getStore().getId(), true);
+
+    } catch (Exception e) {
+      log.error("Error getting store list by terminal id: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }

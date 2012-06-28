@@ -13,6 +13,7 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -20,11 +21,11 @@ public class Product extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    String terminalSearchKey = (String) jsonsent.get("terminal");
-    List<String> lstOrganizations = POSUtils.getStoreList(terminalSearchKey);
-
-    OBRETCOProductList productList = POSUtils
+    final OBPOSApplications pos = POSUtils.getTerminalById(jsonsent.getString("terminal"));
+    final List<String> lstOrganizations = POSUtils.getStoreListByTerminalId(pos.getId());
+    final OBRETCOProductList productList = POSUtils
         .getProductListFromRetailOrganizations(lstOrganizations);
+
     if (productList != null) {
       return "select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
           + "from OBRETCO_Prol_Product pli left outer join pli.product.image img "

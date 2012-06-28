@@ -56,7 +56,7 @@
     }
 
     // Set Hardware..
-    OB.POS.hwserver = new OB.DS.HWServer(modelterminal.get('terminal').hardwareurl, modelterminal.get('terminal').scaleurl);
+    OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
@@ -67,7 +67,7 @@
       if (OB.DATA[OB.POS.paramWindow]) {
         // loading/refreshing required data/models for window
         _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-          var ds = new OB.DS.DataSource(new OB.DS.Query(model, terminal.client, terminal.organization));
+          var ds = new OB.DS.DataSource(new OB.DS.Query(model, null, null, terminal.id));
           ds.on('ready', function () {
 
             queue[model.prototype.source] = true;

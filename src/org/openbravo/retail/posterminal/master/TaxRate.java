@@ -10,36 +10,38 @@ package org.openbravo.retail.posterminal.master;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
 import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class TaxRate extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    final OBQuery<OBPOSApplications> posAppQuery = OBDal.getInstance().createQuery(
-        OBPOSApplications.class, "where searchKey = 'POS-1'"); // FIXME: value is not unique
-    final OBPOSApplications posDetail = posAppQuery.list().get(0); // FIXME: could throw
-                                                                   // IndexOutOfBoundsException
-    OBContext.setAdminMode();
+
+    final OBPOSApplications posDetail = POSUtils.getTerminal("POS-1"); // FIXME: use parameters
 
     // FROM
-    final OrganizationInformation orgInfo = posDetail.getOrganization()
-        .getOrganizationInformationList().get(0); // FIXME: expected org info?
-                                                  // IndexOutOfBoundsException?
+    final OrganizationInformation storeInfo = posDetail.getStore().getOrganizationInformationList()
+        .get(0); // FIXME: expected org info?
+                 // IndexOutOfBoundsException?
 
-    final Country fromCountry = orgInfo.getLocationAddress().getCountry();
-    final Region fromRegion = orgInfo.getLocationAddress().getRegion();
+    final Country fromCountry = storeInfo.getLocationAddress().getCountry();
+    final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
     // TO
-    final Country toCountry = null; // posDetail.getPartnerAddress().getLocationAddress().getCountry();
-    final Region toRegion = null; // posDetail.getPartnerAddress().getLocationAddress().getRegion();
+    final Country toCountry = posDetail.getStore().getObretcoCBpLocation().getLocationAddress()
+        .getCountry();
+    final Region toRegion = posDetail.getStore().getObretcoCBpLocation().getLocationAddress()
+        .getRegion();
 
     return "from FinancialMgmtTaxRate where active = true "
         + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') and (country.id = '"
