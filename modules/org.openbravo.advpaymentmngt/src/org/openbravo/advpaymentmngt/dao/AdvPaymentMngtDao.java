@@ -1193,7 +1193,7 @@ public class AdvPaymentMngtDao {
       if (payMethods.isEmpty()) {
         return (new ArrayList<FIN_PaymentMethod>());
       }
-      obc.add(Restrictions.in("id", payMethods));
+      addPaymentMethodList(obc, payMethods);
     } else {
       if (excludePaymentMethodWithoutAccount) {
 
@@ -1209,7 +1209,7 @@ public class AdvPaymentMngtDao {
         if (payMethods.isEmpty()) {
           return (new ArrayList<FIN_PaymentMethod>());
         }
-        obc.add(Restrictions.in("id", payMethods));
+        addPaymentMethodList(obc, payMethods);
       }
       if (paymentDirection == PaymentDirection.IN) {
         obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
@@ -1219,6 +1219,31 @@ public class AdvPaymentMngtDao {
     }
 
     return obc.list();
+  }
+
+  private void addPaymentMethodList(OBCriteria obc, List<String> paymentMethods) {
+    List<String> paymentMethodsToRemove;
+    Criterion compoundExp = null;
+    while (paymentMethods.size() > 2) {
+      paymentMethodsToRemove = new ArrayList(paymentMethods.subList(0, 2));
+      if (compoundExp == null) {
+        compoundExp = Restrictions.in("id", paymentMethods.subList(0, 2));
+      } else {
+        compoundExp = Restrictions.or(compoundExp,
+            Restrictions.in("id", paymentMethods.subList(0, 2)));
+      }
+      paymentMethods.removeAll(paymentMethodsToRemove);
+    }
+    if (paymentMethods.size() > 0) {
+      if (compoundExp == null) {
+        compoundExp = Restrictions.in("id", paymentMethods);
+      } else {
+        compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethods));
+      }
+    }
+    if (compoundExp != null) {
+      obc.add(compoundExp);
+    }
   }
 
   @Deprecated
