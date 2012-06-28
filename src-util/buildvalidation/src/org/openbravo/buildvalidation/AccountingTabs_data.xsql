@@ -112,18 +112,39 @@
       <Parameter name="tabId"/>
       <Parameter name="sql"/>
   </SqlMethod>
-   <SqlMethod name="existsReference" type="preparedStatement" return="string">
+   <SqlMethod name="existsReference" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
           SELECT COUNT(*) AS EXISTING
             FROM AD_ALERT
            WHERE AD_ALERTRULE_ID = ?
              AND REFERENCEKEY_ID = ?
-             AND STATUS != 'SOLVED'
+             AND COALESCE(STATUS, 'NEW') != 'SOLVED'
       ]]></Sql>
       <Parameter name="alertRule"/>
       <Parameter name="ref"/>      
    </SqlMethod>
+   <SqlMethod name="existsReferenceOld" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT COUNT(*) AS EXISTING
+       FROM AD_ALERT
+       WHERE AD_ALERTRULE_ID = ?
+         AND REFERENCEKEY_ID = ?
+         AND ISFIXED = 'N'
+    ]]></Sql>
+    <Parameter name="alertRule"/>
+    <Parameter name="ref"/>
+  </SqlMethod>
+   <SqlMethod name="existsStatusColumn" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT COUNT(*) AS EXISTING
+       FROM  user_tab_columns
+       WHERE lower(table_name) like 'ad_alert'
+         AND lower(column_name) like 'status'
+    ]]></Sql>
+  </SqlMethod>
    <SqlMethod name="insertAlert" type="preparedStatement"
    	return="rowcount">
    	<SqlMethodComment></SqlMethodComment>
