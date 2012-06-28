@@ -245,5 +245,14 @@ isc.OBSearchItem.addProperties({
       window.releaseEvents(isc.Event.UNLOAD);
     }
     window.onunload = function () {};
+  },
+
+  mapValueToDisplay: function (value) {
+    if (this.displayField) {
+      return this.form.getValue(this.displayField);
+    } else {
+      return this.Super('mapValueToDisplay', arguments);
+    }
   }
+
 });
