@@ -13,7 +13,7 @@
             {kind: OB.UTIL.Thumbnail, attr: {img: this.model.get('img')}}
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 80%;'}, content: [
-            this.model.get('category')._identifier
+            this.model.get('_identifier')
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
         ]}

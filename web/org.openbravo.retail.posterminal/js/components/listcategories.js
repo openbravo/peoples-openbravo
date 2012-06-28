@@ -10,7 +10,7 @@
     this._id = 'ListCategories';
 
     this.receipt = context.modelorder;
-    this.categories = new OB.MODEL.Collection(context.DataCategory);
+    this.categories = new OB.MODEL.Collection({ds: null});
 
     this.receipt.on('clear', function () {
       if (this.categories.length > 0){
@@ -42,7 +42,18 @@
     this.$el = this.component.$el;
     this.tableview = this.component.context.tableview;
 
-    // Exec
-    this.categories.exec();
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackCategories(dataCategories, me) {
+      if(dataCategories && dataCategories.length > 0){
+        me.categories.reset(dataCategories.models);
+      }else{
+        me.categories.reset();
+      }
+    }
+
+    OB.Dal.find(OB.Model.ProductCategory, null , successCallbackCategories, errorCallback, this);
   };
 }());

@@ -11,7 +11,7 @@
 
     this.receipt = this.options.modelorder;
 
-    this.categories = new OB.MODEL.Collection(this.options.DataCategory);
+    this.categories = new OB.MODEL.Collection({ds: null});
     this.products = new OB.MODEL.Collection({ds: null});
 
     this.products.on('click', function (model) {
@@ -47,8 +47,8 @@
                     },
                     renderLine: function (model) {
                       return (
-                        {kind: B.KindJQuery('option'), attr: {value: model.get('category').id}, content: [
-                            model.get('category')._identifier
+                        {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
+                            model.get('_identifier')
                         ]}
                       );
                     }
@@ -135,7 +135,20 @@
     this.productname = this.component.context.productname.$el;
     this.productcategory = this.component.context.productcategory.$el;
     this.tableview = this.component.context.tableview;
-    this.categories.exec({});
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackCategories(dataCategories, me) {
+      if(dataCategories && dataCategories.length > 0){
+        me.categories.reset(dataCategories.models);
+      }else{
+        me.categories.reset();
+      }
+    }
+
+    OB.Dal.find(OB.Model.ProductCategory, null , successCallbackCategories, errorCallback, this);
     }
   });
 }());

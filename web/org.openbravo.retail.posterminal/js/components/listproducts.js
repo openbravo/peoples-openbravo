@@ -69,11 +69,11 @@
       }else{
         me.products.reset();
       }
-      me.titleProd.text(category.get('category')._identifier);
+      me.titleProd.text(category.get('_identifier'));
     }
 
     if (category) {
-      criteria = {'productCategory': category.get('category').id};
+      criteria = {'productCategory': category.get('id')};
       OB.Dal.find(OB.Model.Product, criteria , successCallbackProducts, errorCallback);
     } else {
       this.products.reset();

@@ -16,7 +16,8 @@ public class Category extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select c as category, img.bindaryData as img "
+    return "select c.id as id, c.searchKey as searchKey, c.name as name, c.name as _identifier, "
+        + "img.bindaryData as obposImage "
         + "from ProductCategory as c left outer join c.obposImage img "
         + "where c.$readableCriteria and c.oBPOSIsCatalog = true "
         + "order by c.oBPOSPOSLine, c.name";
