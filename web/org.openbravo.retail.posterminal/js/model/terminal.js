@@ -65,7 +65,7 @@
       this.set('currency', null);
       $.ajax({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-        data: {'user': user, 'password': password, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
+        data: {'user': user, 'password': password, 'terminal': OB.POS.paramTerminal, 'Command': 'DEFAULT', 'IsAjaxCall': 1},
         type: 'POST',
         success: function (data, textStatus, jqXHR) {
           var pos, baseUrl;

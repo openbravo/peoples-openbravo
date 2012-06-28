@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -23,7 +25,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.LoginHandler;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -31,6 +35,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.FormAccess;
@@ -39,6 +44,7 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,9 +98,30 @@ public class POSLoginHandler extends LoginHandler {
 
       final String userId = (String) req.getSession().getAttribute("#Authenticated_user");
       Role role = getPOSRole(userId);
+
       JSONObject jsonMsg = new JSONObject();
+
       if (role != null) {
-        completeLogin(vars, role, userId);
+        final String terminalSearchKey = vars.getStringParameter("terminal");
+        OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+            OBPOSApplications.class);
+        qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
+        qApp.setFilterOnReadableOrganization(false);
+        qApp.setFilterOnReadableClients(false);
+        List<OBPOSApplications> apps = qApp.list();
+        if (apps.isEmpty()) {
+          log4j.error("Cannot find terminal " + terminalSearchKey);
+          errorLogin(res, vars, session, "OBPOS_NO_POS_TERMINAL_TITLE",
+              "OBPOS_NO_POS_TERMINAL_MSG", new ArrayList<String>() {
+                private static final long serialVersionUID = 1L;
+                {
+                  add(terminalSearchKey);
+                }
+              });
+          return;
+        }
+
+        completeLogin(vars, role, userId, apps.get(0));
 
         vars.setSessionValue("#AD_Role_ID", (String) DalUtil.getId(role));
         session.setLoginStatus(WEB_POS_SESSION);
@@ -102,21 +129,11 @@ public class POSLoginHandler extends LoginHandler {
 
         jsonMsg.put("showMessage", false);
       } else {
-        session.setSessionActive(false);
-        session.setLoginStatus("F");
-
-        vars.clearSession(true);
-
-        Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        String language = systemClient.getLanguage().getLanguage();
-
-        jsonMsg.put("showMessage", true);
-        jsonMsg.put("messageType", "Error");
-        jsonMsg.put("messageTitle", Utility.messageBD(this, "OBPOS_NO_POS_ROLE_TITLE", language));
-        jsonMsg.put("messageText", Utility.messageBD(this, "OBPOS_NO_POS_ROLE_MSG", language));
+        errorLogin(res, vars, session, "OBPOS_NO_POS_ROLE_TITLE", "OBPOS_NO_POS_ROLE_MSG",
+            new ArrayList<String>());
+        return;
       }
 
-      OBDal.getInstance().flush();
       final PrintWriter out = res.getWriter();
       out.print(jsonMsg.toString());
       out.close();
@@ -134,12 +151,39 @@ public class POSLoginHandler extends LoginHandler {
         log4j.error("Error setting error msg", e1);
       }
     } finally {
+      OBDal.getInstance().flush(); // flushing in admin mode
       OBContext.restorePreviousMode();
     }
   }
 
-  private void completeLogin(VariablesSecureApp vars, Role role, String userId)
-      throws ServletException {
+  private void errorLogin(HttpServletResponse res, VariablesSecureApp vars, Session session,
+      String title, String msg, List<String> arguments) throws JSONException, IOException {
+    session.setSessionActive(false);
+    session.setLoginStatus("F");
+    vars.clearSession(true);
+
+    Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    String language = systemClient.getLanguage().getLanguage();
+
+    String finalMsg = Utility.messageBD(this, msg, language);
+    int i = 0;
+    for (String arg : arguments) {
+      finalMsg = finalMsg.replace("%" + i, arg);
+      i++;
+    }
+
+    JSONObject jsonMsg = new JSONObject();
+    jsonMsg.put("showMessage", true);
+    jsonMsg.put("messageType", "Error");
+    jsonMsg.put("messageTitle", Utility.messageBD(this, title, language));
+    jsonMsg.put("messageText", finalMsg);
+    final PrintWriter out = res.getWriter();
+    out.print(jsonMsg.toString());
+    out.close();
+  }
+
+  private void completeLogin(VariablesSecureApp vars, Role role, String userId,
+      OBPOSApplications terminal) throws ServletException {
     String strLanguage = "";
     String strIsRTL = "";
     String strRole = "";
@@ -151,17 +195,10 @@ public class POSLoginHandler extends LoginHandler {
 
     strRole = role.getId();
 
-    strClient = (String) DalUtil.getId(role.getClient());
-
-    if (user.getDefaultOrganization() != null) {
-      // TODO: Organization should be taken from POS-Terminal
-      // Using now user default org till pos terminal one is used
-      strOrg = (String) DalUtil.getId(user.getDefaultOrganization());
-    } else {
-      strOrg = (String) DalUtil.getId(role.getOrganization());
-    }
-
-    strWarehouse = null; // XXX: should we set warehouse? POS terminal has one...
+    // terminal defines client, org and warehouse
+    strClient = (String) DalUtil.getId(terminal.getClient());
+    strOrg = (String) DalUtil.getId(terminal.getStore());
+    strWarehouse = (String) DalUtil.getId(terminal.getStore().getObretcoMWarehouse());
 
     if (user.getDefaultLanguage() != null) {
       strLanguage = user.getDefaultLanguage().getLanguage();
