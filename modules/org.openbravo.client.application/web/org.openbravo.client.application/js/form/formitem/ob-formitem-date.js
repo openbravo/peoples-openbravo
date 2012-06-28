@@ -250,7 +250,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     } else {
       savingWithShortcut = false;
     }
-    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving && !savingWithShortcut) {
+    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving && !savingWithShortcut && !this.grid._leavingCell) {
       return;
     }
     if (this.textField._textChanged) {

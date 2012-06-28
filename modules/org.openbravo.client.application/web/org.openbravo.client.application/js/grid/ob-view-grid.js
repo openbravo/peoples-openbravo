@@ -2055,11 +2055,13 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
+    this._leavingCell = true;
     if (newValue) {
       this.Super('cellEditEnd', [editCompletionEvent, newValue]);
     } else {
       this.Super('cellEditEnd', [editCompletionEvent]);
     }
+    delete this._leavingCell;
     // only needed for non picklist fields
     // as picklist fields will always have picked a value
     // note that focusItem updatevalue for picklist can result in extra datasource requests
