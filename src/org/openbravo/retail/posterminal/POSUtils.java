@@ -1,8 +1,14 @@
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 
 /**
  * @author iperdomo
@@ -24,5 +30,51 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
     return false;
+  }
+
+  public static OBPOSApplications getTerminal(String searchKey) {
+
+    try {
+      OBContext.setAdminMode();
+
+      OBQuery<OBPOSApplications> obq = OBDal.getInstance().createQuery(OBPOSApplications.class,
+          "searchKey = :value");
+      obq.setNamedParameter("value", searchKey);
+
+      List<OBPOSApplications> posApps = obq.list();
+
+      if (posApps.isEmpty()) {
+        return null;
+      }
+
+      return posApps.get(0);
+
+    } catch (Exception e) {
+      log.error("Error getting terminal id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
+  public static List<String> getStoreList(String searchKey) {
+    try {
+      OBContext.setAdminMode();
+
+      OBPOSApplications terminal = getTerminal(searchKey);
+
+      if (terminal == null) {
+        throw new OBException("No terminal with searchKey: " + searchKey);
+      }
+
+      return OBContext.getOBContext().getOrganizationStructureProvider()
+          .getParentList(terminal.getStore().getId(), true);
+
+    } catch (Exception e) {
+      log.error("Error getting store list: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
   }
 }
