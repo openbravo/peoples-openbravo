@@ -9,6 +9,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 
 /**
@@ -114,6 +115,48 @@ public class POSUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
+    return null;
+  }
+
+  public static PriceList getPriceListByTerminalId(String terminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      final List<String> storeList = getStoreListByTerminalId(terminalId);
+
+      for (String storeId : storeList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, storeId);
+        if (org.getObretcoPricelist() != null) {
+          return org.getObretcoPricelist();
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error getting PriceList by Terminal ID: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return null;
+  }
+
+  public static PriceList getPriceListByTerminal(String searchKey) {
+    try {
+      OBContext.setAdminMode();
+
+      final List<String> storeList = getStoreList(searchKey);
+
+      for (String storeId : storeList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, storeId);
+        if (org.getObretcoPricelist() != null) {
+          return org.getObretcoPricelist();
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error getting PriceList by Terminal value: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     return null;
   }
 
