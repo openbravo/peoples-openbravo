@@ -75,6 +75,7 @@ BEGIN --BODY
         SELECT c_tax_id, rate, name
         FROM c_tax
         WHERE parent_tax_id=p_tax_id
+          AND isactive = 'Y'
         ORDER BY line
     ) LOOP
       v_taxamt := C_GET_TAX_AMT_FROM_NET(cur_taxes.c_tax_id, p_netamt, p_AlternateTaxBaseAmt, p_StdPrecision, p_accumulatedtaxamt + v_summary_tax) ;

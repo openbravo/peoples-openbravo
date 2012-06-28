@@ -186,45 +186,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
           // Checking, why is not possible to get a tax
           if ("".equals(strCTaxID) && lineNetAmt.compareTo(BigDecimal.ZERO) != 0) {
-            if (!"".equals(data[i].accountId)) {
-              GLItem glItem = OBDal.getInstance().get(GLItem.class, data[i].accountId);
-
-              OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
-              obcriteria
-                  .add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, glItem.getTaxCategory()));
-              obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
-              List<TaxRate> taxRates = obcriteria.list();
-              if (taxRates.size() == 0) {
-                throw new OBException(String.format(OBMessageUtils
-                    .messageBD("NotExistTaxRateForTaxCategory"), glItem.getTaxCategory()
-                    .getIdentifier(), glItem.getIdentifier()));
-              } else {
-                Location location = OBDal.getInstance().get(Location.class,
-                    dataInvoice[0].cBpartnerLocationId);
-                throw new OBException(String.format(
-                    OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"), glItem.getIdentifier(),
-                    glItem.getTaxCategory().getIdentifier(), location.getIdentifier()));
-              }
-            } else if (!"".equals(data[i].productId)) {
-              Product product = OBDal.getInstance().get(Product.class, data[i].productId);
-
-              OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
-              obcriteria
-                  .add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, product.getTaxCategory()));
-              obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
-              List<TaxRate> taxRates = obcriteria.list();
-              if (taxRates.size() == 0) {
-                throw new OBException(String.format(OBMessageUtils
-                    .messageBD("NotExistTaxRateForTaxCategory"), product.getTaxCategory()
-                    .getIdentifier(), product.getIdentifier()));
-              } else {
-                Location location = OBDal.getInstance().get(Location.class,
-                    dataInvoice[0].cBpartnerLocationId);
-                throw new OBException(String.format(
-                    OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"), product.getIdentifier(),
-                    product.getTaxCategory().getIdentifier(), location.getIdentifier()));
-              }
-            }
+            throwTaxNotFoundException(data[i].accountId, data[i].productId,
+                dataInvoice[0].cBpartnerLocationId);
           }
 
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
@@ -307,6 +270,46 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private void throwTaxNotFoundException(String accountId, String productId,
+      String cBpartnerLocationId) throws OBException {
+    if (!"".equals(accountId)) {
+      GLItem glItem = OBDal.getInstance().get(GLItem.class, accountId);
+
+      OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+      obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, glItem.getTaxCategory()));
+      obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+      List<TaxRate> taxRates = obcriteria.list();
+      if (taxRates.size() == 0) {
+        throw new OBException(String.format(OBMessageUtils
+            .messageBD("NotExistTaxRateForTaxCategory"), glItem.getTaxCategory().getIdentifier(),
+            glItem.getIdentifier()));
+      } else {
+        Location location = OBDal.getInstance().get(Location.class, cBpartnerLocationId);
+        throw new OBException(String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"),
+            glItem.getIdentifier(), glItem.getTaxCategory().getIdentifier(),
+            location.getIdentifier()));
+      }
+    } else if (!"".equals(productId)) {
+      Product product = OBDal.getInstance().get(Product.class, productId);
+
+      OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
+      obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY, product.getTaxCategory()));
+      obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
+      List<TaxRate> taxRates = obcriteria.list();
+      if (taxRates.size() == 0) {
+        throw new OBException(String.format(OBMessageUtils
+            .messageBD("NotExistTaxRateForTaxCategory"), product.getTaxCategory().getIdentifier(),
+            product.getIdentifier()));
+      } else {
+        Location location = OBDal.getInstance().get(Location.class, cBpartnerLocationId);
+        throw new OBException(String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"),
+            product.getIdentifier(), product.getTaxCategory().getIdentifier(),
+            location.getIdentifier()));
+      }
+    }
+
   }
 
   public String getServletInfo() {

@@ -124,7 +124,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     LineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
     taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
-        +PricePrecision, BigDecimal.ROUND_HALF_UP);
+        PricePrecision, BigDecimal.ROUND_HALF_UP);
     StringBuffer resultado = new StringBuffer();
 
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");

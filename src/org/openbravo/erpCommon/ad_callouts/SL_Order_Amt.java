@@ -357,7 +357,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     // if net unit price changed then modify tax inclusive unit price
     if (strChanged.equals("inppriceactual")) {
-      BigDecimal tax = new BigDecimal(0);
+      BigDecimal tax = BigDecimal.ZERO;
       priceActual = new BigDecimal(strPriceActual.trim());
       log4j.debug("Net unit price results: " + resultado.toString());
 
