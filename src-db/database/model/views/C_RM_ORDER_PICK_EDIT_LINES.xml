@@ -4,14 +4,14 @@
 CASE
 WHEN rol.c_orderline_id IS NOT NULL THEN 'Y'
 ELSE 'N'
-END AS ob_selected, il.m_inoutline_id, rol.c_order_id AS returnorderid, i.documentno AS inoutno, i.movementdate, COALESCE(rol.m_product_id, il.m_product_id) AS m_product_id, COALESCE(rol.m_attributesetinstance_id, il.m_attributesetinstance_id) AS m_attributesetinstance_id, il.movementqty, COALESCE(rol.c_uom_id, il.c_uom_id) AS c_uom_id, (-1) * rol.qtyordered AS returned,
+END AS ob_selected, il.m_inoutline_id, rol.c_order_id AS returnorderid, i.documentno AS inoutno, i.movementdate, COALESCE(rol.m_product_id, il.m_product_id) AS m_product_id, COALESCE(rol.m_attributesetinstance_id, il.m_attributesetinstance_id) AS m_attributesetinstance_id, il.movementqty, COALESCE(rol.c_uom_id, il.c_uom_id) AS c_uom_id, (-1) * rol.qtyordered AS returned, 
 CASE
-WHEN rol.c_orderline_id IS NOT NULL THEN
+WHEN rol.c_orderline_id IS NOT NULL THEN 
 CASE rol.istaxincluded
 WHEN 'N' THEN rol.priceactual
 ELSE rol.gross_unit_price
 END
-ELSE
+ELSE 
 CASE pl.istaxincluded
 WHEN 'N' THEN ol.priceactual
 ELSE ol.gross_unit_price
