@@ -20,7 +20,7 @@ import org.hibernate.Query;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseReport extends JSONProcessSimple {

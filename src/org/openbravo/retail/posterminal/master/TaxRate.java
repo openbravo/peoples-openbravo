@@ -16,8 +16,8 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 
 public class TaxRate extends ProcessHQLQuery {
 

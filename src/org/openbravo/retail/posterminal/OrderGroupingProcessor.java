@@ -42,7 +42,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
 
 public class OrderGroupingProcessor {

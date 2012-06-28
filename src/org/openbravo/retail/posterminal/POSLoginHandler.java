@@ -44,7 +44,6 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

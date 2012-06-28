@@ -27,8 +27,6 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {

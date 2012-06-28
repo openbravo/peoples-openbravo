@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessCashClose implements JSONProcess {

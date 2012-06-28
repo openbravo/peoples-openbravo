@@ -19,7 +19,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSErrors;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class SaveOrderActionHandler extends BaseActionHandler {

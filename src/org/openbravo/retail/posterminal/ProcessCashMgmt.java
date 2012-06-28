@@ -24,7 +24,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessCashMgmt extends JSONProcessSimple {
