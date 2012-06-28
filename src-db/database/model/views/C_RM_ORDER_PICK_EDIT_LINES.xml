@@ -9,12 +9,12 @@ CASE
 WHEN rol.c_orderline_id IS NOT NULL THEN
 CASE rol.istaxincluded
 WHEN 'N' THEN rol.priceactual
-ELSE rol.priceactual
+ELSE rol.gross_unit_price
 END
 ELSE
 CASE pl.istaxincluded
 WHEN 'N' THEN ol.priceactual
-ELSE ol.priceactual
+ELSE ol.gross_unit_price
 END
 END AS priceactual, rol.c_return_reason_id, o.documentno AS orderno, COALESCE(rol.issotrx, i.issotrx) AS issotrx, (-1) * retol.returnedqty AS returnedqty, COALESCE(rol.c_bpartner_id, i.c_bpartner_id) AS c_bpartner_id, COALESCE(rol.c_tax_id, ol.c_tax_id) AS c_tax_id, pl.istaxincluded
 FROM m_inoutline il
