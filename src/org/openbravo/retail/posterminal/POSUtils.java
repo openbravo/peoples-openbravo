@@ -9,7 +9,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.retail.posconfig.org.openbravo.retail.posconfig.OBRETCOProductList;
+import org.openbravo.retail.config.org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 
 /**
