@@ -2462,10 +2462,11 @@ public abstract class AcctServer {
    * @return
    */
   boolean disableDocumentConfirmation() {
-    OBContext.setAdminMode();
-    String strClassname = "";
     C_DocType_ID = objectFieldProvider[0].getField("cDoctypeId");
-    loadDocumentType();
+    if ("".equals(DocumentType)) {
+      loadDocumentType();
+    }
+    OBContext.setAdminMode();
     try {
       for (int i = 0; i < m_as.length; i++) {
         StringBuffer whereClause = new StringBuffer();
@@ -2473,26 +2474,25 @@ public abstract class AcctServer {
         whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
             + m_as[i].m_C_AcctSchema_ID + "'");
         whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
-        whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
+        if (!"".equals(DocumentType)) {
+          whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
+        }
         final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
             AcctSchemaTableDocType.class, whereClause.toString());
         final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
-        if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
-          strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
-        if (strClassname.equals("")) {
-          final StringBuilder whereClause2 = new StringBuilder();
-          whereClause2.append(" as ast ");
-          whereClause2.append(" where ast.accountingSchema.id = '" + m_as[i].m_C_AcctSchema_ID
-              + "'");
-          whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
-          final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
-              AcctSchemaTable.class, whereClause2.toString());
-          final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
-          if (acctSchemaTables != null && acctSchemaTables.size() > 0
-              && acctSchemaTables.get(0).getCreatefactTemplate() != null)
-            strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
+        if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+            && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
+          return true;
         }
-        if (!strClassname.equals("")) {
+        final StringBuilder whereClause2 = new StringBuilder();
+        whereClause2.append(" as ast ");
+        whereClause2.append(" where ast.accountingSchema.id = '" + m_as[i].m_C_AcctSchema_ID + "'");
+        whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
+        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
+            AcctSchemaTable.class, whereClause2.toString());
+        final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
+        if (acctSchemaTables != null && acctSchemaTables.size() > 0
+            && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
           return true;
         }
       }
