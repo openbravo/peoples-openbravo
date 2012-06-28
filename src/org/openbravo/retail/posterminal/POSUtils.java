@@ -8,6 +8,8 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.retail.posconfig.org.openbravo.retail.posconfig.OBRETCOProductList;
 import org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSApplications;
 
 /**
@@ -74,6 +76,19 @@ public class POSUtils {
       log.error("Error getting store list: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
+  public static OBRETCOProductList getProductListFromRetailOrganizations(
+      List<String> lstOrganizationsIds) {
+    for (String curOrg : lstOrganizationsIds) {
+      Organization org = OBDal.getInstance().get(Organization.class, curOrg);
+      if ("S".equals(org.getOBRETCORetailOrgType()) || "G".equals(org.getOBRETCORetailOrgType())) {
+        if (org.getObretcoProductlist() != null) {
+          return org.getObretcoProductlist();
+        }
+      }
     }
     return null;
   }

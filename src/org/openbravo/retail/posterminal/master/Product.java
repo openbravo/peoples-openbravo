@@ -8,16 +8,29 @@
  */
 package org.openbravo.retail.posterminal.master;
 
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.retail.posconfig.org.openbravo.retail.posconfig.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Product extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select p.id as id, p.name as _identifier, p.taxCategory.id as taxCategory, p.productCategory.id as productCategory, p.obposScale as obposScale, p.uOM.id as uOM, p.uPCEAN as uPCEAN, img.bindaryData as img "
-        + "from Product p left outer join p.image img "
-        + "where p.$readableClientCriteria and p.$naturalOrgCriteria and p.obposCatalog = true order by p.name";
+    String terminalSearchKey = (String) jsonsent.get("terminal");
+    List<String> lstOrganizations = POSUtils.getStoreList(terminalSearchKey);
+
+    OBRETCOProductList productList = POSUtils
+        .getProductListFromRetailOrganizations(lstOrganizations);
+    if (productList != null) {
+      return "select pli.product.id as id, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
+          + "from OBRETCO_Prol_Product pli left outer join pli.product.image img "
+          + "where pli.obretcoProductlist = '" + productList.getId() + "'";
+    } else {
+      throw new JSONException("Product list not found");
+    }
   }
 }
