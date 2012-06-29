@@ -249,7 +249,7 @@
           TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
           C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
           C_INVOICELINE.AD_ORG_ID AS TRORGID,
-          (CASE WHEN (c_invoiceline.m_inoutline_id='' OR c_invoiceline.m_inoutline_id is null) AND  m_product.isstocked='Y'and m_product.producttype='I' THEN 1 ELSE 0 END) COSTCALCULATED, 
+          (CASE WHEN (c_invoiceline.m_inoutline_id='' OR c_invoiceline.m_inoutline_id is null) AND  m_product.isstocked='Y'and m_product.producttype='I' THEN 1 ELSE 0 END) AS COSTCALCULATED, 
           (CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE((cost_withshipment * amtinv /amt_withshipment), 0 ) ELSE (M_GET_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, NULL)*C_INVOICELINE.QTYINVOICED) END) AS COST  
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
                      left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
@@ -260,9 +260,9 @@
                          left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                          left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                          left join (
-                    select SUM(CASE WHEN c_invoiceline.m_inoutline_id='' THEN 0 WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) amt_withshipment, 
+                    select SUM(CASE WHEN c_invoiceline.m_inoutline_id='' THEN 0 WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) AS amt_withshipment, 
                         SUM (linenetamt) as amtinv ,
-                        SUM (transactioncost*qtyinvoiced/abs(movementqty)) cost_withshipment, c_invoiceline_id 
+                        SUM (transactioncost*qtyinvoiced/abs(movementqty)) AS cost_withshipment, c_invoiceline_id 
                     FROM c_invoiceline left join m_transaction on c_invoiceline.m_inoutline_id = m_transaction.m_inoutline_id inner join c_invoice on c_invoiceline.c_invoice_id = c_invoice.c_invoice_id
                     WHERE c_invoice.issotrx = 'Y'
                     GROUP BY c_invoiceline_id) costs on C_INVOICELINE.c_invoiceline_id = costs.c_invoiceline_id ,
