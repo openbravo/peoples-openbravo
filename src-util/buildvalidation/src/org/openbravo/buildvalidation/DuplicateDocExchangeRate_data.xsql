@@ -173,12 +173,12 @@
     <Parameter name="adAlertRuleId" />
     <Parameter name="role" />
   </SqlMethod>
-  <SqlMethod name="existAPRMbasetables" type="preparedStatement" return="boolean">
-    <SqlMethodComment>Check if the FIN_Finacc_Transaction table exist</SqlMethodComment>
+  <SqlMethod name="existConvRateDoctable" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Check if the C_Conversion_Rate_Document table exist</SqlMethodComment>
     <Sql><![CDATA[
        SELECT count(*) AS EXISTING
        FROM ad_table
-       WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
+       WHERE ad_table_id = 'FF808181308EA42301308FB5F7BC0049'
       ]]>
     </Sql>
   </SqlMethod>

@@ -54,7 +54,8 @@ public class DuplicateDocExchangeRate extends BuildValidation {
     ArrayList<String> errors = new ArrayList<String>();
     try {
       // Prevent error when upgrading from a pure 2.50
-      if (DuplicateDocExchangeRateData.existAPRMbasetables(cp)) {
+      // Check if APRM tables and C_Conversion_Rate_Document table exist
+      if (DuplicateDocExchangeRateData.existConvRateDoctable(cp)) {
         
         String errorMessage = "It is not allowed to have the multiple exchange rates defined for the same pair of currencies (Currency From -> Currency To) in the same %s. " +
             "To fix this problem in your instance, you can know the duplicated entries by reviewing Alerts in your system. " + 
