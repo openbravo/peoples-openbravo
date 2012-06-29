@@ -87,7 +87,7 @@ public class POSUtils {
       }
 
       return OBContext.getOBContext().getOrganizationStructureProvider()
-          .getParentList(terminal.getStore().getId(), true);
+          .getParentList(terminal.getOrganization().getId(), true);
 
     } catch (Exception e) {
       log.error("Error getting store list: " + e.getMessage(), e);
@@ -108,7 +108,7 @@ public class POSUtils {
       }
 
       return OBContext.getOBContext().getOrganizationStructureProvider()
-          .getParentList(terminal.getStore().getId(), true);
+          .getParentList(terminal.getOrganization().getId(), true);
 
     } catch (Exception e) {
       log.error("Error getting store list by terminal id: " + e.getMessage(), e);
