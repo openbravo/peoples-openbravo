@@ -11,7 +11,7 @@
      'id',
      'searchKey',
      'name',
-     'obposImage',
+     'img',
      '_identifier',
      '_idx'
     ],
@@ -19,13 +19,13 @@
      'id': 'm_product_category_id',
      'searchKey': 'value',
      'name': 'name',
-     'obposImage': 'em_obpos_image_id',
+     'img': 'ad_image_id',
      '_identifier': '_identifier',
      '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_product_category (m_product_category_id TEXT PRIMARY KEY , value TEXT , name TEXT , em_obpos_image_id TEXT , _identifier TEXT , _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS m_product_category (m_product_category_id TEXT PRIMARY KEY , value TEXT , name TEXT , ad_image_id TEXT , _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product_category',
-    insertStatement: 'INSERT INTO m_product_category(m_product_category_id, value, name, em_obpos_image_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO m_product_category(m_product_category_id, value, name, ad_image_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)',
     updateStatement: ''
   });
 
