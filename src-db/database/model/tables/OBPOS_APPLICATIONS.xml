@@ -81,10 +81,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ORG_ID_STORE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="ORDERDOCNO_PREFIX" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -112,9 +108,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPLICATIONS_GLITEM_TR">
         <reference local="C_GLITEM_TRANSFER_ID" foreign="C_GLITEM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="OBPOS_APPLICATIONS_ORG">
-        <reference local="AD_ORG_ID_STORE" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPLICATIONS_RECON">
         <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
