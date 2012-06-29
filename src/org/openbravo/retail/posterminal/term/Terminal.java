@@ -28,19 +28,31 @@ public class Terminal extends ProcessHQLQuery {
         .getPriceListByTerminal(jsonsent.getJSONObject("parameters").getJSONObject("terminal")
             .getString("value"));
 
-    return "select pos.id as id, pos.store.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.store.obretcoCBpLocation.id as partnerAddress, "
-        + " pos.organization.id as organization, pos.organization.name as organization"
-        + DalUtil.FIELDSEPARATOR
-        + JsonConstants.IDENTIFIER
-        + ", pos.client.id as client, pos.client.name as client"
-        + DalUtil.FIELDSEPARATOR
-        + JsonConstants.IDENTIFIER
+    return "select pos.id as id, pos.store.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.store.obretcoCBpLocation.id as partnerAddress, "
+        + " pos.organization.id as organization, pos.organization.name as "
+        + getIdentifierAlias("organization")
+        + ", pos.client.id as client, pos.client.name as "
+        + getIdentifierAlias("client")
         + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
         + "'"
         + pricesList.getId()
         + "' as priceList, '"
         + pricesList.getCurrency().getId()
-        + "' as currency "
+        + "' as currency, "
+        + "'"
+        + pricesList.getCurrency().getIdentifier()
+        + "' as "
+        + getIdentifierAlias("currency")
+        + ", "
+        + "pos.store.id as store, "
+        + "pos.store.name as "
+        + getIdentifierAlias("store")
+        + ", pos.documentType.id as documentType, pos.documentType.name as "
+        + getIdentifierAlias("documentType")
         + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
+  }
+
+  private String getIdentifierAlias(String propertyName) {
+    return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }
 }
