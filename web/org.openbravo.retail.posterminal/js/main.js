@@ -77,7 +77,9 @@
               createWindow();
             }
           });
+
           ds.load();
+
           queue[model.prototype.source] = false;
         });
       } else {

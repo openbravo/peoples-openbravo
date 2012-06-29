@@ -60,6 +60,26 @@
 
   // Sales.Order Model.
   OB.MODEL.Order = Backbone.Model.extend({
+    modelName: 'Order',
+    tableName: 'c_order',
+    entityName: 'Order',
+    source: 'org.openbravo.model.common.order.Order',
+    properties: [
+      'id',
+      'json',
+      'hasbeenpaid',
+      'isbeingprocessed'
+    ],
+    propertyMap: {
+      'id': 'c_order_id',
+      'json': 'json',
+      'hasbeenpaid': 'hasbeenpaid',
+      'isbeingprocessed': 'isbeingprocessed'
+    },
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_order (c_order_id TEXT PRIMARY KEY, json CLOB, hasbeenpaid TEXT, isbeingprocessed TEXT)',
+    dropStatement: 'DROP TABLE IF EXISTS c_order',
+    insertStatement: 'INSERT INTO c_order(c_order_id, json, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?)',
+    local: true,
     _id: 'modelorder',
     initialize : function () {
       this.set('client', null);
@@ -86,11 +106,20 @@
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
     },
-    
+
+    save: function() {
+      if(this.attributes.json) {
+        delete this.attributes.json; // BINGO!!!
+      }
+      this.set('json', JSON.stringify(this.toJSON()));
+      OB.Dal.save(this, function(){console.log('success');}, function(){console.error(arguments);});
+    },
+
     calculateTaxes : function (callback) {
       if (callback) {
         callback();
       }
+      this.save();
     },
 
     getTotal: function () {
@@ -272,6 +301,7 @@
         }
         this.adjustPayment();
       }
+      this.save();
     },
 
     deleteLine:function (line) {
@@ -291,6 +321,7 @@
         }
       });
       this.adjustPayment();
+      this.save();
     },
 
     addProduct: function (p) {
@@ -316,6 +347,7 @@
           this.createLine(p, 1);
         }
       }
+      this.save();
     },
 
     createLine: function (p, units) {
@@ -362,15 +394,18 @@
           me.set('undo', null);
         }
       });
+      this.save();
     },
 
     setOrderTypeReturn: function () {
       this.set('documentType', OB.POS.modelterminal.get('terminal').documentTypeForReturns);
       this.set('orderType', 1); // 0: Sales order, 1: Return order
+      this.save();
     },
     
     setOrderInvoice: function () {
       this.set('generateInvoice', true);
+      this.save();
     },
     
     adjustPayment: function () {
@@ -450,6 +485,7 @@
       var payments = this.get('payments');
       payments.remove(payment);
       this.adjustPayment();
+      this.save();
     },
     serializeToJSON: function () {
       var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));

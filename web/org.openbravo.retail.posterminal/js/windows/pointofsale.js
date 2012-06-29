@@ -116,5 +116,5 @@
   OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
 
   // Register required models/data
-  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory];
+  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.MODEL.Order];
 }());

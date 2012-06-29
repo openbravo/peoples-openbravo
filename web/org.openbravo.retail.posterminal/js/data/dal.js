@@ -132,7 +132,7 @@
         sql = '',
         params = null,
         firstParam = true,
-        uuid;
+        uuid, propertyName;
 
     if (db) {
       // websql
@@ -144,8 +144,8 @@
         // UPDATE
         sql = 'UPDATE ' + tableName + ' SET ';
 
-        _.each(_.keys(model.attributes), function (attr) {
-
+        _.each(_.keys(modelProto.properties), function (attr) {
+          propertyName = modelProto.properties[attr];
           if (attr === 'id') {
             return;
           }
@@ -156,19 +156,22 @@
           } else {
             sql = sql + ', ';
           }
+          
 
-          sql = sql + modelProto.propertyMap[attr] + ' = ? ';
+          sql = sql + modelProto.propertyMap[propertyName] + ' = ? ';
 
-          params.push(model.attributes[attr]);
+          params.push(model.get(propertyName));
         });
 
         sql = sql + ' WHERE ' + tableName + '_id = ?';
-        params.push(model.attributes.c_tax_id);
+        params.push(model.get('id'));
       } else {
         // INSERT
         params = [];
         sql = modelProto.insertStatement;
-        params.push(get_uuid());
+        uuid = get_uuid();
+        params.push(uuid);
+        model.set('id', uuid);
 
         _.each(modelProto.properties, function (property) {
           if ('id' === property) {
@@ -189,6 +192,36 @@
     }
   }
 
+  function remove(model, success, error) {
+    var modelProto = model.constructor.prototype,
+        tableName = modelProto.tableName,
+        sql = '',
+        params = [];
+
+    if (db) {
+      // websql
+      if (!tableName) {
+        throw 'Missing table name in model';
+      }
+
+      if (model.get('id')) {
+        // UPDATE
+        sql = 'DELETE FROM ' + tableName + ' WHERE '+modelProto.propertyMap.id+' = ? ';
+        params.push(model.get('id'));
+      } else {
+        throw 'An object without id cannot be deleted';
+      }
+
+      //console.log(sql);
+      //console.log(params);
+      db.transaction(function (tx) {
+        tx.executeSql(sql, params, success, error);
+      });
+    } else {
+      throw 'Not implemented';
+    }
+  }
+  
   function get(model, id, success, error) {
     var tableName = model.prototype.tableName,
         sql = 'SELECT * FROM ' + tableName + ' WHERE ' + tableName + '_id = ?';
@@ -221,9 +254,11 @@
         throw 'initialData must be passed as parameter';
       }
 
-      db.transaction(function (tx) {
-        tx.executeSql(model.prototype.dropStatement);
-      }, error);
+      if(!model.prototype.local) {
+        db.transaction(function (tx) {
+          tx.executeSql(model.prototype.dropStatement);
+        }, error);
+      }
 
       db.transaction(function (tx) {
         tx.executeSql(model.prototype.createStatement);
@@ -276,6 +311,7 @@
     save: save,
     find: find,
     get: get,
+    remove: remove,
     initCache: initCache
   };
 }(OB && OB.DATA && OB.DATA.OfflineDB));
