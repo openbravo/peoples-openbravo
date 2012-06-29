@@ -2,7 +2,7 @@
 
 (function (d) {
 
-  var dbSize = 10 * 1024 * 1024,
+  var dbSize = 50 * 1024 * 1024,
       undef, wsql = window.openDatabase !== undef,
       db = d || (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize)),
       OP;
