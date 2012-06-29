@@ -196,8 +196,8 @@ public class POSLoginHandler extends LoginHandler {
 
     // terminal defines client, org and warehouse
     strClient = (String) DalUtil.getId(terminal.getClient());
-    strOrg = (String) DalUtil.getId(terminal.getStore());
-    strWarehouse = (String) DalUtil.getId(terminal.getStore().getObretcoMWarehouse());
+    strOrg = (String) DalUtil.getId(terminal.getOrganization());
+    strWarehouse = (String) DalUtil.getId(terminal.getOrganization().getObretcoMWarehouse());
 
     if (user.getDefaultLanguage() != null) {
       strLanguage = user.getDefaultLanguage().getLanguage();
