@@ -126,6 +126,9 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="ORDERDOCNO_PREFIX"/>
       </unique>
+      <unique name="OBPOS_VALUE_UN">
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="OBPOS_APP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
