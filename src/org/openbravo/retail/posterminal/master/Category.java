@@ -8,8 +8,6 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.util.List;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -20,10 +18,12 @@ public class Category extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    final List<String> lstOrganizations = POSUtils.getStoreListByTerminalId(jsonsent
+
+    final OBRETCOProductList productList = POSUtils.getProductListByTerminalId(jsonsent
         .getString("terminal"));
-    final OBRETCOProductList productList = POSUtils
-        .getProductListFromRetailOrganizations(lstOrganizations);
+
+    // final PriceList priceList =
+    // POSUtils.getPriceListByTerminalId(jsonsent.getString("terminal"));
 
     if (productList != null) {
       return "select distinct pli.product.productCategory.id as id, pli.product.productCategory.searchKey as searchKey,pli.product.productCategory.name as name, pli.product.productCategory.name as _identifier, img.bindaryData as img "

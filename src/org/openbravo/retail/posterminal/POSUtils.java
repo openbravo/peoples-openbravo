@@ -160,16 +160,26 @@ public class POSUtils {
     return null;
   }
 
-  public static OBRETCOProductList getProductListFromRetailOrganizations(
-      List<String> lstOrganizationsIds) {
-    for (String curOrg : lstOrganizationsIds) {
-      Organization org = OBDal.getInstance().get(Organization.class, curOrg);
-      if ("S".equals(org.getOBRETCORetailOrgType()) || "G".equals(org.getOBRETCORetailOrgType())) {
-        if (org.getObretcoProductlist() != null) {
-          return org.getObretcoProductlist();
+  public static OBRETCOProductList getProductListByTerminalId(String terminalId) {
+    try {
+      OBContext.setAdminMode();
+
+      final List<String> storeList = getStoreListByTerminalId(terminalId);
+
+      for (String orgId : storeList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+        if ("S".equals(org.getOBRETCORetailOrgType()) || "G".equals(org.getOBRETCORetailOrgType())) {
+          if (org.getObretcoProductlist() != null) {
+            return org.getObretcoProductlist();
+          }
         }
       }
+    } catch (Exception e) {
+      log.error("Error getting ProductList by Terminal value: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     return null;
   }
 }
