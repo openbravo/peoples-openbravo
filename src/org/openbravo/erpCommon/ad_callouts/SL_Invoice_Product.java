@@ -38,6 +38,7 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -129,14 +130,22 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Invoice_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
+    if (OBDal.getInstance().get(Invoice.class, strCInvoiceID).getPriceList().isPriceIncludesTax()) {
+      resultado.append("new Array(\"inpgrossUnitPrice\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+
+    } else {
+      resultado.append("new Array(\"inppricestd\", "
+          + (strPriceStd.equals("") ? "\"\"" : strPriceStd) + "),");
+      resultado.append("new Array(\"inppriceactual\", "
+          + (strPriceActual.equals("") ? "\"\"" : strPriceActual) + "),");
+
+    }
+
     resultado.append("new Array(\"inppricelist\", "
         + (strPriceList.equals("") ? "\"\"" : strPriceList) + "),");
     resultado.append("new Array(\"inppricelimit\", "
         + (strPriceLimit.equals("") ? "\"\"" : strPriceLimit) + "),");
-    resultado.append("new Array(\"inppricestd\", "
-        + (strPriceStd.equals("") ? "\"\"" : strPriceStd) + "),");
-    resultado.append("new Array(\"inppriceactual\", "
-        + (strPriceActual.equals("") ? "\"\"" : strPriceActual) + "),");
     PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
     if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
       PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);

@@ -29,12 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -137,14 +139,19 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    resultado.append("new Array(\"inppricelist\", "
-        + (strPriceList.equals("") ? "0" : strPriceList) + "),");
-    resultado.append("new Array(\"inppricelimit\", "
-        + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
-    resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
-        + "),");
-    resultado.append("new Array(\"inppriceactual\", "
-        + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+    if (OBDal.getInstance().get(Order.class, strCOrderId).getPriceList().isPriceIncludesTax()) {
+      resultado.append("new Array(\"inpgrossUnitPrice\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+    } else {
+      resultado.append("new Array(\"inppricelist\", "
+          + (strPriceList.equals("") ? "0" : strPriceList) + "),");
+      resultado.append("new Array(\"inppricelimit\", "
+          + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
+      resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
+          + "),");
+      resultado.append("new Array(\"inppriceactual\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+    }
     if (!"".equals(strCurrency)) {
       resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");
     }

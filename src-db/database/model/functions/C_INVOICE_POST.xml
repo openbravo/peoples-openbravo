@@ -84,6 +84,7 @@
   v_BPartner_User_ID VARCHAR2(32);
   v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
   v_Posted C_INVOICE.Posted%TYPE;
+  v_istaxincluded CHAR(1);
   --Added by P.SAROBE
   v_documentno_Settlement VARCHAR2(40);
   v_dateSettlement DATE;
@@ -217,15 +218,19 @@ BEGIN --BODY
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
-      i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn
+      i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn,
+      pl.istaxincluded
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID, v_isreturndoctype
-  FROM C_INVOICE i JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
+      v_C_Project_Id, cWithHoldID, v_isreturndoctype,
+      v_istaxincluded
+  FROM C_INVOICE i
+        JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
+        JOIN m_pricelist pl ON i.m_pricelist_id = pl.m_pricelist_id
   WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
   DBMS_OUTPUT.PUT_LINE('Invoice_ID=' || v_Record_ID ||', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID) ;
   /**
@@ -1219,6 +1224,7 @@ BEGIN --BODY
       Cur_MultiTax RECORD;
       xTaxBaseAmt NUMBER:=0;
       xTaxAmt NUMBER:=0;
+      v_taxnorecalculable NUMBER:=0;
       v_PreviousTaxAmt NUMBER:=0;
       HeaderNotAdded BOOLEAN:=TRUE;
       v_LineNo NUMBER:=0;
@@ -1250,14 +1256,15 @@ BEGIN --BODY
               COALESCE(SUM(l.LineNetAmt),0) + COALESCE(SUM(l.ChargeAmt), 0) AS LineNetAmt,
               COALESCE(SUM(l.TaxBaseAmt), 0) + COALESCE(SUM(l.ChargeAmt), 0) AS TaxBaseAmt,
               COALESCE(SUM(i.ChargeAmt), 0) AS HeaderNet,
-              t.Rate, t.IsSummary, c.StdPrecision, t.Cascade, t.BaseAmount
+              t.Rate, t.IsSummary, c.StdPrecision, t.Cascade, t.BaseAmount,
+              l.line_gross_amount
          FROM C_INVOICE i, C_INVOICELINE l, C_TAX t, C_CURRENCY c
          WHERE i.C_Invoice_ID=l.C_Invoice_ID
            AND i.C_Invoice_ID=v_Record_ID -- Parameter
            AND l.C_Tax_ID=t.C_Tax_ID
            AND i.C_Currency_ID=c.C_Currency_ID
          GROUP BY l.C_InvoiceLine_ID, l.C_Tax_ID,i.IsTaxIncluded, t.Rate, t.IsSummary,
-              c.StdPrecision, t.Cascade, t.BaseAmount
+              c.StdPrecision, t.Cascade, t.BaseAmount, l.line_gross_amount
          ORDER BY 4 DESC
         )
       LOOP
@@ -1268,6 +1275,10 @@ BEGIN --BODY
           xTaxBaseAmt:=xTaxBaseAmt + Cur_Tax.HeaderNet;
         END IF;
         C_INVOICELINETAX_INSERT(v_Org_ID, v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
+        IF (v_istaxincluded = 'Y') THEN
+          C_INVOICELINETAX_ROUNDING(cur_tax.c_invoiceline_id, cur_tax.line_gross_amount, cur_tax.linenetamt);
+        END IF;
+
       END LOOP; -- Insert New Taxes
       -- Update Header
       IF (v_IsSOTrx = 'N') THEN
@@ -1275,15 +1286,28 @@ BEGIN --BODY
       ELSE
         withholdamount:=0;
       END IF;
-      SELECT COALESCE(SUM(TAXAMT), 0) INTO v_GrandTotal
-      FROM C_INVOICETAX
-      WHERE C_INVOICE_ID = v_Record_ID;
-      v_GrandTotal:=v_GrandTotal+ v_TotalLines;
+
+      IF (v_istaxincluded = 'Y') THEN
+        SELECT COALESCE(SUM(TaxAmt),0) INTO v_TaxNoRecalculable
+        FROM C_INVOICETAX
+        WHERE C_Invoice_ID = v_Record_ID
+          AND Recalculate = 'N';
+        SELECT COALESCE(SUM(line_gross_amount), 0) INTO v_grandtotal
+        FROM c_invoiceline
+        WHERE c_invoice_id = v_record_id;
+        v_grandtotal := v_grandtotal + v_taxnorecalculable;
+      ELSE
+        SELECT COALESCE(SUM(TAXAMT), 0) INTO v_GrandTotal
+        FROM C_INVOICETAX
+        WHERE C_INVOICE_ID = v_Record_ID;
+        v_GrandTotal:=v_GrandTotal+ v_TotalLines;
+      END IF;
       UPDATE C_INVOICE
       SET TotalLines=v_TotalLines,
           GrandTotal=v_GrandTotal,
           withholdingamount = withholdamount
       WHERE C_Invoice_ID=v_Record_ID;
+      C_INVOICETAX_ROUNDING(v_Record_ID, v_GrandTotal, v_TotalLines);
       DBMS_OUTPUT.PUT_LINE('withholdingamount=' || withholdamount);
       DBMS_OUTPUT.PUT_LINE('GrandTotal=' || v_GrandTotal) ;
     END; -- Calculate Tax and Totals

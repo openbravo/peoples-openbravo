@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -40,6 +41,9 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -173,7 +177,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     } else if (vars.commandIn("REFRESH_INVOICES", "REFRESH_SHIPMENTS")) {
       final String strBPartner = vars.getStringParameter("inpcBpartnerId");
       final String strWindowId = vars.getStringParameter("inpWindowId");
-      printPageInvoiceCombo(response, vars, strBPartner, strWindowId);
+      final String strKey = vars.getRequiredStringParameter("inpKey");
+      printPageInvoiceCombo(response, vars, strBPartner, strWindowId, strKey);
     } else if (vars.commandIn("SAVE")) {
       final String strProcessId = vars.getStringParameter("inpProcessId");
       final String strKey = vars.getRequiredStringParameter("inpKey");
@@ -451,6 +456,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     XmlDocument xmlDocument;
     String strPO = vars.getStringParameter("inpPurchaseOrder");
     String strShipment = vars.getStringParameter("inpShipmentReciept");
+    Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
+    String strIsTaxIncluded = invoice.getPriceList().isPriceIncludesTax() ? "Y" : "N";
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     if (vars.commandIn("FIND_PO"))
       strShipment = "";
@@ -490,20 +497,24 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (isSOTrx.equals("Y"))
             data = CreateFromInvoiceData.selectFromShipmentSOTrx(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
+                strIsTaxIncluded);
           else
             data = CreateFromInvoiceData.selectFromShipment(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
+                strIsTaxIncluded);
         } else {
           if (isSOTrx.equals("Y"))
             data = CreateFromInvoiceData.selectFromShipmentTrlSOTrx(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
+                strIsTaxIncluded);
           else
             data = CreateFromInvoiceData.selectFromShipmentTrl(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
+                strIsTaxIncluded);
         }
       }
     }
@@ -533,31 +544,27 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromInvoiceData[0]);
     } else {
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData(
-            "reportShipmentReciept",
-            "liststructure",
-            CreateFromInvoiceData.selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
+        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
+            .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
-            CreateFromInvoiceData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner,
+                strIsTaxIncluded));
+        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
+            .selectFromPOSOTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner,
+                strIsTaxIncluded));
       } else {
-        xmlDocument.setData(
-            "reportShipmentReciept",
-            "liststructure",
-            CreateFromInvoiceData.selectFromShipmentCombo(this, vars.getLanguage(),
+        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
+            .selectFromShipmentCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
-            CreateFromInvoiceData.selectFromPOCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner,
+                strIsTaxIncluded));
+        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
+            .selectFromPOCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner,
+                strIsTaxIncluded));
       }
     }
     {
@@ -747,7 +754,7 @@ public class CreateFrom extends HttpSecureAppServlet {
   }
 
   void printPageInvoiceCombo(HttpServletResponse response, VariablesSecureApp vars,
-      String strBPartner, String strWindowId) throws IOException, ServletException {
+      String strBPartner, String strWindowId, String strKey) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Refresh Invoices");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -783,28 +790,31 @@ public class CreateFrom extends HttpSecureAppServlet {
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       } else { // Loading the Combos in the Invoice's CreateFrom
+        Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
+        String strIsTaxIncluded = invoice.getPriceList().isPriceIncludesTax() ? "Y" : "N";
+
         if (isSOTrx.equals("Y")) {
-          strArray = Utility.arrayEntradaSimple(
-              "arrDatos",
-              CreateFromInvoiceData.selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
+          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
+              .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
-                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple(
-              "arrDatos2",
-              CreateFromInvoiceData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
+                  strIsTaxIncluded));
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
+              .selectFromPOSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
-                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
+                  strIsTaxIncluded));
         } else {
-          strArray = Utility.arrayEntradaSimple(
-              "arrDatos",
-              CreateFromInvoiceData.selectFromShipmentCombo(this, vars.getLanguage(),
+          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
+              .selectFromShipmentCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
-                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple(
-              "arrDatos2",
-              CreateFromInvoiceData.selectFromPOCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
+                  strIsTaxIncluded));
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
+              .selectFromPOCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
-                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
+                  strIsTaxIncluded));
         }
       }
     }
@@ -1450,7 +1460,11 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId",
         IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+    final String strIsTaxIncluded = OBDal.getInstance().get(PriceList.class, strPriceList)
+        .isPriceIncludesTax() ? "Y" : "N";
+
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
+    String priceGross = "0";
     CreateFromInvoiceData[] data = null;
     CreateFromInvoiceData[] dataAux = null;
     OBError myMessage = null;
@@ -1487,6 +1501,7 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
             final String strSequence = SequenceIdData.getUUID();
+            BigDecimal qty = new BigDecimal(data[i].id);
             CreateFromInvoiceData[] price = null;
             String C_Tax_ID = "";
             if (data[i].cOrderlineId.equals(""))
@@ -1511,6 +1526,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 priceLimit = price[0].pricelimit;
                 priceStd = price[0].pricestd;
                 priceActual = price[0].priceactual;
+                priceGross = price[0].grossUnitPrice;
               }
               if (isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")) {
                 priceActual = priceStd;
@@ -1520,32 +1536,46 @@ public class CreateFrom extends HttpSecureAppServlet {
               price = CreateFromInvoiceData.selectBOM(conn, this, strDateInvoiced, strBPartner,
                   data[i].mProductId, strPriceListVersion);
               if (price != null && price.length > 0) {
-                priceList = price[0].pricelist;
-                priceLimit = price[0].pricelimit;
-                priceStd = price[0].pricestd;
-                priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
-                    strBPartner, data[i].mProductId, priceStd, data[i].quantityorder, strPriceList,
-                    strKey);
+                if ("N".equals(strIsTaxIncluded)) {
+                  priceList = price[0].pricelist;
+                  priceLimit = price[0].pricelimit;
+                  priceStd = price[0].pricestd;
+                  priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+                      strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
+                      strPriceList, strKey);
+                } else {
+                  priceList = price[0].pricelist;
+                  priceLimit = price[0].pricelimit;
+                  priceGross = price[0].pricestd;
+                  BigDecimal grossAmount = new BigDecimal(priceGross).multiply(qty);
+                  final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(C_Tax_ID,
+                      grossAmount, curPrecision, grossAmount, qty);
+                  priceActual = netUnitPrice.toString();
+                }
               }
               price = null;
             }
-            BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(
-                data[i].id));
-            LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+            BigDecimal lineNetAmt = (new BigDecimal(priceActual)).multiply(qty);
+            lineNetAmt = lineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+            BigDecimal grossAmt = BigDecimal.ZERO;
+            if ("Y".equals(strIsTaxIncluded)) {
+              grossAmt = new BigDecimal(priceGross).multiply(qty);
+              grossAmt = grossAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+            }
 
             String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
             BigDecimal taxRate = (strTaxRate.equals("") ? new BigDecimal(1) : new BigDecimal(
                 strTaxRate));
-            BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+            BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
                 BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
               final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                   strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
-                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
+                  priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, LineNetAmt.toString());
+                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString());
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
