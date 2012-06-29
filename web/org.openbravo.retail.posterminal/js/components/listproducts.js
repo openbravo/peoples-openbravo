@@ -43,7 +43,6 @@
     var criteria, me = this;
 
     function successCallbackPrices(dataPrices, dataProducts) {
-      debugger;
       if(dataPrices && dataPrices.length > 0){
         _.each(dataPrices.models, function(currentPrice){
           if(dataProducts.get(currentPrice.get('product'))){
@@ -72,7 +71,6 @@
     }
 
     function successCallbackProducts(dataProducts) {
-      debugger;
       if(dataProducts && dataProducts.length > 0){
         criteria = {'priceListVersion' : OB.POS.modelterminal.get('pricelistversion').id};
         OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
