@@ -501,7 +501,7 @@
       var order = new OB.MODEL.Order();
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
-      order.set('organization', OB.POS.modelterminal.get('terminal').organization);
+      order.set('organization', OB.POS.modelterminal.get('terminal').store);
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);

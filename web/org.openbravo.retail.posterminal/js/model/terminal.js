@@ -226,7 +226,7 @@
     loadLocation: function () {
       var me = this;
       new OB.DS.Query('org.openbravo.retail.posterminal.term.Location').exec({
-        org: this.get('terminal').organization
+        org: this.get('terminal').store
       }, function (data) {
         if (data[0]) {
           me.set('location', data[0]);

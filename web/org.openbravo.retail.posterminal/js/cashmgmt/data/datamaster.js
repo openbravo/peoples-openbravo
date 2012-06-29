@@ -35,7 +35,7 @@
 	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
 	      'org.openbravo.retail.posterminal.term.CashMgmtDepositsDrops',
 	      OB.POS.modelterminal.get('terminal').client,
-	      OB.POS.modelterminal.get('terminal').organization));
+	      OB.POS.modelterminal.get('terminal').store));
 	    this.loadparams = {};
 	  };
 _.extend(OB.DATA.DepositsDrops.prototype, OB.DATA.Base);

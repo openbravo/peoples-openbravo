@@ -35,7 +35,7 @@
 	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
 	      'org.openbravo.retail.posterminal.term.Payments',
 	      OB.POS.modelterminal.get('terminal').client,
-	      OB.POS.modelterminal.get('terminal').organization));
+	      OB.POS.modelterminal.get('terminal').store));
 	    this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
 	  };
   _.extend(OB.DATA.PaymentMethod.prototype, OB.DATA.Base);
@@ -46,7 +46,7 @@
 	    this.ds = new OB.DS.DataSource(new OB.DS.Query(
 	      'org.openbravo.retail.posterminal.term.CloseCashPayments',
 	      OB.POS.modelterminal.get('terminal').client,
-	      OB.POS.modelterminal.get('terminal').organization));
+	      OB.POS.modelterminal.get('terminal').store));
 	    this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
 	  };
 _.extend(OB.DATA.CloseCashPaymentMethod.prototype, OB.DATA.Base);
@@ -57,7 +57,7 @@ OB.DATA.CashCloseReport = function (context, id) {
   this.ds = new OB.DS.DataSource(new OB.DS.Query(
     'org.openbravo.retail.posterminal.term.CashCloseReport',
     OB.POS.modelterminal.get('terminal').client,
-    OB.POS.modelterminal.get('terminal').organization));
+    OB.POS.modelterminal.get('terminal').store));
   this.loadparams = {pos: OB.POS.modelterminal.get('terminal').id};
 };
 _.extend(OB.DATA.CashCloseReport.prototype, OB.DATA.Base);
