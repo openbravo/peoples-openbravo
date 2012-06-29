@@ -642,13 +642,9 @@ public class OrderLoader {
         Property refProp = p.getReferencedProperty();
         Entity refEntity = refProp.getEntity();
         if (value instanceof JSONObject) {
-          if (key.equals("product")) {
-            value = ((JSONObject) value).get("product");
-          }
           value = ((JSONObject) value).getString("id");
         }
         BaseOBObject refBob = OBDal.getInstance().getProxy(refEntity.getName(), value.toString());
-        // BaseOBObject refBob = OBDal.getInstance().get(refEntity.getName(), value.toString());
         bob.set(p.getName(), refBob);
       }
 
