@@ -43,16 +43,25 @@
     var criteria, me = this;
 
     function successCallbackPrices(dataPrices, dataProducts) {
-      if(dataPrices){
+      debugger;
+      if(dataPrices && dataPrices.length > 0){
         _.each(dataPrices.models, function(currentPrice){
           if(dataProducts.get(currentPrice.get('product'))){
             dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
           }
         });
+        _.each(dataProducts.models, function(currentProd){
+          if(currentProd.get('price')===undefined){
+            var price = new OB.Model.ProductPrice({'listPrice': 0});
+            dataProducts.get(currentProd.get('id')).set('price', price);
+            OB.UTIL.showWarning("No price found for product " + currentProd.get('_identifier'));
+          }
+        });
       }else{
         OB.UTIL.showWarning("OBDAL No prices found for products");
         _.each(dataProducts.models, function(currentProd){
-          currentProd.set('price', 0);
+          var price = new OB.Model.ProductPrice({'listPrice': 0});
+          currentProd.set('price', price);
         });
       }
       me.products.reset(dataProducts.models);
@@ -63,6 +72,7 @@
     }
 
     function successCallbackProducts(dataProducts) {
+      debugger;
       if(dataProducts && dataProducts.length > 0){
         criteria = {'priceListVersion' : OB.POS.modelterminal.get('pricelistversion').id};
         OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
