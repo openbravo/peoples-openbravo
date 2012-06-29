@@ -72,10 +72,18 @@
                             dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
                           }
                         });
+                        _.each(dataProducts.models, function(currentProd){
+                          if(currentProd.get('price')===undefined){
+                            var price = new OB.Model.ProductPrice({'listPrice': 0});
+                            dataProducts.get(currentProd.get('id')).set('price', price);
+                            OB.UTIL.showWarning("No price found for product " + currentProd.get('_identifier'));
+                          }
+                        });
                       }else{
                         OB.UTIL.showWarning("OBDAL No prices found for products");
                         _.each(dataProducts.models, function(currentProd){
-                          currentProd.set('price', 0);
+                          var price = new OB.Model.ProductPrice({'listPrice': 0});
+                          currentProd.set('price', price);
                         });
                       }
                       that.products.reset(dataProducts.models);
