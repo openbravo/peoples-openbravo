@@ -151,8 +151,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
       // Ordered Quantity = returned quantity.
-      BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned"));
-      newOrderLine.setOrderedQuantity(qtyReturned.negate());
+      BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
+      newOrderLine.setOrderedQuantity(qtyReturned);
 
       TaxRate tax = null;
       if (shipmentLine != null && shipmentLine.getSalesOrderLine() != null) {
