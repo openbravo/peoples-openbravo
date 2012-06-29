@@ -1,32 +1,51 @@
   body {
-    font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;  
+	  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px;
   }
   input, button, select, textarea {
-	  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;  
+	  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px;
 	}
   
   ::-webkit-scrollbar {
-      width: 32px;
+    width: 32px;
   }  
   /* Track */
   ::-webkit-scrollbar-track {
-      background: #dddddd; 
+    background: #dddddd; 
   }  
   /* Handle */
   ::-webkit-scrollbar-thumb {
-      background: #888888; 
+    background: #888888; 
   }
   ::-webkit-scrollbar-thumb:window-inactive {
-      background: #666666; 
+    background: #666666; 
   }
-  
+
    ul,ol {
      margin-bottom: 0px;
    }
 
+  .modal-backdrop,
+  .modal-backdrop.fade.in {
+    opacity: 0.5;
+    filter:alpha(opacity=50);
+  }
+
+  .combo {
+    height: 40px;
+    background-color: white;
+  }
+
+  .input {
+    height: 30px;
+    background-color: white;
+  }
+
   .POSLoadingCenteredBox {
     position: fixed;
     background-image: url('../img/loading-bg.png');
+    border: 2px solid #E1E1E1;
     z-index: 1000000;
     top: 50%;
     left: 50%;
@@ -36,8 +55,8 @@
   }
 
   .POSLoadingPromptLabel {
-    padding: 45px 0px 3px 25px;
-    font-size: 130%;
+    padding: 45px 0px 6px 25px;
+    font-size: 20px;
     color: #ccd0d4;
   }
 
@@ -51,60 +70,71 @@
     margin: 0px auto;
     background-image: url('../img/loading-bar.gif');
   }
-   
+
   .btnlink-toolbar:after {
     clear: both;
-  } 
-  
+  }
+
   a.btn-dropdown {
     color: white;
-    cursor: pointer;  
-    text-decoration: none;    
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btnkeyboard-num {
+    font-size: 24px !important;
   }
   
-  a.btnkeyboard {
-    display: block;
-    width: 100%;
-    font-size: 110%;
-    text-align: center;
-    padding: 11px 0px 11px 0px;
-    text-decoration: none;
-    background-color: #e2e2e2;
-    color: black;
-    cursor: pointer;      
-  }
-  a.btnkeyboard:active {
-    background-color: #cccccc;
-  }  
   button.btnkeyboard {
     display: block;
     width: 100%;
-    border:none;
-    font-size: 110%;
+    border: none;
+    font-size: 18px;
     text-align: center;
     padding: 11px 0px 11px 0px;
     text-decoration: none;
     background-color: #e2e2e2;
     color: black;
-    cursor: pointer;      
-  }     
+    cursor: pointer;
+    height: 57px;
+  }
   button.btnkeyboard:active {
     background-color: #cccccc;
-  }      
+  }
   button.btnactive {
-    background-color: #ccccff;
-  }  
+    background-color: #F8941D;
+  }
+
+  button.btnkeyboard-plus:active {
+    background-color: #6cb33f;
+  }
+
+  button.btnkeyboard-minus:active {
+    background-color: #f8941d;
+  }
+
+
+
   button.btnlink {
     display: inline-block;
+    font-weight: 600;
     border: none;
-    padding: 12px 15px 12px 15px;   
+    font-size: 18px;
+    padding: 12px 15px 14px 15px;
     text-decoration: none;
     background-color: #6cb33f;
     color: white;
-    cursor: pointer;      
-    margin:5px; 
-  
-  }  
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  button.btnlink-toolbar {
+    margin: 0px;
+    padding: 0px;
+    height: 57px;
+    width: 100%;
+    font-weight: normal;
+  }
   button.btnlink:active {
     background-color: #cccccc;
   }
@@ -112,38 +142,65 @@
     background-color: #cccccc;
   }
   button.btnlink-small {
-    padding: 5px 15px 5px 15px;    
-  } 
+    display: inline-block;
+    font-weight: normal;
+    border: none;
+    font-size: 16px;
+    padding: 5px 15px 7px 15px;
+    text-decoration: none;
+    background-color: #6cb33f;
+    color: white;
+    cursor: pointer;
+    margin: 10px;
+    font-size: 16px;
+  }
+
   button.btnlink-orange {
     background-color: orange;
-    color: black;  
+    color: black;
   }
   button.btnlink-lightblue {
     background-color: lightblue;
-    color: black;  
-  }   
+    color: black;
+  }
   button.btnlink-lightpink {
     background-color: lightpink;
     color: black;  
-  } 
+  }
   button.btnlink-lightgreen {
     background-color: lightgreen;
-    color: black;  
-  } 
+    color: black;
+  }
   button.btnlink-wheat {
     background-color: wheat;
-    color: black;  
-  }  
+    color: black;
+  }
   button.btnlink-gray {
     background-color: #e2e2e2;
-    color: black;    
-  }   
-      
+    color: black;
+  }
+  button.btnlink-yellow {
+    background-color: #f8e859;
+    color: black;
+  }
+  button.btnlink-white {
+    background-color: #ffffff;
+    color: black;
+  }
+
+  button.btnlink-fontgrey {
+    color: #363636;
+  }
+  button.btnlink-fontblue {
+    color: #7da7d9;
+  }
+
+
   button.btnclear {
     border: none;
-    padding: 5px 5px 5px 5px;   
+    padding: 5px 5px 5px 5px;
     text-decoration: none;
-    background-color: white;    
+    background-color: white;
     font-size: 20px;
     font-weight: bold;
     line-height: 18px;
@@ -153,7 +210,7 @@
   button.btnclear:active {
     background-color: #cccccc;
   }
-         
+
   button.btnselect {
     display: block;
     width: 100%;
@@ -164,82 +221,46 @@
     text-decoration: none;
     text-align: left;
     color: black;
-    cursor: pointer;  
-    border-bottom: 1px solid #cccccc;   
+    cursor: pointer;
+    border-bottom: 1px solid #cccccc;
   }
   button.btnselect:active {
     background-color: #cccccc;
   }
   
   li.selected > button {
-    background-color : #049cdb;
+    background-color: #7da7d9;
     color: #ffffff;
-  }  
-  
+  }
+
+  .dropdown-menu li > a:hover,
+  .dropdown-menu .active > a,
+  .dropdown-menu .active > a:hover {
+    background-color : #7da7d9;
+    color: #ffffff;
+  }
+
   div.btnkeyboard {
     display: block;
-
     width: 100%;
-    font-size: 110%;
+    font-size: 18px;
     text-align: center;
-    padding: 11px 0px 11px 0px;
+    padding: 18px 0px 11px 0px;
     text-decoration: none;
     background-color: darkgray;
-    color: black;  
+    color: black;
+    height: 28px;
   }
   
   div.btnlink {
     display: inline-block;
-    padding: 12px 15px 12px 15px;   
+    padding: 12px 15px 12px 15px;
     text-decoration: none;
     background-color: darkgray;
-    color: white;   
-    margin:5px; 
-    float:left;     
-  }    
-    
-  a.btnlink {
-    display: inline-block;
-    padding: 12px 15px 12px 15px;   
-    text-decoration: none;
-    background-color: #6cb33f;
     color: white;
-    cursor: pointer;      
-    margin:5px; 
-  
-  }  
-  a.btnlink:active {
-    background-color: #cccccc;
-  }  
-  
-  a.btnlink-small {
-    padding: 5px 15px 5px 15px;    
-  } 
-  
-  a.btnlink-orange {
-    background-color: orange;
-    color: black;  
+    margin: 5px;
+    float: left;
   }
-  a.btnlink-lightblue {
-    background-color: lightblue;
-    color: black;  
-  }   
-  a.btnlink-lightpink {
-    background-color: lightpink;
-    color: black;  
-  } 
-  a.btnlink-lightgreen {
-    background-color: lightgreen;
-    color: black;  
-  } 
-  a.btnlink-wheat {
-    background-color: wheat;
-    color: black;  
-  }  
-  a.btnlink-gray {
-    background-color: #e2e2e2;
-    color: black;    
-  }   
 
   .btn-icon-left {
     margin: 2px 5px 0px 0px;
@@ -247,6 +268,41 @@
 
   .btn-icon-right {
     margin: 2px 0px 0px 5px;
+  }
+
+  .btn-icon {
+    width: 100%;
+    height: 25px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: transparent;
+  }
+  .btn-icon-workspace {
+    background-image: url('../img/iconWorkspace.png');
+  }
+  .btn-icon-new {
+    background-image: url('../img/iconCreateNew.png');
+  }
+  .btn-icon-delete {
+    background-image: url('../img/iconDelete.png');
+  }
+  .btn-icon-print {
+    background-image: url('../img/iconPrint.png');
+  }
+  .btn-icon-menu {
+    background-image: url('../img/iconMenu.png');
+  }
+  .btn-icon-backspace {
+    background-image: url('../img/iconBackspace.png');
+  }
+  .btn-icon-enter {
+    background-image: url('../img/iconEnter.png');
+  }
+  .btn-icon-search {
+    background-image: url('../img/iconSearch.png');
+  }
+  .btn-icon-clear {
+    background-image: url('../img/iconClear.png');
   }
 
   .btn-check {
@@ -273,8 +329,8 @@
 
   ul.nav-pos:after {
     clear: both;
-  }  
-  
+  }
+
   ul.nav-pos > li {
     float: left;
   }
@@ -282,13 +338,50 @@
   ul.nav-pos > li.active > a {
     background-color: #7da7d9;
   }
-  
+
+  ul.nav-pos > li.active > button {
+    background-color: #7da7d9;
+  }
+
+  ul.nav-pos > li.active > div > button {
+    background-color: #7da7d9;
+  }
+
+  ul.nav-pos > li.active:nth-child(1) > div > button {
+    background-color: #363636;
+  }
+
+  ul.nav-pos > li.active:nth-child(2) > div > button {
+    background-color: #7da7d9;
+  }
+
+  ul.nav-pos > li.active:nth-child(3) > div > button {
+    background-color: #ff3232;
+  }
+
+  ul.nav-pos > li.active:nth-child(4) > div > button {
+    background-color: #f8e859;
+  }
+
+  ul.nav-pos > li.active:nth-child(5) > div > button {
+    background-color: #f8941d;
+  }
+
   div.btnselect {
     display: block;
     position: relative;
     padding: 8px 10px 8px 10px;
     text-decoration: none;
-    border-bottom: 1px solid #cccccc;       
+    border-bottom: 1px solid #cccccc;
+  }
+
+  .top-right-logo {
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-color: transparent;
+    background-image: url('../img/OBLogo-small.png');
   }
 
 .image-wrap {
@@ -296,7 +389,6 @@
    display: inline-block;
    max-width: 100%; 
   vertical-align: bottom;
-  
 }
 .image-wrap:after {
   content: ' ';
@@ -317,7 +409,6 @@
 }
 
 .image-wrap div {
-
   vertical-align: bottom;
 
 /*   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.4); */
@@ -330,20 +421,20 @@
 }
 
 div.pos-clock {
-  position:absolute;
+  position: absolute;
   bottom: 0px;
   right: 0px;
   text-align: center;
 }
 
 div.clock-time {
-  font-size:300%;
-  margin: 10px;
+  font-size: 48px;
+  margin: 0px 10px 20px 10px;
 }
 
 div.clock-date {
-  font-size:125%;
-  margin: 10px;
+  font-size: 21px;
+  margin: 0px 10px 15px 10px;
 }
 
 div.modal-dialog {
@@ -375,7 +466,6 @@ div.modal-dialog-content-text {
   text-align: center;
   font-size: 120%;
   line-height: 200%;
-
   color: white;
 }
 
@@ -384,14 +474,12 @@ div.modal-dialog-content-buttons-container {
 }
 
 button.modal-dialog-content-button {
-  font-weight: bold;
-  font-size: 16px;
   text-decoration: none;
   background-color: white;
   color: #72B446;
-  padding: 8px 0px 10px 0px;
-  margin: 0px 20px 0px 20px;
-  width: 115px;
+  min-width: 115px;
+ /* padding: 8px 0px 10px 0px;
+  margin: 0px 20px 0px 20px;*/
 }
 
 .modal-dialog-profile-combo {

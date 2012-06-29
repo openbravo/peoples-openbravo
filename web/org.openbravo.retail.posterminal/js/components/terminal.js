@@ -26,14 +26,14 @@
             {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 55px; margin: 6px 0px 0px 6px;'}, content: [
               {kind: OB.UTIL.Thumbnail, attr: {img: ctx.img, 'default': 'img/anonymous-icon.png'}}
             ]},
-            {kind: B.KindJQuery('div'), attr: {style: 'float: left; margin: 6px 0px 0px 0px; line-height: 180%;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {style: 'float: left; margin: 6px 0px 0px 0px; line-height: 150%;'}, content: [
               {kind: B.KindJQuery('div'), content: [
-                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
+                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: 600; margin: 0px 0px 0px 5px;'}, content: [
                   ctx.user._identifier
                 ]}
               ]},
               {kind: B.KindJQuery('div'), content: [
-                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: bold; margin: 0px 0px 0px 5px;'}, content: [
+                {kind: B.KindJQuery('span'), attr:{'style': 'font-weight: 600; margin: 0px 0px 0px 5px;'}, content: [
                   ctx.role._identifier
                 ]}
               ]}

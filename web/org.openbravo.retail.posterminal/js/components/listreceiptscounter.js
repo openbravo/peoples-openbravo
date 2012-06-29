@@ -11,7 +11,7 @@
     initialize: function () {
 
       this.component = B(
-        {kind: B.KindJQuery('a'), attr: {
+        {kind: B.KindJQuery('button'), attr: {
         'class': 'btnlink btnlink-gray',
         'style': 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
         'href': '#modalreceipts', 'data-toggle': 'modal'}, content: [

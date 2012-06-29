@@ -28,6 +28,7 @@
     F.prototype.attr = function (attr) {
       this.htmlId = attr.htmlId;
       this.className = attr.className;
+      this.style = attr.style;
       this.renderLine = attr.renderLine;
       this.renderHeader = attr.renderHeader;
       this.header = this.renderHeader ? 1 : 0;
@@ -63,6 +64,9 @@
       }
       if (this.className) {
         this.$el.addClass(this.className);
+      }
+      if (this.style) {
+        this.$el.attr('style', this.style);
       }
       if (this.renderHeader) {
         this.$el.append(B(this.renderHeader()).$el);

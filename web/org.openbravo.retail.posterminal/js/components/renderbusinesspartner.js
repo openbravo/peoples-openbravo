@@ -8,7 +8,7 @@
   OB.COMP.RenderBusinessPartner = OB.COMP.SelectButton.extend({
     render: function() {
       this.$el.append(B(
-        {kind: B.KindJQuery('div'), content: [
+        {kind: B.KindJQuery('div'), attr:{'style': 'line-height: 23px;'}, content: [
           {kind: B.KindJQuery('div'), content: [
             this.model.get('BusinessPartner')._identifier
           ]},

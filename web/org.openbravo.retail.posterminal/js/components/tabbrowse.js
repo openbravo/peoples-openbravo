@@ -5,7 +5,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ButtonTabBrowse = OB.COMP.ButtonTab.extend({
+  OB.COMP.ButtonTabBrowse = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
     shownEvent: function(e) {
@@ -16,7 +16,7 @@
   OB.COMP.BrowseCategories = Backbone.View.extend({
     tagName: 'div',
     attributes: {
-      'style': 'overflow:auto; height: 500px; margin: 5px;'
+      'style': 'overflow:auto; margin: 5px;'
     },
     initialize: function() {
       var $child = $('<div/>');

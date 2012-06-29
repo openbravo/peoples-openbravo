@@ -39,6 +39,7 @@
       return this;
     },
     clickEvent: function (e) {
+      OB.UTIL.showLoading(true);
       window.location=OB.POS.hrefWindow('retail.pointofsale');
     }
   });

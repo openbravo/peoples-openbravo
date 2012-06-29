@@ -26,42 +26,64 @@
           {kind: OB.COMP.ModalBPs},
           {kind: OB.COMP.ModalReceipts},
 
-          {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-              {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos'}, content: [
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonNew}
-                ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonDelete}
-                ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonPrint}
-                ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.MenuButton.extend({icon: 'icon-th-large icon-white btn-icon-left', label: OB.I18N.getLabel('OBPOS_LblMenu')}), content: [
-                    {kind: OB.COMP.MenuReturn},
-                    {kind: OB.COMP.MenuInvoice},
-                    {kind: OB.COMP.MenuSeparator},
-                    {kind: OB.COMP.MenuItem.extend({href:'../..', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})},
-                    {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})}
+          {kind: B.KindJQuery('div'), attr: {'class': 'row', 'style': 'margin-bottom: 5px'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
+              {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos row-fluid'}, content: [
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonNew}
                   ]}
                 ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabPayment}
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonDelete}
+                  ]}
                 ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabBrowse}
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonPrint}
+                  ]}
                 ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabSearch}
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ToolbarMenuButton.extend({icon: 'btn-icon btn-icon-menu'/*, label: OB.I18N.getLabel('OBPOS_LblMenu')*/}), content: [
+                      {kind: OB.COMP.MenuReturn},
+                      {kind: OB.COMP.MenuInvoice},
+                      {kind: OB.COMP.MenuSeparator},
+                      {kind: OB.COMP.MenuItem.extend({href: '../..', target: '_blank', onclick: 'return true;', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
+                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})},
+                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})}
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]},
+            {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
+              {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos row-fluid'}, content: [
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonTabPayment}
+                  ]}
                 ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabScan}
+                {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonTabScan}
+                  ]}
                 ]},
-                {kind: B.KindJQuery('li'), content: [
-                  {kind: OB.COMP.ButtonTabEditLine }
+                {kind: B.KindJQuery('li'), attr: {'class': 'span2'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonTabBrowse}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('li'), attr: {'class': 'span2'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonTabSearch}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('li'), attr: {'class': 'span2'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ButtonTabEditLine }
+                  ]}
                 ]}
               ]}
             ]}
@@ -77,7 +99,7 @@
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                       {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;'}, content: [
                             {kind: OB.COMP.OrderDetails},
                             {kind: OB.COMP.BusinessPartner},
                             {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}}

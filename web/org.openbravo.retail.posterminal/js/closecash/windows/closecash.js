@@ -5,7 +5,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ButtonTest = OB.COMP.ToolbarButton.extend({
+  OB.COMP.ButtonTest = OB.COMP.RegularButton.extend({
     icon: 'icon-leaf icon-white',
     label: ' **Leaf**',
     clickEvent: function (e) {

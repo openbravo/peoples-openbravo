@@ -48,7 +48,7 @@
                    attributes:{'button':'allokbutton'},
                    clickEvent: function (e) {
                     var that = this;
-                    $('a[button="okbutton"]').hide();
+                    $('button[button="okbutton"]').hide();
                     this.$el.css('visibility', 'hidden');
                     this.me.options.modeldaycash.paymentmethods.each(function(elem){
                       $('div[searchKey*="'+elem.get("_id")+'"]').text(elem.get('expected').toString());

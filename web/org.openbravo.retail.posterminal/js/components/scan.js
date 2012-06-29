@@ -12,7 +12,7 @@
 
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
-        {kind: B.KindJQuery('div'), attr: {'style': 'position:relative; background: #7da7d9 url(img/scan.png) center center no-repeat; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
+        {kind: B.KindJQuery('div'), attr: {'style': 'position:relative; background-color: #7da7d9; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
           {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'}},
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
@@ -20,18 +20,17 @@
                 OB.I18N.getLabel('OBPOS_WelcomeMessage')
               ]}
             ]},
-            {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px; display: none;'}, content: [
-              {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'float:left;'}},
-              {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-orange', 'style': 'float:right;'}, content: [
-                OB.I18N.getLabel('OBPOS_LblUndo')
-              ], init: function () {
-                this.$el.click(function(e) {
-                  e.preventDefault();
-                  if (undoclick) {
-                    undoclick();
+            {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'display: none;'}, content: [
+              {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'padding: 10px; float: left; width: 320px; line-height: 23px;'}},
+              {kind: B.KindJQuery('div'), attr: {'style': 'float: right;'}, content: [
+                {kind: OB.COMP.SmallButton, attr: { 'label': OB.I18N.getLabel('OBPOS_LblUndo'), 'className': 'btnlink-white btnlink-fontblue',
+                  'clickEvent': function() {
+                    if (undoclick) {
+                      undoclick();
+                    }
                   }
-                });
-              }}
+                }}
+              ]}
             ]}
           ]}
         ]}

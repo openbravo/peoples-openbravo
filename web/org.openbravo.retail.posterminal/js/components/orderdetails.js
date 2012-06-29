@@ -7,7 +7,7 @@
 
   OB.COMP.OrderDetails = Backbone.View.extend({
       tagName: 'div',
-      attributes: {'style': 'float:left; margin:5px; padding: 5px 15px 5px 0px; font-weight: bold; font-size: 110%; color: green;'},
+      attributes: {'style': 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'},
       initialize: function () {
 
         this.receipt =  this.options.modelorder;

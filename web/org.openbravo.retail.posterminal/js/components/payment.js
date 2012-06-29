@@ -29,24 +29,24 @@
               ]}
             ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px;height: 30px;'}, content: [
-                  {kind: B.KindJQuery('span'), id: 'totalpending', attr: {style: 'font-size: 175%; font-weight:bold;'}},
+              {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 0px 0px 10px;'}, content: [
+                  {kind: B.KindJQuery('span'), id: 'totalpending', attr: {style: 'font-size: 24px; font-weight: bold;'}},
                   {kind: B.KindJQuery('span'), id: 'totalpendinglbl', content: [OB.I18N.getLabel('OBPOS_PaymentsRemaining')]},
-                  {kind: B.KindJQuery('span'), id: 'change', attr: {style: 'font-size: 175%; font-weight:bold;'}},
+                  {kind: B.KindJQuery('span'), id: 'change', attr: {style: 'font-size: 24px; font-weight: bold;'}},
                   {kind: B.KindJQuery('span'), id: 'changelbl', content: [OB.I18N.getLabel('OBPOS_PaymentsChange')]},
-                  {kind: B.KindJQuery('span'), id: 'overpayment', attr: {style: 'font-size: 175%; font-weight:bold;'}},
+                  {kind: B.KindJQuery('span'), id: 'overpayment', attr: {style: 'font-size: 24px; font-weight: bold;'}},
                   {kind: B.KindJQuery('span'), id: 'overpaymentlbl', content: [OB.I18N.getLabel('OBPOS_PaymentsOverpayment')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {style: 'overflow:auto; width: 100%;'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'margin: 5px; border-bottom: 1px solid #cccccc;'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'}, content: [
                     ]},
                     {kind: OB.COMP.TableView, attr: {
                       collection: payments,
                       renderEmpty: function () {
                         return (
-                          {kind: B.KindJQuery('div')}
+                          {kind: B.KindJQuery('div'), attr: {'style': 'height: 36px'}}
                         );
                       },
                       renderLine: OB.COMP.SelectPanel.extend({
@@ -80,24 +80,27 @@
                   ]}
                 ]}
               ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-                {kind: B.KindJQuery('div'), id: 'coinscontainer', content: [
-                ]},
-                {kind: B.KindJQuery('div'), id: 'doneaction', content: [
-                  {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink', 'style': 'font-size: 150%; font-weight: bold; float: right;'}, content: [
-                    OB.I18N.getLabel('OBPOS_LblDone')
-                  ], init: function () {
-                    this.$el.click(function (e) {
-                       e.preventDefault();
-                       me.receipt.calculateTaxes(function () {
-                         me.receipt.trigger('closed');
-                         me.modelorderlist.deleteCurrent();                               
+              {kind: B.KindJQuery('div'), attr: {'class': 'span5'}, content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'float: right;'}, id: 'doneaction', content: [
+                  {kind: OB.COMP.RegularButton, attr: { 'label': OB.I18N.getLabel('OBPOS_LblDone'),
+                    'clickEvent': function() {
+                      me.receipt.calculateTaxes(function () {
+                        me.receipt.trigger('closed');
+                        me.modelorderlist.deleteCurrent();
                       });
-                    });
+                    }
                   }}
                 ]}
               ]}
+            ]},
+
+            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                {kind: B.KindJQuery('div'), id: 'coinscontainer', content: [
+                ]}
+              ]}
             ]}
+
           ]}
         ]}
       );

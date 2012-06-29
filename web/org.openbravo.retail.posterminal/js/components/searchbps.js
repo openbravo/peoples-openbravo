@@ -26,32 +26,36 @@
       {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
         {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style':  'border-bottom: 1px solid #cccccc;'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [
-                {kind: B.KindJQuery('div'), content: [
-                  {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech'}},
-                  {kind: OB.COMP.ClearButton}
+                {kind: B.KindJQuery('div'), attr: {'style': 'display: table;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell; width: 100%;'}, content: [
+                    {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech', 'class': 'input', 'style': 'width: 100%;'}}
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
+                    //{kind: OB.COMP.ClearButton}
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
+                      'clickEvent': function() {
+                        this.$el.parent().prev().children().val('');
+                      }
+                    }}
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
+                      'clickEvent': function() {
+                        var filter = {};
+                        if (me.bpname.val() && me.bpname.val() !== '') {
+                          filter = {
+                              BusinessPartner :{
+                                _identifier : '%i' + OB.UTIL.escapeRegExp(me.bpname.val())
+                              }
+                          };
+                        }
+                        me.bps.exec(filter);
+                      }
+                    }}
+                  ]}
                 ]}
-              ]}
-            ]},
-            {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'}, content: [
-                {kind: B.KindJQuery('a'), attr: { 'href': '#', 'class': 'btnlink btnlink-small btnlink-gray', 'style': 'float:right;'}, content: [
-                  {kind: B.KindJQuery('i'), attr: {'class': 'icon-search btn-icon-left'}}, OB.I18N.getLabel('OBPOS_SearchButtonSearch')
-                ], init: function () {
-                  this.$el.click(function (e) {
-                    e.preventDefault();
-                    var filter = {};
-                    if (me.bpname.val() && me.bpname.val() !== '') {
-                      filter = {
-                          BusinessPartner :{
-                            _identifier : '%i' + OB.UTIL.escapeRegExp(me.bpname.val())
-                          }
-                      };
-                    }
-                    me.bps.exec(filter);
-                  });
-                }}
               ]}
             ]}
           ]},

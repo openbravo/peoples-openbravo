@@ -73,38 +73,44 @@ if(userId == null){
   <link rel="stylesheet" type="text/css" href="css/login.css" />
 </head>
 
-<body style="padding-top: 20px;background-color: darkgray; background: url(img/BACKGROUND-PNG24.png) top left">
+<body style="background-color: darkgray; background: url(img/BACKGROUND-PNG24.png) top left">
   <div id="container" class="container">
     <div id="topsection" class="section">
-      <div class="row">
-        <div class="span12" style="color: white;">
-          <div id="online" style="display: inline-block; margin: 5px;"><span class="badge badge-success">Online</span></div>
-          <div id="terminal" style="display: inline-block; margin: 5px;"></div>
-          <div class="dropdown" style="display: inline-block; margin-left:30px;" >
-            <a id="yourcompany" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
-            <div class="dropdown-menu" style="color: black; padding:5px; width: 400px;">
-              <img src="../../utility/ShowImageLogo?logo=yourcompanymenu" alt="Your company" style="display:block; float:left;width: 20%;"/>
-              <div id="yourcompanyproperties" style="display:block; margin-left:10px; float:left;width: 70%"></div>
-              <div style="clear:both;"></div>
+      <div class="row" style="height: 50px; vertical-align: middle; display: table-cell;">
+        <div class="span12" style="color: white; font-size: 16px;">
+          <div style="display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;">
+            <div id="online" style="display: inline-block; margin-left: 15px;"><span style="display: inline-block;
+  width: 20px; color: transparent; background-image: url('./img/login-connected.png'); background-repeat: no-repeat; background-position: 2px 3px;">.</span><span>Online</span></div>
+            <div id="terminal" style="display: inline-block; margin-left: 50px;"></div>
+            <div class="dropdown" style="display: inline-block; margin-left: 50px;" >
+              <a id="yourcompany" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
+              <div class="dropdown-menu" style="color: black; width: 350px;">
+                <div style="height: 60px; background-repeat: no-repeat; background-position: center center; background-image: url('../../utility/ShowImageLogo?logo=yourcompanymenu');"></div>
+                <div id="yourcompanyproperties" style="display: block; padding: 10px; float: left; background-color: #FFF899; line-height: 23px;"></div>
+                <div style="clear: both;"></div>
+              </div>
+            </div>
+            <div class="dropdown" style="display: inline-block; margin-left: 50px;" >
+              <a id="loggeduser" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
+              <div id="loggeduserproperties" class="dropdown-menu" style="color: black; padding: 0px; width: 350px;">
+              </div>
             </div>
           </div>
-          <div class="dropdown" style="display: inline-block; margin-left:30px;" >
-            <a id="loggeduser" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
-            <div id="loggeduserproperties" class="dropdown-menu" style="color: black; padding: 0px; width: 300px;">
+          <div style="display: inline-block; float: right;">
+            <div style="display: inline-block; float: left; margin: 4px 10px 0px 0px;">Openbravo Web POS</div>
+            <div style="width: 30px; height: 30px; float: right; margin: 0px 12px 0px 0px;">
+              <div class="top-right-logo">
             </div>
-          </div>
-          <div style="display: inline-block; font-weight: bold; float:right">
-            <span>Openbravo Point of Sale</span>&nbsp;
-            <a data-toggle="modal" id="logoutlink" href="#logoutDialog" class=""><i class="icon-off icon-white"></i></a>
           </div>
           <div id="dialogsContainer"></div>
         </div>
+
       </div>
     </div>
     <div>
       <div id="containerLoading">
         <div class="POSLoadingCenteredBox">
-          <div class="POSLoadingPromptLabel" id="">LOADING...</div>
+          <div class="POSLoadingPromptLabel" id="">Loading...</div>
           <div class="POSLoadingProgressBar">
             <div class="POSLoadingProgressBarImg"></div>
           </div>

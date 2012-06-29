@@ -6,9 +6,9 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.BusinessPartner = Backbone.View.extend({
-      tagName: 'a',
+      tagName: 'button',
       className: 'btnlink btnlink-small btnlink-gray',
-      attributes: {'href': '#modalcustomer', 'data-toggle': 'modal', 'style': 'font-size: 110%'},
+      attributes: {'href': '#modalcustomer', 'data-toggle': 'modal'},
       initialize: function () {
 
         this.receipt =  this.options.modelorder;

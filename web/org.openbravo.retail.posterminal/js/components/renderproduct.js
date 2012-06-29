@@ -13,7 +13,9 @@
             {kind: OB.UTIL.Thumbnail, attr: {img: this.model.get('img')}}
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 60%;'}, content: [
-            this.model.get('_identifier')
+            {kind: B.KindJQuery('div'), attr: {style: 'padding-left: 5px;'}, content: [
+              this.model.get('_identifier')
+            ]}
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [
             {kind: B.KindJQuery('strong'), content: [

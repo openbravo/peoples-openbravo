@@ -46,34 +46,50 @@ div.login-user-button-bottom {
   overflow: hidden;
 }
 
-span.login-user-button-bottom-icon {
-  display: inline-block;
+div.login-user-button-bottom-icon {
+  float: left;
   width: 20px;
+  height: 18px;
   color: transparent;
   background-image: url('../img/login-not-connected.png');
   background-repeat: no-repeat;
   background-position: 2px 2px;
 }
 
-span.login-user-button-bottom-text {
+div.login-user-button-bottom-text {
+  float: left;
+  font-size: 13px;
   font-weight: bold;
+
 }
 
 div.login-inputs-container {
-  height: 207px;
+  height: 220px;
   background-color: #6CB33F;
 }
 
 div.login-inputs-screenlocked {
   text-align: right;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   color: white;
   margin: 10px 0px 0px -10px;
 }
 
 div.login-inputs-userpassword {
   padding: 0px 0px 0px 20px;
+}
+
+div.login-inputs-userpassword {
+  padding: 0px 0px 0px 20px;
+}
+
+.login-inputs-username {
+  height: 25px;
+}
+
+.login-inputs-password {
+  height: 25px;
 }
 
 a.login-inputs-button {
@@ -90,7 +106,7 @@ a.login-inputs-button {
 }
 
 div.login-clock {
-  margin: 40px 0px 0px -40px;
+  margin: 30px 0px 0px 20px;
   text-align: center;
   color: white;
 }

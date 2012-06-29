@@ -4,6 +4,16 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
+  OB.UTIL = window.OB.UTIL || {};
+  OB.UTIL.loginButtonAction = function () {
+    var u = $('#username').val();
+    var p = $('#password').val();
+    if (!u || !p) {
+      alert('Please enter your username and password');
+    } else {
+      OB.POS.modelterminal.login(u, p);
+    }
+  };
 
   OB.COMP.LoginUserButton = Backbone.View.extend({
     tagName: 'div',
@@ -11,8 +21,8 @@
     initialize: function () {
       this.component = B(
         {kind: B.KindJQuery('div'), attr: {'class': 'login-user-button-bottom'}, content: [
-          {kind: B.KindJQuery('span'), id: 'bottomIcon', attr: {'class': 'login-user-button-bottom-icon'}, content: ['.']},
-          {kind: B.KindJQuery('span'), id: 'bottomText', attr: {'class': 'login-user-button-bottom-text'}}
+          {kind: B.KindJQuery('div'), id: 'bottomIcon', attr: {'class': 'login-user-button-bottom-icon'}, content: ['.']},
+          {kind: B.KindJQuery('div'), id: 'bottomText', attr: {'class': 'login-user-button-bottom-text'}}
         ]
       });
       this.$el.append(this.component.$el);
@@ -71,57 +81,25 @@
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'type': 'text', 'placeholder': OB.I18N.getLabel('OBPOS_LoginUserInput'), 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
+                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'class': 'login-inputs-username', 'type': 'text', 'placeholder': OB.I18N.getLabel('OBPOS_LoginUserInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'type': 'password', 'placeholder': OB.I18N.getLabel('OBPOS_LoginPasswordInput'), 'onkeydown': 'if(event && event.keyCode == 13) { $("#loginaction").click(); }; return true;'}}
+                    {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'class': 'login-inputs-password', 'type': 'password', 'placeholder': OB.I18N.getLabel('OBPOS_LoginPasswordInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
-                    {kind: B.KindJQuery('a'), attr: {'id': 'loginaction', 'class': 'login-inputs-button', 'href': '#'}, content: [OB.I18N.getLabel('OBPOS_LoginButton')],
-                      init: function () {
-
-                        OB.POS.modelterminal.on('loginfail', function (status, data) {
-                          var msg;
-                          if (data && data.messageTitle) {
-                            msg = data.messageTitle;
-                          }
-
-                          if (data && data.messageText) {
-                            msg += (msg?'\n':'')+data.messageText;
-                          }
-
-                          msg = msg || 'Invalid user name or password.\nPlease try again.';
-                          alert(msg);
-                          $('#password').val('');
-                          $('#username').focus();
-                        });
-                        OB.POS.modelterminal.on('loginUserImgPressfail', function (status) {
-                          //If the user image press (try to login with default password) fails, then no alert is shown and the focus goes directly to the password input
-                          $('#password').val('');
-                          $('#password').focus();
-                        });
-
-                        this.$el.click(function (e) {
-                          e.preventDefault();
-                          var u = $('#username').val();
-                          var p = $('#password').val();
-                          if (!u || !p) {
-                            alert('Please enter your username and password');
-                          } else {
-                            OB.POS.modelterminal.login(u, p);
-                          }
-                        });
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span2', 'style': 'margin: 20px 0px 0px 0px; text-align: center;'}, content: [
+                    {kind: OB.COMP.ModalDialogButton, 'id': 'loginaction', attr: {'id': 'loginaction', 'label': OB.I18N.getLabel('OBPOS_LoginButton'),
+                      'clickEvent': function() {
+                        OB.UTIL.loginButtonAction();
                       }
-                    }
+                    }}
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
                     {kind: OB.COMP.Clock, attr: {'className': 'login-clock'}}
                   ]}
                 ]}
@@ -129,6 +107,25 @@
             ]}
           ]}
         ], init: function () {
+          OB.POS.modelterminal.on('loginfail', function (status, data) {
+            var msg;
+            if (data && data.messageTitle) {
+              msg = data.messageTitle;
+            }
+
+            if (data && data.messageText) {
+              msg += (msg?'\n':'')+data.messageText;
+            }
+            msg = msg || 'Invalid user name or password.\nPlease try again.';
+            alert(msg);
+            $('#password').val('');
+            $('#username').focus();
+          });
+          OB.POS.modelterminal.on('loginUserImgPressfail', function (status) {
+            //If the user image press (try to login with default password) fails, then no alert is shown and the focus goes directly to the password input
+            $('#password').val('');
+            $('#password').focus();
+          });
           this.context.on('domready', function () {
             var me = this;
             function setUserImages(jsonImgData) {

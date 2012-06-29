@@ -8,6 +8,32 @@
   // Base button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
+    attr: function (attributes) {
+      if (attributes.label) {
+        this.label = attributes.label;
+      }
+      if (attributes.style) {
+        this.$el.attr('style', attributes.style);
+      }
+      if (attributes.clickEvent) {
+        this.clickEvent = attributes.clickEvent;
+      }
+      if (attributes.icon) {
+        this.icon = attributes.icon;
+      }
+      if (attributes.iconright) {
+        this.iconright = attributes.iconright;
+      }
+      if (attributes.href) {
+        this.href = attributes.href;
+      }
+      if (attributes.dataToggle) {
+        this.dataToggle = attributes.dataToggle;
+      }
+      if (attributes.className) {
+        this.$el.addClass(attributes.className);
+      }
+    },
     initialize: function () {
       this.$el.click(_.bind(this._clickEvent, this));
       // new googleuiFastButton(this.el, this._clickEvent);
@@ -19,6 +45,61 @@
     }
   });
 
+  // Regular Button
+  OB.COMP.RegularButton = OB.COMP.Button.extend({
+    render: function () {
+      this.$el.addClass('btnlink');
+      if (this.href) {
+        this.$el.attr('href', this.href);
+      }
+      if (this.dataToggle) {
+        this.$el.attr('data-toggle', this.dataToggle);
+      }
+      if (this.icon) {
+        this.$el.append($('<div class=\"' + this.icon + '\"></div>'));
+      }
+      this.$el.append($('<span>' + this.label + '</span>'));
+      if (this.iconright) {
+        this.$el.append($('<div class=\"' + this.iconright + '\"></div>'));
+      }
+      return this;
+    },
+    icon: '',
+    iconright: '',
+    label: ''
+  });
+
+  // Regular Button
+  OB.COMP.SmallButton = OB.COMP.RegularButton.extend({
+    render: function () {
+      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      this.$el.addClass('btnlink-small');
+      return this;
+    },
+    icon: '',
+    iconright: '',
+    label: ''
+  });
+
+  // Modal Dialog Button
+  OB.COMP.ModalDialogButton = OB.COMP.RegularButton.extend({
+    render: function () {
+      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      this.$el.addClass('btnlink-gray modal-dialog-content-button');
+      return this;
+    }
+  });
+
+  // Toolbar Button
+  OB.COMP.ToolbarButton = OB.COMP.RegularButton.extend({
+    render: function () {
+      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      this.$el.addClass('btnlink-toolbar');
+      return this;
+    }
+  });
+
+  // Checkbox Button
   OB.COMP.CheckboxButton = Backbone.View.extend({
     tagName: 'button',
     attributes: {'class': 'btn-check'},
@@ -41,9 +122,71 @@
     }
   });
 
+  // Generic Tab Button
+  OB.COMP.ButtonTab = OB.COMP.Button.extend({
+    className: 'btnlink btnlink-gray',
+    attributes: {'data-toggle': 'tab'},
+    initialize: function () {
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
+      this.$el.attr('href', this.tabpanel);
+      this.$el.append($('<span>' + this.label + '</span>'));
+    },
+    tabpanel: '#',
+    label: '',
+    events: {
+      'shown': 'shownEvent' // attach the click event as part of the element
+    },
+    shownEvent: function (e) {
+      // custom bootstrap event, no need to prevent default
+    }
+  });
+
+  // Toolbar Tab Button
+  OB.COMP.ToolbarButtonTab = OB.COMP.ButtonTab.extend({
+    render: function () {
+      OB.COMP.ButtonTab.prototype.render.call(this); // super.initialize();
+      this.$el.addClass('btnlink-toolbar');
+      return this;
+    }
+  });
+
+  // Menu Button
+  OB.COMP.ToolbarMenuButton = Backbone.View.extend({
+    tagName: 'div',
+    className: 'dropdown',
+    attributes: {'style': 'display: inline-block; width: 100%;'},
+    initialize: function () {
+      this.button = $('<button class=\"btnlink btnlink-toolbar\" data-toggle=\"dropdown\"></button>');
+
+      // The button
+      this.$el.append(this.button);
+      if (this.icon) {
+        this.button.append($('<div class=\"' + this.icon + '\"></i>'));
+      }
+      this.button.append($('<span>' + this.label + ' </span>'));
+      if (this.iconright) {
+        this.button.append($('<div class=\"' + this.iconright + '\"></i>'));
+      }
+      //this.button.append($('<span class=\"caret\"></span>'));
+
+      this.menu = $('<ul class=\"dropdown-menu\"></ul>');
+      this.$el.append(this.menu);
+    },
+    append: function (child) {
+      if (child.render) {
+        this.menu.append(child.render().$el); // it is a backbone view.
+      } else if (child.$el) {
+        this.menu.append(child.$el);
+      }
+    },
+    icon: '',
+    iconright: '',
+    label: ''
+  });
+
   OB.COMP.PaymentButton = OB.COMP.Button.extend({
     className: 'btnlink btnlink-small',
-    attributes: {'style': 'width:70px; text-align:right;'},
+    attributes: {'style': 'width: 75px; height: 35px; text-align:right; margin: 6px 8px 6px 8px; font-size: 16px;'},
     paymenttype: 'OBPOS_payment.cash',
     amount: 10,
     label: null,
@@ -71,24 +214,6 @@
     }
   });
 
-  // Toolbar Button
-  OB.COMP.ToolbarButton = OB.COMP.Button.extend({
-    render: function () {
-      this.$el.addClass('btnlink');
-      if (this.icon) {
-        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
-      }
-      this.$el.append($('<span>' + this.label + '</span>'));
-      if (this.iconright) {
-        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }
-      return this;
-    },
-    icon: '',
-    iconright: '',
-    label: ''
-  });
-
   // Select Div
   OB.COMP.SelectPanel = Backbone.View.extend({
     tagName: 'div',
@@ -112,40 +237,6 @@
     }
   });
 
-  // Menu Button
-  OB.COMP.MenuButton = Backbone.View.extend({
-    tagName: 'div',
-    className: 'dropdown',
-    attributes: {'style': 'display:inline-block;'},
-    initialize: function () {
-      this.button = $('<a href=\"#\" class=\"btnlink\" data-toggle=\"dropdown\"></a>');
-
-      // The button
-      this.$el.append(this.button);
-      if (this.icon) {
-        this.button.append($('<i class=\"' + this.icon + '\"></i>'));
-      }
-      this.button.append($('<span>' + this.label + ' </span>'));
-      if (this.iconright) {
-        this.button.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }
-      this.button.append($('<span class=\"caret\"></span>'));
-
-      this.menu = $('<ul class=\"dropdown-menu\"></ul>');
-      this.$el.append(this.menu);
-    },
-    append: function (child) {
-      if (child.render) {
-        this.menu.append(child.render().$el); // it is a backbone view.
-      } else if (child.$el) {
-        this.menu.append(child.$el);
-      }
-    },
-    icon: '',
-    iconright: '',
-    label: ''
-  });
-
   OB.COMP.MenuSeparator = Backbone.View.extend({
     tagName: 'li',
     className: 'divider'
@@ -154,16 +245,18 @@
   OB.COMP.MenuItem = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
-      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('onclick', 'OB.UTIL.showLoading(true); return true;').append($('<span/>').text(this.label)));
+      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).attr('onclick', this.onclick).append($('<span/>').text(this.label)));
     },
     href: '',
+    target: '_self',
+    onclick: 'OB.UTIL.showLoading(true); return true;',
     label: ''
   });
 
   OB.COMP.MenuAction = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
-      this.$anchor = $('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', '#').append($('<span/>').text(this.label));
+      this.$anchor = $('<a/>').attr('style', 'padding: 12px 15px 12px 15px;').attr('href', '#').append($('<span/>').text(this.label));
       this.$el.click(_.bind(this._clickEvent, this));
       this.$el.append(this.$anchor);
     },
@@ -173,25 +266,6 @@
     },
     label: '',
     clickEvent: function (e) {
-    }
-  });
-
-  // Generic Tab Button
-  OB.COMP.ButtonTab = Backbone.View.extend({
-    tagName: 'a',
-    className: 'btnlink btnlink-gray',
-    attributes: {'data-toggle': 'tab'},
-    initialize: function () {
-      this.$el.attr('href', this.tabpanel);
-      this.$el.append($('<span>' + this.label + '</span>'));
-    },
-    tabpanel: '#',
-    label: '',
-    events: {
-      'shown': 'shownEvent' // attach the click event as part of the element
-    },
-    shownEvent: function (e) {
-      // custom bootstrap event, no need to prevent default
     }
   });
 

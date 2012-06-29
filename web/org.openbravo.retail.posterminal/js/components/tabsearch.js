@@ -6,7 +6,7 @@
   OB.COMP = window.OB.COMP || {};
 
 
-  OB.COMP.ButtonTabSearch = OB.COMP.ButtonTab.extend({
+  OB.COMP.ButtonTabSearch = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
     shownEvent: function (e) {
@@ -18,7 +18,7 @@
     attributes: {'id': 'search', 'class': 'tab-pane'},
     initialize: function () {
       var $child = $('<div/>');
-      $child.css({'overflow': "auto", 'height': '500px', 'margin': '5px'});
+      $child.css({'overflow': "auto", 'margin': '5px'});
       var $subChild = $('<div/>');
       $subChild.css({'background-color': "#ffffff", 'color': 'black', 'padding': '5px'});
       var searchProd = new OB.COMP.SearchProduct(this.options);

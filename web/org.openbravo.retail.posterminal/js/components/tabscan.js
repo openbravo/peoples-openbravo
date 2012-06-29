@@ -5,15 +5,18 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ButtonTabScan = OB.COMP.ButtonTab.extend({
+  OB.COMP.ButtonTabScan = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
     render: function () {
+      OB.COMP.ToolbarButtonTab.prototype.render.call(this); // super.initialize();
       this.options.modelorder.on('clear scan', function() {
         this.$el.tab('show');
+        this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
       }, this);
       this.options.SearchBPs.bps.on('click', function (model, index) {
         this.$el.tab('show');
+        this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
       }, this);
       return this;
     },

@@ -15,7 +15,11 @@
     return OB.DEC.number(parseFloat(s, 10));
   };
 
-  var BtnAction = function (kb) {
+  var BtnAction = function (kb, isNumber) {
+    var extraClass = '';
+    if (isNumber) {
+      extraClass = ' btnkeyboard-num';
+    }
 
     return Backbone.View.extend({
       tagName: 'div',
@@ -35,16 +39,19 @@
         } else {
           this.command = attr.command;
         }
+        if (attr.className) {
+          this.className = attr.className;
+        }
 
         if (this.command) {
           this.button = new OB.COMP.Button();
-          this.button.$el.addClass('btnkeyboard');
+          this.button.$el.addClass('btnkeyboard').addClass(extraClass).addClass(this.className);
           this.button.clickEvent = function (e) {
             kb.keyPressed(me.command);
           };
           kb.addButton(this.command, this.button.$el);
         } else {
-          this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard'}});
+          this.button = B({kind: B.KindJQuery('div'), id: 'button', attr: {'class': 'btnkeyboard' + extraClass + ' ' + this.className}});
         }
         this.$el.append(this.button.$el);
       },
@@ -68,21 +75,21 @@
 
       this.component = B(
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-          {kind: B.KindJQuery('div'), id: 'toolbarcontainer', attr: {'class': 'span4'}},
-          {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
+          {kind: B.KindJQuery('div'), id: 'toolbarcontainer', attr: {'class': 'span3'}},
+          {kind: B.KindJQuery('div'), attr: {'class': 'span9'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'margin:5px'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'text-align: right; width: 100%; height: 40px;'}, content: [
-                    {kind: B.KindJQuery('pre'), attr: {'style': 'font-size:150%;'}, content: [
-                      ' ', {kind: B.KindJQuery('span'), id: 'editbox'}
+                    {kind: B.KindJQuery('pre'), attr: {'style': 'font-size: 35px; height: 33px; padding: 22px 5px 0px 0px;'}, content: [
+                      ' ', {kind: B.KindJQuery('span'), attr: {'style': 'margin-left: -10px;'} , id: 'editbox'}
                     ]}
                   ]}
                 ]}
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
                 {kind: BtnAction(this), attr: {'command': 'del'}, content: [
-                  {kind: B.KindJQuery('i'), attr:{'class': 'icon-chevron-left'}}
+                  {kind: B.KindJQuery('div'), attr:{'class': 'btn-icon btn-icon-backspace'}}
                 ]}
               ]}
             ]},
@@ -90,64 +97,64 @@
               {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '/'}, content: ['/']}
+                    {kind: BtnAction(this, true), attr: {'command': '/'}, content: ['/']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '*'}, content: ['*']}
+                    {kind: BtnAction(this, true), attr: {'command': '*'}, content: ['*']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '%'}, content: ['%']}
+                    {kind: BtnAction(this, true), attr: {'command': '%'}, content: ['%']}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '7'}, content: ['7']}
+                    {kind: BtnAction(this, true), attr: {'command': '7'}, content: ['7']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '8'}, content: ['8']}
+                    {kind: BtnAction(this, true), attr: {'command': '8'}, content: ['8']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '9'}, content: ['9']}
+                    {kind: BtnAction(this, true), attr: {'command': '9'}, content: ['9']}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '4'}, content: ['4']}
+                    {kind: BtnAction(this, true), attr: {'command': '4'}, content: ['4']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '5'}, content: ['5']}
+                    {kind: BtnAction(this, true), attr: {'command': '5'}, content: ['5']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '6'}, content: ['6']}
+                    {kind: BtnAction(this, true), attr: {'command': '6'}, content: ['6']}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '1'}, content: ['1']}
+                    {kind: BtnAction(this, true), attr: {'command': '1'}, content: ['1']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '2'}, content: ['2']}
+                    {kind: BtnAction(this, true), attr: {'command': '2'}, content: ['2']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '3'}, content: ['3']}
+                    {kind: BtnAction(this, true), attr: {'command': '3'}, content: ['3']}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '0'}, content: ['0']}
+                    {kind: BtnAction(this, true), attr: {'command': '0'}, content: ['0']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    {kind: BtnAction(this), attr: {'command': OB.Format.defaultDecimalSymbol}, content: [OB.Format.defaultDecimalSymbol]}
+                    {kind: BtnAction(this, true), attr: {'command': OB.Format.defaultDecimalSymbol}, content: [OB.Format.defaultDecimalSymbol]}
                   ]}
                 ]}
               ]},
               {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '-'}, content: ['-']}
+                    {kind: BtnAction(this, true), attr: {'command': '-', 'className': 'btnkeyboard-minus'}, content: ['-']}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-                    {kind: BtnAction(this), attr: {'command': '+'}, content: ['+']}
+                    {kind: BtnAction(this, true), attr: {'command': '+', 'className': 'btnkeyboard-plus'}, content: ['+']}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -168,7 +175,7 @@
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: BtnAction(this), attr: {'command': 'OK'}, content: [
-                      {kind: B.KindJQuery('i'), attr:{'class': 'icon-arrow-left'}}
+                      {kind: B.KindJQuery('div'), attr:{'class': 'btn-icon btn-icon-enter'}}
                     ]}
                   ]}
                 ]}
