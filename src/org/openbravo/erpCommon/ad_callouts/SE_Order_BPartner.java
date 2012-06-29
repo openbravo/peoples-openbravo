@@ -199,9 +199,9 @@ public class SE_Order_BPartner extends SimpleCallout {
     FieldProvider[] l = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
-          "C_Order InvoiceRule", "Invoice Rules for POS Sales orders", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this,
-              info.vars, "#User_Client", "SEOrderBPartner"), 0);
+          "C_Order InvoiceRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
+              "SEOrderBPartner"), Utility.getContext(this, info.vars, "#User_Client",
+              "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
       comboTableData = null;
