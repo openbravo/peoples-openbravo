@@ -34,7 +34,7 @@
     <Sql>
       <![CDATA[
         delete from ad_message_trl
-        where ad_message_id in (select msg_trl.ad_message_id
+        where ad_message_trl_id in (select msg_trl.ad_message_trl_id
                                 from ad_message msg, ad_message_trl msg_trl, ad_module mdl
                                 where msg.ad_message_id = msg_trl.ad_message_id
                                 and msg.ad_module_id = mdl.ad_module_id
