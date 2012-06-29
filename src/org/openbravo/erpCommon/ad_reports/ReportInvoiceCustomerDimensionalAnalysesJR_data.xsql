@@ -61,13 +61,13 @@
                          left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID,
            C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
            C_BP_GROUP, AD_ORG,
-           (select SUM(CASE WHEN c_invoiceline.m_inoutline_id='' THEN 0 
-        WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) amt_withshipment,               
-        SUM(linenetamt) as amtinv ,                    
-        SUM(transactioncost*qtyinvoiced/abs(movementqty)) cost_withshipment, c_invoiceline_id                     
+           (select SUM(CASE WHEN c_invoiceline.m_inoutline_id='' THEN 0
+        WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) AS amt_withshipment,
+        SUM(linenetamt) as amtinv,
+        SUM(transactioncost*qtyinvoiced/abs(movementqty)) AS cost_withshipment, c_invoiceline_id
         FROM c_invoiceline left join m_transaction on c_invoiceline.m_inoutline_id = m_transaction.m_inoutline_id 
-        inner join c_invoice on c_invoiceline.c_invoice_id = c_invoice.c_invoice_id                    
-        WHERE c_invoice.issotrx = 'Y'                    
+        inner join c_invoice on c_invoiceline.c_invoice_id = c_invoice.c_invoice_id
+        WHERE c_invoice.issotrx = 'Y'
         GROUP BY c_invoiceline_id) costs
       WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
       AND C_INVOICELINE.c_invoiceline_id = costs.c_invoiceline_id
@@ -85,9 +85,9 @@
       (CASE WHEN (m_product.isstocked='Y'and m_product.producttype='I') THEN COALESCE((COST_WITHSHIPMENT * AMTINV /amt_WITHSHIPMENT), 0 ) 
       ELSE M_GET_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, NULL)*C_INVOICELINE.QTYINVOICED END) AS COSTREF, 
       C_UOM.UOMSYMBOL,
-      C_INVOICE.C_CURRENCY_ID AS TRCURRENCYID,  
-	  TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,      
-	  C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,      
+      C_INVOICE.C_CURRENCY_ID AS TRCURRENCYID,
+	  TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRDATE,
+	  C_INVOICELINE.AD_CLIENT_ID AS TRCLIENTID,
 	  C_INVOICELINE.AD_ORG_ID AS TRORGID,
       (CASE WHEN ((m_product.isstocked='Y'and m_product.producttype='I') and C_INVOICELINE.M_INOUTLINE_ID='') THEN 1 WHEN ((m_product.isstocked='Y'and m_product.producttype='I') and C_INVOICELINE.M_INOUTLINE_ID IS NULL) THEN 1 ELSE 0 END) AS COSTCALCULATED
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
@@ -100,12 +100,12 @@
            C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
            C_BP_GROUP, AD_ORG,
            (select SUM(CASE WHEN c_invoiceline.m_inoutline_id='' THEN 0 
-        WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) amt_withshipment,               
-        SUM(linenetamt) as amtinv ,                    
-        SUM(transactioncost*qtyinvoiced/abs(movementqty)) cost_withshipment, c_invoiceline_id                     
+        WHEN c_invoiceline.m_inoutline_id is null THEN 0 ELSE linenetamt END) AS amt_withshipment,
+        SUM(linenetamt) as amtinv,
+        SUM(transactioncost*qtyinvoiced/abs(movementqty)) AS cost_withshipment, c_invoiceline_id
         FROM c_invoiceline left join m_transaction on c_invoiceline.m_inoutline_id = m_transaction.m_inoutline_id 
-        inner join c_invoice on c_invoiceline.c_invoice_id = c_invoice.c_invoice_id                    
-        WHERE c_invoice.issotrx = 'Y'                    
+        inner join c_invoice on c_invoiceline.c_invoice_id = c_invoice.c_invoice_id
+        WHERE c_invoice.issotrx = 'Y'
         GROUP BY c_invoiceline_id) costs
       WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
       AND C_INVOICELINE.c_invoiceline_id = costs.c_invoiceline_id
