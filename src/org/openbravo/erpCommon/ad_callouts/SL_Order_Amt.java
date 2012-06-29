@@ -330,10 +330,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           PricePrecision, taxBaseAmt, qtyOrdered);
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
-      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelist\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricestd\", \"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelist\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "),");
     }
 
     // if taxinclusive field is changed then modify net unit price and gross price
@@ -348,11 +348,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossAmount + "\"),");
-      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelist\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricestd\",\"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inplineGrossAmount\"," + grossAmount.toString() + "),");
+      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
     }
 
     // if net unit price changed then modify tax inclusive unit price

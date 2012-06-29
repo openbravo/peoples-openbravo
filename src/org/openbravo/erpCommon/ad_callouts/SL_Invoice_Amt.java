@@ -181,10 +181,10 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelist\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricestd\", \"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelist\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "\"),");
     }
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
@@ -195,11 +195,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inplineGrossAmount\",\"" + grossAmount + "\"),");
-      resultado.append("new Array(\"inppriceactual\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelist\",\"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricelimit\", \"" + netUnitPrice + "\"),");
-      resultado.append("new Array(\"inppricestd\",\"" + netUnitPrice + "\"),");
+      resultado.append("new Array(\"inplineGrossAmount\"," + grossAmount.toString() + "),");
+      resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
+      resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
     }
     if (!strChanged.equals("inplinenetamt"))
       // Net amount of a line equals quantity x unit price (actual price)
