@@ -15,7 +15,7 @@
                     this.model.get('name')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
-                    this.model.get('expected').toString()
+                    OB.DEC.add(0,this.model.get('expected')).toString()
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
                        {kind: OB.COMP.ButtonEdit.extend({rowid :this.model.get('id'), searchKey :this.model.get('_id'), commercialName :this.model.get('name'), _id :'edit_'+this.model.get('id'), me:this.me, attributes:{'button':'editbutton'}})}

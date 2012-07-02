@@ -18,7 +18,7 @@
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%'}, content: [
-                   payment.get('name')+ ' expected'
+                   payment.get('name')+' '+OB.I18N.getLabel('OBPOS_LblExpected')
              ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
                        payment.get('expected').toString()
@@ -34,7 +34,7 @@
           {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
             {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
             {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'}, content: [
-                   'Expected amount'
+                   OB.I18N.getLabel('OBPOS_LblTotalExpected')
             ]},
            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
                    me.options.modeldaycash.get('totalExpected').toString()
@@ -61,7 +61,7 @@
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                    {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%'}, content: [
-                      payment.get('name')+ ' counted'
+                      payment.get('name')+' '+OB.I18N.getLabel('OBPOS_LblCounted')
                 ]},
                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
                           payment.get('counted').toString()
@@ -77,7 +77,7 @@
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'}, content: [
-                      'Counted amount'
+                      OB.I18N.getLabel('OBPOS_LblTotalCounted')
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
                       me.options.modeldaycash.get('totalCounted').toString()
@@ -113,7 +113,7 @@
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                    {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%'}, content: [
-                      payment.get('name')+ ' difference'
+                      payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblDifference')
                 ]},
                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
                           (OB.DEC.sub(payment.get('counted'),payment.get('expected'))).toString()
@@ -129,7 +129,7 @@
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'}, content: [
-                      'Difference amount'
+                      OB.I18N.getLabel('OBPOS_LblTotalDifference')
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
                       me.options.modeldaycash.get('totalDifference').toString()

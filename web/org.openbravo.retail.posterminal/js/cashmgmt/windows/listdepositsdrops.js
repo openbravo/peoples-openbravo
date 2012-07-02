@@ -23,14 +23,13 @@
 	                  ]}
 	                ]}
 	              ]},
-	              {kind: B.KindJQuery('div')},
 	              {kind: OB.COMP.TableView, id: 'tableview', attr: {
 	                style: 'list',
 	                collection: this.listdepositsdrops,
 	                me: me,
 	                renderEmpty: function () {
 	                  return (
-	                    {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc;text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+	                    {kind: B.KindJQuery('div'), attr: {'style': ' padding: 20px; border-bottom: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
 	                      OB.I18N.getLabel('OBPOS_SearchNoResults')
 	                    ]}
 	                  );

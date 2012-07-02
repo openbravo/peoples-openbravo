@@ -40,10 +40,17 @@
           },
           renderLine: OB.COMP.RenderPayments.extend({me:me})
         }},
-        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-             {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; float: left;'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding-left: 298px; float: left;' }, content: [
-                   {kind: OB.COMP.ButtonOk.extend({
+        {kind: B.KindJQuery('div'), content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+               {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 0px 17px 10px; float: left; width: 44px'}, content: [
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
+                       {kind: OB.COMP.ButtonOk.extend({
                    me:me,
                    attributes:{'button':'allokbutton'},
                    clickEvent: function (e) {
@@ -56,12 +63,18 @@
                       that.me.options.modeldaycash.set('totalCounted',OB.DEC.add(that.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
                   });
                     $('div[button*="countedbutton"]').show();
+                    if($('a[button="okbutton"][style!="display: none; "]').length===0){
+                      this.me.options.closenextbutton.$el.removeAttr('disabled');
+                    }
                   }
                      })
                    }
-                 ]}
-             ]}
-         ]},
+                  ]}
+
+               ]}
+          ]},
+          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
+        ]},
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
              {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [

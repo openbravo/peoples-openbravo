@@ -60,7 +60,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       }
       transaction.setProcessed(true);
       transaction.setTransactionType("BPW");
-      transaction.setDescription(description);
+      transaction.setDescription(paymentMethod.getCommercialName() + " - " + description);
       transaction.setTransactionDate(new Date());
       transaction.setStatus("RPPC");
 
@@ -74,7 +74,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         jsonData.put("deposit", amount);
       }
       jsonData.put("name", paymentMethod.getCommercialName());
-      jsonData.put("description", description);
+      jsonData.put("description", paymentMethod.getCommercialName() + " - " + description);
 
     } finally {
       OBContext.restorePreviousMode();

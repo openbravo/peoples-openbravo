@@ -32,7 +32,8 @@
         this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.modeldaycash.defaults.step=0;
         this.$el.attr('disabled','disabled');
-      }
+        this.options.closenextbutton.$el.removeAttr('disabled');
+    }
     }
   });
 
@@ -54,6 +55,9 @@
         this.options.closekeyboard.toolbars.toolbarempty.hide();
         this.options.modeldaycash.defaults.step=1;
         this.options.closeprevbutton.$el.removeAttr('disabled');
+        if($('a[button="okbutton"][style!="display: none; "]').length!==0){
+          this.$el.attr('disabled','disabled');
+        }
       } else if (this.options.modeldaycash.defaults.step === 1) {
         //Count Cash to Post, print & Close
         this.options.postprintclose.$el.show();
@@ -83,6 +87,9 @@
     elem.set('counted',OB.DEC.add(0,elem.get('expected')));
     this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
     this.options['counted_'+this.rowid].$el.show();
+    if($('a[button="okbutton"][style!="display: none; "]').length===0){
+      this.me.options.closenextbutton.$el.removeAttr('disabled');
+    }
    },
    render: function () {
       this.$el.addClass('btnlink');

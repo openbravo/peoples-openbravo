@@ -12,6 +12,7 @@
 //    this.receipt = context.modelorder;
     context.modeldaycash.paymentmethods = new OB.MODEL.PaymentMethodCol();
     context.modeldaycash.paymentmethods.on('closed', function () {
+        me.modeldaycash.trigger('print');
         this.proc.exec({
         terminalId: OB.POS.modelterminal.get('terminal').id,
         cashCloseInfo: me.modeldaycash.paymentmethods.serializeToJSON()

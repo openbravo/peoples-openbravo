@@ -128,7 +128,7 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : dropsDepositsQuery.list()) {
       Object[] objdropdeposit = (Object[]) obj;
       JSONObject dropDeposit = new JSONObject();
-      dropDeposit.put("name", objdropdeposit[0]);
+      dropDeposit.put("description", objdropdeposit[0]);
       BigDecimal drop = (BigDecimal) objdropdeposit[1];
       BigDecimal deposit = (BigDecimal) objdropdeposit[2];
       if (drop.compareTo(deposit) > 0) {
@@ -155,7 +155,7 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : salesDepositsQuery.list()) {
       Object[] obja = (Object[]) obj;
       JSONObject salesDep = new JSONObject();
-      salesDep.put("name", obja[0] + " sales");
+      salesDep.put("description", obja[0] + " sales");
       salesDep.put("amount", obja[1]);
       deposits.put(salesDep);
       totalDeposits = totalDeposits.add((BigDecimal) obja[1]);
@@ -186,7 +186,10 @@ public class CashCloseReport extends JSONProcessSimple {
     result.put("totalDeposits", totalDeposits);
 
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    JSONObject finalResult = new JSONObject();
+    finalResult.put("data", new JSONArray().put(result));
+    finalResult.put("status", 0);
     log.debug(result.toString());
-    return result;
+    return finalResult;
   }
 }

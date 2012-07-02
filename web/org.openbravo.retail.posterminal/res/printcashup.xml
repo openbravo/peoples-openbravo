@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<output>
+  <ticket>
+  <%
+    var dropsAmount = OB.DEC.Zero, depositsAmount = OB.DEC.Zero;
+   %>
+    <line>
+        <image>logofb.png</image>
+    </line>
+    <line></line>
+    <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent('User: '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
+    </line>
+    <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent('Time: '+ new Date().toString().substring(3,24)) %></text>
+    </line>
+    <line>
+    </line>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetSales')) %></text>
+      <text align ="right" length="14"><%= cashup.transactions.models[0].get('netSales') %></text>
+    </line>
+    <%
+    cashup.transactions.models[0].get('salesTaxes').forEach(function(tax){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ cashup.transactions.models[0].get('netSales')) %></text>
+      <text align ="right" length="14"><%= tax.taxAmount %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossSales')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('grossSales') %></text>
+    </line>
+    <line>
+    </line>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetReturns')) %></text>
+      <text align ="right" length="14"><%= cashup.transactions.models[0].get('netReturns') %></text>
+    </line>
+    <%
+    cashup.transactions.models[0].get('returnsTaxes').forEach(function(tax){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ cashup.transactions.models[0].get('netReturns')) %></text>
+      <text align ="right" length="14"><%= tax.taxAmount %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossReturns')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('grossReturns') %></text>
+    </line>
+    <line>
+    </line>
+     <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('totalRetailTransactions') %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    cashup.transactions.models[0].get('drops').forEach(function(drop){
+    dropsAmount = OB.DEC.add(dropsAmount,drop.amount);
+    %>
+    <line>
+      <text align ="left" length="25"><%=drop.description %></text>
+      <text align ="right" length="14"><%= drop.amount %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDrops')) %></text>
+      <text align ="right" length="14" bold="true"><%= dropsAmount %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    cashup.transactions.models[0].get('deposits').forEach(function(deposit){
+    depositsAmount = OB.DEC.add(depositsAmount,deposit.amount);
+    %>
+    <line>
+      <text align ="left" length="25"><%=deposit.description %></text>
+      <text align ="right" length="14"><%= deposit.amount %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDeposits')) %></text>
+      <text align ="right" length="14" bold="true"><%= depositsAmount %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    cashup.paymentmethods.forEach(function(payment){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblExpected')) %></text>
+      <text align ="right" length="14"><%= payment.get('expected') %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalExpected')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.get('totalExpected') %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    cashup.paymentmethods.forEach(function(payment){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblCounted')) %></text>
+      <text align ="right" length="14"><%= payment.get('counted') %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalCounted')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.get('totalCounted') %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    cashup.paymentmethods.forEach(function(payment){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblDifference')) %></text>
+      <text align ="right" length="14"><%= OB.DEC.sub(payment.get('counted'),payment.get('expected')) %></text>
+    </line>
+    <%
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDifference')) %></text>
+      <text align ="right" length="14" bold="true"><%= cashup.get('totalDifference') %></text>
+    </line>
+    <line>
+    </line>
+  </ticket>
+</output>

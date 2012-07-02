@@ -8,7 +8,6 @@
   OB.COMP.HWManager = function (context) {
     this.receipt = context.modelorder;
     this.line = null;
-
     this.receipt.get('lines').on('selected', function (line) {
       if (this.line) {
         this.line.off('change', this.printLine);
@@ -21,6 +20,10 @@
     }, this);
 
     this.receipt.on('closed print', this.printOrder, this);
+    if(context.modeldaycash){
+      this.modeldaycash = context.modeldaycash;
+      this.modeldaycash.on('print', this.printCashUp, this);
+    }
   };
 
   var hwcallback = function (e) {
@@ -39,9 +42,14 @@
     OB.POS.hwserver.print(this.templatereceiptdata, { order: this.receipt}, hwcallback);
   };
 
+  OB.COMP.HWManager.prototype.printCashUp = function () {
+    OB.POS.hwserver.print(this.templatecashupdata, { cashup: this.modeldaycash}, hwcallback);
+  };
+
   OB.COMP.HWManager.prototype.attr = function (attrs) {
     this.templateline = attrs.templateline;
     this.templatereceipt = attrs.templatereceipt;
+    this.templatecashup = attrs.templatecashup;
   };
 
   OB.COMP.HWManager.prototype.load = function () {
@@ -50,6 +58,12 @@
     }, this);
     OB.UTIL.loadResource(this.templatereceipt, function(data) {
       this.templatereceiptdata = data;
+    }, this);
+    OB.UTIL.loadResource(this.templatecashup, function(data) {
+      this.templatecashupdata = data;
+    }, this);
+    OB.UTIL.loadResource(this.templatecashup, function(data) {
+      this.templatecashupdata = data;
     }, this);
     OB.UTIL.loadResource('res/welcome.xml', function(data) {
       OB.POS.hwserver.print(data, {}, hwcallback);

@@ -28,6 +28,9 @@
         $('div[searchKey*="'+key+'"]').prev().hide();
         $('div[searchKey*="'+key+'"]').text(counted.toString());
         $('div[searchKey*="'+key+'"]').show();
+        if($('a[button="okbutton"][style!="display: none; "]').length===0){
+          this.options.closenextbutton.$el.removeAttr('disabled');
+        }
         }
       }
     });
