@@ -29,6 +29,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -90,9 +92,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     // Checks if there is a conversion rate for each of the transactions of
     // the report
     ReportValuationStockData[] data = null;
-    Warehouse wh = OBDal.getInstance().get(Warehouse.class, strWarehouse);
-    String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(wh
-        .getOrganization()));
     OBError myMessage = null;
     myMessage = new OBError();
     String strConvRateErrorMsg = "";
@@ -103,9 +102,15 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
     if (vars.commandIn("FIND")) {
       try {
+        Warehouse wh = OBDal.getInstance().get(Warehouse.class, strWarehouse);
+        Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(wh.getClient().getId())
+            .getLegalEntity(wh.getOrganization());
+        String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(wh
+            .getOrganization()));
         data = ReportValuationStockData.select(this, vars.getLanguage(), strBaseCurrencyId,
-            strCurrencyId, strDate, DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
-            strCategoryProduct);
+            strCurrencyId, strDate, legalEntity.getId(),
+            DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse, strCategoryProduct);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
