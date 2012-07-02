@@ -97,41 +97,24 @@ public class POSUtils {
     return null;
   }
 
-  public static List<String> getStoreListByTerminalId(String posTerminalId) {
-    try {
-      OBContext.setAdminMode();
-
-      OBPOSApplications terminal = getTerminalById(posTerminalId);
-
-      if (terminal == null) {
-        throw new OBException("No terminal with ID: " + posTerminalId);
-      }
-
-      return OBContext.getOBContext().getOrganizationStructureProvider()
-          .getParentList(terminal.getOrganization().getId(), true);
-
-    } catch (Exception e) {
-      log.error("Error getting store list by terminal id: " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return null;
+  public static List<String> getStoreList(String orgId) {
+    return OBContext.getOBContext().getOrganizationStructureProvider().getParentList(orgId, true);
   }
 
-  public static PriceList getPriceListByTerminalId(String terminalId) {
+  public static PriceList getPriceListByOrgId(String orgId) {
     try {
       OBContext.setAdminMode();
 
-      final List<String> orgList = getStoreListByTerminalId(terminalId);
+      final List<String> orgList = getStoreList(orgId);
 
-      for (String orgId : orgList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+      for (String currentOrgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
         if (org.getObretcoPricelist() != null) {
           return org.getObretcoPricelist();
         }
       }
     } catch (Exception e) {
-      log.error("Error getting PriceList by Terminal ID: " + e.getMessage(), e);
+      log.error("Error getting PriceList by Org ID: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -160,24 +143,23 @@ public class POSUtils {
     return null;
   }
 
-  public static OBRETCOProductList getProductListByTerminalId(String terminalId) {
+  public static OBRETCOProductList getProductListByOrgId(String orgId) {
     try {
       OBContext.setAdminMode();
 
-      final List<String> orgList = getStoreListByTerminalId(terminalId);
+      final List<String> orgList = getStoreList(orgId);
 
-      for (String orgId : orgList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+      for (String currentOrgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
         if (org.getObretcoProductlist() != null) {
           return org.getObretcoProductlist();
         }
       }
     } catch (Exception e) {
-      log.error("Error getting ProductList by Terminal value: " + e.getMessage(), e);
+      log.error("Error getting ProductList by Org ID: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
-
     return null;
   }
 }

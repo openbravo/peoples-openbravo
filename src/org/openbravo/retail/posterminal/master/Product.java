@@ -18,8 +18,8 @@ public class Product extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    final OBRETCOProductList productList = POSUtils.getProductListByTerminalId(jsonsent
-        .getString("terminal"));
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(jsonsent
+        .getString("organization"));
 
     // final PriceList priceList =
     // POSUtils.getPriceListByTerminalId(jsonsent.getString("terminal"));

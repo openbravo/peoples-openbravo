@@ -20,7 +20,7 @@ public class ProductPrice extends ProcessHQLQuery {
     return "from PricingProductPrice where priceListVersion in "
         + "(select plv.id from PricingPriceList as ppl, PricingPriceListVersion as plv "
         + "where ppl.id = '"
-        + POSUtils.getPriceListByTerminalId(jsonsent.getString("terminal")).getId()
+        + POSUtils.getPriceListByOrgId(jsonsent.getString("organization")).getId()
         + "' and ppl.id = plv.priceList.id  and "
         + "plv.validFromDate = (select max(pplv.validFromDate) from PricingPriceListVersion as pplv where pplv.priceList.id = ppl.id))";
   }
