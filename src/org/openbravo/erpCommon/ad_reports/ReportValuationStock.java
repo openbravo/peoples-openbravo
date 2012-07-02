@@ -31,17 +31,23 @@ import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportValuationStock extends HttpSecureAppServlet {
@@ -111,6 +117,14 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         data = ReportValuationStockData.select(this, vars.getLanguage(), strBaseCurrencyId,
             strCurrencyId, strDate, legalEntity.getId(),
             DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse, strCategoryProduct);
+        boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, strWarehouse, strCategoryProduct);
+        if (hasTrxWithNoCost) {
+          OBError warning = new OBError();
+          warning.setType("Warning");
+          warning.setTitle(OBMessageUtils.messageBD("Warning"));
+          warning.setMessage(OBMessageUtils.messageBD("TrxWithNoCost"));
+          vars.setMessage("ReportValuationStock", warning);
+        }
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -216,6 +230,37 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     }
+  }
+
+  private boolean hasTrxWithNoCost(String strDate, String strWarehouse, String strCategoryProduct) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
+    if (!"".equals(strCategoryProduct)) {
+      where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
+    }
+
+    OBQuery<MaterialTransaction> whereQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    whereQry.setFilterOnReadableClients(false);
+    whereQry.setFilterOnReadableOrganization(false);
+    try {
+      whereQry.setNamedParameter("maxDate",
+          OBDateUtils.getDate(DateTimeData.nDaysAfter(this, strDate, "1")));
+    } catch (Exception e) {
+      // DoNothing parse exception not expected.
+      log4j.error("error parsing date: " + strDate, e);
+    }
+    whereQry.setNamedParameter("wh", strWarehouse);
+    if (!"".equals(strCategoryProduct)) {
+      whereQry.setNamedParameter("prodCategory", strCategoryProduct);
+    }
+    whereQry.setMaxResult(1);
+    return whereQry.uniqueResult() != null;
   }
 
   public String getServletInfo() {
