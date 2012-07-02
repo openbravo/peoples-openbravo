@@ -25,10 +25,10 @@
         this.options.modeldaycash.set('totalCounted',totalCounted);
         this.options.modeldaycash.set('totalDifference',OB.DEC.sub(totalCounted,this.options.modeldaycash.get('totalExpected')));
         $('button[button*="allokbutton"]').css('visibility','hidden');
-        $('div[searchKey*="'+key+'"]').prev().hide();
+        $('button[button="okbutton"][key*="'+key+'"]').hide();
         $('div[searchKey*="'+key+'"]').text(counted.toString());
         $('div[searchKey*="'+key+'"]').show();
-        if($('a[button="okbutton"][style!="display: none; "]').length===0){
+        if($('button[button="okbutton"][style!="display: none; "]').length===0){
           this.options.closenextbutton.$el.removeAttr('disabled');
         }
         }

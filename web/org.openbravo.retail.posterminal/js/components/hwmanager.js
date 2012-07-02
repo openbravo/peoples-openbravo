@@ -62,9 +62,6 @@
     OB.UTIL.loadResource(this.templatecashup, function(data) {
       this.templatecashupdata = data;
     }, this);
-    OB.UTIL.loadResource(this.templatecashup, function(data) {
-      this.templatecashupdata = data;
-    }, this);
     OB.UTIL.loadResource('res/welcome.xml', function(data) {
       OB.POS.hwserver.print(data, {}, hwcallback);
     }, this);

@@ -47,7 +47,7 @@
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 0px 17px 10px; float: left; width: 44px'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 10px 17px 10px; float: left; width: 44px'}, content: [
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
                        {kind: OB.COMP.ButtonOk.extend({
@@ -63,7 +63,7 @@
                       that.me.options.modeldaycash.set('totalCounted',OB.DEC.add(that.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
                   });
                     $('div[button*="countedbutton"]').show();
-                    if($('a[button="okbutton"][style!="display: none; "]').length===0){
+                    if($('button[button="okbutton"][style!="display: none; "]').length===0){
                       this.me.options.closenextbutton.$el.removeAttr('disabled');
                     }
                   }
@@ -76,11 +76,11 @@
           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
         ]},
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
+             {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; '}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
                          OB.I18N.getLabel('OBPOS_ReceiptTotal')
                  ]},
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; border-bottom: 1px solid #cccccc; float: left; width: 20%'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
                    {kind: Backbone.View.extend({
                      tagName: 'span',
                      initialize: function () {
@@ -95,10 +95,11 @@
                 }
             })}
          ]},
-                 {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; border-bottom: 1px solid #cccccc; float: left; width: 33%'}, content: [
+         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 10px 17px 10px; float: left; width: 44px'}, content: [
+          ]},
+                 {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; float: left;'}, content: [
                    {kind: Backbone.View.extend({
                     tagName: 'span',
-                    attributes: {'style': 'padding-left: 60px'},
                     initialize: function () {
                       this.total = $('<strong/>');
                       this.$el.append(this.total);
