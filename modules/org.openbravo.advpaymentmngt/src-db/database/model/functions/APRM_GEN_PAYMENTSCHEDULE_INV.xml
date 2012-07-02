@@ -742,7 +742,10 @@ BEGIN
                 UPDATE C_INVOICE
                 SET TOTALPAID = TOTALPAID + COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
                     OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
-                    DUEAMT = V_DueAmount
+                    DUEAMT = V_DueAmount, 
+                    FINALSETTLEMENT = cur_paymentschedule.duedate,
+                    DAYSOUTSTANDING = 0,
+                    PERCENTAGEOVERDUE = 0
                 WHERE C_INVOICE_ID = P_RECORD_ID;
                 UPDATE C_INVOICE
                 SET ISPAID = 'Y'

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -63,6 +64,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedInvV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -991,7 +993,17 @@ public class FIN_AddPayment {
       if (isDueDateFlag)
         invoice.setDueAmount(invoice.getDueAmount().subtract(writeOffAmount));
     }
+    HashMap<String, BigDecimal> amounts = calculateAmounts(invoice);
     if (0 == invoice.getOutstandingAmount().compareTo(BigDecimal.ZERO)) {
+
+      Date finalSettlementDate = getFinalSettlementDate(invoice);
+      // If date is null invoice amount = 0 then nothing to set
+      if (finalSettlementDate != null) {
+        invoice.setFinalSettlementDate(finalSettlementDate);
+        invoice.setDaysSalesOutstanding(FIN_Utility.getDaysBetween(invoice.getInvoiceDate(),
+            finalSettlementDate));
+      }
+
       invoice.setPaymentComplete(true);
     } else
       invoice.setPaymentComplete(false);
@@ -1002,11 +1014,82 @@ public class FIN_AddPayment {
           && (firstDueDate == null || firstDueDate.after(paymentSchedule.getDueDate())))
         firstDueDate = paymentSchedule.getDueDate();
     }
+    invoice.setPercentageOverdue(amounts.get("overdueOriginal").multiply(new BigDecimal(100))
+        .divide(invoice.getGrandTotalAmount(), BigDecimal.ROUND_HALF_UP).longValue());
+
     if (firstDueDate != null)
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(firstDueDate));
     else
       invoice.setDaysTillDue(0L);
     OBDal.getInstance().save(invoice);
+  }
+
+  private static HashMap<String, BigDecimal> calculateAmounts(Invoice invoice) {
+    BigDecimal paidAmt = BigDecimal.ZERO;
+    BigDecimal outstandingAmt = BigDecimal.ZERO;
+    BigDecimal overdueAmt = BigDecimal.ZERO;
+    BigDecimal overdueOriginal = BigDecimal.ZERO;
+    Boolean currentRecord = true;
+    for (FIN_PaymentSchedule paymentSchedule : invoice.getFINPaymentScheduleList()) {
+      BigDecimal paid = BigDecimal.ZERO;
+      for (FIN_PaymentScheduleDetail psd : paymentSchedule
+          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+        if (psd.isCanceled()) {
+          // If payment scheduled is cancelled don't consider its amount.
+          continue;
+        } else {
+          if (psd.getPaymentDetails() != null) {
+            if (currentRecord) {
+              currentRecord = false;
+            } else if (!(!currentRecord && FIN_Utility.isPaymentConfirmed(psd.getPaymentDetails()
+                .getFinPayment().getStatus(), psd))) {
+              continue;
+            }
+            Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
+            Date paymentDueDate = paymentSchedule.getDueDate();
+            if (paymentDate.after(paymentDueDate))
+              overdueOriginal = overdueOriginal.add(psd.getAmount());
+          }
+        }
+      }
+
+      if (paymentSchedule.getDueDate().before(new Date())
+          && paymentSchedule.getOutstandingAmount() != BigDecimal.ZERO) {
+        overdueAmt = overdueAmt.add(paymentSchedule.getOutstandingAmount());
+      }
+      paidAmt = paidAmt.add(paymentSchedule.getPaidAmount());
+      outstandingAmt = outstandingAmt.add(paymentSchedule.getOutstandingAmount());
+    }
+    HashMap<String, BigDecimal> amounts = new HashMap<String, BigDecimal>();
+    amounts.put("paidAmt", paidAmt);
+    amounts.put("outstandingAmt", outstandingAmt);
+    amounts.put("overdueAmt", overdueAmt);
+    amounts.put("overdueOriginal", overdueOriginal);
+    return amounts;
+  }
+
+  /**
+   * Returns the date in which last payment for this invoice took place
+   * 
+   * @param invoice
+   * @return
+   */
+  private static Date getFinalSettlementDate(Invoice invoice) {
+    final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance().createCriteria(
+        FIN_PaymentSchedInvV.class);
+    // For Background process execution at system level
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
+    }
+    obc.add(Restrictions.eq(FIN_PaymentSchedInvV.PROPERTY_INVOICE, invoice));
+    obc.setProjection(Projections.max(FIN_PaymentSchedInvV.PROPERTY_LASTPAYMENT));
+    Object o = obc.list().get(0);
+    if (o != null) {
+      return ((Date) o);
+    } else {
+      return null;
+    }
   }
 
   /**
