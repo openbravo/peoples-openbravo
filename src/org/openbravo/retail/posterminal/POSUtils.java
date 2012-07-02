@@ -76,7 +76,7 @@ public class POSUtils {
     return null;
   }
 
-  public static List<String> getStoreList(String searchKey) {
+  public static List<String> getOrgList(String searchKey) {
     try {
       OBContext.setAdminMode();
 
@@ -122,10 +122,10 @@ public class POSUtils {
     try {
       OBContext.setAdminMode();
 
-      final List<String> storeList = getStoreListByTerminalId(terminalId);
+      final List<String> orgList = getStoreListByTerminalId(terminalId);
 
-      for (String storeId : storeList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, storeId);
+      for (String orgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
         if (org.getObretcoPricelist() != null) {
           return org.getObretcoPricelist();
         }
@@ -143,10 +143,10 @@ public class POSUtils {
     try {
       OBContext.setAdminMode();
 
-      final List<String> storeList = getStoreList(searchKey);
+      final List<String> orgList = getOrgList(searchKey);
 
-      for (String storeId : storeList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, storeId);
+      for (String orgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
         if (org.getObretcoPricelist() != null) {
           return org.getObretcoPricelist();
         }
@@ -164,14 +164,12 @@ public class POSUtils {
     try {
       OBContext.setAdminMode();
 
-      final List<String> storeList = getStoreListByTerminalId(terminalId);
+      final List<String> orgList = getStoreListByTerminalId(terminalId);
 
-      for (String orgId : storeList) {
+      for (String orgId : orgList) {
         final Organization org = OBDal.getInstance().get(Organization.class, orgId);
-        if ("S".equals(org.getOBRETCORetailOrgType()) || "G".equals(org.getOBRETCORetailOrgType())) {
-          if (org.getObretcoProductlist() != null) {
-            return org.getObretcoProductlist();
-          }
+        if (org.getObretcoProductlist() != null) {
+          return org.getObretcoProductlist();
         }
       }
     } catch (Exception e) {

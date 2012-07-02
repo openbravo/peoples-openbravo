@@ -69,7 +69,7 @@
       if (this.terminal.get('terminal')) {
         name = this.terminal.get('terminal')._identifier;
         clientname = this.terminal.get('terminal')['client' + OB.Constants.FIELDSEPARATOR + '_identifier'];
-        orgname = this.terminal.get('terminal')['store' + OB.Constants.FIELDSEPARATOR + '_identifier'];
+        orgname = this.terminal.get('terminal')['organization' + OB.Constants.FIELDSEPARATOR + '_identifier'];
       }
       if (this.terminal.get('pricelist')) {
         pricelistname = this.terminal.get('pricelist')._identifier;

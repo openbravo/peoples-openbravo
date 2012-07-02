@@ -63,7 +63,7 @@
     modelName: 'Order',
     tableName: 'c_order',
     entityName: 'Order',
-    source: 'org.openbravo.model.common.order.Order',
+    source: '',
     properties: [
       'id',
       'json',
@@ -112,7 +112,7 @@
         delete this.attributes.json; // BINGO!!!
       }
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function(){console.log('success');}, function(){console.error(arguments);});
+      OB.Dal.save(this, function(){window.console.log('success');}, function(){window.console.error(arguments);});
     },
 
     calculateTaxes : function (callback) {
@@ -537,7 +537,7 @@
       var order = new OB.MODEL.Order();
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
-      order.set('organization', OB.POS.modelterminal.get('terminal').store);
+      order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);

@@ -28,7 +28,7 @@ public class Terminal extends ProcessHQLQuery {
         .getPriceListByTerminal(jsonsent.getJSONObject("parameters").getJSONObject("terminal")
             .getString("value"));
 
-    return "select pos.id as id, pos.store.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.store.obretcoCBpLocation.id as partnerAddress, "
+    return "select pos.id as id, pos.organization.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.organization.obretcoCBpLocation.id as partnerAddress, "
         + " pos.organization.id as organization, pos.organization.name as "
         + getIdentifierAlias("organization")
         + ", pos.client.id as client, pos.client.name as "
@@ -43,10 +43,6 @@ public class Terminal extends ProcessHQLQuery {
         + pricesList.getCurrency().getIdentifier()
         + "' as "
         + getIdentifierAlias("currency")
-        + ", "
-        + "pos.store.id as store, "
-        + "pos.store.name as "
-        + getIdentifierAlias("store")
         + ", pos.documentType.id as documentType, pos.documentType.name as "
         + getIdentifierAlias("documentType")
         + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";

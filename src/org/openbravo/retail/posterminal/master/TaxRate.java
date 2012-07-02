@@ -30,18 +30,18 @@ public class TaxRate extends ProcessHQLQuery {
     final OBPOSApplications posDetail = POSUtils.getTerminal("POS-1"); // FIXME: use parameters
 
     // FROM
-    final OrganizationInformation storeInfo = posDetail.getStore().getOrganizationInformationList()
-        .get(0); // FIXME: expected org info?
-                 // IndexOutOfBoundsException?
+    final OrganizationInformation storeInfo = posDetail.getOrganization()
+        .getOrganizationInformationList().get(0); // FIXME: expected org info?
+                                                  // IndexOutOfBoundsException?
 
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
     // TO
-    final Country toCountry = posDetail.getStore().getObretcoCBpLocation().getLocationAddress()
-        .getCountry();
-    final Region toRegion = posDetail.getStore().getObretcoCBpLocation().getLocationAddress()
-        .getRegion();
+    final Country toCountry = posDetail.getOrganization().getObretcoCBpLocation()
+        .getLocationAddress().getCountry();
+    final Region toRegion = posDetail.getOrganization().getObretcoCBpLocation()
+        .getLocationAddress().getRegion();
 
     return "from FinancialMgmtTaxRate where active = true "
         + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') and (country.id = '"

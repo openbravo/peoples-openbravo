@@ -30,7 +30,7 @@
           } else {  
             //In this case, the order was sent correctly, so we remove it from the buffer
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-            OB.Dal.remove(me.receipt, null,null)
+            OB.Dal.remove(me.receipt, null,null);
           }
         });
       }, function(){
