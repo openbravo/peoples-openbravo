@@ -156,7 +156,7 @@
           } else {
             sql = sql + ', ';
           }
-          
+
 
           sql = sql + modelProto.propertyMap[propertyName] + ' = ? ';
 
@@ -206,7 +206,7 @@
 
       if (model.get('id')) {
         // UPDATE
-        sql = 'DELETE FROM ' + tableName + ' WHERE '+modelProto.propertyMap.id+' = ? ';
+        sql = 'DELETE FROM ' + tableName + ' WHERE ' + modelProto.propertyMap.id + ' = ? ';
         params.push(model.get('id'));
       } else {
         throw 'An object without id cannot be deleted';
@@ -221,7 +221,7 @@
       throw 'Not implemented';
     }
   }
-  
+
   function get(model, id, success, error) {
     var tableName = model.prototype.tableName,
         sql = 'SELECT * FROM ' + tableName + ' WHERE ' + tableName + '_id = ?';
@@ -254,7 +254,7 @@
         throw 'initialData must be passed as parameter';
       }
 
-      if(!model.prototype.local) {
+      if (!model.prototype.local) {
         db.transaction(function (tx) {
           tx.executeSql(model.prototype.dropStatement);
         }, error);
