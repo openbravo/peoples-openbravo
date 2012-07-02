@@ -460,7 +460,7 @@ public class CostingMigrationProcess implements Process {
     whereQry.setNamedParameter("minDate", minDate);
     whereQry.setNamedParameter("maxDate", maxDate);
 
-    whereQry.setMaxResult(0);
+    whereQry.setMaxResult(1);
     return whereQry.uniqueResult() != null;
   }
 
