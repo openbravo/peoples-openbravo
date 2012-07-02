@@ -317,4 +317,34 @@
     }
   });
 
+  OB.COMP.SearchInput = Backbone.View.extend({
+    tagName: 'input',
+    attr: function (attributes) {
+      if (attributes.clickEvent) {
+        this.clickEvent = attributes.clickEvent;
+      }
+      if (attributes.xWebkitSpeech) {
+        this.$el.attr('x-webkit-speech', attributes.xWebkitSpeech);
+      }
+      if (attributes.type) {
+        this.$el.attr('type', attributes.type);
+      }
+      if (attributes.style) {
+        this.$el.attr('style', attributes.style);
+      }
+      if (attributes.className) {
+        this.$el.addClass(attributes.className);
+      }
+    },
+    initialize: function () {
+      this.$el.keypress(_.bind(this._clickEvent, this));
+      // new googleuiFastButton(this.el, this._clickEvent);
+    },
+    _clickEvent: function (e) {
+      this.clickEvent(e);
+    },
+    clickEvent: function (e) {
+    }
+  });
+
 }());
