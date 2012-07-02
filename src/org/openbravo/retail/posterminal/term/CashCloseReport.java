@@ -48,7 +48,8 @@ public class CashCloseReport extends JSONProcessSimple {
         + " and sched.order=ord and trans.finPayment=pay "
         + "group by ordertax.tax.id, ordertax.tax.name";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-    salesTaxesQuery.setString(0, (String) DalUtil.getId(terminal.getDocumentType()));
+    salesTaxesQuery.setString(0,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
     salesTaxesQuery.setString(1, posTerminalId);
     JSONArray salesTaxes = new JSONArray();
     BigDecimal totalSalesTax = BigDecimal.ZERO;
@@ -70,7 +71,8 @@ public class CashCloseReport extends JSONProcessSimple {
         + "and ord.obposApplications.id=?" + " and sched.order=ord and trans.finPayment=pay ";
 
     Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-    salesQuery.setString(0, (String) DalUtil.getId(terminal.getDocumentType()));
+    salesQuery.setString(0,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
     salesQuery.setString(1, posTerminalId);
     BigDecimal totalNetAmount = (BigDecimal) salesQuery.uniqueResult();
     if (totalNetAmount == null) {
@@ -83,7 +85,8 @@ public class CashCloseReport extends JSONProcessSimple {
     // Total returns computation
 
     Query returnTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-    returnTaxesQuery.setString(0, (String) DalUtil.getId(terminal.getDocumentTypeForReturns()));
+    returnTaxesQuery.setString(0,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
     returnTaxesQuery.setString(1, posTerminalId);
     JSONArray returnTaxes = new JSONArray();
     BigDecimal totalReturnsTax = BigDecimal.ZERO;
@@ -98,7 +101,8 @@ public class CashCloseReport extends JSONProcessSimple {
     }
 
     Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-    returnsQuery.setString(0, (String) DalUtil.getId(terminal.getDocumentTypeForReturns()));
+    returnsQuery.setString(0,
+        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
     returnsQuery.setString(1, posTerminalId);
     BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.uniqueResult();
     if (totalReturnsAmount == null) {
@@ -120,8 +124,8 @@ public class CashCloseReport extends JSONProcessSimple {
     BigDecimal totalDeposits = BigDecimal.ZERO;
 
     String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount "
-        + "from org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-        + "where trans.gLItem=payment.glitemChanges and trans.reconciliation is null "
+        + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
+        + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications=? and trans.account=payment.financialAccount";
     Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
     dropsDepositsQuery.setString(0, posTerminalId);
@@ -145,7 +149,7 @@ public class CashCloseReport extends JSONProcessSimple {
     String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount)"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
-        + "org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
+        + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
         + "group by obpay.commercialName";
@@ -164,7 +168,7 @@ public class CashCloseReport extends JSONProcessSimple {
     String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount)"
         + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "inner join trans.finPayment as pay, "
-        + "org.openbravo.retail.posterminal.org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
+        + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
         + "where pay.account=obpay.financialAccount and trans.gLItem is null "
         + "and trans.reconciliation is null and obpay.obposApplications.id=? "
         + "group by obpay.commercialName";

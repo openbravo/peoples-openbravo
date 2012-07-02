@@ -29,7 +29,8 @@ public class ProcessCashClose implements JSONProcess {
       JSONObject result = new JSONObject();
       result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       String s = result.toString();
-      w.write(s.substring(1, s.length() - 1));
+      w.write(s.substring(1, s.length()) + "}");
+      w.flush();
       w.close();
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonsent.getString("terminalId"));
@@ -43,5 +44,4 @@ public class ProcessCashClose implements JSONProcess {
     }
 
   }
-
 }

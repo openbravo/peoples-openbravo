@@ -18,6 +18,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -50,19 +51,19 @@ public class CashCloseProcessor {
 
         FIN_FinaccTransaction diffTransaction = null;
         if (!difference.equals(BigDecimal.ZERO)) {
-          diffTransaction = createDifferenceTransaction(posTerminal, reconciliation,
-              paymentType.getFinancialAccount(), difference);
+          diffTransaction = createDifferenceTransaction(posTerminal, reconciliation, paymentType,
+              difference);
           OBDal.getInstance().save(diffTransaction);
         }
         OBDal.getInstance().save(reconciliation);
 
         FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-            posTerminal, reconciliation, paymentType.getFinancialAccount(), reconciliationTotal);
+            posTerminal, reconciliation, paymentType, reconciliationTotal);
 
         OBDal.getInstance().save(paymentTransaction);
 
         FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-            posTerminal, reconciliation, paymentType.getSecondaryAccount(), reconciliationTotal);
+            posTerminal, reconciliation, paymentType, reconciliationTotal);
 
         OBDal.getInstance().save(depositTransaction);
 
@@ -118,7 +119,8 @@ public class CashCloseProcessor {
     FIN_Reconciliation reconciliation = OBProvider.getInstance().get(FIN_Reconciliation.class);
     reconciliation.setAccount(account);
     reconciliation.setDocumentNo(null);
-    reconciliation.setDocumentType(posTerminal.getDocTypeReconciliations());
+    reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
+        .getDocumentTypeForReconciliations());
     reconciliation.setEndingDate(new Date());
     reconciliation.setTransactionDate(new Date());
     reconciliation.setEndingBalance(BigDecimal.ZERO);
@@ -132,8 +134,9 @@ public class CashCloseProcessor {
   }
 
   protected FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
-      FIN_Reconciliation reconciliation, FIN_FinancialAccount account, BigDecimal difference) {
-    GLItem glItem = terminal.getCashDifferences();
+      FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference) {
+    FIN_FinancialAccount account = payment.getFinancialAccount();
+    GLItem glItem = payment.getPaymentMethod().getCashDifferences();
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -157,9 +160,10 @@ public class CashCloseProcessor {
   }
 
   protected FIN_FinaccTransaction createTotalTransferTransactionPayment(OBPOSApplications terminal,
-      FIN_Reconciliation reconciliation, FIN_FinancialAccount account,
-      BigDecimal reconciliationTotal) {
-    GLItem glItem = terminal.getTransferFunds();
+      FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType, BigDecimal reconciliationTotal) {
+    TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
+    FIN_FinancialAccount account = paymentType.getFinancialAccount();
+    GLItem glItem = paymentMethod.getGLItemForDrops();
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -180,9 +184,12 @@ public class CashCloseProcessor {
   }
 
   protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
-      FIN_Reconciliation reconciliation, FIN_FinancialAccount account,
-      BigDecimal reconciliationTotal) {
-    GLItem glItem = terminal.getTransferFunds();
+      FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType, BigDecimal reconciliationTotal) {
+    GLItem glItem = paymentType.getPaymentMethod().getGLItemForDeposits();
+    if (paymentType.getObretcoCmevents() == null) {
+      throw new OBException("There is no close event defined for the payment method");
+    }
+    FIN_FinancialAccount account = paymentType.getObretcoCmevents().getFinancialAccount();
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);

@@ -175,7 +175,7 @@ public class OrderLoader {
       t2 = System.currentTimeMillis();
       OBDal.getInstance().flush();
       t3 = System.currentTimeMillis();
-      log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (113 - 112)
+      log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
           + "; Shipment: " + (t114 - t113) + "; Shipmentlines: " + (t115 - t114) + "; Invoice: "
           + (t11 - t115));
 
@@ -509,7 +509,7 @@ public class OrderLoader {
       FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
-      paymentSchedule.setFinPaymentmethod(paymentType.getPaymentMethod());
+      paymentSchedule.setFinPaymentmethod(paymentType.getPaymentMethod().getPaymentMethod());
       paymentSchedule.setAmount(amount);
       paymentSchedule.setOutstandingAmount(amount);
       paymentSchedule.setDueDate(order.getOrderDate());
@@ -529,7 +529,8 @@ public class OrderLoader {
             FIN_PaymentSchedule.class);
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
-        paymentScheduleInvoice.setFinPaymentmethod(paymentType.getPaymentMethod());
+        paymentScheduleInvoice.setFinPaymentmethod(paymentType.getPaymentMethod()
+            .getPaymentMethod());
         paymentScheduleInvoice.setAmount(amount);
         paymentScheduleInvoice.setOutstandingAmount(amount);
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
@@ -568,11 +569,12 @@ public class OrderLoader {
 
       long t2 = System.currentTimeMillis();
       // Save Payment
-      FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, getPaymentDocumentType(order
-          .getOrganization()), order.getDocumentNo(), order.getBusinessPartner(), paymentType
-          .getPaymentMethod(), account, paymentSchedule.getAmount().toString(), order
-          .getOrderDate(), order.getOrganization(), null, paymentSchedule
-          .getFINPaymentScheduleDetailOrderPaymentScheduleList(), paymentAmount, false, false);
+      FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
+          getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
+          order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
+          paymentSchedule.getAmount().toString(), order.getOrderDate(), order.getOrganization(),
+          null, paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList(),
+          paymentAmount, false, false);
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";
@@ -608,6 +610,9 @@ public class OrderLoader {
     Iterator<String> keys = json.keys();
     while (keys.hasNext()) {
       String key = keys.next();
+      if (key.equals("id")) {
+        continue;
+      }
       String oldKey = key;
       if (entity.hasProperty(key)) {
         log.debug("Found property: " + key + " in entity " + entity.getName());

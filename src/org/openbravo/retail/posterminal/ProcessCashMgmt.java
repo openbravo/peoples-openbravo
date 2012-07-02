@@ -24,6 +24,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.retail.config.CashManagementEvents;
 import org.openbravo.service.json.JsonConstants;
 
 public class ProcessCashMgmt extends JSONProcessSimple {
@@ -38,6 +39,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
       String key = jsonsent.getString("key");
       String type = jsonsent.getString("type");
+      String cashManagementReasonId = jsonsent.getString("reasonId");
 
       OBCriteria<OBPOSAppPayment> payments = OBDal.getInstance().createCriteria(
           OBPOSAppPayment.class);
@@ -45,14 +47,24 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       payments.setFilterOnActive(false);
 
       OBPOSAppPayment paymentMethod = payments.list().get(0);
+      TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
 
-      GLItem glItem = paymentMethod.getGlitemChanges();
+      GLItem glItemMain;
+      GLItem glItemSecondary;
+      if (type.equals("drop")) {
+        glItemMain = terminalPaymentMethod.getGLItemForDrops();
+        glItemSecondary = terminalPaymentMethod.getGLItemForDeposits();
+      } else {
+        glItemMain = terminalPaymentMethod.getGLItemForDeposits();
+        glItemSecondary = terminalPaymentMethod.getGLItemForDrops();
+      }
       FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
+
       FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
-      transaction.setCurrency(account.getCurrency());
+      transaction.setCurrency(terminalPaymentMethod.getCurrency());
       transaction.setAccount(account);
       transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
-      transaction.setGLItem(glItem);
+      transaction.setGLItem(glItemMain);
       if (type.equals("drop")) {
         transaction.setPaymentAmount(amount);
       } else {
@@ -65,6 +77,30 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       transaction.setStatus("RPPC");
 
       OBDal.getInstance().save(transaction);
+
+      CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
+          cashManagementReasonId);
+
+      FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
+          FIN_FinaccTransaction.class);
+      secondTransaction.setCurrency(terminalPaymentMethod.getCurrency());
+      secondTransaction.setAccount(event.getFinancialAccount());
+      secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event
+          .getFinancialAccount()) + 10);
+      secondTransaction.setGLItem(glItemSecondary);
+      // The second transaction describes the opposite movement of the first transaction.
+      // If the first is a deposit, the second is a drop
+      if (type.equals("deposit")) {
+        secondTransaction.setPaymentAmount(amount);
+      } else {
+        secondTransaction.setDepositAmount(amount);
+      }
+      secondTransaction.setProcessed(true);
+      secondTransaction.setTransactionType("BPW");
+      secondTransaction.setDescription(paymentMethod.getCommercialName() + " - " + description);
+      secondTransaction.setTransactionDate(new Date());
+      secondTransaction.setStatus("RPPC");
+      OBDal.getInstance().save(secondTransaction);
 
       if (type.equals("drop")) {
         jsonData.put("drop", amount);

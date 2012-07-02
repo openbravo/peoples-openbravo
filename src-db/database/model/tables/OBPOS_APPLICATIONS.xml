@@ -45,43 +45,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="HARDWAREURL" primaryKey="false" required="false" type="VARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_PRICELIST_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="SCALEURL" primaryKey="false" required="false" type="VARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="ORDERDOCNO_PREFIX" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="HARDWAREURL" primaryKey="false" required="false" type="NVARCHAR" size="1024" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SCALEURL" primaryKey="false" required="false" type="NVARCHAR" size="1024" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_DOCTYPERET_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_DOCTYPERECON_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_GLITEM_DIFF_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_GLITEM_TRANSFER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ORDERDOCNO_PREFIX" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="OBPOS_TERMINALTYPE_ID" primaryKey="false" required="true" type="NVARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -91,27 +67,12 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APP_CURRENCY">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APP_TERTYPE">
+        <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APP_DOCTYPE">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APP_DOCTYPERET">
-        <reference local="C_DOCTYPERET_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="OBPOS_APP_PRICELIST">
-        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPLICATIONS_GLITEM_DIFF">
-        <reference local="C_GLITEM_DIFF_ID" foreign="C_GLITEM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPLICATIONS_GLITEM_TR">
-        <reference local="C_GLITEM_TRANSFER_ID" foreign="C_GLITEM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPLICATIONS_RECON">
-        <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
+      <index name="OBPOS_APP_TERTYPE" unique="false">
+        <index-column name="OBPOS_TERMINALTYPE_ID"/>
+      </index>
       <index name="OBPOS_APPLICATIONS_NAME" unique="true">
         <index-column name="NAME"/>
       </index>

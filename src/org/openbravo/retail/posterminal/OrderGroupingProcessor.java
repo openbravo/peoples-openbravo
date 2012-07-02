@@ -272,8 +272,10 @@ public class OrderGroupingProcessor {
     invoice.setProcessed(true);
     invoice.setPaymentMethod(bp.getPaymentMethod());
     invoice.setPaymentTerms(bp.getPaymentTerms());
-    invoice.setDocumentType(terminal.getDocumentType().getDocumentTypeForInvoice());
-    invoice.setTransactionDocument(terminal.getDocumentType().getDocumentTypeForInvoice());
+    invoice.setDocumentType(terminal.getObposTerminaltype().getDocumentType()
+        .getDocumentTypeForInvoice());
+    invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
+        .getDocumentTypeForInvoice());
     invoice.setAccountingDate(new Date());
     invoice.setInvoiceDate(new Date());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
