@@ -98,18 +98,24 @@
     cursor: pointer;
     height: 57px;
   }
-  button.btnkeyboard:active {
+  button.btnkeyboard:hover {
+    opacity: 0.75;
+  }
+  button.btnkeyboard:active, button.btnkeyboard:hover:active {
+    opacity: 1;
     background-color: #cccccc;
   }
   button.btnactive {
     background-color: #F8941D;
   }
 
-  button.btnkeyboard-plus:active {
+  button.btnkeyboard-plus:active, button.btnkeyboard-plus:hover:active {
+    opacity: 1;
     background-color: #6cb33f;
   }
 
-  button.btnkeyboard-minus:active {
+  button.btnkeyboard-minus:active, button.btnkeyboard-minus:hover:active {
+    opacity: 1;
     background-color: #f8941d;
   }
 
@@ -135,7 +141,12 @@
     width: 100%;
     font-weight: normal;
   }
-  button.btnlink:active {
+
+  button.btnlink:hover {
+    opacity: 0.75;
+  }
+  button.btnlink:active, button.btnlink:hover:active {
+    opacity: 1;
     background-color: #cccccc;
   }
   button.btnlink:disabled {
@@ -224,11 +235,15 @@
     cursor: pointer;
     border-bottom: 1px solid #cccccc;
   }
+  button.btnselect:hover {
+    background-color: #e1e1e1;
+    color: black;
+  }
   button.btnselect:active {
     background-color: #cccccc;
   }
   
-  li.selected > button {
+  li.selected > button, li.selected > button:hover {
     background-color: #7da7d9;
     color: #ffffff;
   }
@@ -236,8 +251,8 @@
   .dropdown-menu li > a:hover,
   .dropdown-menu .active > a,
   .dropdown-menu .active > a:hover {
-    background-color : #7da7d9;
-    color: #ffffff;
+    background-color : #e1e1e1;
+    color: black;
   }
 
   div.btnkeyboard {
