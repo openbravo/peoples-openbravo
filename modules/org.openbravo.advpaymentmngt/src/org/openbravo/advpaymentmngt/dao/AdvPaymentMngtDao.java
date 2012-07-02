@@ -1224,13 +1224,13 @@ public class AdvPaymentMngtDao {
   private void addPaymentMethodList(OBCriteria obc, List<String> paymentMethods) {
     List<String> paymentMethodsToRemove;
     Criterion compoundExp = null;
-    while (paymentMethods.size() > 2) {
-      paymentMethodsToRemove = new ArrayList(paymentMethods.subList(0, 2));
+    while (paymentMethods.size() > 999) {
+      paymentMethodsToRemove = new ArrayList<String>(paymentMethods.subList(0, 999));
       if (compoundExp == null) {
-        compoundExp = Restrictions.in("id", paymentMethods.subList(0, 2));
+        compoundExp = Restrictions.in("id", paymentMethods.subList(0, 999));
       } else {
         compoundExp = Restrictions.or(compoundExp,
-            Restrictions.in("id", paymentMethods.subList(0, 2)));
+            Restrictions.in("id", paymentMethods.subList(0, 999)));
       }
       paymentMethods.removeAll(paymentMethodsToRemove);
     }
