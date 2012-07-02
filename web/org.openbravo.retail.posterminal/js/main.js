@@ -67,20 +67,23 @@
       if (OB.DATA[OB.POS.paramWindow]) {
         // loading/refreshing required data/models for window
         _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-          var ds = new OB.DS.DataSource(new OB.DS.Query(model, null, null, terminal.id));
-          ds.on('ready', function () {
+          var ds;
+          if (model.prototype.local) {
+            OB.Dal.initCache(model, [], function () { window.console.log('init success');}, function () { window.console.error('init error', arguments);});
+          } else {
+            ds = new OB.DS.DataSource(new OB.DS.Query(model, null, null, terminal.id));
+            ds.on('ready', function () {
 
-            queue[model.prototype.source] = true;
-            emptyQueue = OB.UTIL.queueStatus(queue);
+              queue[model.prototype.source] = true;
+              emptyQueue = OB.UTIL.queueStatus(queue);
 
-            if(emptyQueue) {
-              createWindow();
-            }
-          });
-
-          ds.load();
-
-          queue[model.prototype.source] = false;
+              if(emptyQueue) {
+                createWindow();
+              }
+            });
+            ds.load();
+            queue[model.prototype.source] = false;
+          }
         });
       } else {
         createWindow();
