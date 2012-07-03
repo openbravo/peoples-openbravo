@@ -490,7 +490,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
-            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
+            + vars.getLanguage()
+            + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intAuxDiscard = i;
         intDiscard++;
         intProductLevel = i + 1;
@@ -661,23 +662,26 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/WeightDimensionalNoComparative.jrxml";
         }
 
-        if (data.length == 0 || data == null) {
-          data = ReportSalesDimensionalAnalyzeJRData.set();
+        if (data == null || data.length == 0) {
+          advisePopUp(request, response, "WARNING",
+              Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+              Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+        } else {
+          HashMap<String, Object> parameters = new HashMap<String, Object>();
+          parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
+          parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
+          parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
+          parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
+          parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
+          parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
+          parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
+          parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
+          parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
+          parameters.put("DIMENSIONS", new Integer(intDiscard));
+          parameters.put("REPORT_SUBTITLE", strTitle);
+          parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
+          renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
         }
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
-        parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
-        parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
-        parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
-        parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
-        parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
-        parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
-        parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
-        parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
-        parameters.put("DIMENSIONS", new Integer(intDiscard));
-        parameters.put("REPORT_SUBTITLE", strTitle);
-        parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
-        renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
       }
     }
   }

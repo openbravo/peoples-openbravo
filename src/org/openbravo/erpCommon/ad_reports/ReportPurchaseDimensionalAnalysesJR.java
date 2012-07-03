@@ -405,7 +405,8 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
         strLevelLabel[i] = dimensionLabel[2].name;
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
-            + vars.getLanguage() + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
+            + vars.getLanguage()
+            + "'))|| CASE WHEN uomsymbol IS NULL THEN '' ELSE to_char(' ('||uomsymbol||')') END";
         intProductLevel = i + 1;
         intDiscard++;
         intAuxDiscard = i;
@@ -511,15 +512,21 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
       } else { // no comparative report using JasperReports
         strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/SimpleDimensionalNoComparative.jrxml";
       }
-      parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
-      parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
-      parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
-      parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
-      parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
-      parameters.put("DIMENSIONS", new Integer(intDiscard));
-      parameters.put("REPORT_SUBTITLE", strTitle);
-      parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
-      renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
+      if (data == null || data.length == 0) {
+        advisePopUp(request, response, "WARNING",
+            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      } else {
+        parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
+        parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
+        parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
+        parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
+        parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
+        parameters.put("DIMENSIONS", new Integer(intDiscard));
+        parameters.put("REPORT_SUBTITLE", strTitle);
+        parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
+        renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
+      }
     }
   }
 
