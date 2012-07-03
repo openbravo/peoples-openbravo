@@ -25,7 +25,6 @@
 
           {kind: OB.COMP.ModalBPs},
           {kind: OB.COMP.ModalReceipts},
-
           {kind: B.KindJQuery('div'), attr: {'class': 'row', 'style': 'margin-bottom: 5px'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
               {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos row-fluid'}, content: [
@@ -126,8 +125,30 @@
 
         ], init: function () {
           this.context.on('domready', function () {
-            //Add initial empty order
-            this.context.modelorderlist.addNewOrder();
+            var orderlist = this.context.modelorderlist;
+            OB.Dal.find(OB.MODEL.Order, '', function (fetchedOrderList) { //OB.Dal.find success
+              var currentOrder = {};
+              if (!fetchedOrderList || fetchedOrderList.length == 0) {
+                // If there are no pending orders, 
+                //  add an initial empty order
+                orderlist.addNewOrder();
+              } else {
+                var transformedOrderList = [];
+                // The order object is stored in the json property of the row fetched from the database
+                _.each(fetchedOrderList.models, function(model) {
+                  transformedOrderList.push(JSON.parse(model.get('json')));
+                });
+                orderlist.reset(transformedOrderList);
+                // At this point it is sure that there exists at least one order
+                currentOrder = new OB.MODEL.Order(transformedOrderList[0]);
+                orderlist.load(currentOrder);
+                $('#modalreceipts').modal('show');
+              }
+            }, function () { //OB.Dal.find error
+              // If there is an error fetching the pending orders, 
+              // add an initial empty order
+              orderlist.addNewOrder();
+            })
           }, this);
         }}
       );

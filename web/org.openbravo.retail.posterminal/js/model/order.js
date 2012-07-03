@@ -15,6 +15,19 @@
       price: OB.DEC.Zero,
       gross: OB.DEC.Zero
     },
+    
+    initialize: function (attributes) {
+      if (attributes && attributes.product) {
+        this.set('product', new OB.Model.Product(attributes.product));
+        this.set('productidentifier', attributes.productidentifier);
+        this.set('uOM', attributes.uOM);
+        this.set('qty', attributes.qty);
+        this.set('price', attributes.price);
+        this.set('gross', attributes.gross);
+      } else {
+        this.constructor.prototype.initialize.apply(this, arguments);
+      }
+    },    
 
     printQty: function () {
       return this.get('qty').toString();
@@ -81,30 +94,34 @@
     insertStatement: 'INSERT INTO c_order(c_order_id, json, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?)',
     local: true,
     _id: 'modelorder',
-    initialize : function () {
-      this.set('client', null);
-      this.set('organization', null);
-      this.set('documentType', null);
-      this.set('orderType', 0); // 0: Sales order, 1: Return order
-      this.set('generateInvoice', false);      
-      this.set('priceList', null);
-      this.set('currency', null);
-      this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      this.set('warehouse',null);
-      this.set('salesRepresentative', null);
-      this.set('salesRepresentative'+ OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      this.set('posTerminal', null);
-      this.set('posTerminal'+ OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      this.set('orderDate', new Date());
-      this.set('documentNo', '');
-      this.set('undo', null);
-      this.set('bp', null);
-      this.set('bploc', null);
-      this.set('lines', new OB.MODEL.OrderLineCol());
-      this.set('payments', new OB.MODEL.PaymentLineCol());
-      this.set('payment', OB.DEC.Zero);
-      this.set('change', OB.DEC.Zero);
-      this.set('gross', OB.DEC.Zero);
+    initialize: function (attributes) {
+      if (attributes && attributes.documentNo) {
+        this.set('client', attributes.client);
+        this.set('organization', attributes.organization);
+        this.set('documentType', attributes.documentType);
+        this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
+        this.set('generateInvoice', attributes.generateInvoice);
+        this.set('priceList', attributes.priceList);
+        this.set('currency', attributes.currency);
+        this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes.currency);
+        this.set('warehouse', attributes.warehouse);
+        this.set('salesRepresentative', attributes.salesRepresentative);
+        this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+        this.set('posTerminal', attributes.posTerminal);
+        this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+        this.set('orderDate', new Date(attributes.orderDate));
+        this.set('documentNo', attributes.documentNo);
+        this.set('undo', attributes.undo);
+        this.set('bp', new Backbone.Model(attributes.bp));
+        this.set('bploc', new Backbone.Model(attributes.bploc));
+        this.set('lines', new OB.MODEL.OrderLineCol().reset(attributes.lines));
+        this.set('payments', new OB.MODEL.PaymentLineCol().reset(attributes.payments));
+        this.set('payment', attributes.payment);
+        this.set('change', attributes.change);
+        this.set('gross', attributes.gross);
+      } else {
+        this.clearOrderAttributes();
+      }
     },
 
     save: function() {
@@ -170,15 +187,22 @@
     },
 
     clear: function() {
+      this.clearOrderAttributes();
+      this.trigger('change');
+      this.trigger('clear');
+    },
+    
+    clearOrderAttributes: function () {
+      this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
-      this.set('generateInvoice', false);      
+      this.set('generateInvoice', false);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      this.set('warehouse',null);
+      this.set('warehouse', null);
       this.set('salesRepresentative', null);
       this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('posTerminal', null);
@@ -188,14 +212,12 @@
       this.set('undo', null);
       this.set('bp', null);
       this.set('bploc', null);
-      this.get('lines').reset();
-      this.get('payments').reset();
+      this.set('lines', this.get('lines') ? this.get('lines').reset() : new OB.MODEL.OrderLineCol());
+      this.set('payments', this.get('payments') ? this.get('payments').reset() : new OB.MODEL.PaymentLineCol());
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
-      this.trigger('change');
-      this.trigger('clear');
-    },
+    },    
 
     clearWith: function(_order) {
       this.set('client', _order.get('client'));
