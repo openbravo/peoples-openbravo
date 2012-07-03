@@ -5,31 +5,44 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  var getPayment = function (receipt, key, name, type) {
+  var getPayment = function (receipt, key, name, identifier, type) {
     return ({
       'permission': key,
       'action': function (txt) {
       this.options.amountToDrop=txt;
       this.options.destinationKey=key;
+      this.options.identifier=identifier;
       this.options.type=type;
-         $('#modaldropdepdestinations').modal('show');
+      if(type==='drop'){
+        $('#modaldropevents').modal('show');
+      }else{
+        $('#modaldepositevents').modal('show');
+      }
       }
     });
   };
 
   OB.COMP.ToolbarCashMgmt = function (context) {
     var i, max, payments;
-
+    var ctx = context;
     this.toolbar = [];
+    var me = this;
     this.receipt = context.modelorder;
-    payments = OB.POS.modelterminal.get('payments');
-
-    for (i = 0, max = payments.length; i < max; i++) {
-      if(payments[i].glitemChanges){//if it has a GLItem to Deposits and Drops
-        this.toolbar.push({command: payments[i].searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDeposit'), definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier,'deposit'), label: payments[i]._identifier+' '+OB.I18N.getLabel('OBPOS_LblDeposit')});
-        this.toolbar.push({command: payments[i].searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDrop'), definition: getPayment(this.receipt, payments[i].searchKey, payments[i]._identifier,'drop'), label: payments[i]._identifier+' '+OB.I18N.getLabel('OBPOS_LblDrop')});
+    this.payments = new OB.MODEL.Collection(context.DataCashMgmtPaymentMethod);
+    context.DataCashMgmtPaymentMethod.ds.on('ready', function(){
+      me.payments.reset(this.cache);
+      for (i = 0, max = me.payments.length; i < max; i++) {
+        if(me.payments.at(i).get('allowdeposits')){
+          me.toolbar.push({command: me.payments.at(i).get('payment').searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDeposit'), definition: getPayment(this.receipt, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'deposit'), label: me.payments.at(i).get('payment')._identifier+' '+OB.I18N.getLabel('OBPOS_LblDeposit')});
+        }
+        if(me.payments.at(i).get('allowdrops')){
+          me.toolbar.push({command: me.payments.at(i).get('payment').searchKey+'_'+OB.I18N.getLabel('OBPOS_LblDrop'), definition: getPayment(this.receipt, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'drop'), label: me.payments.at(i).get('payment')._identifier+' '+OB.I18N.getLabel('OBPOS_LblDrop')});
+        }
       }
-    }
+      ctx.cashmgmtkeyboard.addToolbar('toolbarcashmgmt', me.toolbar);
+      ctx.cashmgmtkeyboard.show('toolbarcashmgmt');
+    });
+    this.payments.exec();
   };
 }());
 

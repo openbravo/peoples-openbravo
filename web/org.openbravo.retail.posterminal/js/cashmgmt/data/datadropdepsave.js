@@ -9,26 +9,35 @@
     this._id = 'dropdepsave';
     this.context = context;
     var me = this;
-    this.context.destinations = new Backbone.Collection();
-    this.context.destinations.on('click', function (model, index) {
+    me.context.depsdropstosend = [];
+    this.context.ListDepositsDrops.listdepositsdrops.on('depositdrop', function (model, index) {
         this.proc.exec({
-//      terminalId: OB.POS.modelterminal.get('terminal').id,
-          description: model.get('name'),
-          amount: me.context.amountToDrop,
-          key: me.context.destinationKey,
-          type: me.context.type
+          depsdropstosend:me.context.depsdropstosend
         }, function (data, message) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgDropDepNotSaved'));
         } else {
-//        add from data the new drop or deposit created
-          me.context.ListDepositsDrops.listdepositsdrops.add(data);
+          me.context.trigger('print');
           OB.UTIL.showSuccess("OK");
+          me.context.depositsdropsTicket.$el.hide();
+          me.context.ListDepositsDrops.$el.show();
+          me.context.cashmgmtnextbutton.$el.attr('disabled','disabled');
+          me.context.cashmgmtnextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
+          me.context.msginfo.$el.text(OB.I18N.getLabel('OBPOS_LblDepositsDropsMsg'));
         }
        });
      }, this);
-     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
-
+    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
+    this.context.SearchDropEvents.destinations.on('click', function (model, index) {
+        me.context.ListDepositsDrops.listdepositsdrops.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
+        me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
+      me.context.cashmgmtnextbutton.$el.removeAttr('disabled');
+      }, this);
+    this.context.SearchDepositEvents.destinations.on('click', function (model, index) {
+      me.context.ListDepositsDrops.listdepositsdrops.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
+      me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
+    me.context.cashmgmtnextbutton.$el.removeAttr('disabled');
+    }, this);
   };
 
  }());

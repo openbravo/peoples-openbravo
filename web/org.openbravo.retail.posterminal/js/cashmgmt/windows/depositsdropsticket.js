@@ -5,13 +5,12 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ListDepositsDrops = OB.COMP.CustomView.extend({
-	  _id: 'listdepositsdrops',
+  OB.COMP.DepositsDropsTicket = OB.COMP.CustomView.extend({
+	  _id: 'depositsdropsTicket',
 	  initialize: function () {
 	        var me = this;
-	        this._id = 'ListDepositsDrops';
 	        this.total= OB.DEC.Zero;
-	        this.listdepositsdrops = new OB.MODEL.Collection(this.options.DataDepositsDrops);
+	        this.listdepositsdrops = this.options.ListDepositsDrops.listdepositsdrops;
 	        this.component = B(
 	        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
 	          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
@@ -23,6 +22,55 @@
 	                  ]}
 	                ]}
 	              ]},
+	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;text-align:center;'}, content: [
+                       '*** Cash Management Confirmation Ticket ***'
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        'User: '+OB.POS.modelterminal.get('context').user._identifier
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        'Time: '+ new Date().toString().substring(3,24)
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        'Store: '+ OB.POS.modelterminal.get('terminal').organization$_identifier
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        'Terminal: '+ OB.POS.modelterminal.get('terminal')._identifier
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
+                    ]}
+                  ]}
+                ]},
 	              {kind: OB.COMP.TableView, id: 'tableview', attr: {
 	                style: 'list',
 	                collection: this.listdepositsdrops,
@@ -39,7 +87,7 @@
 	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
                       {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 70%'}, content: [
-                              OB.I18N.getLabel('OBPOS_LblTotal')
+                              OB.I18N.getLabel('OBPOS_ReceiptTotal')
                       ]},
                   {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 20px 17px 0px;  float: right; '}, content: [
                    {kind: Backbone.View.extend({
@@ -75,7 +123,6 @@
 	        );
 	       this.$el = this.component.$el;
 	       this.tableview = this.component.context.tableview;
-	       this.listdepositsdrops.exec();
 	    }
 	  });
 }());

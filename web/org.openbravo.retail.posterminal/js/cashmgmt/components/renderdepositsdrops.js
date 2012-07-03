@@ -15,7 +15,7 @@
               OB.I18N.getLabel('OBPOS_LblDrop')+': '+this.model.get('description')
             ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
-              '-'+this.model.get('drop').toString()
+              OB.DEC.sub(0,this.model.get('drop')).toString()
             ]}
            ]}
         ]}).$el);

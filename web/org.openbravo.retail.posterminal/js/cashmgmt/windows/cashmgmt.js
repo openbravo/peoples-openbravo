@@ -13,26 +13,24 @@
     }
   });
 
-
   OB.COMP.CashManagement = OB.COMP.CustomView.extend({
     createView: function () {
       return (
         {kind: B.KindJQuery('section'), content: [
-
-          {kind: OB.DATA.Container, content: [
-            {kind: OB.DATA.DepositsDrops}
-          ]},
-          {kind: OB.DATA.DropDepSave},
           {kind: OB.MODEL.DayCash},
           {kind: OB.MODEL.Order},
           {kind: OB.MODEL.OrderList},
-          {kind: OB.DATA.DepositDestinations},
-          {kind: OB.DATA.DropDestinations},
           {kind: OB.COMP.ModalCancel},
-          {kind: OB.COMP.ModalDropDepDestinations},
+          {kind: OB.DATA.Container, content: [
+            {kind: OB.DATA.DepositEvents},
+            {kind: OB.DATA.DropEvents},
+            {kind: OB.DATA.DepositsDrops},
+            {kind: OB.DATA.CashMgmtPaymentMethod}
+          ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-               {kind: OB.COMP.ListDepositsDrops}
+               {kind: OB.COMP.ListDepositsDrops},
+               {kind: OB.COMP.DepositsDropsTicket}
              ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), content: [
@@ -40,6 +38,12 @@
               ]},
               {kind: OB.COMP.CashMgmtKeyboard }
             ]}
+          ]},
+          {kind: OB.COMP.ModalDropEvents},
+          {kind: OB.COMP.ModalDepositEvents},
+          {kind: OB.DATA.DropDepSave},
+          {kind: OB.DATA.Container, content: [
+            {kind: OB.COMP.HWManager, attr: {'templatecashmgmt': 'res/printcashmgmt.xml'}}
           ]}
         ]}
       );

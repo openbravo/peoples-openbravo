@@ -5,8 +5,8 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ModalDropDepDestinations = OB.COMP.Modal.extend({
-    id: 'modaldropdepdestinations',
+  OB.COMP.ModalDepositEvents = OB.COMP.Modal.extend({
+    id: 'modaldepositevents',
     header: 'Select Destinations',
     initialize: function () {
         OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
@@ -22,7 +22,7 @@
         theHeaderText.attr('color', 'black');
       },
     getContentView: function () {
-      return ({kind:OB.COMP.SearchDropDepDestinations});
+      return ({kind:OB.COMP.SearchDepositEvents});
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default
