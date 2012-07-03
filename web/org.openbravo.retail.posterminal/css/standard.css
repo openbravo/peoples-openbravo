@@ -255,6 +255,10 @@
     color: black;
   }
 
+  .dropdown-menu {
+    padding: 0px;
+  }
+
   div.btnkeyboard {
     display: block;
     width: 100%;
@@ -358,7 +362,9 @@
     background-color: #7da7d9;
   }
 
-  ul.nav-pos > li.active > div > button {
+  ul.nav-pos > li.active > div > button,
+  ul.nav-pos > li.active > div > button:hover {
+    opacity: 1;
     background-color: #7da7d9;
   }
 
