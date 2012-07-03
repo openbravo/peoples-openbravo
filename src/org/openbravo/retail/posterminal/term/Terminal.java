@@ -45,6 +45,8 @@ public class Terminal extends ProcessHQLQuery {
         + getIdentifierAlias("currency")
         + ", pos.obposTerminaltype.documentType.id as documentType, pos.obposTerminaltype.documentType.name as "
         + getIdentifierAlias("documentType")
+        + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
+        + getIdentifierAlias("documentTypeForReturns")
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
         + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
   }
