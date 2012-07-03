@@ -47,6 +47,7 @@ public class SE_Order_BPartner extends SimpleCallout {
     String strPaymentterm = "";
     String strDeliveryRule = "";
     String strDocTypeTarget = info.vars.getStringParameter("inpcDoctypetargetId");
+    String docSubTypeSO = "";
 
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
@@ -55,7 +56,6 @@ public class SE_Order_BPartner extends SimpleCallout {
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
       strUserRep = strUserRep.equals("") ? info.vars.getStringParameter("inpsalesrepId")
           : strUserRep;
-      String docSubTypeSO = "";
       SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;
@@ -198,10 +198,17 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     FieldProvider[] l = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
-          "C_Order InvoiceRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SEOrderBPartner"), Utility.getContext(this, info.vars, "#User_Client",
-              "SEOrderBPartner"), 0);
+      ComboTableData comboTableData = null;
+      if ("WR".equals(docSubTypeSO)) {
+        comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule",
+            "Values for Invoice Rules for POS Sales orders", Utility.getContext(this, info.vars,
+                "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this, info.vars,
+                "#User_Client", "SEOrderBPartner"), 0);
+      } else {
+        comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule", "",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+            Utility.getContext(this, info.vars, "#User_Client", "SEOrderBPartner"), 0);
+      }
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
       comboTableData = null;
