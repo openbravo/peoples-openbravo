@@ -7,21 +7,14 @@
     tableName: 'm_product_category',
     entityName: 'ProductCategory',
     source: 'org.openbravo.retail.posterminal.master.Category',
-    properties: [
-     'id',
-     'searchKey',
-     'name',
-     'img',
-     '_identifier',
-     '_idx'
-    ],
+    properties: ['id', 'searchKey', 'name', 'img', '_identifier', '_idx'],
     propertyMap: {
-     'id': 'm_product_category_id',
-     'searchKey': 'value',
-     'name': 'name',
-     'img': 'ad_image_id',
-     '_identifier': '_identifier',
-     '_idx': '_idx'
+      'id': 'm_product_category_id',
+      'searchKey': 'value',
+      'name': 'name',
+      'img': 'ad_image_id',
+      '_identifier': '_identifier',
+      '_idx': '_idx'
     },
     createStatement: 'CREATE TABLE IF NOT EXISTS m_product_category (m_product_category_id TEXT PRIMARY KEY , value TEXT , name TEXT , ad_image_id TEXT , _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS m_product_category',
