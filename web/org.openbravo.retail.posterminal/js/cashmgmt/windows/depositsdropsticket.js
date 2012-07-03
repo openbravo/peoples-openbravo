@@ -77,7 +77,7 @@
 	                me: me,
 	                renderEmpty: function () {
 	                  return (
-	                    {kind: B.KindJQuery('div'), attr: {'style': ' padding: 20px; border-bottom: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+	                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 20px; border-bottom: 1px solid #cccccc; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
 	                      OB.I18N.getLabel('OBPOS_SearchNoResults')
 	                    ]}
 	                  );

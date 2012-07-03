@@ -23,7 +23,7 @@
           collection: lines,
           renderEmpty: function () {
             return (
-              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
                  OB.I18N.getLabel('OBPOS_ReceiptNew')
               ]}
             );
@@ -55,7 +55,7 @@
             ]}
           ]},
           {kind: B.KindJQuery('li'), content: [
-            {kind: B.KindJQuery('div'), id: 'footer', attr: {style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight:bold; font-size: 150%; color: #888888'}}
+            {kind: B.KindJQuery('div'), id: 'footer', attr: {style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight: bold; font-size: 30px; color: #f8941d'}}
           ]}
         ]}
       ]}

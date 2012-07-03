@@ -93,7 +93,7 @@
                   collection: this.products,
                   renderEmpty: function () {
                     return (
-                      {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
+                      {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
                         OB.I18N.getLabel('OBPOS_SearchNoResults')
                       ]}
                     );

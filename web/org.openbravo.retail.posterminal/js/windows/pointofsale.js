@@ -91,7 +91,7 @@
 
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
 
-              {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; margin: 5px'}, content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'position: relative;background-color: #ffffff; color: black;'}, content: [
                   {kind: OB.COMP.ReceiptsCounter},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [
@@ -104,7 +104,11 @@
                         ]}
                       ]}
                     ]},
-                    {kind: OB.COMP.OrderView}
+                    {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'max-height: 503px; overflow: auto;'}, content: [
+                      {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                        {kind: OB.COMP.OrderView}
+                      ]}
+                    ]}
                   ]}
                 ]}
               ]}
