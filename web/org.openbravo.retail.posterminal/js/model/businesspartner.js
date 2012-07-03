@@ -1,5 +1,4 @@
 //jslint
-
 /*global Backbone */
 
 
@@ -10,27 +9,17 @@
     tableName: 'c_bpartner',
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
-    properties: [
-     'id',
-     'searchKey',
-     'name',
-     'description',
-     'taxId',
-     'locId',
-     'locName',
-     '_identifier',
-     '_idx'
-    ],
+    properties: ['id', 'searchKey', 'name', 'description', 'taxId', 'locId', 'locName', '_identifier', '_idx'],
     propertyMap: {
-     'id': 'c_bpartner_id',
-     'searchKey': 'value',
-     'name': 'name',
-     'description': 'description',
-     'taxId': 'taxID',
-     'locId': 'c_bpartnerlocation_id',
-     'locName': 'c_bpartnerlocation_name',
-     '_identifier': '_identifier',
-     '_idx': '_idx'
+      'id': 'c_bpartner_id',
+      'searchKey': 'value',
+      'name': 'name',
+      'description': 'description',
+      'taxId': 'taxID',
+      'locId': 'c_bpartnerlocation_id',
+      'locName': 'c_bpartnerlocation_name',
+      '_identifier': '_identifier',
+      '_idx': '_idx'
     },
     createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY , value TEXT , name TEXT , description TEXT , taxID TEXT , c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS c_bpartner',
