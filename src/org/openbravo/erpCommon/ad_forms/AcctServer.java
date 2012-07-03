@@ -965,6 +965,10 @@ public abstract class AcctServer {
   } // loadDocument
 
   public void loadDocumentType() {
+    loadDocumentType(false);
+  }
+
+  public void loadDocumentType(boolean supressWarnings) {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - loadDocumentType - DocumentType: " +
     // DocumentType + " - C_DocType_ID : " + C_DocType_ID);
@@ -986,7 +990,7 @@ public abstract class AcctServer {
           IsReturn = data[0].isreturn;
         }
       }
-      if (DocumentType != null && DocumentType.equals(""))
+      if (!supressWarnings && DocumentType != null && DocumentType.equals(""))
         log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
         AcctServerData[] data = AcctServerData.selectDefaultGLCategory(connectionProvider,
@@ -2464,7 +2468,7 @@ public abstract class AcctServer {
   boolean disableDocumentConfirmation() {
     C_DocType_ID = objectFieldProvider[0].getField("cDoctypeId");
     if ("".equals(DocumentType)) {
-      loadDocumentType();
+      loadDocumentType(true);
     }
     OBContext.setAdminMode();
     try {
