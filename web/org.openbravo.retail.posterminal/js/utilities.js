@@ -30,22 +30,22 @@
   };
 
   OB.UTIL.loadResource = function (res, callback, context) {
-   $.ajax({
-        url: res,
-        dataType: 'text',
-        type: 'GET',
-        success: function (data, textStatus, jqXHR) {
-          callback.call(context || this, data);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          callback.call(context || this);
-        }
+    $.ajax({
+      url: res,
+      dataType: 'text',
+      type: 'GET',
+      success: function (data, textStatus, jqXHR) {
+        callback.call(context || this, data);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        callback.call(context || this);
+      }
     });
   };
 
   OB.UTIL.queueStatus = function (queue) {
     // Expects an object where the value element is true/false depending if is processed or not
-    if(!_.isObject(queue)) {
+    if (!_.isObject(queue)) {
       throw 'Object expected';
     }
     return _.reduce(queue, function (memo, val) {
@@ -54,5 +54,3 @@
   };
 
 }());
-
-
