@@ -395,11 +395,12 @@
       this.adjustPayment();
     },
 
-    setBPandBPLoc: function (businessPartner) {
-      var me = this;
+    setBPandBPLoc: function (businessPartner, showNotif) {
+      var me = this, undef;
       var oldbp = this.get('bp');
       this.set('bp', businessPartner);
       // set the undo action
+      if(showNotif ===  undef || showNotif === true){
       this.set('undo', {
         text: businessPartner
             ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')])
@@ -410,6 +411,7 @@
           me.set('undo', null);
         }
       });
+      }
       this.save();
     },
 
@@ -559,10 +561,9 @@
 
         function successCallbackBPs(dataBps) {
           if (dataBps){
-            me.modelorder.setBPandBPLoc(dataBps);
+            me.modelorder.setBPandBPLoc(dataBps, false);
           }
         }
-
         OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
       }
 
