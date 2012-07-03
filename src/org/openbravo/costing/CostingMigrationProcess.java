@@ -110,6 +110,7 @@ public class CostingMigrationProcess implements Process {
           rule.setValidated(true);
           OBDal.getInstance().save(rule);
         }
+        deleteAlertRule();
         CostingStatus.getInstance().setMigrated();
         deleteMigrationFirstPhaseCompletedPreference();
       }
@@ -795,6 +796,11 @@ public class CostingMigrationProcess implements Process {
     newPref.setSearchKey(value);
 
     OBDal.getInstance().save(newPref);
+  }
+
+  private void deleteAlertRule() {
+    AlertRule legacyCostAvailableAlert = getLegacyCostAvailableAlert();
+    OBDal.getInstance().remove(legacyCostAvailableAlert);
   }
 
   private void deleteMigrationFirstPhaseCompletedPreference() {
