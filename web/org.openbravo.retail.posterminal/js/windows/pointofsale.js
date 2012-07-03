@@ -1,4 +1,4 @@
-/*global B, $ */
+/*global B, $, _ */
 
 (function () {
 
@@ -127,7 +127,7 @@
             var orderlist = this.context.modelorderlist;
             OB.Dal.find(OB.MODEL.Order, '', function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
-              if (!fetchedOrderList || fetchedOrderList.length == 0) {
+              if (!fetchedOrderList || fetchedOrderList.length === 0) {
                 // If there are no pending orders, 
                 //  add an initial empty order
                 orderlist.addNewOrder();
@@ -147,7 +147,7 @@
               // If there is an error fetching the pending orders, 
               // add an initial empty order
               orderlist.addNewOrder();
-            })
+            });
           }, this);
         }}
       );
