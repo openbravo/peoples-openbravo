@@ -230,7 +230,7 @@ OB.ViewFormProperties = {
 
     // sometimes if an error occured we stay disabled
     // prevent this
-    this.setDisabled(false);
+    this.disableForm(false);
 
     this.setHasChanged(false);
 
@@ -476,16 +476,15 @@ OB.ViewFormProperties = {
       // autofocus will do it for us
       return;
     }
+    
     if (focusItem && focusItem.isFocusable()) {
       focusItem.focusInItem();
       this.view.lastFocusedItem = focusItem;
-      this.selectFocusItemValue(true);
     } else {
       // find a new one
       this.computeFocusItem(focusItem);
       if (this.getFocusItem() !== focusItem && this.getFocusItem()) {
         focusItem.focusInItem();
-        this.selectFocusItemValue(true);
         this.view.lastFocusedItem = focusItem;
       }
     }
@@ -601,7 +600,7 @@ OB.ViewFormProperties = {
     }
     allProperties._visibleProperties = fldNames;
 
-    this.setDisabled(true);
+    this.disableForm(true);
 
     // note that only the fields with errors are validated anyway
     this.validateAfterFicReturn = true;
@@ -697,7 +696,7 @@ OB.ViewFormProperties = {
 
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
-      this.setDisabled(false);
+      this.disableForm(false);
       this.validate();
       delete this.inFicCall;
       return;
@@ -809,8 +808,8 @@ OB.ViewFormProperties = {
     this.onFieldChanged(this);
 
     // on field changed may have made the focused item non-editable
-    // this is handled in setdisabled restore focus item's call
-    this.setDisabled(false);
+    // this is handled in disableForm restore focus item's call
+    this.disableForm(false);
 
     length = this.getFields().length;
 
@@ -876,23 +875,19 @@ OB.ViewFormProperties = {
     }
   },
 
-  setDisabled: function (state) {
+  // called during the FIC call to prevent key events and to restor
+  // flags on formitems
+  disableForm: function (state) {
     var previousAllItemsDisabled = this.allItemsDisabled || false,
         i, length;
     this.allItemsDisabled = state;
-
+    
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
-          if (!this.initializing) {
-            this.getFocusItem().hasFocus = false;
-            this.getFocusItem().elementBlur();
-          }
-          this.setHandleDisabled(state);
-          this.view.viewGrid.refreshEditRow();
+          this.disableKeyboardEvents(state, null, true);
         } else {
-          this.setHandleDisabled(state);
-          this.view.viewGrid.refreshEditRow();
+          this.disableKeyboardEvents(state, null, true);
           // reset the canfocus
           length = this.getFields().length;
           for (i = 0; i < length; i++) {
@@ -1206,7 +1201,7 @@ OB.ViewFormProperties = {
 
   setDisabledWhenStillInFIC: function () {
     if (this.inFicCall) {
-      this.setDisabled(true);
+      this.disableForm(true);
     }
   },
 
@@ -1558,15 +1553,7 @@ OB.ViewFormProperties = {
     // if in the fic then let the fic call us again afterwards
     if (this.inFicCall) {
       this.doFocusInNextItemAfterFic = currentItemName;
-      // solve issue https://issues.openbravo.com/view.php?id=19236
-      // for firefox we need to recompute focus also during
-      // a fic call, for other browsers we only need to do it
-      // once, it really seems to be a firefox bug, as firefox
-      // does not display the selection of text in an input
-      // but in reality it is selected
-      if (!isc.Browser.isFirefox) {
-        return;
-      }
+      return;
     }
 
     // wait for the redraw to be finished before moving the focus 
@@ -1574,6 +1561,7 @@ OB.ViewFormProperties = {
       this.delayCall('focusInNextItem', [currentItemName], 100);
       return;
     }
+    
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();

@@ -92,7 +92,12 @@ isc.OBNumberItem.addProperties({
 
     if (oldCaretPosition !== newCaretPosition || editValue !== this.getElementValue()) {
       this.setElementValue(editValue);
-      this.setSelectionRange(newCaretPosition, newCaretPosition);
+      // in grid editing always the complete value is selected on focus
+      if (this.form && this.form.grid && this.form.selectOnFocus) {
+        this.selectValue();
+      } else {
+        this.setSelectionRange(newCaretPosition, newCaretPosition);
+      }
     }
   },
 
