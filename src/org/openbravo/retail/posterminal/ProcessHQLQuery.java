@@ -37,12 +37,13 @@ public abstract class ProcessHQLQuery implements JSONProcess {
   public final void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
 
     try {
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(getQuery(jsonsent),
-          jsonsent.optString("client"), jsonsent.optString("organization"));
 
       if (isAdminMode()) {
         OBContext.setAdminMode();
       }
+
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(getQuery(jsonsent),
+          jsonsent.optString("client"), jsonsent.optString("organization"));
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(querybuilder.getHQLQuery());
