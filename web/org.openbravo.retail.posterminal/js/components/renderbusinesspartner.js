@@ -10,10 +10,10 @@
       this.$el.append(B(
         {kind: B.KindJQuery('div'), attr:{'style': 'line-height: 23px;'}, content: [
           {kind: B.KindJQuery('div'), content: [
-            this.model.get('BusinessPartner')._identifier
+            this.model.get('_identifier')
           ]},
           {kind: B.KindJQuery('div'), attr:{'style': 'color: #888888'}, content: [
-            this.model.get('BusinessPartnerLocation')._identifier
+            this.model.get('locName')
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
         ]}

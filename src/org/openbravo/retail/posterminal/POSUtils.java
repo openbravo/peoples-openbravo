@@ -76,6 +76,22 @@ public class POSUtils {
     return null;
   }
 
+  public static Organization getOrganization(String orgId) {
+    try {
+      OBContext.setAdminMode();
+
+      Organization org = OBDal.getInstance().get(Organization.class, orgId);
+
+      return org;
+
+    } catch (Exception e) {
+      log.error("Error getting Organization by org id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
   public static List<String> getOrgList(String searchKey) {
     try {
       OBContext.setAdminMode();

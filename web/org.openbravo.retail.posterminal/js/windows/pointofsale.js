@@ -15,7 +15,6 @@
           {kind: OB.MODEL.OrderList},
 
           {kind: OB.DATA.Container, content: [
-            {kind: OB.DATA.BPs},
             {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
           ]},
 
@@ -159,5 +158,5 @@
   OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
 
   // Register required models/data
-  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.MODEL.Order];
+  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.MODEL.Order];
 }());

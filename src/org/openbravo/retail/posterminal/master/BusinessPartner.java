@@ -10,14 +10,36 @@ package org.openbravo.retail.posterminal.master;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
-    return "select bp as BusinessPartner, loc as BusinessPartnerLocation "
-        + "from BusinessPartner bp, BusinessPartnerLocation loc "
-        + "where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableClientCriteria and bp.$naturalOrgCriteria";
+    Organization org = POSUtils.getOrganization(jsonsent.getString("organization"));
+    return "SELECT bpl.businessPartner.id as id, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxId, bpl.id as locId, max(bpl.name) as locName "
+        + "FROM BusinessPartnerLocation AS bpl "
+        + "WHERE ("
+        + "(bpl.id = '"
+        + org.getObretcoCBpLocation().getId()
+        + "')"
+        + " OR "
+        + "(bpl.businessPartner.id <> '"
+        + org.getObretcoCBpartner().getId()
+        + "' AND "
+        + "bpl.invoiceToAddress = true AND "
+        + "bpl.businessPartner.customer = true AND "
+        + "$readableClientCriteria AND "
+        + "$naturalOrgCriteria"
+        + "))"
+        + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.id "
+        + "ORDER BY bpl.businessPartner.id";
+    // probar los casos con varias loc para un mismo BP
+    // return "select bp as BusinessPartner, loc as BusinessPartnerLocation "
+    // + "from BusinessPartner bp, BusinessPartnerLocation loc "
+    // +
+    // "where bp.id = loc.businessPartner.id and bp.customer = true and bp.$readableClientCriteria and bp.$naturalOrgCriteria";
   }
 }

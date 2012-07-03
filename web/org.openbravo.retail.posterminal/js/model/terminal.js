@@ -43,7 +43,7 @@
       terminal: null,
       context: null,
       permissions: null,
-      bplocation: null,
+      businesspartner: null,
       location: null,
       pricelist: null,
       pricelistversion: null,
@@ -57,7 +57,7 @@
       this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);
-      this.set('bplocation', null);
+      this.set('businesspartner', null);
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
@@ -126,7 +126,7 @@
       this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);
-      this.set('bplocation', null);
+      this.set('businesspartner', null);
       this.set('location', null);
       this.set('pricelist', null);
       this.set('pricelistversion', null);
@@ -148,7 +148,6 @@
           me.loadContext();
           me.loadPermissions();
           me.loadBP();
-          me.loadBPLocation();
           me.loadLocation();
           me.loadPriceList();
           me.loadPriceListVersion();
@@ -201,26 +200,7 @@
     },
 
     loadBP: function () {
-      var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartner').exec({
-        bp: this.get('terminal').businessPartner
-      }, function (data) {
-        if (data[0]) {
-          me.set('businesspartner', data[0]);
-          me.triggerReady();
-        }
-      });
-    },
-
-    loadBPLocation: function () {
-      var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.BusinessPartnerLocation').exec({
-        bploc: this.get('terminal').partnerAddress
-      }, function (data) {
-        if (data[0]) {
-          me.set('bplocation', data[0]);
-        }
-      });
+      this.set('businesspartner', this.get('terminal').businessPartner);
     },
 
     loadLocation: function () {
@@ -270,7 +250,7 @@
     },
 
     triggerReady: function () {
-      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('businesspartner') && this.get('context') && this.get('permissions')) {
+      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions')) {
         this.trigger('ready');
       }
     },

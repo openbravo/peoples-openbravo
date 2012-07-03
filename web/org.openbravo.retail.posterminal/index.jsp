@@ -139,6 +139,7 @@ if(userId == null){
   <script src="../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice"></script>
   <script src="js/model/product-category.js"></script>
   <script src="js/model/product.js"></script>
+  <script src="js/model/businesspartner.js"></script>
   <!-- Web POS Application -->
   <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
 

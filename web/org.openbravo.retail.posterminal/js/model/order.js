@@ -113,7 +113,6 @@
         this.set('documentNo', attributes.documentNo);
         this.set('undo', attributes.undo);
         this.set('bp', new Backbone.Model(attributes.bp));
-        this.set('bploc', new Backbone.Model(attributes.bploc));
         this.set('lines', new OB.MODEL.OrderLineCol().reset(attributes.lines));
         this.set('payments', new OB.MODEL.PaymentLineCol().reset(attributes.payments));
         this.set('payment', attributes.payment);
@@ -211,7 +210,6 @@
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
-      this.set('bploc', null);
       this.set('lines', this.get('lines') ? this.get('lines').reset() : new OB.MODEL.OrderLineCol());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new OB.MODEL.PaymentLineCol());
       this.set('payment', OB.DEC.Zero);
@@ -237,7 +235,6 @@
       this.set('documentNo', _order.get('documentNo'));
       this.set('undo', null);
       this.set('bp', _order.get('bp'));
-      this.set('bploc', _order.get('bploc'));
       this.get('lines').reset();
       _order.get('lines').forEach(function (elem) {
         this.get('lines').add(elem);
@@ -398,21 +395,18 @@
       this.adjustPayment();
     },
 
-    setBPandBPLoc: function (bp, bploc) {
+    setBPandBPLoc: function (businessPartner) {
       var me = this;
       var oldbp = this.get('bp');
-      var oldbploc = this.get('bploc');
-      this.set('bp', bp);
-      this.set('bploc', bploc);
+      this.set('bp', businessPartner);
       // set the undo action
       this.set('undo', {
-        text: bp
-            ? OB.I18N.getLabel('OBPOS_SetBP', [bp.get('_identifier')])
+        text: businessPartner
+            ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')])
             : OB.I18N.getLabel('OBPOS_ResetBP'),
-        bp: bp,
+        bp: businessPartner,
         undo: function() {
           me.set('bp', oldbp);
-          me.set('bploc', oldbploc);
           me.set('undo', null);
         }
       });
@@ -556,7 +550,21 @@
     },
 
     newOrder: function () {
-      var order = new OB.MODEL.Order();
+      var order = new OB.MODEL.Order(), me = this;
+
+      function searchCurrentBP (){
+        function errorCallback(tx, error) {
+          OB.UTIL.showError("OBDAL error: " + error);
+        }
+
+        function successCallbackBPs(dataBps) {
+          if (dataBps){
+            me.modelorder.setBPandBPLoc(dataBps);
+          }
+        }
+
+        OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
+      }
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -577,8 +585,7 @@
       documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5);
       localStorage.setItem('Document_Sequence', documentseq);
       order.set('documentNo', OB.POS.modelterminal.get('terminal').searchKey + '/' + documentseq);
-      order.set('bp', new Backbone.Model(OB.POS.modelterminal.get('businesspartner')));
-      order.set('bploc', new Backbone.Model(OB.POS.modelterminal.get('bplocation')));
+      searchCurrentBP();
       return order;
     },
 
