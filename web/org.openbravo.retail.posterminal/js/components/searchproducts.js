@@ -11,8 +11,8 @@
 
     this.receipt = this.options.modelorder;
 
-    this.categories = new OB.MODEL.Collection({ds: null});
-    this.products = new OB.MODEL.Collection({ds: null});
+    this.categories = new OB.Collection.ProductCategoryList();
+    this.products = new OB.Collection.ProductList();
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(model);

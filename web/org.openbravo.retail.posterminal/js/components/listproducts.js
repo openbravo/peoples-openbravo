@@ -10,7 +10,7 @@
 
     this._id = 'ListProducts';
     this.receipt = context.modelorder;
-    this.products = new OB.MODEL.Collection({ds: null});
+    this.products = new OB.Collection.ProductList();
 
     this.products.on('click', function (model) {
       this.receipt.addProduct(model);

@@ -10,7 +10,7 @@
     this._id = 'ListCategories';
 
     this.receipt = context.modelorder;
-    this.categories = new OB.MODEL.Collection({ds: null});
+    this.categories = new OB.Collection.ProductCategoryList();
 
     this.receipt.on('clear', function () {
       if (this.categories.length > 0){
