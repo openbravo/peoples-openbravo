@@ -2040,6 +2040,7 @@ isc.OBViewGrid.addProperties({
     var rowNum = this.getEditRow(),
         colNum = this.getEditCol();
     var editForm = this.getEditForm(),
+        editField = this.getEditField(colNum),
         focusItem = (editForm ? editForm.getFocusItem() : null);
     // sometimes rowNum and colnum are not set, then don't compute the next cell
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
@@ -2062,7 +2063,7 @@ isc.OBViewGrid.addProperties({
     // only needed for non picklist fields
     // as picklist fields will always have picked a value
     // note that focusItem updatevalue for picklist can result in extra datasource requests
-    if (focusItem && !focusItem.hasPickList) {
+    if (focusItem && editField && focusItem.name === editField.name && !focusItem.hasPickList) {
       focusItem.blur(focusItem.form, focusItem);
     }
   },
