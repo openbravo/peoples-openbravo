@@ -278,6 +278,9 @@ public class CostingUtils {
     }
   }
 
+  /**
+   * Returns the newer order line for the given product, business partner and organization.
+   */
   public static OrderLine getOrderLine(Product product, BusinessPartner bp, Organization org) {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider();
 
