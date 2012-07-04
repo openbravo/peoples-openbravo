@@ -8,22 +8,14 @@
   OB.I18N = window.OB.I18N || {};
 
   OB.I18N.formatCurrency = function (number) {
-    var symbol = OB.POS.modelterminal.get('currency').symbol,
-        isSymbolRight = OB.POS.modelterminal.get('currency').currencySymbolAtTheRight,
-        maskNumeric = OB.Format.formats.priceRelation,
+    var maskNumeric = OB.Format.formats.priceRelation,
         decSeparator = OB.Format.defaultDecimalSymbol,
         groupSeparator = OB.Format.defaultGroupingSymbol,
         groupInterval = OB.Format.defaultGroupingSize;
 
     maskNumeric = maskNumeric.replace(',', 'dummy').replace('.', decSeparator).replace('dummy', groupSeparator);
 
-    var formattedNumber = OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    if (isSymbolRight) {
-      formattedNumber = formattedNumber + symbol;
-    } else {
-      formattedNumber = symbol + formattedNumber;
-    }
-    return formattedNumber;
+    return OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
   };
 
   OB.I18N.formatRate = function (number) {
