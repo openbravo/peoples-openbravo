@@ -55,6 +55,20 @@
       OB.UTIL.showLoading(false);
     }
 
+    function searchCurrentBP (){
+      function errorCallback(tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
+
+      function successCallbackBPs(dataBps) {
+        if (dataBps){
+          OB.POS.modelterminal.set('businessPartner', dataBps);
+          createWindow();
+        }
+      }
+      OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
+    }
+
     // Set Hardware..
     OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
@@ -78,19 +92,6 @@
               emptyQueue = OB.UTIL.queueStatus(queue);
 
               if(emptyQueue) {
-                function searchCurrentBP (){
-                  function errorCallback(tx, error) {
-                    OB.UTIL.showError("OBDAL error: " + error);
-                  }
-
-                  function successCallbackBPs(dataBps) {
-                    if (dataBps){
-                      OB.POS.modelterminal.set('businessPartner', dataBps);                      
-                      createWindow();
-                    }
-                  }
-                  OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
-                }
                 searchCurrentBP();
               }
             });
