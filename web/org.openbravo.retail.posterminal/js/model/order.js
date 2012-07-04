@@ -24,8 +24,6 @@
         this.set('qty', attributes.qty);
         this.set('price', attributes.price);
         this.set('gross', attributes.gross);
-      } else {
-        this.constructor.prototype.initialize.apply(this, arguments);
       }
     },    
 
@@ -89,6 +87,12 @@
       'hasbeenpaid': 'hasbeenpaid',
       'isbeingprocessed': 'isbeingprocessed'
     },
+
+    defaults : {
+      hasbeenpaid: 'N',
+      isbeingprocessed: 'N'
+    },
+
     createStatement: 'CREATE TABLE IF NOT EXISTS c_order (c_order_id TEXT PRIMARY KEY, json CLOB, hasbeenpaid TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS c_order',
     insertStatement: 'INSERT INTO c_order(c_order_id, json, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?)',
@@ -96,6 +100,7 @@
     _id: 'modelorder',
     initialize: function (attributes) {
       if (attributes && attributes.documentNo) {
+        this.set('id', attributes.id);
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
         this.set('documentType', attributes.documentType);
@@ -218,6 +223,7 @@
     },    
 
     clearWith: function(_order) {
+      this.set('id', _order.get('id'));
       this.set('client', _order.get('client'));
       this.set('organization', _order.get('organization'));
       this.set('documentType', _order.get('documentType'));
@@ -395,7 +401,7 @@
       this.adjustPayment();
     },
 
-    setBPandBPLoc: function (businessPartner, showNotif) {
+    setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this, undef;
       var oldbp = this.get('bp');
       this.set('bp', businessPartner);
@@ -412,7 +418,9 @@
         }
       });
       }
-      this.save();
+      if (saveChange) {
+        this.save();
+      }
     },
 
     setOrderTypeReturn: function () {
@@ -560,8 +568,11 @@
         }
 
         function successCallbackBPs(dataBps) {
+          var saveInDB = false;
           if (dataBps){
-            me.modelorder.setBPandBPLoc(dataBps, false);
+            // No changes have been made to the order yet,
+            // is it will not be saved in the database
+            me.modelorder.setBPandBPLoc(dataBps, false, saveInDB);
           }
         }
         OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);

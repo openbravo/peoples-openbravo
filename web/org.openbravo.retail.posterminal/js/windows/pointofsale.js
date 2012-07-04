@@ -136,16 +136,24 @@
                 //  add an initial empty order
                 orderlist.addNewOrder();
               } else {
-                var transformedOrderList = [];
+                var transformedOrderList = [], transformedOrder;
                 // The order object is stored in the json property of the row fetched from the database
                 _.each(fetchedOrderList.models, function(model) {
-                  transformedOrderList.push(JSON.parse(model.get('json')));
+                  transformedOrder = JSON.parse(model.get('json'));
+                  // Get the id from the model, in case it was
+                  // not stored in the json attribute
+                  transformedOrder.id = model.get('id');
+                  transformedOrderList.push(transformedOrder);
                 });
                 orderlist.reset(transformedOrderList);
                 // At this point it is sure that there exists at least one order
                 currentOrder = new OB.MODEL.Order(transformedOrderList[0]);
                 orderlist.load(currentOrder);
-                $('#modalreceipts').modal('show');
+                // Only show the pending receipts modal window if there are at
+                // least two orders pending
+                if (fetchedOrderList.length > 1) {
+                  $('#modalreceipts').modal('show');
+                }
               }
             }, function () { //OB.Dal.find error
               // If there is an error fetching the pending orders, 

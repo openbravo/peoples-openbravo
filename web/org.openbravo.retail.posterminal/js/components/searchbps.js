@@ -30,7 +30,8 @@
     this.bps = new OB.Collection.BusinessPartnerList();
 
     this.bps.on('click', function (model) {
-      this.receipt.setBPandBPLoc(model);
+      var saveInDB = true;
+      this.receipt.setBPandBPLoc(model, false, saveInDB);
     }, this);
 
     this.receipt.on('clear', function() {
