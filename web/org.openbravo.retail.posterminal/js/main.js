@@ -92,7 +92,6 @@
                   OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
                 }
                 searchCurrentBP();
-                createWindow();
               }
             });
             ds.load();
