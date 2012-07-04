@@ -50,6 +50,7 @@ BEGIN
   END IF;
 
   RETURN AD_GET_ORG_LE_BU(v_org_header_id, p_type);
-END AD_GET_DOC_LE_BU]]></body>
+END AD_GET_DOC_LE_BU
+]]></body>
     </function>
   </database>
