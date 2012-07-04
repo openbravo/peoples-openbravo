@@ -55,96 +55,86 @@
       myLanguageCollection.fetch();
 
 
-      OB.COMP.ModalProfile = OB.COMP.Modal.extend({
+      OB.COMP.ModalProfile = OB.COMP.ModalAction.extend({
         id: 'profileDialog',
         header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
-        initialize: function () {
-          OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
-          var theModal = this.$el,
-              theHeader = theModal.children(':first'),
-              theBody = theModal.children(':nth-child(2)'),
-              theHeaderText = theHeader.children(':nth-child(2)');
-          theModal.addClass('modal-dialog');
-          theModal.css('width', '500px');
-          theHeader.addClass('modal-dialog-header');
-          theBody.addClass('modal-dialog-body');
-          theHeaderText.addClass('modal-dialog-header-text');
-        },
-        getContentView: function () {
+        width: '500px',
+
+        setBodyContent: function () {
           return (
-            {kind: B.KindJQuery('div'), content: [
-
-              {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-text', 'style': 'height: 130px; background-color: #ffffff;'}, content: [
-                {kind: B.KindJQuery('div'), content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                   {kind: OB.COMP.ListView('select'), attr: {
-                      collection: myRoleCollection,
-                      htmlId: 'profileRoleId',
-                      className: 'modal-dialog-profile-combo',
-                      renderLine: function (model) {
-                        var optionElement;
-                        if (roleId === model.get('id')) {
-                          optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
-                              model.get('_identifier')
-                          ]};
-                        } else {
-                          optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                              model.get('_identifier')
-                          ]};
-                        }
-                        return optionElement;
-                      }
-                    }}
-                  ]}
+            {kind: B.KindJQuery('div'), attr: {'style': 'height: 130px; background-color: #ffffff;'}, content: [
+              {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
                 ]},
-                {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
-                {kind: B.KindJQuery('div'), content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                    {kind: OB.COMP.ListView('select'), attr: {
-                      collection: myLanguageCollection,
-                      className: 'modal-dialog-profile-combo',
-                      htmlId: 'profileLanguageId',
-                      renderLine: function (model) {
-                        var optionElement;
-                        if (languageId === model.get('id')) {
-                          optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
-                              model.get('_identifier')
-                          ]};
-                        } else {
-                          optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                              model.get('_identifier')
-                          ]};
-                        }
-                        return optionElement;
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
+                 {kind: OB.COMP.ListView('select'), attr: {
+                    collection: myRoleCollection,
+                    htmlId: 'profileRoleId',
+                    className: 'modal-dialog-profile-combo',
+                    renderLine: function (model) {
+                      var optionElement;
+                      if (roleId === model.get('id')) {
+                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
+                            model.get('_identifier')
+                        ]};
+                      } else {
+                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
+                            model.get('_identifier')
+                        ]};
                       }
-                    }}
-
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
-                {kind: B.KindJQuery('div'), content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: ['Set as Default']}
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-profile-combo'}, content: [
-                      {kind: OB.COMP.CheckboxButton, attr: {'className': 'modal-dialog-btn-check', 'id': 'profileDefault'}}
-                    ]}
-                  ]}
+                      return optionElement;
+                    }
+                  }}
                 ]}
               ]},
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
+              {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
+                  {kind: OB.COMP.ListView('select'), attr: {
+                    collection: myLanguageCollection,
+                    className: 'modal-dialog-profile-combo',
+                    htmlId: 'profileLanguageId',
+                    renderLine: function (model) {
+                      var optionElement;
+                      if (languageId === model.get('id')) {
+                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
+                            model.get('_identifier')
+                        ]};
+                      } else {
+                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
+                            model.get('_identifier')
+                        ]};
+                      }
+                      return optionElement;
+                    }
+                  }}
 
-              {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-buttons-container'}, content: [
-                {kind: OB.COMP.ProfileDialogApply},
-                {kind: OB.COMP.ProfileDialogCancel}
+                ]}
+              ]},
+              {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
+              {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: ['Set as Default']}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-profile-combo'}, content: [
+                    {kind: OB.COMP.CheckboxButton, attr: {'className': 'modal-dialog-btn-check', 'id': 'profileDefault'}}
+                  ]}
+                ]}
               ]}
+            ]}
+          );
+        },
 
+        setBodyButtons: function () {
+          return (
+            {kind: B.KindJQuery('div'), content: [
+              {kind: OB.COMP.ProfileDialogApply},
+              {kind: OB.COMP.ProfileDialogCancel}
             ]}
           );
         }

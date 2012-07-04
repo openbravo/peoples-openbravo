@@ -307,6 +307,70 @@
     }
   });
 
+  OB.COMP.ModalAction = Backbone.View.extend({
+    tagName: 'div',
+    className: 'modal hide fade modal-dialog',
+    attributes: {'style': 'display: none;'},
+    width: null,
+    maxheight: null,
+    initialize: function () {
+      if (this.width) {
+        this.$el.css('width', this.width);
+      }
+
+      this.$el.append(B(
+          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header modal-dialog-header'}, content: [
+            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [
+              {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
+            ]},
+            {kind: B.KindJQuery('h3'), attr: {'class': 'modal-dialog-header-text'}, content: [this.header]}
+          ]}
+      , this.options).$el);
+      var body = $('<div/>').addClass('modal-body').addClass('modal-dialog-body');
+      if (this.maxheight) {
+        body.css('max-height', this.maxheight);
+      }
+
+      var bodyContentContainer = $('<div/>').addClass('modal-dialog-content-text');
+      if (this.setBodyContent) {
+        var bodyContent = this.setBodyContent();
+        var theBodyContent;
+        if (bodyContent.kind) {
+          // it is a builder structure
+          theBodyContent = B(bodyContent, this.options);
+        } else {
+          // it is a backbone view
+          theBodyContent = new bodyContent(this.options).render();
+        }
+        bodyContentContainer.append(theBodyContent.$el);
+      }
+
+      var bodyButtonsContainer = $('<div/>').addClass('modal-dialog-content-buttons-container');
+      if (this.setBodyButtons) {
+        var bodyButtons = this.setBodyButtons();
+        var theBodyButtons;
+        if (bodyButtons.kind) {
+          // it is a builder structure
+          theBodyButtons = B(bodyButtons, this.options);
+        } else {
+          // it is a backbone view
+          theBodyButtons = new bodyButtons(this.options).render();
+        }
+        bodyButtonsContainer.append(theBodyButtons.$el);
+      }
+      body.append(bodyContentContainer);
+      body.append(bodyButtonsContainer);
+
+      this.$el.append(body);
+    },
+    events: {
+      'show': 'showEvent' // attach the click event as part of the element
+    },
+    showEvent: function (e) {
+      // custom bootstrap event, no need to prevent default
+    }
+  });
+
   OB.COMP.CustomView = Backbone.View.extend({
     initialize: function () {
       this.component = B(this.createView(), this.options);

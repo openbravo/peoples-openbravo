@@ -5,32 +5,27 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-
-  OB.COMP.ModalFinishClose = OB.COMP.Modal.extend({
+  OB.COMP.ModalFinishClose = OB.COMP.ModalAction.extend({
     id: 'modalFinishClose',
     header: OB.I18N.getLabel('OBPOS_LblGoodjob'),
-    initialize: function () {
-      OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
-      var theModal = this.$el,
-          theHeader = theModal.children(':first'),
-          theBody = theModal.children(':nth-child(2)'),
-          theHeaderText = theHeader.children(':nth-child(2)');
-      theModal.addClass('modal-dialog');
-      theHeader.addClass('modal-dialog-header');
-      theBody.addClass('modal-dialog-body');
-      theHeaderText.addClass('modal-dialog-header-text');
-    },
-    getContentView: function () {
-      return (
+
+    setBodyContent: function() {
+      return(
         {kind: B.KindJQuery('div'), content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-text'}, content: [OB.I18N.getLabel('OBPOS_FinishCloseDialog')]},
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-content-buttons-container'}, content: [
-            {kind: OB.COMP.CloseDialogOk}
-          ]}
+          OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+        ]}
+      );
+    },
+
+    setBodyButtons: function() {
+      return(
+        {kind: B.KindJQuery('div'), content: [
+          {kind: OB.COMP.CloseDialogOk}
         ]}
       );
     }
   });
+
   // Exit
   OB.COMP.CloseDialogOk = OB.COMP.Button.extend({
     render: function () {
