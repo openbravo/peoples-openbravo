@@ -10,7 +10,7 @@
       'permission': key,
       'stateless': provider,
       'action': function (txt) {
-        var amount = OB.DEC.number(parseFloat(txt, 10));
+        var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? receipt.getPending() : amount;
         var providerview = OB.POS.paymentProviders[provider];
         if (providerview) {

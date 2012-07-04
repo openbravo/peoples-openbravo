@@ -13,7 +13,7 @@
   };
 
   var toNumber = function (big) {
-    return parseFloat(big.setScale(scale, roundingmode).toString());
+    return parseFloat(big.setScale(scale, roundingmode).toString(), 10);
   };
 
   OB.DEC.Zero = toNumber(BigDecimal.prototype.ZERO);

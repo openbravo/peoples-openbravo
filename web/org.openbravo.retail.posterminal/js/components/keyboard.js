@@ -5,16 +5,6 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  var parseNumber = function (s) {
-    if (OB.Format.defaultDecimalSymbol !== '.') {
-      s = s.toString();
-      while (s.indexOf(OB.Format.defaultDecimalSymbol) !== -1) {
-        s = s.replace(OB.Format.defaultDecimalSymbol, '.');
-      }
-    }
-    return OB.DEC.number(parseFloat(s, 10));
-  };
-
   var BtnAction = function (kb, isNumber) {
     var extraClass = '';
     if (isNumber) {
@@ -303,7 +293,7 @@
     },
 
     getNumber: function () {
-      var i = parseNumber(this.editbox.text());
+      var i = OB.I18N.parseNumber(this.editbox.text());
       this.editbox.empty();
       return i;
     },
@@ -375,7 +365,7 @@
       this.addCommand('line:qty', {
         'action': function (txt) {
           if (this.line) {
-            this.receipt.setUnit(this.line, parseNumber(txt));
+            this.receipt.setUnit(this.line, OB.I18N.parseNumber(txt));
             this.receipt.trigger('scan');
           }
         }
@@ -384,7 +374,7 @@
         'permission': 'OBPOS_order.changePrice',
         'action': function (txt) {
           if (this.line) {
-            this.receipt.setPrice(this.line, parseNumber(txt));
+            this.receipt.setPrice(this.line, OB.I18N.parseNumber(txt));
             this.receipt.trigger('scan');
           }
         }
@@ -393,7 +383,7 @@
         'permission': 'OBPOS_order.discount',
         'action': function (txt) {
           if (this.line) {
-             this.receipt.trigger('discount', this.line, parseNumber(txt));
+             this.receipt.trigger('discount', this.line, OB.I18N.parseNumber(txt));
           }
         }
       });
@@ -450,7 +440,7 @@
         'stateless': true,
         'action': function (txt) {
           if (this.line) {
-            this.receipt.addUnit(this.line, parseNumber(txt));
+            this.receipt.addUnit(this.line, OB.I18N.parseNumber(txt));
             this.receipt.trigger('scan');
           }
         }
@@ -459,7 +449,7 @@
         'stateless': true,
         'action': function (txt) {
           if (this.line) {
-            this.receipt.removeUnit(this.line, parseNumber(txt));
+            this.receipt.removeUnit(this.line, OB.I18N.parseNumber(txt));
             this.receipt.trigger('scan');
           }
         }

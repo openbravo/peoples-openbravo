@@ -11,7 +11,7 @@
       'action': function (txt) {
         var providerview = OB.POS.paymentProviders[provider];
         if (providerview) {
-          modalpayment.show(receipt, key, name, providerview, OB.DEC.number(parseFloat(txt, 10)));
+          modalpayment.show(receipt, key, name, providerview, OB.DEC.number(OB.I18N.parseNumber(txt)));
         } else {
         var totalCounted = 0;
         var counted = 0;
