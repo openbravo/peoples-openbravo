@@ -129,4 +129,25 @@
       return this;
     }
   });
+
+  OB.COMP.ButtonVoid = OB.COMP.RegularButton.extend({
+    _id: 'closevoidbutton',
+    label: 'VOID',
+    order: null,
+    me: null,
+    attributes: {'style': 'min-width: 115px; margin: 5px;'},
+    render: function () {
+      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      this.$el.addClass('btnlink-fontgrey');
+      return this;
+    },
+    clickEvent: function (e) {
+       this.me.receiptlist.remove(this.order);
+       OB.Dal.remove(this.order, function(){
+         return true;
+       }, function(){
+         OB.UTIL.showError('Error removing');
+       });
+    }
+  });
 }());

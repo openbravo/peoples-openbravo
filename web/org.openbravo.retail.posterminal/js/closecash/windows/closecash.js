@@ -1,4 +1,4 @@
-/*global B, $ */
+/*global B, $ , _*/
 
 (function () {
 
@@ -13,7 +13,6 @@
     }
   });
 
-
   OB.COMP.CloseCash = OB.COMP.CustomView.extend({
     createView: function () {
 
@@ -27,6 +26,7 @@
           {kind: OB.DATA.PaymentCloseCash},
           {kind: OB.COMP.ModalCancel},
           {kind: OB.COMP.ModalFinishClose},
+          {kind: OB.COMP.ModalProcessReceipts},
           {kind: OB.DATA.Container, content: [
                {kind: OB.DATA.PaymentMethod},
                {kind: OB.DATA.CloseCashPaymentMethod},
@@ -57,7 +57,37 @@
             ]}
           ]}
 
-        ]}
+        ], init: function () {
+          var ctx = this.context;
+          ctx.on('domready', function () {
+            var orderlist = this.context.modelorderlist;
+            OB.Dal.find(OB.MODEL.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
+              var currentOrder = {};
+              OB.UTIL.showLoading(true);
+              if (fetchedOrderList && fetchedOrderList.length !== 0) {
+                ctx.orderlisttoprocess = fetchedOrderList;
+                OB.UTIL.showLoading(false);
+                $('#modalprocessreceipts').modal('show');
+              }
+            }, function () { //OB.Dal.find error
+              OB.UTIL.showError('Find error');
+            });
+
+            OB.Dal.find(OB.MODEL.Order, '', function (fetchedOrderList) { //OB.Dal.find success
+              var currentOrder = {};
+              if (fetchedOrderList && fetchedOrderList.length !== 0) {
+                var transformedOrderList = [];
+                // The order object is stored in the json property of the row fetched from the database
+                _.each(fetchedOrderList.models, function(model) {
+                  transformedOrderList.push(JSON.parse(model.get('json')));
+                });
+                orderlist.reset(transformedOrderList);
+              }
+            }, function () { //OB.Dal.find error
+              OB.UTIL.showError('Find error');
+            });
+          }, this);
+        }}
       );
     }
   });
