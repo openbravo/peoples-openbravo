@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,12 +100,16 @@ public class Posted extends HttpSecureAppServlet {
           } else {
             String title;
             OBContext.setAdminMode();
-            Process genLedJour = OBDal.getInstance().get(Process.class,
-                generalLedgerJournalReport_ID);
-            if (genLedJour != null) {
-              title = genLedJour.getIdentifier();
-            } else {
-              title = "POST";
+            try {
+              Process genLedJour = OBDal.getInstance().get(Process.class,
+                  generalLedgerJournalReport_ID);
+              if (genLedJour != null) {
+                title = genLedJour.getIdentifier();
+              } else {
+                title = "POST";
+              }
+            } finally {
+              OBContext.restorePreviousMode();
             }
             printPageClosePopUp(response, vars, strDireccion
                 + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
@@ -128,12 +132,16 @@ public class Posted extends HttpSecureAppServlet {
           } else {
             String title;
             OBContext.setAdminMode();
-            Process genLedJour = OBDal.getInstance().get(Process.class,
-                generalLedgerJournalReport_ID);
-            if (genLedJour != null) {
-              title = genLedJour.getIdentifier();
-            } else {
-              title = "POST";
+            try {
+              Process genLedJour = OBDal.getInstance().get(Process.class,
+                  generalLedgerJournalReport_ID);
+              if (genLedJour != null) {
+                title = genLedJour.getIdentifier();
+              } else {
+                title = "POST";
+              }
+            } finally {
+              OBContext.restorePreviousMode();
             }
             printPageClosePopUp(response, vars, strDireccion
                 + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
