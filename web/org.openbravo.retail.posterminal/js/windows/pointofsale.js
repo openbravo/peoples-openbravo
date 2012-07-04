@@ -128,8 +128,11 @@
 
         ], init: function () {
           this.context.on('domready', function () {
-            var orderlist = this.context.modelorderlist;
-            OB.Dal.find(OB.MODEL.Order, '', function (fetchedOrderList) { //OB.Dal.find success
+            var orderlist = this.context.modelorderlist,
+            criteria={
+                'hasbeenpaid' : 'N'
+              };
+            OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
               if (!fetchedOrderList || fetchedOrderList.length === 0) {
                 // If there are no pending orders, 
