@@ -51,7 +51,8 @@ BEGIN
     RETURN 0;
   ELSE
     SELECT ot.islegalentity INTO v_islegalentity
-    FROM ad_org o JOIN ad_orgtype ot ON o.ad_orgtype_id = ot.ad_orgtype_id;
+    FROM ad_org o JOIN ad_orgtype ot ON o.ad_orgtype_id = ot.ad_orgtype_id
+    WHERE o.ad_org_id = p_org_id;
     IF (v_islegalentity = 'Y') THEN
       v_legal_entity := p_org_id;
     ELSE
@@ -66,6 +67,7 @@ BEGIN
     AND m_product_id = p_product_id
     AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
     AND ad_org_id = v_legal_entity
+    AND cost IS NOT NULL
     AND costtype = COALESCE(v_CostType, 'AVA');
   IF(v_Count = 0) THEN
     RETURN 0;
@@ -78,6 +80,7 @@ BEGIN
         AND m_product_id = p_product_id
         AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
         AND ad_org_id = v_legal_entity
+        AND cost IS NOT NULL
         AND costtype = COALESCE(v_CostType, 'AVA')
       ORDER BY datefrom, dateto DESC, CASE WHEN m_warehouse_id IS NULL THEN 1 ELSE 0 END
   ) LOOP
