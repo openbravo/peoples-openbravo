@@ -8,7 +8,7 @@
   OB.COMP.SearchBP = function (context) {
     var me = this;
 
-    this.searchAction = function (criteria){
+    this.searchAction = function (){
       function errorCallback(tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
       }
@@ -19,6 +19,14 @@
         }else{
           me.bps.reset();
         }
+      }
+
+      var criteria = {};
+      if (me.bpname.val() && me.bpname.val() !== '') {
+        criteria._identifier = {
+          operator: OB.Dal.CONTAINS,
+          value: me.bpname.val()
+        };
       }
 
       OB.Dal.find(OB.Model.BusinessPartner, criteria , successCallbackBPs, errorCallback);
@@ -47,27 +55,30 @@
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'display: table;'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell; width: 100%;'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'bpname', attr: {'type': 'text', 'x-webkit-speech': 'x-webkit-speech', 'class': 'input', 'style': 'width: 100%;'}}
+                    {kind: OB.COMP.SearchInput, id: 'bpname', attr: {'type': 'text', 'xWebkitSpeech': 'x-webkit-speech', 'className': 'input', 'style': 'width: 100%;',
+                      'clickEvent': function(e) {
+                        if(e && e.keyCode === 13) {
+                          me.searchAction();
+                          return false;
+                        } else {
+                          return true;
+                        }
+                      }
+                    }}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
                     //{kind: OB.COMP.ClearButton}
                     {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
                       'clickEvent': function() {
                         this.$el.parent().prev().children().val('');
+                        me.searchAction();
                       }
                     }}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
                     {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
                       'clickEvent': function() {
-                        var criteria = {};
-                        if (me.bpname.val() && me.bpname.val() !== '') {
-                          criteria._identifier  = {
-                            operator: OB.Dal.CONTAINS,
-                            value: me.bpname.val()
-                          };
-                        }
-                        me.searchAction(criteria);
+                        me.searchAction();
                       }
                     }}
                   ]}
