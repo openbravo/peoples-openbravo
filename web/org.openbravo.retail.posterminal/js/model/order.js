@@ -562,22 +562,6 @@
     newOrder: function () {
       var order = new OB.MODEL.Order(), me = this;
 
-      function searchCurrentBP (){
-        function errorCallback(tx, error) {
-          OB.UTIL.showError("OBDAL error: " + error);
-        }
-
-        function successCallbackBPs(dataBps) {
-          var saveInDB = false;
-          if (dataBps){
-            // No changes have been made to the order yet,
-            // is it will not be saved in the database
-            me.modelorder.setBPandBPLoc(dataBps, false, saveInDB);
-          }
-        }
-        OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
-      }
-
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
@@ -597,7 +581,7 @@
       documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5);
       localStorage.setItem('Document_Sequence', documentseq);
       order.set('documentNo', OB.POS.modelterminal.get('terminal').searchKey + '/' + documentseq);
-      searchCurrentBP();
+      order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       return order;
     },
 
