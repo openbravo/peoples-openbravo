@@ -43,11 +43,11 @@
         {kind: B.KindJQuery('div'), content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 10px 17px 10px; float: left; width: 44px'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 30px'}, content: [
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
                        {kind: OB.COMP.ButtonOk.extend({
@@ -77,10 +77,10 @@
         ]},
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
              {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc; '}, content: [
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                          OB.I18N.getLabel('OBPOS_ReceiptTotal')
                  ]},
-                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                    {kind: Backbone.View.extend({
                      tagName: 'span',
                      initialize: function () {
@@ -97,7 +97,7 @@
          ]},
          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 10px 17px 10px; float: left; width: 44px'}, content: [
           ]},
-                 {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 5px 17px 0px; float: left;'}, content: [
+                 {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 10px 5px 10px 0px; float: left;'}, content: [
                    {kind: Backbone.View.extend({
                     tagName: 'span',
                     initialize: function () {

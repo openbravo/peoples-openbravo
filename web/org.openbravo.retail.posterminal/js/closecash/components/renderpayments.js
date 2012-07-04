@@ -11,10 +11,10 @@
         {kind: B.KindJQuery('div'), content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                     this.model.get('name')
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 20%'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
                     OB.DEC.add(0,this.model.get('expected')).toString()
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [

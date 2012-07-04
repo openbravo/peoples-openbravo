@@ -208,6 +208,16 @@ button.btnlink-fontblue {
   color: #7da7d9;
 }
 
+button.btnlink-cashup-edit {
+  margin: 2px 5px 2px 5px;
+  width: 50px;
+}
+
+button.btnlink-cashup-ok {
+  margin: 2px 5px 2px 5px;
+  width: 70px;
+}
+
 
 button.btnclear {
   border: none;
@@ -325,6 +335,12 @@ div.btnlink {
 }
 .btn-icon-clear {
   background-image: url('../img/iconClear.png');
+}
+.btn-icon-edit {
+  background-image: url('../img/iconEdit.png');
+}
+.btn-icon-check {
+  background-image: url('../img/iconCheck.png');
 }
 
 .btn-check {

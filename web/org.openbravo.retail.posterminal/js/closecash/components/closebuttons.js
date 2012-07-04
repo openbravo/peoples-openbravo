@@ -74,10 +74,10 @@
    }
   });
 
-  OB.COMP.ButtonOk =OB.COMP.Button.extend({
+  OB.COMP.ButtonOk =OB.COMP.SmallButton.extend({
 	_id: 'okbutton',
-    iconright: 'icon-ok icon-black',
-    className: 'btnlink btnlink-green',
+    icon: 'btn-icon btn-icon-check',
+    className: 'btnlink-green btnlink-cashup-ok',
     label: '',
    clickEvent: function (e) {
 	this.$el.hide();
@@ -90,24 +90,13 @@
     if($('button[button="okbutton"][style!="display: none; "]').length===0){
       this.me.options.closenextbutton.$el.removeAttr('disabled');
     }
-   },
-   render: function () {
-      this.$el.addClass('btnlink');
-      if (this.icon) {
-        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
-      }
-      this.$el.append($('<span>' + this.label + '</span>'));
-      if (this.iconright) {
-        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }
-      return this;
-    }
+   }
   });
 
-  OB.COMP.ButtonEdit =OB.COMP.Button.extend({
-	_id: 'editbutton',
-    iconright: 'icon-pencil icon-black',
-    className: 'btnlink btnlink-orange',
+  OB.COMP.ButtonEdit =OB.COMP.SmallButton.extend({
+    _id: 'editbutton',
+    icon: 'btn-icon btn-icon-edit',
+    className: 'btnlink-orange btnlink-cashup-edit',
     label: '',
    clickEvent: function (e) {
 	   var that = this;
@@ -116,18 +105,7 @@
        that.me.options.closekeyboard.trigger('command', that.searchKey);
    }
    });
-   },
-   render: function () {
-      this.$el.addClass('btnlink');
-      if (this.icon) {
-        this.$el.append($('<i class=\"' + this.icon + '\"></i>'));
-      }
-      this.$el.append($('<span>' + this.label + '</span>'));
-      if (this.iconright) {
-        this.$el.append($('<i class=\"' + this.iconright + '\"></i>'));
-      }
-      return this;
-    }
+   }
   });
 
   OB.COMP.ButtonVoid = OB.COMP.RegularButton.extend({
