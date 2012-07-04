@@ -108,7 +108,7 @@
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
-        this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes.currency);
+        this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('warehouse', attributes.warehouse);
         this.set('salesRepresentative', attributes.salesRepresentative);
         this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
