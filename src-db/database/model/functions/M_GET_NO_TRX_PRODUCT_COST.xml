@@ -68,7 +68,8 @@ BEGIN
     AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
     AND ad_org_id = v_legal_entity
     AND cost IS NOT NULL
-    AND costtype = COALESCE(v_CostType, 'AVA');
+    AND costtype IN ('STA', 'AVA')
+    AND costtype = COALESCE(v_CostType, costtype);
   IF(v_Count = 0) THEN
     RETURN 0;
   END IF;
@@ -81,7 +82,8 @@ BEGIN
         AND COALESCE(m_warehouse_id, p_warehouse_id, '-1') = COALESCE(p_warehouse_id, m_warehouse_id, '-1')
         AND ad_org_id = v_legal_entity
         AND cost IS NOT NULL
-        AND costtype = COALESCE(v_CostType, 'AVA')
+        AND costtype IN ('STA', 'AVA')
+        AND costtype = COALESCE(v_CostType, costtype)
       ORDER BY datefrom, dateto DESC, CASE WHEN m_warehouse_id IS NULL THEN 1 ELSE 0 END
   ) LOOP
     v_Cost := Cur_Cost.COST;
