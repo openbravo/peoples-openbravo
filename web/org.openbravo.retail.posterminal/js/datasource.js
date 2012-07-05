@@ -367,10 +367,8 @@
     if (this.scaleurl) {
       var me = this;
       $.ajax({
-        timeout: 5000,
         url: me.scaleurl,
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'jsonp',
+        dataType: 'json',
         type: 'GET',
         success: function (data, textStatus, jqXHR) {
           callback(data);
@@ -397,14 +395,11 @@
     if (this.url) {
       var me = this;
       $.ajax({
-        timeout: 5000,
         url: me.url,
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'jsonp',
-        type: 'GET',
-        data: {
-          content: params ? _.template(templatedata, params) : templatedata
-        },
+        contentType: 'application/xml;charset=utf-8',
+        dataType: 'json',
+        type: 'POST',
+        data: params ? _.template(templatedata, params) : templatedata,
         success: function (data, textStatus, jqXHR) {
           if (callback) {
             callback(data);
