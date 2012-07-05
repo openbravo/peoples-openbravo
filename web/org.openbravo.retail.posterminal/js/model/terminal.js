@@ -50,6 +50,16 @@
       currency: null
     },
 
+    initialize: function() {
+      var me = this;
+      $(window).bind('online',function() {
+        me.triggerOnLine();
+      });
+      $(window).bind('offline',function() {
+        me.triggerOffLine();
+      });
+    },
+
     login: function (user, password, mode) {
       OB.UTIL.showLoading(true);
       var me = this;
@@ -261,6 +271,14 @@
 
     triggerLoginSuccess: function () {
       this.trigger('loginsuccess');
+    },
+
+    triggerOnLine: function() {
+      this.trigger('online');
+    },
+
+    triggerOffLine: function() {
+      this.trigger('offline');
     },
 
     triggerLoginFail: function (e, mode, data) {

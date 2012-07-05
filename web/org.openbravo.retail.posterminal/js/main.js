@@ -132,6 +132,16 @@
     // Entry Point
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
     modelterminal.load();
+
+    modelterminal.on('online', function () {
+      $($('#online > span')[0]).css("background-image", "url('./img/login-connected.png')");
+      $($('#online > span')[1]).text(OB.I18N.getLabel('OBPOS_Online'));
+    });
+
+    modelterminal.on('offline', function () {
+      $($('#online > span')[0]).css("background-image", "url('./img/login-not-connected.png')");
+      $($('#online > span')[1]).text(OB.I18N.getLabel('OBPOS_Offline'));
+    });
   });
 
 }());
