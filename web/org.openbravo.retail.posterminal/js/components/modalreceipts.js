@@ -1,4 +1,4 @@
-/*global window, B, Backbone */
+/*global window, B, $, Backbone */
 
 (function () {
 
