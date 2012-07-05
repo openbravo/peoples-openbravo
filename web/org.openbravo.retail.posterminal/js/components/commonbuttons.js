@@ -238,11 +238,10 @@
   });
   
   OB.COMP.RenderEmpty = Backbone.View.extend({
-    label: OB.I18N.getLabel('OBPOS_SearchNoResults'),
     tagName: 'div',
     attributes: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, 
-    render: function () {
-      this.$el.text(this.label);
+    render: function () {      
+      this.$el.text(this.label || OB.I18N.getLabel('OBPOS_SearchNoResults'));
       return this;
     }
   });
