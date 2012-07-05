@@ -233,7 +233,7 @@
           if (result.rows.length === 0) {
             return null;
           } else {
-            success(new model(transform(model, result.rows.item(0))));
+            success(transform(model, result.rows.item(0)));
           }
         }, error);
       });

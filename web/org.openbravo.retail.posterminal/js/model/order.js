@@ -138,7 +138,7 @@
         delete this.attributes.json; // BINGO!!!
       }
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function(){window.console.log('success');}, function(){window.console.error(arguments);});
+      OB.Dal.save(this, null, function(){window.console.error(arguments);});
     },
 
     calculateTaxes : function (callback) {
@@ -518,11 +518,13 @@
       this.adjustPayment();
       this.save();
     },
+
     serializeToJSON: function () {
-      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+      var jsonorder = this.toJSON();
 
       // remove not needed members
       delete jsonorder.undo;
+      delete jsonorder.json;
 
       _.forEach(jsonorder.lines, function (item) {
         delete item.product.img;
