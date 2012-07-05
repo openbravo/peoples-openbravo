@@ -46,6 +46,7 @@
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
                {kind: OB.COMP.PendingReceipts},
                {kind: OB.COMP.CountCash},
+               {kind: OB.COMP.CashToKeep},
                {kind: OB.COMP.PostPrintClose}
              ]},
 
@@ -59,29 +60,26 @@
 
         ], init: function () {
           var ctx = this.context;
+          OB.UTIL.showLoading(true);
           ctx.on('domready', function () {
             var orderlist = this.context.modelorderlist;
             OB.Dal.find(OB.MODEL.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
-              OB.UTIL.showLoading(true);
               if (fetchedOrderList && fetchedOrderList.length !== 0) {
                 ctx.orderlisttoprocess = fetchedOrderList;
                 OB.UTIL.showLoading(false);
                 $('#modalprocessreceipts').modal('show');
+              }else{
+                OB.UTIL.showLoading(false);
               }
             }, function () { //OB.Dal.find error
               OB.UTIL.showError('Find error');
             });
 
-            OB.Dal.find(OB.MODEL.Order, '', function (fetchedOrderList) { //OB.Dal.find success
+            OB.Dal.find(OB.MODEL.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
               if (fetchedOrderList && fetchedOrderList.length !== 0) {
-                var transformedOrderList = [];
-                // The order object is stored in the json property of the row fetched from the database
-                _.each(fetchedOrderList.models, function(model) {
-                  transformedOrderList.push(JSON.parse(model.get('json')));
-                });
-                orderlist.reset(transformedOrderList);
+                orderlist.reset(fetchedOrderList.models);
               }
             }, function () { //OB.Dal.find error
               OB.UTIL.showError('Find error');

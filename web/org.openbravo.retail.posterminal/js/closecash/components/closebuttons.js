@@ -16,18 +16,23 @@
       return this;
     },
     clickEvent: function (e) {
-      if (this.options.modeldaycash.defaults.step === 2) {
+      if (this.options.modeldaycash.defaults.step === 3) {
         //Count Cash back from Post, print & Close.
+        this.options.cashtokeep.$el.show();
+        this.options.postprintclose.$el.hide();
+        this.options.closenextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
+        this.options.modeldaycash.defaults.step=2;
+      } else if (this.options.modeldaycash.defaults.step === 2) {
+        //Count Cash back from Cash to keep
         this.options.countcash.$el.show();
         this.options.closekeyboard.toolbars.toolbarcountcash.show();
         this.options.postprintclose.$el.hide();
         this.options.closekeyboard.toolbars.toolbarempty.hide();
-        this.options.closenextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
         this.options.modeldaycash.defaults.step=1;
       } else if (this.options.modeldaycash.defaults.step === 1) {
         //Pending receipts back from Count Cash.
         this.options.pendingreceipts.$el.show();
-        this.options.countcash.$el.hide();
+        this.options.cashtokeep.$el.hide();
         this.options.closekeyboard.toolbars.toolbarempty.show();
         this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.modeldaycash.defaults.step=0;
@@ -58,17 +63,24 @@
         if($('button[button="okbutton"][style!="display: none; "]').length!==0){
           this.$el.attr('disabled','disabled');
         }
-      } else if (this.options.modeldaycash.defaults.step === 1) {
-        //Count Cash to Post, print & Close
-        this.options.postprintclose.$el.show();
+      } else if (this.options.modeldaycash.defaults.step === 1){
+      //Count Cash to Cash to keep
+        this.options.cashtokeep.$el.show();
         this.options.closekeyboard.toolbars.toolbarempty.show();
         this.options.countcash.$el.hide();
         this.options.closekeyboard.toolbars.toolbarcountcash.hide();
+        this.options.modeldaycash.defaults.step=2;
+      } else if (this.options.modeldaycash.defaults.step === 2) {
+        //Cash to keep to Post, print & Close
+        this.options.postprintclose.$el.show();
+        this.options.closekeyboard.toolbars.toolbarempty.show();
+        this.options.cashtokeep.$el.hide();
+        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.renderpaymentlines.$el.empty();
         this.options.renderpaymentlines.render();
-        this.options.modeldaycash.defaults.step=2;
+        this.options.modeldaycash.defaults.step=3;
         this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
-      } else if (this.options.modeldaycash.defaults.step === 2) {
+      } else if (this.options.modeldaycash.defaults.step === 3) {
         this.options.modeldaycash.paymentmethods.trigger('closed');
       }
    }

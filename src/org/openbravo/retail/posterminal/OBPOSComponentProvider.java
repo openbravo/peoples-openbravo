@@ -120,8 +120,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/data/datadropdepsave",
         "cashmgmt/components/cashmgmtbuttons",
         "cashmgmt/components/cashmgmtkeyboard",
-        "cashmgmt/components/depositdestinations",
-        "cashmgmt/components/dropdestinations",
         "cashmgmt/components/renderdropdepdestinations",
         "cashmgmt/components/searchdepositevents",
         "cashmgmt/components/searchdropevents",
@@ -143,8 +141,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/components/modalfinishclose", "closecash/components/modalprocessreceipts",
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
         "closecash/windows/closeinfo", "closecash/windows/tabcountcash",
-        "closecash/windows/tabpendingreceipts", "closecash/windows/tabpostprintclose",
-        "closecash/windows/closecash",
+        "closecash/windows/tabcashtokeep", "closecash/windows/tabpendingreceipts",
+        "closecash/windows/tabpostprintclose", "closecash/windows/closecash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date" };

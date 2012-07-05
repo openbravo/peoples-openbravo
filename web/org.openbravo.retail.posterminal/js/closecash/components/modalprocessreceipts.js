@@ -36,8 +36,8 @@
       return this;
     },
     clickEvent: function (e) {
+      var orderarraytoprocess = [], me = this;
       OB.UTIL.showLoading(true);
-      var orderarraytoprocess = [];
       this.options.orderlisttoprocess.each(function (order){
         orderarraytoprocess.push(JSON.parse(order.get('json')));
       });
@@ -49,6 +49,13 @@
         OB.UTIL.showLoading(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgDropDepNotSaved'));
       } else {
+        me.options.orderlisttoprocess.each(function (order){
+          me.options.modelorderlist.remove(order);
+          OB.Dal.remove(order, function(){
+          }, function(){
+            OB.UTIL.showError('Error removing');
+          });
+        });
         OB.UTIL.showLoading(false);
         OB.UTIL.showSuccess("ALL tickets processed");
       }

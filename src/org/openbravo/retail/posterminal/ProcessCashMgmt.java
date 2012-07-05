@@ -78,7 +78,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         }
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
-        transaction.setDescription(paymentMethod.getCommercialName() + " - " + description);
+        transaction.setDescription(description);
         transaction.setTransactionDate(new Date());
         transaction.setStatus("RPPC");
 
@@ -103,7 +103,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         }
         secondTransaction.setProcessed(true);
         secondTransaction.setTransactionType("BPW");
-        secondTransaction.setDescription(paymentMethod.getCommercialName() + " - " + description);
+        secondTransaction.setDescription(description);
         secondTransaction.setTransactionDate(new Date());
         secondTransaction.setStatus("RPPC");
         OBDal.getInstance().save(secondTransaction);
@@ -116,7 +116,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
           jsonData.put("deposit", amount);
         }
         jsonData.put("name", paymentMethod.getCommercialName());
-        jsonData.put("description", paymentMethod.getCommercialName() + " - " + description);
+        jsonData.put("description", description);
         respArray.put(jsonData);
       }
     } finally {

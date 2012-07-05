@@ -32,9 +32,8 @@
     this.$el = this.component.$el;
     context.closeprevbutton.$el.attr('disabled','disabled');
     context.countcash.$el.hide();
+    context.cashtokeep.$el.hide();
     context.postprintclose.$el.hide();
-
-
   };
 
 }());
