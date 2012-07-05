@@ -613,6 +613,11 @@
     },
 
     load: function(model) {
+      // Workaround to prevent the pending receipts moder window from remaining open
+      // when the current receipt is selected from the list
+      if (model && this.current && model.get('documentNo') === this.current.get('documentNo')) {
+        return;
+      }
       this.saveCurrent();
       this.current = model;
       this.loadCurrent();
