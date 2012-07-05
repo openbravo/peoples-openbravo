@@ -18,6 +18,8 @@
 
   OB.DEC.Zero = toNumber(BigDecimal.prototype.ZERO);
   OB.DEC.One = toNumber(BigDecimal.prototype.ONE);
+  //scale is now public and will be set when the currency data is retrieved
+  OB.DEC.scale = scale;
 
   OB.DEC.isNumber = function (a) {
     return typeof(a) === 'number' && !isNaN(a);

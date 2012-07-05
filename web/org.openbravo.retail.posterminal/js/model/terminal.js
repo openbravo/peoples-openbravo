@@ -72,6 +72,7 @@
       this.set('pricelist', null);
       this.set('pricelistversion', null);
       this.set('currency', null);
+      this.set('currencyPrecision', null);
       $.ajax({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         data: {
@@ -109,6 +110,7 @@
       this.set('pricelist', null);
       this.set('pricelistversion', null);
       this.set('currency', null);
+      this.set('currencyPrecision', null);
 
       $.ajax({
         url: '../../org.openbravo.retail.posterminal.service.logout',
@@ -141,6 +143,7 @@
       this.set('pricelist', null);
       this.set('pricelistversion', null);
       this.set('currency', null);
+      this.set('currencyPrecision', null);
 
       // Starting app
       var me = this;
@@ -254,6 +257,8 @@
       }, function (data) {
         if (data[0]) {
           me.set('currency', data[0]);
+          //Precision used by arithmetics operations is set using the currency
+          OB.DEC.scale = data[0].pricePrecision;
           me.triggerReady();
         }
       });
