@@ -120,17 +120,13 @@
    }
   });
 
-  OB.COMP.ButtonVoid = OB.COMP.RegularButton.extend({
+  OB.COMP.ButtonVoid = OB.COMP.SmallButton.extend({
     _id: 'closevoidbutton',
     label: 'VOID',
     order: null,
     me: null,
-    attributes: {'style': 'min-width: 115px; margin: 5px;'},
-    render: function () {
-      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
-      this.$el.addClass('btnlink-fontgrey');
-      return this;
-    },
+    className: 'btnlink-gray',
+    attributes: {'style': 'min-width: 70px; margin: 2px 5px 2px 5px;'},
     clickEvent: function (e) {
        this.me.receiptlist.remove(this.order);
        OB.Dal.remove(this.order, function(){
