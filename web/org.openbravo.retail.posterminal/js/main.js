@@ -83,7 +83,7 @@
         _.each(OB.DATA[OB.POS.paramWindow], function (model) {
           var ds;
           if (model.prototype.local) {
-            OB.Dal.initCache(model, [], function () { window.console.log('init success');}, function () { window.console.error('init error', arguments);});
+            OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
           } else {
             ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization));
             ds.on('ready', function () {
