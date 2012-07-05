@@ -7,69 +7,69 @@
 
   OB.DS.MAXSIZE = 100;
 
-  var serviceSuccess = function (data, textStatus, jqXHR, callback) {
-      if (data._entityname) {
-        callback([data]);
+  function serviceSuccess(data, textStatus, jqXHR, callback) {
+    if (data._entityname) {
+      callback([data]);
+    } else {
+      var response = data.response;
+      var status = response.status;
+      if (status === 0) {
+        callback(response.data, response.message);
+      } else if (response.errors) {
+        callback({
+          exception: {
+            message: response.errors.id
+          }
+        });
       } else {
-        var response = data.response;
-        var status = response.status;
-        if (status === 0) {
-          callback(response.data, response.message);
-        } else if (response.errors) {
-          callback({
-            exception: {
-              message: response.errors.id
-            }
-          });
-        } else {
-          callback({
-            exception: {
-              message: response.error.message
-            }
-          });
-        }
+        callback({
+          exception: {
+            message: response.error.message
+          }
+        });
       }
-      };
+    }
+  }
 
-  var serviceError = function (jqXHR, textStatus, errorThrown, callback) {
-      callback({
-        exception: {
-          message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
-          status: jqXHR.status
-        }
-      });
-      };
+  function serviceError(jqXHR, textStatus, errorThrown, callback) {
+    callback({
+      exception: {
+        message: (errorThrown ? errorThrown : OB.I18N.getLabel('OBPOS_MsgApplicationServerNotAvailable')),
+        status: jqXHR.status
+      }
+    });
+  }
 
-  var servicePOST = function (source, dataparams, callback) {
-      $.ajax({
-        url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'json',
-        type: 'POST',
-        data: JSON.stringify(dataparams),
-        success: function (data, textStatus, jqXHR) {
-          serviceSuccess(data, textStatus, jqXHR, callback);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          serviceError(jqXHR, textStatus, errorThrown, callback);
-        }
-      });
-      };
+  function servicePOST(source, dataparams, callback) {
+    $.ajax({
+      url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source,
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'POST',
+      data: JSON.stringify(dataparams),
+      success: function (data, textStatus, jqXHR) {
+        serviceSuccess(data, textStatus, jqXHR, callback);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        serviceError(jqXHR, textStatus, errorThrown, callback);
+      }
+    });
+  }
 
-  var serviceGET = function (source, dataparams, callback) {
-      $.ajax({
-        url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
-        contentType: 'application/json;charset=utf-8',
-        dataType: 'json',
-        type: 'GET',
-        success: function (data, textStatus, jqXHR) {
-          serviceSuccess(data, textStatus, jqXHR, callback);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          serviceError(jqXHR, textStatus, errorThrown, callback);
-        }
-      });
-      };
+  function serviceGET(source, dataparams, callback) {
+    $.ajax({
+      url: '../../org.openbravo.retail.posterminal.service.jsonrest/' + source + '/' + encodeURI(JSON.stringify(dataparams)),
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'GET',
+      success: function (data, textStatus, jqXHR) {
+        serviceSuccess(data, textStatus, jqXHR, callback);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        serviceError(jqXHR, textStatus, errorThrown, callback);
+      }
+    });
+  }
 
   // Process object
   OB.DS.Process = function (source) {
@@ -311,22 +311,22 @@
     });
   };
 
-  var findPrice = function (item, prices, priceListVersion) {
-      if (item) {
-        var price = findInData(prices, {
-          'priceListVersion': priceListVersion,
-          'product': item.product.id
-        });
-        if (price) {
-          item.price = price;
-          return item;
-        } else {
-          return null;
-        }
+  function findPrice(item, prices, priceListVersion) {
+    if (item) {
+      var price = findInData(prices, {
+        'priceListVersion': priceListVersion,
+        'product': item.product.id
+      });
+      if (price) {
+        item.price = price;
+        return item;
       } else {
         return null;
       }
-      };
+    } else {
+      return null;
+    }
+  }
 
   OB.DS.DataSourceProductPrice.prototype.find = function (filter, callback) {
     if (this.pcache && this.ppcache) {
