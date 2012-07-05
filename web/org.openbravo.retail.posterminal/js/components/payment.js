@@ -1,4 +1,4 @@
-/*global B */
+/*global B, Backbone */
 
 (function () {
 
@@ -42,13 +42,12 @@
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'}, content: [
                     ]},
-                    {kind: OB.COMP.TableView, attr: {
+                    {kind: OB.UI.TableView, attr: {
                       collection: payments,
-                      renderEmpty: function () {
-                        return (
-                          {kind: B.KindJQuery('div'), attr: {'style': 'height: 36px'}}
-                        );
-                      },
+                      renderEmpty: Backbone.View.extend({
+                        tagName: 'div',
+                        attributes: {'style': 'height: 36px'}
+                      }),                      
                       renderLine: OB.COMP.SelectPanel.extend({
                         render: function () {
                           var model = this.model;

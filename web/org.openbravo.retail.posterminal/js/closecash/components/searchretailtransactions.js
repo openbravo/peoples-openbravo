@@ -17,7 +17,7 @@
       });
       this.component = B(
         {kind: B.KindJQuery('div'), content: [
-           {kind: OB.COMP.TableView, id: 'tableview', attr: {
+           {kind: OB.UI.TableView, id: 'tableview', attr: {
              style: 'list',
              collection: this.transactions,
              me: me,

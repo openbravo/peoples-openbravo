@@ -23,7 +23,7 @@
         {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
           {kind: B.KindJQuery('div'), attr: {'style':  'border-bottom: 1px solid #cccccc;'}},
           {kind: B.KindJQuery('div'), content: [
-            {kind: OB.COMP.TableView, id: 'tableview', attr: {
+            {kind: OB.UI.TableView, id: 'tableview', attr: {
               collection: this.receiptlist,
               renderLine: OB.COMP.RenderOrder
             }}

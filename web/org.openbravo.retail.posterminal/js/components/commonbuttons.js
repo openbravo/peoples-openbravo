@@ -236,6 +236,16 @@
       this.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
     }
   });
+  
+  OB.COMP.RenderEmpty = Backbone.View.extend({
+    label: OB.I18N.getLabel('OBPOS_SearchNoResults'),
+    tagName: 'div',
+    attributes: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, 
+    render: function () {
+      this.$el.text(this.label);
+      return this;
+    }
+  });
 
   OB.COMP.MenuSeparator = Backbone.View.extend({
     tagName: 'li',

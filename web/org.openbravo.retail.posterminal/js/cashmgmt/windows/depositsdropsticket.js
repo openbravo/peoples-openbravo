@@ -71,17 +71,11 @@
                     ]}
                   ]}
                 ]},
-	              {kind: OB.COMP.TableView, id: 'tableview', attr: {
+	              {kind: OB.UI.TableView, id: 'tableview', attr: {
 	                style: 'list',
 	                collection: this.listdepositsdrops,
 	                me: me,
-	                renderEmpty: function () {
-	                  return (
-	                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 20px; border-bottom: 1px solid #cccccc; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
-	                      OB.I18N.getLabel('OBPOS_SearchNoResults')
-	                    ]}
-	                  );
-	                },
+                  renderEmpty: OB.COMP.RenderEmpty,
 	                renderLine: OB.COMP.RenderDepositsDrops.extend({me:me})
 	              }},
 	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [

@@ -21,15 +21,9 @@
         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
           {kind: B.KindJQuery('h3'), id: 'title'}
         ]},
-        {kind: OB.COMP.TableView, id: 'tableview', attr: {
+        {kind: OB.UI.TableView, id: 'tableview', attr: {
           collection: this.products,
-          renderEmpty: function () {
-            return (
-              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
-                OB.I18N.getLabel('OBPOS_SearchNoResults')
-              ]}
-            );
-          },
+          renderEmpty: OB.COMP.RenderEmpty,          
           renderLine: OB.COMP.RenderProduct
         }}
       ]}

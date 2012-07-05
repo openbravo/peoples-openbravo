@@ -89,15 +89,9 @@
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
               {kind: B.KindJQuery('div'), content: [
-                {kind: OB.COMP.TableView, id: 'tableview', attr: {
+                {kind: OB.UI.TableView, id: 'tableview', attr: {
                   collection: this.bps,
-                  renderEmpty: function () {
-                    return (
-                      {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, content: [
-                        OB.I18N.getLabel('OBPOS_SearchNoResults')
-                      ]}
-                    );
-                  },
+                  renderEmpty: OB.COMP.RenderEmpty,                  
                   renderLine: OB.COMP.RenderBusinessPartner
                 }}
               ]}

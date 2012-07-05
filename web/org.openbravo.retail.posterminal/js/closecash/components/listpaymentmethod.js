@@ -27,17 +27,11 @@
           ]}
         ]}
       ]},
-        {kind: OB.COMP.TableView, id: 'tableview', attr: {
+        {kind: OB.UI.TableView, id: 'tableview', attr: {
           style: 'list',
           collection: this.paymentmethods,
           me: me,
-          renderEmpty: function () {
-            return (
-              {kind: B.KindJQuery('div'), attr: {'style': 'border-bottom: 1px solid #cccccc;text-align: center; font-weight:bold; font-size: 150%; color: #cccccc'}, content: [
-                OB.I18N.getLabel('OBPOS_SearchNoResults')
-              ]}
-            );
-          },
+          renderEmpty: OB.COMP.RenderEmpty,
           renderLine: OB.COMP.RenderPayments.extend({me:me})
         }},
         {kind: B.KindJQuery('div'), content: [
