@@ -21,7 +21,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************/
  -- Logistice
- v_IsMigrated NUMBER;
+ v_count NUMBER;
  v_ResultStr      VARCHAR2(2000);
  v_Result NUMBER:= 1;
  v_Message        VARCHAR2(2000);
@@ -35,11 +35,12 @@ TYPE RECORD IS REF CURSOR;
 BEGIN
 
 -- Checks if instance is migrated to new cost engine
-  SELECT COUNT(*) INTO v_IsMigrated
-  FROM M_COSTING_RULE
-  WHERE ISVALIDATED='Y';
+      SELECT count(1) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
 
-  IF (v_IsMigrated > 0) THEN
+  IF (v_count > 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
   END IF;
 

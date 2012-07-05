@@ -322,8 +322,8 @@
         --Calculate Production Cost
       SELECT count(1) INTO v_count
       FROM DUAL
-      WHERE EXISTS (SELECT 1 FROM m_costing_rule cr
-                    WHERE cr.isvalidated = 'Y');
+      WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
       IF (v_count = 0) THEN
         --Only calculate cost automatically if legacy cost engine is used.
         Ma_Production_Cost(v_Record_ID, v_User_ID, v_Message);

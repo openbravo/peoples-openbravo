@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_COSTING_TRG">
-    <trigger name="M_COSTING_TRG" table="M_COSTING" fires="after" insert="false" update="true" delete="true" foreach="row">
+    <trigger name="M_COSTING_TRG" table="M_COSTING" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -19,11 +19,19 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-
+v_count NUMBER;
 BEGIN
   IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
-  IF (DELETING) THEN
+  IF (INSERTING) THEN
+      SELECT count(1) INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
+    IF(v_count>0 and (:new.costtype = 'AV' or :new.costtype = 'ST' or :new.costtype = 'AVO')) then
+      RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
+    END IF;
+  ELSIF (DELETING) THEN
     IF (:OLD.ISPERMANENT = 'Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
     END IF;

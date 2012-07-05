@@ -99,10 +99,7 @@ public class CostingMigrationProcess implements Process {
 
       if (CostingStatus.getInstance().isMigrated()) {
         throw new OBException("@CostMigratedInstance@");
-      } else if (isCostingMigrationNotNeeded()) {
-        throw new OBException("@CostMigrationNoNeeded@");
       }
-
       // FIXME: Remove when HQL based inserts are removed.
       OBDal.getInstance().registerSQLFunction("get_uuid",
           new StandardSQLFunction("get_uuid", new StringType()));
@@ -421,14 +418,6 @@ public class CostingMigrationProcess implements Process {
         OBDal.getInstance().save(initICL);
       }
     }
-  }
-
-  private boolean isCostingMigrationNotNeeded() {
-    OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, "");
-    costingQry.setFilterOnReadableClients(false);
-    costingQry.setFilterOnReadableOrganization(false);
-
-    return costingQry.count() == 0;
   }
 
   private boolean isMigrationFirstPhaseCompleted() {

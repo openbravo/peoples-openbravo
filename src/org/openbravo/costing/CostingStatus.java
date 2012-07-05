@@ -18,11 +18,14 @@
  */
 package org.openbravo.costing;
 
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class CostingStatus implements OBSingleton {
   private static CostingStatus instance;
@@ -41,12 +44,12 @@ public class CostingStatus implements OBSingleton {
     if (isMigrated == null) {
       OBContext.setAdminMode(false);
       try {
-        OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
-            CostingRule.PROPERTY_VALIDATED + " = true");
+        //
+        OBQuery<Preference> crQry = OBDal.getInstance().createQuery(Preference.class,
+            Preference.PROPERTY_ATTRIBUTE + " ='Cost_Eng_Ins_Migrated'");
         crQry.setFilterOnReadableClients(false);
         crQry.setFilterOnReadableOrganization(false);
         crQry.setMaxResult(1);
-
         isMigrated = crQry.uniqueResult() != null;
       } finally {
         OBContext.restorePreviousMode();
@@ -56,6 +59,22 @@ public class CostingStatus implements OBSingleton {
   }
 
   public void setMigrated() {
+    if (isMigrated()) {
+      return;
+    }
+    OBContext.setAdminMode(false);
+    try {
+      Preference MigratedPreference = OBProvider.getInstance().get(Preference.class);
+      MigratedPreference.setAttribute("Cost_Eng_Ins_Migrated");
+      MigratedPreference.setSearchKey("Y");
+      MigratedPreference.setClient(OBDal.getInstance().get(Client.class, "0"));
+      MigratedPreference.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+      MigratedPreference.setPropertyList(false);
+      OBDal.getInstance().save(MigratedPreference);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     isMigrated = true;
   }
 }
