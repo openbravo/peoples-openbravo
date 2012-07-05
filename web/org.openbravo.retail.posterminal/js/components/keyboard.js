@@ -218,15 +218,17 @@
 
       //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
       $(window).keydown(function(e) {
-        if (window.fixFocus() && OB.Format.defaultDecimalSymbol !== '.') {
-          if (e.keyCode === 110) { //Numeric keypad dot (.)
-            me.keyPressed(OB.Format.defaultDecimalSymbol);
-          } else if (e.keyCode === 190) { //Character keyboard dot (.)
-            me.keyPressed('.');
+        if (window.fixFocus()){
+          if (OB.Format.defaultDecimalSymbol !== '.') {
+            if (e.keyCode === 110) { //Numeric keypad dot (.)
+              me.keyPressed(OB.Format.defaultDecimalSymbol);
+            } else if (e.keyCode === 190) { //Character keyboard dot (.)
+              me.keyPressed('.');
+            }
           }
-        }
-        if(e.keyCode === 8) { //del key
-          me.keyPressed('del');
+          if(e.keyCode === 8) { //del key
+            me.keyPressed('del');
+          }
         }
         return true;
       });
