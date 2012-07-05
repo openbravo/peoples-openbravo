@@ -34,6 +34,7 @@
                 ]},
                 {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
+                    {kind: OB.COMP.ModalDeleteReceipt},
                     {kind: OB.COMP.ButtonDelete}
                   ]}
                 ]},

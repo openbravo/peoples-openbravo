@@ -17,17 +17,7 @@
     icon: 'btn-icon btn-icon-delete',
     //label: OB.I18N.getLabel('OBPOS_LblDelete'),
     clickEvent: function (e) {
-      if (window.confirm(OB.I18N.getLabel('OBPOS_MsgConfirmDelete'))) {
-        // If the model order does not have an id, it has not been
-        // saved in the database yet, so there is no need to remove it
-        if (this.options.modelorder.get('id')) {
-          // makes sure that the current order has the id
-          this.options.modelorderlist.saveCurrent();
-          // removes the current order from the database
-          OB.Dal.remove(this.options.modelorderlist.current, null,null);
-        }
-        this.options.modelorderlist.deleteCurrent();
-      }
+      $('#modalDeleteReceipt').modal('show');
     }
   });
 
