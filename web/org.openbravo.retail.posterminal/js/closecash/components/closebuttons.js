@@ -88,7 +88,7 @@
 
   OB.COMP.ButtonOk =OB.COMP.SmallButton.extend({
 	_id: 'okbutton',
-    icon: 'btn-icon btn-icon-check',
+    icon: 'btn-icon-small btn-icon-check',
     className: 'btnlink-green btnlink-cashup-ok',
     label: '',
    clickEvent: function (e) {
@@ -107,7 +107,7 @@
 
   OB.COMP.ButtonEdit =OB.COMP.SmallButton.extend({
     _id: 'editbutton',
-    icon: 'btn-icon btn-icon-edit',
+    icon: 'btn-icon-small btn-icon-edit',
     className: 'btnlink-orange btnlink-cashup-edit',
     label: '',
    clickEvent: function (e) {
