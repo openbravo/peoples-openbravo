@@ -38,6 +38,7 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -303,6 +304,8 @@ public class OrderLoader {
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
+    invoice.setPartnerAddress(OBDal.getInstance().get(Location.class,
+        jsonorder.getJSONObject("bp").getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
         jsonorder.getJSONObject("bp").getString("paymentMethod")));
@@ -364,6 +367,8 @@ public class OrderLoader {
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
     shipment.setAccountingDate(order.getOrderDate());
     shipment.setMovementDate(order.getOrderDate());
+    shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
+        jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");
@@ -411,7 +416,8 @@ public class OrderLoader {
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
-
+    order.setPartnerAddress(OBDal.getInstance().get(Location.class,
+        jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
     order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
         jsonorder.getJSONObject("bp").getString("paymentMethod")));
