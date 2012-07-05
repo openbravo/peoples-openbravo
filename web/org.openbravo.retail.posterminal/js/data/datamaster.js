@@ -37,18 +37,6 @@
   };
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);
 
-  OB.DATA.ProductPrice = function (context, id) {
-    this._id = 'DataProductPrice';
-    this.context = context;
-    this.ds = new OB.DS.DataSourceProductPrice(
-    new OB.DS.Request('org.openbravo.retail.posterminal.master.Product', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization), new OB.DS.Request('org.openbravo.retail.posterminal.master.ProductPrice', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
-    this.loadparams = {
-      product: {},
-      productprice: {}
-    };
-  };
-  _.extend(OB.DATA.ProductPrice.prototype, OB.DATA.Base);
-
   OB.DATA.Category = function (context, id) {
     this._id = 'DataCategory';
     this.context = context;
