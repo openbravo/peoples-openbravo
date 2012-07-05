@@ -138,7 +138,7 @@
         terminal: OB.POS.paramTerminal
       };
 
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Terminal').exec(
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(
       params, function (data) {
         if (data.exception) {
           me.logout();
@@ -160,7 +160,7 @@
 
     loadPayments: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Payments').exec({
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
         pos: this.get('terminal').id
       }, function (data) {
         if (data) {
@@ -177,7 +177,7 @@
 
     loadContext: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
@@ -187,7 +187,7 @@
 
     loadPermissions: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
         var i, max, permissions = {};
         if (data) {
           for (i = 0, max = data.length; i < max; i++) {
@@ -205,7 +205,7 @@
 
     loadLocation: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Location').exec({
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
         org: this.get('terminal').organization
       }, function (data) {
         if (data[0]) {
@@ -216,7 +216,7 @@
 
     loadPriceList: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceList').exec({
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -227,7 +227,7 @@
 
     loadPriceListVersion: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
         pricelist: this.get('terminal').priceList
       }, function (data) {
         if (data[0]) {
@@ -239,7 +239,7 @@
 
     loadCurrency: function () {
       var me = this;
-      new OB.DS.Query('org.openbravo.retail.posterminal.term.Currency').exec({
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
         currency: this.get('terminal').currency
       }, function (data) {
         if (data[0]) {

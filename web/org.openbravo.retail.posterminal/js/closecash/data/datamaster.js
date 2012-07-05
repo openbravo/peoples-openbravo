@@ -5,7 +5,7 @@
   OB.DATA.PaymentMethod = function (context, id) {
     this._id = 'DataPaymentMethod';
     this.context = context;
-    this.ds = new OB.DS.DataSource(new OB.DS.Query('org.openbravo.retail.posterminal.term.Payments', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
+    this.ds = new OB.DS.DataSource(new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {
       pos: OB.POS.modelterminal.get('terminal').id
     };
@@ -15,7 +15,7 @@
   OB.DATA.CloseCashPaymentMethod = function (context, id) {
     this._id = 'DataCloseCashPaymentMethod';
     this.context = context;
-    this.ds = new OB.DS.DataSource(new OB.DS.Query('org.openbravo.retail.posterminal.term.CloseCashPayments', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
+    this.ds = new OB.DS.DataSource(new OB.DS.Request('org.openbravo.retail.posterminal.term.CloseCashPayments', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {
       pos: OB.POS.modelterminal.get('terminal').id
     };
@@ -25,7 +25,7 @@
   OB.DATA.CashCloseReport = function (context, id) {
     this._id = 'DataCashCloseReport';
     this.context = context;
-    this.ds = new OB.DS.DataSource(new OB.DS.Query('org.openbravo.retail.posterminal.term.CashCloseReport', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
+    this.ds = new OB.DS.DataSource(new OB.DS.Request('org.openbravo.retail.posterminal.term.CashCloseReport', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {
       pos: OB.POS.modelterminal.get('terminal').id
     };

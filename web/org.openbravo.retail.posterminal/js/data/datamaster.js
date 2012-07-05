@@ -32,7 +32,7 @@
   OB.DATA.BPs = function (context) {
     this._id = 'DataBPs';
     this.context = context;
-    this.ds = new OB.DS.DataSource(new OB.DS.Query('org.openbravo.retail.posterminal.master.BusinessPartner', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
+    this.ds = new OB.DS.DataSource(new OB.DS.Request('org.openbravo.retail.posterminal.master.BusinessPartner', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {};
   };
   _.extend(OB.DATA.BPs.prototype, OB.DATA.Base);
@@ -41,7 +41,7 @@
     this._id = 'DataProductPrice';
     this.context = context;
     this.ds = new OB.DS.DataSourceProductPrice(
-    new OB.DS.Query('org.openbravo.retail.posterminal.master.Product', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization), new OB.DS.Query('org.openbravo.retail.posterminal.master.ProductPrice', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
+    new OB.DS.Request('org.openbravo.retail.posterminal.master.Product', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization), new OB.DS.Request('org.openbravo.retail.posterminal.master.ProductPrice', OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization));
     this.loadparams = {
       product: {},
       productprice: {}
@@ -52,7 +52,7 @@
   OB.DATA.Category = function (context, id) {
     this._id = 'DataCategory';
     this.context = context;
-    this.ds = new OB.DS.DataSource(new OB.DS.Query('org.openbravo.retail.posterminal.master.Category'));
+    this.ds = new OB.DS.DataSource(new OB.DS.Request('org.openbravo.retail.posterminal.master.Category'));
     this.loadparams = {};
   };
   _.extend(OB.DATA.Category.prototype, OB.DATA.Base);

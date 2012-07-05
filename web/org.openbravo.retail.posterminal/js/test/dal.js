@@ -27,7 +27,7 @@ asyncTest('Load models - WebSQL', function() {
 
   _.each(_.keys(OB.Model), function(m) {
     var model = OB.Model[m];
-    var ds = new OB.DS.DataSource(new OB.DS.Query(model, '23C59575B9CF467C9620760EB255B389', 'E443A31992CB4635AFCAEABE7183CE85'));
+    var ds = new OB.DS.DataSource(new OB.DS.Request(model, '23C59575B9CF467C9620760EB255B389', 'E443A31992CB4635AFCAEABE7183CE85'));
 
     ds.on('ready', function() {
       
