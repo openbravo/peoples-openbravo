@@ -11,7 +11,7 @@
       tagName: tag,
       _addModelToCollection: function (model, index) {
         var me = this,
-            tr = (new this.renderLine(model)).render().$el;
+            tr = (new this.renderLine({model: model})).render().$el;
         if (_.isNumber(index) && index < this.collection.length - 1) {
           this.$el.children().eq(index + this.header).before(tr);
         } else {
@@ -29,7 +29,7 @@
   
         this.collection.on('change', function (model, prop) {
           var index = this.collection.indexOf(model);
-          this.$el.children().eq(index + this.header).replaceWith((new this.renderLine(model)).render().$el);
+          this.$el.children().eq(index + this.header).replaceWith((new this.renderLine({model : model})).render().$el);
         }, this);
   
         this.collection.on('add', function (model, prop, options) {
@@ -88,47 +88,13 @@
               .append(this.tempty);
     },
     
-    inRenderEmpty: function() {
-      var r = this.renderEmpty;
-      if (r.__super__) {
-        return (new this.renderEmpty()).render().$el;
-      } else {
-        return B(this.renderEmpty()).$el;
-      }
-    },
-    inRenderHeader: function() {
-      var r = this.renderEmpty;
-      if (r.__super__) {
-        return (new this.renderHeader()).render().$el;
-      } else {
-        return B(this.renderHeader()).$el;
-      }
-    },      
-    renderLineModel: function (model) {
-      var b;
-      if (this.renderLine.prototype.initialize) { // it is a backbone view
-        b = (new this.renderLine({
-          model: model
-        })).render();
-      } else {
-        // old fashioned render
-        b = B(this.renderLine(model));
-        b.$el.click(function (e) {
-          model.trigger('selected', model);
-          model.trigger('click', model);
-          b.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
-        });
-      }
-      return b.$el;
-    },
-    
     _addModelToCollection: function (model, index) { // means after...
       var me = this,
           tr = $('<li/>');
-      tr.append(this.renderLineModel(model));
+      tr.append((new this.renderLine({model: model})).render().$el);
       // tr.click(stdClickEvent);
       model.on('change', function () {
-        tr.empty().append(this.renderLineModel(model));
+        tr.empty().append((new this.renderLine({model: model})).render().$el);
       }, this);
   
       model.on('selected', function () {
@@ -158,11 +124,11 @@
       this.selected = null;
   
       if (this.renderHeader) {
-        this.theader.append(this.inRenderHeader());
+        this.theader.append((new this.renderHeader()).render().$el);
       }
   
       if (this.renderEmpty) {
-        this.tempty.append(this.inRenderEmpty());
+        this.tempty.append((new this.renderEmpty()).render().$el);
       }
   
       this.collection.on('selected', function (model) {

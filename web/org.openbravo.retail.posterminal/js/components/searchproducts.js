@@ -75,7 +75,11 @@
                     renderLine: Backbone.View.extend({
                       tagName: 'option',
                       initialize: function () {
-                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
+                        this.model = this.options.model;
+                      },
+                      render: function () {
+                        this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
+                        return this;
                       }
                     })
                   }}

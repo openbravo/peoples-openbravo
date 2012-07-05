@@ -75,10 +75,14 @@
                     renderLine: Backbone.View.extend({
                       tagName: 'option',
                       initialize: function () {
-                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
-                        if (roleId === this.options.get('id')) {
+                        this.model = this.options.model;
+                      },
+                      render: function () {
+                        this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
+                        if (roleId === this.model.get('id')) {
                           this.$el.attr('selected', 'selected');
-                        }
+                        }                        
+                        return this;
                       }
                     })
                   }}
@@ -97,10 +101,14 @@
                     renderLine: Backbone.View.extend({
                       tagName: 'option',
                       initialize: function () {
-                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
-                        if (languageId === this.options.get('id')) {
+                        this.model = this.options.model;
+                      },
+                      render: function () {
+                        this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
+                        if (languageId === this.model.get('id')) {
                           this.$el.attr('selected', 'selected');
                         }
+                        return this;
                       }
                     })
                   }}
