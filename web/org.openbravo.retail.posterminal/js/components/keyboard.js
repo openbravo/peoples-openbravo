@@ -225,6 +225,9 @@
             me.keyPressed('.');
           }
         }
+        if(e.keyCode === 8) { //del key
+          me.keyPressed('del');
+        }
         return true;
       });
 
