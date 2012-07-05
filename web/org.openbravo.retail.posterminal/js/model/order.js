@@ -99,6 +99,11 @@
     local: true,
     _id: 'modelorder',
     initialize: function (attributes) {
+      if (attributes && attributes.id && attributes.json) {
+        // The attributes of the order are stored in attributes.json
+        attributes = JSON.parse(attributes.json);
+      }
+
       if (attributes && attributes.documentNo) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
@@ -550,8 +555,10 @@
     model: OB.MODEL.Order,
 
     constructor: function (context) {
-      this._id = 'modelorderlist';
-      this.modelorder = context.modelorder;
+      if (context) {
+        this._id = 'modelorderlist';
+        this.modelorder = context.modelorder;
+      }
       Backbone.Collection.prototype.constructor.call(this);
     },
 
@@ -622,5 +629,8 @@
     }
 
   });
+
+  window.OB.Collection = window.OB.Collection || {};
+  window.OB.Collection.OrderList = OB.MODEL.OrderList;
 
 }());

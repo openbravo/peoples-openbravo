@@ -37,7 +37,7 @@
         tmp[prop] = val;
       }
     });
-    return tmp;
+    return new model(tmp);
   }
 
   function dbSuccess() {
