@@ -46,6 +46,7 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.access.ProcessAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.alert.Alert;
@@ -75,10 +76,20 @@ public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
   private static final Logger log4j = Logger.getLogger(CostingRuleProcess.class);
   private static CostingAlgorithm averageAlgorithm = null;
-  private final String alertRuleName = "Products with transactions without available cost on date.";
+  private static final String alertRuleName = "Products with transactions without available cost on date.";
+  private static final String pareto = "75F83D534E764C7C8781FFA6C08E87ED";
+  private static final String mUpdatePareto = "9CD67D41E43242CDA034FB994B75812A";
+  private static final String valued = "E5BE98DCF4514A18B571F21183B397DD";
+  private static final String dimensional = "6D3B1C36BF594A51878281B505F6CECF";
+  private static final String paretoLegacy = "1000500000";
+  private static final String mUpdateParetoLegacy = "1000500001";
+  private static final String valuedLegacy = "800088";
+  private static final String dimensionalLegacy = "800205";
+  private static final String processEntity = org.openbravo.model.ad.ui.Process.ENTITY_NAME;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
+
     logger = bundle.getLogger();
     OBError msg = new OBError();
     msg.setType("Success");
@@ -111,8 +122,10 @@ public class CostingMigrationProcess implements Process {
           OBDal.getInstance().save(rule);
         }
         deleteAlertRule();
+        updateReportRoles();
         CostingStatus.getInstance().setMigrated();
         deleteMigrationFirstPhaseCompletedPreference();
+
       }
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
@@ -137,6 +150,50 @@ public class CostingMigrationProcess implements Process {
       OBContext.restorePreviousMode();
     }
     bundle.setResult(msg);
+
+  }
+
+  private void updateReportRoles() {
+    OBContext.setAdminMode(false);
+    try {
+      StringBuffer where = new StringBuffer();
+      where.append(" as ra");
+      where.append("  join ra." + ProcessAccess.PROPERTY_ROLE + " as r");
+      where.append(" where r." + Role.PROPERTY_MANUAL + " = true");
+      where.append("   and ra." + ProcessAccess.PROPERTY_PROCESS + ".id IN ('" + paretoLegacy
+          + "', '" + mUpdateParetoLegacy + "', '" + dimensionalLegacy + "', '" + valuedLegacy
+          + "')");
+      OBQuery<ProcessAccess> obcRoleAccess = OBDal.getInstance().createQuery(ProcessAccess.class,
+          where.toString());
+      obcRoleAccess.setFilterOnReadableClients(false);
+      obcRoleAccess.setFilterOnReadableOrganization(false);
+      for (ProcessAccess processAccess : obcRoleAccess.list()) {
+        String idprocess = (String) DalUtil.getId(processAccess.getProcess());
+
+        if (paretoLegacy.equals(idprocess)) {
+          processAccess.setProcess((org.openbravo.model.ad.ui.Process) OBDal.getInstance()
+              .getProxy(processEntity, pareto));
+        } else if (mUpdateParetoLegacy.equals(idprocess)) {
+          processAccess.setProcess((org.openbravo.model.ad.ui.Process) OBDal.getInstance()
+              .getProxy(processEntity, mUpdatePareto));
+        } else if (dimensionalLegacy.equals(idprocess)) {
+          processAccess.setProcess((org.openbravo.model.ad.ui.Process) OBDal.getInstance()
+              .getProxy(processEntity, dimensional));
+        } else if (valuedLegacy.equals(idprocess)) {
+          processAccess.setProcess((org.openbravo.model.ad.ui.Process) OBDal.getInstance()
+              .getProxy(processEntity, valued));
+        }
+
+        OBDal.getInstance().save(processAccess);
+      }
+
+    } catch (Exception e) {
+
+    }
+
+    finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void doChecks() {
