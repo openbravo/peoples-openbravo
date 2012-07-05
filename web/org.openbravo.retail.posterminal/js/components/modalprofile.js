@@ -68,23 +68,19 @@
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                 {kind: OB.COMP.ListView('select'), attr: {
+                 {kind: OB.UI.ListView('select'), attr: {
                     collection: myRoleCollection,
                     htmlId: 'profileRoleId',
                     className: 'modal-dialog-profile-combo',
-                    renderLine: function (model) {
-                      var optionElement;
-                      if (roleId === model.get('id')) {
-                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
-                            model.get('_identifier')
-                        ]};
-                      } else {
-                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                            model.get('_identifier')
-                        ]};
+                    renderLine: Backbone.View.extend({
+                      tagName: 'option',
+                      initialize: function () {
+                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
+                        if (roleId === this.options.get('id')) {
+                          this.$el.attr('selected', 'selected');
+                        }
                       }
-                      return optionElement;
-                    }
+                    })
                   }}
                 ]}
               ]},
@@ -94,25 +90,20 @@
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                  {kind: OB.COMP.ListView('select'), attr: {
+                  {kind: OB.UI.ListView('select'), attr: {
                     collection: myLanguageCollection,
                     className: 'modal-dialog-profile-combo',
                     htmlId: 'profileLanguageId',
-                    renderLine: function (model) {
-                      var optionElement;
-                      if (languageId === model.get('id')) {
-                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id'), selected: 'selected'}, content: [
-                            model.get('_identifier')
-                        ]};
-                      } else {
-                        optionElement = {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                            model.get('_identifier')
-                        ]};
+                    renderLine: Backbone.View.extend({
+                      tagName: 'option',
+                      initialize: function () {
+                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
+                        if (languageId === this.options.get('id')) {
+                          this.$el.attr('selected', 'selected');
+                        }
                       }
-                      return optionElement;
-                    }
+                    })
                   }}
-
                 ]}
               ]},
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},

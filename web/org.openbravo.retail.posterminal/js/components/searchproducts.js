@@ -62,24 +62,22 @@
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), content: [
-                  {kind: OB.COMP.ListView('select'), id: 'productcategory', attr: {
+                  {kind: OB.UI.ListView('select'), id: 'productcategory', attr: {
                     collection: this.categories,
                     className: 'combo',
                     style: 'width: 100%',
-                    renderHeader: function (model) {
-                      return (
-                        {kind: B.KindJQuery('option'), attr: {value: ''}, content: [
-                           OB.I18N.getLabel('OBPOS_SearchAllCategories')
-                        ]}
-                      );
-                    },
-                    renderLine: function (model) {
-                      return (
-                        {kind: B.KindJQuery('option'), attr: {value: model.get('id')}, content: [
-                            model.get('_identifier')
-                        ]}
-                      );
-                    }
+                    renderHeader: Backbone.View.extend({
+                      tagName: 'option',
+                      initialize: function () {
+                        this.$el.text(OB.I18N.getLabel('OBPOS_SearchAllCategories'));
+                      }
+                    }),
+                    renderLine: Backbone.View.extend({
+                      tagName: 'option',
+                      initialize: function () {
+                        this.$el.attr('value', this.options.get('id')).text(this.options.get('_identifier'));
+                      }
+                    })
                   }}
                 ]}
               ]}
