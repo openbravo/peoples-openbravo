@@ -40,8 +40,6 @@ public class CashCloseProcessor {
       for (int i = 0; i < cashCloseInfo.length(); i++) {
         JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"));
-        BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-            .getDouble("amountToKeep"));
         BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
         String paymentTypeId = cashCloseObj.getString("paymentTypeId");
         OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
@@ -60,7 +58,8 @@ public class CashCloseProcessor {
         OBDal.getInstance().save(reconciliation);
 
         if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
-
+          BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
+              .getDouble("amountToKeep"));
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
 
           FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(

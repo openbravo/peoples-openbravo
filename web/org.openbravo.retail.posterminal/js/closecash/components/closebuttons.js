@@ -7,7 +7,7 @@
 
   OB.COMP.ButtonPrev = OB.COMP.RegularButton.extend({
     _id: 'closeprevbutton',
-	  disabled: 'disabled',
+    disabled: 'disabled',
     label: OB.I18N.getLabel('OBPOS_LblPrevStep'),
     attributes: {'style': 'min-width: 115px; margin: 5px;'},
     render: function () {
@@ -16,18 +16,16 @@
       return this;
     },
     clickEvent: function (e) {
+      var found = false;
       if (this.options.modeldaycash.defaults.step === 3) {
         //Count Cash back from Post, print & Close.
-        
         found = false;
         this.options.closenextbutton.$el.attr('disabled','disabled');
-//        this.options.modeldaycash.defaults.step = 2;
-      //Count Cash to Cash to keep or Cash to keep to Cash to keep
+        //Count Cash to Cash to keep or Cash to keep to Cash to keep
         if( $(".active").length===0){
           this.options.cashtokeep.$el.show();
           this.options.postprintclose.$el.hide();
           this.options.closenextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
-//          this.options.modeldaycash.defaults.step=2;
         }
          while(this.options.modeldaycash.get('allowedStep') >= 0 ){
 
@@ -85,9 +83,6 @@
           this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
           this.options.closenextbutton.$el.removeAttr('disabled');
         }
-      } else if (this.options.modeldaycash.defaults.step === 2) {
-        //Count Cash back from Cash to keep
-       
       } else if (this.options.modeldaycash.defaults.step === 1) {
         //Pending receipts back from Count Cash.
         this.options.pendingreceipts.$el.show();
@@ -205,21 +200,21 @@
   });
 
   OB.COMP.ButtonOk =OB.COMP.SmallButton.extend({
-	_id: 'okbutton',
+    _id: 'okbutton',
     icon: 'btn-icon-small btn-icon-check',
     className: 'btnlink-green btnlink-cashup-ok',
     label: '',
-   clickEvent: function (e) {
-	this.$el.hide();
-	$('button[button*="allokbutton"]').css('visibility','hidden');
-    var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
-    this.options['counted_'+this.options[this._id].rowid].$el.text(elem.get('expected').toString());
-    elem.set('counted',OB.DEC.add(0,elem.get('expected')));
-    this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
-    this.options['counted_'+this.rowid].$el.show();
-    if($('button[button="okbutton"][style!="display: none; "]').length===0){
-      this.me.options.closenextbutton.$el.removeAttr('disabled');
-    }
+    clickEvent: function (e) {
+      this.$el.hide();
+      $('button[button*="allokbutton"]').css('visibility','hidden');
+      var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
+      this.options['counted_'+this.options[this._id].rowid].$el.text(elem.get('expected').toString());
+      elem.set('counted',OB.DEC.add(0,elem.get('expected')));
+      this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
+      this.options['counted_'+this.rowid].$el.show();
+      if($('button[button="okbutton"][style!="display: none; "]').length===0){
+        this.me.options.closenextbutton.$el.removeAttr('disabled');
+      }
    }
   });
 
@@ -228,8 +223,8 @@
     icon: 'btn-icon-small btn-icon-edit',
     className: 'btnlink-orange btnlink-cashup-edit',
     label: '',
-   clickEvent: function (e) {
-	   var that = this;
+    clickEvent: function (e) {
+     var that = this;
        $($(this.me.options.closekeyboard.toolbars.toolbarcountcash).find('.btnkeyboard')).each(function(){
        if($(this).text()===that.commercialName){
        that.me.options.closekeyboard.trigger('command', that.searchKey);
