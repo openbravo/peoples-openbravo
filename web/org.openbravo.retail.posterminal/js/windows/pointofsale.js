@@ -129,6 +129,7 @@
           ]}
 
         ], init: function () {
+          var ctx = this.context, modelterminal;
           this.context.on('domready', function () {
             var orderlist = this.context.modelorderlist,
             criteria={
@@ -158,8 +159,6 @@
               orderlist.addNewOrder();
             });
           }, this);
-
-          var ctx = this.context,
           modelterminal = new OB.MODEL.Terminal();
           modelterminal.on('online', function () {
             var orderlist = ctx.modelorderlist,
