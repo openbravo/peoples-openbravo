@@ -30,7 +30,7 @@
         {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px'},  content: [
+              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 10px 5px 10px'},  content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'display: table;'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell; width: 100%;'}, content: [
                     {kind: OB.COMP.SearchInput, id: 'productname', attr: {'type': 'text', 'xWebkitSpeech': 'x-webkit-speech', 'className': 'input', 'style': 'width: 100%;',
@@ -46,7 +46,7 @@
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
                     //{kind: OB.COMP.ClearButton}
-                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon-small btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
                       'clickEvent': function() {
                         this.$el.parent().prev().children().val('');
                         me.searchAction();
@@ -54,14 +54,14 @@
                     }}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
-                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon-small btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
                       'clickEvent': function() {
                         me.searchAction();
                       }
                     }}
                   ]}
                 ]},
-                {kind: B.KindJQuery('div'), content: [
+                {kind: B.KindJQuery('div'), attr: {'style': 'margin: 5px 0px 0px 0px;'}, content: [
                   {kind: OB.UI.ListView('select'), id: 'productcategory', attr: {
                     collection: this.categories,
                     className: 'combo',

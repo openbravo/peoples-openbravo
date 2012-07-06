@@ -68,7 +68,7 @@
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
                     //{kind: OB.COMP.ClearButton}
-                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon-small btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
                       'clickEvent': function() {
                         this.$el.parent().prev().children().val('');
                         me.searchAction();
@@ -76,7 +76,7 @@
                     }}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
-                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
+                    {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-yellow', 'icon': 'btn-icon-small btn-icon-search', 'style': 'width: 100px; margin: 0px 0px 8px 5px;',
                       'clickEvent': function() {
                         me.searchAction();
                       }
