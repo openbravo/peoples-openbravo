@@ -472,7 +472,7 @@
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
 
       // Toolbars at the end...
-      this.addToolbar('toolbarpayment', new OB.COMP.ToolbarPayment(this.options).toolbar);
+      this.addToolbar('toolbarpayment', new OB.UI.ToolbarPayment(this.options).toolbar);
       this.addToolbar('toolbarscan', new OB.COMP.ToolbarScan(this.options).toolbar);
     }
   });
