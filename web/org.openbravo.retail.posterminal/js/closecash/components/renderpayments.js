@@ -39,6 +39,7 @@
       pay.set('_id',this.model.get('_id'));
       pay.set('name',this.model.get('name'));
       pay.set('expected',OB.DEC.add(0,this.model.get('expected')));
+      pay.set('paymentMethod',this.model.get('paymentMethod'));
       this.me.options.modeldaycash.paymentmethods.add(pay);
       this.me.options.modeldaycash.set('totalExpected',OB.DEC.add(this.me.options.modeldaycash.get('totalExpected'),this.model.get('expected')));
       this.me.options.modeldaycash.trigger('change:totalCounted');

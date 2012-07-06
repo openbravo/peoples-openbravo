@@ -57,6 +57,11 @@ public class CashCloseProcessor {
         }
         OBDal.getInstance().save(reconciliation);
 
+        // if(paymentType.getPaymentMethod().isAutomatemovementtoother()){
+        //
+        // reconciliationTotal = reconciliationTotal.subtract(new
+        // BigDecimal(paymentType.getPaymentMethod().getAmount()));
+
         FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
             posTerminal, reconciliation, paymentType, reconciliationTotal);
 
@@ -66,6 +71,8 @@ public class CashCloseProcessor {
             posTerminal, reconciliation, paymentType, reconciliationTotal);
 
         OBDal.getInstance().save(depositTransaction);
+
+        // }
 
         associateTransactions(paymentType, reconciliation);
 

@@ -26,13 +26,13 @@
         //Count Cash back from Cash to keep
         this.options.countcash.$el.show();
         this.options.closekeyboard.toolbars.toolbarcountcash.show();
-        this.options.postprintclose.$el.hide();
+        this.options.cashtokeep.$el.hide();
         this.options.closekeyboard.toolbars.toolbarempty.hide();
         this.options.modeldaycash.defaults.step=1;
       } else if (this.options.modeldaycash.defaults.step === 1) {
         //Pending receipts back from Count Cash.
         this.options.pendingreceipts.$el.show();
-        this.options.cashtokeep.$el.hide();
+        this.options.countcash.$el.hide();
         this.options.closekeyboard.toolbars.toolbarempty.show();
         this.options.closekeyboard.toolbars.toolbarcountcash.hide();
         this.options.modeldaycash.defaults.step=0;
@@ -52,6 +52,7 @@
       return this;
     },
     clickEvent: function (e) {
+      var found = false;
       if(this.options.modeldaycash.defaults.step === 0){
         //Pending receipts to Count Cash
         this.options.countcash.$el.show();
@@ -64,22 +65,78 @@
           this.$el.attr('disabled','disabled');
         }
       } else if (this.options.modeldaycash.defaults.step === 1){
-      //Count Cash to Cash to keep
-        this.options.cashtokeep.$el.show();
-        this.options.closekeyboard.toolbars.toolbarempty.show();
-        this.options.countcash.$el.hide();
-        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
-        this.options.modeldaycash.defaults.step=2;
-      } else if (this.options.modeldaycash.defaults.step === 2) {
-        //Cash to keep to Post, print & Close
-        this.options.postprintclose.$el.show();
-        this.options.closekeyboard.toolbars.toolbarempty.show();
-        this.options.cashtokeep.$el.hide();
-        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
-        this.options.renderpaymentlines.$el.empty();
-        this.options.renderpaymentlines.render();
-        this.options.modeldaycash.defaults.step=3;
-        this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+        found = false;
+        this.$el.attr('disabled','disabled');
+      //Count Cash to Cash to keep or Cash to keep to Cash to keep
+        if( $(".active").length>0){
+          if($('.active').val()===""){//Variable Amount
+            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amount=OB.I18N.parseNumber($('#variableamount').val());
+          }else{
+            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amount=OB.I18N.parseNumber($('.active').val());
+          }
+          $(".active").removeClass("active");
+        }else{
+          this.options.countcash.$el.hide();
+          this.options.cashtokeep.$el.show();
+          this.options.closekeyboard.toolbars.toolbarcountcash.hide();
+          this.options.closekeyboard.toolbars.toolbarempty.show();
+        }
+         while(this.options.modeldaycash.get('allowedStep') < this.options.modeldaycash.paymentmethods.length){
+
+           if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').automatemovementtoother){
+            found = true;
+            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
+              $('#keepfixedamountlbl').text(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount.toString());
+              $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
+              $('#keepfixedamount').show();
+              $('#keepfixedamountlbl').show();
+            }else{
+              $('#keepfixedamount').hide();
+              $('#keepfixedamountlbl').hide();
+            }
+            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowmoveeverything){
+              $('#allowmoveeverything').val(0);
+              $('#allowmoveeverythinglbl').text('Nothing');
+              $('#allowmoveeverything').show();
+              $('#allowmoveeverythinglbl').show();
+            }else{
+              $('#allowmoveeverything').hide();
+              $('#allowmoveeverythinglbl').hide();
+            }
+            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowdontmove){
+              $('#allowdontmove').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
+              $('#allowdontmovelbl').text('Total amount of '+this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted').toString());
+              $('#allowdontmove').show();
+              $('#allowdontmovelbl').show();
+            }else{
+              $('#allowdontmove').hide();
+              $('#allowdontmovelbl').hide();
+            }
+            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowvariableamount){
+              $('#allowvariableamountlbl').text('Other');
+              $('#allowvariableamount').show();
+              $('#allowvariableamountlbl').show();
+              $('#variableamount').show();
+              $('#variableamount').val('');
+            }else {
+              $('#allowvariableamount').hide();
+              $('#allowvariableamountlbl').hide();
+              $('#variableamount').hide();
+            }
+            this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
+            break;
+          }
+           this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
+        }
+        if(found===false){
+          this.options.postprintclose.$el.show();
+          this.options.cashtokeep.$el.hide();
+          this.options.renderpaymentlines.$el.empty();
+          this.options.renderpaymentlines.render();
+          this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+          this.$el.removeAttr('disabled');
+          this.options.modeldaycash.defaults.step=3;
+        }
       } else if (this.options.modeldaycash.defaults.step === 3) {
         this.options.modeldaycash.paymentmethods.trigger('closed');
       }
@@ -134,6 +191,20 @@
        }, function(){
          OB.UTIL.showError('Error removing');
        });
+    }
+  });
+
+  OB.COMP.RadioButton = OB.COMP.RegularButton.extend({
+    _id: 'radiobutton',
+    label: '',
+    me: null,
+    attributes: {'style': 'min-width: 115px; margin: 5px;'},
+    render: function () {
+      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      return this;
+    },
+    clickEvent: function (e) {
+      this.options.closenextbutton.$el.removeAttr('disabled');
     }
   });
 }());

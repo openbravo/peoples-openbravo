@@ -42,7 +42,8 @@
 	      totalExpected: OB.DEC.Zero,
 	      totalCounted: OB.DEC.Zero,
 	      totalDifference: OB.DEC.Zero,
-	      step: 0
+	      step: 0,
+	      allowedStep: 0
 	    }
 	  });
 }());

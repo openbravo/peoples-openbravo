@@ -24,19 +24,23 @@
                   ]}
                 ]}
               ]},
-              {kind: B.KindJQuery('div'), attr: {'class': 'btn', 'data-toggle':'button' }, content: [
-               ]},
                  {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black;'}, content: [
                      {kind: B.KindJQuery('div'), attr: {'class': 'btn-group','data-toggle':'buttons-radio' }, content: [
-                        {kind: B.KindJQuery('div'), attr: {'class': 'btn' }, content: [
-                            'A'
-                        ]},
-                        {kind: B.KindJQuery('div'), attr: {'class': 'btn' }, content: [
-                            'B'
-                        ]},
-                        {kind: B.KindJQuery('div'), attr: {'class': 'btn' }, content: [
-                            'C'
-                        ]}
+                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'keepfixedamount' }})},
+                        {kind: B.KindJQuery('div'), attr: { 'id': 'keepfixedamountlbl' }, content: []},
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
+
+                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowmoveeverything' }})},
+                        {kind: B.KindJQuery('div'), attr: { 'id': 'allowmoveeverythinglbl' }, content: []},
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
+
+                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowdontmove' }})},
+                        {kind: B.KindJQuery('div'), attr: {'id': 'allowdontmovelbl' }, content: []},
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
+
+                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowvariableamount' }})},
+                        {kind: B.KindJQuery('div'), attr: { 'id': 'allowvariableamountlbl' }, content: []},
+                        {kind: B.KindJQuery('input'), attr: {'class': 'span1', 'id': 'variableamount', 'type':'text' }, content: []}
                      ]}
                   ]}
             ]}
