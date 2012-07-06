@@ -122,6 +122,40 @@
     }
   });
 
+  // Radio Button
+  OB.COMP.RadioButton = Backbone.View.extend({
+    tagName: 'button',
+    className: 'btn',
+    initialize: function () {
+      this.$el.click(_.bind(this._clickEvent, this));
+    },
+    append: function (child) {
+      if (child.render) {
+        this.$el.append(child.render().$el); // it is a backbone view.
+      } else if (child.$el) {
+        this.$el.append(child.$el);
+      }
+    },
+    attr: function (attributes) {
+      if (attributes.className) {
+        this.$el.addClass(attributes.className);
+      }
+      if (attributes.id) {
+        this.$el.attr('id', attributes.id);
+      }
+    },
+    render: function () {
+      this.$el.addClass('btn-radio');
+      this.$el.attr('style', 'padding: 0px 0px 0px 40px; margin: 10px;');
+      return this;
+    },
+    _clickEvent: function (e) {
+      this.clickEvent(e);
+    },
+    clickEvent: function (e) {
+    }
+  });
+
   // Generic Tab Button
   OB.COMP.ButtonTab = OB.COMP.Button.extend({
     className: 'btnlink btnlink-gray',

@@ -250,17 +250,14 @@
     }
   });
 
-  OB.COMP.RadioButton = OB.COMP.RegularButton.extend({
+  // Cash To Keep Radio Button
+  OB.COMP.CashToKeepRadioButton = OB.COMP.RadioButton.extend({
     _id: 'radiobutton',
     label: '',
     me: null,
-    attributes: {'style': 'min-width: 115px; margin: 5px;'},
-    render: function () {
-      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
-      return this;
-    },
     clickEvent: function (e) {
       this.options.closenextbutton.$el.removeAttr('disabled');
     }
   });
+
 }());

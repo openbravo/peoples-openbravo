@@ -373,6 +373,28 @@ div.btnlink {
   background-image: url('../img/checkbox-off.png');
 }
 
+.btn-radio,
+.btn-radio:hover,
+.btn-radio:active,
+.btn-radio.active {
+  height: 29px;
+  border: none;
+  font-size: 16px;
+  color: black;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-image: url('../img/radio-off.png');
+}
+
+.btn-radio.active {
+  background-image: url('../img/radio-on.png');
+}
+
+
 ul.nav-pos:after {
   clear: both;
 }

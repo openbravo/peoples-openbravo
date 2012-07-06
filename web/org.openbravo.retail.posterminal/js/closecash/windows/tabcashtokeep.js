@@ -25,22 +25,28 @@
                 ]}
               ]},
                  {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black;'}, content: [
-                     {kind: B.KindJQuery('div'), attr: {'class': 'btn-group','data-toggle':'buttons-radio' }, content: [
-                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'keepfixedamount' }})},
-                        {kind: B.KindJQuery('div'), attr: { 'id': 'keepfixedamountlbl' }, content: []},
+                     {kind: B.KindJQuery('div'), attr: {'class': 'btn-group','data-toggle':'buttons-radio'}, content: [
+                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'keepfixedamount'}, content: [
+                          {kind: B.KindJQuery('div'), attr: {'id': 'keepfixedamountlbl' }, content: []}
+                        ]},
                         {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
 
-                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowmoveeverything' }})},
-                        {kind: B.KindJQuery('div'), attr: { 'id': 'allowmoveeverythinglbl' }, content: []},
+                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowmoveeverything'}, content: [
+                          {kind: B.KindJQuery('div'), attr: {'id': 'allowmoveeverythinglbl' }, content: []}
+                        ]},
                         {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
 
-                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowdontmove' }})},
-                        {kind: B.KindJQuery('div'), attr: {'id': 'allowdontmovelbl' }, content: []},
+                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowdontmove'}, content: [
+                          {kind: B.KindJQuery('div'), attr: {'id': 'allowdontmovelbl' }, content: []}
+                        ]},
                         {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
 
-                        {kind: OB.COMP.RadioButton.extend({attributes: {'class': 'btn', 'id': 'allowvariableamount' }})},
-                        {kind: B.KindJQuery('div'), attr: { 'id': 'allowvariableamountlbl' }, content: []},
-                        {kind: B.KindJQuery('input'), attr: {'class': 'span1', 'id': 'variableamount', 'type':'text' }, content: []}
+                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowvariableamount'}, content: [
+                          {kind: B.KindJQuery('div'), attr: {'style': 'display: table-row;'}, content: [
+                            {kind: B.KindJQuery('div'), attr: {'id': 'allowvariableamountlbl', 'style': 'display: table-cell; vertical-align: middle;'}, content: []},
+                            {kind: B.KindJQuery('input'), attr: {'type':'text', 'class': 'span1', 'id': 'variableamount', 'style': 'display: table-cell; vertical-align: middle; margin: 0px 0px 0px 10px;'}, content: []}
+                          ]}
+                        ]}
                      ]}
                   ]}
             ]}
