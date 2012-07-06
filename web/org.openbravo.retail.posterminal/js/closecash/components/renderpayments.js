@@ -23,7 +23,7 @@
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
                        {kind: OB.COMP.ButtonOk.extend({ rowid :this.model.get('id'), searchKey :this.model.get('_id'), _id :'ok_'+this.model.get('id'), me:this.me, attributes:{'button':'okbutton', 'key':this.model.get('_id')}})}
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'style': 'float: left; padding: 17px 0px 17px 5px;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'float: left; padding: 10px 0px 10px 10px;'}, content: [
                        {kind: B.KindJQuery('div'), rowid :this.model.get('id'), id :'counted_'+this.model.get('id'), attr:{'searchKey':this.model.get('_id'), 'button':'countedbutton', 'hidden':'hidden'},
                         content:['0']
                        }
