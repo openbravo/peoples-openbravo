@@ -232,8 +232,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|EntryNo", "1");
       String strInitialBalance = vars.getNumericGlobalVariable("inpInitialBalance",
           "ReportGeneralLedgerJournal|InitialBalance", "0");
-      String strShowDescription = vars.getGlobalVariable("inpShowDescription",
-          "ReportGeneralLedgerJournal|ShowDescription", "N");
+      String strShowDescription = vars.getRequestGlobalVariable("inpShowDescription",
+          "ReportGeneralLedgerJournal|ShowDescription");
       if (strShowDescription == null || "".equals(strShowDescription))
         vars.setSessionValue("ReportGeneralLedgerJournal|ShowDescription", "N");
       /*
