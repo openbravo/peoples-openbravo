@@ -261,6 +261,10 @@ li.selected > button:hover {
   background-color: #7da7d9;
   color: #ffffff;
 }
+li.selected > button.btnselect-browse {
+  background-color: #B882C6;
+  color: #ffffff;
+}
 
 .dropdown-menu li > a:hover,
 .dropdown-menu .active > a,

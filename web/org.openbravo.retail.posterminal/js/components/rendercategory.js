@@ -7,6 +7,7 @@
 
   OB.COMP.RenderCategory = OB.COMP.SelectButton.extend({
     render: function() {
+      this.$el.addClass('btnselect-browse');
       this.$el.append(B(
         {kind: B.KindJQuery('div'), content: [
           {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%'}, content: [
