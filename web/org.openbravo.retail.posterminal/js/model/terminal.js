@@ -329,7 +329,8 @@
     },
 
     triggerReady: function () {
-      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence')) {
+      //if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence')) {
+      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions')) {
         this.trigger('ready');
       }
     },
