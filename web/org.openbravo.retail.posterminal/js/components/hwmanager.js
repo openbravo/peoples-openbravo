@@ -1,15 +1,15 @@
 /*global B */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.HWManager = function (context) {
-    if(context.modelorder){
+  OB.COMP.HWManager = function(context) {
+    if (context.modelorder) {
       this.receipt = context.modelorder;
       this.line = null;
-      this.receipt.get('lines').on('selected', function (line) {
+      this.receipt.get('lines').on('selected', function(line) {
         if (this.line) {
           this.line.off('change', this.printLine);
         }
@@ -22,47 +22,55 @@
 
       this.receipt.on('closed print', this.printOrder, this);
     }
-    if(context.modeldaycash){
+    if (context.modeldaycash) {
       this.modeldaycash = context.modeldaycash;
       this.modeldaycash.on('print', this.printCashUp, this);
     }
-    if(context.depsdropstosend){
+    if (context.depsdropstosend) {
       this.depsdropstosend = context.depsdropstosend;
       context.on('print', this.printCashMgmt, this);
     }
   };
 
-  var hwcallback = function (e) {
+  function hwcallback(e) {
     if (e.exception) {
       OB.UTIL.showError(e.exception.message);
     }
-  };
+  }
 
-  OB.COMP.HWManager.prototype.printLine = function () {
+  OB.COMP.HWManager.prototype.printLine = function() {
     if (this.line) {
-      OB.POS.hwserver.print(this.templatelinedata, {line: this.line}, hwcallback);
+      OB.POS.hwserver.print(this.templatelinedata, {
+        line: this.line
+      }, hwcallback);
     }
   };
 
-  OB.COMP.HWManager.prototype.printOrder = function () {
-    OB.POS.hwserver.print(this.templatereceiptdata, { order: this.receipt}, hwcallback);
+  OB.COMP.HWManager.prototype.printOrder = function() {
+    OB.POS.hwserver.print(this.templatereceiptdata, {
+      order: this.receipt
+    }, hwcallback);
   };
 
-  OB.COMP.HWManager.prototype.printCashUp = function () {
-    OB.POS.hwserver.print(this.templatecashupdata, { cashup: this.modeldaycash}, hwcallback);
+  OB.COMP.HWManager.prototype.printCashUp = function() {
+    OB.POS.hwserver.print(this.templatecashupdata, {
+      cashup: this.modeldaycash
+    }, hwcallback);
   };
-  OB.COMP.HWManager.prototype.printCashMgmt = function () {
-    OB.POS.hwserver.print(this.templatecashmgmtdata, { cashmgmt: this.depsdropstosend}, hwcallback);
+  OB.COMP.HWManager.prototype.printCashMgmt = function() {
+    OB.POS.hwserver.print(this.templatecashmgmtdata, {
+      cashmgmt: this.depsdropstosend
+    }, hwcallback);
   };
 
-  OB.COMP.HWManager.prototype.attr = function (attrs) {
+  OB.COMP.HWManager.prototype.attr = function(attrs) {
     this.templateline = attrs.templateline;
     this.templatereceipt = attrs.templatereceipt;
     this.templatecashup = attrs.templatecashup;
     this.templatecashmgmt = attrs.templatecashmgmt;
   };
 
-  OB.COMP.HWManager.prototype.load = function () {
+  OB.COMP.HWManager.prototype.load = function() {
     OB.UTIL.loadResource(this.templateline, function(data) {
       this.templatelinedata = data;
     }, this);
