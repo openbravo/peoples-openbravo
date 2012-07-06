@@ -131,25 +131,40 @@
         ], init: function () {
           var ctx = this.context, modelterminal;
           this.context.on('domready', function () {
+            // Processes the paid, unprocessed orders
             var orderlist = this.context.modelorderlist,
+              criteria = {
+                hasbeenpaid:'Y'
+              };
+            if (navigator.onLine) {
+              OB.Dal.find(OB.MODEL.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
+                var currentOrder = {};
+                if (ordersPaidNotProcessed && ordersPaidNotProcessed.length > 0) {
+                  ctx.orderlisttoprocess = ordersPaidNotProcessed;
+                  $('#modalprocessreceipts').modal('show');
+                }
+              });
+            }
+
+            // Shows a modal window with the orders pending to be paid
             criteria={
                 'hasbeenpaid' : 'N'
               };
-            OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
+            OB.Dal.find(OB.MODEL.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
               var currentOrder = {};
-              if (!fetchedOrderList || fetchedOrderList.length === 0) {
+              if (!ordersNotPaid || ordersNotPaid.length === 0) {
                 // If there are no pending orders, 
                 //  add an initial empty order
                 orderlist.addNewOrder();
               } else {
                 // The order object is stored in the json property of the row fetched from the database
-                orderlist.reset(fetchedOrderList.models);
+                orderlist.reset(ordersNotPaid.models);
                 // At this point it is sure that there exists at least one order
-                currentOrder = fetchedOrderList.models[0];
+                currentOrder = ordersNotPaid.models[0];
                 orderlist.load(currentOrder);
                 // Only show the pending receipts modal window if there are at
                 // least two orders pending
-                if (fetchedOrderList.length > 1) {
+                if (ordersNotPaid.length > 1) {
                   $('#modalreceipts').modal('show');
                 }
               }
@@ -166,7 +181,7 @@
                   hasbeenpaid:'Y'
                 };
             OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
-              if (fetchedOrderList && fetchedOrderList.length !== 0) {
+              if (fetchedOrderList && fetchedOrderList.length > 0) {
                 ctx.orderlisttoprocess = fetchedOrderList;
                 $('#modalprocessreceipts').modal('show');
               }
