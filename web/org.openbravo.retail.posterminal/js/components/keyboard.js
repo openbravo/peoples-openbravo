@@ -4,6 +4,16 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
+        
+  var BtnSide = Backbone.View.extend({
+    tagName: 'div',
+    attributes: {'class': 'row-fluid'},
+    initialize: function () {
+      var inst = new this.options();
+      inst.render();
+      this.$el.append($('<div/>').attr('class', 'span12').append(inst.$el));
+    }
+  });
   
   var ButtonDummy = Backbone.View.extend({
     tag: 'div',
@@ -51,6 +61,10 @@
         this.button.$el.text(this.label);
       } else {
         this.button.$el.append();
+      }
+      
+      if (this.label) {
+        this.button.$el.text(this.label);
       }
       
       this.$el.append(this.button.$el);
@@ -336,7 +350,7 @@
       }
     },
 
-    addToolbar: function (name, value) {
+    addToolbar: function (name, value) {    
       var i, max;
       
       this.toolbars[name] = $('<div/>').attr('style', 'display:none');
@@ -346,20 +360,11 @@
         if (value[i].definition) {
           this.addCommand(value[i].command, value[i].definition);
         }
-        // add the button        
-        this.toolbars[name].append(B({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-            {kind: BtnAction.extend({kb: this, command: value[i].command, permission: (value[i].definition ? value[i].definition.permission : null)}), content: [value[i].label]}
-          ]}
-        ]}).$el);
+        // add the button   
+        this.toolbars[name].append(new BtnSide(BtnAction.extend({kb: this, command: value[i].command, permission: (value[i].definition ? value[i].definition.permission : null), label: value[i].label})).render().$el);        
       }
       while (i < 6) {
-        this.toolbars[name].append(B({kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-            {kind: BtnAction.extend({kb: this})}
-          ]}
-        ]}).$el);
-        // content.push({command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}});
+        this.toolbars[name].append(new BtnSide(BtnAction.extend({kb: this})).render().$el);        
         i++;
       }
 
@@ -495,6 +500,5 @@
 
     }
   });
-
-
+  
 }());

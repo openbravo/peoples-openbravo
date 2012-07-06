@@ -201,15 +201,12 @@
       if (this.iconright) {
         this.button.append($('<div class=\"' + this.iconright + '\"></i>'));
       }
-      //this.button.append($('<span class=\"caret\"></span>'));
 
       this.menu = $('<ul class=\"dropdown-menu\"></ul>');
       this.$el.append(this.menu);
     },
     append: function (child) {
-      if (child.render) {
-        this.menu.append(child.render().$el); // it is a backbone view.
-      } else if (child.$el) {
+      if (child.$el) {
         this.menu.append(child.$el);
       }
     },

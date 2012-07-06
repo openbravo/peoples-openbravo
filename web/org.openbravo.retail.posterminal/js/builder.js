@@ -52,6 +52,11 @@
         }
       }
     }
+    
+    // render
+    if (inst.render) {
+      inst.render();
+    }
 
     // initialize
     if (inst.inithandler) {
@@ -102,9 +107,7 @@
     };
 
     F.prototype.append = function (child) {
-      if (child.render) {
-        this.$el.append(child.render().$el); // it is a backbone view.
-      } else if (child.$el) {
+      if (child.$el) {
         this.$el.append(child.$el);
       }
     };

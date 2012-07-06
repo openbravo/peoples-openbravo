@@ -33,29 +33,40 @@
     }
   };
 
-  // public
-  OB.UTIL.Thumbnail = function (base64, width, height, contentType) {
-    this.component = B(
-      {kind: B.KindJQuery('div'), attr: {'class': 'image-wrap'}, content: [
-        {kind: B.KindJQuery('div'), id: 'image'}
-      ]}
-    );
-    this.$el = this.component.$el;
-    this.image = this.component.context.image.$el;
-  };
-  OB.UTIL.Thumbnail.prototype.attr = function (attr) {
-    var url = (attr.img)
-      ? 'data:' + (attr.contentType ? attr.contentType : 'image/png') + ';base64,' + attr.img
-      : (attr['default'] ? attr['default'] :'img/box.png');
-    this.$el.css('height', attr.height ? attr.height : '48');
-    this.$el.css('width', attr.width ? attr.width : '48');
-    this.image
-        .css('margin', 'auto')
-        .css('height', '100%')
-        .css('width', '100%')
-        .css('background', '#ffffff url(' + url + ') center center no-repeat')
-        .css('background-size', 'contain');
-  };
+  // public 
+  OB.UTIL.Thumbnail = Backbone.View.extend({
+    tagName: 'div',
+    className: 'image-wrap',
+    img: null,
+    contentType: 'img/png',
+    width: 48,
+    height: 48,
+    'default': 'img/box.png',
+    initialize: function () {
+      this.$image = $('<div/>')          
+          .css('margin', 'auto')
+          .css('height', '100%')
+          .css('width', '100%')
+          .css('background-size', 'contain');
+      this.$el.append(this.$image);
+    },
+    attr: function (attr) {
+      this.img = attr.img || this.img;
+      this.contentType = attr.contentType || this.contentType;
+      this.width = attr.width || this.width;
+      this.height = attr.height || this.height;
+      this['default'] = attr['default'] || this['default'];     
+    },
+    render: function () {
+      var url = (this.img)
+        ? 'data:' + this.contentType + ';base64,' + this.img
+        : this['default'];
+      this.$el.css('height', this.height);
+      this.$el.css('width', this.width);
+      this.$image.css('background', '#ffffff url(' + url + ') center center no-repeat');      
+      return this;
+    }
+  });
 
   OB.UTIL.showAlert = function (s, title, type) {
     var c = B(
