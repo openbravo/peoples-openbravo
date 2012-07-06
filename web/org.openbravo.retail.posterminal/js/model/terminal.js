@@ -50,12 +50,12 @@
       currency: null
     },
 
-    initialize: function() {
+    initialize: function () {
       var me = this;
-      $(window).bind('online',function() {
+      $(window).bind('online', function () {
         me.triggerOnLine();
       });
-      $(window).bind('offline',function() {
+      $(window).bind('offline', function () {
         me.triggerOffLine();
       });
     },
@@ -165,6 +165,7 @@
           me.loadPriceList();
           me.loadPriceListVersion();
           me.loadCurrency();
+          me.setDocumentSequence();
         } else {
           OB.UTIL.showError("Terminal does not exists: " + params.terminal);
         }
@@ -264,8 +265,71 @@
       });
     },
 
+    setDocumentSequence: function () {
+      var me = this,
+          maxDocumentSequence, criteria = {
+          'hasbeenpaid': 'N'
+          };
+      // compare the last document number returned from the ERP with
+      // the last document number of the unprocessed pending lines (if any)
+      OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) {
+        var criteria;
+        if (!fetchedOrderList || fetchedOrderList.length === 0) {
+          // There are no pending orders, the initial document sequence
+          // will be the one fetched from the database
+          me.saveDocumentSequenceAndGo(OB.POS.modelterminal.get('terminal').lastDocumentNumber);
+        } else {
+          // There are pending orders. The document sequence will be set
+          // to the maximum of the pending order document sequence and the
+          // document sequence retrieved from the server
+          maxDocumentSequence = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
+          me.saveDocumentSequenceAndGo(maxDocumentSequence);
+        }
+      });
+    },
+
+    getMaxDocumentSequenceFromPendingOrders: function (pendingOrders) {
+      var nPreviousOrders = pendingOrders.length,
+          maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
+          posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
+          orderCompleteDocumentNo, orderDocumentSequence, i;
+      for (i = 0; i < nPreviousOrders; i++) {
+        orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
+        orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
+        if (orderDocumentSequence > maxDocumentSequence) {
+          maxDocumentSequence = orderDocumentSequence;
+        }
+      }
+      return maxDocumentSequence;
+    },
+
+    saveDocumentSequenceAndGo: function (documentSequence) {
+      var me = this,
+          criteria = {
+          'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+          };
+      OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
+        var docSeq;
+        if (documentSequenceList) {
+          // There can only be one documentSequence model in the list (posSearchKey is unique)
+          docSeq = documentSequenceList.models[0];
+          // There exists already a document sequence, update it
+          docSeq.set('documentSequence', documentSequence);
+        } else {
+          // There is not a document sequence for the pos, create it
+          docSeq = new OB.Model.DocumentSequence();
+          docSeq.set('posSearchKey', OB.POS.modelterminal.get('terminal').searchKey);
+          docSeq.set('documentSequence', documentSequence);
+        }
+        OB.Dal.save(docSeq, function () {
+          me.set('documentsequence', docSeq.get('documentSequence'));
+          me.triggerReady();
+        });
+      });
+    },
+
     triggerReady: function () {
-      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions')) {
+      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence')) {
         this.trigger('ready');
       }
     },
@@ -278,11 +342,11 @@
       this.trigger('loginsuccess');
     },
 
-    triggerOnLine: function() {
+    triggerOnLine: function () {
       this.trigger('online');
     },
 
-    triggerOffLine: function() {
+    triggerOffLine: function () {
       this.trigger('offline');
     },
 

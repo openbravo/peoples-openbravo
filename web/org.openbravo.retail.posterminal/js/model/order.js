@@ -569,7 +569,8 @@
     },
 
     newOrder: function () {
-      var order = new OB.MODEL.Order(), me = this;
+      var order = new OB.MODEL.Order(), me = this,
+      documentseq, documentseqstr;
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
@@ -584,14 +585,28 @@
       order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,  OB.POS.modelterminal.get('context').user._identifier);
       order.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
-
       order.set('orderDate', new Date());
-      var documentseq = localStorage.getItem('Document_Sequence') || '0';
-      documentseq = OB.UTIL.padNumber(parseInt(documentseq, 10) + 1, 5);
-      localStorage.setItem('Document_Sequence', documentseq);
-      order.set('documentNo', OB.POS.modelterminal.get('terminal').searchKey + '/' + documentseq);
+
+      documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
+      documentseqstr = OB.UTIL.padNumber(documentseq, 5);
+      OB.POS.modelterminal.set('documentsequence', documentseq);
+      this.updateDocumentSequenceInDB(documentseq);
+      order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
+
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       return order;
+    },
+
+    updateDocumentSequenceInDB: function (documentseq) {
+      var docSeqModel,
+          criteria = {
+            'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+          };
+      OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
+        docSeqModel = documentSequenceList.models[0];
+        docSeqModel.set('documentSequence', documentseq);
+        OB.Dal.save(docSeqModel, null, null);
+      });
     },
 
     addNewOrder: function () {

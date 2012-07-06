@@ -24,9 +24,11 @@ public class Terminal extends ProcessHQLQuery {
 
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
+    String POSSearchKey = jsonsent.getJSONObject("parameters").getJSONObject("terminal")
+        .getString("value");
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
-        .getPriceListByTerminal(jsonsent.getJSONObject("parameters").getJSONObject("terminal")
-            .getString("value"));
+        .getPriceListByTerminal(POSSearchKey);
+    int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(POSSearchKey);
 
     return "select pos.id as id, pos.organization.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.organization.obretcoCBpLocation.id as partnerAddress, "
         + " pos.organization.id as organization, pos.organization.name as "
@@ -48,6 +50,10 @@ public class Terminal extends ProcessHQLQuery {
         + ", pos.obposTerminaltype.documentTypeForReturns.id as documentTypeForReturns, pos.obposTerminaltype.documentTypeForReturns.name as "
         + getIdentifierAlias("documentTypeForReturns")
         + ", pos.organization.obretcoMWarehouse.id as warehouse "
+        + ", pos.orderdocnoPrefix as docNoPrefix "
+        + ", "
+        + lastDocumentNumber
+        + " as lastDocumentNumber "
         + " from OBPOS_Applications AS pos where pos.$readableCriteria and searchKey = :terminal";
   }
 

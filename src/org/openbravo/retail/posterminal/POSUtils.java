@@ -9,6 +9,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 
@@ -177,5 +178,36 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  public static int getLastDocumentNumberForPOS(String searchKey) {
+
+    OBQuery<OBPOSApplications> obqPOSTerminal = OBDal.getInstance().createQuery(
+        OBPOSApplications.class, "searchKey = :value");
+    obqPOSTerminal.setNamedParameter("value", searchKey);
+    List<OBPOSApplications> POSTerminals = obqPOSTerminal.list();
+    OBPOSApplications POSTerminal = POSTerminals.get(0);
+
+    OBQuery<Order> obqOrders = OBDal.getInstance().createQuery(Order.class,
+        "documentNo like :value");
+    obqOrders.setNamedParameter("value", POSTerminal.getOrderdocnoPrefix() + "%");
+
+    List<Order> POSOrders = obqOrders.list();
+    int maxNumber = 0;
+    for (Order order : POSOrders) {
+      String documentNo = order.getDocumentNo();
+      // documentNo = prefix + '/' + number
+      String onlyNumber = documentNo.substring(searchKey.length() + 1);
+      try {
+        int number = Integer.parseInt(onlyNumber);
+        if (number > maxNumber) {
+          maxNumber = number;
+        }
+      } catch (NumberFormatException e) {
+        // If the parsed result is not a number (i.e. because the searchKey is a
+        // prefix of another POS searchKey, the result is ignored
+      }
+    }
+    return maxNumber;
   }
 }

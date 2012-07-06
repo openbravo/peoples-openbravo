@@ -141,6 +141,7 @@ if(userId == null){
   <script src="js/model/product-category.js"></script>
   <script src="js/model/product.js"></script>
   <script src="js/model/businesspartner.js"></script>
+  <script src="js/model/document-sequence.js"></script>
   <!-- Web POS Application -->
   <script src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS"></script>
 
