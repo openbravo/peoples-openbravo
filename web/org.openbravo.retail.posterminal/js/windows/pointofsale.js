@@ -23,6 +23,7 @@
           {kind: OB.DATA.OrderSave},
 
           {kind: OB.COMP.ModalBPs},
+          {kind: OB.COMP.ModalProcessReceipts},
           {kind: OB.COMP.ModalReceipts},
           {kind: B.KindJQuery('div'), attr: {'class': 'row', 'style': 'margin-bottom: 5px'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
@@ -157,6 +158,21 @@
               orderlist.addNewOrder();
             });
           }, this);
+
+          var ctx = this.context,
+          modelterminal = new OB.MODEL.Terminal();
+          modelterminal.on('online', function () {
+            var orderlist = ctx.modelorderlist,
+                criteria = {
+                  hasbeenpaid:'Y'
+                };
+            OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
+              if (fetchedOrderList && fetchedOrderList.length !== 0) {
+                ctx.orderlisttoprocess = fetchedOrderList;
+                $('#modalprocessreceipts').modal('show');
+              }
+            });
+          });
         }}
       );
     }
