@@ -3,9 +3,9 @@
 (function() {
 
   OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
+  OB.UI = window.OB.UI || {};
 
-  OB.COMP.ButtonTabBrowse = OB.COMP.ToolbarButtonTab.extend({
+  OB.UI.ButtonTabBrowse = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
     shownEvent: function(e) {
@@ -13,7 +13,7 @@
     }
   });
 
-  OB.COMP.BrowseCategories = Backbone.View.extend({
+  OB.UI.BrowseCategories = Backbone.View.extend({
     tagName: 'div',
     attributes: {
       'style': 'overflow:auto; margin: 5px;'
@@ -31,7 +31,7 @@
     }
   });
 
-  OB.COMP.BrowseProducts = Backbone.View.extend({
+  OB.UI.BrowseProducts = Backbone.View.extend({
     tagName: 'div',
     attributes: {
       'style': 'overflow:auto; height: 500px; margin: 5px;'
@@ -49,30 +49,32 @@
     }
   });
 
-  OB.COMP.TabBrowse = Backbone.View.extend({
+  OB.UI.TabBrowse = Backbone.View.extend({
     tagName: 'div',
     attributes: {
       'id': 'catalog',
       'class': 'tab-pane'
     },
     initialize: function() {
-      var $child = $('<div/>');
-      $child.addClass('row-fluid');
+      var $container, $productListContainer, browseProd, $categoriesListContainer, browseCateg;
+      $container = $('<div/>');
+      $container.addClass('row-fluid');
 
-      var $subChild = $('<div/>');
-      $subChild.addClass('span6');
-      var browseProd = new OB.COMP.BrowseProducts(this.options);
-      $subChild.append(browseProd.$el);
+      $productListContainer = $('<div/>');
+      $productListContainer.addClass('span6');
 
-      var $subChild2 = $('<div/>');
-      $subChild2.addClass('span6');
-      var browseCateg = new OB.COMP.BrowseCategories(this.options);
-      $subChild2.append(browseCateg.$el);
+      browseProd = new OB.UI.BrowseProducts(this.options);
+      $productListContainer.append(browseProd.$el);
 
-      $child.append($subChild);
-      $child.append($subChild2);
+      $categoriesListContainer = $('<div/>');
+      $categoriesListContainer.addClass('span6');
+      browseCateg = new OB.UI.BrowseCategories(this.options);
+      $categoriesListContainer.append(browseCateg.$el);
 
-      this.$el.append($child);
+      $container.append($productListContainer);
+      $container.append($categoriesListContainer);
+
+      this.$el.append($container);
 
       browseCateg.listCategories.categories.on('selected', function(category) {
         browseProd.listProducts.loadCategory(category);
