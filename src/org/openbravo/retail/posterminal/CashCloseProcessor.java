@@ -40,6 +40,8 @@ public class CashCloseProcessor {
       for (int i = 0; i < cashCloseInfo.length(); i++) {
         JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
         BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("expected"));
+        BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
+            .getDouble("amountToKeep"));
         BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
         String paymentTypeId = cashCloseObj.getString("paymentTypeId");
         OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
@@ -57,22 +59,21 @@ public class CashCloseProcessor {
         }
         OBDal.getInstance().save(reconciliation);
 
-        // if(paymentType.getPaymentMethod().isAutomatemovementtoother()){
-        //
-        // reconciliationTotal = reconciliationTotal.subtract(new
-        // BigDecimal(paymentType.getPaymentMethod().getAmount()));
+        if (paymentType.getPaymentMethod().isAutomatemovementtoother()) {
 
-        FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-            posTerminal, reconciliation, paymentType, reconciliationTotal);
+          reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
 
-        OBDal.getInstance().save(paymentTransaction);
+          FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
+              posTerminal, reconciliation, paymentType, reconciliationTotal);
 
-        FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-            posTerminal, reconciliation, paymentType, reconciliationTotal);
+          OBDal.getInstance().save(paymentTransaction);
 
-        OBDal.getInstance().save(depositTransaction);
+          FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
+              posTerminal, reconciliation, paymentType, reconciliationTotal);
 
-        // }
+          OBDal.getInstance().save(depositTransaction);
+
+        }
 
         associateTransactions(paymentType, reconciliation);
 
