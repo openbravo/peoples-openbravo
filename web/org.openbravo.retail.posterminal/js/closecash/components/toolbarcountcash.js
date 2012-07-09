@@ -41,7 +41,7 @@
 
     this.toolbar = [];
     this.receipt = options.modelorder;
-    this.modalpayment = new OB.COMP.ModalPayment(options).render();
+    this.modalpayment = new OB.UI.ModalPayment(options).render();
     $('body').append(this.modalpayment.$el);
     payments = OB.POS.modelterminal.get('payments');
 
