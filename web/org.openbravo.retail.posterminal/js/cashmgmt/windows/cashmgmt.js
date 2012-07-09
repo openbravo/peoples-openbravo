@@ -39,7 +39,7 @@
               {kind: OB.COMP.CashMgmtKeyboard }
             ]}
           ]},
-          {kind: OB.COMP.ModalDropEvents},
+          {kind: OB.UI.ModalDropEvents},
           {kind: OB.COMP.ModalDepositEvents},
           {kind: OB.DATA.DropDepSave},
           {kind: OB.DATA.Container, content: [
