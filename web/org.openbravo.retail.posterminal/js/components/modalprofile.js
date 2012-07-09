@@ -60,9 +60,10 @@
         header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
         width: '500px',
 
+        bodyContentClass: 'modal-dialog-content-profile',
         setBodyContent: function () {
           return (
-            {kind: B.KindJQuery('div'), attr: {'style': 'height: 130px; background-color: #ffffff;'}, content: [
+            {kind: B.KindJQuery('div'), attr: {'style': 'height: 127px; background-color: #ffffff;'}, content: [
               {kind: B.KindJQuery('div'), content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}

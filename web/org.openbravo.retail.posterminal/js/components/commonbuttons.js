@@ -378,6 +378,8 @@
     attributes: {'style': 'display: none;'},
     width: null,
     maxheight: null,
+    bodyContentClass: 'modal-dialog-content-text',
+    bodyButtonsClass: 'modal-dialog-content-buttons-container',
     initialize: function () {
       if (this.width) {
         this.$el.css('width', this.width);
@@ -396,7 +398,7 @@
         body.css('max-height', this.maxheight);
       }
 
-      var bodyContentContainer = $('<div/>').addClass('modal-dialog-content-text');
+      var bodyContentContainer = $('<div/>').addClass(this.bodyContentClass);
       if (this.setBodyContent) {
         var bodyContent = this.setBodyContent();
         var theBodyContent;
@@ -410,7 +412,7 @@
         bodyContentContainer.append(theBodyContent.$el);
       }
 
-      var bodyButtonsContainer = $('<div/>').addClass('modal-dialog-content-buttons-container');
+      var bodyButtonsContainer = $('<div/>').addClass(this.bodyButtonsClass);
       if (this.setBodyButtons) {
         var bodyButtons = this.setBodyButtons();
         var theBodyButtons;

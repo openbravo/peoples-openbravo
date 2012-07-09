@@ -542,11 +542,20 @@ h3.modal-dialog-header-text {
   color: white;
 }
 
-div.modal-dialog-content-text {
+div.modal-dialog-content-text,
+div.modal-dialog-content-profile {
   text-align: center;
-  font-size: 120%;
-  line-height: 200%;
+  font-size: 20px;
+  line-height: 30px;
   color: white;
+  margin: 15px 50px 10px 50px;
+}
+div.modal-dialog-content-text > div > br {
+  line-height: 50px;
+}
+
+div.modal-dialog-content-profile {
+  margin: 0px;
 }
 
 div.modal-dialog-content-buttons-container {
