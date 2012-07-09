@@ -285,6 +285,10 @@
           maxDocumentSequence = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
           me.saveDocumentSequenceAndGo(maxDocumentSequence);
         }
+      }, function () {
+        // If c_order does not exist yet, go with the sequence
+        // number fetched from the server
+        me.saveDocumentSequenceAndGo(OB.POS.modelterminal.get('terminal').lastDocumentNumber);
       });
     },
 
@@ -304,9 +308,16 @@
     },
 
     saveDocumentSequenceAndGo: function (documentSequence) {
+      this.set('documentsequence', documentSequence);
+      this.triggerReady();
+    },
+
+    saveDocumentSequenceInDB: function() {
       var me = this,
+          modelterminal = OB.POS.modelterminal,
+          documentSequence = modelterminal.get('documentsequence'),
           criteria = {
-          'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+            'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
           };
       OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
         var docSeq;
@@ -321,17 +332,13 @@
           docSeq.set('posSearchKey', OB.POS.modelterminal.get('terminal').searchKey);
           docSeq.set('documentSequence', documentSequence);
         }
-        OB.Dal.save(docSeq, function () {
-          me.set('documentsequence', docSeq.get('documentSequence'));
-          me.triggerReady();
-        });
+        OB.Dal.save(docSeq, null, null);
       });
     },
 
     triggerReady: function () {
-      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions')) {
-      //var undef;
-      //if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
+      var undef;
+      if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
         this.trigger('ready');
       }
     },

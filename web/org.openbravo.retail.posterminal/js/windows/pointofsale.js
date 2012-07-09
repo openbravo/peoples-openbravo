@@ -129,8 +129,11 @@
           ]}
 
         ], init: function () {
-          var ctx = this.context, modelterminal;
+          var ctx = this.context,
+              modelterminal = OB.POS.modelterminal,
+              me = this;
           this.context.on('domready', function () {
+            modelterminal.saveDocumentSequenceInDB();
             // Processes the paid, unprocessed orders
             var orderlist = this.context.modelorderlist,
               criteria = {
@@ -174,7 +177,6 @@
               orderlist.addNewOrder();
             });
           }, this);
-          modelterminal = new OB.MODEL.Terminal();
           modelterminal.on('online', function () {
             var orderlist = ctx.modelorderlist,
                 criteria = {
