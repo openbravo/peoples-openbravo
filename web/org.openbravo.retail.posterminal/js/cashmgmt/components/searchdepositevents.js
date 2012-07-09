@@ -9,7 +9,7 @@
     var ctx = context;
     this._id = 'SearchDepositEvents';
     var me = this;
-    this.destinations = new OB.MODEL.Collection(context.DataDepositEvents);
+    this.destinations = new OB.Model.Collection(context.DataDepositEvents);
     context.DataDepositEvents.ds.on('ready', function(){
       me.destinations.reset(this.cache);
     });
