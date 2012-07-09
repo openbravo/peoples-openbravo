@@ -72,7 +72,9 @@
       return this;
     },
     clickEvent: function (e) {
-      window.location=OB.POS.hrefWindow('retail.pointofsale');
+      if (window.location.search !== OB.POS.hrefWindow('retail.pointofsale')) {
+        window.location=OB.POS.hrefWindow('retail.pointofsale');
+      }
     }
   });
 }());
