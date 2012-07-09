@@ -176,7 +176,9 @@
                   // least two orders pending
                   if (ordersNotPaid.length > 1) {
                     // Do not show if the Process Receipts modal window is shown
-                    $('#modalreceipts').modal('show');
+                    if (!$('#modalprocessreceipts').is(":visible")) {
+                      $('#modalreceipts').modal('show');
+                    }
                   }
                 }
               }, function () { //OB.Dal.find error
