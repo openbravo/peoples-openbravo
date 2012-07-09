@@ -16,7 +16,7 @@
         if (providerview) {
           modalpayment.show(receipt, key, name, providerview, amount);
         } else {
-          receipt.addPayment(new OB.MODEL.PaymentLine({
+          receipt.addPayment(new OB.Model.PaymentLine({
             'kind': key,
             'name': name,
             'amount': amount

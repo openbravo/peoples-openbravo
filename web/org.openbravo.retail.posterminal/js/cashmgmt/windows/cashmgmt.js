@@ -18,8 +18,8 @@
       return (
         {kind: B.KindJQuery('section'), content: [
           {kind: OB.MODEL.DayCash},
-          {kind: OB.MODEL.Order},
-          {kind: OB.MODEL.OrderList},
+          {kind: OB.Model.Order},
+          {kind: OB.Model.OrderList},
           {kind: OB.COMP.ModalCancel},
           {kind: OB.DATA.Container, content: [
             {kind: OB.DATA.DepositEvents},

@@ -34,7 +34,7 @@
           }, function (data, message) {
             var d = data,
                 m = message;
-            OB.Dal.get(OB.MODEL.Order, receiptId, function (receipt) {
+            OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
               if (d && d.exception) {
                 OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
                 //If there is an error while sending the order to the backend,

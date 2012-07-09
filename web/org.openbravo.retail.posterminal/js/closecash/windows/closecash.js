@@ -20,8 +20,8 @@
         {kind: B.KindJQuery('section'), content: [
 
           {kind: OB.MODEL.DayCash},
-          {kind: OB.MODEL.Order},
-          {kind: OB.MODEL.OrderList},
+          {kind: OB.Model.Order},
+          {kind: OB.Model.OrderList},
           {kind: OB.DATA.CloseCashPaymentMethod},
           {kind: OB.DATA.PaymentCloseCash},
           {kind: OB.COMP.ModalCancel},
@@ -63,7 +63,7 @@
           OB.UTIL.showLoading(true);
           ctx.on('domready', function () {
             var orderlist = this.context.modelorderlist;
-            OB.Dal.find(OB.MODEL.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
+            OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
               if (fetchedOrderList && fetchedOrderList.length !== 0) {
                 ctx.orderlisttoprocess = fetchedOrderList;
@@ -76,7 +76,7 @@
               OB.UTIL.showError('Find error');
             });
 
-            OB.Dal.find(OB.MODEL.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
+            OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
               if (fetchedOrderList && fetchedOrderList.length !== 0) {
                 orderlist.reset(fetchedOrderList.models);

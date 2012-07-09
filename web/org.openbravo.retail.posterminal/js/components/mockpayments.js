@@ -35,7 +35,7 @@
           return this;
         },
         clickEvent: function (e) {
-          me.receipt.addPayment(new OB.MODEL.PaymentLine(
+          me.receipt.addPayment(new OB.Model.PaymentLine(
             {
               'kind':me.key,
               'name': me.name,

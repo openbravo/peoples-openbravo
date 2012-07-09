@@ -11,8 +11,8 @@
       return (
         {kind: B.KindJQuery('section'), content: [
 
-          {kind: OB.MODEL.Order},
-          {kind: OB.MODEL.OrderList},
+          {kind: OB.Model.Order},
+          {kind: OB.Collection.OrderList},
 
           {kind: OB.DATA.Container, content: [
             {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}

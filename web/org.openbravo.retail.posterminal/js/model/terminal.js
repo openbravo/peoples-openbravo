@@ -272,7 +272,7 @@
           };
       // compare the last document number returned from the ERP with
       // the last document number of the unprocessed pending lines (if any)
-      OB.Dal.find(OB.MODEL.Order, criteria, function(fetchedOrderList) {
+      OB.Dal.find(OB.Model.Order, criteria, function(fetchedOrderList) {
         var criteria;
         if (!fetchedOrderList || fetchedOrderList.length === 0) {
           // There are no pending orders, the initial document sequence
