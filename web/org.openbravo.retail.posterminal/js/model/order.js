@@ -520,7 +520,9 @@
     },
 
     serializeToJSON: function () {
-      var jsonorder = this.toJSON();
+      // this.toJSON() generates a collection instance for members like "lines"
+      // We need a plain array object
+      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
 
       // remove not needed members
       delete jsonorder.undo;
