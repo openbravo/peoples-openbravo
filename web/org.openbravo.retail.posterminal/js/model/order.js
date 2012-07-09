@@ -99,9 +99,13 @@
     local: true,
     _id: 'modelorder',
     initialize: function (attributes) {
+      var orderId;
       if (attributes && attributes.id && attributes.json) {
         // The attributes of the order are stored in attributes.json
+        // Makes sure that the id is copied
+        orderId = attributes.id;
         attributes = JSON.parse(attributes.json);
+        attributes.id = orderId;
       }
 
       if (attributes && attributes.documentNo) {
