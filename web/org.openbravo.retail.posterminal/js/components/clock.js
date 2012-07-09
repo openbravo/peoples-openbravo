@@ -1,4 +1,4 @@
-/*global window, B, $, Backbone */
+/*global window, $, Backbone */
 
 (function () {
 
@@ -19,7 +19,7 @@
       tag: 'div',
       attributes: {
         'class': 'clock-date'
-      },
+      }
     }],
     initialize: function () {
       OB.UTIL.initContentView(this);
