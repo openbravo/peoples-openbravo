@@ -6,7 +6,6 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.RenderCategory = OB.COMP.SelectButton.extend({
-    className: 'btnselect btnselect-browse',
     contentView: [{
       tag: 'div',
       attributes: {
@@ -35,6 +34,7 @@
       }]
     }],
     render: function () {
+      this.$el.addClass('btnselect-browse');
       this.modelthumbnail.img = this.model.get('img');
       this.modelthumbnail.render();
       this.modelidentifier.text(this.model.get('_identifier'));

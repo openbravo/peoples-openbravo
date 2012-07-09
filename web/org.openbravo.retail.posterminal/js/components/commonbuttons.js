@@ -195,6 +195,10 @@
       OB.COMP.ButtonTab.prototype.render.call(this); // super.initialize();
       this.$el.addClass('btnlink-toolbar');
       return this;
+    },
+    clickEvent: function () {
+      OB.COMP.ButtonTab.prototype.clickEvent.call(this); // super.initialize();
+      OB.UTIL.setOrderLineInEditMode(false);
     }
   });
 

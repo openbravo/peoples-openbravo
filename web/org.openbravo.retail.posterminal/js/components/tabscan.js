@@ -13,10 +13,12 @@
       this.options.modelorder.on('clear scan', function() {
         this.$el.tab('show');
         this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
+        OB.UTIL.setOrderLineInEditMode(false);
       }, this);
       this.options.SearchBPs.bps.on('click', function (model, index) {
         this.$el.tab('show');
         this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
+        OB.UTIL.setOrderLineInEditMode(false);
       }, this);
       return this;
     },

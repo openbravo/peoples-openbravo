@@ -11,10 +11,15 @@
     render: function () {
       OB.COMP.ToolbarButtonTab.prototype.render.call(this); // super.initialize();
       this.options.modelorder.get('lines').on('click', function () {
+        OB.UTIL.setOrderLineInEditMode(true);
         this.$el.tab('show');
         this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
       }, this);
       return this;
+    },
+    clickEvent: function () {
+      OB.COMP.ToolbarButtonTab.prototype.clickEvent.call(this); // super.initialize();
+      OB.UTIL.setOrderLineInEditMode(true);
     },
     shownEvent: function (e) {
       this.options.keyboard.show('toolbarscan');

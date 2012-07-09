@@ -37,6 +37,7 @@
       }
     }],
     render: function () {
+      this.$el.addClass('btnselect-orderline');
       this.divproduct.text(this.model.get('product').get('_identifier'));
       this.divquantity.text(this.model.printQty());
       this.divprice.text(this.model.printPrice());

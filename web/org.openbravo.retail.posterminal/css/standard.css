@@ -259,6 +259,14 @@ li.selected > button.btnselect-browse {
   background-color: #B882C6;
   color: #ffffff;
 }
+/* To be able to set the order line with #F8941D bg color when we are in EDIT mode */
+li.selected > button.btnselect-orderline {
+}
+li.selected > button.btnselect-orderline.btnselect-orderline-edit,
+li.selected > button.btnselect-orderline.btnselect-orderline-edit:hover {
+  background-color: #F8941D;
+  color: black;
+}
 
 .dropdown-menu li > a:hover,
 .dropdown-menu .active > a,
