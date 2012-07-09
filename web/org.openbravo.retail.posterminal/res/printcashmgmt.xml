@@ -10,21 +10,21 @@
     </line>
     <line></line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent('** Cash Management Confirmation Ticket **') %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblCashMgmtHeader')) %></text>
     </line>
     <line>
     </line>
     <line>
-      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent('User: '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
+      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser')+': '+OB.POS.modelterminal.get('context').user._identifier) %></text>
     </line>
     <line>
-      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent('Time: '+ new Date().toString().substring(3,24)) %></text>
+      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)) %></text>
     </line>
     <line>
-      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent('Store: '+ OB.POS.modelterminal.get('terminal').organization$_identifier) %></text>
+      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore')+': '+ OB.POS.modelterminal.get('terminal').organization$_identifier) %></text>
     </line>
     <line>
-      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent('Terminal: '+ OB.POS.modelterminal.get('terminal')._identifier) %></text>
+      <text align="left" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal')+': '+ OB.POS.modelterminal.get('terminal')._identifier) %></text>
     </line>
     <line>
     </line>
@@ -34,7 +34,7 @@
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDrop')+': '+depositsdrops.description) %></text>
-      <text align ="right" length="14"><%= OB.DEC.sub(0,depositsdrops.amount) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.amount)) %></text>
     </line>
     <%
     total = OB.DEC.sub(total, depositsdrops.amount);
@@ -42,7 +42,7 @@
     %>
      <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+depositsdrops.description) %></text>
-      <text align ="right" length="14"><%= depositsdrops.amount %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(depositsdrops.amount) %></text>
     </line>
     <%
     }
@@ -51,7 +51,7 @@
     %>
      <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotal')) %></text>
-      <text align ="right" length="14" bold="true"><%= total %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(total) %></text>
     </line>
   </ticket>
 </output>

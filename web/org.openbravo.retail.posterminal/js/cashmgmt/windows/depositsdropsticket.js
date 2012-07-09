@@ -25,7 +25,7 @@
 	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;text-align:center;'}, content: [
-                       '*** Cash Management Confirmation Ticket ***'
+                       OB.I18N.getLabel('OBPOS_LblCashMgmtHeader')
                     ]}
                   ]}
                 ]},
@@ -39,28 +39,28 @@
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-                        'User: '+OB.POS.modelterminal.get('context').user._identifier
+                         OB.I18N.getLabel('OBPOS_LblUser')+': '+OB.POS.modelterminal.get('context').user._identifier
                     ]}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-                        'Time: '+ new Date().toString().substring(3,24)
+                        OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)
                     ]}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-                        'Store: '+ OB.POS.modelterminal.get('terminal').organization$_identifier
+                        OB.I18N.getLabel('OBPOS_LblStore')+': '+ OB.POS.modelterminal.get('terminal').organization$_identifier
                     ]}
                   ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
-                        'Terminal: '+ OB.POS.modelterminal.get('terminal')._identifier
+                        OB.I18N.getLabel('OBPOS_LblTerminal')+': '+ OB.POS.modelterminal.get('terminal')._identifier
                     ]}
                   ]}
                 ]},
@@ -92,7 +92,7 @@
                           this.$el.append(this.total);
                           // Set Model
                           me.on('change:total', function() {
-                          this.total.text(me.total.toString());
+                          this.total.text(OB.I18N.formatCurrency(me.total));
                           if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
                              this.$el.css("color","red");//negative value
                           }else{
@@ -100,7 +100,7 @@
                           }
                           }, this);
                            // Initial total display
-                          this.total.text(me.total.toString());
+                          this.total.text(OB.I18N.formatCurrency(me.total));
                          if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
                              this.$el.css("color","red");//negative value
                          }else{

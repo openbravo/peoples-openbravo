@@ -35,7 +35,7 @@
         this.options.ListDepositsDrops.listdepositsdrops.trigger('depositdrop');
       }else{
         this.$el.text(OB.I18N.getLabel('OBPOS_LblDone'));
-        this.options.msginfo.$el.text('Tap Done to confirm the cash drop and print a confirmation ticket');
+        this.options.msginfo.$el.text(OB.I18N.getLabel('OBPOS_MsgTapDone'));
         this.options.ListDepositsDrops.$el.hide();
         this.options.depositsdropsTicket.$el.show();
       }
