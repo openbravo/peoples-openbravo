@@ -10,7 +10,7 @@
     contentView: [{
       tag: 'div',
       attributes: {
-        style: 'float: left; width: 20%'
+        style: 'float: left; width: 25%'
       },
       content: [{
         id: 'modelthumbnail',
@@ -19,7 +19,7 @@
     }, {
       tag: 'div',
       attributes: {
-        style: 'float: left; width: 80%;'
+        style: 'float: left; width: 75%;'
       },
       content: [{
         id: 'modelidentifier',

@@ -247,11 +247,9 @@
         this.msgaction.hide();
         this.msgedit.show();
         this.editlineimage.empty().append(B({
-          kind: OB.UTIL.Thumbnail,
+          kind: OB.UTIL.ThumbnailEditLine,
           attr: {
-            img: this.line.get('img'),
-            width: 128,
-            height: 128
+            img: this.line.get('img')
           }
         }).$el);
         this.editlinename.text(this.line.get('product').get('_identifier'));

@@ -9,7 +9,7 @@
     contentView: [{
       tag: 'div',
       attributes: {
-        style: 'float: left; width: 20%'
+        style: 'float: left; width: 25%'
       },
       content: [{
         id: 'viewthumbnail',
@@ -18,7 +18,7 @@
     }, {
       tag: 'div',
       attributes: {
-        style: 'float: left; width: 60%;'
+        style: 'float: left; width: 55%;'
       },
       content: [{
         id: 'dividentifier',

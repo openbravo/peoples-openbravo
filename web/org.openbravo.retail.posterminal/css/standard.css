@@ -453,9 +453,9 @@ div.btnselect {
 }
 
 .image-wrap {
-   position: relative;
-   display: inline-block;
-   max-width: 100%;
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
   vertical-align: bottom;
 }
 .image-wrap:after {
@@ -471,9 +471,9 @@ div.btnselect {
 /*   -moz-box-shadow: inset 0 0 1px rgba(255,255,255,.4), inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.3); */
 /*   box-shadow: inset 0 0 1px rgba(255,255,255,.4), inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.3); */
 
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  border-radius: 7px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
 }
 
 .image-wrap div {
@@ -483,9 +483,13 @@ div.btnselect {
 /*   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.4); */
 /*   box-shadow: 0 1px 2px rgba(0,0,0,.4); */
 
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+.image-wrap.image-editline:after {
+  border: none;
 }
 
 div.pos-clock {
