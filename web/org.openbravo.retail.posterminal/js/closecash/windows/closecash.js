@@ -21,7 +21,7 @@
 
           {kind: OB.MODEL.DayCash},
           {kind: OB.Model.Order},
-          {kind: OB.Model.OrderList},
+          {kind: OB.Collection.OrderList},
           {kind: OB.DATA.CloseCashPaymentMethod},
           {kind: OB.DATA.PaymentCloseCash},
           {kind: OB.COMP.ModalCancel},

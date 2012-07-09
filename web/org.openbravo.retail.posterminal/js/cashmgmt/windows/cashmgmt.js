@@ -19,7 +19,7 @@
         {kind: B.KindJQuery('section'), content: [
           {kind: OB.MODEL.DayCash},
           {kind: OB.Model.Order},
-          {kind: OB.Model.OrderList},
+          {kind: OB.Collection.OrderList},
           {kind: OB.COMP.ModalCancel},
           {kind: OB.DATA.Container, content: [
             {kind: OB.DATA.DepositEvents},
