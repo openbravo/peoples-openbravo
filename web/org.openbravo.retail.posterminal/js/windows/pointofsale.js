@@ -46,7 +46,7 @@
                 ]},
                 {kind: B.KindJQuery('li'), attr: {'class': 'span3'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'margin: 0px 5px 0px 5px;'}, content: [
-                    {kind: OB.COMP.ToolbarMenuButton.extend({icon: 'btn-icon btn-icon-menu'/*, label: OB.I18N.getLabel('OBPOS_LblMenu')*/}), content: [
+                    {kind: OB.COMP.ToolbarMenu.extend({icon: 'btn-icon btn-icon-menu'/*, label: OB.I18N.getLabel('OBPOS_LblMenu')*/}), content: [
                       {kind: OB.COMP.MenuReturn},
                       {kind: OB.COMP.MenuInvoice},
                       {kind: OB.COMP.MenuSeparator},

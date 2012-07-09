@@ -98,11 +98,12 @@ button.btnkeyboard {
   cursor: pointer;
   height: 57px;
 }
-button.btnkeyboard:hover {
+
+button.btnkeyboard.btn-over {
   opacity: 0.75;
 }
-button.btnkeyboard:active,
-button.btnkeyboard:hover:active {
+
+button.btnkeyboard:active {
   opacity: 1;
   background-color: #cccccc;
 }
@@ -110,14 +111,12 @@ button.btnactive {
   background-color: #F8941D;
 }
 
-button.btnkeyboard-plus:active,
-button.btnkeyboard-plus:hover:active {
+button.btnkeyboard-plus:active {
   opacity: 1;
   background-color: #6cb33f;
 }
 
-button.btnkeyboard-minus:active,
-button.btnkeyboard-minus:hover:active {
+button.btnkeyboard-minus:active {
   opacity: 1;
   background-color: #f8941d;
 }
@@ -143,11 +142,10 @@ button.btnlink-toolbar {
   font-weight: normal;
 }
 
-button.btnlink:hover {
+button.btnlink.btn-over {
   opacity: 0.75;
 }
-button.btnlink:active,
-button.btnlink:hover:active {
+button.btnlink:active {
   opacity: 1;
   background-color: #cccccc;
 }
@@ -247,10 +245,6 @@ button.btnselect {
   color: black;
   cursor: pointer;
   border-bottom: 1px solid #cccccc;
-}
-button.btnselect:hover {
-  background-color: #e1e1e1;
-  color: black;
 }
 button.btnselect:active {
   background-color: #cccccc;

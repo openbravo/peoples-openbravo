@@ -36,13 +36,25 @@
     },
     initialize: function () {
       this.$el.click(_.bind(this._clickEvent, this));
+      this.$el.mouseover(_.bind(this._mouseOverEvent, this));
+      this.$el.mouseout(_.bind(this._mouseOutEvent, this));
       // new googleuiFastButton(this.el, this._clickEvent);
     },
     _clickEvent: function (e) {
+      this.$el.removeClass('btn-over');
       this.clickEvent(e);
     },
-    clickEvent: function (e) {
-    }
+    _mouseOverEvent: function (e) {
+      this.$el.addClass('btn-over');
+      this.mouseOverEvent(e);
+    },
+    _mouseOutEvent: function (e) {
+      this.$el.removeClass('btn-over');
+      this.mouseOutEvent(e);
+    },
+    clickEvent: function (e) {},
+    mouseOverEvent: function (e) {},
+    mouseOutEvent: function (e) {}
   });
 
   // Regular Button
@@ -185,12 +197,16 @@
   });
 
   // Menu Button
-  OB.COMP.ToolbarMenuButton = Backbone.View.extend({
+  OB.COMP.ToolbarMenuButton = OB.COMP.ToolbarButton.extend({
+    attributes: {'data-toggle': 'dropdown'}
+  });
+
+  OB.COMP.ToolbarMenu = Backbone.View.extend({
     tagName: 'div',
     className: 'dropdown',
     attributes: {'style': 'display: inline-block; width: 100%;'},
     initialize: function () {
-      this.button = $('<button class=\"btnlink btnlink-toolbar\" data-toggle=\"dropdown\"></button>');
+      this.button = new OB.COMP.ToolbarMenuButton().render().$el;
 
       // The button
       this.$el.append(this.button);
