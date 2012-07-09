@@ -1,4 +1,4 @@
-/*global window, B, $, Backbone, _ */
+/*global window, $, Backbone, _ */
 
 (function () {
 
@@ -314,21 +314,31 @@
     tagName: 'div',
     className: 'modal hide fade',
     attributes: {'style': 'display: none;'},
+    contentView: [
+      {tag: 'div', attributes: {'class': 'modal-header'}, content: [
+        {tag: 'a', attributes: {'class': 'close', 'data-dismiss': 'modal'}, content: [
+          {tag: 'span', attributes: {style: 'font-size: 150%;'}, content: '&times;'}
+        ]},
+        {id:'divheader', tag: 'h3'},
+      ]},
+      {id:'body', tag: 'div', attributes: {'class': 'modal-header'}}                  
+    ],
     maxheight: null,
     initialize: function () {
-      this.$el.append(B(
-          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [
-              {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
-            ]},
-            {kind: B.KindJQuery('h3'), content: [this.header]}
-          ]}
-      , this.options).$el);
-      var body = $('<div/>').addClass('modal-body');
+      OB.UTIL.initContentView(this);
+//      this.$el.append(B(
+//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
+//            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [
+//              {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
+//            ]},
+//            {kind: B.KindJQuery('h3'), content: [this.header]}
+//          ]}
+//      , this.options).$el);
+      
+      this.divheader.text(this.header);
       if (this.maxheight) {
-        body.css('max-height', this.maxheight);
+        this.body.css('max-height', this.maxheight);
       }
-      this.$el.append(body);
       
       var getcv = this.getContentView();
       if (getcv.kind) {
@@ -338,7 +348,7 @@
         // it is a backbone view
         this.contentview = new getcv(this.options).render();
       }
-      body.append(this.contentview.$el);    
+     this.body.append(this.contentview.$el);    
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
