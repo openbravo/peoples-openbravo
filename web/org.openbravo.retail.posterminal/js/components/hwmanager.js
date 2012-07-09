@@ -1,4 +1,4 @@
-/*global B */
+/*global */
 
 (function() {
 

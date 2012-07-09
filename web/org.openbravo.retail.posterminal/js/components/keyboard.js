@@ -1,4 +1,4 @@
-/*global B, $, _, Backbone */
+/*global $, _, Backbone */
 
 (function () {
 
