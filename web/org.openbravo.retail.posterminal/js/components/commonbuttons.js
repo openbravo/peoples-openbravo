@@ -1,4 +1,4 @@
-/*global window, B, $, Backbone, _ */
+/*global window, B, $, Backbone, _, MBP */
 
 (function () {
 
@@ -35,10 +35,10 @@
       }
     },
     initialize: function () {
-      //this.$el.click(_.bind(this._clickEvent, this));
+      var fb;
       this.$el.mouseover(_.bind(this._mouseOverEvent, this));
       this.$el.mouseout(_.bind(this._mouseOutEvent, this));
-      new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
+      fb = new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
     },
     _clickEvent: function (e) {
       this.$el.removeClass('btn-over');
