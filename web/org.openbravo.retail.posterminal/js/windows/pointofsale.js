@@ -143,7 +143,7 @@
                   hasbeenpaid:'Y'
                 };
               if (navigator.onLine) {
-                OB.Dal.find(OB.MODEL.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
+                OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
                   var currentOrder = {};
                   if (ordersPaidNotProcessed && ordersPaidNotProcessed.length > 0) {
                     ctx.orderlisttoprocess = ordersPaidNotProcessed;
@@ -160,7 +160,7 @@
                   criteria={
                     'hasbeenpaid' : 'N'
                   };
-              OB.Dal.find(OB.MODEL.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
+              OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
                 var currentOrder = {};
                 if (!ordersNotPaid || ordersNotPaid.length === 0) {
                   // If there are no pending orders,
@@ -195,7 +195,7 @@
                 criteria = {
                   hasbeenpaid:'Y'
                 };
-            OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
+            OB.Dal.find(OB.Model.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
               if (fetchedOrderList && fetchedOrderList.length > 0) {
                 ctx.orderlisttoprocess = fetchedOrderList;
                 $('#modalprocessreceipts').modal('show');
@@ -211,5 +211,5 @@
   OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
 
   // Register required models/data
-  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.MODEL.Order, OB.Model.DocumentSequence];
+  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence];
 }());
