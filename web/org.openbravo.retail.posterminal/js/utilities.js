@@ -52,5 +52,44 @@
       return memo && val;
     }, true);
   };
+  
+    
+  function _initContentView(view, child) {
+    var obj, inst, i, max;
+    if (typeof (child) === 'string') {
+      inst = $(document.createTextNode(child));
+    } else if (child.tag) {
+      inst = $('<' + child.tag + '/>'); 
+      if (child.attributes) {
+        inst.attr(child.attributes);
+      }
+      if (child.content) {
+        for (i = 0, max = child.content.length; i < max; i++) {
+          inst.append(_initContentView(view, child.content[i]));
+        }        
+      }
+      if (child.id) {
+        view[child.id] = inst;
+      }      
+    } else if (child.view) {
+      obj = new child.view();
+      inst = obj.$el;
+      if (child.id) {
+        view[child.id] = obj;
+      }
+    } else if (child.$el) {
+      inst = child.$el;
+    }
+    return inst
+  }
+  
+  OB.UTIL.initContentView = function (view) {
+    var i, max;
+    if (view.contentView) {
+      for (i = 0, max = view.contentView.length; i < max; i++) {
+        view.$el.append(_initContentView(view, view.contentView[i]));
+      }       
+    }
+  };
 
 }());

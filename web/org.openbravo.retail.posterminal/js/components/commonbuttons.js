@@ -260,6 +260,7 @@
     initialize: function () {
       OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
       this.model = this.options.model;
+      OB.UTIL.initContentView(this);      
     },
     clickEvent: function (e) {
       this.model.trigger('selected', this.model);
