@@ -1,4 +1,4 @@
-/*global window, B, $, Backbone */
+/*global window, $, B, Backbone */
 
 (function() {
 
@@ -10,9 +10,7 @@
     id: 'modalreceipts',
     header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
     getContentView: function() {
-      return ({
-        kind: OB.COMP.ListReceipts
-      });
+      return OB.COMP.ListReceipts;
     },
     showEvent: function(e) {
       // custom bootstrap event, no need to prevent default
