@@ -5,27 +5,53 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.RenderOrder =  OB.COMP.SelectButton.extend({
-    render: function() {
-      this.$el.append(B(
-        {kind: B.KindJQuery('div'), content: [
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [
-             OB.I18N.formatHour(this.model.get('orderDate'))
-          ]},
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 15%;'}, content: [
-            this.model.get('documentNo')
-          ]},
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left;width: 50%;'}, content: [
-            this.model.get('bp').get('_identifier')
-          ]},
-          {kind: B.KindJQuery('div'), attr: {style: 'float: left; width: 20%; text-align:right;'}, content: [
-            {kind: B.KindJQuery('strong'), content: [
-               this.model.printGross()
-            ]}
-          ]},
-          {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
-        ]}
-      ).$el);
+  OB.COMP.RenderOrder = OB.COMP.SelectButton.extend({
+    contentView: [{
+      tag: 'div',
+      attributes: {
+        'style': 'line-height: 23px;'
+      },
+      content: [{
+        tag: 'div',
+        content: [{
+          id: 'divdate',
+          tag: 'div',
+          attributes: {
+            style: 'float: left; width: 15%'
+          }
+        }, {
+          id: 'divdocumentno',
+          tag: 'div',
+          attributes: {
+            style: 'float: left; width: 25%;'
+          }
+        }, {
+          id: 'divbp',
+          tag: 'div',
+          attributes: {
+            style: 'float: left; width: 60%;'
+          }
+
+        }, {
+          tag: 'div',
+          attributes: {
+            style: 'clear: both;'
+          }
+        }]
+      }, {
+        id: 'divgross',
+        tag: 'div',
+        attributes: {
+          style: 'text-align: right; font-weight:bold;'
+        }
+      }]
+    }],
+    render: function () {
+      this.divdate.text(OB.I18N.formatHour(this.model.get('orderDate')));
+      this.divdocumentno.text(this.model.get('documentNo'));
+      this.divbp.text(this.model.get('bp').get('_identifier'));
+      this.divgross.text(this.model.printGross());
+
       return this;
     }
   });

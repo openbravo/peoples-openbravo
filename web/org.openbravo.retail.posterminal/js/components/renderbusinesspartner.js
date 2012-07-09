@@ -28,7 +28,7 @@
       }]
     }],
     render: function () {
-      this.dividentifier.text(this.model.get('_identifier') + "  dd");
+      this.dividentifier.text(this.model.get('_identifier'));
       this.divlocation.text(this.model.get('locName'));
       return this;
     }
