@@ -100,7 +100,7 @@
                     {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
                       {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;'}, content: [
-                            {kind: OB.COMP.OrderDetails},
+                            {kind: OB.UI.OrderDetails},
                             {kind: OB.COMP.BusinessPartner},
                             {kind: B.KindJQuery('div'), attr: {'style': 'clear:both;'}}
                         ]}
