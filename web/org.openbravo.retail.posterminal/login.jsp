@@ -83,6 +83,7 @@ width: 20px; color: transparent; background-image: url('./img/login-connected.pn
 <script src="js/libs/bootstrap/js/bootstrap-dropdown.js"></script>
 <script src="js/libs/bootstrap/js/bootstrap-modal.js"></script>
 <script src="js/libs/bootstrap/js/bootstrap-alert.js"></script>
+<script src="js/libs/mbp-helper.js"></script>
 
 <!-- Login application -->
 <script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script>

@@ -35,10 +35,10 @@
       }
     },
     initialize: function () {
-      this.$el.click(_.bind(this._clickEvent, this));
+      //this.$el.click(_.bind(this._clickEvent, this));
       this.$el.mouseover(_.bind(this._mouseOverEvent, this));
       this.$el.mouseout(_.bind(this._mouseOutEvent, this));
-      // new googleuiFastButton(this.el, this._clickEvent);
+      new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
     },
     _clickEvent: function (e) {
       this.$el.removeClass('btn-over');
@@ -173,7 +173,9 @@
     className: 'btnlink btnlink-gray',
     attributes: {'data-toggle': 'tab'},
     initialize: function () {
-      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
+      this.$el.click(_.bind(this._clickEvent, this));
+      this.$el.mouseover(_.bind(this._mouseOverEvent, this));
+      this.$el.mouseout(_.bind(this._mouseOutEvent, this));
       this.$el.attr('href', this.tabpanel);
       this.$el.append($('<span>' + this.label + '</span>'));
     },
