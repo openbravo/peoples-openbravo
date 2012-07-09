@@ -11,7 +11,7 @@
     initialize: function () {
       var me = this;
       this._id = 'searchretailtransactions';
-      this.transactions = new OB.MODEL.Collection(this.options.DataCashCloseReport);
+      this.transactions = new OB.Model.Collection(this.options.DataCashCloseReport);
       this.options.DataCashCloseReport.ds.on('ready', function(){
         me.transactions.reset(this.cache);
       });

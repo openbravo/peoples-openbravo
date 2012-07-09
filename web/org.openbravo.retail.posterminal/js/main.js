@@ -2,7 +2,7 @@
 
 (function () {
 
-  var modelterminal = new OB.MODEL.Terminal();
+  var modelterminal = new OB.Model.Terminal();
 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
   terminal.setModel(modelterminal);

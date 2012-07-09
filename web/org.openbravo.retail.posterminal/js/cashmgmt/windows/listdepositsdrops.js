@@ -11,7 +11,7 @@
 	        var me = this;
 	        this._id = 'ListDepositsDrops';
 	        this.total= OB.DEC.Zero;
-	        this.listdepositsdrops = new OB.MODEL.Collection(this.options.DataDepositsDrops);
+	        this.listdepositsdrops = new OB.Model.Collection(this.options.DataDepositsDrops);
 	        this.component = B(
 	        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
 	          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [

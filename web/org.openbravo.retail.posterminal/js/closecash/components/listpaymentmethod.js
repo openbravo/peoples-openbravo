@@ -11,7 +11,7 @@
     initialize: function () {
         var me = this;
     this._id = 'ListPaymentMethods';
-    this.paymentmethods = new OB.MODEL.Collection(this.options.DataCloseCashPaymentMethod);
+    this.paymentmethods = new OB.Model.Collection(this.options.DataCloseCashPaymentMethod);
     this.component = B(
       {kind: B.KindJQuery('div'), content: [
        {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [

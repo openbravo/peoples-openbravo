@@ -9,7 +9,7 @@
     var ctx = context;
     this._id = 'SearchDropEvents';
     var me = this;
-    this.destinations = new OB.MODEL.Collection(context.DataDropEvents);
+    this.destinations = new OB.Model.Collection(context.DataDropEvents);
     context.DataDropEvents.ds.on('ready', function(){
       me.destinations.reset(this.cache);
     });

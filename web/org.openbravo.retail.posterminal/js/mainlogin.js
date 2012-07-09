@@ -2,7 +2,7 @@
 
 (function () {
 
-  var modelterminal = new OB.MODEL.Terminal();
+  var modelterminal = new OB.Model.Terminal();
   
   // global components.
   OB = window.OB || {};

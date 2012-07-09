@@ -1,24 +1,24 @@
 /*global B, $, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
-  OB.MODEL = window.OB.MODEL || {};
+  OB.Model = window.OB.Model || {};
 
-  OB.MODEL.Collection = Backbone.Collection.extend({
-    constructor: function (data) {
+  OB.Model.Collection = Backbone.Collection.extend({
+    constructor: function(data) {
       this.ds = data.ds;
       Backbone.Collection.prototype.constructor.call(this);
     },
-    inithandler: function (init) {
+    inithandler: function(init) {
       if (init) {
         init.call(this);
       }
     },
-    exec: function (filter) {
+    exec: function(filter) {
       var me = this;
       if (this.ds) {
-        this.ds.exec(filter, function (data, info) {
+        this.ds.exec(filter, function(data, info) {
           var i;
           me.reset();
           me.trigger('info', info);
@@ -37,7 +37,7 @@
   });
 
   // Terminal model.
-  OB.MODEL.Terminal = Backbone.Model.extend({
+  OB.Model.Terminal = Backbone.Model.extend({
 
     defaults: {
       terminal: null,
@@ -50,17 +50,17 @@
       currency: null
     },
 
-    initialize: function () {
+    initialize: function() {
       var me = this;
-      $(window).bind('online', function () {
+      $(window).bind('online', function() {
         me.triggerOnLine();
       });
-      $(window).bind('offline', function () {
+      $(window).bind('offline', function() {
         me.triggerOffLine();
       });
     },
 
-    login: function (user, password, mode) {
+    login: function(user, password, mode) {
       OB.UTIL.showLoading(true);
       var me = this;
       this.set('terminal', null);
@@ -83,7 +83,7 @@
           'IsAjaxCall': 1
         },
         type: 'POST',
-        success: function (data, textStatus, jqXHR) {
+        success: function(data, textStatus, jqXHR) {
           var pos, baseUrl;
           if (data && data.showMessage) {
             me.triggerLoginFail(401, mode, data);
@@ -93,13 +93,13 @@
           baseUrl = window.location.pathname.substring(0, pos);
           window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: function(jqXHR, textStatus, errorThrown) {
           me.triggerLoginFail(jqXHR.status, mode);
         }
       });
     },
 
-    logout: function () {
+    logout: function() {
       var me = this;
       this.set('terminal', null);
       this.set('payments', null);
@@ -117,20 +117,20 @@
         contentType: 'application/json;charset=utf-8',
         dataType: 'json',
         type: 'GET',
-        success: function (data, textStatus, jqXHR) {
+        success: function(data, textStatus, jqXHR) {
           me.triggerLogout();
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: function(jqXHR, textStatus, errorThrown) {
           me.triggerLogout();
         }
       });
     },
 
-    lock: function () {
+    lock: function() {
       alert('Feature not yet implemented');
     },
 
-    load: function () {
+    load: function() {
 
       // reset all application state.
       $(window).off('keypress');
@@ -152,7 +152,7 @@
       };
 
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(
-      params, function (data) {
+      params, function(data) {
         if (data.exception) {
           me.logout();
         } else if (data[0]) {
@@ -172,11 +172,11 @@
       });
     },
 
-    loadPayments: function () {
+    loadPayments: function() {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec({
         pos: this.get('terminal').id
-      }, function (data) {
+      }, function(data) {
         if (data) {
           var i, max;
           me.set('payments', data);
@@ -189,9 +189,9 @@
       });
     },
 
-    loadContext: function () {
+    loadContext: function() {
       var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function(data) {
         if (data[0]) {
           me.set('context', data[0]);
           me.triggerReady();
@@ -199,9 +199,9 @@
       });
     },
 
-    loadPermissions: function () {
+    loadPermissions: function() {
       var me = this;
-      new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function (data) {
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.RolePreferences').exec({}, function(data) {
         var i, max, permissions = {};
         if (data) {
           for (i = 0, max = data.length; i < max; i++) {
@@ -213,37 +213,37 @@
       });
     },
 
-    loadBP: function () {
+    loadBP: function() {
       this.set('businesspartner', this.get('terminal').businessPartner);
     },
 
-    loadLocation: function () {
+    loadLocation: function() {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec({
         org: this.get('terminal').organization
-      }, function (data) {
+      }, function(data) {
         if (data[0]) {
           me.set('location', data[0]);
         }
       });
     },
 
-    loadPriceList: function () {
+    loadPriceList: function() {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec({
         pricelist: this.get('terminal').priceList
-      }, function (data) {
+      }, function(data) {
         if (data[0]) {
           me.set('pricelist', data[0]);
         }
       });
     },
 
-    loadPriceListVersion: function () {
+    loadPriceListVersion: function() {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceListVersion').exec({
         pricelist: this.get('terminal').priceList
-      }, function (data) {
+      }, function(data) {
         if (data[0]) {
           me.set('pricelistversion', data[0]);
           me.triggerReady();
@@ -251,11 +251,11 @@
       });
     },
 
-    loadCurrency: function () {
+    loadCurrency: function() {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec({
         currency: this.get('terminal').currency
-      }, function (data) {
+      }, function(data) {
         if (data[0]) {
           me.set('currency', data[0]);
           //Precision used by arithmetics operations is set using the currency
@@ -265,14 +265,14 @@
       });
     },
 
-    setDocumentSequence: function () {
+    setDocumentSequence: function() {
       var me = this,
           maxDocumentSequence, criteria = {
           'hasbeenpaid': 'N'
           };
       // compare the last document number returned from the ERP with
       // the last document number of the unprocessed pending lines (if any)
-      OB.Dal.find(OB.MODEL.Order, criteria, function (fetchedOrderList) {
+      OB.Dal.find(OB.MODEL.Order, criteria, function(fetchedOrderList) {
         var criteria;
         if (!fetchedOrderList || fetchedOrderList.length === 0) {
           // There are no pending orders, the initial document sequence
@@ -292,7 +292,7 @@
       });
     },
 
-    getMaxDocumentSequenceFromPendingOrders: function (pendingOrders) {
+    getMaxDocumentSequenceFromPendingOrders: function(pendingOrders) {
       var nPreviousOrders = pendingOrders.length,
           maxDocumentSequence = OB.POS.modelterminal.get('terminal').lastDocumentNumber,
           posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
@@ -307,7 +307,7 @@
       return maxDocumentSequence;
     },
 
-    saveDocumentSequenceAndGo: function (documentSequence) {
+    saveDocumentSequenceAndGo: function(documentSequence) {
       this.set('documentsequence', documentSequence);
       this.triggerReady();
     },
@@ -317,9 +317,9 @@
           modelterminal = OB.POS.modelterminal,
           documentSequence = modelterminal.get('documentsequence'),
           criteria = {
-            'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+          'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
           };
-      OB.Dal.find(OB.Model.DocumentSequence, criteria, function (documentSequenceList) {
+      OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
         var docSeq;
         if (documentSequenceList) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
@@ -336,30 +336,30 @@
       });
     },
 
-    triggerReady: function () {
+    triggerReady: function() {
       var undef;
       if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
         this.trigger('ready');
       }
     },
 
-    triggerLogout: function () {
+    triggerLogout: function() {
       this.trigger('logout');
     },
 
-    triggerLoginSuccess: function () {
+    triggerLoginSuccess: function() {
       this.trigger('loginsuccess');
     },
 
-    triggerOnLine: function () {
+    triggerOnLine: function() {
       this.trigger('online');
     },
 
-    triggerOffLine: function () {
+    triggerOffLine: function() {
       this.trigger('offline');
     },
 
-    triggerLoginFail: function (e, mode, data) {
+    triggerLoginFail: function(e, mode, data) {
       OB.UTIL.showLoading(false);
       if (mode === 'userImgPress') {
         this.trigger('loginUserImgPressfail', e);
@@ -368,15 +368,15 @@
       }
     },
 
-    hasPermission: function (p) {
+    hasPermission: function(p) {
       return this.get('context').role.clientAdmin || this.get('permissions')[p];
     },
 
-    getPaymentName: function (key) {
+    getPaymentName: function(key) {
       return this.paymentnames[key];
     },
 
-    hasPayment: function (key) {
+    hasPayment: function(key) {
       return this.paymentnames[key];
     }
 

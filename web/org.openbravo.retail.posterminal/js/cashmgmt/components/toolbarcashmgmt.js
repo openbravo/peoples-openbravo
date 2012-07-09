@@ -28,7 +28,7 @@
     this.toolbar = [];
     var me = this;
     this.receipt = context.modelorder;
-    this.payments = new OB.MODEL.Collection(context.DataCashMgmtPaymentMethod);
+    this.payments = new OB.Model.Collection(context.DataCashMgmtPaymentMethod);
     context.DataCashMgmtPaymentMethod.ds.on('ready', function(){
       me.payments.reset(this.cache);
       for (i = 0, max = me.payments.length; i < max; i++) {
