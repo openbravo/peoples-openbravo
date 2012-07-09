@@ -77,7 +77,7 @@
                 ]},
                 {kind: B.KindJQuery('li'), attr: {'class': 'span2'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'data-toggle': 'tab', 'style': 'margin: 0px 5px 0px 5px;'}, content: [
-                    {kind: OB.COMP.ButtonTabSearch}
+                    {kind: OB.UI.ButtonTabSearch}
                   ]}
                 ]},
                 {kind: B.KindJQuery('li'), attr: {'class': 'span2'}, content: [
@@ -120,7 +120,7 @@
               {kind: B.KindJQuery('div'), attr: {'class': 'tab-content'}, content: [
                 {kind: OB.COMP.TabScan },
                 {kind: OB.UI.TabBrowse },
-                {kind: OB.COMP.TabSearch },
+                {kind: OB.UI.TabSearch },
                 {kind: OB.COMP.TabEditLine },
                 {kind: OB.COMP.TabPayment }
               ]},
