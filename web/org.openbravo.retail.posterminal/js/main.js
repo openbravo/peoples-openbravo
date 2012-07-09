@@ -85,7 +85,7 @@
           if (model.prototype.local) {
             OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
           } else {
-            ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization));
+            ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
             ds.on('ready', function () {
 
               queue[model.prototype.source] = true;

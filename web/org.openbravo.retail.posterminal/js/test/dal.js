@@ -31,7 +31,7 @@ asyncTest('Load models - WebSQL', function() {
 
     ds.on('ready', function() {
       
-      queue[ds.query.source] = true;
+      queue[ds.request.source] = true;
 
       //reduce
       triggerNext = _.reduce(queue, function(memo, val) {
@@ -44,7 +44,7 @@ asyncTest('Load models - WebSQL', function() {
     });
     ds.load();
     //source
-    queue[ds.query.source] = false;
+    queue[ds.request.source] = false;
   });
 
 });

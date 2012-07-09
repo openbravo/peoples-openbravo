@@ -27,7 +27,7 @@ public class TaxRate extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
 
-    final OBPOSApplications posDetail = POSUtils.getTerminal("POS-1"); // FIXME: use parameters
+    final OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
 
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()

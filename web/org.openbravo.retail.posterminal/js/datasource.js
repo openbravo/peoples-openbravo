@@ -90,14 +90,15 @@
   };
 
   // Source object
-  OB.DS.Request = function (source, client, org) {
+  OB.DS.Request = function (source, client, org, pos) {
     this.model = source && source.prototype && source.prototype.modelName && source; // we're using a Backbone.Model as source
     this.source = (this.model && this.model.prototype.source) || source; // we're using a plain String as source
     if (!this.source) {
-      throw 'Query must have a source';
+      throw 'A Request must have a source';
     }
     this.client = client;
     this.org = org;
+    this.pos = pos;
   };
 
   OB.DS.Request.prototype.exec = function (params, callback) {
@@ -146,8 +147,8 @@
       data.organization = this.org;
     }
 
-    if (this.terminal) {
-      data.terminal = this.terminal;
+    if (this.pos) {
+      data.pos = this.pos;
     }
 
     serviceGET(this.source, data, callback);
@@ -231,8 +232,8 @@
 
   // DataSource objects
   // OFFLINE GOES HERE
-  OB.DS.DataSource = function (query) {
-    this.query = query;
+  OB.DS.DataSource = function (request) {
+    this.request = request;
     this.cache = null;
   };
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
@@ -241,9 +242,7 @@
     var me = this;
     this.cache = null;
 
-    this.query.exec(params, function (data) {
-
-      //var db = OB.DATA.OfflineDB;
+    this.request.exec(params, function (data) {
 
       if (data.exception) {
         throw data.exception;
@@ -251,8 +250,8 @@
 
       me.cache = data;
 
-      if (me.query.model) {
-        OB.Dal.initCache(me.query.model, data, function () {
+      if (me.request.model) {
+        OB.Dal.initCache(me.request.model, data, function () {
           me.trigger('ready');
         }, function () {
           window.console.error(arguments);
