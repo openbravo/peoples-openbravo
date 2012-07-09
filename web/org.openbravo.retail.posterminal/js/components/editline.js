@@ -1,4 +1,4 @@
-/*global */
+/*global B, Backbone */
 
 (function () {
 

@@ -1,4 +1,4 @@
-/*global window, $, Backbone, _ */
+/*global window, B, $, Backbone, _ */
 
 (function () {
 
@@ -319,21 +319,13 @@
         {tag: 'a', attributes: {'class': 'close', 'data-dismiss': 'modal'}, content: [
           {tag: 'span', attributes: {style: 'font-size: 150%;'}, content: '&times;'}
         ]},
-        {id:'divheader', tag: 'h3'},
+        {id:'divheader', tag: 'h3'}
       ]},
       {id:'body', tag: 'div', attributes: {'class': 'modal-header'}}                  
     ],
     maxheight: null,
     initialize: function () {
       OB.UTIL.initContentView(this);
-//      this.$el.append(B(
-//          {kind: B.KindJQuery('div'), attr: {'class': 'modal-header'}, content: [
-//            {kind: B.KindJQuery('a'), attr: {'class': 'close', 'data-dismiss': 'modal'}, content: [
-//              {kind: B.KindHTML('<span style=\"font-size: 150%;\">&times;</span>')}
-//            ]},
-//            {kind: B.KindJQuery('h3'), content: [this.header]}
-//          ]}
-//      , this.options).$el);
       
       this.divheader.text(this.header);
       if (this.maxheight) {
