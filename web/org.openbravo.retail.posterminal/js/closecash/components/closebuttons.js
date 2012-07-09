@@ -17,10 +17,16 @@
     },
     clickEvent: function (e) {
       var found = false;
-      if (this.options.modeldaycash.defaults.step === 3) {
+      if (this.options.modeldaycash.defaults.step === 3 || this.options.modeldaycash.defaults.step === 2) {
         //Count Cash back from Post, print & Close.
+        if(this.options.modeldaycash.defaults.step === 2){
+          this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
+        }else{
+          this.options.modeldaycash.defaults.step=2;
+        }
         found = false;
         this.options.closenextbutton.$el.attr('disabled','disabled');
+        $(".active").removeClass("active");
         //Count Cash to Cash to keep or Cash to keep to Cash to keep
         if( $(".active").length===0){
           this.options.cashtokeep.$el.show();
@@ -31,6 +37,7 @@
 
            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').automatemovementtoother){
             found = true;
+            $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4',[this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
               $('#keepfixedamountlbl').text(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount.toString());
               $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
@@ -69,7 +76,6 @@
               $('#allowvariableamountlbl').hide();
               $('#variableamount').hide();
             }
-            this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
             break;
           }
            this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
@@ -80,7 +86,7 @@
           this.options.cashtokeep.$el.hide();
           this.options.closekeyboard.toolbars.toolbarempty.hide();
           this.options.modeldaycash.defaults.step=1;
-          this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
+          this.options.modeldaycash.set('allowedStep', 0);
           this.options.closenextbutton.$el.removeAttr('disabled');
         }
       } else if (this.options.modeldaycash.defaults.step === 1) {
@@ -120,10 +126,13 @@
         }
       } else if (this.options.modeldaycash.defaults.step === 1 || this.options.modeldaycash.defaults.step === 2){
         found = false;
+        if(this.options.modeldaycash.defaults.step === 2){
+          this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
+        }
         this.$el.attr('disabled','disabled');
         this.options.modeldaycash.defaults.step = 2;
       //Count Cash to Cash to keep or Cash to keep to Cash to keep
-        if( $(".active").length>0){
+        if( $(".active").length>0 && this.options.modeldaycash.get('allowedStep')!==0){
           if($('.active').val()===""){//Variable Amount
             this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('#variableamount').val());
           }else{
@@ -140,6 +149,7 @@
 
            if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').automatemovementtoother){
             found = true;
+            $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4', [this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
               $('#keepfixedamountlbl').text(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount.toString());
               $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
@@ -178,7 +188,6 @@
               $('#allowvariableamountlbl').hide();
               $('#variableamount').hide();
             }
-            this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);
             break;
           }
            this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')+1);

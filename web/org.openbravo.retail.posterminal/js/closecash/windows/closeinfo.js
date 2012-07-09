@@ -22,8 +22,8 @@
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblSteps')]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep1')]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep2')]} ,
-              //{kind: B.KindJQuery('div'), content: ['3) Prepare report']} ,
-              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep3')]}
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep3')]} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep4')]}
             ]}
           ]}
         ]}
