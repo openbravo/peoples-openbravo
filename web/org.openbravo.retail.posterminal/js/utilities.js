@@ -72,7 +72,7 @@
         view[child.id] = inst;
       }      
     } else if (child.view) {
-      obj = new child.view();
+      obj = new child.view({parent: view});
       inst = obj.$el;
       if (child.id) {
         view[child.id] = obj;
