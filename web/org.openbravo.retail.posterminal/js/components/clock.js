@@ -8,22 +8,28 @@
   // Generic Clock
   OB.COMP.Clock = Backbone.View.extend({
     tagName: 'div',
+    contentView: [{
+      id: 'divclock',
+      tag: 'div',
+      attributes: {
+        'class': 'clock-time'
+      }
+    }, {
+      id: 'divdate',
+      tag: 'div',
+      attributes: {
+        'class': 'clock-date'
+      },
+    }],
     initialize: function () {
-      this.component = B(
-        {kind: B.KindJQuery('div'), content: [
-          {kind: B.KindJQuery('div'), attr: {'class': 'clock-time'}, id: 'clock'},
-          {kind: B.KindJQuery('div'),  attr: {'class': 'clock-date'}, id: 'date'}
-        ]});
-      this.$el.append(this.component.$el);
+      OB.UTIL.initContentView(this);
 
-      this.$clock = this.component.context.clock.$el;
-      this.$date = this.component.context.date.$el;
       var me = this;
       var updateclock = function () {
-        var d = new Date();
-        me.$clock.text(OB.I18N.formatHour(d));
-        me.$date.text(OB.I18N.formatDate(d));
-      };
+          var d = new Date();
+          me.divclock.text(OB.I18N.formatHour(d));
+          me.divdate.text(OB.I18N.formatDate(d));
+          };
       updateclock();
       setInterval(updateclock, 1000);
     },
@@ -34,4 +40,3 @@
     }
   });
 }());
-
