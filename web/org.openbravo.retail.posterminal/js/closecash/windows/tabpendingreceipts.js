@@ -16,7 +16,7 @@
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'}, content: [
 
-                     OB.I18N.getLabel('OBPOS_LblStep1of3')
+                     OB.I18N.getLabel('OBPOS_LblStep1of4')
 
                   ]}
                 ]}
