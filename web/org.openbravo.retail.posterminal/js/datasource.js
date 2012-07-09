@@ -1,6 +1,6 @@
 /*global B,$,Backbone,_ */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.DS = window.OB.DS || {};
@@ -47,10 +47,10 @@
       dataType: 'json',
       type: 'POST',
       data: JSON.stringify(dataparams),
-      success: function (data, textStatus, jqXHR) {
+      success: function(data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      error: function(jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback);
       }
     });
@@ -62,21 +62,21 @@
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       type: 'GET',
-      success: function (data, textStatus, jqXHR) {
+      success: function(data, textStatus, jqXHR) {
         serviceSuccess(data, textStatus, jqXHR, callback);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      error: function(jqXHR, textStatus, errorThrown) {
         serviceError(jqXHR, textStatus, errorThrown, callback);
       }
     });
   }
 
   // Process object
-  OB.DS.Process = function (source) {
+  OB.DS.Process = function(source) {
     this.source = source;
   };
 
-  OB.DS.Process.prototype.exec = function (params, callback) {
+  OB.DS.Process.prototype.exec = function(params, callback) {
     var attr;
     var data = {};
 
@@ -101,7 +101,7 @@
     this.pos = pos;
   };
 
-  OB.DS.Request.prototype.exec = function (params, callback) {
+  OB.DS.Request.prototype.exec = function(params, callback) {
     var p, i;
     var data = {};
 
@@ -159,7 +159,7 @@
 
     for (p in filter) {
       if (filter.hasOwnProperty(p)) {
-        if (typeof (filter[p]) === 'object') {
+        if (typeof(filter[p]) === 'object') {
           return check(elem[p], filter[p]);
         } else {
           if (filter[p].substring(0, 2) === '%i') {
@@ -206,7 +206,7 @@
       };
     } else {
       f = filterfunction ||
-      function (item) {
+      function(item) {
         return item;
       };
       newdata = [];
@@ -232,17 +232,17 @@
 
   // DataSource objects
   // OFFLINE GOES HERE
-  OB.DS.DataSource = function (request) {
+  OB.DS.DataSource = function(request) {
     this.request = request;
     this.cache = null;
   };
   _.extend(OB.DS.DataSource.prototype, Backbone.Events);
 
-  OB.DS.DataSource.prototype.load = function (params) {
+  OB.DS.DataSource.prototype.load = function(params) {
     var me = this;
     this.cache = null;
 
-    this.request.exec(params, function (data) {
+    this.request.exec(params, function(data) {
 
       if (data.exception) {
         throw data.exception;
@@ -251,9 +251,9 @@
       me.cache = data;
 
       if (me.request.model) {
-        OB.Dal.initCache(me.request.model, data, function () {
+        OB.Dal.initCache(me.request.model, data, function() {
           me.trigger('ready');
-        }, function () {
+        }, function() {
           window.console.error(arguments);
         });
       } else {
@@ -262,22 +262,22 @@
     });
   };
 
-  OB.DS.DataSource.prototype.find = function (filter, callback) {
+  OB.DS.DataSource.prototype.find = function(filter, callback) {
     if (this.cache) {
       callback(findInData(this.cache, filter));
     } else {
-      this.on('ready', function () {
+      this.on('ready', function() {
         callback(findInData(this.cache, filter));
       }, this);
     }
   };
 
-  OB.DS.DataSource.prototype.exec = function (filter, callback) {
+  OB.DS.DataSource.prototype.exec = function(filter, callback) {
     if (this.cache) {
       var result1 = execInData(this.cache, filter);
       callback(result1.data, result1.info);
     } else {
-      this.on('ready', function () {
+      this.on('ready', function() {
         var result2 = execInData(this.cache, filter);
         callback(result2.data, result2.info);
       }, this);
@@ -285,22 +285,22 @@
   };
 
   // HWServer
-  OB.DS.HWServer = function (url, scaleurl) {
+  OB.DS.HWServer = function(url, scaleurl) {
     this.url = url;
     this.scaleurl = scaleurl;
   };
 
-  OB.DS.HWServer.prototype.getWeight = function (callback) {
+  OB.DS.HWServer.prototype.getWeight = function(callback) {
     if (this.scaleurl) {
       var me = this;
       $.ajax({
         url: me.scaleurl,
         dataType: 'json',
         type: 'GET',
-        success: function (data, textStatus, jqXHR) {
+        success: function(data, textStatus, jqXHR) {
           callback(data);
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: function(jqXHR, textStatus, errorThrown) {
           if (callback) {
             callback({
               exception: {
@@ -318,7 +318,7 @@
     }
   };
 
-  OB.DS.HWServer.prototype.print = function (templatedata, params, callback) {
+  OB.DS.HWServer.prototype.print = function(templatedata, params, callback) {
     if (this.url) {
       var me = this;
       $.ajax({
@@ -327,12 +327,12 @@
         dataType: 'json',
         type: 'POST',
         data: params ? _.template(templatedata, params) : templatedata,
-        success: function (data, textStatus, jqXHR) {
+        success: function(data, textStatus, jqXHR) {
           if (callback) {
             callback(data);
           }
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: function(jqXHR, textStatus, errorThrown) {
           if (callback) {
             callback({
               exception: {
