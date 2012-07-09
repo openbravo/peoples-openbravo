@@ -64,16 +64,20 @@
         inst.attr(child.attributes);
       }
       if (child.content) {
-        for (i = 0, max = child.content.length; i < max; i++) {
-          inst.append(_initContentView(view, child.content[i]));
-        }        
+        if (typeof(child.content) === 'string') {
+          inst.html(child.content);          
+        } else {
+          for (i = 0, max = child.content.length; i < max; i++) {
+            inst.append(_initContentView(view, child.content[i]));
+          }      
+        }
       }
       if (child.id) {
         view[child.id] = inst;
       }      
     } else if (child.view) {
       obj = new child.view({parent: view});
-      inst = obj.$el;
+      inst = obj.render().$el;
       if (child.id) {
         view[child.id] = obj;
       }

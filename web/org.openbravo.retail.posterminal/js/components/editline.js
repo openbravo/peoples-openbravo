@@ -1,147 +1,274 @@
-/*global B */
+/*global */
 
 (function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.EditLine = function (context) {
-    var me = this;
-
-    this.component = B(
-      {kind: B.KindJQuery('div'), content: [
-        {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {kind: B.KindJQuery('div'), id: 'msgedit', attr: {'class': 'row-fluid', 'style': 'display: none;'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span7'}, content: [
-              {kind: B.KindJQuery('div'), attr: {style: 'padding: 5px; width:100%'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-                    {kind: OB.COMP.SmallButton, attr: { 'label': OB.I18N.getLabel('OBPOS_ButtonDelete'), 'className': 'btnlink-orange',
-                      'clickEvent': function() {
-                        if (me.line) {
-                          me.receipt.deleteLine(me.line);
-                          me.receipt.trigger('scan');
-                        }
+  OB.COMP.EditLine = Backbone.View.extend({
+    tag: 'div',
+    contentView: [{
+      tag: 'div',
+      attributes: {
+        'style': 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px'
+      },
+      content: [{
+        tag: 'div',
+        id: 'msgedit',
+        attributes: {
+          'class': 'row-fluid',
+          'style': 'display: none;'
+        },
+        content: [{
+          tag: 'div',
+          attributes: {
+            'class': 'span7'
+          },
+          content: [{
+            tag: 'div',
+            attributes: {
+              style: 'padding: 5px; width:100%'
+            },
+            content: [{
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span12'
+                },
+                content: [{
+                  view: OB.COMP.SmallButton.extend({
+                    'label': OB.I18N.getLabel('OBPOS_ButtonDelete'),
+                    'className': 'btnlink-orange',
+                    'clickEvent': function () {
+                      var parent = this.options.parent;
+                      if (parent.line) {
+                        parent.receipt.deleteLine(parent.line);
+                        parent.receipt.trigger('scan');
                       }
-                    }}
-                  ]}
-                ]}
-              ]},
-              {kind: B.KindJQuery('div'), attr: {style: 'padding: 0px 0px 0px 25px; width:100%; line-height: 140%;'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LineDescription')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), id: 'editlinename'}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LineQuantity')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), id: 'editlineqty'}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LinePrice')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), id: 'editlineprice'}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LineValue')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), content: [
-                    ]}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LineDiscount')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), content: [
-                    ]}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
-                    OB.I18N.getLabel('OBPOS_LineTotal')
-                  ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span8'}, content: [
-                    {kind: B.KindJQuery('span'), id: 'editlinegross'}
-                  ]}
-                ]}
-              ]}
-            ]},
-            {kind: B.KindJQuery('div'), attr: {'class': 'span5', 'style': 'text-align: right'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 60px 10px 20px 10px;'}, id: 'editlineimage'}
-            ]}
-          ]},
-          {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 10px; display: none;'}, content: [
-            {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'float:left;'}}
-          ]}
-        ]}
-      ]}
-    );
+                    }
+                  })
+                }]
+              }]
+            }]
+          }, {
+            tag: 'div',
+            attributes: {
+              style: 'padding: 0px 0px 0px 25px; width:100%; line-height: 140%;'
+            },
+            content: [{
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LineDescription')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  id: 'editlinename'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LineQuantity')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  id: 'editlineqty'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LinePrice')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  id: 'editlineprice'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LineValue')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  content: []
+                }]
+              }]
+            }, {
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LineDiscount')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  content: []
+                }]
+              }]
+            }, {
+              tag: 'div',
+              attributes: {
+                'class': 'row-fluid'
+              },
+              content: [{
+                tag: 'div',
+                attributes: {
+                  'class': 'span4'
+                },
+                content: [
+                OB.I18N.getLabel('OBPOS_LineTotal')]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'span8'
+                },
+                content: [{
+                  tag: 'span',
+                  id: 'editlinegross'
+                }]
+              }]
+            }]
+          }]
+        }, {
+          tag: 'div',
+          attributes: {
+            'class': 'span5',
+            'style': 'text-align: right'
+          },
+          content: [{
+            tag: 'div',
+            attributes: {
+              'style': 'padding: 60px 10px 20px 10px;'
+            },
+            id: 'editlineimage'
+          }]
+        }]
+      }, {
+        tag: 'div',
+        id: 'msgaction',
+        attributes: {
+          'style': 'padding: 10px; display: none;'
+        },
+        content: [{
+          tag: 'div',
+          id: 'txtaction',
+          attributes: {
+            'style': 'float:left;'
+          }
+        }]
+      }]
+    }],
+    initialize: function () {
+      var me = this;
+      OB.UTIL.initContentView(this);
 
-    this.$el = this.component.$el;
-    this.msgedit = this.component.context.msgedit.$el;
-    this.msgaction = this.component.context.msgaction.$el;
-    this.txtaction = this.component.context.txtaction.$el;
-    this.editlineimage = this.component.context.editlineimage.$el;
-    this.editlinename = this.component.context.editlinename.$el;
-    this.editlineqty = this.component.context.editlineqty.$el;
-    this.editlineprice = this.component.context.editlineprice.$el;
-    this.editlinegross = this.component.context.editlinegross.$el;
+      this.products = this.options.DataProductPrice;
+      this.receipt = this.options.modelorder;
+      this.line = null;
 
-    // Set Model
+      this.receipt.get('lines').on('selected', function (line) {
+        if (this.line) {
+          this.line.off('change', this.render);
+        }
+        this.line = line;
+        if (this.line) {
+          this.line.on('change', this.render, this);
+        }
+        this.render();
+      }, this);
+    },
+    render: function () {
 
-    this.products = context.DataProductPrice;
-    this.receipt = context.modelorder;
-    this.line = null;
-
-    this.receipt.get('lines').on('selected', function (line) {
       if (this.line) {
-        this.line.off('change', this.renderLine);
+        this.msgaction.hide();
+        this.msgedit.show();
+        this.editlineimage.empty().append(B({
+          kind: OB.UTIL.Thumbnail,
+          attr: {
+            img: this.line.get('img'),
+            width: 128,
+            height: 128
+          }
+        }).$el);
+        this.editlinename.text(this.line.get('product').get('_identifier'));
+        this.editlineqty.text(this.line.printQty());
+        this.editlineprice.text(this.line.printPrice());
+        this.editlinegross.text(this.line.printGross());
+      } else {
+        this.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
+        this.msgedit.hide();
+        this.msgaction.show();
+        this.editlineimage.empty();
+        this.editlinename.empty();
+        this.editlineqty.empty();
+        this.editlineprice.empty();
+        this.editlinegross.empty();
       }
-      this.line = line;
-      if (this.line) {
-        this.line.on('change', this.renderLine, this);
-      }
-      this.renderLine();
-    }, this);
-
-    this.renderLine();
-  };
-
-  OB.COMP.EditLine.prototype.renderLine = function () {
-
-    if (this.line) {
-      this.msgaction.hide();
-      this.msgedit.show();
-      this.editlineimage.empty().append(B(
-          {kind: OB.UTIL.Thumbnail, attr: {img: this.line.get('img'), width: 128, height: 128}}
-      ).$el);
-      this.editlinename.text(this.line.get('product').get('_identifier'));
-      this.editlineqty.text(this.line.printQty());
-      this.editlineprice.text(this.line.printPrice());
-      this.editlinegross.text(this.line.printGross());
-    } else {
-      this.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
-      this.msgedit.hide();
-      this.msgaction.show();
-      this.editlineimage.empty();
-      this.editlinename.empty();
-      this.editlineqty.empty();
-      this.editlineprice.empty();
-      this.editlinegross.empty();
+      return this;
     }
-  };
+  });
 }());
