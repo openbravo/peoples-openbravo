@@ -80,7 +80,7 @@
     } else if (child.$el) {
       inst = child.$el;
     }
-    return inst
+    return inst;
   }
   
   OB.UTIL.initContentView = function (view) {
