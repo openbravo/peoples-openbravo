@@ -24,7 +24,7 @@
 
           {kind: OB.COMP.ModalBPs},
           {kind: OB.COMP.ModalProcessReceipts},
-          {kind: OB.COMP.ModalReceipts},
+          {kind: OB.UI.ModalReceipts},
           {kind: B.KindJQuery('div'), attr: {'class': 'row', 'style': 'margin-bottom: 5px'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
               {kind: B.KindJQuery('ul'), attr: {'class': 'unstyled nav-pos row-fluid'}, content: [
