@@ -1,4 +1,4 @@
-/*global B, _, Backbone, $ */
+/*global _, Backbone, $ */
 
 (function () {
 
@@ -9,6 +9,41 @@
   OB.UI.ListView = function (tag) {
     return Backbone.View.extend({
       tagName: tag,
+      registerCollection: function (collection) {
+        this.collection = collection;
+        if (this.collection) {
+          this.collection.on('change', function (model, prop) {
+            var index = this.collection.indexOf(model);
+            this.$el.children().eq(index + this.header).replaceWith((new this.renderLine({
+              model: model
+            })).render().$el);
+          }, this);
+  
+          this.collection.on('add', function (model, prop, options) {
+            this._addModelToCollection(model, options.index);
+          }, this);
+  
+          this.collection.on('remove', function (model, prop, options) {
+            var index = options.index;
+            this.$el.children().eq(index + this.header).remove();
+          }, this);
+  
+          this.collection.on('reset', function () {
+            this.$el.empty();
+            if (this.renderHeader) {
+              this.$el.append((new this.renderHeader()).render().$el);
+            }
+            this.collection.each(function (model) {
+              this._addModelToCollection(model);
+            }, this);
+          }, this);
+        }
+
+        if (this.renderHeader) {
+          this.$el.append((new this.renderHeader()).render().$el);
+        }        
+        
+      },
       _addModelToCollection: function (model, index) {
         var me = this,
             tr = (new this.renderLine({
@@ -20,43 +55,19 @@
           this.$el.append(tr);
         }
       },
-      attr: function (attr) {
+      
+      attr: function (attr) {       
+        // Deprecated function used by Builder        
         this.htmlId = attr.htmlId;
         this.className = attr.className;
         this.style = attr.style;
         this.renderLine = attr.renderLine;
         this.renderHeader = attr.renderHeader;
         this.header = this.renderHeader ? 1 : 0;
-        this.collection = attr.collection;
-
-        this.collection.on('change', function (model, prop) {
-          var index = this.collection.indexOf(model);
-          this.$el.children().eq(index + this.header).replaceWith((new this.renderLine({
-            model: model
-          })).render().$el);
-        }, this);
-
-        this.collection.on('add', function (model, prop, options) {
-          this._addModelToCollection(model, options.index);
-        }, this);
-
-        this.collection.on('remove', function (model, prop, options) {
-          var index = options.index;
-          this.$el.children().eq(index + this.header).remove();
-        }, this);
-
-        this.collection.on('reset', function () {
-          this.$el.empty();
-          if (this.renderHeader) {
-            this.$el.append((new this.renderHeader()).render().$el);
-          }
-          this.collection.each(function (model) {
-            this._addModelToCollection(model);
-          }, this);
-        }, this);
-
+        
         // Init clear...
         this.$el.empty();
+        
         if (this.htmlId) {
           this.$el.attr('id', this.htmlId);
         }
@@ -66,13 +77,11 @@
         if (this.style) {
           this.$el.attr('style', this.style);
         }
-        if (this.renderHeader) {
-          this.$el.append((new this.renderHeader()).render().$el);
-        }
+        
+        this.registerCollection(attr.collection);
       }
     });
   };
-
 
   // Table View
   OB.UI.TableView = Backbone.View.extend({
@@ -82,46 +91,12 @@
       this.tbody = $('<ul/>').addClass('unstyled').css('display', 'none');
       this.tempty = $('<div/>');
       this.tinfo = $('<div/>').css('display', 'none').css('border-bottom', '1px solid #cccccc').css('padding', '15px').css('font-weight', 'bold').css('color', '#cccccc');
-      this.$el.append(this.theader).append(this.tbody).append(this.tinfo).append(this.tempty);
+      this.$el.empty().append(this.theader).append(this.tbody).append(this.tinfo).append(this.tempty);
     },
-
-    _addModelToCollection: function (model, index) { // means after...
-      var me = this,
-          tr = $('<li/>');
-      tr.append((new this.renderLine({
-        model: model
-      })).render().$el);
-      // tr.click(stdClickEvent);
-      model.on('change', function () {
-        tr.empty().append((new this.renderLine({
-          model: model
-        })).render().$el);
-      }, this);
-
-      model.on('selected', function () {
-        if (this.style) {
-          if (this.selected) {
-            this.selected.removeClass('selected');
-          }
-          this.selected = tr;
-          this.selected.addClass('selected');
-          OB.UTIL.makeElemVisible(this.$el, this.selected);
-        }
-      }, this);
-
-      if (_.isNumber(index) && index < this.collection.length - 1) {
-        this.tbody.children().eq(index).before(tr);
-      } else {
-        this.tbody.append(tr);
-      }
-    },
-
-    attr: function (attr) {
-      this.style = attr.style; // none, "edit", "list"
-      this.renderHeader = attr.renderHeader;
-      this.renderLine = attr.renderLine;
-      this.renderEmpty = attr.renderEmpty;
-      this.collection = attr.collection;
+    
+    registerCollection: function (collection) {
+      
+      this.collection = collection;
       this.selected = null;
 
       if (this.renderHeader) {
@@ -130,8 +105,8 @@
 
       if (this.renderEmpty) {
         this.tempty.append((new this.renderEmpty()).render().$el);
-      }
-
+      }      
+      
       this.collection.on('selected', function (model) {
         if (!model && this.style) {
           if (this.selected) {
@@ -210,7 +185,48 @@
         } else {
           this.tinfo.hide();
         }
+      }, this);    
+    },
+
+    _addModelToCollection: function (model, index) { // means after...
+      var me = this,
+          tr = $('<li/>');
+      tr.append((new this.renderLine({
+        model: model
+      })).render().$el);
+      // tr.click(stdClickEvent);
+      model.on('change', function () {
+        tr.empty().append((new this.renderLine({
+          model: model
+        })).render().$el);
       }, this);
+
+      model.on('selected', function () {
+        if (this.style) {
+          if (this.selected) {
+            this.selected.removeClass('selected');
+          }
+          this.selected = tr;
+          this.selected.addClass('selected');
+          OB.UTIL.makeElemVisible(this.$el, this.selected);
+        }
+      }, this);
+
+      if (_.isNumber(index) && index < this.collection.length - 1) {
+        this.tbody.children().eq(index).before(tr);
+      } else {
+        this.tbody.append(tr);
+      }
+    },
+
+    attr: function (attr) {
+      // Deprecated function used by Builder
+      this.style = attr.style; // none, "edit", "list"
+      this.renderHeader = attr.renderHeader;     
+      this.renderEmpty = attr.renderEmpty;
+      this.renderLine = attr.renderLine;
+      
+      this.registerCollection(attr.collection); 
     }
   });
 
