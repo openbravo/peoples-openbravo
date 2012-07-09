@@ -1,4 +1,4 @@
-/*global B, Backbone */
+/*global Backbone */
 
 (function () {
 
@@ -204,7 +204,18 @@
             attributes: {
               'style': 'padding: 60px 10px 20px 10px;'
             },
-            id: 'editlineimage'
+            content: [
+                 {
+                   id: 'editlineimage',
+                   
+                   view: OB.UTIL.Thumbnail.extend({
+                     className: 'image-wrap image-editline',
+                     width: 128,
+                     height: 128
+                   })
+                 }
+              ]
+              
           }]
         }]
       }, {
@@ -246,12 +257,8 @@
       if (this.line) {
         this.msgaction.hide();
         this.msgedit.show();
-        this.editlineimage.empty().append(B({
-          kind: OB.UTIL.ThumbnailEditLine,
-          attr: {
-            img: this.line.get('img')
-          }
-        }).$el);
+        this.editlineimage.img = this.line.get('img');
+        this.editlineimage.render();
         this.editlinename.text(this.line.get('product').get('_identifier'));
         this.editlineqty.text(this.line.printQty());
         this.editlineprice.text(this.line.printPrice());
@@ -260,7 +267,8 @@
         this.txtaction.text(OB.I18N.getLabel('OBPOS_NoLineSelected'));
         this.msgedit.hide();
         this.msgaction.show();
-        this.editlineimage.empty();
+        this.editlineimage.img = null;
+        this.editlineimage.render();
         this.editlinename.empty();
         this.editlineqty.empty();
         this.editlineprice.empty();

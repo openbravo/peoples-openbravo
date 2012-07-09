@@ -68,16 +68,6 @@
     }
   });
 
-  OB.UTIL.ThumbnailEditLine = OB.UTIL.Thumbnail.extend({
-    width: 128,
-    height: 128,
-    render: function () {
-      OB.UTIL.Thumbnail.prototype.render.call(this); // super.initialize();
-      this.$el.addClass('image-editline');
-      return this;
-    }
-  });
-
   OB.UTIL.showAlert = function (s, title, type) {
     var c = B(
       {kind: B.KindJQuery('div'), attr: {'class': 'alert fade in ' + type, style: 'position:absolute; right:35px; top: 5px'}, content: [
