@@ -141,8 +141,14 @@
               var orderlist = me.context.modelorderlist,
                 criteria = {
                   hasbeenpaid:'Y'
-                };
-              if (navigator.onLine) {
+                },
+                previousPage = document.referrer || "",
+                fromCashUp;
+
+              // Do not show if previous window is retail.cashup, because
+              // the modal window has just been closed there
+              fromCashUp = previousPage.match(/retail.cashup$/);
+              if (navigator.onLine && !fromCashUp) {
                 OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
                   var currentOrder = {};
                   if (ordersPaidNotProcessed && ordersPaidNotProcessed.length > 0) {
