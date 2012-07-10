@@ -105,6 +105,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_GLITEM_DROPDEP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -122,6 +126,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_DIFFS">
         <reference local="C_GLITEM_DIFF_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_DROPDE">
+        <reference local="C_GLITEM_DROPDEP_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_DROPS">
         <reference local="C_GLITEM_DROPS_ID" foreign="C_GLITEM_ID"/>

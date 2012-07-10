@@ -170,7 +170,7 @@ public class CashCloseProcessor {
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType, BigDecimal reconciliationTotal) {
     TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
     FIN_FinancialAccount account = paymentType.getFinancialAccount();
-    GLItem glItem = paymentMethod.getGLItemForDrops();
+    GLItem glItem = paymentMethod.getGlitemDropdep();
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -192,7 +192,7 @@ public class CashCloseProcessor {
 
   protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType, BigDecimal reconciliationTotal) {
-    GLItem glItem = paymentType.getPaymentMethod().getGLItemForDeposits();
+    GLItem glItem = paymentType.getPaymentMethod().getGlitemDropdep();
     if (paymentType.getObretcoCmevents() == null) {
       throw new OBException("There is no close event defined for the payment method");
     }
