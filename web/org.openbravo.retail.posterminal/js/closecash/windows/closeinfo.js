@@ -17,7 +17,7 @@
               {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'float: right; padding: 0px;'}, content: [
                 {kind: OB.COMP.SmallButton, attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel'), 'href': '#modalCancel', 'dataToggle': 'modal', 'className': 'btnlink-white btnlink-fontgrey'}}
               ]},
-              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblEndDayProcess')]} ,
+              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblCashUpProcess')]} ,
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [{kind: OB.COMP.ButtonPrev},{kind: OB.COMP.ButtonNext}]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep1')]} ,
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep2')]} ,
