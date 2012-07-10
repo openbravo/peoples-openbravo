@@ -49,6 +49,7 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
@@ -327,18 +328,23 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           }
 
           // Process the new payment
-          FIN_AddPayment.processPayment(vars, this, "P", newPayment);
-
-          // Update Invoice's description
-          final StringBuffer invDesc = new StringBuffer();
-          if (invoice.getDescription() != null) {
-            invDesc.append(invoice.getDescription());
-            invDesc.append("\n");
+          OBError message = FIN_AddPayment.processPayment(vars, this, "P", newPayment);
+          if ("Success".equals(message.getType())) {
+            // Update Invoice's description
+            final StringBuffer invDesc = new StringBuffer();
+            if (invoice.getDescription() != null) {
+              invDesc.append(invoice.getDescription());
+              invDesc.append("\n");
+            }
+            invDesc.append(String.format(
+                Utility.messageBD(this, "APRM_InvoiceDescUsedCredit", vars.getLanguage()),
+                creditPaymentsIdentifiers.toString()));
+            invoice.setDescription(invDesc.toString());
+          } else {
+            message.setMessage(OBMessageUtils.messageBD("PaymentError") + " "
+                + message.getMessage());
+            vars.setMessage(strTabId, message);
           }
-          invDesc.append(String.format(
-              Utility.messageBD(this, "APRM_InvoiceDescUsedCredit", vars.getLanguage()),
-              creditPaymentsIdentifiers.toString()));
-          invoice.setDescription(invDesc.toString());
 
         } catch (final Exception e) {
           log4j.error("Exception while canceling the credit in the invoice: " + strC_Invoice_ID);
