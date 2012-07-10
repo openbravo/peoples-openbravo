@@ -76,31 +76,56 @@
             ]},
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid login-inputs-container'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-screenlocked'}, content: [OB.I18N.getLabel('OBPOS_LoginScreenLocked')]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'class': 'login-inputs-username', 'type': 'text', 'placeholder': OB.I18N.getLabel('OBPOS_LoginUserInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
-                    {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'class': 'login-inputs-password', 'type': 'password', 'placeholder': OB.I18N.getLabel('OBPOS_LoginPasswordInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
-                  ]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span2', 'style': 'margin: 20px 0px 0px 0px; text-align: center;'}, content: [
-                    {kind: OB.COMP.ModalDialogButton, 'id': 'loginaction', attr: {'id': 'loginaction', 'label': OB.I18N.getLabel('OBPOS_LoginButton'),
-                      'clickEvent': function() {
-                        OB.UTIL.loginButtonAction();
-                      }
-                    }}
+                {kind: B.KindJQuery('div'), attr: {'id': 'login-inputs'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-screenlocked'}, content: [OB.I18N.getLabel('OBPOS_LoginScreenLocked')]}
                   ]},
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
-                    {kind: OB.COMP.Clock, attr: {'className': 'login-clock'}}
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
+                      {kind: B.KindJQuery('input'), id: 'username', attr: {'id': 'username', 'class': 'login-inputs-username', 'type': 'text', 'placeholder': OB.I18N.getLabel('OBPOS_LoginUserInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
+                    ]}
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-inputs-userpassword'}, content: [
+                      {kind: B.KindJQuery('input'), id: 'password', attr: {'id': 'password', 'class': 'login-inputs-password', 'type': 'password', 'placeholder': OB.I18N.getLabel('OBPOS_LoginPasswordInput'), 'onkeydown': 'if(event && event.keyCode == 13) { OB.UTIL.loginButtonAction(); }; return true;'}}
+                    ]}
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span1', 'style': 'color: transparent;'}, content: ['.']},
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span2', 'style': 'margin: 20px 0px 0px 0px; text-align: center;'}, content: [
+                      {kind: OB.COMP.ModalDialogButton, 'id': 'loginaction', attr: {'id': 'loginaction', 'label': OB.I18N.getLabel('OBPOS_LoginButton'),
+                        'clickEvent': function() {
+                          OB.UTIL.loginButtonAction();
+                        }
+                      }}
+                    ]},
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
+                      {kind: OB.COMP.Clock, attr: {'className': 'login-clock'}}
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'id': 'login-browsernotsupported', 'style': 'display: none;'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span6 login-browsernotsupported-title'}, content: [
+                      OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported')
+                    ]}
+                  ]},
+                  {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span4'}, content: [
+                      {kind: B.KindJQuery('div'), attr: {'class': 'login-browsernotsupported-content'}, content: [
+                        OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P1')
+                      ]},
+                      {kind: B.KindJQuery('div'), attr: {'class': 'login-browsernotsupported-content'}, content: [
+                        OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P2', ['Chrome, Safari, Safari (iOS)','Android'])
+                      ]},
+                      {kind: B.KindJQuery('div'), attr: {'class': 'login-browsernotsupported-content'}, content: [
+                        OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P3')
+                      ]}
+                    ]},
+                    {kind: B.KindJQuery('div'), attr: {'class': 'span2'}, content: [
+                      {kind: OB.COMP.Clock, attr: {'className': 'login-browsernotsupported-clock'}}
+                    ]}
                   ]}
                 ]}
               ]}
@@ -175,6 +200,12 @@
                 setCompanyLogo(data);
               }
             });
+            if (!$.browser.webkit) { //If the browser is not supported, show message and finish.
+              $('#login-inputs').css('display', 'none');
+              $('#login-browsernotsupported').css('display', 'block');
+              OB.UTIL.showLoading(false);
+              return true;
+            }
             $.ajax({
               url: '../../org.openbravo.retail.posterminal.service.loginutils',
               contentType: 'application/json;charset=utf-8',
