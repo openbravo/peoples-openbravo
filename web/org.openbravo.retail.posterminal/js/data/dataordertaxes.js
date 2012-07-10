@@ -38,10 +38,10 @@
           taxRate = coll.at(0);
           taxId = taxRate.get('id');
 
-          rate =  new BigDecimal(String(taxRate.get('rate')));
-          rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY));
+          rate = new BigDecimal(String(taxRate.get('rate')));
+          rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
 
-          pricenet = OB.DEC.div(element.get('price'), rate.add(new BigDecimal('1'));
+          pricenet = OB.DEC.div(element.get('price'), rate.add(new BigDecimal('1')));
 
           net =  OB.DEC.mul(pricenet, element.get('qty'));
           amount = OB.DEC.sub(element.get('gross'), net);
