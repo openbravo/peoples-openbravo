@@ -196,7 +196,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
           String hqlSession = "select distinct session.username, session.sessionActive "
               + "from ADSession session "
               + "where session.username = :theUsername and session.sessionActive = 'Y' and "
-              + "session.loginStatus = 'S'";
+              + "session.loginStatus = 'OBPOS_POS'";
           Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
           qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
           qrySession.setMaxResults(1);
