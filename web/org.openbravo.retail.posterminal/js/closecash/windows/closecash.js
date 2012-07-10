@@ -69,6 +69,7 @@
             OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
               var currentOrder = {};
               if (fetchedOrderList && fetchedOrderList.length !== 0) {
+                ctx.closenextbutton.$el.attr('disabled','disabled');
                 orderlist.reset(fetchedOrderList.models);
               }
             }, function () { //OB.Dal.find error

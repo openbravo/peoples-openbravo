@@ -17,7 +17,7 @@
           {kind: B.KindJQuery('div'), content: [
             {kind: OB.UI.TableView, id: 'tableview', attr: {
               collection: this.receiptlist,
-              renderLine: OB.COMP.RenderPendingReceipt.extend({me:me}),
+              renderLine: OB.COMP.RenderPendingReceipt.extend({me:me, ctx: context}),
               renderEmpty: OB.COMP.RenderEmpty
             }}
           ]}

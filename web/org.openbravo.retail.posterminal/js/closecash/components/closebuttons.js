@@ -247,10 +247,14 @@
     label: OB.I18N.getLabel('OBUIAPP_Delete'),
     order: null,
     me: null,
+    ctx: null,
     className: 'btnlink-gray',
     attributes: {'style': 'min-width: 70px; margin: 2px 5px 2px 5px;'},
     clickEvent: function (e) {
        this.me.receiptlist.remove(this.order);
+       if(this.me.receiptlist.length===0){
+         this.ctx.closenextbutton.$el.removeAttr('disabled');
+       }
        OB.Dal.remove(this.order, function(){
          return true;
        }, function(){

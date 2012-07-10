@@ -7,6 +7,7 @@
 
   OB.COMP.RenderPendingReceipt =  OB.COMP.CustomView.extend({
     me: null,
+    ctx: null,
     render: function() {
       this.$el.append(B(
         {kind: B.KindJQuery('div'), attr:{'style': 'display: table-row; height: 42px;'}, content: [
@@ -25,7 +26,7 @@
             ]}
           ]},
           {kind: B.KindJQuery('div'), attr: {style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 15%;'}, content: [
-             {kind: OB.COMP.ButtonVoid.extend({order: this.model, me: this.me})}
+             {kind: OB.COMP.ButtonVoid.extend({order: this.model, me: this.me, ctx: this.ctx})}
            ]},
           {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}}
         ]}
