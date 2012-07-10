@@ -5,13 +5,13 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.ButtonPrev = OB.COMP.RegularButton.extend({
+  OB.COMP.ButtonPrev = OB.COMP.SmallButton.extend({
     _id: 'closeprevbutton',
     disabled: 'disabled',
     label: OB.I18N.getLabel('OBPOS_LblPrevStep'),
     attributes: {'style': 'min-width: 115px; margin: 5px;'},
     render: function () {
-      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      OB.COMP.SmallButton.prototype.render.call(this); // super.initialize();
       this.$el.addClass('btnlink-fontgrey');
       return this;
     },
@@ -102,12 +102,12 @@
     }
   });
 
-  OB.COMP.ButtonNext = OB.COMP.RegularButton.extend({
+  OB.COMP.ButtonNext = OB.COMP.SmallButton.extend({
     _id: 'closenextbutton',
     label: OB.I18N.getLabel('OBPOS_LblNextStep'),
     attributes: {'style': 'min-width: 115px; margin: 5px;'},
     render: function () {
-      OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
+      OB.COMP.SmallButton.prototype.render.call(this); // super.initialize();
       this.$el.addClass('btnlink-fontgrey');
       return this;
     },
