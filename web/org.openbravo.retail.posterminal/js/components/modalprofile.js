@@ -66,7 +66,7 @@
             {kind: B.KindJQuery('div'), attr: {'style': 'height: 127px; background-color: #ffffff;'}, content: [
               {kind: B.KindJQuery('div'), content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
                  {kind: OB.UI.ListView('select'), attr: {
@@ -92,7 +92,7 @@
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
               {kind: B.KindJQuery('div'), content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
                   {kind: OB.UI.ListView('select'), attr: {
@@ -118,7 +118,7 @@
               {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
               {kind: B.KindJQuery('div'), content: [
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 3px 8px 0px 0px; font-size: 15px;'}, content: ['Set as Default']}
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: ['Set as Default']}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-profile-combo'}, content: [
