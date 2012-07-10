@@ -39,8 +39,8 @@
     className: 'image-wrap',
     img: null,
     contentType: 'img/png',
-    width: 48,
-    height: 48,
+    width: 49,
+    height: 49,
     'default': 'img/box.png',
     initialize: function () {
       this.$image = $('<div/>')          
