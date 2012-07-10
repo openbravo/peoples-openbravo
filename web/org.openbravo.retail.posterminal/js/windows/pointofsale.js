@@ -208,6 +208,9 @@
               }
             });
           });
+          modelterminal.on('offline', function () {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
+          });
         }}
       );
     }
