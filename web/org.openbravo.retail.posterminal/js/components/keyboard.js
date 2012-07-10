@@ -31,7 +31,7 @@
     command: false,
     permission: null,
     label: null,
-
+    classButtonActive: 'btnactive',
     tagName: 'div',
     attributes: {
       'style': 'margin: 5px;'
@@ -56,11 +56,11 @@
 
       if (this.command) {
         this.button = new OB.COMP.Button();
-        this.button.$el.attr('class', 'btnkeyboard ' + this.classButton);
+        this.button.$el.attr('class', 'btnkeyboard ' + this.classButton);       
         this.button.clickEvent = function (e) {
           me.kb.keyPressed(me.command);
         };
-        this.kb.addButton(this.command, this.button.$el);
+        this.kb.addButton(this.command, this.button);
       } else {
         this.button = new ButtonDummy({
           className: 'btnkeyboard ' + this.classButton
@@ -69,6 +69,7 @@
 
       // Initialize the interface of the button
       this.button.contentView = this.contentViewButton;
+      this.button.classButtonActive = this.classButtonActive;
       OB.UTIL.initContentView(this.button);
 
       this.$el.append(this.button.$el);
@@ -563,12 +564,14 @@
     },
 
     setStatus: function (newstatus) {
-      if (this.buttons[this.status]) {
-        this.buttons[this.status].removeClass('btnactive');
+      var btn = this.buttons[this.status];
+      if (btn) {
+        btn.$el.removeClass(btn.classButtonActive);
       }
       this.status = newstatus;
-      if (this.buttons[this.status]) {
-        this.buttons[this.status].addClass('btnactive');
+      btn = this.buttons[this.status];
+      if (btn) {
+        btn.$el.addClass(btn.classButtonActive);
       }
     },
 
@@ -660,6 +663,7 @@
           parent: this,
           btn: BtnAction.extend({
             command: value[i].command,
+            classButtonActive: value[i].classButtonActive,
             permission: (value[i].definition ? value[i].definition.permission : null),
             contentViewButton: [value[i].label]
           })

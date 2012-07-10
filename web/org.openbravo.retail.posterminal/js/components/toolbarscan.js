@@ -6,8 +6,10 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.ToolbarScan = function (context) {
-    this.toolbar = [
-      {command:'code', label: OB.I18N.getLabel('OBPOS_KbCode')}
-    ];
+    this.toolbar = [{
+        command: 'code', 
+        classButtonActive: 'btnactive-blue',
+        label: OB.I18N.getLabel('OBPOS_KbCode')
+      }];
   };
 }());

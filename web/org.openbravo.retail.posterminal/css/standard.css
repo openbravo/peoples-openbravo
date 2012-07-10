@@ -110,6 +110,12 @@ button.btnkeyboard:active {
 button.btnactive {
   background-color: #F8941D;
 }
+button.btnactive-green {
+  background-color: #6cb33f;
+}
+button.btnactive-blue {
+  background-color: #7da7d9;
+}
 
 button.btnkeyboard-plus:active {
   opacity: 1;
