@@ -136,28 +136,6 @@
                   'class': 'span4'
                 },
                 content: [
-                OB.I18N.getLabel('OBPOS_LineValue')]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span8'
-                },
-                content: [{
-                  tag: 'span',
-                  content: []
-                }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [
                 OB.I18N.getLabel('OBPOS_LineDiscount')]
               }, {
                 tag: 'div',
