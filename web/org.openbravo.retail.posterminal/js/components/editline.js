@@ -257,7 +257,7 @@
       if (this.line) {
         this.msgaction.hide();
         this.msgedit.show();
-        this.editlineimage.img = this.line.get('img');
+        this.editlineimage.img = this.line.get('product').get('img');
         this.editlineimage.render();
         this.editlinename.text(this.line.get('product').get('_identifier'));
         this.editlineqty.text(this.line.printQty());
