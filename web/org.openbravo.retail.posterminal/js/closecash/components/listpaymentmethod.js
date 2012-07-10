@@ -100,7 +100,7 @@
                       // Set Model
                       me.options.modeldaycash.on('change:totalCounted', function() {
                       this.total.text(OB.I18N.formatCurrency(OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))));
-                      if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+                      if(OB.DEC.compare(OB.DEC.add(0,OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))) )<0){
                         this.$el.css("color","red");//negative value
                       }else{
                         this.$el.css("color","black");
@@ -108,7 +108,7 @@
                      }, this);
                      // Initial total display
                      this.total.text(OB.I18N.formatCurrency(OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))));
-                     if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+                     if(OB.DEC.compare(OB.DEC.add(0,OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))) )<0){
                        this.$el.css("color","red");//negative value
                      }else{
                        this.$el.css("color","black");

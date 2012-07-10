@@ -93,7 +93,7 @@
                           // Set Model
                           me.on('change:total', function() {
                           this.total.text(OB.I18N.formatCurrency(me.total));
-                          if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+                          if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                           }else{
                              this.$el.css("color","black");
@@ -101,7 +101,7 @@
                           }, this);
                            // Initial total display
                           this.total.text(OB.I18N.formatCurrency(me.total));
-                         if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
+                         if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                          }else{
                              this.$el.css("color","black");
