@@ -406,9 +406,9 @@
                 content: [{
                   view: BtnAction.extend({
                     command: '+',
-                    classButton: 'btnkeyboard-num btnkeyboard-plus'
-                  }),
-                  contentViewButton: ['+']
+                    classButton: 'btnkeyboard-num btnkeyboard-plus',
+                    contentViewButton: ['+']
+                  })                 
                 }]
               }]
             }, {
