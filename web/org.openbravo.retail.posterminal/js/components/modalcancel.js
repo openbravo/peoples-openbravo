@@ -12,7 +12,7 @@
     setBodyContent: function() {
       return(
         {kind: B.KindJQuery('div'), content: [
-          OB.I18N.getLabel('OBPOS_CancelDialog')
+          OB.I18N.getLabel('OBPOS_ProcessCancelDialog')
         ]}
       );
     },
