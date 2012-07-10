@@ -17,6 +17,6 @@ public class CashMgmtPayments extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "select p as payment, p.paymentMethod.allowdeposits as allowdeposits, p.paymentMethod.allowdrops as allowdrops from OBPOS_App_Payment as p "
-        + "where p.paymentMethod.allowdeposits=true or p.paymentMethod.allowdrops=true and  p.obposApplications.id = :pos order by p.commercialName";
+        + "where obposApplications.id = :pos and (p.paymentMethod.allowdeposits=true or p.paymentMethod.allowdrops=true) order by p.commercialName";
   }
 }
