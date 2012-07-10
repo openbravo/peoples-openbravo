@@ -385,11 +385,14 @@ public class OrderLoader {
 
       OrderLine orderline = OBProvider.getInstance().get(OrderLine.class);
       Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
-      fillBobFromJSON(orderLineEntity, orderline, orderlines.getJSONObject(i));
+      JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+
+      fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine);
       fillBobFromJSON(ModelProvider.getInstance().getEntity(OrderLine.class), orderline, jsonorder);
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      orderline.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net")));
+      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
+      orderline.setListPrice(orderline.getUnitPrice());
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
@@ -684,11 +687,14 @@ public class OrderLoader {
     } else if (key.equals("qty")) {
       return "orderedQuantity";
     } else if (key.equals("price")) {
-      return "unitPrice";
+      return "grossUnitPrice";
     } else if (key.equals("posTerminal")) {
       return "obposApplications";
+    } else if (key.equals("pricenet")) {
+      return "unitPrice";
+    } else if (key.equals("gross")) {
+      return "lineGrossAmount";
     }
     return null;
   }
-
 }
