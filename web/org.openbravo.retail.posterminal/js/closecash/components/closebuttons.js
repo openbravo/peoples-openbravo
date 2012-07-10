@@ -244,7 +244,7 @@
 
   OB.COMP.ButtonVoid = OB.COMP.SmallButton.extend({
     _id: 'closevoidbutton',
-    label: 'VOID',
+    label: OB.I18N.getLabel('OBUIAPP_Delete'),
     order: null,
     me: null,
     className: 'btnlink-gray',
