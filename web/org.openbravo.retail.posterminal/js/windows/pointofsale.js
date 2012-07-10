@@ -133,31 +133,46 @@
               modelterminal = OB.POS.modelterminal,
               me = this, processPaidOrders,
               showUnpaidOrders;
+
+          processPaidOrders = function() {
+            // Processes the paid, unprocessed orders
+            var orderlist = me.context.modelorderlist,
+              criteria = {
+                hasbeenpaid:'Y'
+              };
+            if (navigator.onLine) {
+              OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
+                var orderarraytoprocess = [];
+                if (!ordersPaidNotProcessed) {
+                  return;
+                }
+                ordersPaidNotProcessed.each(function (order){
+                  orderarraytoprocess.push(JSON.parse(order.get('json')));
+                });
+                this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
+                OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
+                this.proc.exec({
+                  order: orderarraytoprocess
+                }, function (data, message) {
+                  $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') +'")').alert('close');
+                if (data && data.exception) {
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
+                } else {
+                  ordersPaidNotProcessed.each(function (order){
+                    ctx.modelorderlist.remove(order);
+                    OB.Dal.remove(order, function(){
+                    }, function(){
+                    });
+                  });
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
+                }
+               });
+              });
+            }
+          };
           this.context.on('domready', function () {
             modelterminal.saveDocumentSequenceInDB();
 
-            processPaidOrders = function() {
-              // Processes the paid, unprocessed orders
-              var orderlist = me.context.modelorderlist,
-                criteria = {
-                  hasbeenpaid:'Y'
-                },
-                previousPage = document.referrer || "",
-                fromCashUp;
-
-              // Do not show if previous window is retail.cashup, because
-              // the modal window has just been closed there
-              fromCashUp = previousPage.match(/retail.cashup$/);
-              if (navigator.onLine && !fromCashUp) {
-                OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
-                  var currentOrder = {};
-                  if (ordersPaidNotProcessed && ordersPaidNotProcessed.length > 0) {
-                    ctx.orderlisttoprocess = ordersPaidNotProcessed;
-                    $('#modalprocessreceipts').modal('show');
-                  }
-                });
-              }
-            };
             processPaidOrders();
 
             showUnpaidOrders = function() {
@@ -197,16 +212,8 @@
 
           }, this);
           modelterminal.on('online', function () {
-            var orderlist = ctx.modelorderlist,
-                criteria = {
-                  hasbeenpaid:'Y'
-                };
-            OB.Dal.find(OB.Model.Order, criteria, function (fetchedOrderList) { //OB.Dal.find success
-              if (fetchedOrderList && fetchedOrderList.length > 0) {
-                ctx.orderlisttoprocess = fetchedOrderList;
-                $('#modalprocessreceipts').modal('show');
-              }
-            });
+            // When the connection is restored, process the pending orders
+            processPaidOrders();
           });
           modelterminal.on('offline', function () {
             OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineModeWarning'));
