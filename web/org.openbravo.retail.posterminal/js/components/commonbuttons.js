@@ -274,6 +274,7 @@
     className: 'btnselect',
     initialize: function () {
       this.model = this.options.model;
+      OB.UTIL.initContentView(this);
     }
   });
 
