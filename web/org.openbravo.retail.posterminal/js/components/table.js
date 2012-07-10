@@ -15,6 +15,7 @@
           this.collection.on('change', function (model, prop) {
             var index = this.collection.indexOf(model);
             this.$el.children().eq(index + this.header).replaceWith((new this.renderLine({
+              parent: this,
               model: model
             })).render().$el);
           }, this);
@@ -47,6 +48,7 @@
       _addModelToCollection: function (model, index) {
         var me = this,
             tr = (new this.renderLine({
+            parent: this,
             model: model
           })).render().$el;
         if (_.isNumber(index) && index < this.collection.length - 1) {
@@ -192,11 +194,13 @@
       var me = this,
           tr = $('<li/>');
       tr.append((new this.renderLine({
+        parent: me,
         model: model
       })).render().$el);
       // tr.click(stdClickEvent);
       model.on('change', function () {
         tr.empty().append((new this.renderLine({
+          parent: me,
           model: model
         })).render().$el);
       }, this);
