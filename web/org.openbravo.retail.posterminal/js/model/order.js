@@ -479,7 +479,7 @@
     addPayment: function(payment) {
       var i, max, p;
 
-      if (OB.DEC.compare(this.getPending()) === 0) {
+      if (OB.DEC.compare(this.getTotal()) === 0) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
         return;
       }
