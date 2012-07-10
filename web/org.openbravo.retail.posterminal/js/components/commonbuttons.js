@@ -36,9 +36,10 @@
     },
     initialize: function () {
       var fb;
+      this.$el.click(_.bind(this._clickEvent, this));
       this.$el.mouseover(_.bind(this._mouseOverEvent, this));
       this.$el.mouseout(_.bind(this._mouseOutEvent, this));
-      fb = new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
+      //fb = new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
     },
     _clickEvent: function (e) {
       this.$el.removeClass('btn-over');
