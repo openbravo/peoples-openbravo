@@ -18,12 +18,7 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
           me.context.trigger('print');
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessDropDep'));
-          me.context.depositsdropsTicket.$el.hide();
-          me.context.ListDepositsDrops.$el.show();
-          me.context.cashmgmtnextbutton.$el.attr('disabled','disabled');
-          me.context.cashmgmtnextbutton.$el.text(OB.I18N.getLabel('OBPOS_LblNextStep'));
-          me.context.msginfo.$el.text(OB.I18N.getLabel('OBPOS_LblDepositsDropsMsg'));
+          window.location=OB.POS.hrefWindow('retail.pointofsale');
         }
        });
      }, this);
