@@ -34,15 +34,6 @@
                {kind: OB.COMP.HWManager, attr: {'templatecashup': 'res/printcashup.xml'}}
           ]},
           {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]} ,
-//              {kind: OB.COMP.ButtonTabPendingReceipts},
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
-//              {kind: B.KindJQuery('div'), content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
-            ]}
-          ]},
-
-          {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
                {kind: OB.COMP.PendingReceipts},
                {kind: OB.COMP.CountCash},
@@ -73,7 +64,6 @@
                 OB.UTIL.showLoading(false);
               }
             }, function () { //OB.Dal.find error
-              OB.UTIL.showError('Find error');
             });
 
             OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
@@ -82,7 +72,6 @@
                 orderlist.reset(fetchedOrderList.models);
               }
             }, function () { //OB.Dal.find error
-              OB.UTIL.showError('Find error');
             });
           }, this);
         }}

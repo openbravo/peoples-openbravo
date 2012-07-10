@@ -12,7 +12,7 @@
     setBodyContent: function() {
       return(
         {kind: B.KindJQuery('div'), content: [
-          'There are receipts to process. It would take a while. Do you want to continue?'
+            OB.I18N.getLabel('OBPOS_MsgReceiptsProcess')
         ]}
       );
     },
@@ -47,17 +47,16 @@
       }, function (data, message) {
       if (data && data.exception) {
         OB.UTIL.showLoading(false);
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgDropDepNotSaved'));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
       } else {
         me.options.orderlisttoprocess.each(function (order){
           me.options.modelorderlist.remove(order);
           OB.Dal.remove(order, function(){
           }, function(){
-            OB.UTIL.showError('Error removing');
           });
         });
         OB.UTIL.showLoading(false);
-        OB.UTIL.showSuccess("ALL tickets processed");
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
       }
      });
       return true;

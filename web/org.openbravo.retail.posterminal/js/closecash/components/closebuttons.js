@@ -39,8 +39,8 @@
             found = true;
             $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4',[this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
-              $('#keepfixedamountlbl').text(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount.toString());
-              $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
+              $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+              $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
             }else{
@@ -48,7 +48,7 @@
               $('#keepfixedamountlbl').hide();
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowmoveeverything){
-              $('#allowmoveeverything').val(0);
+              $('#allowmoveeverything').val(OB.I18N.formatCurrency(OB.DEC.Zero));
               $('#allowmoveeverythinglbl').text('Nothing');
               $('#allowmoveeverything').show();
               $('#allowmoveeverythinglbl').show();
@@ -58,7 +58,7 @@
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowdontmove){
               $('#allowdontmove').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
-              $('#allowdontmovelbl').text('Total amount of '+this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted').toString());
+              $('#allowdontmovelbl').text('Total amount of '+OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
               $('#allowdontmove').show();
               $('#allowdontmovelbl').show();
             }else{
@@ -134,9 +134,9 @@
       //Count Cash to Cash to keep or Cash to keep to Cash to keep
         if( $(".active").length>0 && this.options.modeldaycash.get('allowedStep')!==0){
           if($('.active').val()===""){//Variable Amount
-            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('#variableamount').val());
+            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('#variableamount').val()));
           }else{
-            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('.active').val());
+            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('.active').val()));
           }
           $(".active").removeClass("active");
         }else{
@@ -151,7 +151,7 @@
             found = true;
             $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4', [this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
-              $('#keepfixedamountlbl').text(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount.toString());
+              $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
               $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
@@ -170,7 +170,7 @@
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowdontmove){
               $('#allowdontmove').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
-              $('#allowdontmovelbl').text('Total amount of '+this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted').toString());
+              $('#allowdontmovelbl').text('Total amount of '+OB.I18N.formatCurrency(OB.DEC.add(0,this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'))));
               $('#allowdontmove').show();
               $('#allowdontmovelbl').show();
             }else{
@@ -217,7 +217,7 @@
       this.$el.hide();
       $('button[button*="allokbutton"]').css('visibility','hidden');
       var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
-      this.options['counted_'+this.options[this._id].rowid].$el.text(elem.get('expected').toString());
+      this.options['counted_'+this.options[this._id].rowid].$el.text(OB.I18N.formatCurrency(elem.get('expected')));
       elem.set('counted',OB.DEC.add(0,elem.get('expected')));
       this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
       this.options['counted_'+this.rowid].$el.show();

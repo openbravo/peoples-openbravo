@@ -15,10 +15,10 @@
           depsdropstosend:me.context.depsdropstosend
         }, function (data, message) {
         if (data && data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgDropDepNotSaved'));
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
           me.context.trigger('print');
-          OB.UTIL.showSuccess("OK");
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessDropDep'));
           me.context.depositsdropsTicket.$el.hide();
           me.context.ListDepositsDrops.$el.show();
           me.context.cashmgmtnextbutton.$el.attr('disabled','disabled');

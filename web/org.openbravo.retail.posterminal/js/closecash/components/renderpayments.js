@@ -15,7 +15,7 @@
                     this.model.get('name')
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 20%'}, content: [
-                    OB.DEC.add(0,this.model.get('expected')).toString()
+                    OB.I18N.formatCurrency(OB.DEC.add(0,this.model.get('expected')))
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left;'}, content: [
                        {kind: OB.COMP.ButtonEdit.extend({rowid :this.model.get('id'), searchKey :this.model.get('_id'), commercialName :this.model.get('name'), _id :'edit_'+this.model.get('id'), me:this.me, attributes:{'button':'editbutton'}})}
@@ -25,7 +25,7 @@
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'float: left; padding: 10px 0px 10px 10px;'}, content: [
                        {kind: B.KindJQuery('div'), rowid :this.model.get('id'), id :'counted_'+this.model.get('id'), attr:{'searchKey':this.model.get('_id'), 'button':'countedbutton', 'hidden':'hidden'},
-                        content:['0']
+                        content:[OB.I18N.formatCurrency(0)]
                        }
                   ]}
 

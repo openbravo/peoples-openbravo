@@ -10,56 +10,56 @@
     </line>
     <line></line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent('User: '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser')+': '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent('Time: '+ new Date().toString().substring(3,24)) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)) %></text>
     </line>
     <line>
     </line>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetSales')) %></text>
-      <text align ="right" length="14"><%= cashup.transactions.models[0].get('netSales') %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(cashup.transactions.models[0].get('netSales')) %></text>
     </line>
     <%
     cashup.transactions.models[0].get('salesTaxes').forEach(function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ cashup.transactions.models[0].get('netSales')) %></text>
-      <text align ="right" length="14"><%= tax.taxAmount %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ OB.I18N.formatCurrency(cashup.transactions.models[0].get('netSales'))) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.taxAmount) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossSales')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('grossSales') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.transactions.models[0].get('grossSales')) %></text>
     </line>
     <line>
     </line>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetReturns')) %></text>
-      <text align ="right" length="14"><%= cashup.transactions.models[0].get('netReturns') %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(cashup.transactions.models[0].get('netReturns')) %></text>
     </line>
     <%
     cashup.transactions.models[0].get('returnsTaxes').forEach(function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ cashup.transactions.models[0].get('netReturns')) %></text>
-      <text align ="right" length="14"><%= tax.taxAmount %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ OB.I18N.formatCurrency(cashup.transactions.models[0].get('netReturns'))) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.taxAmount) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossReturns')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('grossReturns') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.transactions.models[0].get('grossReturns')) %></text>
     </line>
     <line>
     </line>
      <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.transactions.models[0].get('totalRetailTransactions') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.transactions.models[0].get('totalRetailTransactions')) %></text>
     </line>
     <line>
     </line>
@@ -69,14 +69,14 @@
     %>
     <line>
       <text align ="left" length="25"><%=drop.description %></text>
-      <text align ="right" length="14"><%= drop.amount %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.amount) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDrops')) %></text>
-      <text align ="right" length="14" bold="true"><%= dropsAmount %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(dropsAmount) %></text>
     </line>
     <line>
     </line>
@@ -86,14 +86,14 @@
     %>
     <line>
       <text align ="left" length="25"><%=deposit.description %></text>
-      <text align ="right" length="14"><%= deposit.amount %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(deposit.amount) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDeposits')) %></text>
-      <text align ="right" length="14" bold="true"><%= depositsAmount %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(depositsAmount) %></text>
     </line>
     <line>
     </line>
@@ -102,14 +102,14 @@
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblExpected')) %></text>
-      <text align ="right" length="14"><%= payment.get('expected') %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('expected')) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalExpected')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.get('totalExpected') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.get('totalExpected')) %></text>
     </line>
     <line>
     </line>
@@ -118,14 +118,14 @@
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblCounted')) %></text>
-      <text align ="right" length="14"><%= payment.get('counted') %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('counted')) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalCounted')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.get('totalCounted') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.get('totalCounted')) %></text>
     </line>
     <line>
     </line>
@@ -134,14 +134,14 @@
     %>
     <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')+' '+ OB.I18N.getLabel('OBPOS_LblDifference')) %></text>
-      <text align ="right" length="14"><%= OB.DEC.sub(payment.get('counted'),payment.get('expected')) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.sub(payment.get('counted'),payment.get('expected'))) %></text>
     </line>
     <%
     });
     %>
     <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDifference')) %></text>
-      <text align ="right" length="14" bold="true"><%= cashup.get('totalDifference') %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.get('totalDifference')) %></text>
     </line>
     <line>
     </line>

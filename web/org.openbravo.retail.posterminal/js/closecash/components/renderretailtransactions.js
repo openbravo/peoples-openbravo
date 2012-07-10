@@ -18,7 +18,7 @@
                          OB.I18N.getLabel('OBPOS_LblNetSales')
                    ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                             this.model.get('netSales').toString()
+                             OB.I18N.formatCurrency(this.model.get('netSales'))
                  ]},
                  {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
               ]},
@@ -31,10 +31,10 @@
                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                       {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                       {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%'}, content: [
-                         tax.taxName+' * '+ me.model.get('netSales').toString()
+                         tax.taxName+' * '+ OB.I18N.formatCurrency(me.model.get('netSales'))
                    ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                        tax.taxAmount.toString()
+                        OB.I18N.formatCurrency(tax.taxAmount)
                  ]},
                  {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
               ]},
@@ -50,7 +50,7 @@
                  OB.I18N.getLabel('OBPOS_LblGrossSales')
           ]},
          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
-                 this.model.get('grossSales').toString()
+                 OB.I18N.formatCurrency(this.model.get('grossSales'))
         ]},
         {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
       ]},
@@ -76,7 +76,7 @@
                    OB.I18N.getLabel('OBPOS_LblNetReturns')
              ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                       this.model.get('netReturns').toString()
+                       OB.I18N.formatCurrency(this.model.get('netReturns'))
            ]},
            {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
         ]},
@@ -89,10 +89,10 @@
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%'}, content: [
-                     tax.taxName+' * '+ me.model.get('netReturns').toString()
+                     tax.taxName+' * '+ OB.I18N.formatCurrency(me.model.get('netReturns'))
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                         tax.taxAmount.toString()
+                         OB.I18N.formatCurrency(tax.taxAmount)
              ]},
              {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
           ]},
@@ -108,7 +108,7 @@
                    OB.I18N.getLabel('OBPOS_LblGrossReturns')
             ]},
            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
-                   this.model.get('grossReturns').toString()
+                   OB.I18N.formatCurrency(this.model.get('grossReturns'))
           ]},
           {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
         ]},
@@ -134,7 +134,7 @@
                OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')
              ]},
              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
-               this.model.get('totalRetailTransactions').toString()
+               OB.I18N.formatCurrency(this.model.get('totalRetailTransactions'))
               ]},
              {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
            ]}
@@ -161,7 +161,7 @@
                    drop.description
              ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                   drop.amount.toString()
+                   OB.I18N.formatCurrency(drop.amount)
            ]},
            {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
         ]},
@@ -177,7 +177,7 @@
                     OB.I18N.getLabel('OBPOS_LblTotalDrops')
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
-                     dropsAmount.toString()
+                     OB.I18N.formatCurrency(dropsAmount)
              ]},
              {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
           ]},
@@ -205,7 +205,7 @@
                      deposit.description
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'}, content: [
-                     deposit.amount.toString()
+                     OB.I18N.formatCurrency(deposit.amount)
              ]},
              {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
           ]},
@@ -221,7 +221,7 @@
                       OB.I18N.getLabel('OBPOS_LblTotalDeposits')
                  ]},
                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
-                       depositsAmount.toString()
+                       OB.I18N.formatCurrency(depositsAmount)
                ]},
                {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]}
             ]},

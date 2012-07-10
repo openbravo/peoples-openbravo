@@ -26,7 +26,7 @@
         this.options.modeldaycash.set('totalDifference',OB.DEC.sub(totalCounted,this.options.modeldaycash.get('totalExpected')));
         $('button[button*="allokbutton"]').css('visibility','hidden');
         $('button[button="okbutton"][key*="'+key+'"]').hide();
-        $('div[searchKey*="'+key+'"]').text(counted.toString());
+        $('div[searchKey*="'+key+'"]').text(OB.I18N.formatCurrency(counted));
         $('div[searchKey*="'+key+'"]').show();
         if($('button[button="okbutton"][style!="display: none; "]').length===0){
           this.options.closenextbutton.$el.removeAttr('disabled');

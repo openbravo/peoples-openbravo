@@ -42,16 +42,16 @@
     %>
      <line>
       <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+depositsdrops.description) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(depositsdrops.amount) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.amount)) %></text>
     </line>
     <%
-    }
     total = OB.DEC.add(total, depositsdrops.amount);
+    }
     });
     %>
      <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotal')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(total) %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(OB.DEC.add(0,total)) %></text>
     </line>
   </ticket>
 </output>

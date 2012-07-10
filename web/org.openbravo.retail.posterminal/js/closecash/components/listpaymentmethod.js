@@ -52,7 +52,7 @@
                     $('button[button="okbutton"]').hide();
                     this.$el.css('visibility', 'hidden');
                     this.me.options.modeldaycash.paymentmethods.each(function(elem){
-                      $('div[searchKey*="'+elem.get("_id")+'"]').text(elem.get('expected').toString());
+                      $('div[searchKey*="'+elem.get("_id")+'"]').text(OB.I18N.formatCurrency(elem.get('expected')));
                       elem.set('counted',OB.DEC.add(0,elem.get('expected')));
                       that.me.options.modeldaycash.set('totalCounted',OB.DEC.add(that.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
                   });
@@ -82,10 +82,10 @@
                        this.$el.append(this.total);
                        // Set Model
                        me.options.modeldaycash.on('change:totalExpected', function() {
-                       this.total.text(me.options.modeldaycash.get('totalExpected').toString());
+                       this.total.text(OB.I18N.formatCurrency(me.options.modeldaycash.get('totalExpected')));
                     }, this);
                  // Initial total display
-                 this.total.text(me.options.modeldaycash.get('totalExpected').toString());
+                 this.total.text(OB.I18N.formatCurrency(me.options.modeldaycash.get('totalExpected')));
                 }
             })}
          ]},
@@ -99,7 +99,7 @@
                       this.$el.append(this.total);
                       // Set Model
                       me.options.modeldaycash.on('change:totalCounted', function() {
-                      this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+                      this.total.text(OB.I18N.formatCurrency(OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))));
                       if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
                         this.$el.css("color","red");//negative value
                       }else{
@@ -107,7 +107,7 @@
                       }
                      }, this);
                      // Initial total display
-                     this.total.text((OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))).toString());
+                     this.total.text(OB.I18N.formatCurrency(OB.DEC.sub(me.options.modeldaycash.get('totalCounted'),me.options.modeldaycash.get('totalExpected'))));
                      if(OB.DEC.compare(OB.DEC.add(0,this.total.text()) )<0){
                        this.$el.css("color","red");//negative value
                      }else{
