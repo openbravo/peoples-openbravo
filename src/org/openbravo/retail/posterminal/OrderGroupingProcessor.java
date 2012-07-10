@@ -304,9 +304,13 @@ public class OrderGroupingProcessor {
     invoice.setSummedLineAmount(totalNetAmount);
     invoice.setPaymentComplete(true);
     invoice.setTotalPaid(grossamount);
+    invoice.setPercentageOverdue(new Long(0));
+    invoice.setFinalSettlementDate(new Date());
+    invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
     paymentSchedule.setAmount(grossamount);
+    paymentSchedule.setPaidAmount(grossamount);
     origPaymentSchedule.setAmount(grossamount);
 
     OBDal.getInstance().flush();
