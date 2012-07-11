@@ -80,7 +80,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         transaction.setTransactionType("BPW");
         transaction.setDescription(description);
         transaction.setTransactionDate(new Date());
-        transaction.setStatus("RPPC");
+        transaction.setStatus("RDNC");
 
         OBDal.getInstance().save(transaction);
 
@@ -105,7 +105,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         secondTransaction.setTransactionType("BPW");
         secondTransaction.setDescription(description);
         secondTransaction.setTransactionDate(new Date());
-        secondTransaction.setStatus("RPPC");
+        secondTransaction.setStatus("RDNC");
         OBDal.getInstance().save(secondTransaction);
 
         if (type.equals("drop")) {
