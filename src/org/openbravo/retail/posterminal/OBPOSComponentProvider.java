@@ -108,7 +108,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/total",
         "components/modalpayment",
         "components/payment",
-        "components/paymentcoins",
         "components/tabpayment",
         "components/renderorderline",
         "components/order",
