@@ -39,7 +39,7 @@ public class ProcessCashClose implements JSONProcess {
       JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
       new CashCloseProcessor().processCashClose(arrayCashCloseInfo);
     } catch (Exception e) {
-      log.error(e);
+      log.error("Error processing cash close", e);
       return;
     }
 
