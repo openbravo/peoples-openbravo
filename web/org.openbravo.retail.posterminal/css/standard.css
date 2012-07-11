@@ -197,6 +197,10 @@ button.btnlink-gray {
   background-color: #e2e2e2;
   color: black;
 }
+button.btnlink-darkgray {
+  background-color: #363636;
+  color: white;
+}
 button.btnlink-yellow {
   background-color: #f8e859;
   color: black;
@@ -211,6 +215,12 @@ button.btnlink-fontgrey {
 }
 button.btnlink-fontblue {
   color: #7da7d9;
+}
+
+button.btnlink-payment-clear {
+  width: 90%;
+  margin: 0px 0px 0px 16px;
+  border: 1px #cccccc dotted;
 }
 
 button.btnlink-cashup-edit {
@@ -361,6 +371,9 @@ div.btnlink {
 }
 .btn-icon-check {
   background-image: url('../img/iconCheck.png');
+}
+.btn-icon-clearPayment {
+  background-image: url('../img/iconClearPayment.png');
 }
 
 .btn-check {

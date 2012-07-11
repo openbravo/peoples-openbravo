@@ -16,17 +16,9 @@
     }
   });
 
-  var RemovePayment = Backbone.View.extend({
-    tag: 'a',
-    attributes: {
-      'href': '#'
-    },
-    contentView: [{
-      tag: 'i',
-      attributes: {
-        'class': 'icon-remove icon-white'
-      }
-    }],
+  var RemovePayment = OB.COMP.SmallButton.extend({
+    className: 'btnlink-darkgray btnlink-payment-clear',
+    icon: 'btn-icon-small btn-icon-clearPayment',
     initialize: function () {
       OB.UTIL.initContentView(this);
       var parent = this.options.parent;
@@ -47,18 +39,18 @@
         tag: 'div',
         id: 'divname',
         attributes: {
-          style: 'float: left; width: 40%'
+          style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
         }
       }, {
         tag: 'div',
         id: 'divamount',
         attributes: {
-          style: 'float: left; width: 40%; text-align:right;'
+          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; text-align: right;'
         }
       }, {
         tag: 'div',
         attributes: {
-          style: 'float: left; width: 20%; text-align:right;'
+          style: 'float: left; width: 25%; text-align: right;'
         },
         content: [{
           view: RemovePayment
