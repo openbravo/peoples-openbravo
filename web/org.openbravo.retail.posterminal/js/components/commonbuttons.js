@@ -293,11 +293,22 @@
   OB.COMP.MenuItem = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
-      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).attr('onclick', this.onclick).append($('<span/>').text(this.label)));
+      var opts = this.options;
+      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).append($('<span/>').text(this.label)));
+      this.$el.find('a').first().click(function (e) {
+        var $el = $(this),
+            href = $el.attr('href'),
+            target = $el.attr('target');
+
+        if (target === '_self') {
+          e.preventDefault();
+          OB.UTIL.showLoading(true);
+          window.location = href;
+        }
+      });
     },
     href: '',
     target: '_self',
-    onclick: 'OB.UTIL.showLoading(true); return true;',
     label: ''
   });
 
