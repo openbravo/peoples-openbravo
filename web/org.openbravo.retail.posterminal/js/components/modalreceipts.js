@@ -26,7 +26,7 @@
       return ({
         kind: B.KindJQuery('div'),
         content: [
-        OB.I18N.getLabel('OBPOS_MsgConfirmDelete')]
+          OB.I18N.getLabel('OBPOS_MsgConfirmDelete'),{kind: B.KindJQuery('br')},OB.I18N.getLabel('OBPOS_cannotBeUndone')]
       });
     },
 
@@ -47,7 +47,7 @@
     isActive: true,
     render: function() {
       this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
-      this.$el.html(OB.I18N.getLabel('OBPOS_LblApply'));
+      this.$el.html(OB.I18N.getLabel('OBPOS_LblYesDelete'));
       return this;
     },
     clickEvent: function(e) {
