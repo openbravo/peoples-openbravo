@@ -7,77 +7,13 @@
 
   var BtnSide = Backbone.View.extend({
     tagName: 'div',
-    attributes: {
-      'class': 'row-fluid'
-    },
+    attributes: {'style': 'display:table; width:100%'},
     initialize: function () {
       var inst = new this.options.btn({
         parent: this.options.parent
       });
       inst.render();
-      this.$el.append($('<div/>').attr('class', 'span12').append(inst.$el));
-    }
-  });
-
-  var ButtonDummy = Backbone.View.extend({
-    tag: 'div',
-    initialize: function () {
-      this.$el.attr('class', this.options.className);
-    }
-  });
-
-  var BtnAction = Backbone.View.extend({
-    classButton: '',
-    command: false,
-    permission: null,
-    label: null,
-    classButtonActive: 'btnactive',
-    tagName: 'div',
-    attributes: {
-      'style': 'margin: 5px;'
-    },
-    initialize: function (attr) {
-
-      this.kb = this.options.parent;
-
-      var me = this;
-      if (this.command) {
-        if (this.command === '---') {
-          // It is the null command
-          this.command = false;
-        } else if (!this.command.match(/^([0-9]|\.|,|[a-z])$/) && this.command !== 'OK' && this.command !== 'del' && this.command !== String.fromCharCode(13) && !this.kb.commands[this.command]) {
-          // is not a key and does not exists the command
-          this.command = false;
-        } else if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
-          // does not have permissions.
-          this.command = false;
-        }
-      }
-
-      if (this.command) {
-        this.button = new OB.COMP.Button();
-        this.button.$el.attr('class', 'btnkeyboard ' + this.classButton);       
-        this.button.clickEvent = function (e) {
-          me.kb.keyPressed(me.command);
-        };
-        this.kb.addButton(this.command, this.button);
-      } else {
-        this.button = new ButtonDummy({
-          className: 'btnkeyboard ' + this.classButton
-        });
-      }
-
-      // Initialize the interface of the button
-      this.button.contentView = this.contentViewButton;
-      this.button.classButtonActive = this.classButtonActive;
-      OB.UTIL.initContentView(this.button);
-
-      this.$el.append(this.button.$el);
-    },
-    append: function (child) {
-      if (child.$el) {
-        this.button.$el.append(child.$el);
-      }
+      this.$el.append(inst.$el);
     }
   });
 
@@ -145,7 +81,7 @@
               'class': 'span4'
             },
             content: [{
-              view: BtnAction.extend({
+              view: OB.COMP.ButtonKey.extend({
                 command: 'del',
                 contentViewButton: [{
                   tag: 'div',
@@ -162,221 +98,11 @@
             'class': 'row-fluid'
           },
           content: [{
+            id: 'keypadcontainer',
             tag: 'div',
             attributes: {
               'class': 'span8'
-            },
-            content: [{
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '/',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['/']
-                  })
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '*',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['*']
-                  })
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '%',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['%']
-                  })
-                }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '7',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['7']
-                  }),
-                  content: ['7']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '8',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['8']
-                  }),
-                  content: ['8']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '9',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['9']
-                  }),
-                  content: ['9']
-                }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '4',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['4']
-                  }),
-                  content: ['4']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    kb: this,
-                    command: '5',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['5']
-                  }),
-                  content: ['5']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    kb: this,
-                    command: '6',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['6']
-                  }),
-                  content: ['6']
-                }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '1',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['1']
-                  }),
-                  content: ['1']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '2',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['2']
-                  }),
-                  content: ['2']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '3',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['3']
-                  }),
-                  content: ['3']
-                }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
-                tag: 'div',
-                attributes: {
-                  'class': 'span8'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: '0',
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: ['0']
-                  }),
-                  content: ['0']
-                }]
-              }, {
-                tag: 'div',
-                attributes: {
-                  'class': 'span4'
-                },
-                content: [{
-                  view: BtnAction.extend({
-                    command: OB.Format.defaultDecimalSymbol,
-                    classButton: 'btnkeyboard-num',
-                    contentViewButton: [OB.Format.defaultDecimalSymbol]
-                  })
-                }]
-              }]
-            }]
+            }
           }, {
             tag: 'div',
             attributes: {
@@ -393,7 +119,7 @@
                   'class': 'span6'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: '-',
                     classButton: 'btnkeyboard-num btnkeyboard-minus',
                     contentViewButton: ['-']
@@ -405,7 +131,7 @@
                   'class': 'span6'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: '+',
                     classButton: 'btnkeyboard-num btnkeyboard-plus',
                     contentViewButton: ['+']
@@ -423,7 +149,7 @@
                   'class': 'span12'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: 'line:qty',
                     contentViewButton: [OB.I18N.getLabel('OBPOS_KbQuantity')]
                   })
@@ -440,7 +166,7 @@
                   'class': 'span12'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: 'line:price',
                     permission: 'OBPOS_order.changePrice',
                     contentViewButton: [OB.I18N.getLabel('OBPOS_KbPrice')]
@@ -458,10 +184,10 @@
                   'class': 'span12'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: 'line:dto',
                     permission: 'OBPOS_order.discount',
-                    contentViewButton: [OB.I18N.getLabel('OBPOS_KbPrice')]
+                    contentViewButton: [OB.I18N.getLabel('OBPOS_KbDiscount')]
                   })
                 }]
               }]
@@ -476,7 +202,7 @@
                   'class': 'span12'
                 },
                 content: [{
-                  view: BtnAction.extend({
+                  view: OB.COMP.ButtonKey.extend({
                     command: 'OK',
                     contentViewButton: [{
                       tag: 'div',
@@ -500,6 +226,11 @@
       var me = this;
 
       this.toolbars = {};
+      
+      this.keypads = {};
+      this.keypad = '';
+      this.addKeypad(OB.COMP.KeypadBasic); // index
+      this.showKeypad();     
 
       this.on('command', function (cmd) {
         var txt;
@@ -602,16 +333,17 @@
       this.setStatus('');
     },
 
-    show: function (toolbar) {
+    show: function (toolbar, keypad) {
       var t;
       this.clear();
+      this.showKeypad(keypad);
       if (toolbar) {
         for (t in this.toolbars) {
           if (this.toolbars.hasOwnProperty(t)) {
-            this.toolbars[t].hide();
+            this.toolbars[t].$el.hide();
           }
         }
-        this.toolbars[toolbar].show();
+        this.toolbars[toolbar].$el.show();
       }
       this.$el.show();
     },
@@ -651,7 +383,12 @@
     addToolbar: function (name, value) {
       var i, max;
 
-      this.toolbars[name] = $('<div/>').attr('style', 'display:none');
+      var Toolbar = Backbone.View.extend({
+        tag: 'div',
+        attributes: {'style': 'display:none'}
+      });
+      
+      this.toolbars[name] = new Toolbar();
 
       for (i = 0, max = value.length; i < max; i++) {
         // add the command if provided
@@ -659,9 +396,9 @@
           this.addCommand(value[i].command, value[i].definition);
         }
         // add the button   
-        this.toolbars[name].append(new BtnSide({
+        this.toolbars[name].$el.append(new BtnSide({
           parent: this,
-          btn: BtnAction.extend({
+          btn: OB.COMP.ButtonKey.extend({
             command: value[i].command,
             classButtonActive: value[i].classButtonActive || 'btnactive-green',
             permission: (value[i].definition ? value[i].definition.permission : null),
@@ -670,14 +407,37 @@
         }).render().$el);
       }
       while (i < 6) {
-        this.toolbars[name].append(new BtnSide({
+        this.toolbars[name].$el.append(new BtnSide({
           parent: this,
-          btn: BtnAction
+          btn: OB.COMP.ButtonKey
         }).render().$el);
         i++;
       }
 
-      this.toolbarcontainer.append(this.toolbars[name]);
+      this.toolbarcontainer.append(this.toolbars[name].$el);
+    },
+    
+    addToolbarView: function (name, component) {
+      this.toolbars[name] = new component({parent: this}).render();
+      this.toolbarcontainer.append(this.toolbars[name].$el);
+    },
+    
+    addKeypad: function (component) {
+      // Initialize keypad...
+      var inst = new component({parent: this}).render();
+      this.keypads[inst.name] = inst;
+      this.keypadcontainer.append(inst.$el);
+    },
+    
+    showKeypad: function (padname) {
+      var t;
+      for (t in this.keypads) {
+        if (this.keypads.hasOwnProperty(t)) {
+          this.keypads[t].$el.hide();
+        }
+      }
+      this.keypad = this.keypads[padname || 'index'];
+      this.keypad.$el.show();
     },
 
     attr: function (attrs) {
@@ -802,6 +562,7 @@
       }, this);
 
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
+      
       // Toolbars at the end...
       this.addToolbar('toolbarpayment', new OB.UI.ToolbarPayment(this.options).toolbar);
       this.addToolbar('toolbarscan', new OB.COMP.ToolbarScan(this.options).toolbar);

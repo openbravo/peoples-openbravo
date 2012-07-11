@@ -26,7 +26,7 @@
       return this;
     },
     shownEvent: function(e) {
-      this.options.keyboard.show('toolbarpayment');
+      this.options.keyboard.show('toolbarpayment', 'coins');
     }
   });
 
