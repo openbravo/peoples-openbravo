@@ -32,11 +32,11 @@
       SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_PRODUCT.M_PRODUCT_ID), TO_CHAR(?)) AS PRODUCT_NAME, 
       A.QTY, C_UOM.NAME AS UOM_NAME, 
       CASE a.iscostcalculated
-        WHEN 'Y' THEN C_CURRENCY_ROUND(C_CURRENCY_CONVERT(Suma, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, ?)/A.QTY, ?, 'Y')
+        WHEN 'Y' THEN C_CURRENCY_CONVERT_PRECISION(Suma/A.QTY, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, ?, 'C')
         ELSE null
       END AS AVERAGE_COST,
       CASE a.iscostcalculated
-      WHEN 'Y' THEN C_CURRENCY_CONVERT(Suma, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, ?)
+      WHEN 'Y' THEN C_CURRENCY_CONVERT_PRECISION(Suma, ?, ?, TO_DATE(?), NULL, A.AD_CLIENT_ID, ?, 'C')
         ELSE null
       END AS TOTAL_COST
       FROM M_PRODUCT_CATEGORY,
@@ -66,7 +66,6 @@
       <Parameter name="cCurrencyConv"/>
       <Parameter name="date"/>
       <Parameter name="legalEntity"/>
-      <Parameter name="cCurrencyConv"/>
       <Parameter name="cCurrencyBase"/>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="date"/>
