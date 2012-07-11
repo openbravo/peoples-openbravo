@@ -171,6 +171,8 @@ public class DocMovement extends AcctServer {
           Organization.class, line.m_AD_Org_ID));
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+      } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+        costCurrency = line.transaction.getCurrency();
       }
       if (CostingStatus.getInstance().isMigrated() && line.transaction != null
           && !line.transaction.isCostCalculated()) {

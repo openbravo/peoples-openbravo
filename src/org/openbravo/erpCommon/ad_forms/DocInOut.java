@@ -194,6 +194,8 @@ public class DocInOut extends AcctServer {
         Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
         if (!CostingStatus.getInstance().isMigrated()) {
           costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+          costCurrency = line.transaction.getCurrency();
         }
         C_Currency_ID = costCurrency.getId();
         Account cogsAccount = null;
@@ -303,6 +305,8 @@ public class DocInOut extends AcctServer {
         Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
         if (!CostingStatus.getInstance().isMigrated()) {
           costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+          costCurrency = line.transaction.getCurrency();
         }
         C_Currency_ID = costCurrency.getId();
         if (CostingStatus.getInstance().isMigrated() && line.transaction != null

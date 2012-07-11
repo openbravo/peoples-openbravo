@@ -189,6 +189,8 @@ public class DocMatchInv extends AcctServer {
         Organization.class, AD_Org_ID));
     if (!CostingStatus.getInstance().isMigrated()) {
       costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+    } else if (transaction != null && transaction.getCurrency() != null) {
+      costCurrency = transaction.getCurrency();
     }
     if (CostingStatus.getInstance().isMigrated() && transaction != null
         && !transaction.isCostCalculated()) {
