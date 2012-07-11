@@ -58,9 +58,13 @@ div.login-user-button-bottom-icon {
 
 div.login-user-button-bottom-text {
   float: left;
-  font-size: 13px;
-  font-weight: bold;
-
+  font-size: 12px;
+  font-weight: normal;
+  padding: 1px 0px 0px 0px;
+  width: 78px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 div.login-inputs-container {
