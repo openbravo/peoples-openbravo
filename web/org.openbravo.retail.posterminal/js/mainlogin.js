@@ -77,7 +77,7 @@
           if ((data.response[0].data[0].strClient) !== 'none') {
             renderLoginPage();
           } else {
-            OB.UTIL.showError("Terminal does not exists: " + OB.POS.paramTerminal);
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
           }
         }
       });
