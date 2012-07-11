@@ -200,7 +200,7 @@
                 setCompanyLogo(data);
               }
             });
-            if (!$.browser.webkit) { //If the browser is not supported, show message and finish.
+            if (!$.browser.webkit || !window.openDatabase) { //If the browser is not supported, show message and finish.
               $('#login-inputs').css('display', 'none');
               $('#login-browsernotsupported').css('display', 'block');
               OB.UTIL.showLoading(false);
