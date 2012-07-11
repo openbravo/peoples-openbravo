@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
-     <title>Openbravo Point of Sale</title>
+     <title>Openbravo POS</title>
      <meta charset="utf-8">
      <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
      <meta name="description" content="Openbravo Point of Sale window">
