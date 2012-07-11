@@ -34,7 +34,7 @@
     tagName: 'div',
     attributes: {'id': 'payment', 'class': 'tab-pane'},
     initialize: function () {
-      var paymentCoins = new OB.UI.PaymentCoins(this.options);
+      var paymentCoins = new OB.COMP.Payment(this.options);
       this.$el.append(paymentCoins.$el);
     }
   });

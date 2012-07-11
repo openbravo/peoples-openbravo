@@ -86,19 +86,9 @@
                   {view: DoneButton}
                 ]}
               ]}
-            ]},
-
-            {tag: 'div', attributes: {'class': 'row-fluid'}, content: [
-              {tag: 'div', attributes: {'class': 'span12'}, content: [
-                {tag: 'div', id: 'coinscontainer', content: [
-                ]}
-              ]}
             ]}
-
-          ]}
-                  
-                  ],
-    paymentButtons : [],
+          ]}                  
+    ],
     initialize : function () {
       
       OB.UTIL.initContentView(this);
@@ -117,17 +107,6 @@
         this.updatePending();
       }, this);
       this.updatePending();
-
-      for (i = 0, max = this.paymentButtons.length; i < max; i++) {
-        this.addButton(this.paymentButtons[i]);
-      }
-    },
-    addButton : function (btn) {
-      var btninst = new btn(this.options);
-      if (btninst.render) {
-        btninst = btninst.render();
-      }
-      this.coinscontainer.append(btninst.$el);
     },
     updatePending : function () {
       var paymentstatus = this.receipt.getPaymentStatus();
@@ -150,14 +129,12 @@
       if (paymentstatus.done) {
         this.totalpending.hide();
         this.totalpendinglbl.hide();        
-        this.coinscontainer.hide();
         this.doneaction.show();
       } else {
         this.totalpending.text(paymentstatus.pending);
         this.totalpending.show();
         this.totalpendinglbl.show();
         this.doneaction.hide();
-        this.coinscontainer.show();
       }
     }
 

@@ -238,23 +238,6 @@
     label: ''
   });
 
-  OB.COMP.PaymentButton = OB.COMP.Button.extend({
-    className: 'btnlink btnlink-small',
-    attributes: {'style': 'width: 75px; height: 35px; text-align:right; margin: 6px 8px 6px 8px; font-size: 16px;'},
-    paymenttype: 'OBPOS_payment.cash',
-    amount: 10,
-    label: null,
-    classcolor: 'btnlink-orange',
-    render: function() {
-      this.$el.addClass(this.classcolor);
-      this.$el.text(this.label || OB.I18N.formatCurrency(this.amount));
-      return this;
-    },
-    clickEvent: function (e) {
-      this.options.modelorder.addPayment(new OB.Model.PaymentLine({'kind': this.paymenttype, 'name': OB.POS.modelterminal.getPaymentName(this.paymenttype), 'amount': OB.DEC.number(this.amount)}));
-    }
-  });
-
   // Clears the text of the previous field
   OB.COMP.ClearButton = OB.COMP.Button.extend({
     render: function () {
