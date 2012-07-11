@@ -97,6 +97,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[100]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_COSTING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -105,6 +109,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_INVOICELINE" name="M_COSTING_C_INVOICELINE">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="M_COSTING_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_INOUTLINE" name="M_COSTING_M_INOUTLINE">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
