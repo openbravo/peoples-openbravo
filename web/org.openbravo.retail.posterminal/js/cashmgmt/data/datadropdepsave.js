@@ -26,12 +26,10 @@
     this.context.SearchDropEvents.destinations.on('click', function (model, index) {
         me.context.ListDepositsDrops.listdepositsdrops.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
         me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
-      me.context.cashmgmtnextbutton.$el.removeAttr('disabled');
       }, this);
     this.context.SearchDepositEvents.destinations.on('click', function (model, index) {
       me.context.ListDepositsDrops.listdepositsdrops.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
       me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
-    me.context.cashmgmtnextbutton.$el.removeAttr('disabled');
     }, this);
   };
 

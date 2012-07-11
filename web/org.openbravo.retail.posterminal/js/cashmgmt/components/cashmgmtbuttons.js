@@ -27,7 +27,6 @@
     render: function () {
       OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
       this.$el.addClass('btnlink-white').addClass('btnlink-fontgrey');
-      this.$el.attr('disabled','disabled');
       return this;
     },
     clickEvent: function (e) {
