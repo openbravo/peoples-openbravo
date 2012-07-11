@@ -73,8 +73,10 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         transaction.setGLItem(glItemMain);
         if (type.equals("drop")) {
           transaction.setPaymentAmount(amount);
+          account.setCurrentBalance(account.getCurrentBalance().subtract(amount));
         } else {
           transaction.setDepositAmount(amount);
+          account.setCurrentBalance(account.getCurrentBalance().add(amount));
         }
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
@@ -87,10 +89,12 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
             cashManagementReasonId);
 
+        FIN_FinancialAccount secondAccount = event.getFinancialAccount();
+
         FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
             FIN_FinaccTransaction.class);
         secondTransaction.setCurrency(terminalPaymentMethod.getCurrency());
-        secondTransaction.setAccount(event.getFinancialAccount());
+        secondTransaction.setAccount(secondAccount);
         secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event
             .getFinancialAccount()) + 10);
         secondTransaction.setGLItem(glItemSecondary);
@@ -98,8 +102,10 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         // If the first is a deposit, the second is a drop
         if (type.equals("deposit")) {
           secondTransaction.setPaymentAmount(amount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(amount));
         } else {
           secondTransaction.setDepositAmount(amount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(amount));
         }
         secondTransaction.setProcessed(true);
         secondTransaction.setTransactionType("BPW");
