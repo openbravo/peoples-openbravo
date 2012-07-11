@@ -131,8 +131,7 @@
         ], init: function () {
           var ctx = this.context,
               modelterminal = OB.POS.modelterminal,
-              me = this, processPaidOrders,
-              showUnpaidOrders;
+              me = this, processPaidOrders;
 
           processPaidOrders = function() {
             // Processes the paid, unprocessed orders
@@ -171,18 +170,19 @@
             }
           };
           this.context.on('domready', function () {
+            var loadUnpaidOrders;
             modelterminal.saveDocumentSequenceInDB();
 
             processPaidOrders();
 
-            showUnpaidOrders = function() {
+            loadUnpaidOrders = function() {
               // Shows a modal window with the orders pending to be paid
               var orderlist = me.context.modelorderlist,
                   criteria={
                     'hasbeenpaid' : 'N'
                   };
               OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
-                var currentOrder = {};
+                var currentOrder = {}, loadOrderStr;
                 if (!ordersNotPaid || ordersNotPaid.length === 0) {
                   // If there are no pending orders,
                   //  add an initial empty order
@@ -193,14 +193,8 @@
                   // At this point it is sure that there exists at least one order
                   currentOrder = ordersNotPaid.models[0];
                   orderlist.load(currentOrder);
-                  // Only show the pending receipts modal window if there are at
-                  // least two orders pending
-                  if (ordersNotPaid.length > 1) {
-                    // Do not show if the Process Receipts modal window is shown
-                    if (!$('#modalprocessreceipts').is(":visible")) {
-                      $('#modalreceipts').modal('show');
-                    }
-                  }
+                  loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
+                  OB.UTIL.showAlert(loadOrderStr, OB.I18N.getLabel('OBUIAPP_Info'));
                 }
               }, function () { //OB.Dal.find error
                 // If there is an error fetching the pending orders,
@@ -208,7 +202,7 @@
                 orderlist.addNewOrder();
               });
             };
-            showUnpaidOrders();
+            loadUnpaidOrders();
 
           }, this);
           modelterminal.on('online', function () {
