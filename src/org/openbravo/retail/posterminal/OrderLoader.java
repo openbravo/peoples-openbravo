@@ -394,6 +394,8 @@ public class OrderLoader {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")));
       orderline.setListPrice(orderline.getUnitPrice());
 
+      orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")));
+
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
       order.getOrderLineList().add(orderline);
@@ -692,8 +694,6 @@ public class OrderLoader {
       return "obposApplications";
     } else if (key.equals("pricenet")) {
       return "unitPrice";
-    } else if (key.equals("gross")) {
-      return "lineGrossAmount";
     }
     return null;
   }
