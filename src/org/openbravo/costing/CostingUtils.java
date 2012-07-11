@@ -187,12 +187,40 @@ public class CostingUtils {
    */
   public static Costing getStandardCostDefinition(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions) {
+    Costing stdCost = getStandardCostDefinition(product, org, date, costDimensions,
+        recheckWithoutDimensions, "STA");
+    if (stdCost != null) {
+      return stdCost;
+    } else {
+      // If no cost is found, search valid legacy cost
+      return getStandardCostDefinition(product, org, date, costDimensions,
+          recheckWithoutDimensions, "ST");
+    }
+  }
+
+  /**
+   * Calculates the standard cost definition of a product on the given date and cost dimensions.
+   * 
+   * @param product
+   *          The Product to get its Standard Cost
+   * @param date
+   *          The Date to get the Standard Cost
+   * @param costDimensions
+   *          The cost dimensions to get the Standard Cost if it is defined by some of them.
+   * @param recheckWithoutDimensions
+   *          boolean flag to force a recall the method to get the Standard Cost at client level if
+   *          no cost is found in the given cost dimensions.
+   * @return the Standard Cost. Null when no definition is found.
+   */
+  public static Costing getStandardCostDefinition(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions,
+      String costtype) {
     // Get cost from M_Costing for given date.
     OBCriteria<Costing> obcCosting = OBDal.getInstance().createCriteria(Costing.class);
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_PRODUCT, product));
     obcCosting.add(Restrictions.le(Costing.PROPERTY_STARTINGDATE, date));
     obcCosting.add(Restrictions.gt(Costing.PROPERTY_ENDINGDATE, date));
-    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, "STA"));
+    obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, costtype));
     obcCosting.add(Restrictions.isNotNull(Costing.PROPERTY_COST));
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
@@ -235,6 +263,49 @@ public class CostingUtils {
     select
         .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    select
+        .append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", product.getId());
+    trxQry.setParameter("date", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+
+    Object stock = trxQry.uniqueResult();
+    if (stock != null) {
+      return (BigDecimal) stock;
+    }
+
+    return BigDecimal.ZERO;
+  }
+
+  /**
+   * Calculates the stock of the product on the given date and for the given cost dimensions. It
+   * only takes transactions that have its cost calculated.
+   */
+  public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date date,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    // Get child tree of organizations.
+    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getChildTree(org.getId(), true);
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select sum(case");
+    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select

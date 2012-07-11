@@ -27,8 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.DateType;
@@ -97,9 +100,10 @@ public class CostingMigrationProcess implements Process {
     try {
       OBContext.setAdminMode(false);
 
-      if (CostingStatus.getInstance().isMigrated()) {
-        throw new OBException("@CostMigratedInstance@");
-      }
+      /*
+       * if (CostingStatus.getInstance().isMigrated()) { throw new
+       * OBException("@CostMigratedInstance@"); }
+       */
       // FIXME: Remove when HQL based inserts are removed.
       OBDal.getInstance().registerSQLFunction("get_uuid",
           new StandardSQLFunction("get_uuid", new StringType()));
@@ -302,9 +306,11 @@ public class CostingMigrationProcess implements Process {
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(client.getId());
       Currency clientCur = client.getCurrency();
+      OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE).lock(clientCur);
       log4j.debug("** Processing client: " + client.getIdentifier() + " with currency: "
           + clientCur.getIdentifier());
       for (Organization legalEntity : osp.getLegalEntitiesList()) {
+        // OBDal.getInstance().refresh(clientCur);
         Currency orgCur = legalEntity.getCurrency() != null ? legalEntity.getCurrency() : clientCur;
         log4j.debug("** Processing organization: " + legalEntity.getIdentifier()
             + " with currency: " + orgCur.getIdentifier());
@@ -331,6 +337,9 @@ public class CostingMigrationProcess implements Process {
           legacyCosts = getLegacyCostBatch(legalEntity, naturalTree);
         }
 
+        updateReceiptAndProductionCosts(naturalTree, !conversionNeeded, clientCur
+            .getStandardPrecision().intValue());
+
         // If minDate is null there isn't any cost to update.
         if (!orgCur.getId().equals(clientCur.getId()) && minDate != null) {
           Organization convOrg = legalEntity;
@@ -338,7 +347,7 @@ public class CostingMigrationProcess implements Process {
           while (hasTrxToConvert) {
             log4j.debug("**** HasTrxToConvert ");
             for (ConversionRate convRate : getConversionRates(convOrg, clientCur, orgCur, minDate,
-                maxDate)) {
+                maxDate, client)) {
               convertTrxLegacyCosts(convRate, orgCur.getStandardPrecision(), naturalTree);
             }
 
@@ -405,19 +414,21 @@ public class CostingMigrationProcess implements Process {
 
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         BigDecimal cost = getLegacyProductCost(trx.getProduct());
-        trx.setCostCalculated(true);
-        trx.setTransactionCost(cost.multiply(trx.getMovementQuantity().abs()).setScale(
-            orgCurrency.getStandardPrecision().intValue()));
-        OBDal.getInstance().save(trx);
-        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
         if (!clientCurrency.getId().equals(orgCurrency.getId())) {
           cost = FinancialUtils.getConvertedAmount(cost, clientCurrency, orgCurrency, startingDate,
               rule.getOrganization(), FinancialUtils.PRECISION_COSTING);
         }
+        trx.setCostCalculated(true);
+        trx.setTransactionCost(cost.multiply(trx.getMovementQuantity().abs()).setScale(
+            orgCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP));
+        OBDal.getInstance().save(trx);
+        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);
       }
     }
+    OBDal.getInstance().flush();
+    insertTrxCosts();
   }
 
   private boolean isMigrationFirstPhaseCompleted() {
@@ -440,7 +451,7 @@ public class CostingMigrationProcess implements Process {
   private List<Costing> getLegacyCostBatch(Organization legalEntity, Set<String> naturalTree) {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
-    where.append(" where c." + Costing.PROPERTY_CLIENT + " = :client");
+    where.append(" where c." + Costing.PROPERTY_CLIENT + ".id = :client");
     where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx");
     where.append("     where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append("       and trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
@@ -458,7 +469,7 @@ public class CostingMigrationProcess implements Process {
     OBQuery<Costing> costingQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
     costingQry.setFilterOnReadableClients(false);
     costingQry.setFilterOnReadableOrganization(false);
-    costingQry.setNamedParameter("client", legalEntity.getClient());
+    costingQry.setNamedParameter("client", legalEntity.getClient().getId());
     costingQry.setNamedParameter("orgs", naturalTree);
     costingQry.setMaxResult(1000);
     return costingQry.list();
@@ -491,6 +502,50 @@ public class CostingMigrationProcess implements Process {
     log4j.debug("****** UpdateTrxLegacyCosts updated:" + updated);
   }
 
+  private void updateReceiptAndProductionCosts(Set<String> naturalTree, boolean setIsCalculated,
+      int standardPrecission) {
+    log4j.debug("****** updateReceiptAndProductionCosts");
+
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    where.append("   and (exists (select 1 from " + Costing.ENTITY_NAME + " as cr");
+    where.append("          where cr." + Costing.PROPERTY_GOODSSHIPMENTLINE + " = trx."
+        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ")");
+    where.append("       or exists (select 1 from " + Costing.ENTITY_NAME + " cp");
+    where.append("          where cp." + Costing.PROPERTY_PRODUCTIONLINE + " = trx."
+        + MaterialTransaction.PROPERTY_PRODUCTIONLINE + "))");
+
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setFilterOnReadableClients(false);
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("orgs", naturalTree);
+
+    ScrollableResults trxs = trxQry.scroll(ScrollMode.FORWARD_ONLY);
+    int i = 0;
+    while (trxs.next()) {
+      final MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
+      Costing cost = null;
+      if (trx.getGoodsShipmentLine() != null) {
+        cost = trx.getGoodsShipmentLine().getMaterialMgmtCostingList().get(0);
+      } else {
+        cost = trx.getProductionLine().getMaterialMgmtCostingList().get(0);
+      }
+      if (cost.getPrice().compareTo(cost.getCost()) != 0) {
+        log4j.debug("blabla");
+      }
+      trx.setCostCalculated(setIsCalculated);
+      trx.setTransactionCost(cost.getPrice().multiply(trx.getMovementQuantity().abs())
+          .setScale(standardPrecission, BigDecimal.ROUND_HALF_UP));
+      OBDal.getInstance().save(trx);
+
+      i++;
+    }
+
+    log4j.debug("****** updateReceiptAndProductionCosts updated");
+  }
+
   private boolean hasTrxToConvert(Set<String> naturalTree, Date minDate, Date maxDate) {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
@@ -512,7 +567,7 @@ public class CostingMigrationProcess implements Process {
   }
 
   private List<ConversionRate> getConversionRates(Organization organization, Currency fromCur,
-      Currency toCur, Date minDate, Date maxDate) {
+      Currency toCur, Date minDate, Date maxDate, Client client) {
     StringBuffer where = new StringBuffer();
     where.append(" as cr");
     where.append(" where cr." + ConversionRate.PROPERTY_ORGANIZATION + ".id = :organizationId");
@@ -521,6 +576,7 @@ public class CostingMigrationProcess implements Process {
     where.append("   and cr." + ConversionRate.PROPERTY_VALIDFROMDATE + " <= :maxDate");
     where.append("   and cr." + ConversionRate.PROPERTY_VALIDTODATE + " >= :minDate");
     where.append("   and cr." + ConversionRate.PROPERTY_ACTIVE + " = true");
+    where.append("   and cr." + ConversionRate.PROPERTY_CLIENT + ".id = :client");
     where.append(" order by cr." + ConversionRate.PROPERTY_VALIDFROMDATE);
 
     OBQuery<ConversionRate> convRateQry = OBDal.getInstance().createQuery(ConversionRate.class,
@@ -532,6 +588,7 @@ public class CostingMigrationProcess implements Process {
     convRateQry.setNamedParameter("toCur", toCur.getId());
     convRateQry.setNamedParameter("maxDate", maxDate);
     convRateQry.setNamedParameter("minDate", minDate);
+    convRateQry.setNamedParameter("client", client.getId());
     return convRateQry.list();
   }
 
@@ -645,11 +702,11 @@ public class CostingMigrationProcess implements Process {
     insert.append(", t");
     insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
     insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+    insert.append(" from  " + TransactionCost.ENTITY_NAME + " as tc ");
+    insert.append("   right join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as t");
     insert.append(", " + User.ENTITY_NAME + " as u");
     insert.append("  where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
-    insert.append("    and not exists (select 1 from " + TransactionCost.ENTITY_NAME + " as tc");
-    insert.append("        where t = tc)");
+    insert.append("    and tc.id is null");
     insert.append("    and u.id = :user");
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
