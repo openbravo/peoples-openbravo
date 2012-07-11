@@ -91,7 +91,8 @@ public class DocLine_Material extends DocLine {
    */
 
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
-    if (transaction != null && transaction.getTransactionCost() != null) {
+    if (transaction != null && transaction.getTransactionCost() != null
+        && CostingStatus.getInstance().isMigrated()) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
       return transaction.getTransactionCost().multiply(sign).toString();
     } else if (transaction != null && CostingStatus.getInstance().isMigrated()) {

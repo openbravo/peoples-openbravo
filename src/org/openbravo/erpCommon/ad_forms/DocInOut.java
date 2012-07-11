@@ -301,6 +301,9 @@ public class DocInOut extends AcctServer {
             .getOrganizationStructureProvider(AD_Client_ID)
             .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
         Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
+        if (!CostingStatus.getInstance().isMigrated()) {
+          costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
+        }
         C_Currency_ID = costCurrency.getId();
         if (CostingStatus.getInstance().isMigrated() && line.transaction != null
             && !line.transaction.isCostCalculated()) {
@@ -469,7 +472,13 @@ public class DocInOut extends AcctServer {
                   .getLegalEntity(inOut.getOrganization());
               HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
                   .getEmptyDimensions();
-              costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin().getWarehouse());
+              if (inOutLine.getStorageBin() == null) {
+                costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt()
+                    .getWarehouse());
+              } else {
+                costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin()
+                    .getWarehouse());
+              }
               if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
                   inOut.getAccountingDate(), costDimensions)) {
                 Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()

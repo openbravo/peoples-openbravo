@@ -174,13 +174,6 @@ public class DocInventory extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     log4jDocInventory.debug("CreateFact - before loop");
-    String costCurrencyId = as.getC_Currency_ID();
-    OBContext.setAdminMode(false);
-    try {
-      costCurrencyId = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
 
