@@ -210,7 +210,7 @@ button.btnlink-white {
   color: black;
 }
 
-button.btnlink-fontgrey {
+button.btnlink-fontgray {
   color: #363636;
 }
 button.btnlink-fontblue {
@@ -220,7 +220,7 @@ button.btnlink-fontblue {
 button.btnlink-payment-clear {
   width: 90%;
   margin: 0px 0px 0px 16px;
-  border: 1px #cccccc dotted;
+  border: 1px #cccccc solid;
 }
 
 button.btnlink-cashup-edit {

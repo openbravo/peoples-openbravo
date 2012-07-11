@@ -15,7 +15,7 @@
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msginfo', attr: {'style': 'padding: 10px; float: left; width: 320px; line-height: 23px;'} , content: [OB.I18N.getLabel('OBPOS_LblDepositsDropsMsg')]},
             {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 5px; float: right;'}, content: [
-              {kind: OB.COMP.SmallButton, attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel'), 'href': '#modalCancel', 'dataToggle': 'modal', 'className': 'btnlink-white btnlink-fontgrey'}}
+              {kind: OB.COMP.SmallButton, attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel'), 'href': '#modalCancel', 'dataToggle': 'modal', 'className': 'btnlink-white btnlink-fontgray'}}
             ]}
           ]},
           {kind: B.KindJQuery('div'), attr: {'align':'center', 'style': 'width: 100%; float: left;'}, content: [{kind: OB.COMP.ButtonNextCashMgmt}]}

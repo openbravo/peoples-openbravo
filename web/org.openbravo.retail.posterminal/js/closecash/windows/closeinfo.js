@@ -15,7 +15,7 @@
           {kind: B.KindJQuery('div'), content: [
             {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 5px 10px 10px 10px; line-height: 23px;'}, content: [
               {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'float: right; padding: 0px;'}, content: [
-                {kind: OB.COMP.SmallButton, attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel'), 'href': '#modalCancel', 'dataToggle': 'modal', 'className': 'btnlink-white btnlink-fontgrey'}}
+                {kind: OB.COMP.SmallButton, attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel'), 'href': '#modalCancel', 'dataToggle': 'modal', 'className': 'btnlink-white btnlink-fontgray'}}
               ]},
               {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblCashUpProcess')]} ,
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [{kind: OB.COMP.ButtonPrev},{kind: OB.COMP.ButtonNext}]} ,
