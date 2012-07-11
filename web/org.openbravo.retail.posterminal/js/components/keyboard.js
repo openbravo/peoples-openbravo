@@ -663,7 +663,7 @@
           parent: this,
           btn: BtnAction.extend({
             command: value[i].command,
-            classButtonActive: value[i].classButtonActive,
+            classButtonActive: value[i].classButtonActive || 'btnactive-green',
             permission: (value[i].definition ? value[i].definition.permission : null),
             contentViewButton: [value[i].label]
           })

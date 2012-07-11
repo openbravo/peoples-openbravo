@@ -39,7 +39,7 @@
     for (i = 0, max = payments.length; i < max; i++) {
       this.toolbar.push({
         command: payments[i].searchKey,
-        classButtonActive: 'btnactive-green',
+//        classButtonActive: 'btnactive-green',
         definition: getPayment(this.modalpayment, this.receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider),
         label: payments[i]._identifier
       });
