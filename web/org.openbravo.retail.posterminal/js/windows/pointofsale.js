@@ -141,31 +141,20 @@
               };
             if (navigator.onLine) {
               OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
-                var orderarraytoprocess = [];
+                var successCallback, errorCallback;
                 if (!ordersPaidNotProcessed) {
                   return;
                 }
-                ordersPaidNotProcessed.each(function (order){
-                  orderarraytoprocess.push(JSON.parse(order.get('json')));
-                });
-                this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
-                OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
-                this.proc.exec({
-                  order: orderarraytoprocess
-                }, function (data, message) {
+                successCallback = function() {
                   $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') +'")').alert('close');
-                if (data && data.exception) {
-                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
-                } else {
-                  ordersPaidNotProcessed.each(function (order){
-                    ctx.modelorderlist.remove(order);
-                    OB.Dal.remove(order, function(){
-                    }, function(){
-                    });
-                  });
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
-                }
-               });
+                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
+                 };
+                 errorCallback = function() {
+                   $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') +'")').alert('close');
+                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
+                 };
+                OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
+                OB.UTIL.processOrders(me.context, ordersPaidNotProcessed, successCallback, errorCallback);
               });
             }
           };

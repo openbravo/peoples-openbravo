@@ -96,4 +96,37 @@
     }
   };
 
+  OB.UTIL.processOrders = function (context, orders, successCallback, errorCallback) {
+    var ordersToJson = [];
+    orders.each(function (order){
+      ordersToJson.push(order.serializeToJSON());
+    });
+    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
+    if (navigator.onLine) {
+      this.proc.exec({
+        order: ordersToJson
+      }, function (data, message) {
+        if (data && data.exception) {
+          // Orders have not been processed
+          orders.each(function (order){
+            order.set('isbeingprocessed', 'N');
+            OB.Dal.save(order, null, function (tx, err) { OB.UTIL.showError(err);});
+          });
+          if (errorCallback) {
+            errorCallback();
+          }
+        } else {
+          // Orders have been processed, delete them
+          orders.each(function (order){
+            context.modelorderlist.remove(order);
+            OB.Dal.remove(order,null, function (tx, err) { OB.UTIL.showError(err);});
+          });
+          if (successCallback) {
+            successCallback();
+          }
+        }
+      });
+    }
+  };
+
 }());

@@ -8,7 +8,6 @@
   OB.DATA.OrderSave = function (context) {
     this._id = 'logicOrderSave';
     this.context = context;
-
     this.receipt = context.modelorder;
 
     this.receipt.on('closed', function () {
@@ -29,30 +28,22 @@
 
       OB.Dal.save(this.receipt, function () {
         if (navigator.onLine) {
-          me.proc.exec({
-            order: json
-          }, function (data, message) {
-            var d = data,
-                m = message;
-            OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-              if (d && d.exception) {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
-                //If there is an error while sending the order to the backend,
-                //we set the order as not being processed so that it can be sent again
-                receipt.set('isbeingprocessed', 'N');
-                OB.Dal.save(receipt, null, function (tx, err) { OB.UTIL.showError(err);});
-              } else {
-                //In this case, the order was sent correctly, so we remove it from the buffer
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
-                OB.Dal.remove(receipt, null, function (tx, err) { OB.UTIL.showError(err);});
-              }
-            }, null);
-          });
+          OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
+            var successCallback, errorCallback, orderList;
+            successCallback = function() {
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [docno]));
+            };
+            errorCallback = function() {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
+            };
+            orderList = new OB.Collection.OrderList();
+            orderList.add(receipt);
+            OB.UTIL.processOrders(context, orderList, successCallback, errorCallback);
+          }, null);
         }
       }, function () {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgReceiptNotSaved', [docno]));
       });
     }, this);
-    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
   };
 }());

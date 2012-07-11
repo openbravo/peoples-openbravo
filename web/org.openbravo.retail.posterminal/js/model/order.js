@@ -123,19 +123,25 @@
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('gross', attributes.gross);
+        this.set('net', attributes.net);
+        this.set('taxes', attributes.taxes);
       } else {
         this.clearOrderAttributes();
       }
     },
 
     save: function() {
+      var undoCopy;
       if (this.attributes.json) {
         delete this.attributes.json; // BINGO!!!
       }
+      undoCopy = this.get('undo');
+      this.unset('undo',{silent:true});
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, null, function() {
         window.console.error(arguments);
       });
+      this.set('undo', undoCopy, {silent:true});
     },
 
     calculateTaxes: function(callback) {
