@@ -9,8 +9,9 @@
 	  _id: 'depositsdropsTicket',
 	  initialize: function () {
 	        var me = this;
+	        this.startingCash= OB.DEC.Zero;
+	        this.totalTendered= OB.DEC.Zero;
 	        this.total= OB.DEC.Zero;
-	        this.listdepositsdrops = this.options.ListDepositsDrops.listdepositsdrops;
 	        this.component = B(
 	        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
 	          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
@@ -71,9 +72,29 @@
                     ]}
                   ]}
                 ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
+                      'Starting Cash'
+                    ]},
+                    {kind: B.KindJQuery('div'), attr: { 'id': 'startingCashTicket','style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
+                      OB.I18N.formatCurrency(OB.DEC.add(0,this.startingCash))
+                    ]}
+                   ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
+                      'Total tendered'
+                    ]},
+                    {kind: B.KindJQuery('div'), attr: { 'id': 'totalTenderedTicket', 'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
+                      OB.I18N.formatCurrency(OB.DEC.add(0,this.totalTendered))
+                    ]}
+                   ]}
+                ]},
 	              {kind: OB.UI.TableView, id: 'tableview', attr: {
 	                style: 'list',
-	                collection: this.listdepositsdrops,
+	                collection: this.options.ListDepositsDrops.dropsdeps,
 	                me: me,
                   renderEmpty: OB.COMP.RenderEmpty,
 	                renderLine: OB.COMP.RenderDepositsDrops.extend({me:me})
@@ -83,16 +104,24 @@
                       {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 10px; float: left; width: 70%'}, content: [
                               OB.I18N.getLabel('OBPOS_ReceiptTotal')
                       ]},
-                  {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 17px 20px 17px 0px;  float: right; '}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 17px 20px 17px 0px;  float: right; '}, content: [
                    {kind: Backbone.View.extend({
                      tagName: 'span',
                      attributes: {'style': 'float:right;'},
                      initialize: function () {
+                          var that = this;
                           this.total = $('<strong/>');
                           this.$el.append(this.total);
                           // Set Model
+                          me.options.ListDepositsDrops.dropsdeps.on('add', function(e) {
+                          if(me.options.ListDepositsDrops.dropsdeps.length!==0){
+//                          $('#startingCashTicket').text(OB.I18N.formatCurrency(me.listdepositsdrops.models[0].get('startingCash')));
+                            that.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.options.ListDepositsDrops.startingCash,me.options.ListDepositsDrops.totalTendered),me.options.ListDepositsDrops.total)));
+                            $('#totalTenderedTicket').text(OB.I18N.formatCurrency(me.options.ListDepositsDrops.totalTendered));
+                          }
+                        });
                           me.on('change:total', function() {
-                          this.total.text(OB.I18N.formatCurrency(me.total));
+                            that.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.options.ListDepositsDrops.startingCash,me.options.ListDepositsDrops.totalTendered),me.options.ListDepositsDrops.total)));
                           if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                           }else{
@@ -100,7 +129,7 @@
                           }
                           }, this);
                            // Initial total display
-                          this.total.text(OB.I18N.formatCurrency(me.total));
+                          this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.options.ListDepositsDrops.startingCash,me.options.ListDepositsDrops.totalTendered),me.options.ListDepositsDrops.total)));
                          if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                          }else{

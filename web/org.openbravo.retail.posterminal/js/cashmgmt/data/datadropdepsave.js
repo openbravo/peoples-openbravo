@@ -24,11 +24,11 @@
      }, this);
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
     this.context.SearchDropEvents.destinations.on('click', function (model, index) {
-        me.context.ListDepositsDrops.listdepositsdrops.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
+        me.context.ListDepositsDrops.dropsdeps.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
         me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
       }, this);
     this.context.SearchDepositEvents.destinations.on('click', function (model, index) {
-      me.context.ListDepositsDrops.listdepositsdrops.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
+      me.context.ListDepositsDrops.dropsdeps.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey});
       me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id')});
     }, this);
   };
