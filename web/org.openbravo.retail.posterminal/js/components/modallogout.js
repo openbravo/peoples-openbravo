@@ -32,8 +32,8 @@
 
   // Logout the application
   OB.COMP.LogoutDialogLogout = OB.COMP.Button.extend({
+    className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function () {
-      this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
       this.$el.html(OB.I18N.getLabel('OBPOS_LogoutDialogLogout'));
       return this;
     },
@@ -44,8 +44,8 @@
 
   // Lock the application
   OB.COMP.LogoutDialogLock = OB.COMP.Button.extend({
+    className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function () {
-      this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
       this.$el.html(OB.I18N.getLabel('OBPOS_LogoutDialogLock'));
       return this;
     },
@@ -56,14 +56,15 @@
 
   // Cancel
   OB.COMP.LogoutDialogCancel = OB.COMP.Button.extend({
+    attributes: {
+      'data-dismiss': 'modal'
+    },
+    className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function () {
-      this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
       this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
-      this.$el.attr('data-dismiss', 'modal');
       return this;
     },
     clickEvent: function (e) {
-      return true;
     }
   });
 

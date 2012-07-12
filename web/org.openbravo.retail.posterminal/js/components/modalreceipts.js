@@ -45,8 +45,8 @@
   // Apply the changes
   OB.COMP.DeleteReceiptDialogApply = OB.COMP.Button.extend({
     isActive: true,
+    className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function() {
-      this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
       this.$el.html(OB.I18N.getLabel('OBPOS_LblYesDelete'));
       return this;
     },
@@ -66,14 +66,15 @@
 
   // Cancel
   OB.COMP.DeleteReceiptDialogCancel = OB.COMP.Button.extend({
+    attributes: {
+      'data-dismiss': 'modal'
+    },
+    className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function() {
-      this.$el.addClass('btnlink btnlink-gray modal-dialog-content-button');
       this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
-      this.$el.attr('data-dismiss', 'modal');
       return this;
     },
     clickEvent: function(e) {
-      return true;
     }
   });
 
