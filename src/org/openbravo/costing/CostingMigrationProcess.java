@@ -454,7 +454,8 @@ public class CostingMigrationProcess implements Process {
     where.append("               where cri." + CostingRuleInit.PROPERTY_CLOSEINVENTORY + " = il."
         + InventoryCountLine.PROPERTY_PHYSINVENTORY + ")");
     where.append("   and il." + InventoryCountLine.PROPERTY_CLIENT + ".id = :client");
-    where.append(" order by " + InventoryCountLine.PROPERTY_PRODUCT);
+    where.append(" order by " + InventoryCountLine.PROPERTY_PRODUCT + ", il."
+        + InventoryCountLine.PROPERTY_BOOKQUANTITY);
 
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
