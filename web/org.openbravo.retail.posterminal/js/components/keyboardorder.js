@@ -109,6 +109,7 @@
       this.products = this.options.DataProductPrice;
       this.receipt = this.options.modelorder;
       this.line = null;
+      this.defaultcommand = 'code';
 
       this.receipt.get('lines').on('selected', function (line) {
         this.line = line;

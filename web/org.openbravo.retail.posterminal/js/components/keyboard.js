@@ -236,21 +236,25 @@
         var txt;
         var me = this;
         if (this.editbox.text() && cmd === String.fromCharCode(13)) {
-          // Barcode read using an scanner or typed in the keyboard...
-          this.execCommand(this.commands.code, this.getString());
+          txt = this.getString();
+          
+          if (this.defaultcommand) {
+            this.execCommand(this.commands[this.defaultcommand], txt);
+          }
         } else if (cmd === 'OK') {
-
-          // Accepting a command
           txt = this.getString();
 
           if (txt && this.status === '') {
+            if (this.defaultcommand) {
+              this.execCommand(this.commands[this.defaultcommand], txt);
+            }
             // It is a barcode
             this.execCommand(this.commands.code, txt);
           } else if (txt && this.status !== '') {
             this.execCommand(this.commands[this.status], txt);
             this.setStatus('');
           }
-        } else if ((cmd.substring(0, 5) !== 'line:' || this.line) && this.commands[cmd]) {
+        } else if (this.commands[cmd]) {
           txt = this.getString();
           if (this.commands[cmd].stateless) {
             // Stateless commands: add, subs, ...
