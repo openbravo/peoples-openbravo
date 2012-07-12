@@ -140,10 +140,6 @@
             this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('.active').val()));
           }
           $(".active").removeClass("active");
-        }else{
-          this.options.countcash.$el.hide();
-          this.options.cashtokeep.$el.show();
-          this.options.closekeyboard.show('toolbarempty');
         }
          while(this.options.modeldaycash.get('allowedStep') < this.options.modeldaycash.paymentmethods.length){
 
@@ -198,12 +194,17 @@
         if(found===false){
           this.options.postprintclose.$el.show();
           this.options.cashtokeep.$el.hide();
+          this.options.countcash.$el.hide();
           this.options.renderpaymentlines.$el.empty();
           this.options.renderpaymentlines.render();
           this.$el.text(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
           this.$el.removeAttr('disabled');
           this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
           this.options.modeldaycash.defaults.step=3;
+        }else{
+          this.options.countcash.$el.hide();
+          this.options.cashtokeep.$el.show();
+          this.options.closekeyboard.show('toolbarempty');
         }
       } else if (this.options.modeldaycash.defaults.step === 3) {
         this.options.modeldaycash.paymentmethods.trigger('closed');
