@@ -82,9 +82,8 @@
         }
         if(found===false){
           this.options.countcash.$el.show();
-          this.options.closekeyboard.toolbars.toolbarcountcash.show();
           this.options.cashtokeep.$el.hide();
-          this.options.closekeyboard.toolbars.toolbarempty.hide();
+          this.options.closekeyboard.show('toolbarcountcash');
           this.options.modeldaycash.defaults.step=1;
           this.options.modeldaycash.set('allowedStep', 0);
           this.options.closenextbutton.$el.removeAttr('disabled');
@@ -93,8 +92,7 @@
         //Pending receipts back from Count Cash.
         this.options.pendingreceipts.$el.show();
         this.options.countcash.$el.hide();
-        this.options.closekeyboard.toolbars.toolbarempty.show();
-        this.options.closekeyboard.toolbars.toolbarcountcash.hide();
+        this.options.closekeyboard.show('toolbarempty');
         this.options.modeldaycash.defaults.step=0;
         this.$el.attr('disabled','disabled');
         this.options.closenextbutton.$el.removeAttr('disabled');
@@ -116,9 +114,8 @@
       if(this.options.modeldaycash.defaults.step === 0){
         //Pending receipts to Count Cash
         this.options.countcash.$el.show();
-        this.options.closekeyboard.toolbars.toolbarcountcash.show();
         this.options.pendingreceipts.$el.hide();
-        this.options.closekeyboard.toolbars.toolbarempty.hide();
+        this.options.closekeyboard.show('toolbarcountcash');
         this.options.modeldaycash.defaults.step=1;
         this.options.closeprevbutton.$el.removeAttr('disabled');
         if($('button[button="okbutton"][style!="display: none; "]').length!==0){
@@ -142,8 +139,7 @@
         }else{
           this.options.countcash.$el.hide();
           this.options.cashtokeep.$el.show();
-          this.options.closekeyboard.toolbars.toolbarcountcash.hide();
-          this.options.closekeyboard.toolbars.toolbarempty.show();
+          this.options.closekeyboard.show('toolbarempty');
         }
          while(this.options.modeldaycash.get('allowedStep') < this.options.modeldaycash.paymentmethods.length){
 
