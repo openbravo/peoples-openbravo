@@ -240,6 +240,8 @@
           
           if (this.defaultcommand) {
             this.execCommand(this.commands[this.defaultcommand], txt);
+          } else {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
           }
         } else if (cmd === 'OK') {
           txt = this.getString();
@@ -247,9 +249,9 @@
           if (txt && this.status === '') {
             if (this.defaultcommand) {
               this.execCommand(this.commands[this.defaultcommand], txt);
+            } else {
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));            
             }
-            // It is a barcode
-            this.execCommand(this.commands.code, txt);
           } else if (txt && this.status !== '') {
             this.execCommand(this.commands[this.status], txt);
             this.setStatus('');
@@ -269,6 +271,8 @@
               this.setStatus(cmd);
             }
           }
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoActionDefined'));
         }
       }, this);
 
