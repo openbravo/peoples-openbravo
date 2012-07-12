@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -329,13 +330,16 @@ public class CostingMigrationProcess implements Process {
 
     List<Client> clients = getClients();
     for (Client client : clients) {
+      client = OBDal.getInstance().get(Client.class, client.getId());
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(client.getId());
       for (Organization org : osp.getLegalEntitiesList()) {
         CostingRule rule = createCostingRule(org);
         processRule(rule);
       }
+      calculateCosts(client);
     }
+
   }
 
   private void processRule(CostingRule rule) {
@@ -351,32 +355,115 @@ public class CostingMigrationProcess implements Process {
     log4j.debug("setting starting date " + startingDate);
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(rule);
-    Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(rule.getOrganization());
+  }
 
+  private void calculateCosts(Client client) {
+    Currency cur = client.getCurrency();
+    String curId = cur.getId();
+    int costPrecision = cur.getCostingPrecision().intValue();
+    int stdPrecision = cur.getStandardPrecision().intValue();
+    CostingRuleProcess crp = new CostingRuleProcess();
     // Update cost of inventories and process starting physical inventories.
-    for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
-      for (InventoryCountLine icl : cri.getCloseInventory().getMaterialMgmtInventoryCountLineList()) {
-        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
-        trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
-        Costing costing = getLegacyProductCost(trx.getProduct());
-        BigDecimal cost = (costing == null) ? BigDecimal.ZERO : costing.getCost();
-        Currency costCurrency = costing != null ? costing.getCurrency() : legalEntityCur;
-        trx.setCurrency(costCurrency);
-        trx.setTransactionCost(cost.multiply(trx.getMovementQuantity().abs()).setScale(
-            legalEntityCur.getStandardPrecision().intValue()));
-        trx.setCostCalculated(true);
-        OBDal.getInstance().save(trx);
-        if (!costCurrency.equals(legalEntityCur)) {
-          cost = FinancialUtils.getConvertedAmount(cost, costing.getCurrency(), legalEntityCur,
-              startingDate, rule.getOrganization(), FinancialUtils.PRECISION_COSTING);
-        }
-        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
-        initICL.setCost(cost);
-        OBDal.getInstance().save(initICL);
+    ScrollableResults icls = getCloseInventoryLines(client);
+    String productId = "";
+    BigDecimal totalCost = BigDecimal.ZERO;
+    BigDecimal totalStock = BigDecimal.ZERO;
+    int i = 0;
+    while (icls.next()) {
+      InventoryCountLine icl = (InventoryCountLine) icls.get(0);
+      if (!productId.equals(icl.getProduct().getId())) {
+        productId = icl.getProduct().getId();
+        HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId);
+        totalCost = stock.get("cost");
+        totalStock = stock.get("stock");
       }
+
+      MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
+      trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
+      trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
+
+      BigDecimal trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
+          stdPrecision, BigDecimal.ROUND_HALF_UP);
+      if (trx.getMovementQuantity().compareTo(totalStock) == 0) {
+        // Last transaction adjusts remaining cost amount.
+        trxCost = totalCost;
+      }
+      trx.setTransactionCost(trxCost);
+      trx.setCostCalculated(true);
+      OBDal.getInstance().save(trx);
+      Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
+      BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
+          BigDecimal.ROUND_HALF_UP);
+      if (!legalEntityCur.equals(cur)) {
+        cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
+            icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
+      }
+      CostingRuleInit cri = icl.getPhysInventory().getCostingRuleInitCloseInventoryList().get(0);
+      InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+      initICL.setCost(cost);
+      OBDal.getInstance().save(initICL);
+
+      totalCost = totalCost.subtract(trxCost);
+      totalStock = totalStock.subtract(trx.getMovementQuantity());
+
+      if ((i % 100) == 0) {
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+        cur = OBDal.getInstance().get(Currency.class, curId);
+      }
+      i++;
     }
+
     OBDal.getInstance().flush();
     insertTrxCosts();
+
+  }
+
+  private HashMap<String, BigDecimal> getCurrentValuedStock(String productId) {
+    StringBuffer select = new StringBuffer();
+    select.append(" select sum(case");
+    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
+    select.append("    sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", productId);
+
+    Object[] stock = (Object[]) trxQry.uniqueResult();
+    HashMap<String, BigDecimal> retStock = new HashMap<String, BigDecimal>();
+
+    if (stock != null) {
+      retStock.put("cost", (BigDecimal) stock[0]);
+      retStock.put("stock", (BigDecimal) stock[1]);
+    } else {
+      retStock.put("cost", BigDecimal.ZERO);
+      retStock.put("stock", BigDecimal.ZERO);
+    }
+    return retStock;
+  }
+
+  private ScrollableResults getCloseInventoryLines(Client client) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as il");
+    where.append(" where exists (select 1 from " + CostingRuleInit.ENTITY_NAME + " as cri");
+    where.append("               where cri." + CostingRuleInit.PROPERTY_CLOSEINVENTORY + " = il."
+        + InventoryCountLine.PROPERTY_PHYSINVENTORY + ")");
+    where.append("   and il." + InventoryCountLine.PROPERTY_CLIENT + ".id = :client");
+    where.append(" order by " + InventoryCountLine.PROPERTY_PRODUCT);
+
+    OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
+        where.toString());
+    iclQry.setNamedParameter("client", client.getId());
+    iclQry.setFilterOnActive(false);
+    iclQry.setFilterOnReadableClients(false);
+    iclQry.setFilterOnReadableOrganization(false);
+    iclQry.setFetchSize(1000);
+    return iclQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private boolean isMigrationFirstPhaseCompleted() {
@@ -682,52 +769,6 @@ public class CostingMigrationProcess implements Process {
     rule.setStartingDate(null);
     OBDal.getInstance().save(rule);
     return rule;
-  }
-
-  private Costing getLegacyProductCost(Product product) {
-    Date date = new Date();
-    StringBuffer where = new StringBuffer();
-    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
-    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
-    where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
-    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AV'");
-    where.append("  and " + Costing.PROPERTY_COST + " is not null");
-    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setFilterOnReadableClients(false);
-    costQry.setNamedParameter("product", product.getId());
-    costQry.setNamedParameter("startingDate", date);
-    costQry.setNamedParameter("endingDate", date);
-
-    if (costQry.count() > 0) {
-      if (costQry.count() > 1) {
-        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
-            + " for product: " + product.getName() + " (" + product.getId() + ")");
-      }
-      return costQry.list().get(0);
-    }
-    // If no average cost is found try with standard cost.
-    where = new StringBuffer();
-    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
-    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
-    where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
-    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'ST'");
-    where.append("  and " + Costing.PROPERTY_COST + " is not null");
-    costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setFilterOnReadableClients(false);
-    costQry.setNamedParameter("product", product.getId());
-    costQry.setNamedParameter("startingDate", date);
-    costQry.setNamedParameter("endingDate", date);
-
-    if (costQry.count() > 0) {
-      if (costQry.count() > 1) {
-        log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
-            + " for product: " + product.getName() + " (" + product.getId() + ")");
-      }
-      return costQry.list().get(0);
-    }
-    return null;
   }
 
   private void checkAllInventoriesAreProcessed() {
