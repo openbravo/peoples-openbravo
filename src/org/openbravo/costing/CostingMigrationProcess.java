@@ -101,10 +101,10 @@ public class CostingMigrationProcess implements Process {
     try {
       OBContext.setAdminMode(false);
 
-      /*
-       * if (CostingStatus.getInstance().isMigrated()) { throw new
-       * OBException("@CostMigratedInstance@"); }
-       */
+      if (CostingStatus.getInstance().isMigrated()) {
+        throw new OBException("@CostMigratedInstance@");
+      }
+
       // FIXME: Remove when HQL based inserts are removed.
       OBDal.getInstance().registerSQLFunction("get_uuid",
           new StandardSQLFunction("get_uuid", new StringType()));
