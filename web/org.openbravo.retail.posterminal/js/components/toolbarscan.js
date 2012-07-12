@@ -34,6 +34,7 @@
     ],
     shown: function() {
       this.options.parent.showKeypad('index');
+      this.options.parent.showSidepad('sideenabled');
       this.options.parent.defaultcommand = 'code';
     }
   });

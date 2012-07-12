@@ -59,27 +59,46 @@
     
     
     initialize: function () {
-      var i, max, payments, Btn, inst, cont;
+      var i, max, payments, Btn, inst, cont, receipt, cashpayment;
       
       this.modalpayment = new OB.UI.ModalPayment({parent: this.options.parent}).render();
       $('body').append(this.modalpayment.$el);     
       
       payments = OB.POS.modelterminal.get('payments');
-      
+      receipt = this.options.parent.receipt;
+       
       for (i = 0, max = payments.length; i < max; i++) {
            
-        // this.options.parent.addCommand(payments[i].searchKey, definition);
+        // Add cashexact action if is cash payment
+        if (payments[i].searchKey === 'OBPOS_payment.cash') {
+          cashpayment = payments[i];
+        }
      
         Btn = OB.COMP.ButtonKey.extend({
           command: payments[i].searchKey,
-          definition: getPayment(this.modalpayment, this.options.parent.receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider),
+          definition: getPayment(this.modalpayment, receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider),
           classButtonActive: 'btnactive-green',
           permission: payments[i].searchKey,
           contentViewButton: [payments[i]._identifier]
         });
         inst = new Btn({parent: this.options.parent}).render();
         this.$el.append($('<div/>').attr({'style': 'display:table; width:100%'}).append(inst.$el));       
-      }   
+      }  
+      
+      if (cashpayment) {
+        this.options.parent.addCommand('cashexact', {
+          'action': function(txt) {
+            var amount = receipt.getPending();
+            if (amount > 0) {
+              receipt.addPayment(new OB.Model.PaymentLine({
+                'kind': cashpayment.searchKey,
+                'name': cashpayment._identifier,
+                'amount': amount
+              }));
+            }
+          }
+        });        
+      }
       
       while (i < 5) {
         inst = new OB.COMP.ButtonKey({parent: this.options.parent}).render();
@@ -94,6 +113,7 @@
     },
     shown: function() {
       this.options.parent.showKeypad('coins');
+      this.options.parent.showSidepad('sidedisabled');
       this.options.parent.defaultcommand = 'OBPOS_payment.cash';
     }
   });

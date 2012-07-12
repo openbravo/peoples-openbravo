@@ -109,89 +109,163 @@
               'class': 'span4'
             },
             content: [{
+              id: 'sideenabled',
+              attributes: {'style': 'display:none'},
               tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
               content: [{
                 tag: 'div',
                 attributes: {
-                  'class': 'span6'
+                  'class': 'row-fluid'
                 },
                 content: [{
-                  view: OB.COMP.ButtonKey.extend({
-                    command: '-',
-                    classButton: 'btnkeyboard-num btnkeyboard-minus',
-                    contentViewButton: ['-']
-                  })
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span6'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey.extend({
+                      command: '-',
+                      classButton: 'btnkeyboard-num btnkeyboard-minus',
+                      contentViewButton: ['-']
+                    })
+                  }]
+                }, {
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span6'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey.extend({
+                      command: '+',
+                      classButton: 'btnkeyboard-num btnkeyboard-plus',
+                      contentViewButton: ['+']
+                    })                 
+                  }]
                 }]
               }, {
                 tag: 'div',
                 attributes: {
-                  'class': 'span6'
+                  'class': 'row-fluid'
                 },
                 content: [{
-                  view: OB.COMP.ButtonKey.extend({
-                    command: '+',
-                    classButton: 'btnkeyboard-num btnkeyboard-plus',
-                    contentViewButton: ['+']
-                  })                 
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey.extend({
+                      command: 'line:qty',
+                      contentViewButton: [OB.I18N.getLabel('OBPOS_KbQuantity')]
+                    })
+                  }]
                 }]
-              }]
-            }, {
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'row-fluid'
+                },
+                content: [{
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey.extend({
+                      command: 'line:price',
+                      permission: 'OBPOS_order.changePrice',
+                      contentViewButton: [OB.I18N.getLabel('OBPOS_KbPrice')]
+                    })
+                  }]
+                }]
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'row-fluid'
+                },
+                content: [{
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey.extend({
+                      command: 'line:dto',
+                      permission: 'OBPOS_order.discount',
+                      contentViewButton: [OB.I18N.getLabel('OBPOS_KbDiscount')]
+                    })
+                  }]
+                }]
+              }
+            ]}, {
+              id: 'sidedisabled',
+              attributes: {'style': 'display:none'},
               tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
               content: [{
                 tag: 'div',
                 attributes: {
-                  'class': 'span12'
+                  'class': 'row-fluid'
                 },
                 content: [{
-                  view: OB.COMP.ButtonKey.extend({
-                    command: 'line:qty',
-                    contentViewButton: [OB.I18N.getLabel('OBPOS_KbQuantity')]
-                  })
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span6'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey
+                  }]
+                }, {
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span6'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey
+                  }]
                 }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
+              }, {
                 tag: 'div',
                 attributes: {
-                  'class': 'span12'
+                  'class': 'row-fluid'
                 },
                 content: [{
-                  view: OB.COMP.ButtonKey.extend({
-                    command: 'line:price',
-                    permission: 'OBPOS_order.changePrice',
-                    contentViewButton: [OB.I18N.getLabel('OBPOS_KbPrice')]
-                  })
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey
+                  }]
                 }]
-              }]
-            }, {
-              tag: 'div',
-              attributes: {
-                'class': 'row-fluid'
-              },
-              content: [{
+              }, {
                 tag: 'div',
                 attributes: {
-                  'class': 'span12'
+                  'class': 'row-fluid'
                 },
                 content: [{
-                  view: OB.COMP.ButtonKey.extend({
-                    command: 'line:dto',
-                    permission: 'OBPOS_order.discount',
-                    contentViewButton: [OB.I18N.getLabel('OBPOS_KbDiscount')]
-                  })
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey
+                  }]
                 }]
-              }]
-            }, {
+              }, {
+                tag: 'div',
+                attributes: {
+                  'class': 'row-fluid'
+                },
+                content: [{
+                  tag: 'div',
+                  attributes: {
+                    'class': 'span12'
+                  },
+                  content: [{
+                    view: OB.COMP.ButtonKey
+                  }]
+                }]
+              }
+            ]}, {
               tag: 'div',
               attributes: {
                 'class': 'row-fluid'
@@ -231,6 +305,7 @@
       this.keypad = '';
       this.addKeypad(OB.COMP.KeypadBasic); // index
       this.showKeypad();     
+      this.showSidepad('sidedisabled');
 
       this.on('command', function (cmd) {
         var txt;
@@ -260,7 +335,7 @@
           txt = this.getString();
           if (this.commands[cmd].stateless) {
             // Stateless commands: add, subs, ...
-            this.execStatelessCommand(this.commands[cmd], txt);
+            this.execStatelessCommand(cmd, txt);
           } else {
             // Statefull commands: quantity, price, discounts, payments ...
             if (txt && this.status === '') { // Short cut: type + action
@@ -321,8 +396,8 @@
       }
     },
 
-    execStatelessCommand: function (cmddefinition, txt) {
-      cmddefinition.action.call(this, txt);
+    execStatelessCommand: function (cmd, txt) {
+      this.commands[cmd].action.call(this, txt);
     },
 
     addCommand: function (cmd, definition) {
@@ -454,6 +529,12 @@
       this.keypad = this.keypads[padname || 'index'];
       this.keypad.$el.show();
       this.trigger('keypad', this.keypad.name);
+    },
+    
+    showSidepad: function (sidepadname) {
+      this.sideenabled.hide();
+      this.sidedisabled.hide();
+      this[sidepadname].show();
     },
 
     attr: function (attrs) {

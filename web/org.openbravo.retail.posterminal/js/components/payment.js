@@ -16,6 +16,13 @@
     }
   });
 
+  var ExactButton = OB.COMP.RegularButton.extend({  
+    label: 'OK',
+    'clickEvent': function () {
+      this.options.parent.options.keyboard.execStatelessCommand('cashexact');
+    }
+  });
+  
   var RemovePayment = OB.COMP.SmallButton.extend({
     className: 'btnlink-darkgray btnlink-payment-clear',
     icon: 'btn-icon-small btn-icon-clearPayment',
@@ -184,6 +191,15 @@
             content: [{
               view: DoneButton
             }]
+          }, {
+            tag: 'div',
+            attributes: {
+              'style': 'float: right;'
+            },
+            id: 'exactaction',
+            content: [{
+              view: ExactButton
+            }]
           }]
         }]
       }]
@@ -229,11 +245,13 @@
         this.totalpending.hide();
         this.totalpendinglbl.hide();
         this.doneaction.show();
+        this.exactaction.hide();
       } else {
         this.totalpending.text(paymentstatus.pending);
         this.totalpending.show();
         this.totalpendinglbl.show();
         this.doneaction.hide();
+        this.exactaction.show();
       }
       if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
         this.exactlbl.show();
