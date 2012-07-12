@@ -59,7 +59,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
           .negate() : trxCost;
       BigDecimal newCost = null;
       BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
-          costOrg, transaction.getTransactionProcessDate(), costDimensions);
+          costOrg, transaction.getTransactionProcessDate(), costDimensions, costCurrency);
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
           transaction.getTransactionProcessDate(), costDimensions);
       if (currentCosting == null) {

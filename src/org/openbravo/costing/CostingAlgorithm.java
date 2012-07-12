@@ -328,7 +328,7 @@ public abstract class CostingAlgorithm {
         .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
 
     return CostingUtils.getTransactionCost(origInOutLineTrx,
-        transaction.getTransactionProcessDate());
+        transaction.getTransactionProcessDate(), costCurrency);
   }
 
   /**
@@ -349,7 +349,7 @@ public abstract class CostingAlgorithm {
           + transaction.getIdentifier());
     }
     BigDecimal originalCost = CostingUtils.getTransactionCost(originalTrx,
-        transaction.getTransactionProcessDate());
+        transaction.getTransactionProcessDate(), costCurrency);
     return originalCost.multiply(transaction.getMovementQuantity().abs()).divide(
         originalTrx.getMovementQuantity().abs(), costCurrency.getStandardPrecision().intValue(),
         RoundingMode.HALF_UP);
@@ -407,7 +407,7 @@ public abstract class CostingAlgorithm {
       }
       // Calculate transaction cost if it is not calculated yet.
       return CostingUtils.getTransactionCost(movementTransaction,
-          transaction.getTransactionProcessDate(), true);
+          transaction.getTransactionProcessDate(), true, costCurrency);
     }
     // If no transaction is found throw an exception.
     throw new OBException("@NoInternalMovementTransactionFound@ @Transaction@: "
@@ -441,7 +441,7 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getInternalConsVoidCost() {
     return CostingUtils.getTransactionCost(transaction.getInternalConsumptionLine()
         .getVoidedInternalConsumptionLine().getMaterialMgmtMaterialTransactionList().get(0),
-        transaction.getTransactionProcessDate(), true);
+        transaction.getTransactionProcessDate(), true, costCurrency);
   }
 
   /**
@@ -472,7 +472,7 @@ public abstract class CostingAlgorithm {
           .get(0);
       // Calculate transaction cost if it is not calculated yet.
       totalCost = totalCost.add(CostingUtils.getTransactionCost(partTransaction,
-          transaction.getTransactionProcessDate(), true));
+          transaction.getTransactionProcessDate(), true, costCurrency));
     }
     return totalCost;
   }

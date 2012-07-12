@@ -40,6 +40,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.currency.Currency;
@@ -108,8 +109,8 @@ public class CostingRuleProcess implements Process {
             // Remove 1 second from transaction date to ensure that cost is calculated with previous
             // costing rule.
             trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
-            BigDecimal trxCost = CostingUtils.getTransactionCost(trx, startingDate, true);
-            Currency cur = new CostingServer(trx).getCostCurrency();
+            Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
+            BigDecimal trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
             BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), cur
                 .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
 

@@ -21,6 +21,7 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -36,7 +37,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -46,6 +49,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class CostingUtils {
   protected static Logger log4j = Logger.getLogger(CostingUtils.class);
@@ -54,8 +59,9 @@ public class CostingUtils {
    * Calls {@link #getTransactionCost(MaterialTransaction, Date, boolean)} setting the calculateTrx
    * flag to false.
    */
-  public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date) {
-    return getTransactionCost(transaction, date, false);
+  public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
+      Currency currency) {
+    return getTransactionCost(transaction, date, false, currency);
   }
 
   /**
@@ -71,7 +77,7 @@ public class CostingUtils {
    * @return The total cost amount.
    */
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
-      boolean calculateTrx) {
+      boolean calculateTrx, Currency currency) {
     log4j.debug("Get Transaction Cost");
     if (!transaction.isCostCalculated()) {
       // Transaction hasn't been calculated yet.
@@ -89,6 +95,10 @@ public class CostingUtils {
     BigDecimal cost = BigDecimal.ZERO;
     for (TransactionCost trxCost : transaction.getTransactionCostList()) {
       if (!trxCost.getCostDate().after(date)) {
+        cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(), trxCost.getCurrency(),
+            currency, trxCost.getCostDate(), trxCost.getOrganization(),
+            FinancialUtils.PRECISION_COSTING));
+      } else {
         cost = cost.add(trxCost.getCost());
       }
     }
@@ -294,7 +304,7 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(org.getId(), true);
@@ -303,10 +313,17 @@ public class CostingUtils {
     select.append(" select sum(case");
     select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
-    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
+    select.append(" tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
+    select.append(" case when trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
+        + " is null then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+    select.append("      else sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + " end as mdate");
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
     select.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select
+        .append("   left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("   left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select
         .append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
@@ -316,6 +333,10 @@ public class CostingUtils {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
+    select.append(" case when trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
+        + " is null then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+    select.append("      else sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + " end");
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("date", date);
@@ -323,13 +344,17 @@ public class CostingUtils {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxQry.setParameterList("orgs", orgs);
-
-    Object stock = trxQry.uniqueResult();
-    if (stock != null) {
-      return (BigDecimal) stock;
+    List o = trxQry.list();
+    BigDecimal sum = BigDecimal.ZERO;
+    if (o != null && o.size() > 0) {
+      for (int i = 0; i < o.size(); i++) {
+        Object[] resultSet = (Object[]) o.get(i);
+        sum = sum.add(FinancialUtils.getConvertedAmount((BigDecimal) resultSet[0], (Currency) OBDal
+            .getInstance().get(Currency.class, resultSet[1]), currency, (Date) resultSet[2], org,
+            FinancialUtils.PRECISION_COSTING));
+      }
     }
-
-    return BigDecimal.ZERO;
+    return sum;
   }
 
   public static BusinessPartner getTrxBusinessPartner(MaterialTransaction transaction,
