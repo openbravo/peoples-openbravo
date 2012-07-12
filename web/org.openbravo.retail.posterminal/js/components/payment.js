@@ -135,6 +135,10 @@
               tag: 'span',
               id: 'overpaymentlbl',
               content: [OB.I18N.getLabel('OBPOS_PaymentsOverpayment')]
+            }, {
+              tag: 'span',
+              id: 'exactlbl',
+              content: [OB.I18N.getLabel('OBPOS_PaymentsExact')]
             }]
           }, {
             tag: 'div',
@@ -231,7 +235,11 @@
         this.totalpendinglbl.show();
         this.doneaction.hide();
       }
+      if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
+        this.exactlbl.show();
+      } else {
+        this.exactlbl.hide();
+      }
     }
-
   });
 }());

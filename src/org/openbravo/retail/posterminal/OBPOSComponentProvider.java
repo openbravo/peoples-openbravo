@@ -86,8 +86,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         //
         "components/mockpayments",
         // Web POS window
-        "components/toolbarpayment", "components/toolbarscan", "components/keypadbasic",
-        "components/keyboard", "components/keypadcoins", "components/keyboardorder",
+        "components/keypadbasic", "components/keyboard", "components/toolbarpayment",
+        "components/toolbarscan", "components/keypadcoins", "components/keyboardorder",
         "windows/login", "windows/posbuttons", "data/datamaster", "data/dataordersave",
         "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
         "components/listreceipts",

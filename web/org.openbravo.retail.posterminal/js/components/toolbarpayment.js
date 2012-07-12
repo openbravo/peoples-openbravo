@@ -28,10 +28,14 @@
   
   OB.UI.ButtonSwitch = OB.COMP.Button.extend({
     className: 'btnkeyboard',
-
+    
+    initialize: function () {
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();     
+      this.options.parent.on('keypad', this.render, this);
+    },
     clickEvent: function (e) {
       if (this.options.parent.keypad.name === 'coins') {
-        this.options.parent.showKeypad(); // show index
+        this.options.parent.showKeypad('index'); // show index
       } else {
         this.options.parent.showKeypad('coins');
       }
@@ -39,14 +43,18 @@
     },
     render: function() {
       // this.$el.text(this.options.parent.keypad.label);
-      this.$el.text('$,$,$,..');
+      if (this.options.parent.keypad.name === 'coins') {
+        this.$el.text(this.options.parent.keypads.index.label);
+      } else {
+        this.$el.text(this.options.parent.keypads.coins.label);
+      }
       return this;
     }
     
   });
   
   OB.UI.ToolbarPayment = Backbone.View.extend({
-    'tag': 'div',
+    tagName: 'div',
     attributes: {'style': 'display:none'},
     
     
@@ -83,6 +91,10 @@
       inst = new OB.UI.ButtonSwitch({parent: this.options.parent}).render();
       cont = $('<div/>').attr({'style': 'display:table; width:100%;'}).append($('<div/>').attr({'style': 'margin: 5px;'}).append(inst.$el));
       this.$el.append(cont);    
+    },
+    shown: function() {
+      this.options.parent.showKeypad('coins');
+      this.options.parent.defaultcommand = 'OBPOS_payment.cash';
     }
   });
 

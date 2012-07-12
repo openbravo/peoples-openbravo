@@ -308,6 +308,7 @@
         btn.$el.removeClass(btn.classButtonActive);
       }
       this.status = newstatus;
+      this.trigger('status', this.status);
       btn = this.buttons[this.status];
       if (btn) {
         btn.$el.addClass(btn.classButtonActive);
@@ -341,17 +342,23 @@
       this.setStatus('');
     },
 
-    show: function (toolbar, keypad) {
+    show: function (toolbar) {
       var t;
+      var mytoolbar;
+      
       this.clear();
-      this.showKeypad(keypad);
+      
       if (toolbar) {
         for (t in this.toolbars) {
           if (this.toolbars.hasOwnProperty(t)) {
             this.toolbars[t].$el.hide();
           }
         }
-        this.toolbars[toolbar].$el.show();
+        mytoolbar = this.toolbars[toolbar];
+        mytoolbar.$el.show();
+        if (mytoolbar.shown) {
+          mytoolbar.shown();
+        }
       }
       this.$el.show();
     },
@@ -446,6 +453,7 @@
       }
       this.keypad = this.keypads[padname || 'index'];
       this.keypad.$el.show();
+      this.trigger('keypad', this.keypad.name);
     },
 
     attr: function (attrs) {

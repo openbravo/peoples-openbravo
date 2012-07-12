@@ -7,7 +7,7 @@
  
   OB.COMP.KeypadCoins = OB.COMP.KeypadBasic.extend({
     name: 'coins',
-    label: '$,$,$,..',
+    label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
     contentView: [{
       tag: 'div',
       attributes: {
@@ -220,7 +220,18 @@
           })
         }]
       }]
-    }]
+    }],
+    initialize: function() {    
+      OB.COMP.KeypadCoins.__super__.initialize.call(this);
+      
+      this.options.parent.on('status', function (status) {
+        if (status === 'OBPOS_payment.cash') {
+          this.options.parent.showKeypad('coins');
+        } else {
+          this.options.parent.showKeypad('index');
+        }
+      }, this);
+    }
   });
 
 }());

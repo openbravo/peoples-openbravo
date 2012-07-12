@@ -4,12 +4,27 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-
+  
   var ButtonDummy = Backbone.View.extend({
     tag: 'div',
     initialize: function () {
       this.$el.attr('class', this.options.className);
     }
+  });
+  
+  OB.COMP.KeyboardComponent = Backbone.View.extend({
+    initialize: function () {
+
+      // bind Keyboard properties to parent that is the real Keyboard...
+      this.receipt = this.options.parent.receipt;
+      this.commands = this.options.parent.commands;
+      this.addCommand = _.bind(this.options.parent.addCommand, this.options.parent);
+      this.addButton = _.bind(this.options.parent.addButton, this.options.parent);
+      this.keyPressed = _.bind(this.options.parent.keyPressed, this.options.parent);
+//      this.showKeypad =  _.bind(this.options.parent.showKeypad, this.options.parent);
+
+      OB.UTIL.initContentView(this);
+    }    
   });
 
   OB.COMP.ButtonKey = Backbone.View.extend({
@@ -86,7 +101,7 @@
     initialize: function () {
       OB.UTIL.initContentView(this);
       var me = this;
-      this.button.$el.css({'background': this.background, 'border': '10px solid' + (this.bordercolor || this.background)});
+      this.button.$el.css({'background-color': this.background, 'border': '10px solid' + (this.bordercolor || this.background)});
       this.button.$el.text(this.label || OB.I18N.formatCurrency(this.amount));
       this.button.clickEvent = function (e) {
         me.options.parent.receipt.addPayment(new OB.Model.PaymentLine({'kind': me.paymenttype, 'name': OB.POS.modelterminal.getPaymentName(me.paymenttype), 'amount': OB.DEC.number(me.amount)}));
@@ -94,10 +109,10 @@
     }
   });
   
-  OB.COMP.KeypadBasic = Backbone.View.extend({
+  OB.COMP.KeypadBasic = OB.COMP.KeyboardComponent.extend({
     tag: 'div',
     name: 'index',
-    label: '1,2,3,..',
+    label: OB.I18N.getLabel('OBPOS_KeypadBasic'),
     attributes: {
       'style': 'display:none'
     },
@@ -311,19 +326,7 @@
           })
         }]
       }]
-    }],
-    initialize: function () {
-
-      // bind Keyboard properties to parent that is the real Feyboard...
-      this.receipt = this.options.parent.receipt;
-      this.commands = this.options.parent.commands;
-      this.addCommand = _.bind(this.options.parent.addCommand, this.options.parent);
-      this.addButton = _.bind(this.options.parent.addButton, this.options.parent);
-      this.keyPressed = _.bind(this.options.parent.keyPressed, this.options.parent);
-//      this.showKeypad =  _.bind(this.options.parent.showKeypad, this.options.parent);
-
-      OB.UTIL.initContentView(this);
-    }
+    }]
   });
 
 }());

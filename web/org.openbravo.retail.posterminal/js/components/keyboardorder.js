@@ -109,7 +109,6 @@
       this.products = this.options.DataProductPrice;
       this.receipt = this.options.modelorder;
       this.line = null;
-      this.defaultcommand = 'code';
 
       this.receipt.get('lines').on('selected', function (line) {
         this.line = line;
@@ -118,12 +117,13 @@
 
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
       
-      // Toolbars at the end...
-//      this.addToolbar('toolbarpayment', new OB.UI.ToolbarPayment(this.options).toolbar);
-      this.addToolbarView('toolbarpayment', OB.UI.ToolbarPayment);
-      this.addToolbar('toolbarscan', new OB.COMP.ToolbarScan(this.options).toolbar);
-      
+      // First the keypads     
       this.addKeypad(OB.COMP.KeypadCoins); 
+      
+      // Toolbars at the end...
+      this.addToolbarView('toolbarpayment', OB.UI.ToolbarPayment); // after the keypad coins because the toolbar payment depends on the coins keypad.
+      this.addToolbarView('toolbarscan', OB.COMP.ToolbarScan);
+
     }
   });
 
