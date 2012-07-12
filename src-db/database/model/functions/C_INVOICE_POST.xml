@@ -152,7 +152,9 @@
   Cur_InvoiceNetLine RECORD;
 
   v_LineMax NUMBER:=0;
-
+  v_precision NUMBER;
+  v_gross_unit_price NUMBER;
+  v_line_gross_amount NUMBER;
   v_Isquantityvariable CHAR(1);
     
 BEGIN
@@ -1156,6 +1158,9 @@ BEGIN --BODY
     SELECT MAX(LINE) INTO v_InvoiceLineSeqNo
     FROM C_INVOICELINE
     WHERE C_INVOICE_ID=v_Record_ID;
+    SELECT PricePrecision INTO v_precision
+    FROM C_INVOICE i, C_CURRENCY c
+    WHERE i.C_INVOICE_ID = v_Record_ID AND i.C_CURRENCY_ID = c.C_CURRENCY_ID;
     FOR Cur_CInvoiceDiscount IN
       (SELECT C_INVOICE_DISCOUNT.C_INVOICE_DISCOUNT_ID, C_DISCOUNT.DISCOUNT, C_DISCOUNT.M_PRODUCT_ID, C_DISCOUNT.NAME,
            C_INVOICE_DISCOUNT.CASCADE, C_DISCOUNT.C_DISCOUNT_ID, M_PRODUCT.C_UOM_ID
@@ -1170,7 +1175,8 @@ BEGIN --BODY
       v_CumDiscount:=(1-v_OldCumDiscount) * Cur_CInvoiceDiscount.Discount/100;
       v_OldCumDiscount:=v_OldCumDiscount + v_CumDiscount;
       FOR Cur_TaxDiscount IN
-        (SELECT C_INVOICELINE.C_TAX_ID, SUM(C_INVOICELINE.LINENETAMT) AS LINENETAMT
+        (SELECT C_INVOICELINE.C_TAX_ID, SUM(C_INVOICELINE.LINENETAMT) AS LINENETAMT,
+                SUM(C_INVOICELINE.LINE_GROSS_AMOUNT) AS LINEGROSSAMT
          FROM C_INVOICELINE
          WHERE C_INVOICE_ID=v_Record_ID
            AND C_INVOICELINE.LINENETAMT<>0
@@ -1178,10 +1184,22 @@ BEGIN --BODY
          GROUP BY C_TAX_ID
         )
       LOOP
-        IF (Cur_CInvoiceDiscount.CASCADE='Y') THEN
-          v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+        IF (v_istaxincluded = 'Y') THEN
+          IF (Cur_CInvoiceDiscount.CASCADE='Y') THEN
+            v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * v_CumDiscount;
+          ELSE
+            v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * Cur_CInvoiceDiscount.Discount/100;
+          END IF;
+          v_Discount:= C_GET_NET_PRICE_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_precision, 1);
+          v_gross_unit_price:= v_line_gross_amount;
         ELSE
-          v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_CInvoiceDiscount.Discount/100;
+          IF (Cur_CInvoiceDiscount.CASCADE='Y') THEN
+            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+          ELSE
+            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_CInvoiceDiscount.Discount/100;
+          END IF;
+          v_gross_unit_price:= 0;
+          v_line_gross_amount:= 0;
         END IF;
         v_InvoiceLineSeqNo:=10 + v_InvoiceLineSeqNo;
         v_InvoiceLine:=get_uuid();
@@ -1194,7 +1212,8 @@ BEGIN --BODY
            PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID,
            CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
-           QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD
+           QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD,
+           GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT
           )
           VALUES
           (
@@ -1205,7 +1224,8 @@ BEGIN --BODY
            v_Discount, v_Discount, v_Discount, NULL,
            0, Cur_CInvoiceDiscount.C_UOM_ID, Cur_TaxDiscount.C_TAX_ID, NULL,
            NULL, NULL, 'N' ,
-           NULL, NULL, v_Discount
+           NULL, NULL, v_Discount,
+           v_gross_unit_price, v_line_gross_amount
           );
         --v_InvoiceDiscount:=Ad_Sequence_Nextno('C_InvoiceLine');
         UPDATE C_INVOICELINE

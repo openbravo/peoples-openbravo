@@ -108,6 +108,8 @@
   v_precision NUMBER;
   Cur_OrderLine RECORD;
   v_DiscountExist NUMBER;
+  v_gross_unit_price NUMBER;
+  v_line_gross_amount NUMBER;
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -602,7 +604,8 @@
         v_OldCumDiscount:=v_OldCumDiscount + v_CumDiscount;
         FOR Cur_TaxDiscount IN
            (SELECT C_ORDERLINE.C_TAX_ID,
-              SUM(C_ORDERLINE.LINENETAMT) AS LINENETAMT
+              SUM(C_ORDERLINE.LINENETAMT) AS LINENETAMT,
+              SUM(C_ORDERLINE.LINE_GROSS_AMOUNT) AS LINEGROSSAMT
             FROM C_ORDERLINE
             WHERE C_ORDER_ID=v_Record_ID
               AND C_ORDERLINE.LINENETAMT<>0
@@ -610,10 +613,22 @@
             GROUP BY C_TAX_ID
             )
         LOOP
-          IF (Cur_COrderDiscount.CASCADE='Y') THEN
-            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+          IF (v_istaxincluded = 'Y') THEN
+            IF (Cur_COrderDiscount.CASCADE='Y') THEN
+              v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * v_CumDiscount;
+            ELSE
+              v_line_gross_amount:=(-1) * Cur_TaxDiscount.LINEGROSSAMT * Cur_COrderDiscount.Discount/100;
+            END IF;
+            v_Discount:= C_GET_NET_PRICE_FROM_GROSS(Cur_TaxDiscount.C_TAX_ID, v_line_gross_amount, 0, v_precision, 1);
+            v_gross_unit_price:= v_line_gross_amount;
           ELSE
-            v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
+            IF (Cur_COrderDiscount.CASCADE='Y') THEN
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * v_CumDiscount;
+            ELSE
+              v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
+            END IF;
+            v_gross_unit_price:= 0;
+            v_line_gross_amount:= 0;
           END IF;
 
           SELECT COUNT(*) INTO v_DiscountExist FROM C_ORDERLINE
@@ -633,7 +648,8 @@
                 pricelist, priceactual, pricelimit, linenetamt, discount, freightamt,
                 c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id,
                 m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id,
-                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID
+                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID,
+                gross_unit_price, line_gross_amount
               )
             VALUES
               (
@@ -645,9 +661,10 @@
                 ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0,
                 NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL,
                 NULL, 'N', NULL, NULL,
-                NULL, ROUND(v_Discount,v_precision), NULL
+                NULL, ROUND(v_Discount,v_precision), NULL,
+                ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision)
               );
-  
+
             UPDATE C_ORDERLINE
             SET C_ORDER_DISCOUNT_ID=Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
             WHERE C_ORDERLINE_ID=v_OrderLine;
