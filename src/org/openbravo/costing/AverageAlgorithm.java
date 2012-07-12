@@ -96,6 +96,11 @@ public class AverageAlgorithm extends CostingAlgorithm {
           + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     BigDecimal cost = currentCosting.getCost();
+    if (currentCosting.getCurrency() != costCurrency) {
+      cost = FinancialUtils.getConvertedAmount(currentCosting.getCost(),
+          currentCosting.getCurrency(), costCurrency, transaction.getTransactionProcessDate(),
+          costOrg, FinancialUtils.PRECISION_COSTING);
+    }
     return transaction.getMovementQuantity().abs().multiply(cost);
   }
 
@@ -120,6 +125,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
     cost.setCost(newCost);
+    cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());
     cost.setEndingDate(dateTo);
     cost.setInventoryTransaction(transaction);

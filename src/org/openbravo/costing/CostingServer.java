@@ -87,6 +87,7 @@ public class CostingServer {
       log4j.debug("  *** Transaction cost amount: " + trxCost.toString());
       // Save calculated cost on M_Transaction.
       transaction.setTransactionCost(trxCost);
+      transaction.setCurrency(currency);
       transaction.setCostCalculated(true);
       // insert on m_transaction_cost
       createTransactionCost();
@@ -130,6 +131,7 @@ public class CostingServer {
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setOrganization(transaction.getOrganization());
     transactionCost.setCost(trxCost);
+    transactionCost.setCurrency(currency);
     transactionCost.setCostDate(transaction.getTransactionProcessDate());
     OBDal.getInstance().save(transactionCost);
   }
