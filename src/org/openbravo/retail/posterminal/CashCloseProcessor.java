@@ -162,6 +162,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setDateAcct(new Date());
     transaction.setTransactionDate(new Date());
     transaction.setReconciliation(reconciliation);
 
@@ -183,6 +184,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setDateAcct(new Date());
     transaction.setTransactionDate(new Date());
     transaction.setReconciliation(reconciliation);
 
@@ -209,6 +211,7 @@ public class CashCloseProcessor {
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
     transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setDateAcct(new Date());
     transaction.setTransactionDate(new Date());
 
     account.setCurrentBalance(account.getCurrentBalance().add(reconciliationTotal));
