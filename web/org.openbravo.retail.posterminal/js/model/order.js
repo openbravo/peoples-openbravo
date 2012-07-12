@@ -125,6 +125,8 @@
         this.set('gross', attributes.gross);
         this.set('net', attributes.net);
         this.set('taxes', attributes.taxes);
+        this.set('hasbeenpaid', attributes.hasbeenpaid);
+        this.set('isbeingprocessed', attributes.isbeingprocessed);
       } else {
         this.clearOrderAttributes();
       }
@@ -228,6 +230,8 @@
       this.set('payment', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
+      this.set('hasbeenpaid', 'N');
+      this.set('isbeingprocessed', 'N');
     },
 
     clearWith: function(_order) {
@@ -260,6 +264,8 @@
       this.set('payment', _order.get('payment'));
       this.set('change', _order.get('change'));
       this.set('gross', _order.get('gross'));
+      this.set('hasbeenpaid', _order.get('hasbeenpaid'));
+      this.set('isbeingprocessed', _order.get('isbeingprocessed'));
       this.trigger('change');
       this.trigger('clear');
     },
