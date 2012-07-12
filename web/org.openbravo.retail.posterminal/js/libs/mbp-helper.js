@@ -136,7 +136,7 @@ MBP.fastButton.prototype.onClick = function(event) {
 MBP.fastButton.prototype.reset = function() {
 	rmEvt(this.element, "touchend", this, false);
 	rmEvt(document.body, "touchmove", this, false);
-  this.element.style.backgroundColor = "";
+  //this.element.style.backgroundColor = "";
 };
 
 MBP.preventGhostClick = function (x, y) {
