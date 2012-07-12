@@ -40,7 +40,7 @@
             ]}
           ]},
           {kind: OB.UI.ModalDropEvents},
-          {kind: OB.COMP.ModalDepositEvents},
+          {kind: OB.UI.ModalDepositEvents},
           {kind: OB.DATA.DropDepSave},
           {kind: OB.DATA.Container, content: [
             {kind: OB.COMP.HWManager, attr: {'templatecashmgmt': 'res/printcashmgmt.xml'}}

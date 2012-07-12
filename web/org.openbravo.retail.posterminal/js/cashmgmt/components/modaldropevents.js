@@ -1,6 +1,6 @@
 /*global window, define, Backbone */
 
-(function() {
+(function () {
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
@@ -8,12 +8,13 @@
   OB.UI.ModalDropEvents = OB.COMP.Modal.extend({
     id: 'modaldropevents',
     header: 'Select Destinations',
-    initialize: function() {
+    initialize: function () {
+      var theModal, theHeader, theBody, theHeaderText;
       OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
-      var theModal = this.$el,
-          theHeader = theModal.children(':first'),
-          theBody = theModal.children(':nth-child(2)'),
-          theHeaderText = theHeader.children(':nth-child(2)');
+      theModal = this.$el;
+      theHeader = theModal.children(':first');
+      theBody = theModal.children(':nth-child(2)');
+      theHeaderText = theHeader.children(':nth-child(2)');
       theModal.addClass('modal-dialog');
       theBody.addClass('modal-dialog-body');
       theHeaderText.attr('text-align', 'left');
@@ -21,12 +22,12 @@
       theHeaderText.attr('padding-top', '10px');
       theHeaderText.attr('color', 'black');
     },
-    getContentView: function() {
+    getContentView: function () {
       return ({
         kind: OB.COMP.SearchDropEvents
       });
     },
-    showEvent: function(e) {
+    showEvent: function (e) {
       // custom bootstrap event, no need to prevent default
     }
   });
