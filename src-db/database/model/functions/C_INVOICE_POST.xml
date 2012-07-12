@@ -584,7 +584,8 @@ BEGIN --BODY
               Description, M_Product_ID, QtyInvoiced, PriceList,
               PriceActual, LineNetAmt, C_Charge_ID, ChargeAmt,
               C_UOM_ID, C_Tax_ID, PriceStd, 
-              Financial_Invoice_Line, Account_ID,Taxbaseamt)
+              Financial_Invoice_Line, Account_ID,Taxbaseamt,
+              gross_unit_price, line_gross_amount)
             VALUES
             (
               v_NextNo, Cur_InvoiceLine.AD_Client_ID, Cur_InvoiceLine.AD_Org_ID, 'Y',
@@ -593,7 +594,8 @@ BEGIN --BODY
                '*R*: ' || Cur_InvoiceLine.Description, Cur_InvoiceLine.M_Product_ID, Cur_InvoiceLine.QtyInvoiced * -1, Cur_InvoiceLine.PriceList,
               Cur_InvoiceLine.PriceActual, Cur_InvoiceLine.LineNetAmt * -1, Cur_InvoiceLine.C_Charge_ID, Cur_InvoiceLine.ChargeAmt * -1,
               Cur_InvoiceLine.C_UOM_ID, Cur_InvoiceLine.C_Tax_ID, Cur_InvoiceLine.PriceStd, 
-              Cur_InvoiceLine.Financial_Invoice_Line, Cur_InvoiceLine.Account_ID,Cur_InvoiceLine.Taxbaseamt * -1
+              Cur_InvoiceLine.Financial_Invoice_Line, Cur_InvoiceLine.Account_ID,Cur_InvoiceLine.Taxbaseamt * -1,
+              Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1
             );
           INSERT INTO M_MATCHINV
             (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
