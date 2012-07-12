@@ -97,7 +97,7 @@ if(userId == null){
             </div>
           </div>
           <div style="display: inline-block; float: right;">
-            <div style="display: inline-block; float: left; margin: 4px 10px 0px 0px;">Openbravo Web POS</div>
+            <div style="display: inline-block; float: left; margin: 4px 10px 0px 0px;">Openbravo</div>
             <div style="width: 30px; height: 30px; float: right; margin: 0px 12px 0px 0px;">
               <div class="top-right-logo">
             </div>
