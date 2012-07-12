@@ -76,7 +76,7 @@ END IF;
    v_Insert := TRUE;
    END IF;
  END IF;
-
+ 
  IF INSERTING OR v_Insert THEN
    SELECT C_BPartner_ID, dateInvoiced, priceprecision, i.M_PriceList_ID,p.istaxincluded
     INTO v_BPartner_ID, v_DateInvoiced, v_Precision, v_PriceList_ID, v_istaxincluded
@@ -89,9 +89,7 @@ END IF;
      AND i.C_Currency_ID = c.C_Currency_ID;
 
    IF (v_istaxincluded = 'Y') THEN
-     IF (DELETING) THEN
-        v_oldgrossamt := :old.line_gross_amount;
-     ELSIF (UPDATING) THEN
+     IF (UPDATING) THEN
         v_oldgrossamt := :old.line_gross_amount;
         v_newgrossamt := :new.line_gross_amount;
      ELSE
@@ -221,10 +219,11 @@ END IF;
   /**************************************************************************
    * Calculate Tax, etc.
    */
- SELECT processed, stdPrecision
-   INTO v_Processed, v_Prec
- FROM C_Invoice, C_Currency
+ SELECT processed, stdPrecision, pl.istaxincluded
+   INTO v_Processed, v_Prec, v_istaxincluded
+ FROM C_Invoice, C_Currency, m_pricelist pl
  WHERE C_Invoice.C_Currency_ID = C_Currency.C_Currency_ID
+ AND C_Invoice.m_pricelist_id = pl.m_pricelist_id
  AND C_Invoice_ID=v_ID;
  v_oldLine:=0;
  v_newLineNetAmt:=0;
@@ -264,6 +263,9 @@ END IF;
    --  Updated = SysDate -- Don't update as otherwise it does not save changes
    WHERE C_Invoice_ID = :new.C_Invoice_ID;
   ELSE -- DELETING
+   IF (v_istaxincluded = 'Y') THEN
+     v_oldgrossamt := :old.line_gross_amount;
+   END IF;
    SELECT SUM(TaxAmt)
      INTO v_taxAmt
    FROM C_InvoiceTax
