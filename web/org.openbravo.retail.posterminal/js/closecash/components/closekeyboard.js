@@ -20,7 +20,7 @@
                        ]
                      });
       this.addToolbar('toolbarcountcash', new OB.COMP.ToolbarCountCash(this.options).toolbar);
-     this.toolbars.toolbarempty.show();
+      this.show('toolbarempty');
     }
   });
 
