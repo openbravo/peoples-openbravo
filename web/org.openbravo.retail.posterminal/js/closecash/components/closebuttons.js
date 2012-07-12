@@ -131,7 +131,11 @@
       //Count Cash to Cash to keep or Cash to keep to Cash to keep
         if( $(".active").length>0 && this.options.modeldaycash.get('allowedStep')!==0){
           if($('.active').val()===""){//Variable Amount
-            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('#variableamount').val()));
+            if($('#variableamount').val()===''){
+              this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(0);
+            }else{
+              this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber('#variableamount').val());
+            }
           }else{
             this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('.active').val()));
           }
@@ -147,6 +151,9 @@
             found = true;
             $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4', [this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
+              if(!this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount){
+                this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount=0;
+              }
               $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
               $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
               $('#keepfixedamount').show();
@@ -229,13 +236,8 @@
     className: 'btnlink-orange btnlink-cashup-edit',
     label: '',
     clickEvent: function (e) {
-     var that = this;
-       $($(this.me.options.closekeyboard.toolbars.toolbarcountcash).find('.btnkeyboard')).each(function(){
-       if($(this).text()===that.commercialName){
-       that.me.options.closekeyboard.trigger('command', that.searchKey);
-   }
-   });
-   }
+     this.me.options.closekeyboard.trigger('command', this.searchKey);
+    }
   });
 
   OB.COMP.ButtonVoid = OB.COMP.SmallButton.extend({
