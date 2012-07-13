@@ -1227,7 +1227,7 @@ BEGIN --BODY
            0, Cur_CInvoiceDiscount.C_UOM_ID, Cur_TaxDiscount.C_TAX_ID, NULL,
            NULL, NULL, 'N' ,
            NULL, NULL, v_Discount,
-           v_gross_unit_price, v_line_gross_amount
+           ROUND(v_gross_unit_price, v_precision), ROUND(v_line_gross_amount, v_precision)
           );
         --v_InvoiceDiscount:=Ad_Sequence_Nextno('C_InvoiceLine');
         UPDATE C_INVOICELINE
