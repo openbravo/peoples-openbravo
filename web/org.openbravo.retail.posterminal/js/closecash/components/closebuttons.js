@@ -41,10 +41,10 @@
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
               if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount > this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')){
                 $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
-                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+                $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
               }else{
                 $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
-                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+                $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
               }
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
@@ -53,8 +53,8 @@
               $('#keepfixedamountlbl').hide();
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowmoveeverything){
-              $('#allowmoveeverything').val(OB.I18N.formatCurrency(OB.DEC.Zero));
-              $('#allowmoveeverythinglbl').text('Nothing');
+              $('#allowmoveeverything').val(OB.DEC.Zero);
+              $('#allowmoveeverythinglbl').text(OB.I18N.getLabel('OBPOS_LblNothing'));
               $('#allowmoveeverything').show();
               $('#allowmoveeverythinglbl').show();
             }else{
@@ -63,7 +63,7 @@
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowdontmove){
               $('#allowdontmove').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
-              $('#allowdontmovelbl').text('Total amount of '+OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+              $('#allowdontmovelbl').text(OB.I18N.getLabel('OBPOS_LblTotalAmount')+' '+OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
               $('#allowdontmove').show();
               $('#allowdontmovelbl').show();
             }else{
@@ -71,7 +71,7 @@
               $('#allowdontmovelbl').hide();
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowvariableamount){
-              $('#allowvariableamountlbl').text('Other');
+              $('#allowvariableamountlbl').text(OB.I18N.getLabel('OBPOS_LblOther'));
               $('#allowvariableamount').show();
               $('#allowvariableamountlbl').show();
               $('#variableamount').show();
@@ -137,10 +137,10 @@
         if( $(".active").length>0 && this.options.modeldaycash.get('allowedStep')!==0){
           if($('.active').val()===""){//Variable Amount
             if($('#variableamount').val()===''){
-              this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(0);
+              this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=0;
             }else{
-              if(OB.I18N.parseNumber($('#variableamount').val()) < this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('counted')){
-                this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('#variableamount').val()));
+              if(OB.I18N.parseNumber($('#variableamount').val()) <= this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('counted')){
+                this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('#variableamount').val());
               }else{
                 OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanCounted'));
                 this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
@@ -149,7 +149,7 @@
               }
             }
           }else{
-            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('.active').val()));
+            this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('.active').val());
           }
           $(".active").removeClass("active");
         }
@@ -164,10 +164,10 @@
               }
               if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount > this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')){
                 $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
-                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+                $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
               }else{
                 $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
-                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+                $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
               }
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
@@ -177,7 +177,7 @@
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowmoveeverything){
               $('#allowmoveeverything').val(0);
-              $('#allowmoveeverythinglbl').text('Nothing');
+              $('#allowmoveeverythinglbl').text(OB.I18N.getLabel('OBPOS_LblNothing'));
               $('#allowmoveeverything').show();
               $('#allowmoveeverythinglbl').show();
             }else{
@@ -186,7 +186,7 @@
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowdontmove){
               $('#allowdontmove').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'));
-              $('#allowdontmovelbl').text('Total amount of '+OB.I18N.formatCurrency(OB.DEC.add(0,this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'))));
+              $('#allowdontmovelbl').text(OB.I18N.getLabel('OBPOS_LblTotalAmount')+' '+OB.I18N.formatCurrency(OB.DEC.add(0,this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted'))));
               $('#allowdontmove').show();
               $('#allowdontmovelbl').show();
             }else{
@@ -194,7 +194,7 @@
               $('#allowdontmovelbl').hide();
             }
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').allowvariableamount){
-              $('#allowvariableamountlbl').text('Other');
+              $('#allowvariableamountlbl').text(OB.I18N.getLabel('OBPOS_LblOther'));
               $('#allowvariableamount').show();
               $('#allowvariableamountlbl').show();
               $('#variableamount').show();

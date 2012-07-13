@@ -33,24 +33,24 @@
     if(depositsdrops.type==='drop'){
     %>
     <line>
-      <text align ="left" length="12"><%=OB.UTIL.encodeXMLComponent(depositsdrops.description) %></text>
+      <text align ="left" length="17"><%=OB.UTIL.encodeXMLComponent(depositsdrops.description) %></text>
       <text align ="left" length="1"><%=' '%></text>
-      <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
+      <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
       <text align ="left" length="1"><%=' '%></text>
-      <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
-      <text align ="right" length="7"><%= OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.amount)) %></text>
+      <text align ="left" length="5"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.sub(0,depositsdrops.amount)) %></text>
     </line>
     <%
     total = OB.DEC.sub(total, depositsdrops.amount);
     }else{
     %>
      <line>
-      <text align ="left" length="12"><%=OB.UTIL.encodeXMLComponent(depositsdrops.description) %></text>
+      <text align ="left" length="17"><%=OB.UTIL.encodeXMLComponent(depositsdrops.description) %></text>
       <text align ="left" length="1"><%=' '%></text>
-      <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
+      <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.user) %></text>
       <text align ="left" length="1"><%=' '%></text>
-      <text align ="left" length="8"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
-      <text align ="right" length="7"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.amount)) %></text>
+      <text align ="left" length="5"><%=OB.UTIL.encodeXMLComponent(depositsdrops.time) %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(OB.DEC.add(0,depositsdrops.amount)) %></text>
     </line>
     <%
     total = OB.DEC.add(total, depositsdrops.amount);
@@ -59,7 +59,7 @@
     %>
      <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotal')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(OB.DEC.add(0,total)) %></text>
+      <text align ="right" length="17" bold="true"><%= OB.I18N.formatCurrency(OB.DEC.add(0,total)) %></text>
     </line>
   </ticket>
 </output>

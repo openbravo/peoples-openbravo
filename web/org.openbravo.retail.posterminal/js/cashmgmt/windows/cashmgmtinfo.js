@@ -22,7 +22,6 @@
         ]}
       ]}
     , context);
-//    context.depositsdropsTicket.$el.hide();
     this.$el = this.component.$el;
   };
 }());

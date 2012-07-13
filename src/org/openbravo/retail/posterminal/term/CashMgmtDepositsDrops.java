@@ -79,11 +79,6 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       totalNetAmount = BigDecimal.ZERO;
     }
 
-    // result.put("netSales", totalNetAmount);
-    // result.put("grossSales", totalNetAmount.add(totalSalesTax));
-    // result.put("salesTaxes", salesTaxes);
-    // Total returns computation
-
     Query returnTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     returnTaxesQuery.setString(0,
         (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
@@ -111,31 +106,15 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       totalReturnsAmount = totalReturnsAmount.abs();
     }
 
-    // result.put("netReturns", totalReturnsAmount);
-    // result.put("grossReturns", totalReturnsAmount.add(totalReturnsTax.abs()));
-    // result.put("returnsTaxes", returnTaxes);
     result.put("totalTendered",
         totalNetAmount.add(totalSalesTax).subtract(totalReturnsAmount.add(totalReturnsTax.abs())));
-
-    // result.put("totalRetailTransactions",
-    // totalNetAmount.add(totalSalesTax).subtract(totalReturnsAmount.add(totalReturnsTax.abs())));
-    // Total drops and deposits computation
-    JSONArray listdepositsdrops = new JSONArray();
-    // BigDecimal totalDrops = BigDecimal.ZERO;
-    // BigDecimal totalDeposits = BigDecimal.ZERO;
 
     String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date "
         + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications.id=? and trans.account=payment.financialAccount order by trans.transactionDate asc";
 
-    // "select trans.description, trans.paymentAmount, trans.depositAmount "
-    // +
-    // "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-    // +
-    // "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
-    // + "and payment.obposApplications=? and trans.account=payment.financialAccount";
-
+    JSONArray listdepositsdrops = new JSONArray();
     Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
     dropsDepositsQuery.setString(0, posTerminalId);
     for (Object obj : dropsDepositsQuery.list()) {
@@ -145,52 +124,10 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       dropDeposit.put("drop", (BigDecimal) objdropdeposit[1]);
       dropDeposit.put("deposit", (BigDecimal) objdropdeposit[2]);
       dropDeposit.put("user", objdropdeposit[3]);
-      dropDeposit.put("time", objdropdeposit[4].toString().substring(11, 19));
+      dropDeposit.put("time", objdropdeposit[4].toString().substring(11, 16));
       listdepositsdrops.put(dropDeposit);
     }
-    // }
-
-    // String hqlSalesDeposits = "select obpay.commercialName, sum(trans.depositAmount)"
-    // + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-    // + "inner join trans.finPayment as pay, "
-    // + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
-    // + "where pay.account=obpay.financialAccount and trans.gLItem is null "
-    // + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-    // + "group by obpay.commercialName";
-    //
-    // Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
-    // salesDepositsQuery.setString(0, posTerminalId);
-    // for (Object obj : salesDepositsQuery.list()) {
-    // Object[] obja = (Object[]) obj;
-    // JSONObject salesDep = new JSONObject();
-    // salesDep.put("description", obja[0] + " sales");
-    // salesDep.put("amount", obja[1]);
-    // deposits.put(salesDep);
-    // totalDeposits = totalDeposits.add((BigDecimal) obja[1]);
-    // }
-
-    // String hqlReturnsDrop = "select obpay.commercialName, sum(trans.paymentAmount)"
-    // + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-    // + "inner join trans.finPayment as pay, "
-    // + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
-    // + "where pay.account=obpay.financialAccount and trans.gLItem is null "
-    // + "and trans.reconciliation is null and obpay.obposApplications.id=? "
-    // + "group by obpay.commercialName";
-    //
-    // Query returnDropsQuery = OBDal.getInstance().getSession().createQuery(hqlReturnsDrop);
-    // returnDropsQuery.setString(0, posTerminalId);
-    // for (Object obj : returnDropsQuery.list()) {
-    // Object[] obja = (Object[]) obj;
-    // JSONObject returnDrop = new JSONObject();
-    // returnDrop.put("description", obja[0] + " returns");
-    // returnDrop.put("amount", obja[1]);
-    // drops.put(returnDrop);
-    // totalDrops = totalDrops.add((BigDecimal) obja[1]);
-    // }
-
     result.put("listdepositsdrops", listdepositsdrops);
-    // result.put("totalDrops", totalDrops);
-    // result.put("totalDeposits", totalDeposits);
 
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     JSONObject finalResult = new JSONObject();
