@@ -116,14 +116,10 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
       // of the report
-      String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(OBDal
-          .getInstance().get(Organization.class, strAD_Org_ID)));
-      ;
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(),
-            strBaseCurrencyId, strCurrencyId, strAD_Org_ID);
+        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(), strCurrencyId, strAD_Org_ID);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
