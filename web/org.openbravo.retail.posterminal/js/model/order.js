@@ -447,6 +447,11 @@
       this.save();
     },
 
+    resetOrderInvoice: function() {
+      this.set('generateInvoice', false);
+      this.save();
+    },
+
     adjustPayment: function() {
       var i, max, p;
       var payments = this.get('payments');

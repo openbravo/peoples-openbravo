@@ -5,6 +5,19 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+
+  var InvoiceButton = OB.COMP.SmallButton.extend({
+    className: 'btnlink-white btnlink-payment-clear',
+    icon: 'btn-icon-small btn-icon-check',
+    label: 'Invoice',
+    attributes: {
+      style: 'width: 50px;'
+    },
+    clickEvent: function (e) {
+      this.options.parent.receipt.resetOrderInvoice();
+    }
+  });
+
   // Order list
   OB.COMP.OrderView = Backbone.View.extend({
     tag: 'div',
@@ -55,14 +68,43 @@
         tag: 'li',
         content: [{
           tag: 'div',
-          id: 'footer',
           attributes: {
-            style: 'padding: 10px; border-top: 1px solid #cccccc; text-align: center; font-weight: bold; font-size: 30px; color: #f8941d'
-          }
+            style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;'
+          },
+          content: [{
+            tag: 'div',
+            attributes: {
+              style: 'float: left; width: 50%;'
+            },
+            content: [{
+              id: 'btninvoice',
+              view: InvoiceButton
+            }, {
+              tag: 'span',
+              content: '&nbsp;'
+            }, {
+              id: 'divinvoice',
+              tag: 'span',
+              attributes: {
+                style: 'font-weight:bold; '
+              }
+            }]
+          }, {
+            id: 'divreturn',
+            tag: 'div',
+            attributes: {
+              style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;'
+            }
+          }, {
+            tag: 'div',
+            attributes: {
+              style: 'clear: both;'
+            }
+          }]
         }]
       }]
     }],
-    
+
     initialize: function () {
 
       OB.UTIL.initContentView(this);
@@ -80,22 +122,16 @@
       this.renderFooter();
       this.renderTotal();
     },
-    
-    renderFooter: function () {
-      var s = [];
-      if (this.receipt.get('orderType') === 1) {
-        s.push(OB.I18N.getLabel('OBPOS_ToBeReturned'));
-      }
-      if (this.receipt.get('generateInvoice')) {
-        s.push(OB.I18N.getLabel('OBPOS_ToInvoice'));
-      }
 
-      if (s.length > 0) {
-        this.footer.text(s.join(' / '));
-        this.footer.show();
+    renderFooter: function () {
+      if (this.receipt.get('generateInvoice')) {
+        this.btninvoice.$el.show();
+        this.divinvoice.text(OB.I18N.getLabel('OBPOS_ToInvoice'));
       } else {
-        this.footer.hide();
+        this.btninvoice.$el.hide();
+        this.divinvoice.text('');
       }
+      this.divreturn.text(this.receipt.get('orderType') === 1 ? OB.I18N.getLabel('OBPOS_ToBeReturned') : '');
     },
 
     renderTotal: function () {
