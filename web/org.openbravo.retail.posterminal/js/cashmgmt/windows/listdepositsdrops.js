@@ -10,9 +10,10 @@
 	  initialize: function () {
 	        var me = this;
 	        this._id = 'ListDepositsDrops';
-	        this.startingCash= OB.DEC.Zero;
+//	        this.startingCash= OB.DEC.Zero;
           this.totalTendered= OB.DEC.Zero;
 	        this.total= OB.DEC.Zero;
+	        this.totalToDrop= OB.DEC.Zero;
 	        this.listdepositsdrops = new OB.Model.Collection(this.options.DataDepositsDrops);
 	        this.dropsdeps = new Backbone.Collection();
 	        this.component = B(
@@ -26,25 +27,60 @@
 	                  ]}
 	                ]}
 	              ]},
+//	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+//                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+//                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
+//                      'Starting Cash'
+//                    ]},
+//                    {kind: B.KindJQuery('div'), attr: {'id': 'startingCash','style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
+//                      OB.I18N.formatCurrency(OB.DEC.add(0,this.startingCash))
+//                    ]}
+//                   ]}
+//                ]},
+//                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+//                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
+//                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
+//                      'Total tendered'
+//                    ]},
+//                    {kind: B.KindJQuery('div'), attr: {'id': 'totalTendered','style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
+//                      OB.I18N.formatCurrency(OB.DEC.add(0,this.totalTendered))
+//                    ]}
+//                   ]}
+//                ]},
 	              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
-                      'Starting Cash'
-                    ]},
-                    {kind: B.KindJQuery('div'), attr: {'id': 'startingCash','style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
-                      OB.I18N.formatCurrency(OB.DEC.add(0,this.startingCash))
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                         OB.I18N.getLabel('OBPOS_LblUser')+': '+OB.POS.modelterminal.get('context').user._identifier
                     ]}
-                   ]}
+                  ]}
                 ]},
                 {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 70%'}, content: [
-                      'Total tendered'
-                    ]},
-                    {kind: B.KindJQuery('div'), attr: {'id': 'totalTendered','style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
-                      OB.I18N.formatCurrency(OB.DEC.add(0,this.totalTendered))
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)
                     ]}
-                   ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        OB.I18N.getLabel('OBPOS_LblStore')+': '+ OB.POS.modelterminal.get('terminal').organization$_identifier
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        OB.I18N.getLabel('OBPOS_LblTerminal')+': '+ OB.POS.modelterminal.get('terminal')._identifier
+                    ]}
+                  ]}
+                ]},
+                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
+                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc;'}, content: [
+                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
+                    ]}
+                  ]}
                 ]},
 	              {kind: OB.UI.TableView, id: 'tableview', attr: {
 	                style: 'list',
@@ -71,13 +107,15 @@
 //                            me.startingCash=me.listdepositsdrops.models[0].get('startingCash');
                             me.totalTendered=me.listdepositsdrops.models[0].get('totalTendered');
                             me.dropsdeps.reset(me.listdepositsdrops.models[0].get('listdepositsdrops'));
-                            this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
-                            $('#totalTendered').text(OB.I18N.formatCurrency(me.totalTendered));
+                            this.total.text(OB.I18N.formatCurrency(me.total));
+//                            this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
+//                            $('#totalTendered').text(OB.I18N.formatCurrency(me.totalTendered));
 //                            $('#startingCash').text(OB.I18N.formatCurrency(me.startingCash));
                           }
                         }, this);
                           me.on('change:total', function() {
-                          this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
+                            this.total.text(OB.I18N.formatCurrency(me.total));
+//                          this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
                           if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                           }else{
@@ -85,7 +123,8 @@
                           }
                           }, this);
                            // Initial total display
-                        this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
+//                        this.total.text(OB.I18N.formatCurrency(OB.DEC.add(OB.DEC.add(me.startingCash,me.totalTendered),me.total)));
+                          this.total.text(OB.I18N.formatCurrency(me.total));
                          if(OB.DEC.compare(OB.DEC.add(0,me.total) )<0){
                              this.$el.css("color","red");//negative value
                          }else{

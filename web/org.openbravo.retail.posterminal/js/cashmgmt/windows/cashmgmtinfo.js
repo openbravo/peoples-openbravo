@@ -22,7 +22,7 @@
         ]}
       ]}
     , context);
-    context.depositsdropsTicket.$el.hide();
+//    context.depositsdropsTicket.$el.hide();
     this.$el = this.component.$el;
   };
 }());

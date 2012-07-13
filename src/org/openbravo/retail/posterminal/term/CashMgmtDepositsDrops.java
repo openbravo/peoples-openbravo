@@ -105,11 +105,11 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
         (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
     returnsQuery.setString(1, posTerminalId);
     BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.uniqueResult();
-    // if (totalReturnsAmount == null) {
-    // totalReturnsAmount = BigDecimal.ZERO;
-    // } else {
-    // totalReturnsAmount = totalReturnsAmount.abs();
-    // }
+    if (totalReturnsAmount == null) {
+      totalReturnsAmount = BigDecimal.ZERO;
+    } else {
+      totalReturnsAmount = totalReturnsAmount.abs();
+    }
 
     // result.put("netReturns", totalReturnsAmount);
     // result.put("grossReturns", totalReturnsAmount.add(totalReturnsTax.abs()));
@@ -124,7 +124,7 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
     // BigDecimal totalDrops = BigDecimal.ZERO;
     // BigDecimal totalDeposits = BigDecimal.ZERO;
 
-    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.transactionDate as date "
+    String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount, trans.createdBy.name, trans.transactionDate as date "
         + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
         + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications.id=? and trans.account=payment.financialAccount order by trans.transactionDate asc";
@@ -144,6 +144,8 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       dropDeposit.put("description", objdropdeposit[0]);
       dropDeposit.put("drop", (BigDecimal) objdropdeposit[1]);
       dropDeposit.put("deposit", (BigDecimal) objdropdeposit[2]);
+      dropDeposit.put("user", objdropdeposit[3]);
+      dropDeposit.put("time", objdropdeposit[4].toString().substring(11, 19));
       listdepositsdrops.put(dropDeposit);
     }
     // }

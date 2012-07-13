@@ -129,7 +129,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/data/datamaster",
         "cashmgmt/windows/cashmgmtinfo",
         "cashmgmt/windows/listdepositsdrops",
-        "cashmgmt/windows/depositsdropsticket",
         "cashmgmt/components/renderdepositsdrops",
         "cashmgmt/windows/cashmgmt",
         // Cash Up window
