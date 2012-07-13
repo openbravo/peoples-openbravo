@@ -404,7 +404,8 @@ public class CostingMigrationProcess implements Process {
       OBDal.getInstance().save(initICL);
 
       totalCost = totalCost.subtract(trxCost);
-      totalStock = totalStock.subtract(trx.getMovementQuantity());
+      // MovementQty is already negative so add to totalStock to decrease it.
+      totalStock = totalStock.add(trx.getMovementQuantity());
 
       if ((i % 100) == 0) {
         OBDal.getInstance().flush();
