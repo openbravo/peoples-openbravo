@@ -254,7 +254,7 @@
         this.doneaction.hide();       
       }
       
-      if (paymentstatus.done || this.receipt.getGross() == 0) {
+      if (paymentstatus.done || this.receipt.getGross() === 0) {
         this.exactaction.hide();
       } else {
         this.exactaction.show();
