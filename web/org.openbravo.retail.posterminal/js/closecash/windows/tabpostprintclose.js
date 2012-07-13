@@ -24,10 +24,10 @@
                     {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; text-align:center;'}, content: [
                        {kind: B.KindJQuery('img'), attr: {'style': 'padding: 20px 20px 20px 10px;', 'src':'../../utility/ShowImageLogo?logo=yourcompanymenu'}, content:[]},
                        {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px; text-align:center;'}, content:[
-                             'User: '+OB.POS.modelterminal.get('context').user._identifier
+                             OB.I18N.getLabel('OBPOS_LblUser')+': '+OB.POS.modelterminal.get('context').user._identifier
                          ]},
-                         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 5px 15px 5px; text-align:center;'}, content:[
-                            'Time: '+ new Date().toString().substring(3,24)
+                         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 5px 15px 5px; text-align:center;', 'id':'reportTime'}, content:[
+                            OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)
                         ]}
                      ]}
                   ]}

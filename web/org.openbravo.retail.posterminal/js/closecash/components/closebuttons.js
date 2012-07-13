@@ -218,6 +218,8 @@
           this.$el.removeAttr('disabled');
           this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
           this.options.modeldaycash.defaults.step=3;
+          this.options.modeldaycash.time=new Date().toString().substring(3,24);
+          $('#reportTime').text(OB.I18N.getLabel('OBPOS_LblTime')+': '+new Date().toString().substring(3,24));
         }else{
           this.options.countcash.$el.hide();
           this.options.cashtokeep.$el.show();

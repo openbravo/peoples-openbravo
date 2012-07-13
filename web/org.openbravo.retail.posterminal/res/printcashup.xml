@@ -13,7 +13,7 @@
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser')+': '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime')+': '+ cashup.time) %></text>
     </line>
     <line>
     </line>
@@ -68,7 +68,7 @@
     dropsAmount = OB.DEC.add(dropsAmount,drop.amount);
     %>
     <line>
-      <text align ="left" length="25"><%=drop.description %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDrop')+': '+drop.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.amount) %></text>
     </line>
     <%
@@ -85,7 +85,7 @@
     depositsAmount = OB.DEC.add(depositsAmount,deposit.amount);
     %>
     <line>
-      <text align ="left" length="25"><%=deposit.description %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDeposit')+': '+deposit.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(deposit.amount) %></text>
     </line>
     <%
