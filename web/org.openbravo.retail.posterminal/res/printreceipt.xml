@@ -19,9 +19,9 @@
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
-      <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
+      <text><%= OB.I18N.formatDate(new Date()) %></text>
       <text> </text>
-      <text><%= OB.I18N.formatHour(order.get('orderDate')) %></text>
+      <text><%= OB.I18N.formatHour(new Date()) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
