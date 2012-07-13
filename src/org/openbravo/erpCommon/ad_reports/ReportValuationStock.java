@@ -114,9 +114,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
             .getLegalEntity(wh.getOrganization());
         String strBaseCurrencyId = (String) DalUtil.getId(FinancialUtils.getLegalEntityCurrency(wh
             .getOrganization()));
-        data = ReportValuationStockData.select(this, vars.getLanguage(), strBaseCurrencyId,
-            strCurrencyId, strDate, legalEntity.getId(),
-            DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse, strCategoryProduct);
+        data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
+            legalEntity.getId(), DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse,
+            strCategoryProduct);
         boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, strWarehouse, strCategoryProduct);
         if (hasTrxWithNoCost) {
           OBError warning = new OBError();
