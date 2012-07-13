@@ -110,8 +110,9 @@ public class CostingUtils {
    * recheckWithoutDimensions flag to true.
    */
   public static BigDecimal getStandardCost(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions) throws OBException {
-    return getStandardCost(product, org, date, costDimensions, true);
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency convCurrency)
+      throws OBException {
+    return getStandardCost(product, org, date, costDimensions, true, convCurrency);
   }
 
   /**
@@ -131,8 +132,8 @@ public class CostingUtils {
    *           when no standard cost is found.
    */
   public static BigDecimal getStandardCost(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions)
-      throws OBException {
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions,
+      Currency convCurrency) throws OBException {
     Costing stdCost = getStandardCostDefinition(product, org, date, costDimensions,
         recheckWithoutDimensions);
     if (stdCost == null) {
@@ -140,7 +141,8 @@ public class CostingUtils {
       throw new OBException("@NoStandardCostDefined@ @Organization@:" + org.getName()
           + ", @Product@: " + product.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
-    return stdCost.getCost();
+    return FinancialUtils.getConvertedAmount(stdCost.getCost(), stdCost.getCurrency(),
+        convCurrency, date, org, FinancialUtils.PRECISION_COSTING);
   }
 
   /**
@@ -290,12 +292,10 @@ public class CostingUtils {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxQry.setParameterList("orgs", orgs);
-
     Object stock = trxQry.uniqueResult();
     if (stock != null) {
       return (BigDecimal) stock;
     }
-
     return BigDecimal.ZERO;
   }
 
@@ -314,19 +314,18 @@ public class CostingUtils {
     select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
-    select.append(" tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
-    select.append(" case when trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
-        + " is null then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    select.append("      else sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + " end as mdate");
+    select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
+    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select
-        .append("   left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
-    select.append("   left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    select
-        .append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -334,9 +333,9 @@ public class CostingUtils {
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
-    select.append(" case when trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
-        + " is null then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    select.append("      else sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + " end");
+    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("date", date);
@@ -344,14 +343,24 @@ public class CostingUtils {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxQry.setParameterList("orgs", orgs);
-    List o = trxQry.list();
+    @SuppressWarnings("unchecked")
+    List<Object[]> o = trxQry.list();
     BigDecimal sum = BigDecimal.ZERO;
-    if (o != null && o.size() > 0) {
-      for (int i = 0; i < o.size(); i++) {
-        Object[] resultSet = (Object[]) o.get(i);
-        sum = sum.add(FinancialUtils.getConvertedAmount((BigDecimal) resultSet[0], (Currency) OBDal
-            .getInstance().get(Currency.class, resultSet[1]), currency, (Date) resultSet[2], org,
+    BigDecimal sumNoConv = BigDecimal.ZERO;
+    if (o.size() == 0) {
+      return sum;
+    }
+    for (Object[] resultSet : o) {
+      BigDecimal origAmt = (BigDecimal) resultSet[0];
+      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
+      Date convDate = (Date) resultSet[2];
+
+      if (origCur != currency) {
+        sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate, org,
             FinancialUtils.PRECISION_COSTING));
+        sumNoConv = sumNoConv.add(origAmt);
+      } else {
+        sum = sum.add(origAmt);
       }
     }
     return sum;

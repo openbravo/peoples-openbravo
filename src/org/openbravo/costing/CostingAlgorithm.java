@@ -565,7 +565,7 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getTransactionStandardCost() {
     BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(), costOrg,
-        transaction.getTransactionProcessDate(), costDimensions);
+        transaction.getTransactionProcessDate(), costDimensions, costCurrency);
     return transaction.getMovementQuantity().abs().multiply(standardCost);
   }
 

@@ -41,7 +41,7 @@ public class CostingStatus implements OBSingleton {
   public Boolean isMigrated() {
     // set in a localIsMigrated to prevent threading issues when
     // reseting it in setMigrated()
-    if (isMigrated == null) {
+    if (isMigrated == null || isMigrated == false) {
       OBContext.setAdminMode(false);
       try {
         //
