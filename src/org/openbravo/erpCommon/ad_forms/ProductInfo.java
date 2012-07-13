@@ -31,6 +31,7 @@ import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
@@ -317,8 +318,8 @@ public class ProductInfo {
    *           When the Product does not have a standard cost defined for the given date on the
    *           organization's Legal Entity
    */
-  public String getProductDefaultCosts(String date, BigDecimal _qty, Organization org, Warehouse wh)
-      throws OBException {
+  public String getProductDefaultCosts(String date, BigDecimal _qty, Organization org,
+      Warehouse wh, Currency currency) throws OBException {
     BigDecimal qty = null;
     Product product = OBDal.getInstance().get(Product.class, m_M_Product_ID);
     if (_qty == null || "".equals(_qty)) {
@@ -330,7 +331,7 @@ public class ProductInfo {
       HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
       costDimensions.put(CostDimension.Warehouse, wh);
       BigDecimal cost = CostingUtils.getStandardCost(product, org, OBDateUtils.getDate(date),
-          costDimensions);
+          costDimensions, currency);
       return cost.multiply(qty).toString();
     } catch (ParseException e) {
       // Do nothing

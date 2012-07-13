@@ -491,7 +491,7 @@ public class DocInOut extends AcctServer {
                 throw new IllegalStateException();
               } else {
                 trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-                    inOut.getAccountingDate(), costDimensions).multiply(
+                    inOut.getAccountingDate(), costDimensions, legalEntity.getCurrency()).multiply(
                     inOutLine.getMovementQuantity());
               }
             }

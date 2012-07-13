@@ -103,7 +103,9 @@ public class DocLine_Material extends DocLine {
         Organization legalEntity = OBContext.getOBContext()
             .getOrganizationStructureProvider(p_productInfo.m_AD_Client_ID)
             .getLegalEntity(OBDal.getInstance().get(Organization.class, m_AD_Org_ID));
-        return p_productInfo.getProductDefaultCosts(date, null, legalEntity, getWarehouse());
+        return p_productInfo.getProductDefaultCosts(date, null, legalEntity, getWarehouse(),
+            legalEntity.getCurrency() != null ? legalEntity.getCurrency() : legalEntity.getClient()
+                .getCurrency());
       } catch (OBException e) {
         log4jDocLine_Material.error("No standard cost found for product: "
             + OBDal.getInstance().get(Product.class, m_M_Product_ID).getIdentifier()
