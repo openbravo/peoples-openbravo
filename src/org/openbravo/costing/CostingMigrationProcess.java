@@ -71,6 +71,8 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -337,7 +339,9 @@ public class CostingMigrationProcess implements Process {
         CostingRule rule = createCostingRule(org);
         processRule(rule);
       }
-      calculateCosts(client);
+      for (Organization org : osp.getLegalEntitiesList()) {
+        calculateCosts(org);
+      }
     }
 
   }
@@ -357,14 +361,18 @@ public class CostingMigrationProcess implements Process {
     OBDal.getInstance().refresh(rule);
   }
 
-  private void calculateCosts(Client client) {
-    Currency cur = client.getCurrency();
+  private void calculateCosts(Organization org) {
+    Currency cur = FinancialUtils.getLegalEntityCurrency(org);
     String curId = cur.getId();
+    Set<String> orgs = OBContext.getOBContext()
+        .getOrganizationStructureProvider(org.getClient().getId()).getChildTree(org.getId(), true);
+    String orgId = org.getId();
+
     int costPrecision = cur.getCostingPrecision().intValue();
     int stdPrecision = cur.getStandardPrecision().intValue();
     CostingRuleProcess crp = new CostingRuleProcess();
     // Update cost of inventories and process starting physical inventories.
-    ScrollableResults icls = getCloseInventoryLines(client);
+    ScrollableResults icls = getCloseInventoryLines(orgs);
     String productId = "";
     BigDecimal totalCost = BigDecimal.ZERO;
     BigDecimal totalStock = BigDecimal.ZERO;
@@ -373,7 +381,7 @@ public class CostingMigrationProcess implements Process {
       InventoryCountLine icl = (InventoryCountLine) icls.get(0);
       if (!productId.equals(icl.getProduct().getId())) {
         productId = icl.getProduct().getId();
-        HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId);
+        HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId, curId, orgs, orgId);
         totalCost = stock.get("cost");
         totalStock = stock.get("stock");
       }
@@ -382,8 +390,11 @@ public class CostingMigrationProcess implements Process {
       trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
       trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
 
-      BigDecimal trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
-          stdPrecision, BigDecimal.ROUND_HALF_UP);
+      BigDecimal trxCost = BigDecimal.ZERO;
+      if (totalStock.compareTo(BigDecimal.ZERO) != 0) {
+        trxCost = totalCost.multiply(trx.getMovementQuantity().abs()).divide(totalStock,
+            stdPrecision, BigDecimal.ROUND_HALF_UP);
+      }
       if (trx.getMovementQuantity().compareTo(totalStock) == 0) {
         // Last transaction adjusts remaining cost amount.
         trxCost = totalCost;
@@ -420,47 +431,76 @@ public class CostingMigrationProcess implements Process {
 
   }
 
-  private HashMap<String, BigDecimal> getCurrentValuedStock(String productId) {
+  private HashMap<String, BigDecimal> getCurrentValuedStock(String productId, String curId,
+      Set<String> orgs, String orgId) {
+    Currency currency = OBDal.getInstance().get(Currency.class, curId);
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
     select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
-    select.append("    sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
+    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate,");
+    select.append("  sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
+    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", productId);
-
-    Object[] stock = (Object[]) trxQry.uniqueResult();
+    trxQry.setParameterList("orgs", orgs);
+    @SuppressWarnings("unchecked")
+    List<Object[]> stocks = trxQry.list();
+    BigDecimal totalAmt = BigDecimal.ZERO;
+    BigDecimal totalQty = BigDecimal.ZERO;
     HashMap<String, BigDecimal> retStock = new HashMap<String, BigDecimal>();
+    if (stocks.size() > 0) {
+      for (Object[] resultSet : stocks) {
+        BigDecimal costAmt = (BigDecimal) resultSet[0];
+        Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
+        Date convDate = (Date) resultSet[2];
+        BigDecimal qty = (BigDecimal) resultSet[3];
 
-    if (stock != null) {
-      retStock.put("cost", (BigDecimal) stock[0]);
-      retStock.put("stock", (BigDecimal) stock[1]);
-    } else {
-      retStock.put("cost", BigDecimal.ZERO);
-      retStock.put("stock", BigDecimal.ZERO);
+        if (origCur != currency) {
+          totalAmt = totalAmt.add(FinancialUtils.getConvertedAmount(costAmt, origCur, currency,
+              convDate, OBDal.getInstance().get(Organization.class, orgId),
+              FinancialUtils.PRECISION_COSTING));
+        } else {
+          totalAmt = totalAmt.add(costAmt);
+        }
+        totalQty = totalQty.add(qty);
+      }
     }
+    retStock.put("cost", totalAmt);
+    retStock.put("stock", totalQty);
     return retStock;
   }
 
-  private ScrollableResults getCloseInventoryLines(Client client) {
+  private ScrollableResults getCloseInventoryLines(Set<String> orgs) {
     StringBuffer where = new StringBuffer();
     where.append(" as il");
     where.append(" where exists (select 1 from " + CostingRuleInit.ENTITY_NAME + " as cri");
     where.append("               where cri." + CostingRuleInit.PROPERTY_CLOSEINVENTORY + " = il."
         + InventoryCountLine.PROPERTY_PHYSINVENTORY + ")");
-    where.append("   and il." + InventoryCountLine.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and il." + InventoryCountLine.PROPERTY_ORGANIZATION + ".id IN (:orgs)");
     where.append(" order by " + InventoryCountLine.PROPERTY_PRODUCT + ", il."
         + InventoryCountLine.PROPERTY_BOOKQUANTITY);
 
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
-    iclQry.setNamedParameter("client", client.getId());
+    iclQry.setNamedParameter("orgs", orgs);
     iclQry.setFilterOnActive(false);
     iclQry.setFilterOnReadableClients(false);
     iclQry.setFilterOnReadableOrganization(false);
