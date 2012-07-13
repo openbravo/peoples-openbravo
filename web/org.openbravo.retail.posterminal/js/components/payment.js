@@ -17,7 +17,9 @@
   });
 
   var ExactButton = OB.COMP.RegularButton.extend({  
-    label: 'OK',
+    icon: 'btn-icon-small btn-icon-check',
+    className: 'btnlink-green',
+    attributes: {style: 'width: 69px'},
     'clickEvent': function () {
       this.options.parent.options.keyboard.execStatelessCommand('cashexact');
     }
@@ -245,14 +247,19 @@
         this.totalpending.hide();
         this.totalpendinglbl.hide();
         this.doneaction.show();
-        this.exactaction.hide();
       } else {
         this.totalpending.text(paymentstatus.pending);
         this.totalpending.show();
         this.totalpendinglbl.show();
-        this.doneaction.hide();
+        this.doneaction.hide();       
+      }
+      
+      if (paymentstatus.done || this.receipt.getGross() == 0) {
+        this.exactaction.hide();
+      } else {
         this.exactaction.show();
       }
+            
       if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
         this.exactlbl.show();
       } else {

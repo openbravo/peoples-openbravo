@@ -115,6 +115,7 @@
       this.options.parent.showKeypad('coins');
       this.options.parent.showSidepad('sidedisabled');
       this.options.parent.defaultcommand = 'OBPOS_payment.cash';
+      this.options.parent.setStatus('OBPOS_payment.cash')
     }
   });
 
