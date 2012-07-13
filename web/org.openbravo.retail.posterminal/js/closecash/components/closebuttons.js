@@ -39,8 +39,13 @@
             found = true;
             $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4',[this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('name')]));
             if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').keepfixedamount){
-              $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
-              $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+              if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount > this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')){
+                $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+              }else{
+                $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+              }
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
             }else{
@@ -134,7 +139,14 @@
             if($('#variableamount').val()===''){
               this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(0);
             }else{
-              this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber('#variableamount').val());
+              if(OB.I18N.parseNumber($('#variableamount').val()) < this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('counted')){
+                this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('#variableamount').val()));
+              }else{
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanCounted'));
+                this.options.modeldaycash.set('allowedStep', this.options.modeldaycash.get('allowedStep')-1);
+                this.$el.removeAttr('disabled');
+                return true;
+              }
             }
           }else{
             this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.formatCurrency(OB.I18N.parseNumber($('.active').val()));
@@ -150,8 +162,13 @@
               if(!this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount){
                 this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount=0;
               }
-              $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
-              $('#keepfixedamount').val(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount);
+              if(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount > this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')){
+                $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('counted')));
+              }else{
+                $('#keepfixedamountlbl').text(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+                $('#keepfixedamount').val(OB.I18N.formatCurrency(this.options.modeldaycash.paymentmethods.at(this.options.modeldaycash.get('allowedStep')).get('paymentMethod').amount));
+              }
               $('#keepfixedamount').show();
               $('#keepfixedamountlbl').show();
             }else{
@@ -268,6 +285,9 @@
     label: '',
     me: null,
     clickEvent: function (e) {
+      if(this.$el.attr('id')==='allowvariableamount'){
+        $('#variableamount').focus();
+      }
       this.options.closenextbutton.$el.removeAttr('disabled');
     }
   });
