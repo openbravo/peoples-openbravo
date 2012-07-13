@@ -15,7 +15,13 @@
           {kind: OB.Collection.OrderList},
 
           {kind: OB.DATA.Container, content: [
-            {kind: OB.COMP.HWManager, attr: { 'templateline': 'res/printline.xml', 'templatereceipt': 'res/printreceipt.xml'}}
+            {kind: OB.COMP.HWManager, attr: { 
+              'templateline': 'res/printline.xml', 
+              'templatereceipt': 'res/printreceipt.xml',
+              'templateinvoice': 'res/printinvoice.xml',
+              'templatereturn': 'res/printreturn.xml',
+              'templatereturninvoice': 'res/printreturninvoice.xml'
+            }}
           ]},
 
           {kind: OB.DATA.OrderDiscount},

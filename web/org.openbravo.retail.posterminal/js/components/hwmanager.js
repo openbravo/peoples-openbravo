@@ -47,7 +47,23 @@
   };
 
   OB.COMP.HWManager.prototype.printOrder = function() {
-    OB.POS.hwserver.print(this.templatereceiptdata, {
+    
+    var template;
+    if (this.receipt.get('generateInvoice')) {
+      if (this.receipt.get('orderType') === 1) {
+        template = this.templatereturninvoicedata;
+      } else {
+        template = this.templateinvoicedata;       
+      }
+    } else {
+      if (this.receipt.get('orderType') === 1) {
+        template = this.templatereturndata;
+      } else {
+        template = this.templatereceiptdata;
+      }      
+    }
+    
+    OB.POS.hwserver.print(template, {
       order: this.receipt
     }, hwcallback);
   };
@@ -66,6 +82,9 @@
   OB.COMP.HWManager.prototype.attr = function(attrs) {
     this.templateline = attrs.templateline;
     this.templatereceipt = attrs.templatereceipt;
+    this.templateinvoice = attrs.templateinvoice || attrs.templatereceipt;
+    this.templatereturn = attrs.templatereturn || attrs.templatereceipt;
+    this.templatereturninvoice = attrs.templatereturninvoice || attrs.templatereturn || attrs.templatereceipt;
     this.templatecashup = attrs.templatecashup;
     this.templatecashmgmt = attrs.templatecashmgmt;
   };
@@ -74,9 +93,20 @@
     OB.UTIL.loadResource(this.templateline, function(data) {
       this.templatelinedata = data;
     }, this);
+    
     OB.UTIL.loadResource(this.templatereceipt, function(data) {
       this.templatereceiptdata = data;
+    }, this);   
+    OB.UTIL.loadResource(this.templateinvoice, function(data) {
+      this.templateinvoicedata = data;
     }, this);
+    OB.UTIL.loadResource(this.templatereturn, function(data) {
+      this.templatereturndata = data;
+    }, this);
+    OB.UTIL.loadResource(this.templatereturninvoice, function(data) {
+      this.templatereturninvoicedata = data;
+    }, this);
+    
     OB.UTIL.loadResource(this.templatecashup, function(data) {
       this.templatecashupdata = data;
     }, this);
