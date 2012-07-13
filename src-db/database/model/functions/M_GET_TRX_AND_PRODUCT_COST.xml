@@ -25,6 +25,9 @@
       <parameter name="p_precission" type="NUMERIC" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_currency_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -43,9 +46,9 @@
 ************************************************************************/
 BEGIN
   IF (p_transaction_id IS NOT NULL) THEN
-    RETURN M_GET_TRANSACTION_COST(p_transaction_id, p_movementdate);
+    RETURN M_GET_TRANSACTION_COST(p_transaction_id, p_movementdate, p_currency_id);
   ELSE
-    RETURN ROUND(M_GET_NO_TRX_PRODUCT_COST(p_product_id, p_movementdate, p_costtype, p_org_id, p_warehouse_id) * p_qty, p_precission);
+    RETURN ROUND(COALESCE(M_GET_NO_TRX_PRODUCT_COST(p_product_id, p_movementdate, p_costtype, p_org_id, p_warehouse_id, p_currency_id), 0) * p_qty, p_precission);
   END IF;
 END M_GET_TRX_AND_PRODUCT_COST
 ]]></body>

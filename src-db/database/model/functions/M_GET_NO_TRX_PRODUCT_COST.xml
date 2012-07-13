@@ -16,6 +16,12 @@
       <parameter name="p_warehouse_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_currency_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_islegalentity" type="CHAR" mode="in">
+        <default><![CDATA[N]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -42,13 +48,15 @@
 BEGIN
   v_CostType := p_CostType;
   IF(p_Product_ID IS NULL) THEN
-    RETURN 0;
+    RETURN NULL;
   END IF;
   IF(p_MovementDate IS NULL) THEN
-    RETURN 0;
+    RETURN NULL;
   END IF;
-  IF(p_org_id IS NULL) THEN
-    RETURN 0;
+  IF(p_isLegalEntity = 'Y') THEN
+    v_legal_entity := p_org_id;
+  ELSIF(p_org_id IS NULL) THEN
+    RETURN NULL;
   ELSE
     SELECT ot.islegalentity INTO v_islegalentity
     FROM ad_org o JOIN ad_orgtype ot ON o.ad_orgtype_id = ot.ad_orgtype_id
@@ -71,10 +79,11 @@ BEGIN
     AND costtype IN ('STA', 'AVA')
     AND costtype = COALESCE(v_CostType, costtype);
   IF(v_Count = 0) THEN
-    RETURN 0;
+    RETURN NULL;
   END IF;
+  
   FOR Cur_Cost IN (
-      SELECT cost
+      SELECT cost, c_currency_id, ad_client_id, ad_org_id
       FROM m_costing
       WHERE datefrom <= p_movementdate
         AND dateto > p_movementdate
@@ -86,7 +95,11 @@ BEGIN
         AND costtype = COALESCE(v_CostType, costtype)
       ORDER BY datefrom, dateto DESC, CASE WHEN m_warehouse_id IS NULL THEN 1 ELSE 0 END
   ) LOOP
+    IF (Cur_Cost.c_currency_id <> p_currency_id ) THEN
+    v_Cost := C_CURRENCY_CONVERT_PRECISION(Cur_Cost.COST, Cur_Cost.c_currency_id, p_currency_id, TO_DATE(p_movementdate), NULL, Cur_Cost.ad_client_id, Cur_Cost.ad_org_id,'C');
+    ELSE
     v_Cost := Cur_Cost.COST;
+    END IF;
     EXIT;
   END LOOP;
   RETURN v_Cost;
