@@ -181,6 +181,7 @@
     className: 'btnlink btnlink-gray',
     attributes: {'data-toggle': 'tab'},
     initialize: function () {
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
       this.$el.attr('href', this.tabpanel);
       this.$el.append($('<span>' + this.label + '</span>'));
     },
