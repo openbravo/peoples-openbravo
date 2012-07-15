@@ -220,6 +220,7 @@ button.btnlink-fontblue {
 button.btnlink-payment-clear {
   width: 90%;
   margin: 0px 0px 0px 16px;
+  padding-top: 4px;
   border: 1px #cccccc solid;
 }
 
