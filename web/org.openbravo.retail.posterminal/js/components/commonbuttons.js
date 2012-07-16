@@ -243,19 +243,6 @@
     label: ''
   });
 
-  // Clears the text of the previous field
-  OB.COMP.ClearButton = OB.COMP.Button.extend({
-    render: function () {
-      this.$el.addClass('btnclear');
-      this.$el.html('&times;');
-      return this;
-    },
-    clickEvent: function (e) {
-      // clears the text of the previous field.
-      this.$el.prev().val('');
-    }
-  });
-
   // Select Div
   OB.COMP.SelectPanel = Backbone.View.extend({
     tagName: 'div',

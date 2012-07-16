@@ -45,7 +45,6 @@
                     }}
                   ]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'display: table-cell;'}, content: [
-                    //{kind: OB.COMP.ClearButton}
                     {kind: OB.COMP.SmallButton, attr: {'className': 'btnlink-gray', 'icon': 'btn-icon-small btn-icon-clear', 'style': 'width: 100px; margin: 0px 5px 8px 19px;',
                       'clickEvent': function() {
                         this.$el.parent().prev().children().val('');
