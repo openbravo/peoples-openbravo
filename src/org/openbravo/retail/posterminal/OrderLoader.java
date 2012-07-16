@@ -396,6 +396,9 @@ public class OrderLoader {
 
       orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")));
 
+      // shipment is created, so all is delivered
+      orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
       order.getOrderLineList().add(orderline);
