@@ -122,7 +122,7 @@
     modalObj.on('shown', function(e) {
       function getCSSPosition(element, type) {
         var position = element.css(type);
-        if (position.indexOf('%') !== -1) {
+        if (position && position.indexOf('%') !== -1) {
           position = position.replace('%','');
           position = parseInt(position, 10);
           position = position / 100;
