@@ -49,6 +49,58 @@
     }
   }
 
+  function getWhereClause(criteria, propertyMap) {
+    var appendWhere = true,
+    firstParam = true,
+    sql = '',
+    params = [],
+    res = {};
+    if (criteria && !_.isEmpty(criteria)) {
+      _.each(_.keys(criteria), function (k) {
+
+        var undef, val = criteria[k],
+            operator = (val !== null && val.operator !== undef) ? val.operator : '=',
+            value = (val !== null && val.value !== undef) ? val.value : val;
+
+        if (appendWhere) {
+          sql = sql + ' WHERE ';
+          params = [];
+          appendWhere = false;
+        }
+
+        sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
+
+        if (value === null) {
+          sql = sql + ' IS null ';
+        } else {
+
+          if (operator === OP.EQ) {
+            sql = sql + ' = ? ';
+          } else {
+            sql = sql + ' like ? ';
+          }
+
+          if (operator === OP.CONTAINS) {
+            value = '%' + value + '%';
+          } else if (operator === OP.STARTSWITH) {
+            value = '%' + value;
+          } else if (operator === OP.ENDSWITH) {
+            value = value + '%';
+          }
+          params.push(value);
+        }
+
+        if (firstParam) {
+          firstParam = false;
+        }
+
+      });
+    }
+    res.sql = sql;
+    res.params = params;
+    return res;
+  }
+
   function find(model, whereClause, success, error, args) {
     var tableName = model.prototype.tableName,
         propertyMap = model.prototype.propertyMap,
@@ -60,7 +112,7 @@
 
     if (db) {
       // websql
-      whereClause = this.buildWhereClause(whereClause, propertyMap);
+      whereClause = getWhereClause(whereClause, propertyMap);
       sql = sql + whereClause.sql;
       params = whereClause.params;
 
@@ -198,7 +250,7 @@
       }
 
       sql = 'DELETE FROM ' + tableName;
-      whereClause = this.buildWhereClause(criteria, propertyMap);
+      whereClause = getWhereClause(criteria, propertyMap);
       sql = sql + whereClause.sql;
       params = whereClause.params;
       db.transaction(function (tx) {
@@ -207,58 +259,6 @@
     } else {
       throw 'Not implemented';
     }
-  }
-
-  function buildWhereClause(criteria, propertyMap) {
-    var appendWhere = true,
-    firstParam = true,
-    sql = '',
-    params = [],
-    res = {};
-    if (criteria && !_.isEmpty(criteria)) {
-      _.each(_.keys(criteria), function (k) {
-
-        var undef, val = criteria[k],
-            operator = (val !== null && val.operator !== undef) ? val.operator : '=',
-            value = (val !== null && val.value !== undef) ? val.value : val;
-
-        if (appendWhere) {
-          sql = sql + ' WHERE ';
-          params = [];
-          appendWhere = false;
-        }
-
-        sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
-
-        if (value === null) {
-          sql = sql + ' IS null ';
-        } else {
-
-          if (operator === OP.EQ) {
-            sql = sql + ' = ? ';
-          } else {
-            sql = sql + ' like ? ';
-          }
-
-          if (operator === OP.CONTAINS) {
-            value = '%' + value + '%';
-          } else if (operator === OP.STARTSWITH) {
-            value = '%' + value;
-          } else if (operator === OP.ENDSWITH) {
-            value = value + '%';
-          }
-          params.push(value);
-        }
-
-        if (firstParam) {
-          firstParam = false;
-        }
-
-      });
-    }
-    res.sql = sql;
-    res.params = params;
-    return res;
   }
 
   function get(model, id, success, error) {
