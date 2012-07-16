@@ -39,6 +39,7 @@
 
       this.$el.mouseover(_.bind(this._mouseOverEvent, this));
       this.$el.mouseout(_.bind(this._mouseOutEvent, this));
+      this.$el.mousedown(_.bind(this._mouseDownEvent, this));
 
       // data-toggle is used by Bootstrap plugins, like: dropdown, tab, etc
       // we fall back to default 'slow' click event
@@ -60,9 +61,16 @@
       this.$el.removeClass('btn-over');
       this.mouseOutEvent(e);
     },
+    _mouseDownEvent: function (e) {
+      var me = this;
+      this.$el.addClass('btn-down');
+      setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
+      this.mouseOutEvent(e);
+    },
     clickEvent: function (e) {},
     mouseOverEvent: function (e) {},
-    mouseOutEvent: function (e) {}
+    mouseOutEvent: function (e) {},
+    mouseDownEvent: function (e) {}
   });
 
   // Regular Button

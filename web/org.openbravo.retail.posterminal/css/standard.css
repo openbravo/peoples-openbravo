@@ -103,6 +103,7 @@ button.btnkeyboard.btn-over {
   opacity: 0.75;
 }
 
+button.btnkeyboard.btn-down,
 button.btnkeyboard:active {
   opacity: 1;
   background-color: #cccccc;
@@ -117,11 +118,13 @@ button.btnactive-blue {
   background-color: #7da7d9;
 }
 
+button.btnkeyboard-plus.btn-down,
 button.btnkeyboard-plus:active {
   opacity: 1;
   background-color: #6cb33f;
 }
 
+button.btnkeyboard-minus.btn-down,
 button.btnkeyboard-minus:active {
   opacity: 1;
   background-color: #f8941d;
@@ -151,6 +154,7 @@ button.btnlink-toolbar {
 button.btnlink.btn-over {
   opacity: 0.75;
 }
+button.btnlink.btn-down,
 button.btnlink:active {
   opacity: 1;
   background-color: #cccccc;
@@ -248,6 +252,7 @@ button.btnselect {
   cursor: pointer;
   border-bottom: 1px solid #cccccc;
 }
+button.btnselect.btn-down,
 button.btnselect:active {
   background-color: #cccccc;
 }
