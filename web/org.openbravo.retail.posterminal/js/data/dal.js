@@ -1,4 +1,4 @@
-
+/*global define,_,console,Backbone */
 (function (d) {
 
   var dbSize = 50 * 1024 * 1024,
