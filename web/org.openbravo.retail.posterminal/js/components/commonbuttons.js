@@ -360,7 +360,9 @@
         // it is a backbone view
         this.contentview = new getcv(this.options).render();
       }
-     this.body.append(this.contentview.$el);    
+      this.body.append(this.contentview.$el);    
+
+      OB.UTIL.adjustModalPosition(this.$el);
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
@@ -427,6 +429,8 @@
       body.append(bodyButtonsContainer);
 
       this.$el.append(body);
+
+      OB.UTIL.adjustModalPosition(this.$el);
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
