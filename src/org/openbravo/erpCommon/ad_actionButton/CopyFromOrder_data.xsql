@@ -150,11 +150,11 @@
         INSERT INTO C_ORDERLINE (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
             C_ORDER_ID, LINE, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, DATEORDERED, DATEPROMISED, M_PRODUCT_ID, M_WAREHOUSE_ID, C_UOM_ID,
             QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, PRICESTD, DISCOUNT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID,
-            gross_unit_price, line_gross_amount
+            grosspricelist, gross_unit_price, line_gross_amount
         ) VALUES (?,?,?,NOW(),?,NOW(),?,
                 ?,(SELECT (coalesce(Max(Line),0))+10 FROM C_OrderLine WHERE C_Order_id = ?),?,?,TO_DATE(?),TO_DATE(?),?,?,?,
                 TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), ?, ?,
-            TO_NUMBER(?), TO_NUMBER(?)
+            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)
         )
       ]]>
     </Sql>
@@ -181,6 +181,7 @@
     <Parameter name="discount"/>
     <Parameter name="cTaxId"/>
     <Parameter name="mAttributesetinstanceId"/>
+    <Parameter name="priceListGross"/>
     <Parameter name="priceGross"/>
     <Parameter name="amtGross"/>
   </SqlMethod>

@@ -111,7 +111,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       CopyFromOrderRecordData[] orderData = CopyFromOrderRecordData.select(this, strKey);
       Order order = OBDal.getInstance().get(Order.class, strKey);
 
-      BigDecimal discount, priceActual, priceList, priceStd, priceLimit, priceGross, amtGross;
+      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross;
       while (st.hasMoreTokens()) {
         String strRownum = st.nextToken().trim();
         String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
@@ -144,25 +144,33 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           amtGross = priceGross.multiply(qty).setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
           priceActual = FinancialUtils.calculateNetFromGross(strcTaxId, amtGross, pricePrecision,
               amtGross, qty);
+          priceLimit = priceActual;
+          netPriceList = priceActual;
+          grossPriceList = priceList;
         } else {
           priceActual = (strLastpriceso.equals("") ? ZERO : new BigDecimal(strLastpriceso));
+          netPriceList = priceList;
           priceGross = BigDecimal.ZERO;
           amtGross = BigDecimal.ZERO;
+          grossPriceList = BigDecimal.ZERO;
         }
 
-        if (priceList.compareTo(BigDecimal.ZERO) == 0 || order.getPriceList().isPriceIncludesTax()) {
+        if (priceList.compareTo(BigDecimal.ZERO) == 0) {
           discount = ZERO;
         } else {
-          log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-          log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-          // (PL-PA)/PL * 100
-          discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-              BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+          log4j.debug("pricelist:" + priceList.toString());
+          log4j.debug("priceActual:" + priceActual.toString());
+          BigDecimal unitPrice;
+          if (order.getPriceList().isPriceIncludesTax()) {
+            unitPrice = priceGross;
+          } else {
+            unitPrice = priceActual;
+          }
+          // (PL-UP)/PL * 100
+          discount = ((priceList.subtract(unitPrice)).multiply(new BigDecimal("100")).divide(
+              priceList, stdPrecision, BigDecimal.ROUND_HALF_UP));
         }
         log4j.debug("Discount: " + discount.toString());
-        if (discount.scale() > stdPrecision) {
-          discount = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-        }
         if (priceStd.scale() > pricePrecision) {
           priceStd = priceStd.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
         }
@@ -173,9 +181,9 @@ public class CopyFromOrder extends HttpSecureAppServlet {
               orderData[0].cBpartnerLocationId, orderData[0].dateordered, orderData[0].dateordered,
               strmProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
                   : orderData[0].mWarehouseId, strcUOMId, strQty, orderData[0].cCurrencyId,
-              priceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
+              netPriceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
                   .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId,
-              priceGross.toString(), amtGross.toString());
+              grossPriceList.toString(), priceGross.toString(), amtGross.toString());
         } catch (ServletException ex) {
           myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
