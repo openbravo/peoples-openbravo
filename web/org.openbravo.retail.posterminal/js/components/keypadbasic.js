@@ -6,7 +6,7 @@
   OB.COMP = window.OB.COMP || {};
   
   var ButtonDummy = Backbone.View.extend({
-    tag: 'div',
+    tagName: 'button',
     initialize: function () {
       this.$el.attr('class', this.options.className);
     }
@@ -67,7 +67,7 @@
         this.kb.addButton(this.command, this.button);
       } else {
         this.button = new ButtonDummy({
-          className: 'btnkeyboard ' + this.classButton
+          className: 'btnkeyboard ' + 'btnkeyboard-inactive ' + this.classButton
         });
       }
 

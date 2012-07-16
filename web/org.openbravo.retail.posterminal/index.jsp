@@ -74,6 +74,23 @@ if(userId == null){
 </head>
 
 <body style="background-color: darkgray; background: url(img/BACKGROUND-PNG24.png) top left">
+  <script>
+    (function () {
+      function resizeWindow() {
+        var winHeight = window.innerHeight,
+            percentage;
+        if (winHeight < 740) {
+          percentage = window.innerHeight * 100 / 740;
+          percentage = Math.floor(percentage) / 100;
+          document.body.style.zoom = percentage;
+        } else if (document.body.style.zoom < 1) {
+          document.body.style.zoom = 1;
+        }
+      }
+      resizeWindow();
+      window.onresize = function() { resizeWindow(); };
+    }());
+  </script>
   <div id="container" class="container">
     <div id="topsection" class="section">
       <div class="row" style="height: 50px; vertical-align: middle; display: table-cell;">

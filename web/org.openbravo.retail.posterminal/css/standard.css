@@ -99,6 +99,17 @@ button.btnkeyboard {
   height: 57px;
 }
 
+button.btnkeyboard-inactive,
+button.btnkeyboard-inactive.btn-over,
+button.btnkeyboard-inactive:hover,
+button.btnkeyboard-inactive.btn-down,
+button.btnkeyboard-inactive:active {
+  opacity: 1 !important;
+  background-color: darkgray !important;
+  cursor: default;
+  color: black;
+}
+
 button.btnkeyboard.btn-over {
   opacity: 0.75;
 }
@@ -284,18 +295,6 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit:hover {
 
 .dropdown-menu {
   padding: 0px;
-}
-
-div.btnkeyboard {
-  display: block;
-  width: 100%;
-  font-size: 18px;
-  text-align: center;
-  padding: 18px 0px 11px 0px;
-  text-decoration: none;
-  background-color: darkgray;
-  color: black;
-  height: 28px;
 }
 
 div.btnlink {
