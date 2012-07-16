@@ -1,6 +1,6 @@
 /*global Backbone, $, _ */
 
-(function() {
+(function () {
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
@@ -9,7 +9,7 @@
     return ({
       'permission': key,
       'stateless': provider,
-      'action': function(txt) {
+      'action': function (txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? receipt.getPending() : amount;
         var providerview = OB.POS.paymentProviders[provider];
@@ -25,10 +25,10 @@
       }
     });
   }
-  
+
   OB.UI.ButtonSwitch = OB.COMP.Button.extend({
     className: 'btnkeyboard',
-    
+
     initialize: function () {
       OB.COMP.Button.prototype.initialize.call(this); // super.initialize();     
       this.options.parent.on('keypad', this.render, this);
@@ -41,7 +41,7 @@
       }
       this.render();
     },
-    render: function() {
+    render: function () {
       // this.$el.text(this.options.parent.keypad.label);
       if (this.options.parent.keypad.name === 'coins') {
         this.$el.text(this.options.parent.keypads.index.label);
@@ -50,31 +50,35 @@
       }
       return this;
     }
-    
+
   });
-  
+
   OB.UI.ToolbarPayment = Backbone.View.extend({
     tagName: 'div',
-    attributes: {'style': 'display:none'},
-    
-    
+    attributes: {
+      'style': 'display:none'
+    },
+
+
     initialize: function () {
       var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
-      
-      this.modalpayment = new OB.UI.ModalPayment({parent: this.options.parent}).render();
-      $('body').append(this.modalpayment.$el);     
-      
+
+      this.modalpayment = new OB.UI.ModalPayment({
+        parent: this.options.parent
+      }).render();
+      $('body').append(this.modalpayment.$el);
+
       payments = OB.POS.modelterminal.get('payments');
       receipt = this.options.parent.receipt;
-       
+
       for (i = 0, max = payments.length; i < max; i++) {
-           
+
         // Data for cashexact command
         if (payments[i].searchKey === 'OBPOS_payment.cash') {
           defaultpayment = payments[i];
         }
         allpayments[payments[i].searchKey] = payments[i];
-     
+
         Btn = OB.COMP.ButtonKey.extend({
           command: payments[i].searchKey,
           definition: getPayment(this.modalpayment, receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider),
@@ -82,15 +86,19 @@
           permission: payments[i].searchKey,
           contentViewButton: [payments[i]._identifier]
         });
-        inst = new Btn({parent: this.options.parent}).render();
-        this.$el.append($('<div/>').attr({'style': 'display:table; width:100%'}).append(inst.$el));       
-      }  
-      
+        inst = new Btn({
+          parent: this.options.parent
+        }).render();
+        this.$el.append($('<div/>').attr({
+          'style': 'display:table; width:100%'
+        }).append(inst.$el));
+      }
+
       this.options.parent.addCommand('cashexact', {
-        'action': function(txt) {
+        'action': function (txt) {
           var exactpayment = allpayments[this.status] || defaultpayment;
           var amount = receipt.getPending();
-          if (amount > 0 && exactpayment) {             
+          if (amount > 0 && exactpayment) {
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': exactpayment.searchKey,
               'name': exactpayment._identifier,
@@ -98,20 +106,30 @@
             }));
           }
         }
-      });        
-      
+      });
+
       while (i < 5) {
-        inst = new OB.COMP.ButtonKey({parent: this.options.parent}).render();
-        this.$el.append($('<div/>').attr({'style': 'display:table; width:100%'}).append(inst.$el));       
+        inst = new OB.COMP.ButtonKey({
+          parent: this.options.parent
+        }).render();
+        this.$el.append($('<div/>').attr({
+          'style': 'display:table; width:100%'
+        }).append(inst.$el));
         i++;
       }
-      
+
       // switch button..
-      inst = new OB.UI.ButtonSwitch({parent: this.options.parent}).render();
-      cont = $('<div/>').attr({'style': 'display:table; width:100%;'}).append($('<div/>').attr({'style': 'margin: 5px;'}).append(inst.$el));
-      this.$el.append(cont);    
+      inst = new OB.UI.ButtonSwitch({
+        parent: this.options.parent
+      }).render();
+      cont = $('<div/>').attr({
+        'style': 'display:table; width:100%;'
+      }).append($('<div/>').attr({
+        'style': 'margin: 5px;'
+      }).append(inst.$el));
+      this.$el.append(cont);
     },
-    shown: function() {
+    shown: function () {
       this.options.parent.showKeypad('coins');
       this.options.parent.showSidepad('sidedisabled');
       this.options.parent.defaultcommand = 'OBPOS_payment.cash';
