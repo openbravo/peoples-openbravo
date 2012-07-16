@@ -30,11 +30,7 @@
       return this;
     },
     clickEvent: function (e) {
-        if(this.options.ListDepositsDrops.totalTendered + this.options.ListDepositsDrops.totalToDrop >= 0 ){
-          this.options.ListDepositsDrops.listdepositsdrops.trigger('depositdrop');
-        }else{
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
-        }
+       this.options.ListDepositsDrops.listdepositsdrops.trigger('depositdrop');
    }
   });
 }());

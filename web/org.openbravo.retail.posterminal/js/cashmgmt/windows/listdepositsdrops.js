@@ -12,7 +12,6 @@
 	        this._id = 'ListDepositsDrops';
           this.totalTendered= OB.DEC.Zero;
 	        this.total= OB.DEC.Zero;
-	        this.totalToDrop= OB.DEC.Zero;
 	        this.listdepositsdrops = new OB.Model.Collection(this.options.DataDepositsDrops);
 	        this.dropsdeps = new Backbone.Collection();
 	        this.component = B(
