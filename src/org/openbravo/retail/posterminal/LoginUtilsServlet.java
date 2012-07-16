@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -147,23 +146,25 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
           strOrg = "0";
         }
 
-        Set<String> orgNaturalTree = OBContext.getOBContext()
-            .getOrganizationStructureProvider(strClient).getNaturalTree(strOrg);
-
         // Get the user name and username list with the following criteria
         // * Belongs to a "Role" which has the "Web POS" form as an allowed one
-        // * Is in the same natural organization tree than the current "POS Terminal"
+        // * Has access to the organization the terminal is defined in
         final String hqlUser = "select distinct user.name, user.username, user.id "
-            + "from ADUser user, ADUserRoles userRoles, ADRole role, " + "ADFormAccess formAccess "
-            + "where user.active = true and " + "userRoles.active = true and "
-            + "role.active = true and " + "formAccess.active = true and "
-            + "user.username != '' and " + "user.password is not null and "
-            + "userRoles.role.organization.id in :orgList and "
+            + "from ADUser user, ADUserRoles userRoles, ADRole role, "
+            + "ADFormAccess formAccess, OBPOS_Applications terminal "
+            + "where user.active = true and "
+            + "userRoles.active = true and "
+            + "role.active = true and "
+            + "formAccess.active = true and "
+            + "user.username != '' and "
+            + "user.password is not null and "
+            + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
+            + "terminal.searchKey = :theTerminalSearchKey and "
             + "user.id = userRoles.userContact.id and " + "userRoles.role.id = role.id and "
             + "userRoles.role.id = formAccess.role.id and "
             + "formAccess.specialForm.id = :webPOSFormId " + "order by user.name";
         Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
-        qryUser.setParameterList("orgList", orgNaturalTree);
+        qryUser.setParameter("theTerminalSearchKey", terminalName);
         qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
         int queryCount = 0;
 
