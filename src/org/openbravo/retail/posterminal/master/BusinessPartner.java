@@ -35,7 +35,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "$naturalOrgCriteria"
         + "))"
         + "GROUP BY bpl.businessPartner.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, bpl.id "
-        + "ORDER BY bpl.businessPartner.id";
+        + "ORDER BY bpl.businessPartner.name";
     // probar los casos con varias loc para un mismo BP
     // return "select bp as BusinessPartner, loc as BusinessPartnerLocation "
     // + "from BusinessPartner bp, BusinessPartnerLocation loc "

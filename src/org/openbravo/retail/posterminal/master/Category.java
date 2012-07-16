@@ -45,7 +45,7 @@ public class Category extends ProcessHQLQuery {
           + ") AND ("
           + "ppp.priceListVersion.id = pplv.id"
           + ") AND ("
-          + "pli.product.id = ppp.product.id" + ")";
+          + "pli.product.id = ppp.product.id" + ") order by pli.product.productCategory.name";
     } else {
       throw new JSONException("Product list not found");
     }

@@ -103,6 +103,10 @@
         });
       }
 
+      if (model.prototype.propertyMap._idx) {
+        sql = sql + ' ORDER BY _idx ';
+      }
+
       //console.log(sql);
       //console.log(params);
       db.readTransaction(function (tx) {
