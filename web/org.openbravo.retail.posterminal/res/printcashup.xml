@@ -68,14 +68,14 @@
     dropsAmount = OB.DEC.add(dropsAmount,drop.amount);
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblDrop')+': '+drop.description) %></text>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+drop.description) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.amount) %></text>
     </line>
     <%
     });
     %>
     <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDrops')) %></text>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalWithdrawals')) %></text>
       <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(dropsAmount) %></text>
     </line>
     <line>

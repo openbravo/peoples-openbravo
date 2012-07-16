@@ -40,9 +40,9 @@
         }
         if (me.payments.at(i).get('allowdrops')) {
           me.toolbar.push({
-            command: me.payments.at(i).get('payment').searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDrop'),
+            command: me.payments.at(i).get('payment').searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
             definition: getPayment(this.receipt, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'drop'),
-            label: me.payments.at(i).get('payment')._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDrop')
+            label: me.payments.at(i).get('payment')._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
           });
         }
       }

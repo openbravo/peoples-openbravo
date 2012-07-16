@@ -174,7 +174,7 @@
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                   {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;' }, content: [
-                    OB.I18N.getLabel('OBPOS_LblTotalDrops')
+                    OB.I18N.getLabel('OBPOS_LblTotalWithdrawals')
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'}, content: [
                      OB.I18N.formatCurrency(dropsAmount)

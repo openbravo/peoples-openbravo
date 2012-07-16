@@ -16,7 +16,7 @@
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
           {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
             {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left; width: 40%'}, content: [
-              OB.I18N.getLabel('OBPOS_LblDrop')+': '+this.model.get('description')
+              OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+this.model.get('description')
             ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: left;  width: 15%'}, content: [
               this.model.get('user')
