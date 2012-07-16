@@ -66,20 +66,19 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
-      OBError myError = processButton(vars, strKey, strOrder, strWindow);
-      if (log4j.isDebugEnabled())
-        log4j.debug(myError.getMessage());
+      OBError myError = processButton(vars, strKey, strOrder);
+      log4j.debug(myError.getMessage());
       vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else
       pageErrorPopUp(response);
   }
 
-  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrder,
-      String windowId) {
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrder) {
     OBError myError = null;
     int i = 0;
     String strPriceActual = "";
@@ -116,24 +115,30 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual)))
                 .setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
             priceList = (strPriceList.equals("") ? ZERO : new BigDecimal(strPriceList));
-            if (priceList.compareTo(ZERO) == 0)
+            if (priceList.compareTo(ZERO) == 0) {
               discount = ZERO;
-            else
+            } else {
+              // ((PL-PA)/PL)*100
               discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100")); // ((PL-PA)/PL)*100
-            if (discount.scale() > stdPrecision)
+                  BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+            }
+            if (discount.scale() > stdPrecision) {
               discount = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+            }
             strDiscount = discount.toString();
             strPriceActual = priceActual.toString();
             strPriceList = priceList.toString();
           }
         }
-        if (strPriceActual.equals(""))
+        if (strPriceActual.equals("")) {
           strPriceActual = "0";
-        if (strPriceList.equals(""))
+        }
+        if (strPriceList.equals("")) {
           strPriceList = "0";
-        if (strPriceLimit.equals(""))
+        }
+        if (strPriceLimit.equals("")) {
           strPriceLimit = "0";
+        }
 
         String strCTaxID = Tax.get(this, data[i].mProductId, orderData[0].datepromised,
             orderData[0].adOrgId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
@@ -225,21 +230,22 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Button process Copy lines");
+    log4j.debug("Output: Button process Copy lines");
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
-      discard[0] = new String("helpDiscard");
+    if (strHelp.equals("")) {
+      discard[0] = "helpDiscard";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CopyFromPOOrder", discard).createXmlDocument();
     xmlDocument.setParameter("key", strKey);
