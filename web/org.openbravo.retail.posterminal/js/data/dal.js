@@ -1,4 +1,3 @@
-/*global define,_,console,Backbone */
 
 (function (d) {
 
@@ -61,47 +60,9 @@
 
     if (db) {
       // websql
-      if (whereClause && !_.isEmpty(whereClause)) {
-        _.each(_.keys(whereClause), function (k) {
-
-          var undef, val = whereClause[k],
-              operator = (val !== null && val.operator !== undef) ? val.operator : '=',
-              value = (val !== null && val.value !== undef) ? val.value : val;
-
-          if (appendWhere) {
-            sql = sql + ' WHERE ';
-            params = [];
-            appendWhere = false;
-          }
-
-          sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
-
-          if (value === null) {
-            sql = sql + ' IS null ';
-          } else {
-
-            if (operator === OP.EQ) {
-              sql = sql + ' = ? ';
-            } else {
-              sql = sql + ' like ? ';
-            }
-
-            if (operator === OP.CONTAINS) {
-              value = '%' + value + '%';
-            } else if (operator === OP.STARTSWITH) {
-              value = '%' + value;
-            } else if (operator === OP.ENDSWITH) {
-              value = value + '%';
-            }
-            params.push(value);
-          }
-
-          if (firstParam) {
-            firstParam = false;
-          }
-
-        });
-      }
+      whereClause = buildWhereClause(whereClause, propertyMap);
+      sql = sql + whereClause.sql;
+      params = whereClause.params;
 
       if (model.prototype.propertyMap._idx) {
         sql = sql + ' ORDER BY _idx ';
@@ -226,6 +187,80 @@
     }
   }
 
+  function removeAll(model, criteria, success, error) {
+    var tableName = model.prototype.tableName,
+    propertyMap = model.prototype.propertyMap,
+    sql, params, whereClause;
+    if (db) {
+      // websql
+      if (!tableName) {
+        throw 'Missing table name in model';
+      }
+
+      sql = 'DELETE FROM ' + tableName;
+      whereClause = buildWhereClause(criteria, propertyMap);
+      sql = sql + whereClause.sql;
+      params = whereClause.params;
+      db.transaction(function (tx) {
+        tx.executeSql(sql, params, success, error);
+      });
+    } else {
+      throw 'Not implemented';
+    }
+  }
+
+  function buildWhereClause(criteria, propertyMap) {
+    var appendWhere = true,
+    firstParam = true,
+    sql = '',
+    params = [],
+    res = {};
+    if (criteria && !_.isEmpty(criteria)) {
+      _.each(_.keys(criteria), function (k) {
+
+        var undef, val = criteria[k],
+            operator = (val !== null && val.operator !== undef) ? val.operator : '=',
+            value = (val !== null && val.value !== undef) ? val.value : val;
+
+        if (appendWhere) {
+          sql = sql + ' WHERE ';
+          params = [];
+          appendWhere = false;
+        }
+
+        sql = sql + (firstParam ? '' : ' AND ') + ' ' + propertyMap[k] + ' ';
+
+        if (value === null) {
+          sql = sql + ' IS null ';
+        } else {
+
+          if (operator === OP.EQ) {
+            sql = sql + ' = ? ';
+          } else {
+            sql = sql + ' like ? ';
+          }
+
+          if (operator === OP.CONTAINS) {
+            value = '%' + value + '%';
+          } else if (operator === OP.STARTSWITH) {
+            value = '%' + value;
+          } else if (operator === OP.ENDSWITH) {
+            value = value + '%';
+          }
+          params.push(value);
+        }
+
+        if (firstParam) {
+          firstParam = false;
+        }
+
+      });
+    }
+    res.sql = sql;
+    res.params = params;
+    return res;
+  }
+
   function get(model, id, success, error) {
     var tableName = model.prototype.tableName,
         sql = 'SELECT * FROM ' + tableName + ' WHERE ' + tableName + '_id = ?';
@@ -316,6 +351,7 @@
     find: find,
     get: get,
     remove: remove,
+    removeAll: removeAll,
     initCache: initCache
   };
 }(OB && OB.DATA && OB.DATA.OfflineDB));
