@@ -42,6 +42,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.json.JsonConstants;
 
 public class OrderGroupingProcessor {
@@ -239,9 +240,27 @@ public class OrderGroupingProcessor {
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
     invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+
+    invoiceLine.setSalesOrderLine(orderLine);
+    invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
+
     orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
 
     return invoiceLine;
+  }
+
+  private ShipmentInOutLine getShipmentLine(OrderLine orderLine) {
+    String hqlWhereClause = "as line where line.salesOrderLine = :orderLine ";
+    OBQuery<ShipmentInOutLine> query = OBDal.getInstance().createQuery(ShipmentInOutLine.class,
+        hqlWhereClause);
+    query.setNamedParameter("orderLine", orderLine);
+    query.setMaxResult(1); // it should be a 1:1 relationship
+    List<ShipmentInOutLine> result = query.list();
+    if (result.size() == 0) {
+      return null;
+    } else {
+      return result.get(0);
+    }
   }
 
   private void copyObject(BaseOBObject sourceObj, BaseOBObject targetObj) {
