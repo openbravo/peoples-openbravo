@@ -48,17 +48,21 @@ BEGIN
 
   IF (v_hasrule = 'Y') THEN
     IF (v_hascost = 'Y') THEN
-      SELECT CASE WHEN mt.c_currency_id <> p_currency_id THEN C_CURRENCY_CONVERT_PRECISION(sum(cost), mt.c_currency_id , p_currency_id, TO_DATE(COALESCE (aa.dateacct, movementdate)), NULL,mt.ad_client_id, mt.ad_org_id,'C') ELSE sum(cost) END
-      INTO v_costamt
-      FROM (SELECT DATEACCT , m_inoutline_id
-            FROM m_inout mi , m_inoutline mil
-            WHERE mi.m_inout_id=mil.m_inout_id
-            AND dateacct <> movementdate ) aa
-      RIGHT JOIN m_transaction mt ON mt.m_inoutline_id= aa.m_inoutline_id 
-      LEFT JOIN m_transaction_cost mtc ON mtc.m_transaction_id=mt.m_transaction_id
-      WHERE mt.m_transaction_id = p_transaction_id
-      AND mtc.costdate <= p_date
-      GROUP BY mt.c_currency_id, aa.dateacct, movementdate ,mt.ad_client_id, mt.ad_org_id;
+			SELECT SUM(COST) 
+			INTO v_costamt
+			FROM (
+				SELECT CASE WHEN mt.c_currency_id <> p_currency_id 
+				THEN C_CURRENCY_CONVERT_PRECISION(sum(cost), mt.c_currency_id ,p_currency_id, TO_DATE(COALESCE (aa.dateacct, movementdate)), NULL,mt.ad_client_id, mt.ad_org_id,'C') 
+				ELSE sum(cost) END AS COST
+	      FROM m_transaction_cost mtc, m_transaction mt
+	      LEFT JOIN (SELECT DATEACCT , m_inoutline_id
+	            FROM m_inout mi , m_inoutline mil
+	            WHERE mi.m_inout_id=mil.m_inout_id
+	            AND dateacct <> movementdate ) aa ON mt.m_inoutline_id= aa.m_inoutline_id 
+	      WHERE mtc.m_transaction_id=mt.m_transaction_id
+	      AND mt.m_transaction_id = p_transaction_id
+	      AND mtc.costdate <= p_date
+	      GROUP BY mt.c_currency_id, aa.dateacct, movementdate ,mt.ad_client_id, mt.ad_org_id) A;
       RETURN v_costamt;
     ELSE
       RETURN NULL;
