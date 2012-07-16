@@ -25,12 +25,12 @@
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
     this.context.SearchDropEvents.destinations.on('click', function (model, index) {
         me.context.ListDepositsDrops.totalToDrop=OB.DEC.sub(me.context.ListDepositsDrops.totalToDrop, me.context.amountToDrop);
-        me.context.ListDepositsDrops.dropsdeps.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
+        me.context.ListDepositsDrops.dropsdeps.add({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date()});
         me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
       }, this);
     this.context.SearchDepositEvents.destinations.on('click', function (model, index) {
       me.context.ListDepositsDrops.totalToDrop=OB.DEC.add(me.context.ListDepositsDrops.totalToDrop, me.context.amountToDrop);
-      me.context.ListDepositsDrops.dropsdeps.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
+      me.context.ListDepositsDrops.dropsdeps.add({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date()});
       me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
     }, this);
   };

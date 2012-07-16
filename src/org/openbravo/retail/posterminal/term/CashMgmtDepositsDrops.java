@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 import javax.servlet.ServletException;
 
@@ -26,6 +27,10 @@ import org.openbravo.service.json.JsonConstants;
 public class CashMgmtDepositsDrops extends JSONProcessSimple {
 
   private static final Logger log = Logger.getLogger(CashCloseReport.class);
+  Calendar now = Calendar.getInstance();
+  // Obtains the UTC time zone offset of the server
+  int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET))
+      / (1000 * 60);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -124,7 +129,8 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
       dropDeposit.put("drop", (BigDecimal) objdropdeposit[1]);
       dropDeposit.put("deposit", (BigDecimal) objdropdeposit[2]);
       dropDeposit.put("user", objdropdeposit[3]);
-      dropDeposit.put("time", objdropdeposit[4].toString().substring(11, 16));
+      dropDeposit.put("time", objdropdeposit[4]);
+      dropDeposit.put("timeOffset", serverMinutesTimezoneOffset);
       listdepositsdrops.put(dropDeposit);
     }
     result.put("listdepositsdrops", listdepositsdrops);

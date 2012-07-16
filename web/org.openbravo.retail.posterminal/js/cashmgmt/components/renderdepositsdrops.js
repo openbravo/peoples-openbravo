@@ -7,6 +7,10 @@
 
   OB.COMP.RenderDepositsDrops = OB.COMP.CustomView.extend({
     render: function() {
+      var time = new Date(this.model.get('time'));
+      if(this.model.get('timeOffset')){
+        time.setMinutes(time.getMinutes()+ this.model.get('timeOffset') + time.getTimezoneOffset());
+      }
       if(this.model.get('drop')!==0){
         this.$el.append(B(
         {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -18,7 +22,7 @@
               this.model.get('user')
             ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: left;  width: 10%'}, content: [
-             this.model.get('time')
+              time.toString().substring(16,21)
             ]},
             {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
               OB.I18N.formatCurrency(OB.DEC.sub(0,this.model.get('drop')))
@@ -37,7 +41,7 @@
                  this.model.get('user')
                ]},
                {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: left;  width: 10%'}, content: [
-                this.model.get('time')
+                 time.toString().substring(16,21)
                ]},
               {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 10px 20px 10px 10px; float: right;'}, content: [
                 OB.I18N.formatCurrency(OB.DEC.add(0,this.model.get('deposit')))
