@@ -429,7 +429,15 @@ public class DatabaseValidator implements SystemValidator {
 
     final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
     for (Column column : adTable.getADColumnList()) {
-      final boolean checkColumn = moduleId == null || (column.getModule().getId().equals(moduleId));
+      boolean hasSqlLogic;
+      if (column.getSqllogic() != null && !column.getSqllogic().isEmpty()) {
+        hasSqlLogic = true;
+      } else {
+        hasSqlLogic = false;
+      }
+      // If the column has SQL logic, it does not need to be present in the database
+      final boolean checkColumn = (moduleId == null || (column.getModule().getId().equals(moduleId)))
+          && !hasSqlLogic;
       if (!checkColumn) {
         dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
         continue;
