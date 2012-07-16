@@ -62,9 +62,11 @@
       this.mouseOutEvent(e);
     },
     _mouseDownEvent: function (e) {
-      var me = this;
-      this.$el.addClass('btn-down');
-      setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
+      if (navigator.userAgent.toLowerCase().indexOf('windows nt') !== -1) {
+        var me = this;
+        this.$el.addClass('btn-down');
+        setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
+      }
       this.mouseOutEvent(e);
     },
     clickEvent: function (e) {},
