@@ -50,9 +50,19 @@ public class OrderGroupingProcessor {
   private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
 
   public JSONObject groupOrders(OBPOSApplications posTerminal) throws JSONException, SQLException {
-    String hqlWhereClause = "as line where line.salesOrder.obposApplications=:terminal"
-        + " and salesOrder not in (select ord.salesOrder from OrderLine as ord where invoicedQuantity<>0)"
+    // Obtaining order lines that have been created in current terminal and have not already been
+    // reconciled. This query must be kept in sync with the one in CashCloseReport
+
+    String hqlWhereClause = "as line, "
+        + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
+        + "inner join det.paymentDetails as sdet inner join sdet.finPayment as pay, "
+        + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
+        + "where trans.reconciliation is null "
+        + " and sched.order=line.salesOrder and trans.finPayment=pay "
+        + " and line.salesOrder.obposApplications=:terminal"
+        + " and line.salesOrder not in (select ord.salesOrder from OrderLine as ord where invoicedQuantity<>0)"
         + " order by line.businessPartner.id";
+
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
     query.setNamedParameter("terminal", posTerminal);
 
