@@ -59,7 +59,7 @@
     
     
     initialize: function () {
-      var i, max, payments, Btn, inst, cont, receipt, cashpayment;
+      var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
       
       this.modalpayment = new OB.UI.ModalPayment({parent: this.options.parent}).render();
       $('body').append(this.modalpayment.$el);     
@@ -69,10 +69,11 @@
        
       for (i = 0, max = payments.length; i < max; i++) {
            
-        // Add cashexact action if is cash payment
+        // Data for cashexact command
         if (payments[i].searchKey === 'OBPOS_payment.cash') {
-          cashpayment = payments[i];
+          defaultpayment = payments[i];
         }
+        allpayments[payments[i].searchKey] = payments[i];
      
         Btn = OB.COMP.ButtonKey.extend({
           command: payments[i].searchKey,
@@ -85,20 +86,19 @@
         this.$el.append($('<div/>').attr({'style': 'display:table; width:100%'}).append(inst.$el));       
       }  
       
-      if (cashpayment) {
-        this.options.parent.addCommand('cashexact', {
-          'action': function(txt) {
-            var amount = receipt.getPending();
-            if (amount > 0) {
-              receipt.addPayment(new OB.Model.PaymentLine({
-                'kind': cashpayment.searchKey,
-                'name': cashpayment._identifier,
-                'amount': amount
-              }));
-            }
+      this.options.parent.addCommand('cashexact', {
+        'action': function(txt) {
+          var exactpayment = allpayments[this.status] || defaultpayment;
+          var amount = receipt.getPending();
+          if (amount > 0 && exactpayment) {             
+            receipt.addPayment(new OB.Model.PaymentLine({
+              'kind': exactpayment.searchKey,
+              'name': exactpayment._identifier,
+              'amount': amount
+            }));
           }
-        });        
-      }
+        }
+      });        
       
       while (i < 5) {
         inst = new OB.COMP.ButtonKey({parent: this.options.parent}).render();
