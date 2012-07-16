@@ -82,7 +82,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String _strUOM,
-      String _strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
+      String strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strADOrgID,
       String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strQty,
       String cancelPriceAd) throws IOException, ServletException {
@@ -93,9 +93,19 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     String strPriceActual = "";
     String strHasSecondaryUOM = "";
     String strUOM = _strUOM;
-    String strPriceList = _strPriceList;
     String strPriceLimit = _strPriceLimit;
     String strPriceStd = _strPriceStd;
+    String strNetPriceList = strPriceList;
+    String strGrossPriceList = strPriceList;
+    if (strPriceList.startsWith("\"")) {
+      strNetPriceList = strPriceList.substring(1, strPriceList.length() - 1);
+      strGrossPriceList = strPriceList.substring(1, strPriceList.length() - 1);
+    }
+    if (_strPriceStd.startsWith("\"")) {
+      strPriceStd = _strPriceStd.substring(1, _strPriceStd.length() - 1);
+    }
+    boolean isTaxIncludedPriceList = OBDal.getInstance().get(Order.class, strCOrderId).getPriceList()
+        .isPriceIncludesTax();
 
     if (!strMProductID.equals("")) {
       SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
@@ -103,43 +113,59 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       log4j.debug("get Offers date: " + dataOrder[0].dateordered + " partner:"
           + dataOrder[0].cBpartnerId + " prod:" + strMProductID + " std:"
           + strPriceStd.replace("\"", ""));
-      strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
-          dataOrder[0].cBpartnerId, strMProductID, (strPriceStd.equals("undefined") ? "0"
-              : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId, dataOrder[0].id);
+      if (isTaxIncludedPriceList) {
+        strNetPriceList = "0";
+        strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
+            dataOrder[0].cBpartnerId, strMProductID, (strPriceStd.equals("undefined") ? "0"
+                : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
+            dataOrder[0].id);
+      } else {
+        strGrossPriceList = "0";
+      }
       log4j.debug("get Offers price:" + strPriceActual);
 
       dataOrder = null;
     } else {
-      strUOM = strPriceList = strPriceLimit = strPriceStd = "";
+      strUOM = strNetPriceList = strGrossPriceList = strPriceLimit = strPriceStd = "";
     }
     StringBuffer resultado = new StringBuffer();
 
-    if (strPriceActual.equals("") || "Y".equals(cancelPriceAd))
+    if (strPriceActual.equals("") || "Y".equals(cancelPriceAd)) {
       strPriceActual = strPriceStd;
+    }
 
     // Discount...
-    if (strPriceList.startsWith("\""))
-      strPriceList = strPriceList.substring(1, strPriceList.length() - 1);
-    if (strPriceStd.startsWith("\""))
-      strPriceStd = strPriceStd.substring(1, strPriceStd.length() - 1);
-    BigDecimal priceList = (strPriceList.equals("") ? BigDecimal.ZERO
-        : new BigDecimal(strPriceList));
-    BigDecimal priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
     BigDecimal discount = BigDecimal.ZERO;
-    if (priceList.compareTo(discount) != 0) {
-      discount = (((priceList.subtract(priceStd)).divide(priceList, 12, BigDecimal.ROUND_HALF_EVEN))
-          .multiply(new BigDecimal("100"))).setScale(2, BigDecimal.ROUND_HALF_UP);
+    if (isTaxIncludedPriceList) {
+      BigDecimal priceList = (strGrossPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
+          strGrossPriceList));
+      BigDecimal priceActual = (strPriceActual.equals("") ? BigDecimal.ZERO : new BigDecimal(
+          strPriceActual));
+      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
+        discount = priceList.subtract(priceActual).multiply(new BigDecimal("100"))
+            .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
+      }
+    } else {
+      BigDecimal priceList = (strNetPriceList.equals("") ? BigDecimal.ZERO : new BigDecimal(
+          strNetPriceList));
+      BigDecimal priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
+      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
+        discount = priceList.subtract(priceStd).multiply(new BigDecimal("100"))
+            .divide(priceList, 2, BigDecimal.ROUND_HALF_UP);
+      }
     }
 
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    if (OBDal.getInstance().get(Order.class, strCOrderId).getPriceList().isPriceIncludesTax()) {
+    if (isTaxIncludedPriceList) {
       resultado.append("new Array(\"inpgrossUnitPrice\", "
           + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
+      resultado.append("new Array(\"inpgrosspricelist\", "
+          + (strGrossPriceList.equals("") ? "0" : strGrossPriceList) + "),");
     } else {
       resultado.append("new Array(\"inppricelist\", "
-          + (strPriceList.equals("") ? "0" : strPriceList) + "),");
+          + (strNetPriceList.equals("") ? "0" : strNetPriceList) + "),");
       resultado.append("new Array(\"inppricelimit\", "
           + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
       resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
