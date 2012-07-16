@@ -53,8 +53,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
+      log4j.debug("CHANGED: " + strChanged);
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
       String strPriceList = vars.getNumericParameter("inpmProductId_PLIST");
       String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
@@ -62,22 +61,19 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
       String strQty = vars.getNumericParameter("inpqtyordered");
 
-      String strCBpartnerID = vars.getStringParameter("inpcBpartnerId");
       String strMProductID = vars.getStringParameter("inpmProductId");
       String strCBPartnerLocationID = vars.getStringParameter("inpcBpartnerLocationId");
-      String strDateOrdered = vars.getStringParameter("inpdateordered");
       String strADOrgID = vars.getStringParameter("inpadOrgId");
       String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
       String strCOrderId = vars.getStringParameter("inpcOrderId");
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strTabId = vars.getStringParameter("inpTabId");
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
 
       try {
         printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
-            strMProductID, strCBPartnerLocationID, strDateOrdered, strADOrgID, strMWarehouseID,
-            strCOrderId, strWindowId, strIsSOTrx, strCBpartnerID, strTabId, strQty, cancelPriceAd);
+            strMProductID, strCBPartnerLocationID, strADOrgID, strMWarehouseID, strCOrderId,
+            strIsSOTrx, strQty, cancelPriceAd);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -85,32 +81,32 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
-      String strPriceList, String strPriceStd, String strPriceLimit, String strCurrency,
-      String strMProductID, String strCBPartnerLocationID, String strDateOrdered,
-      String strADOrgID, String strMWarehouseID, String strCOrderId, String strWindowId,
-      String strIsSOTrx, String strCBpartnerID, String strTabId, String strQty, String cancelPriceAd)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String _strUOM,
+      String _strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
+      String strMProductID, String strCBPartnerLocationID, String strADOrgID,
+      String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strQty,
+      String cancelPriceAd) throws IOException, ServletException {
+    log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     String strPriceActual = "";
     String strHasSecondaryUOM = "";
+    String strUOM = _strUOM;
+    String strPriceList = _strPriceList;
+    String strPriceLimit = _strPriceLimit;
+    String strPriceStd = _strPriceStd;
 
     if (!strMProductID.equals("")) {
       SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("get Offers date: " + dataOrder[0].dateordered + " partner:"
-            + dataOrder[0].cBpartnerId + " prod:" + strMProductID + " std:"
-            + strPriceStd.replace("\"", ""));
+      log4j.debug("get Offers date: " + dataOrder[0].dateordered + " partner:"
+          + dataOrder[0].cBpartnerId + " prod:" + strMProductID + " std:"
+          + strPriceStd.replace("\"", ""));
       strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
           dataOrder[0].cBpartnerId, strMProductID, (strPriceStd.equals("undefined") ? "0"
               : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId, dataOrder[0].id);
-      if (log4j.isDebugEnabled())
-        log4j.debug("get Offers price:" + strPriceActual);
+      log4j.debug("get Offers price:" + strPriceActual);
 
       dataOrder = null;
     } else {
@@ -126,11 +122,10 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       strPriceList = strPriceList.substring(1, strPriceList.length() - 1);
     if (strPriceStd.startsWith("\""))
       strPriceStd = strPriceStd.substring(1, strPriceStd.length() - 1);
-    BigDecimal priceList = (strPriceList.equals("") ? new BigDecimal(0.0) : new BigDecimal(
-        strPriceList));
-    BigDecimal priceStd = (strPriceStd.equals("") ? new BigDecimal(0.0) : new BigDecimal(
-        strPriceStd));
-    BigDecimal discount = new BigDecimal(0.0);
+    BigDecimal priceList = (strPriceList.equals("") ? BigDecimal.ZERO
+        : new BigDecimal(strPriceList));
+    BigDecimal priceStd = (strPriceStd.equals("") ? BigDecimal.ZERO : new BigDecimal(strPriceStd));
+    BigDecimal discount = BigDecimal.ZERO;
     if (priceList.compareTo(discount) != 0) {
       discount = (((priceList.subtract(priceStd)).divide(priceList, 12, BigDecimal.ROUND_HALF_EVEN))
           .multiply(new BigDecimal("100"))).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -194,8 +189,9 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           (data[0].billtoId.equals("") ? strCBPartnerLocationID : data[0].billtoId),
           strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
     }
-    if (!strCTaxID.equals(""))
+    if (!strCTaxID.equals("")) {
       resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),\n");
+    }
 
     resultado.append("new Array(\"inpmProductUomId\", ");
     // if (strUOM.startsWith("\""))
@@ -221,12 +217,14 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"" + ("false") + "\")");
-          if (i < tld.length - 1)
+          if (i < tld.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
-      } else
+      } else {
         resultado.append("null");
+      }
       resultado.append("\n),");
     } else {
       FieldProvider[] tld = null;
@@ -248,20 +246,22 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
               + (i == 0 ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
+          if (i < tld.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
-      } else
+      } else {
         resultado.append("null");
+      }
       resultado.append("\n),");
     }
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\"),\n");
     // Para posicionar el cursor en el campo de cantidad
     resultado.append("new Array(\"CURSOR_FIELD\", \"inpqtyordered\")\n");
-    if (!strHasSecondaryUOM.equals("0"))
+    if (!strHasSecondaryUOM.equals("0")) {
       resultado.append(", new Array(\"CURSOR_FIELD\", \"inpquantityorder\")\n");
-
+    }
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
