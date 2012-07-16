@@ -70,12 +70,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
       String strGrossUnitPrice = vars.getNumericParameter("inpgrossUnitPrice");
+      String strGrossPriceList = vars.getNumericParameter("inpgrosspricelist");
       String strtaxbaseamt = vars.getNumericParameter("inptaxbaseamt");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strProduct, strUOM, strAttribute, strQty,
-            strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId, strGrossUnitPrice, strtaxbaseamt);
+            strPriceStd, cancelPriceAd, strLineNetAmt, strTaxId, strGrossUnitPrice,
+            strGrossPriceList, strtaxbaseamt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -84,11 +86,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
+      String strQtyOrdered, String _strPriceActual, String strDiscount, String strPriceLimit,
       String strPriceList, String strCOrderId, String strProduct, String strUOM,
       String strAttribute, String strQty, String strPriceStd, String cancelPriceAd,
-      String strLineNetAmt, String strTaxId, String strGrossUnitPrice, String strTaxBaseAmt)
-      throws IOException, ServletException {
+      String strLineNetAmt, String strTaxId, String strGrossUnitPrice, String strGrossPriceList,
+      String strTaxBaseAmt) throws IOException, ServletException {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -100,6 +102,9 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     String isSOTrx = SLOrderStockData.isSotrx(this, strCOrderId);
     String strStockNoAttribute;
     String strStockAttribute;
+    String strPriceActual = _strPriceActual;
+    boolean isTaxIncludedPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId)
+        .isPriceIncludesTax();
 
     if (data1 != null && data1.length > 0) {
       strStockSecurity = data1[0].stock;
@@ -113,15 +118,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     int stdPrecision = Integer.valueOf(strPrecision).intValue();
     int pricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, lineNetAmt, taxBaseAmt;
+    BigDecimal qtyOrdered, priceActual, priceLimit, netPriceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, lineNetAmt, taxBaseAmt;
     stockSecurity = new BigDecimal(strStockSecurity);
     qtyOrdered = (strQtyOrdered.equals("") ? ZERO : new BigDecimal(strQtyOrdered));
     priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
         pricePrecision, BigDecimal.ROUND_HALF_UP);
-    discount = (strDiscount.equals("") ? ZERO : new BigDecimal(strDiscount));
     priceLimit = (strPriceLimit.equals("") ? ZERO : (new BigDecimal(strPriceLimit))).setScale(
         pricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceList = (strPriceList.equals("") ? ZERO : (new BigDecimal(strPriceList))).setScale(
+    netPriceList = (strPriceList.equals("") ? ZERO : (new BigDecimal(strPriceList))).setScale(
         pricePrecision, BigDecimal.ROUND_HALF_UP);
     priceStd = (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
         pricePrecision, BigDecimal.ROUND_HALF_UP);
@@ -129,6 +133,10 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         pricePrecision, BigDecimal.ROUND_HALF_UP);
     taxBaseAmt = (strTaxBaseAmt.equals("") ? ZERO : (new BigDecimal(strTaxBaseAmt))).setScale(
         pricePrecision, BigDecimal.ROUND_HALF_UP);
+    BigDecimal grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO : new BigDecimal(
+        strGrossUnitPrice).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
+    BigDecimal grossPriceList = (strGrossPriceList.equals("") ? ZERO : new BigDecimal(
+        strGrossPriceList).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
     /*
      * if (enforcedLimit) { String strPriceVersion = ""; PriceListVersionComboData[] data1 =
      * PriceListVersionComboData.selectActual(this, data[0].mPricelistId, DateTimeData.today(this));
@@ -150,7 +158,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     // Calculating prices for offers...
     SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
     if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
-      log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+      log4j.debug("priceActual:" + priceActual.toString());
       if ("Y".equals(cancelPriceAd)) {
         priceStd = priceActual;
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
@@ -205,21 +213,30 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     // calculating discount
     if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")
-        || strChanged.equals("inplinenetamt")) {
+        || strChanged.equals("inplinenetamt") || strChanged.equals("inpgrosspricelist")
+        || strChanged.equals("inpgrossUnitPrice")) {
+      BigDecimal priceList = BigDecimal.ZERO;
+      BigDecimal unitPrice = BigDecimal.ZERO;
+      BigDecimal discount;
+
+      if (isTaxIncludedPriceList) {
+        priceList = grossPriceList;
+        unitPrice = grossUnitPrice;
+      } else {
+        priceList = netPriceList;
+        unitPrice = priceStd;
+      }
       if (priceList.compareTo(BigDecimal.ZERO) == 0) {
         discount = ZERO;
       } else {
-        log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-        log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-        discount = ((priceList.subtract(priceStd))
-            .divide(priceList, 12, BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
-      }
-      log4j.debug("Discount: " + discount.toString());
-      if (discount.scale() > stdPrecision) {
-        discount = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        log4j.debug("pricelist:" + priceList.toString());
+        log4j.debug("unit price:" + unitPrice.toString());
+        discount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
+            .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
       }
       log4j.debug("Discount rounded: " + discount.toString());
       resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
+
     } else if (strChanged.equals("inpqtyordered")) { // calculate Actual
       if ("Y".equals(cancelPriceAd)) {
         priceActual = priceStd;
@@ -245,34 +262,48 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
       }
       // ordered qty multiply with gross price
-      BigDecimal grossAmount = new BigDecimal(strGrossUnitPrice.trim()).multiply(new BigDecimal(
-          strQtyOrdered.trim()));
+      BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyOrdered.trim()));
       resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
-      BigDecimal discount1 = null;
-      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        discount1 = (((priceList.subtract(priceStd)).divide(priceList, 12,
-            BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(stdPrecision,
-            BigDecimal.ROUND_HALF_UP);
+      BigDecimal origDiscount = null;
+      BigDecimal priceList;
+      if (isTaxIncludedPriceList) {
+        priceList = grossPriceList;
       } else {
-        discount1 = BigDecimal.ZERO;
+        priceList = netPriceList;
       }
-      BigDecimal discount2 = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-      if (discount1.compareTo(discount2) != 0) {
-        // checks if rounded discount has changed
-        priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
-            12, BigDecimal.ROUND_HALF_EVEN));
-        priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
-            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
-            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
-        if (priceStd.scale() > pricePrecision) {
-          priceStd = priceStd.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+      if (priceList.compareTo(BigDecimal.ZERO) != 0) {
+        BigDecimal unitPrice = BigDecimal.ZERO;
+        if (isTaxIncludedPriceList) {
+          unitPrice = grossUnitPrice;
+        } else {
+          unitPrice = priceStd;
         }
-        if (priceActual.scale() > pricePrecision) {
-          priceActual = priceActual.setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+        origDiscount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
+            .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_UP);
+      } else {
+        origDiscount = BigDecimal.ZERO;
+      }
+      BigDecimal newDiscount = (strDiscount.equals("") ? ZERO : new BigDecimal(strDiscount)
+          .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP));
+
+      if (origDiscount.compareTo(newDiscount) != 0) {
+        BigDecimal unitPrice = priceList.subtract(priceList.multiply(newDiscount).divide(
+            new BigDecimal("100"), pricePrecision, BigDecimal.ROUND_HALF_UP));
+        if (isTaxIncludedPriceList) {
+          grossUnitPrice = unitPrice;
+          resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
+        } else {
+          // checks if rounded discount has changed
+          priceStd = unitPrice;
+          priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
+              dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
+              priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id))
+              .setScale(pricePrecision, BigDecimal.ROUND_HALF_UP);
+
+          resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+          resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
         }
-        resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
-        resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }
     }
 
@@ -314,9 +345,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // if taxRate field is changed
-    if (strChanged.equals("inpcTaxId")
-        && OBDal.getInstance().get(PriceList.class, dataOrder[0].mPricelistId).isPriceIncludesTax()) {
-      BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
+    if (strChanged.equals("inpcTaxId") && isTaxIncludedPriceList) {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
           RoundingMode.HALF_UP);
       final BigDecimal netUnitPrice = FinancialUtils.calculateNetFromGross(strTaxId, grossAmount,
@@ -331,7 +360,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
-      BigDecimal grossUnitPrice = new BigDecimal(strGrossUnitPrice.trim());
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
           RoundingMode.HALF_UP);
 
@@ -350,10 +378,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     // if net unit price changed then modify tax inclusive unit price
     if (strChanged.equals("inppriceactual")) {
-      BigDecimal tax = BigDecimal.ZERO;
       priceActual = new BigDecimal(strPriceActual.trim());
       log4j.debug("Net unit price results: " + resultado.toString());
-
     }
     // Multiply
     if ("Y".equals(cancelPriceAd)) {
@@ -383,5 +409,4 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-
 }
