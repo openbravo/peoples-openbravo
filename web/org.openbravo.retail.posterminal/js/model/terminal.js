@@ -73,6 +73,10 @@
       this.set('pricelistversion', null);
       this.set('currency', null);
       this.set('currencyPrecision', null);
+
+      // Remove the pending orders that have not been paid
+      OB.Dal.removeAll(OB.Model.Order, {'hasbeenpaid':'N'}, null, null);
+
       $.ajax({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         data: {

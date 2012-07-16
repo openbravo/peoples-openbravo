@@ -87,14 +87,17 @@ width: 20px; color: transparent; background-image: url('./img/login-connected.pn
 
 <!-- Login application -->
 <script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script>
+<script src="js/arithmetic.js"></script>
 <script src="js/builder.js"></script>
 <script src="js/datasource.js"></script>
+<script src="js/data/dal.js"></script>
 <script src="js/utilities.js"></script>
 <script src="js/utilitiesui.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/components/clock.js"></script>
 <script src="js/components/commonbuttons.js"></script>
 <script src="js/model/terminal.js"></script>
+<script src="js/model/order.js"></script>
 <script src="js/windows/login.js"></script>
 <script src="js/mainlogin.js"></script>
 

@@ -60,7 +60,7 @@
 
     if (db) {
       // websql
-      whereClause = buildWhereClause(whereClause, propertyMap);
+      whereClause = this.buildWhereClause(whereClause, propertyMap);
       sql = sql + whereClause.sql;
       params = whereClause.params;
 
@@ -198,7 +198,7 @@
       }
 
       sql = 'DELETE FROM ' + tableName;
-      whereClause = buildWhereClause(criteria, propertyMap);
+      whereClause = this.buildWhereClause(criteria, propertyMap);
       sql = sql + whereClause.sql;
       params = whereClause.params;
       db.transaction(function (tx) {
