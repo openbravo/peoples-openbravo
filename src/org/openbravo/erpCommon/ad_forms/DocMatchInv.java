@@ -58,8 +58,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -285,7 +285,7 @@ public class DocMatchInv extends AcctServer {
       updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
     }
 
-    if (!bdCost.equals(bdExpenses)) {
+    if (bdCost.compareTo(bdExpenses) != 0) {
       diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
           costCurrency.getId(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
               .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
