@@ -6,7 +6,7 @@
     var dropsAmount = OB.DEC.Zero, depositsAmount = OB.DEC.Zero;
    %>
     <line>
-        <image>logofb.png</image>
+        <image>ticket-image.png</image>
     </line>
     <line></line>
     <line>
