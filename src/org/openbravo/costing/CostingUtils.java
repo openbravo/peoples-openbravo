@@ -98,8 +98,6 @@ public class CostingUtils {
         cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(), trxCost.getCurrency(),
             currency, trxCost.getCostDate(), trxCost.getOrganization(),
             FinancialUtils.PRECISION_COSTING));
-      } else {
-        cost = cost.add(trxCost.getCost());
       }
     }
     return cost;
@@ -300,8 +298,9 @@ public class CostingUtils {
   }
 
   /**
-   * Calculates the stock of the product on the given date and for the given cost dimensions. It
-   * only takes transactions that have its cost calculated.
+   * Calculates the value of the stock of the product on the given date, for the given cost
+   * dimensions and for the given currency. It only takes transactions that have its cost
+   * calculated.
    */
   public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
@@ -346,7 +345,6 @@ public class CostingUtils {
     @SuppressWarnings("unchecked")
     List<Object[]> o = trxQry.list();
     BigDecimal sum = BigDecimal.ZERO;
-    BigDecimal sumNoConv = BigDecimal.ZERO;
     if (o.size() == 0) {
       return sum;
     }
@@ -358,7 +356,6 @@ public class CostingUtils {
       if (origCur != currency) {
         sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate, org,
             FinancialUtils.PRECISION_COSTING));
-        sumNoConv = sumNoConv.add(origAmt);
       } else {
         sum = sum.add(origAmt);
       }

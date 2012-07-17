@@ -19,7 +19,6 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -954,16 +953,5 @@ public class CostingMigrationProcess implements Process {
     obcClient.setFilterOnReadableClients(false);
     obcClient.add(Restrictions.ne(Client.PROPERTY_ID, "0"));
     return obcClient.list();
-  }
-
-  private Date getLastDate() {
-    SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
-    try {
-      return outputFormat.parse("31-12-9999");
-    } catch (ParseException e) {
-      // Error parsing the date.
-      log4j.error("Error parsing the date.", e);
-      return null;
-    }
   }
 }
