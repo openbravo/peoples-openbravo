@@ -261,9 +261,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         }
         resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
       }
-      // ordered qty multiply with gross price
-      BigDecimal grossAmount = grossUnitPrice.multiply(new BigDecimal(strQtyOrdered.trim()));
-      resultado.append("new Array(\"inplineGrossAmount\", " + grossAmount.toString() + "),");
     } else if (strChanged.equals("inpdiscount")) { // calculate std and actual
       BigDecimal origDiscount = null;
       BigDecimal priceList;
@@ -369,7 +366,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       priceActual = netUnitPrice;
       priceStd = netUnitPrice;
 
-      resultado.append("new Array(\"inplineGrossAmount\"," + grossAmount.toString() + "),");
       resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
@@ -397,6 +393,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
     if (!strChanged.equals("inplinenetamt") || priceActual.compareTo(BigDecimal.ZERO) == 0) {
       resultado.append("new Array(\"inplinenetamt\", " + lineNetAmt.toString() + "),");
+    }
+    if (!strChanged.equals("inplineGrossAmount")) {
+      BigDecimal grossLineAmt = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
+          BigDecimal.ROUND_HALF_UP);
+      resultado.append("new Array(\"inplineGrossAmount\", " + grossLineAmt.toString() + "),");
     }
     resultado.append("new Array(\"dummy\", \"\" )");
 
