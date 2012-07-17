@@ -61,7 +61,7 @@ function validate()
 }
 function onloadFunctions() {
 }
-</script>	  
+</script>     
 
 <script language="JavaScript" type="text/javascript">
 function refreshWarehouses() {
@@ -80,7 +80,7 @@ var arrWarehouse=null;
     function onLoadDo(){
         this.windowTables = new Array(
           new windowTableId('client', 'buttonSearch'),
-		  new windowTableId('tdbottomButtons', 'buttonUpdateABC')
+          new windowTableId('tdbottomButtons', 'buttonUpdateABC')
         );
         setWindowTableParentElement();
         this.tabsTables = new Array(
@@ -230,7 +230,7 @@ var arrWarehouse=null;
             </tr>
             </tbody>
           </table>
-		  <!-- MessageBox END -->
+          <!-- MessageBox END -->
           <!-- USER CONTROLS BEGIN -->
           <table class="Main_Client_TableEdition">
             <tr>
@@ -245,20 +245,20 @@ var arrWarehouse=null;
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
-                  <tr class="FieldGroup_TopMargin"/>
+                  <tr class="FieldGroup_TopMargin"></tr>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupTitle">Filter</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupContent"/>
+                    <td class="FieldGroupContent"></td>
                   </tr>
-                  <tr class="FieldGroup_BottomMargin"/>
+                  <tr class="FieldGroup_BottomMargin"></td>
                 </tbody>
                 </table>
               </td>
             </tr>
             <tr>
-            <td class="TitleCell"><span class="LabelText">Organization</span></td>		
+            <td class="TitleCell"><span class="LabelText">Organization</span></td>      
               <td class="Combo_ContentCell" colspan="2"> 
                 <select name="inpadOrgId"  id="inpadOrgId" class="ComboKey Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;" required="true">
                   <option value=""> <div id="reportAD_Org_ID"></div></option>
@@ -266,31 +266,31 @@ var arrWarehouse=null;
               </td>
               <td class="TitleCell"><span class="LabelText">Currency</span></td>
                   <td class="Combo_ContentCell">
-  		     		<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-     		      	<option value=""><div id="reportC_Currency_ID"></div></option>
-   		     		</select>
-	   		  </td>
+                    <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                    <option value=""><div id="reportC_Currency_ID"></div></option>
+                    </select>
+              </td>
             </tr>
-            <tr>            	   		  
-	      	<td class="TitleCell"> <span class="LabelText">Warehouse</span></td>
+            <tr>                          
+            <td class="TitleCell"> <span class="LabelText">Warehouse</span></td>
              <td class="Combo_ContentCell" colspan="2">
                  <select name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
                   <option value=""> <div id="reportM_Warehouse_ID"></div></option>
                 </select>
             </td>
             </tr>
-			<tr>
+            <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
-                  <tr class="FieldGroup_TopMargin"/>
+                  <tr class="FieldGroup_TopMargin"></tr>
                   <tr>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupTitle">View Results</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupContent"/>
+                    <td class="FieldGroupContent"></td>
                   </tr>
-                  <tr class="FieldGroup_BottomMargin"/>
+                  <tr class="FieldGroup_BottomMargin"></tr>
                 </tbody>
                 </table>
               </td>
@@ -331,54 +331,54 @@ var arrWarehouse=null;
 
           </table>
           <!-- OUTPUT -->
-		  <div id="sectionOrg">
+          <div id="sectionOrg">
           <table class="Main_Client_TableEdition">
             <tr>
               <td colspan="6">
                 <div style="height:25px;" />
-				 
+                 
                 <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar">
-				
+                
                     
                     <tr class="DataGrid_Body_Row"> 
                       <th colspan="9" class="DataGrid_Header_Cell"><span>Organization<span>: </span><span id="fieldAdOrg">xxOrganization</span></span></th>
                     </tr>
-					  <div id="sectionPartner">
+                      <div id="sectionPartner">
                       <tr class="DataGrid_Body_Row"> 
                         <th class="DataGrid_Header_Cell">Search Key</th>
                         <th class="DataGrid_Header_Cell">Name</th>
                         <th class="DataGrid_Header_Cell">Quantity</th>
-						<th class="DataGrid_Header_Cell">Unit</th>
-						<th class="DataGrid_Header_Cell">Cost</th>
-						<th class="DataGrid_Header_Cell">Value</th>
-						<th class="DataGrid_Header_Cell">Percentage</th>
-						<th class="DataGrid_Header_Cell">Category</th>
-                      </tr>                      					  
-	                  <div id="sectionDetail"> 
-	                    <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-	                      <td width="10%" class="DataGrid_Body_Cell" id="fieldSearchKey">xxName</td>
-	                      <td width="40%"  class="DataGrid_Body_Cell" id="fieldName">xxY</td>
-						  <td width="10%"  class="DataGrid_Body_Cell" id="fieldQty">xxY</td>
-	                      <td width="10%"  class="DataGrid_Body_Cell" id="fieldUnit">xxY</td>
-	                      <td width="8%"  class="DataGrid_Body_Cell" id="fieldCost">xxY</td>
-						  <td width="8%"  class="DataGrid_Body_Cell" id="fieldValue">xxY</td>
-	                      <td width="7%"  class="DataGrid_Body_Cell" id="fieldPercentage">xxY</td>
+                        <th class="DataGrid_Header_Cell">Unit</th>
+                        <th class="DataGrid_Header_Cell">Cost</th>
+                        <th class="DataGrid_Header_Cell">Value</th>
+                        <th class="DataGrid_Header_Cell">Percentage</th>
+                        <th class="DataGrid_Header_Cell">Category</th>
+                      </tr>                                           
+                      <div id="sectionDetail"> 
+                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
+                          <td width="10%" class="DataGrid_Body_Cell" id="fieldSearchKey">xxName</td>
+                          <td width="40%"  class="DataGrid_Body_Cell" id="fieldName">xxY</td>
+                          <td width="10%"  class="DataGrid_Body_Cell_Amount" id="fieldQty">xxY</td>
+                          <td width="10%"  class="DataGrid_Body_Cell" id="fieldUnit">xxY</td>
+                          <td width="8%"  class="DataGrid_Body_Cell_Amount" id="fieldCost">xxY</td>
+                          <td width="8%"  class="DataGrid_Body_Cell_Amount" id="fieldValue">xxY</td>
+                          <td width="7%"  class="DataGrid_Body_Cell_Amount" id="fieldPercentage">xxY</td>
                           <td width="7%"  class="DataGrid_Body_Cell" id="fieldIsabc">xxY</td>
-	                    </tr>
-	                  </div>
-                    </div>						
+                        </tr>
+                      </div>
+                    </div>                      
                   
                 </table>
-			  				
+                            
                 <!-- OUTPUT END -->
               <!-- USER CONTROLS END -->
-			  
+              
               </td>
             </tr>
           </table>
-		  </div>
+          </div>
         </div>
-		    <div >
+            <div >
             <div class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
               <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
                 <tr>

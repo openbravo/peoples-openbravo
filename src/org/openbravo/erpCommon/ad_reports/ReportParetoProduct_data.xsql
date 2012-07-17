@@ -48,7 +48,8 @@
                                     and t.ad_client_id = ?
                                     and 1=1
                                     and 2=2
-                                  group by t.c_currency_id, w.ad_org_id, w.m_warehouse_id
+                                    AND ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1
+                                  group by t.c_currency_id, w.ad_org_id, w.ad_client_id, w.m_warehouse_id
                                 ) a
                               where a.m_warehouse_id = warehouse
                               having sum(a.movementqty)>0
@@ -67,7 +68,8 @@
             and w.ad_client_id=t.ad_client_id
             and 3=3
             and 4=4
-          group by w.ad_org_id, p.m_product_id, t.c_currency_id, p.name, p.value, p.c_uom_id, w.m_warehouse_id
+            AND ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1
+          group by w.ad_org_id, w.ad_client_id, p.m_product_id, t.c_currency_id, p.name, p.value, p.c_uom_id, w.m_warehouse_id
           having sum(t.movementqty) > 0
         ) a
         group by ad_org_id, m_product_id, name, value, c_uom_id, warehouse
@@ -83,12 +85,12 @@
     <Parameter name="adClientId"/>
     <Parameter name="adClientId"/>
     <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND l.M_WAREHOUSE_ID = ? "/>
-    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND w.AD_ORG_ID = ? "/>
+    <Parameter name="adOrgId"/>
     <Parameter name="cCurrencyConv"/> 
     <Parameter name="adClientId"/>
     <Parameter name="adClientId"/>
     <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND l.M_WAREHOUSE_ID = ? "/>    
-    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND w.AD_ORG_ID = ? "/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

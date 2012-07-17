@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
-import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -40,8 +39,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportParetoProduct extends HttpSecureAppServlet {
@@ -119,7 +116,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(), strCurrencyId, strAD_Org_ID);
+        data = ReportParetoProductData.select(this, strWarehouse, strClient, vars.getLanguage(),
+            strCurrencyId, strAD_Org_ID);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -135,6 +133,29 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           discard[0] = "selEliminar";
           data = ReportParetoProductData.set();
         } else {
+          // Apply differences in percentages applying difference to bigger percentage
+          BigDecimal total = BigDecimal.ZERO;
+          BigDecimal difference = BigDecimal.ZERO;
+          int toAdjustPosition = 0;
+          String currentOrganization = data[0].orgid;
+          for (int i = 0; i < data.length; i++) {
+            if (data[i].orgid.equals(currentOrganization)) {
+              total = total.add(new BigDecimal(data[i].percentage)).setScale(2,
+                  BigDecimal.ROUND_HALF_UP);
+            } else {
+              difference = new BigDecimal("100.00").subtract(total);
+              total = new BigDecimal(data[i].percentage).setScale(2, BigDecimal.ROUND_HALF_UP);
+              data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
+                  .add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+              toAdjustPosition = i;
+              currentOrganization = data[i].orgid;
+            }
+          }
+          // Update last group
+          difference = new BigDecimal("100.00").subtract(total);
+          data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
+              .add(difference).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+
           xmlDocument.setData("structure1", data);
         }
       }
