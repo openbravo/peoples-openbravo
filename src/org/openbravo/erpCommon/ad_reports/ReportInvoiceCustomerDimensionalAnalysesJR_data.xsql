@@ -53,7 +53,7 @@
 	  C_INVOICELINE.AD_ORG_ID AS TRORGID,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(trxcost.cost, 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COST,
                 0 AS COSTREF,
@@ -75,9 +75,9 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id
+                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
                            FROM m_transaction_cost
-                           GROUP BY m_transaction_id
+                           GROUP BY m_transaction_id, c_currency_id
                           ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
@@ -95,7 +95,7 @@
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(trxcost.cost, 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COSTREF,
                 0 AS COSTEDAMT,
@@ -117,9 +117,9 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id
+                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
                            FROM m_transaction_cost
-                           GROUP BY m_transaction_id
+                           GROUP BY m_transaction_id, c_currency_id
                           ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
       AND C_INVOICE.PROCESSED = 'Y'
@@ -137,6 +137,8 @@
 	<Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyBase"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -264,7 +266,7 @@
                 C_INVOICELINE.AD_ORG_ID AS TRORGID,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(trxcost.cost, 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COST,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
@@ -285,9 +287,9 @@
                 left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id
+                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
                            FROM m_transaction_cost
-                           GROUP BY m_transaction_id
+                           GROUP BY m_transaction_id, c_currency_id
                           ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
       WHERE C_INVOICE.ISSOTRX = 'Y'
         AND C_INVOICE.PROCESSED = 'Y'
@@ -303,6 +305,7 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyBase"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="nivel1" type="replace" optional="true" after="FROM (SELECT to_char(" text="'1'"/>
     <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1, to_char(" text="'2'"/>
