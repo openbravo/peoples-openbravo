@@ -51,9 +51,9 @@ div.login-user-button-bottom-icon {
   width: 20px;
   height: 18px;
   color: transparent;
-  background-image: url('../img/login-not-connected.png');
+  background-image: url('../img/iconOfflineUser.png');
   background-repeat: no-repeat;
-  background-position: 2px 2px;
+  background-position: 3px 3px;
 }
 
 div.login-user-button-bottom-text {

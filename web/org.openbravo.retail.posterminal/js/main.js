@@ -134,17 +134,15 @@
     modelterminal.load();
 
     modelterminal.on('online', function () {
-      $($('#online > span')[0]).css("background-image", "url('./img/login-connected.png')");
-      $($('#online > span')[1]).text(OB.I18N.getLabel('OBPOS_Online'));
+      OB.UTIL.setConnectivityLabel('Online');
     });
 
     modelterminal.on('offline', function () {
-      $($('#online > span')[0]).css("background-image", "url('./img/login-not-connected.png')");
-      $($('#online > span')[1]).text(OB.I18N.getLabel('OBPOS_Offline'));
+      OB.UTIL.setConnectivityLabel('Offline');
     });
 
-    setInterval(OB.UTIL.checkConnectivityStatus,30*1000);
-
+    OB.UTIL.checkConnectivityStatus(); //Initial check;
+    setInterval(OB.UTIL.checkConnectivityStatus, 30*1000);
   });
 
 }());

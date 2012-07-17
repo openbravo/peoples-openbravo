@@ -52,7 +52,7 @@
         this.$el.attr('style', 'background-image: url("' + attributes.userImage + '")');
       }
       if (attributes.userConnected === 'true') {
-        this.$bottomIcon.attr('style', 'background-image: url("img/login-connected.png");');
+        this.$bottomIcon.attr('style', 'background-image: url("img/iconOnlineUser.png");');
       }
       if (attributes.user) {
         this.$user = attributes.user;

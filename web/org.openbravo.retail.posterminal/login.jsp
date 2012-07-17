@@ -33,8 +33,8 @@
     <div class="row" style="height: 50px; vertical-align: middle; display: table-cell;">
       <div class="span12" style="color: white; font-size: 16px;">
         <div style="display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;">
-          <div id="online" style="display: inline-block; margin-left: 15px;"><span style="display: inline-block;
-width: 20px; color: transparent; background-image: url('./img/login-connected.png'); background-repeat: no-repeat; background-position: 2px 3px;">.</span><span>Online</span></div>
+          <div id="online" style="display: inline-block; margin-left: 15px; visibility: hidden;"><span style="display: inline-block;
+width: 20px; color: transparent; background-image: url('./img/iconOffline.png'); background-repeat: no-repeat; background-position: 2px 3px;">.</span><span>Offline</span></div>
           <div id="terminal" style="display: inline-block; margin-left: 50px;"></div>
           <div class="dropdown" style="display: inline-block; margin-left: 50px;" >
             <a id="yourcompany" class="btn-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"></a>

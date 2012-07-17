@@ -84,6 +84,17 @@
     }
 
     preRenderActions();
+
+    modelterminal.on('online', function () {
+      OB.UTIL.setConnectivityLabel('Online');
+    });
+
+    modelterminal.on('offline', function () {
+      OB.UTIL.setConnectivityLabel('Offline');
+    });
+
+    OB.UTIL.checkConnectivityStatus(); //Initial check;
+    setInterval(OB.UTIL.checkConnectivityStatus, 30*1000);
   });
 
 }());

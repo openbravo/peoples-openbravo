@@ -129,7 +129,7 @@
     }
   };
 
-  OB.UTIL.connectedToERP = true;
+  OB.UTIL.connectedToERP = null;
 
   OB.UTIL.checkConnectivityStatus = function() {
     if (navigator.onLine) {
@@ -140,7 +140,7 @@
           context: $("#status"),
           dataType: "json",
           error: function (req, status, ex) {
-            if (OB.UTIL.connectedToERP) {
+            if (OB.UTIL.connectedToERP !== false) {
               OB.UTIL.connectedToERP = false;
               if (OB.POS.modelterminal) {
                 OB.POS.modelterminal.triggerOffLine();
@@ -148,7 +148,7 @@
             }
           },
           success: function (data, status, req) {
-            if (!OB.UTIL.connectedToERP) {
+            if (OB.UTIL.connectedToERP !== true) {
               OB.UTIL.connectedToERP = true;
               if (OB.POS.modelterminal) {
                 OB.POS.modelterminal.triggerOnLine();
@@ -160,15 +160,25 @@
           url: "../../security/SessionActive?id=0"
       });
       $.ajax();
-  }
-  else {
-    if (OB.UTIL.connectedToERP) {
-      OB.UTIL.connectedToERP = false;
-      if (OB.POS.modelterminal) {
-        OB.POS.modelterminal.triggerOffLine();
+    } else {
+      if (OB.UTIL.connectedToERP) {
+        OB.UTIL.connectedToERP = false;
+        if (OB.POS.modelterminal) {
+          OB.POS.modelterminal.triggerOffLine();
+        }
       }
     }
-  }
+  };
+
+  OB.UTIL.setConnectivityLabel = function(status) {
+    var label = OB.I18N.getLabel('OBPOS_' + status);
+    if (label.indexOf('OBPOS_' + status) === -1) { // If the *good* label is ready (can be retrieved), set the label
+      $($('#online > span')[0]).css('background-image', 'url("./img/icon' + status + '.png")');
+      $($('#online > span')[1]).text(label);
+      $($('#online')[0]).css('visibility', 'visible');
+    } else { // else, retry after 300ms
+      setTimeout(function() { OB.UTIL.setConnectivityLabel(status); }, 300);
+    }
   };
 
 }());
