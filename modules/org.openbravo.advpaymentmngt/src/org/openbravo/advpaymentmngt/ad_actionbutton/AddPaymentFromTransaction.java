@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -373,9 +373,10 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     if (!strFinBankStatementLineId.isEmpty()) {
       FIN_BankStatementLine bsline = dao.getObject(FIN_BankStatementLine.class,
           strFinBankStatementLineId);
-      xmlDocument.setParameter("actualPayment",
-          (isReceipt) ? bsline.getCramount().subtract(bsline.getDramount()).toString() : bsline
-              .getDramount().subtract(bsline.getCramount()).toString());
+      String actualPayment = (isReceipt) ? bsline.getCramount().subtract(bsline.getDramount())
+          .toString() : bsline.getDramount().subtract(bsline.getCramount()).toString();
+      xmlDocument.setParameter("actualPayment", actualPayment);
+      xmlDocument.setParameter("origActualPayment", actualPayment);
       if (bsline.getBusinessPartner() == null) {
         OBCriteria<BusinessPartner> obcBP = OBDal.getInstance().createCriteria(
             BusinessPartner.class);

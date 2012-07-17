@@ -362,10 +362,6 @@ function removeGLItem(key, removedAmount) {
   OB.APRM.APFT_GLItems.splice(key, 1);
   loadGLItemList();
 }
-function removeAllGLItem(closePopup) {
-  OB.APRM.APFT_GLItems = [];
-  loadGLItemList();
-}
 </script>
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
@@ -586,6 +582,11 @@ function actualPaymentOnChange(){
     } else {
       distributeAmount(amount);
     }
+  } else {
+    if (isMulticurrencyTxn()) {
+      updateConvertedAmounts();
+      updateTotal();
+    }
   }
 }
 function useCreditOnChange(){
@@ -626,13 +627,26 @@ function displayMulticurrencyControls() {
 }
 
 function currencyOnChange() {
-  if( isPaymentMethodMulticurrency() ) {
+  markAll(document.frmMain.inpScheduledPaymentDetailId, false);
+  
+  if(isPaymentMethodMulticurrency()) {
     changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ',true);
-    loadGridList();
+    if (isMulticurrencyTxn() && document.frmMain.paramFinBankStatementLineId.value !== '') {
+      changeClass('paramActualPayment','required readonly dojoValidateValid ', 'required dojoValidateValid ',true);
+      document.getElementById('paramActualPayment').readOnly = false;
+    } else {
+      if (!isTrue('isReceipt')) {
+        changeClass('paramActualPayment','required dojoValidateValid ', 'required readonly dojoValidateValid ',true);
+        document.getElementById('paramActualPayment').readOnly = true;
+      }
+      document.getElementById('paramActualPayment').value = document.getElementById('paramOrigActualPayment').value;
+    }
+    loadGridList(); 
     return refreshExchangeRate();
   } else {
     // Reset currency
     changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ',true);
+    changeClass('paramActualPayment', 'required dojoValidateValid ', 'required readonly dojoValidateValid ',true);
     selectCombo(document.getElementById('paramCurrencyId'), document.getElementById('paramFinancialAccountCurrencyId').value);
     document.getElementById('paramExchangeRate').value='1';
     updateConvertedAmounts();
@@ -654,12 +668,19 @@ function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         var resp = decodeJSON(XMLHttpRequestObj.responseText);
-        document.getElementById('paramExchangeRate').value=resp.exchangeRate;
-      } else {
-        document.getElementById('paramExchangeRate').value='';
-      }
+          document.getElementById('paramExchangeRate').value=resp.exchangeRate;
+      } 
       updateConvertedAmounts();
       displayMulticurrencyControls();
+      if (isMulticurrencyTxn()  && document.frmMain.paramFinBankStatementLineId.value !== '') {
+        changeClass('paramActualPayment','required readonly dojoValidateValid ', 'required dojoValidateValid ',true);
+        document.getElementById('paramActualConverted').value = document.getElementById('paramOrigActualPayment').value;
+        if (document.getElementById('paramExchangeRate').value !== '' && document.getElementById('paramExchangeRate').value !== 0) {
+          document.getElementById('paramActualPayment').value = divide(document.getElementById('paramActualConverted').value, document.getElementById('paramExchangeRate').value);  
+        } else {
+          document.getElementById('paramActualPayment').value = 0;
+        }
+      }
     } catch (e) {
     }
   }
@@ -702,7 +723,7 @@ function initializeTemplate(){
   if (isTrue('isReceipt')) {
   } else {
       document.getElementById('paramActualPayment').readOnly = true;
-      document.getElementById('paramActualPayment').className = "readonly required dojoValidateValid TextBox_btn_OneCell_width number";
+      document.getElementById('paramActualPayment').className = "required readonly dojoValidateValid TextBox_btn_OneCell_width number";
   }
   setWindowElementFocus(frm.inpBpartnerId_DES);
   loadGridList();
@@ -733,11 +754,6 @@ function onLoadDo(){
 }
 function onResizeDo(){
   resizeAreaCreateFrom(true);
-}
-function closeThisPage() {
-  removeAllGLItem(true);
-  closePage();
-  return true;
 }
 function submitThisPage(strCommand) {
   if (document.getElementById('buttonOK')){
@@ -786,6 +802,7 @@ function closeProcessPayment() {
   <input type="hidden" name="isInGLItemMode" value="N"/>
   <input type="hidden" name="inpGLItems" value=""/>
   <input type="hidden" name="inpInheritedActualPayment" value="N" id="paramInheritedActualPayment"/>
+  <input type="hidden" name="inpOrigActualPayment" value="0" id="paramOrigActualPayment"/>
   <input type="hidden" name="strElement_BP" id="paramStrElement_BP" value=""/>
   <input type="hidden" name="strElement_PR" id="paramStrElement_PR" value=""/>
   <input type="hidden" name="strElement_PJ" id="paramStrElement_PJ" value=""/>
@@ -1890,7 +1907,7 @@ function closeProcessPayment() {
                   <button type="button" 
                     id="buttonCancel" 
                     class="ButtonLink" 
-                    onclick="closeThisPage();return false;"
+                    onclick="closePage();return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
