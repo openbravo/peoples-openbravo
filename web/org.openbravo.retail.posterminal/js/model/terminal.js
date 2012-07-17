@@ -373,7 +373,7 @@
     },
 
     hasPermission: function(p) {
-      return this.get('context').role.clientAdmin || this.get('permissions')[p];
+      return !this.get('context').role.manual || this.get('permissions')[p];
     },
 
     getPaymentName: function(key) {

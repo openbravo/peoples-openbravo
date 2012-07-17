@@ -15,6 +15,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class Context extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "select u as user, img.bindaryData as img, r as role "
         + "from ADUser u left outer join u.image img, ADRole r "
