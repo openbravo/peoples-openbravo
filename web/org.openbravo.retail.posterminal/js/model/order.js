@@ -20,6 +20,9 @@
         this.set('qty', attributes.qty);
         this.set('price', attributes.price);
         this.set('gross', attributes.gross);
+        if (attributes.product && attributes.product.price) {
+          this.set('grossListPrice', attributes.product.price.listPrice);
+        }
       }
     },
 
