@@ -141,12 +141,12 @@
         delete this.attributes.json; // BINGO!!!
       }
       undoCopy = this.get('undo');
-      this.unset('undo',{silent:true});
+      this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, null, function() {
         window.console.error(arguments);
       });
-      this.set('undo', undoCopy, {silent:true});
+      this.set('undo', undoCopy);
     },
 
     calculateTaxes: function(callback) {
