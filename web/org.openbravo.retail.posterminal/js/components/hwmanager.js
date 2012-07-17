@@ -119,28 +119,6 @@
   };
 
   OB.COMP.HWManager.prototype.load = function() {
-//    OB.UTIL.loadResource(this.templateline, function(data) {
-//      this.templatelinedata = data;
-//    }, this); 
-//    OB.UTIL.loadResource(this.templatereceipt, function(data) {
-//      this.templatereceiptdata = data;
-//    }, this);   
-//    OB.UTIL.loadResource(this.templateinvoice, function(data) {
-//      this.templateinvoicedata = data;
-//    }, this);
-//    OB.UTIL.loadResource(this.templatereturn, function(data) {
-//      this.templatereturndata = data;
-//    }, this);
-//    OB.UTIL.loadResource(this.templatereturninvoice, function(data) {
-//      this.templatereturninvoicedata = data;
-//    }, this);
-//    
-//    OB.UTIL.loadResource(this.templatecashup, function(data) {
-//      this.templatecashupdata = data;
-//    }, this);
-//    OB.UTIL.loadResource(this.templatecashmgmt, function(data) {
-//      this.templatecashmgmtdata = data;
-//    }, this);
     OB.UTIL.loadResource('res/welcome.xml', function(data) {
       OB.POS.hwserver.print(data, {}, hwcallback);
     }, this);
