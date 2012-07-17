@@ -52,7 +52,12 @@ BEGIN
   END IF;
   
   IF(p_targetCurrency_id IS NULL) THEN 
+
 	  SELECT C_CURRENCY_ID INTO v_currency
+	  FROM AD_CLIENT
+	  WHERE AD_CLIENT_ID = p_client_id;
+
+	  SELECT COALESCE(C_CURRENCY_ID, v_currency) INTO v_currency
 	  FROM AD_ORG
 	  WHERE AD_ORG_ID = (AD_GET_ORG_LE_BU (p_org_ID, 'LE'));
 	ELSE

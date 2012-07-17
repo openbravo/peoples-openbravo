@@ -78,8 +78,12 @@ BEGIN
     v_client_ID := p_client_id;
   END IF;
 BEGIN --BODY
-  
+
   SELECT C_CURRENCY_ID INTO v_currency
+  FROM AD_CLIENT
+  WHERE AD_CLIENT_ID = v_client_ID;
+    
+  SELECT COALESCE(C_CURRENCY_ID, v_currency) INTO v_currency
   FROM AD_ORG
   WHERE AD_ORG_ID = (AD_GET_ORG_LE_BU (v_org_ID, 'LE'));
 

@@ -37,29 +37,31 @@
           sum(value_per_currency) as value, 
           100 * sum(value_per_currency) / (select sum(cost_per_currency)
                              from (
-                                  select c_currency_convert_precision(sum(case when t.movementqty>=0 then t.transactioncost else -t.transactioncost end),
-                                         t.c_currency_id, ?, to_date(now()), null, ?, ad_get_org_le_bu (w.ad_org_id, 'LE')) as cost_per_currency,
+                                  select c_currency_convert_precision(sum(case when t.movementqty>=0 then tc.cost else -tc.cost end),
+                                         tc.c_currency_id, ?, to_date(now()), null, ?, ad_get_org_le_bu (w.ad_org_id, 'LE')) as cost_per_currency,
                                          sum(t.movementqty) as movementqty, w.m_warehouse_id
-                                  from m_transaction t
+                                  from m_transaction_cost tc, m_transaction t
                                     left join m_locator l on (t.m_locator_id=l.m_locator_id)
                                     left join m_warehouse w on (l.m_warehouse_id=w.m_warehouse_id)
-                                  where t.iscostcalculated = 'Y'
+                                  where tc.m_transaction_id = t.m_transaction_id
+                                    and t.iscostcalculated = 'Y'
                                     and t.transactioncost is not null
                                     and t.ad_client_id = ?
                                     and 1=1
                                     and 2=2
                                     AND ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1
-                                  group by t.c_currency_id, w.ad_org_id, w.ad_client_id, w.m_warehouse_id
+                                  group by tc.c_currency_id, w.ad_org_id, w.ad_client_id, w.m_warehouse_id
                                 ) a
                               where a.m_warehouse_id = warehouse
                               having sum(a.movementqty)>0
                             ) as percentage
         from (
           select w.ad_org_id, p.value, p.name, p.c_uom_id, sum(t.movementqty) as movementqty, p.m_product_id, w.m_warehouse_id as warehouse,
-                 c_currency_convert_precision(sum(case when t.movementqty>=0 then t.transactioncost else -t.transactioncost end),
-                 t.c_currency_id, ?, to_date(now()), null, ?, ad_get_org_le_bu (w.ad_org_id, 'LE')) as value_per_currency
-          from m_transaction t, m_locator l, m_warehouse w, m_product p
-          where t.m_locator_id = l.m_locator_id
+                 c_currency_convert_precision(sum(case when t.movementqty>=0 then tc.cost else -tc.cost end),
+                 tc.c_currency_id, ?, to_date(now()), null, ?, ad_get_org_le_bu (w.ad_org_id, 'LE')) as value_per_currency
+          from m_transaction_cost tc, m_transaction t, m_locator l, m_warehouse w, m_product p
+          where tc.m_transaction_id = t.m_transaction_id
+            and t.m_locator_id = l.m_locator_id
             and l.m_warehouse_id = w.m_warehouse_id
             and t.m_product_id = p.m_product_id
             and t.iscostcalculated = 'Y'
@@ -69,7 +71,7 @@
             and 3=3
             and 4=4
             AND ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1
-          group by w.ad_org_id, w.ad_client_id, p.m_product_id, t.c_currency_id, p.name, p.value, p.c_uom_id, w.m_warehouse_id
+          group by w.ad_org_id, w.ad_client_id, p.m_product_id, tc.c_currency_id, p.name, p.value, p.c_uom_id, w.m_warehouse_id
           having sum(t.movementqty) > 0
         ) a
         group by ad_org_id, m_product_id, name, value, c_uom_id, warehouse
