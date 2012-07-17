@@ -142,6 +142,9 @@
       $($('#online > span')[0]).css("background-image", "url('./img/login-not-connected.png')");
       $($('#online > span')[1]).text(OB.I18N.getLabel('OBPOS_Offline'));
     });
+
+    setInterval(OB.UTIL.checkConnectivityStatus,30*1000);
+
   });
 
 }());

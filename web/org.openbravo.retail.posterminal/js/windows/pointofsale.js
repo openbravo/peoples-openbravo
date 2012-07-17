@@ -145,7 +145,7 @@
               criteria = {
                 hasbeenpaid:'Y'
               };
-            if (navigator.onLine) {
+            if (OB.UTIL.connectedToERP) {
               OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
                 var successCallback, errorCallback;
                 if (!ordersPaidNotProcessed) {

@@ -22,12 +22,12 @@
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
       // The order will not be processed if the navigator is offline
-      if (navigator.onLine) {
+      if (OB.UTIL.connectedToERP) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
 
       OB.Dal.save(this.receipt, function () {
-        if (navigator.onLine) {
+        if (OB.UTIL.connectedToERP) {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
             var successCallback, errorCallback, orderList;
             successCallback = function() {

@@ -102,7 +102,7 @@
       ordersToJson.push(order.serializeToJSON());
     });
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
-    if (navigator.onLine) {
+    if (OB.UTIL.connectedToERP) {
       this.proc.exec({
         order: ordersToJson
       }, function (data, message) {
@@ -127,6 +127,48 @@
         }
       });
     }
+  };
+
+  OB.UTIL.connectedToERP = true;
+
+  OB.UTIL.checkConnectivityStatus = function() {
+    if (navigator.onLine) {
+      // It can be a false positive, make sure with the ping
+      $.ajaxSetup({
+          async: true,
+          cache: false,
+          context: $("#status"),
+          dataType: "json",
+          error: function (req, status, ex) {
+            if (OB.UTIL.connectedToERP) {
+              OB.UTIL.connectedToERP = false;
+              if (OB.POS.modelterminal) {
+                OB.POS.modelterminal.triggerOffLine();
+              }
+            }
+          },
+          success: function (data, status, req) {
+            if (!OB.UTIL.connectedToERP) {
+              OB.UTIL.connectedToERP = true;
+              if (OB.POS.modelterminal) {
+                OB.POS.modelterminal.triggerOnLine();
+              }
+            }
+          },
+          timeout: 5000,
+          type: "GET",
+          url: "../../security/SessionActive?id=0"
+      });
+      $.ajax();
+  }
+  else {
+    if (OB.UTIL.connectedToERP) {
+      OB.UTIL.connectedToERP = false;
+      if (OB.POS.modelterminal) {
+        OB.POS.modelterminal.triggerOffLine();
+      }
+    }
+  }
   };
 
 }());
