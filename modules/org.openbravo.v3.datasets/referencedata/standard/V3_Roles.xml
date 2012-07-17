@@ -1630,7 +1630,7 @@
   </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E40245" identifier="Sales Invoice Dimensional Report - Finance">
     <id>FF808181259DADEB01259DDDA4E40245</id>
-    <process id="800205" entity-name="ADProcess" identifier="Sales Invoice Dimensional Report"/>
+    <process id="6D3B1C36BF594A51878281B505F6CECF" entity-name="ADProcess" identifier="Sales Invoice Dimensional Report"/>
     <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
     <active>true</active>
     <creationDate transient="true">2011-12-13T10:35:14.126Z</creationDate>
@@ -1685,7 +1685,7 @@
   </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E6024C" identifier="Valued Stock Report - Finance">
     <id>FF808181259DADEB01259DDDA4E6024C</id>
-    <process id="800088" entity-name="ADProcess" identifier="Valued Stock Report"/>
+    <process id="E5BE98DCF4514A18B571F21183B397DD" entity-name="ADProcess" identifier="Valued Stock Report"/>
     <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
     <active>true</active>
     <creationDate transient="true">2011-12-13T10:35:14.124Z</creationDate>
@@ -1762,7 +1762,7 @@
   </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E70254" identifier="Valued Stock Report - Warehouse">
     <id>FF808181259DADEB01259DDDA4E70254</id>
-    <process id="800088" entity-name="ADProcess" identifier="Valued Stock Report"/>
+    <process id="E5BE98DCF4514A18B571F21183B397DD" entity-name="ADProcess" identifier="Valued Stock Report"/>
     <role id="FF808181259DADEB01259DDDA4C201E7" entity-name="ADRole" identifier="Warehouse"/>
     <active>true</active>
     <creationDate transient="true">2011-12-13T10:35:14.122Z</creationDate>
@@ -1817,7 +1817,7 @@
   </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E9025A" identifier="Sales Invoice Dimensional Report - Company Executive">
     <id>FF808181259DADEB01259DDDA4E9025A</id>
-    <process id="800205" entity-name="ADProcess" identifier="Sales Invoice Dimensional Report"/>
+    <process id="6D3B1C36BF594A51878281B505F6CECF" entity-name="ADProcess" identifier="Sales Invoice Dimensional Report"/>
     <role id="FF808181259DADEB01259DDDA4C201E6" entity-name="ADRole" identifier="Company Executive"/>
     <active>true</active>
     <creationDate transient="true">2011-12-13T10:35:14.120Z</creationDate>
