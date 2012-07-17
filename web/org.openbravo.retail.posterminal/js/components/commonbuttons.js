@@ -43,7 +43,7 @@
 
       // data-toggle is used by Bootstrap plugins, like: dropdown, tab, etc
       // we fall back to default 'slow' click event
-      if(this.attributes && (this.attributes['data-toggle'] || this.attributes['data-dismiss'])) {
+      if ((navigator.userAgent.toLowerCase().indexOf('windows nt') !== -1) || (this.attributes && (this.attributes['data-toggle'] || this.attributes['data-dismiss']))) {
         this.$el.click(_.bind(this._clickEvent, this));
       } else {
         fb = new MBP.fastButton(this.el, _.bind(this._clickEvent, this));
