@@ -105,6 +105,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     String strPriceActual = _strPriceActual;
     boolean isTaxIncludedPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId)
         .isPriceIncludesTax();
+    boolean isGrossUnitPriceChanged = strChanged.equals("inpgrossUnitPrice");
 
     if (data1 != null && data1.length > 0) {
       strStockSecurity = data1[0].stock;
@@ -289,6 +290,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             new BigDecimal("100"), pricePrecision, BigDecimal.ROUND_HALF_UP));
         if (isTaxIncludedPriceList) {
           grossUnitPrice = unitPrice;
+          isGrossUnitPriceChanged = true;
           resultado.append("new Array(\"inpgrossUnitPrice\", " + grossUnitPrice.toString() + "),");
         } else {
           // checks if rounded discount has changed
@@ -356,7 +358,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // if taxinclusive field is changed then modify net unit price and gross price
-    if (strChanged.equals("inpgrossUnitPrice")) {
+    if (isGrossUnitPriceChanged) {
       BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
           RoundingMode.HALF_UP);
 
