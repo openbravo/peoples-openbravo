@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonConstants;
 
@@ -25,6 +26,7 @@ public class ProcessCashClose implements JSONProcess {
 
   @Override
   public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
+    OBContext.setAdminMode();
     try {
       JSONObject result = new JSONObject();
       result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -32,6 +34,7 @@ public class ProcessCashClose implements JSONProcess {
       w.write(s.substring(1, s.length()) + "}");
       w.flush();
       w.close();
+
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           jsonsent.getString("terminalId"));
 
@@ -41,6 +44,8 @@ public class ProcessCashClose implements JSONProcess {
     } catch (Exception e) {
       log.error("Error processing cash close", e);
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
   }

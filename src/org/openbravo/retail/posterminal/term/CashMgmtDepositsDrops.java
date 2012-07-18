@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSApplications;
@@ -36,7 +37,14 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
 
     String posTerminalId = jsonsent.getJSONObject("parameters").getJSONObject("pos")
         .getString("value");
-    OBPOSApplications terminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
+
+    OBPOSApplications terminal;
+    OBContext.setAdminMode();
+    try {
+      terminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     JSONArray result = new JSONArray();
 
     // Payment types
