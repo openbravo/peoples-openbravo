@@ -303,8 +303,8 @@
             target = $el.attr('target');
 
         if (target === '_self') {
+          e.preventDefault();
           if (OB.POS.modelterminal.get('connectedToERP')) {
-            e.preventDefault();
             OB.UTIL.showLoading(true);
             window.location = href;
           } else {
