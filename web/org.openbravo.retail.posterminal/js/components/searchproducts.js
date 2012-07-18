@@ -87,7 +87,7 @@
             ]}
           ]},
 
-          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'height: 450px; overflow: auto;'}, content: [
+          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'height: 483px; overflow: auto;'}, content: [
             {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
               {kind: B.KindJQuery('div'), content: [
                 {kind: OB.UI.TableView, id: 'tableview', attr: {

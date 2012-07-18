@@ -16,7 +16,7 @@
   OB.UI.BrowseCategories = Backbone.View.extend({
     tagName: 'div',
     attributes: {
-      'style': 'overflow:auto; margin: 5px;'
+      'style': 'overflow:auto; height: 612px; margin: 5px;'
     },
     initialize: function() {
       var $child = $('<div/>');
@@ -34,7 +34,7 @@
   OB.UI.BrowseProducts = Backbone.View.extend({
     tagName: 'div',
     attributes: {
-      'style': 'overflow:auto; height: 500px; margin: 5px;'
+      'style': 'overflow:auto; height: 612px; margin: 5px;'
     },
     initialize: function() {
       var $child = $('<div/>');

@@ -112,7 +112,7 @@
                         ]}
                       ]}
                     ]},
-                    {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'max-height: 503px; overflow: auto;'}, content: [
+                    {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid', 'style': 'max-height: 536px; overflow: auto;'}, content: [
                       {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
                         {kind: OB.COMP.OrderView}
                       ]}
