@@ -102,7 +102,7 @@
       OB.UTIL.initContentView(this);
       var me = this;
       this.button.$el.css({'background-color': this.background, 'border': '10px solid' + (this.bordercolor || this.background)});
-      this.button.$el.text(this.label || OB.I18N.formatCurrency(this.amount));
+      this.button.$el.text(this.label || OB.I18N.formatCoins(this.amount));
       this.button.clickEvent = function (e) {
         me.options.parent.receipt.addPayment(new OB.Model.PaymentLine({'kind': me.paymenttype, 'name': OB.POS.modelterminal.getPaymentName(me.paymenttype), 'amount': OB.DEC.number(me.amount)}));
       };

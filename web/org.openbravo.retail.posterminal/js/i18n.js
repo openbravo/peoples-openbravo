@@ -17,6 +17,12 @@
 
     return OB.Utilities.Number.JSToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
   };
+  
+  OB.I18N.formatCoins = function (number) {
+    var val = OB.I18N.formatCurrency(number);
+    var decSeparator = OB.Format.defaultDecimalSymbol;
+    return val.replace(new RegExp('[' + decSeparator + '][0]+$'), '');
+  };  
 
   OB.I18N.formatRate = function (number) {
     var symbol = '%',
