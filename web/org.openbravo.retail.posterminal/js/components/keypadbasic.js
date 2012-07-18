@@ -4,14 +4,14 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-  
+
   var ButtonDummy = Backbone.View.extend({
     tagName: 'button',
     initialize: function () {
       this.$el.attr('class', this.options.className);
     }
   });
-  
+
   OB.COMP.KeyboardComponent = Backbone.View.extend({
     initialize: function () {
 
@@ -24,7 +24,7 @@
 //      this.showKeypad =  _.bind(this.options.parent.showKeypad, this.options.parent);
 
       OB.UTIL.initContentView(this);
-    }    
+    }
   });
 
   OB.COMP.ButtonKey = Backbone.View.extend({
@@ -85,7 +85,7 @@
     }
   });
 
-  OB.COMP.PaymentButton = Backbone.View.extend({     
+  OB.COMP.PaymentButton = Backbone.View.extend({
     contentView: [{
       tag: 'div',
       attributes: {
@@ -93,7 +93,7 @@
       },
       content: [{
         view: OB.COMP.Button.extend({
-          className: 'btnkeyboard'  
+          className: 'btnkeyboard'
         }), id: 'button'
       }]
     }],
@@ -108,7 +108,7 @@
       };
     }
   });
-  
+
   OB.COMP.KeypadBasic = OB.COMP.KeyboardComponent.extend({
     tag: 'div',
     name: 'index',

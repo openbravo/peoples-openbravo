@@ -269,7 +269,7 @@
     initialize: function () {
       OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
       this.model = this.options.model;
-      OB.UTIL.initContentView(this);      
+      OB.UTIL.initContentView(this);
     },
     clickEvent: function (e) {
       this.model.trigger('selected', this.model);
@@ -277,11 +277,11 @@
       this.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
     }
   });
-  
+
   OB.COMP.RenderEmpty = Backbone.View.extend({
     tagName: 'div',
-    attributes: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'}, 
-    render: function () {      
+    attributes: {'style': 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc'},
+    render: function () {
       this.$el.text(this.label || OB.I18N.getLabel('OBPOS_SearchNoResults'));
       return this;
     }
@@ -345,26 +345,26 @@
         ]},
         {id:'divheader', tag: 'h3'}
       ]},
-      {id:'body', tag: 'div', attributes: {'class': 'modal-header'}}                  
+      {id:'body', tag: 'div', attributes: {'class': 'modal-header'}}
     ],
     maxheight: null,
     initialize: function () {
       OB.UTIL.initContentView(this);
-      
+
       this.divheader.text(this.header);
       if (this.maxheight) {
         this.body.css('max-height', this.maxheight);
       }
-      
+
       var getcv = this.getContentView();
       if (getcv.kind) {
         // it is a builder structure
-        this.contentview = B(getcv, this.options);            
+        this.contentview = B(getcv, this.options);
       } else {
         // it is a backbone view
         this.contentview = new getcv(this.options).render();
       }
-      this.body.append(this.contentview.$el);    
+      this.body.append(this.contentview.$el);
 
       OB.UTIL.adjustModalPosition(this.$el);
       OB.UTIL.focusInModal(this.$el);

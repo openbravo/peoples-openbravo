@@ -116,10 +116,10 @@
       }, this);
 
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
-      
-      // First the keypads     
-      this.addKeypad(OB.COMP.KeypadCoins); 
-      
+
+      // First the keypads
+      this.addKeypad(OB.COMP.KeypadCoins);
+
       // Toolbars at the end...
       this.addToolbarView('toolbarpayment', OB.UI.ToolbarPayment); // after the keypad coins because the toolbar payment depends on the coins keypad.
       this.addToolbarView('toolbarscan', OB.COMP.ToolbarScan);

@@ -6,7 +6,7 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.CloseKeyboard = OB.COMP.Keyboard.extend({
-	_id: 'closekeyboard',
+    _id: 'closekeyboard',
     initialize: function () {
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
       this.addToolbar('toolbarempty', {
@@ -23,6 +23,5 @@
       this.show('toolbarempty');
     }
   });
-
 
 }());

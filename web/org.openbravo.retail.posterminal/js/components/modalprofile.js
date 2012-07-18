@@ -82,7 +82,7 @@
                         this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
                         if (roleId === this.model.get('id')) {
                           this.$el.attr('selected', 'selected');
-                        }                        
+                        }
                         return this;
                       }
                     })

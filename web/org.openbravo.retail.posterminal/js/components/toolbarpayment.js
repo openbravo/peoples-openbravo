@@ -4,7 +4,7 @@
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
-  
+
   function payment(amount, modalpayment, receipt, key, name, provider) {
     if (OB.DEC.compare(amount) > 0) {
       var providerview = OB.POS.paymentProviders[provider];
@@ -36,7 +36,7 @@
     className: 'btnkeyboard',
 
     initialize: function () {
-      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();     
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
       this.options.parent.on('keypad', this.render, this);
     },
     clickEvent: function (e) {

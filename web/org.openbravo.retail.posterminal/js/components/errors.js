@@ -40,7 +40,7 @@ OB.OBPOS.Errors.clearError = function(params, view) {
         isc.say(data.message);
         params.button.closeProcessPopup();
     };
-    
+
     for (i = 0; i < selectedRecords.length; i++) {
         ids.push(selectedRecords[i].id);
     }

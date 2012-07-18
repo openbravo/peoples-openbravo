@@ -90,7 +90,7 @@
               {kind: B.KindJQuery('div'), content: [
                 {kind: OB.UI.TableView, id: 'tableview', attr: {
                   collection: this.bps,
-                  renderEmpty: OB.COMP.RenderEmpty,                  
+                  renderEmpty: OB.COMP.RenderEmpty,
                   renderLine: OB.COMP.RenderBusinessPartner
                 }}
               ]}

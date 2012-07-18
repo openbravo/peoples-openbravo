@@ -33,7 +33,7 @@
     }
   };
 
-  // public 
+  // public
   OB.UTIL.Thumbnail = Backbone.View.extend({
     tagName: 'div',
     className: 'image-wrap',
@@ -43,7 +43,7 @@
     height: 49,
     'default': 'img/box.png',
     initialize: function () {
-      this.$image = $('<div/>')          
+      this.$image = $('<div/>')
           .css('margin', 'auto')
           .css('height', '100%')
           .css('width', '100%')
@@ -55,7 +55,7 @@
       this.contentType = attr.contentType || this.contentType;
       this.width = attr.width || this.width;
       this.height = attr.height || this.height;
-      this['default'] = attr['default'] || this['default'];     
+      this['default'] = attr['default'] || this['default'];
     },
     render: function () {
       var url = (this.img)
@@ -63,7 +63,7 @@
         : this['default'];
       this.$el.css('height', this.height);
       this.$el.css('width', this.width);
-      this.$image.css('background', '#ffffff url(' + url + ') center center no-repeat');      
+      this.$image.css('background', '#ffffff url(' + url + ') center center no-repeat');
       return this;
     }
   });

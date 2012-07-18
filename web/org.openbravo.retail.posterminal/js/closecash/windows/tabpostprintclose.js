@@ -35,13 +35,13 @@
                {kind: OB.COMP.SearchRetailTransactions},
                {kind: OB.COMP.RenderPaymentLines},
                {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-	               {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-	                 {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
-	                 {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;'}, content: [
-	              {kind: B.KindJQuery('div')}
-	              ]},    {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
-	                 ]}
-	             ]}
+                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
+                   {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
+                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;'}, content: [
+                {kind: B.KindJQuery('div')}
+                ]},    {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
+                   ]}
+               ]}
           ]}
         ]}
        ]}

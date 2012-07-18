@@ -3,7 +3,7 @@
 (function () {
 
   var modelterminal = new OB.Model.Terminal();
-  
+
   // global components.
   OB = window.OB || {};
   OB.POS = {

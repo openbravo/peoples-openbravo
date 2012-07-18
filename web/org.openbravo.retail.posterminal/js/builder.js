@@ -52,7 +52,7 @@
         }
       }
     }
-    
+
     // render
     if (inst.render) {
       inst.render();

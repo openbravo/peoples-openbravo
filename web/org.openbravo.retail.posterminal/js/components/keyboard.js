@@ -139,7 +139,7 @@
                       command: '+',
                       classButton: 'btnkeyboard-num btnkeyboard-plus',
                       contentViewButton: ['+']
-                    })                 
+                    })
                   }]
                 }]
               }, {
@@ -300,11 +300,11 @@
       var me = this;
 
       this.toolbars = {};
-      
+
       this.keypads = {};
       this.keypad = '';
       this.addKeypad(OB.COMP.KeypadBasic); // index
-      this.showKeypad();     
+      this.showKeypad();
       this.showSidepad('sidedisabled');
 
       this.on('command', function (cmd) {
@@ -312,7 +312,7 @@
         var me = this;
         if (this.editbox.text() && cmd === String.fromCharCode(13)) {
           txt = this.getString();
-          
+
           if (this.defaultcommand) {
             this.execCommand(this.commands[this.defaultcommand], txt);
           } else {
@@ -325,7 +325,7 @@
             if (this.defaultcommand) {
               this.execCommand(this.commands[this.defaultcommand], txt);
             } else {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));            
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
             }
           } else if (txt && this.status !== '') {
             this.execCommand(this.commands[this.status], txt);
@@ -420,9 +420,9 @@
     show: function (toolbar) {
       var t;
       var mytoolbar;
-      
+
       this.clear();
-      
+
       if (toolbar) {
         for (t in this.toolbars) {
           if (this.toolbars.hasOwnProperty(t)) {
@@ -477,7 +477,7 @@
         tag: 'div',
         attributes: {'style': 'display:none'}
       });
-      
+
       this.toolbars[name] = new Toolbar();
 
       for (i = 0, max = value.length; i < max; i++) {
@@ -485,7 +485,7 @@
         if (value[i].definition) {
           this.addCommand(value[i].command, value[i].definition);
         }
-        // add the button   
+        // add the button
         this.toolbars[name].$el.append(new BtnSide({
           parent: this,
           btn: OB.COMP.ButtonKey.extend({
@@ -506,19 +506,19 @@
 
       this.toolbarcontainer.append(this.toolbars[name].$el);
     },
-    
+
     addToolbarView: function (name, component) {
       this.toolbars[name] = new component({parent: this}).render();
       this.toolbarcontainer.append(this.toolbars[name].$el);
     },
-    
+
     addKeypad: function (component) {
       // Initialize keypad...
       var inst = new component({parent: this}).render();
       this.keypads[inst.name] = inst;
       this.keypadcontainer.append(inst.$el);
     },
-    
+
     showKeypad: function (padname) {
       var t;
       for (t in this.keypads) {
@@ -530,7 +530,7 @@
       this.keypad.$el.show();
       this.trigger('keypad', this.keypad.name);
     },
-    
+
     showSidepad: function (sidepadname) {
       this.sideenabled.hide();
       this.sidedisabled.hide();

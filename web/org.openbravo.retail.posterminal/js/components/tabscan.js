@@ -30,7 +30,7 @@
   OB.COMP.TabScan = Backbone.View.extend({
     tagName: 'div',
     attributes: {'id': 'scan', 'class': 'tab-pane'},
-	initialize: function () {
+    initialize: function () {
       var scan = new OB.COMP.Scan(this.options);
       this.$el.append(scan.$el);
     }

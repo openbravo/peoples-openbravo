@@ -78,7 +78,7 @@
       );
     }
   });
-  
+
   // register
   OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
 }());

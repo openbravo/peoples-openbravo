@@ -46,8 +46,8 @@
     var curr_sec = d.getSeconds();
     return OB.UTIL.padNumber(curr_hour, 2) + ':' + OB.UTIL.padNumber(curr_min, 2);
   };
-  
-  
+
+
   OB.I18N.parseNumber = function (s) {
     if (OB.Format.defaultDecimalSymbol !== '.') {
       s = s.toString();
@@ -55,7 +55,7 @@
         s = s.replace(OB.Format.defaultDecimalSymbol, '.');
       }
     }
-    return parseFloat(s, 10);    
-  };  
-  
+    return parseFloat(s, 10);
+  };
+
 }());

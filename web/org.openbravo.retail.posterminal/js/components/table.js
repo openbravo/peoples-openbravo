@@ -19,16 +19,16 @@
               model: model
             })).render().$el);
           }, this);
-  
+
           this.collection.on('add', function (model, prop, options) {
             this._addModelToCollection(model, options.index);
           }, this);
-  
+
           this.collection.on('remove', function (model, prop, options) {
             var index = options.index;
             this.$el.children().eq(index + this.header).remove();
           }, this);
-  
+
           this.collection.on('reset', function () {
             this.$el.empty();
             if (this.renderHeader) {
@@ -42,8 +42,8 @@
 
         if (this.renderHeader) {
           this.$el.append((new this.renderHeader()).render().$el);
-        }        
-        
+        }
+
       },
       _addModelToCollection: function (model, index) {
         var me = this,
@@ -57,19 +57,19 @@
           this.$el.append(tr);
         }
       },
-      
-      attr: function (attr) {       
-        // Deprecated function used by Builder        
+
+      attr: function (attr) {
+        // Deprecated function used by Builder
         this.htmlId = attr.htmlId;
         this.className = attr.className;
         this.style = attr.style;
         this.renderLine = attr.renderLine;
         this.renderHeader = attr.renderHeader;
         this.header = this.renderHeader ? 1 : 0;
-        
+
         // Init clear...
         this.$el.empty();
-        
+
         if (this.htmlId) {
           this.$el.attr('id', this.htmlId);
         }
@@ -79,7 +79,7 @@
         if (this.style) {
           this.$el.attr('style', this.style);
         }
-        
+
         this.registerCollection(attr.collection);
       }
     });
@@ -95,9 +95,9 @@
       this.tinfo = $('<div/>').css('display', 'none').css('border-bottom', '1px solid #cccccc').css('padding', '15px').css('font-weight', 'bold').css('color', '#cccccc');
       this.$el.empty().append(this.theader).append(this.tbody).append(this.tinfo).append(this.tempty);
     },
-    
+
     registerCollection: function (collection) {
-      
+
       this.collection = collection;
       this.selected = null;
 
@@ -107,8 +107,8 @@
 
       if (this.renderEmpty) {
         this.tempty.append((new this.renderEmpty()).render().$el);
-      }      
-      
+      }
+
       this.collection.on('selected', function (model) {
         if (!model && this.style) {
           if (this.selected) {
@@ -187,7 +187,7 @@
         } else {
           this.tinfo.hide();
         }
-      }, this);    
+      }, this);
     },
 
     _addModelToCollection: function (model, index) { // means after...
@@ -226,11 +226,11 @@
     attr: function (attr) {
       // Deprecated function used by Builder
       this.style = attr.style; // none, "edit", "list"
-      this.renderHeader = attr.renderHeader;     
+      this.renderHeader = attr.renderHeader;
       this.renderEmpty = attr.renderEmpty;
       this.renderLine = attr.renderLine;
-      
-      this.registerCollection(attr.collection); 
+
+      this.registerCollection(attr.collection);
     }
   });
 

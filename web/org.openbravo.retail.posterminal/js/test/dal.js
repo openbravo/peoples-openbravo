@@ -30,7 +30,7 @@ asyncTest('Load models - WebSQL', function() {
     var ds = new OB.DS.DataSource(new OB.DS.Request(model, '23C59575B9CF467C9620760EB255B389', 'E443A31992CB4635AFCAEABE7183CE85'));
 
     ds.on('ready', function() {
-      
+
       queue[ds.request.source] = true;
 
       //reduce

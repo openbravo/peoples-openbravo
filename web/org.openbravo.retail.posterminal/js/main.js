@@ -32,7 +32,7 @@
       modelterminal.lock();
     },
     paymentProviders: {},
-    windows: {}         
+    windows: {}
   };
 
   modelterminal.on('ready', function () {

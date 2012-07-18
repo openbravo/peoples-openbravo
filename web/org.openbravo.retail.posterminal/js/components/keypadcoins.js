@@ -4,7 +4,7 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
- 
+
   OB.COMP.KeypadCoins = OB.COMP.KeypadBasic.extend({
     name: 'coins',
     label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
@@ -221,9 +221,9 @@
         }]
       }]
     }],
-    initialize: function() {    
+    initialize: function() {
       OB.COMP.KeypadCoins.__super__.initialize.call(this);
-      
+
       this.options.parent.on('status', function (status) {
         if (status === 'OBPOS_payment.cash') {
           this.options.parent.showKeypad('coins');

@@ -6,7 +6,7 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.RenderPaymentLines = OB.COMP.CustomView.extend({
-	_id:'renderpaymentlines',
+  _id:'renderpaymentlines',
     render: function() {
      var me = this;
      if(!this.options.modeldaycash.paymentmethods){

@@ -49,7 +49,7 @@
       );
     }
   });
-  
+
   // register
-  OB.POS.windows['retail.cashmanagement'] = OB.COMP.CashManagement;  
+  OB.POS.windows['retail.cashmanagement'] = OB.COMP.CashManagement;
 }());

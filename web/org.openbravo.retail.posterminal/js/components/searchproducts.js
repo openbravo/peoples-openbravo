@@ -6,8 +6,8 @@
   OB.COMP = window.OB.COMP || {};
 
   OB.COMP.SearchProduct = Backbone.View.extend({
-	initialize: function(){
-	  var me = this;
+  initialize: function(){
+    var me = this;
 
     this.receipt = this.options.modelorder;
 

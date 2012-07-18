@@ -52,29 +52,29 @@
       return memo && val;
     }, true);
   };
-  
-    
+
+
   function _initContentView(view, child) {
     var obj, inst, i, max;
     if (typeof (child) === 'string') {
       inst = $(document.createTextNode(child));
     } else if (child.tag) {
-      inst = $('<' + child.tag + '/>'); 
+      inst = $('<' + child.tag + '/>');
       if (child.attributes) {
         inst.attr(child.attributes);
       }
       if (child.content) {
         if (typeof(child.content) === 'string') {
-          inst.html(child.content);          
+          inst.html(child.content);
         } else {
           for (i = 0, max = child.content.length; i < max; i++) {
             inst.append(_initContentView(view, child.content[i]));
-          }      
+          }
         }
       }
       if (child.id) {
         view[child.id] = inst;
-      }      
+      }
     } else if (child.view) {
       obj = new child.view({parent: view});
       inst = obj.render().$el;
@@ -86,13 +86,13 @@
     }
     return inst;
   }
-  
+
   OB.UTIL.initContentView = function (view) {
     var i, max;
     if (view.contentView) {
       for (i = 0, max = view.contentView.length; i < max; i++) {
         view.$el.append(_initContentView(view, view.contentView[i]));
-      }       
+      }
     }
   };
 

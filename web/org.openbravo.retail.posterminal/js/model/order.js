@@ -35,11 +35,11 @@
     printPrice: function() {
       return OB.I18N.formatCurrency(this.get('price'));
     },
-    
+
     printDiscount: function () {
       var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
       if (OB.DEC.compare(d) === 0) {
-        return '';      
+        return '';
       } else {
         return OB.I18N.formatCurrency(d);
       }

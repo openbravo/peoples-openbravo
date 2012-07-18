@@ -16,7 +16,7 @@
     }
   });
 
-  var ExactButton = OB.COMP.RegularButton.extend({  
+  var ExactButton = OB.COMP.RegularButton.extend({
     icon: 'btn-icon-small btn-icon-check',
     className: 'btnlink-green',
     attributes: {style: 'width: 69px'},
@@ -24,7 +24,7 @@
       this.options.parent.options.keyboard.execStatelessCommand('cashexact');
     }
   });
-  
+
   var RemovePayment = OB.COMP.SmallButton.extend({
     className: 'btnlink-darkgray btnlink-payment-clear',
     icon: 'btn-icon-small btn-icon-clearPayment',
@@ -251,15 +251,15 @@
         this.totalpending.text(paymentstatus.pending);
         this.totalpending.show();
         this.totalpendinglbl.show();
-        this.doneaction.hide();       
+        this.doneaction.hide();
       }
-      
+
       if (paymentstatus.done || this.receipt.getGross() === 0) {
         this.exactaction.hide();
       } else {
         this.exactaction.show();
       }
-            
+
       if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
         this.exactlbl.show();
       } else {

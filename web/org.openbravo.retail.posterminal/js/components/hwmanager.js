@@ -4,12 +4,12 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-  
+
   OB.COMP.HWResource = function (res) {
     this.resource = res;
     this.resourcedata = null;
   };
-  
+
   OB.COMP.HWResource.prototype.getData = function (callback) {
     if (this.resourcedata) {
       callback(this.resourcedata);
@@ -17,10 +17,10 @@
       OB.UTIL.loadResource(this.resource, function(data) {
         this.resourcedata = data;
         callback(this.resourcedata);
-      }, this);  
+      }, this);
     }
   };
-  
+
   OB.COMP.HWManager = function(context) {
     if (context.modelorder) {
       this.receipt = context.modelorder;
@@ -56,33 +56,33 @@
 
   OB.COMP.HWManager.prototype.printLine = function() {
     var line = this.line;
-    if (line) {      
+    if (line) {
       this.templateline.getData(function (data) {
         OB.POS.hwserver.print(data, {
           line: line
-        }, hwcallback);        
+        }, hwcallback);
       });
     }
   };
 
   OB.COMP.HWManager.prototype.printOrder = function() {
-    
+
     var receipt = this.receipt;
     var template;
     if (this.receipt.get('generateInvoice')) {
       if (this.receipt.get('orderType') === 1) {
         template = this.templatereturninvoice;
       } else {
-        template = this.templateinvoice;       
+        template = this.templateinvoice;
       }
     } else {
       if (this.receipt.get('orderType') === 1) {
         template = this.templatereturn;
       } else {
         template = this.templatereceipt;
-      }      
+      }
     }
-    
+
     template.getData(function (data) {
       OB.POS.hwserver.print(data, {
         order: receipt
@@ -98,7 +98,7 @@
       }, hwcallback);
     });
   };
-  
+
   OB.COMP.HWManager.prototype.printCashMgmt = function() {
     var depsdropstosend = this.depsdropstosend;
     this.templatecashmgmt.getData(function (data) {
