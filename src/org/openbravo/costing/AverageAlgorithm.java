@@ -138,7 +138,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       cost.setPrice(newCost);
     } else {
       cost.setPrice(trxCost.divide(transaction.getMovementQuantity(), costCurrency
-          .getCostingPrecision().intValue()));
+          .getPricePrecision().intValue(), BigDecimal.ROUND_HALF_UP));
     }
     cost.setCostType("AVA");
     cost.setManual(false);
