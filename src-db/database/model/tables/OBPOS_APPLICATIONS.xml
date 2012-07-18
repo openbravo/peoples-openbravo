@@ -41,10 +41,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VERSION" primaryKey="false" required="true" type="NVARCHAR" size="1024" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="HARDWAREURL" primaryKey="false" required="false" type="VARCHAR" size="1024" autoIncrement="false">
         <default/>
         <onCreateDefault/>
