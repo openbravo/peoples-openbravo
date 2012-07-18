@@ -6,9 +6,10 @@
   OB.DATA = window.OB.DATA || {};
 
   OB.DATA.DropDepSave = function (context) {
+    var i;
+    var me = this;
     this._id = 'dropdepsave';
     this.context = context;
-    var me = this;
     me.context.depsdropstosend = [];
     this.context.ListDepositsDrops.listdepositsdrops.on('depositdrop', function (model, index) {
       if(me.context.depsdropstosend.length===0){
@@ -28,9 +29,9 @@
      }, this);
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
     this.context.SearchDropEvents.destinations.on('click', function (model, index) {
-      for(var i=0; i< this.context.ListDepositsDrops.listdepositsdrops.models.length; i++) {
+      for(i=0; i< this.context.ListDepositsDrops.listdepositsdrops.models.length; i++) {
         if(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('paySearchKey')===me.context.destinationKey){
-          if(!(OB.DEC.sub(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('total'),me.context.amountToDrop) >= 0)){
+          if((OB.DEC.sub(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('total'),me.context.amountToDrop) < 0)){
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
             return true;
           }
@@ -41,9 +42,9 @@
       }
      }, this);
     this.context.SearchDepositEvents.destinations.on('click', function (model, index) {
-      for(var i=0; i< this.context.ListDepositsDrops.listdepositsdrops.models.length; i++) {
+      for(i=0; i< this.context.ListDepositsDrops.listdepositsdrops.models.length; i++) {
         if(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('paySearchKey')===me.context.destinationKey){
-          if(!(OB.DEC.add(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('total'),me.context.amountToDrop) >= 0)){
+          if((OB.DEC.add(this.context.ListDepositsDrops.listdepositsdrops.models[i].get('total'),me.context.amountToDrop) < 0)){
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
             return true;
           }

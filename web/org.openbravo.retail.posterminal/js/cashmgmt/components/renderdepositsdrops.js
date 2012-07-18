@@ -1,4 +1,4 @@
-/*global B, $ */
+/*global B, $ , Backbone */
 
 (function () {
 
@@ -7,6 +7,7 @@
 
   OB.COMP.RenderDepositsDrops = OB.COMP.CustomView.extend({
     render: function() {
+      var i;
       var me = this;
       this.total= OB.DEC.add(this.model.get('startingCash'),this.model.get('totalTendered'));
       if(!this.model.get('total')){
@@ -48,7 +49,7 @@
          ]}
       ]}).$el);
 
-      for(var i=0; i< this.dropsdeps.length; i++) {
+      for(i=0; i< this.dropsdeps.length; i++) {
         var time = new Date(this.dropsdeps[i].time);
         if(this.dropsdeps[i].timeOffset){
           time.setMinutes(time.getMinutes()+ this.dropsdeps[i].timeOffset + time.getTimezoneOffset());
