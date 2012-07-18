@@ -46,7 +46,7 @@
     payments = OB.POS.modelterminal.get('payments');
 
     for (i = 0, max = payments.length; i < max; i++) {
-      this.toolbar.push({command: payments[i].searchKey, definition: getPayment(this.modalpayment, this.receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider), label: payments[i]._identifier});
+      this.toolbar.push({command: payments[i].payment.searchKey, definition: getPayment(this.modalpayment, this.receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].payment.provider), label: payments[i].payment._identifier});
     }
   };
 }());

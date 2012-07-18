@@ -83,8 +83,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modallogout",
         "components/modalcancel",
         "main",
-        //
-        "components/mockpayments",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/toolbarpayment",
         "components/toolbarscan", "components/keypadcoins", "components/keyboardorder",
@@ -144,7 +142,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/windows/tabpostprintclose", "closecash/windows/closecash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
-        "../../org.openbravo.client.application/js/utilities/ob-utilities-date" };
+        "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
+        // Payment providers
+        "components/mockpayments" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

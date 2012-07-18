@@ -4,24 +4,30 @@
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
+  
+  function payment(amount, modalpayment, receipt, key, name, provider) {
+    if (OB.DEC.compare(amount, OB.DEC.Zero) > 0) {
+      var providerview = OB.POS.paymentProviders[provider];
+      if (providerview) {
+        modalpayment.show(receipt, key, name, providerview, amount);
+      } else {
+        receipt.addPayment(new OB.Model.PaymentLine({
+          'kind': key,
+          'name': name,
+          'amount': amount
+        }));
+      }
+    }
+  }
 
   function getPayment(modalpayment, receipt, key, name, provider) {
     return ({
       'permission': key,
-      'stateless': provider,
+      'stateless': false,
       'action': function (txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? receipt.getPending() : amount;
-        var providerview = OB.POS.paymentProviders[provider];
-        if (providerview) {
-          modalpayment.show(receipt, key, name, providerview, amount);
-        } else {
-          receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': key,
-            'name': name,
-            'amount': amount
-          }));
-        }
+        payment(amount, modalpayment, receipt, key, name, provider);
       }
     });
   }
@@ -63,10 +69,10 @@
     initialize: function () {
       var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
 
-      this.modalpayment = new OB.UI.ModalPayment({
+      var modalpayment = new OB.UI.ModalPayment({
         parent: this.options.parent
       }).render();
-      $('body').append(this.modalpayment.$el);
+      $('body').append(modalpayment.$el);
 
       payments = OB.POS.modelterminal.get('payments');
       receipt = this.options.parent.receipt;
@@ -74,17 +80,17 @@
       for (i = 0, max = payments.length; i < max; i++) {
 
         // Data for cashexact command
-        if (payments[i].searchKey === 'OBPOS_payment.cash') {
+        if (payments[i].payment.searchKey === 'OBPOS_payment.cash') {
           defaultpayment = payments[i];
         }
-        allpayments[payments[i].searchKey] = payments[i];
+        allpayments[payments[i].payment.searchKey] = payments[i];
 
         Btn = OB.COMP.ButtonKey.extend({
-          command: payments[i].searchKey,
-          definition: getPayment(this.modalpayment, receipt, payments[i].searchKey, payments[i]._identifier, payments[i].provider),
+          command: payments[i].payment.searchKey,
+          definition: getPayment(modalpayment, receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].provider),
           classButtonActive: 'btnactive-green',
-          permission: payments[i].searchKey,
-          contentViewButton: [payments[i]._identifier]
+          permission: payments[i].payment.searchKey,
+          contentViewButton: [payments[i].payment._identifier]
         });
         inst = new Btn({
           parent: this.options.parent
@@ -99,11 +105,7 @@
           var exactpayment = allpayments[this.status] || defaultpayment;
           var amount = receipt.getPending();
           if (amount > 0 && exactpayment) {
-            receipt.addPayment(new OB.Model.PaymentLine({
-              'kind': exactpayment.searchKey,
-              'name': exactpayment._identifier,
-              'amount': amount
-            }));
+            payment(amount, modalpayment, receipt, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.provider);
           }
         }
       });

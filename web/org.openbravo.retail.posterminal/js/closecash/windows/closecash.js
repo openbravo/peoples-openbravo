@@ -28,7 +28,6 @@
           {kind: OB.COMP.ModalFinishClose},
           {kind: OB.COMP.ModalProcessReceipts},
           {kind: OB.DATA.Container, content: [
-               {kind: OB.DATA.PaymentMethod},
                {kind: OB.DATA.CloseCashPaymentMethod},
                {kind: OB.DATA.CashCloseReport},
                {kind: OB.COMP.HWManager, attr: {'templatecashup': 'res/printcashup.xml'}}

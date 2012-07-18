@@ -186,7 +186,7 @@
           me.set('payments', data);
           me.paymentnames = {};
           for (i = 0, max = data.length; i < max; i++) {
-            me.paymentnames[data[i].searchKey] = data[i]._identifier;
+            me.paymentnames[data[i].payment.searchKey] = data[i].payment._identifier;
           }
           me.triggerReady();
         }
