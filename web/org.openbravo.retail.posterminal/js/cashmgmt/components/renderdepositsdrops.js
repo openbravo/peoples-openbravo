@@ -71,7 +71,8 @@
               ]}
              ]}
           ]}).$el);
-          me.total= OB.DEC.sub(me.total,this.dropsdeps[i].drop);
+          this.total= OB.DEC.sub(this.total,this.dropsdeps[i].drop);
+          this.model.set('total', this.total);
         }else{
           this.$el.append(B(
             {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
@@ -90,7 +91,8 @@
                 ]}
                ]}
             ]}).$el);
-          me.total= OB.DEC.add(me.total,this.dropsdeps[i].deposit);
+          this.total= OB.DEC.add(this.total,this.dropsdeps[i].deposit);
+          this.model.set('total', this.total);
         }
         me.trigger('change:total');
       }
