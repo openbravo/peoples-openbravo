@@ -58,6 +58,11 @@
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <NAME><![CDATA[Payment Method]]></NAME>
+<!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <DESCRIPTION><![CDATA[Payment Method]]></DESCRIPTION>
+<!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <HELP><![CDATA[Defines each of the payment methods the terminal type can use. When creating the POS terminal based on this type, all payment methods defined here will be available to create different payment types. Note that even they are available, it is not mandatory to create all of them, so it would be possible to have different terminals based on same type but each of them with different payment types.
+
+Here it is defined the payment method (cash, card, etc...) and also which actions are allowed for Cash Management and Cash Up processes.
+]]></HELP>
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <AD_WINDOW_ID><![CDATA[8AC4D0AC73A44547ACE1FC6A39D00F7F]]></AD_WINDOW_ID>
 <!--4D9F5E9CC0014A96861CEFB64BBF013B-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -84,6 +89,8 @@
 <!--D01039797B054BE69CA5770B8CFB933C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D01039797B054BE69CA5770B8CFB933C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D01039797B054BE69CA5770B8CFB933C-->  <NAME><![CDATA[Terminal Type]]></NAME>
+<!--D01039797B054BE69CA5770B8CFB933C-->  <DESCRIPTION><![CDATA[Header of terminal type]]></DESCRIPTION>
+<!--D01039797B054BE69CA5770B8CFB933C-->  <HELP><![CDATA[Terminal type groups a set of allowed payment methods and defines which are the document types for each of the different documents that are generated in back end from POS transactions.]]></HELP>
 <!--D01039797B054BE69CA5770B8CFB933C-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--D01039797B054BE69CA5770B8CFB933C-->  <AD_WINDOW_ID><![CDATA[8AC4D0AC73A44547ACE1FC6A39D00F7F]]></AD_WINDOW_ID>
 <!--D01039797B054BE69CA5770B8CFB933C-->  <SEQNO><![CDATA[10]]></SEQNO>

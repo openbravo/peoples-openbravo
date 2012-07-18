@@ -325,6 +325,8 @@
 <!--12556DBF01154B3A85F77D7587583391-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--12556DBF01154B3A85F77D7587583391-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--12556DBF01154B3A85F77D7587583391-->  <NAME><![CDATA[C_Glitem_Dropdep_ID]]></NAME>
+<!--12556DBF01154B3A85F77D7587583391-->  <DESCRIPTION><![CDATA[G/L Item for Cash drop/deposit]]></DESCRIPTION>
+<!--12556DBF01154B3A85F77D7587583391-->  <HELP><![CDATA[In case of automated funds movement in cash up process, two new transactions for this movement are created both in current and destination financial accounts. These transactions will use this G/L Item.]]></HELP>
 <!--12556DBF01154B3A85F77D7587583391-->  <COLUMNNAME><![CDATA[C_Glitem_Dropdep_ID]]></COLUMNNAME>
 <!--12556DBF01154B3A85F77D7587583391-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--12556DBF01154B3A85F77D7587583391-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
@@ -536,6 +538,8 @@
 <!--2286CFE5E2074432B7723288554677F6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2286CFE5E2074432B7723288554677F6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2286CFE5E2074432B7723288554677F6-->  <NAME><![CDATA[Allowdontmove]]></NAME>
+<!--2286CFE5E2074432B7723288554677F6-->  <DESCRIPTION><![CDATA[Allow not to Move]]></DESCRIPTION>
+<!--2286CFE5E2074432B7723288554677F6-->  <HELP><![CDATA[Allows user to decide to keep all counted amount in current financial account.]]></HELP>
 <!--2286CFE5E2074432B7723288554677F6-->  <COLUMNNAME><![CDATA[Allowdontmove]]></COLUMNNAME>
 <!--2286CFE5E2074432B7723288554677F6-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--2286CFE5E2074432B7723288554677F6-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -782,6 +786,8 @@
 <!--349309D809134679955395B9655E8236-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--349309D809134679955395B9655E8236-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--349309D809134679955395B9655E8236-->  <NAME><![CDATA[Cash differences]]></NAME>
+<!--349309D809134679955395B9655E8236-->  <DESCRIPTION><![CDATA[G/L Item for cash differences]]></DESCRIPTION>
+<!--349309D809134679955395B9655E8236-->  <HELP><![CDATA[This is the G/L Item used in Cash Up process in case there are differences between the expected and counted amount in this payment type. In this case a new transaction with this G/L Item and difference between expected and counted amounts will be created.]]></HELP>
 <!--349309D809134679955395B9655E8236-->  <COLUMNNAME><![CDATA[C_Glitem_Diff_ID]]></COLUMNNAME>
 <!--349309D809134679955395B9655E8236-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--349309D809134679955395B9655E8236-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
@@ -1030,6 +1036,8 @@
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <NAME><![CDATA[Allowdeposits]]></NAME>
+<!--4C31D9531AF848058BF9E66963BCD3F5-->  <DESCRIPTION><![CDATA[Allow Deposits]]></DESCRIPTION>
+<!--4C31D9531AF848058BF9E66963BCD3F5-->  <HELP><![CDATA[When deposits are allowed, it will be possible for POS users to deposit money in current financial account through Cash Management process.]]></HELP>
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <COLUMNNAME><![CDATA[Allowdeposits]]></COLUMNNAME>
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--4C31D9531AF848058BF9E66963BCD3F5-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -1344,6 +1352,8 @@
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <NAME><![CDATA[GLItemForDeposits]]></NAME>
+<!--69DE59465CCE41F08575F610A4CE51C3-->  <DESCRIPTION><![CDATA[G/L Item for Deposits]]></DESCRIPTION>
+<!--69DE59465CCE41F08575F610A4CE51C3-->  <HELP><![CDATA[When creating a deposit, two transactions are created: one in current financial account deposit the amount and another one in the origin financial account to take it out from there. Both of these transactions will use this G/L Item.]]></HELP>
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <COLUMNNAME><![CDATA[C_Glitem_Deposits_ID]]></COLUMNNAME>
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--69DE59465CCE41F08575F610A4CE51C3-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
@@ -1378,6 +1388,8 @@
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <NAME><![CDATA[Allowdrops]]></NAME>
+<!--72D8142B8AB34C54B877E943CB42BD0A-->  <DESCRIPTION><![CDATA[Allow Withdrawals]]></DESCRIPTION>
+<!--72D8142B8AB34C54B877E943CB42BD0A-->  <HELP><![CDATA[When withdrawals are allowed, it will be possible for POS users to drop money from current financial account from Cash Management process.]]></HELP>
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <COLUMNNAME><![CDATA[Allowdrops]]></COLUMNNAME>
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--72D8142B8AB34C54B877E943CB42BD0A-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -1623,6 +1635,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <NAME><![CDATA[Automatemovementtoother]]></NAME>
+<!--8A3DC869E2B44812B74F17A14852CE56-->  <DESCRIPTION><![CDATA[Automate Movement to Other Account]]></DESCRIPTION>
+<!--8A3DC869E2B44812B74F17A14852CE56-->  <HELP><![CDATA[When this field is flagged, Cash Up process will transfer founds from the financial account in this payment method to the one defined in the close event. In case it is not flagged, Cash Up process will create a reconciliation but will keep all the amount in current financial account.
+
+If checked, different options on how to do this movement can be defined by setting the rest of fields in this group.]]></HELP>
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <COLUMNNAME><![CDATA[Automatemovementtoother]]></COLUMNNAME>
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--8A3DC869E2B44812B74F17A14852CE56-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -1690,8 +1706,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--96DE96195D564282AD390149B3F0C6C3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--96DE96195D564282AD390149B3F0C6C3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--96DE96195D564282AD390149B3F0C6C3-->  <NAME><![CDATA[Document Type for Returns]]></NAME>
-<!--96DE96195D564282AD390149B3F0C6C3-->  <DESCRIPTION><![CDATA[A value defining what sequence and process are used to handle this document.]]></DESCRIPTION>
-<!--96DE96195D564282AD390149B3F0C6C3-->  <HELP><![CDATA[The Document Type for Returns determines document sequence and processing rules.]]></HELP>
+<!--96DE96195D564282AD390149B3F0C6C3-->  <DESCRIPTION><![CDATA[Document type for returns]]></DESCRIPTION>
+<!--96DE96195D564282AD390149B3F0C6C3-->  <HELP><![CDATA[Document type used for return orders generated in back end when a POS ticket is marked to be returned.
+
+Document Types determine document sequence and processing rules.]]></HELP>
 <!--96DE96195D564282AD390149B3F0C6C3-->  <COLUMNNAME><![CDATA[C_Doctyperet_ID]]></COLUMNNAME>
 <!--96DE96195D564282AD390149B3F0C6C3-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--96DE96195D564282AD390149B3F0C6C3-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
@@ -2217,6 +2235,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <NAME><![CDATA[Keepfixedamount]]></NAME>
+<!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <DESCRIPTION><![CDATA[Keep Fixed Amount]]></DESCRIPTION>
+<!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <HELP><![CDATA[Allows to keep a fixed amount in the current financial account.]]></HELP>
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <COLUMNNAME><![CDATA[Keepfixedamount]]></COLUMNNAME>
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--BC0C496F16C94F51A37ECF9AD0C2BDFA-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -2320,6 +2340,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <NAME><![CDATA[Allowvariableamount]]></NAME>
+<!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <DESCRIPTION><![CDATA[Allow to keep a variable amount]]></DESCRIPTION>
+<!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <HELP><![CDATA[When checked, it will include in the cash up process the option to allow user to manually define the amount to be kept in current financial account.]]></HELP>
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <COLUMNNAME><![CDATA[Allowvariableamount]]></COLUMNNAME>
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--C5AD82AFB0A54FEDBD24F32375F2A4D5-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -2530,6 +2552,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <NAME><![CDATA[Allowmoveeverything]]></NAME>
+<!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <DESCRIPTION><![CDATA[Allow Move Everything]]></DESCRIPTION>
+<!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <HELP><![CDATA[Includes an option in cash up process to move everything from current financial account, so cash up process would set it to 0.]]></HELP>
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <COLUMNNAME><![CDATA[Allowmoveeverything]]></COLUMNNAME>
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--CC960982D9B14E0DAAC4D95EA3DBAA79-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -2705,6 +2729,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <NAME><![CDATA[GLItemForDrops]]></NAME>
+<!--D8DD5F42308E4A7893E5766DA2B0C383-->  <DESCRIPTION><![CDATA[G/L Item for Withdrawals]]></DESCRIPTION>
+<!--D8DD5F42308E4A7893E5766DA2B0C383-->  <HELP><![CDATA[When creating a withdrawal, two transactions are created: one in current financial account to take out the amount and another one in the destination financial account to deposit it there. Both of these transactions will use this G/L Item.]]></HELP>
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <COLUMNNAME><![CDATA[C_Glitem_Drops_ID]]></COLUMNNAME>
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--D8DD5F42308E4A7893E5766DA2B0C383-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
@@ -3195,6 +3221,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <NAME><![CDATA[Document type for Reconciliations]]></NAME>
+<!--F8B5212A3C17437DBCFFD7B808EFB140-->  <DESCRIPTION><![CDATA[Document type for Reconciliations]]></DESCRIPTION>
+<!--F8B5212A3C17437DBCFFD7B808EFB140-->  <HELP><![CDATA[When Cash Up process is executed from POS, a reconciliation including all transactions done in that terminal since last cash up is created. This is the document type used for that reconciliation.]]></HELP>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <COLUMNNAME><![CDATA[C_Doctyperecon_ID]]></COLUMNNAME>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--F8B5212A3C17437DBCFFD7B808EFB140-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>

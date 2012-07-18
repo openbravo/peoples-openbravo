@@ -6,6 +6,8 @@
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <NAME><![CDATA[POS Terminal Type]]></NAME>
+<!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <DESCRIPTION><![CDATA[Defines terminal properties]]></DESCRIPTION>
+<!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <HELP><![CDATA[POS Terminal Types are used to define a series of properties that will be shared among all terminals of the same type. In this way, definition of type is done once and reused by different terminals, each of these terminals will set the terminal specific configuration.]]></HELP>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--8AC4D0AC73A44547ACE1FC6A39D00F7F-->  <PROCESSING><![CDATA[N]]></PROCESSING>
