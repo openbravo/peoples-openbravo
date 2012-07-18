@@ -309,7 +309,6 @@
             window.location = href;
           } else {
             alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
-            return false;
           }
         }
       });
