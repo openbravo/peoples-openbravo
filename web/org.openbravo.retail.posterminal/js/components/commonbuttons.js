@@ -367,6 +367,7 @@
       this.body.append(this.contentview.$el);    
 
       OB.UTIL.adjustModalPosition(this.$el);
+      OB.UTIL.focusInModal(this.$el);
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element
@@ -435,6 +436,7 @@
       this.$el.append(body);
 
       OB.UTIL.adjustModalPosition(this.$el);
+      OB.UTIL.focusInModal(this.$el);
     },
     events: {
       'show': 'showEvent' // attach the click event as part of the element

@@ -116,6 +116,17 @@
     OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
   };
 
+  /* This will automatically set the focus in the first focusable item in the modal popup */
+  OB.UTIL.focusInModal = function (modalObj) {
+    modalObj.on('shown', function(e) {
+      var firstFocusableItem = $(this).find('input,select,button').filter(':visible:enabled:first');
+      if (firstFocusableItem) {
+        firstFocusableItem.focus();
+      }
+      return true;
+    });
+  };
+
   /* Twitter Bootstrap is not able to position in a good way a modal popup based on the 'left' and 'top' css parameters.
    * This function fixes it */
   OB.UTIL.adjustModalPosition = function (modalObj) {
