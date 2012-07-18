@@ -81,7 +81,7 @@ function validate(action) {
 	  var numRow = frm.elements[i].id.slice("CheckNum".length);
 	  var lp =document.getElementsByName('inpLastpriceso'+ numRow)[0];
 	  var qty = document.getElementsByName('inpquantity'+ numRow)[0];
-	  if ((!validateNumber(lp, 'inpLastpriceso', 'lpinvalid')) || (!validateNumber(qty, 'inpquantity', 'qtyinvalid'))) {
+	  if ((!isValidNumber(lp, 'inpLastpriceso', 'lpinvalid')) || (!isValidNumber(qty, 'inpquantity', 'qtyinvalid'))) {
 	    setWindowElementFocus(frm.elements[i]);
 	 	showJSMessage('APRM_NotValidNumber');
 	 	return false;
@@ -157,15 +157,15 @@ function validate(action) {
       return true;
     }
     
-    function validateNumber(input, name, idd) {
-   	  var id = input.name.slice(name.length);
-      var invalidSpan = document.getElementById(idd+id);
-      if (invalidSpan) {
-        var invalid = isNaN(Number(input.value));
-    	document.getElementById(idd+id).style.display = invalid ? 'block' : 'none';
-    	if (invalid) {
-    	  return false;
-    	}
+    function isValidNumber(input, name, idd) {
+      var id = input.name.slice(name.length);
+      var errorSpan = document.getElementById(idd+id);
+      if (errorSpan) {
+        var isValid = validateNumber(input.value, true, true);
+        errorSpan.style.display = isValid ? 'none' : 'block';
+        if (!isValid) {
+          return false;
+        }
       }
       return true;
     } 
@@ -465,7 +465,7 @@ function validate(action) {
                         <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmAttributesetinstanceIdxx" id="fieldmAttributesetinstanceId" value=""/><span id="fieldDescription">xxExtraLarge</span></td>
                         <td width="11%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmOfferIdxx" id="fieldMofferid" value=""/><span id="fieldOffername">xx15%descuentoFebrero</span></td>
                         <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmPricestdvaluexx" id="fieldPricestdvalue" value=""/><span id="fieldPricestd">xx15.345</span></td>
-                         <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" id="fieldLastpriceso" style="font-weight: normal;" name="inpLastpricesoxx" type="text" size="6" value="" outputformat="priceEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="validateNumber(this, 'inpLastpriceso','lpinvalid');" disabled="" class="xx" />
+                         <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" id="fieldLastpriceso" style="font-weight: normal;" name="inpLastpricesoxx" type="text" size="6" value="" outputformat="priceEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="isValidNumber(this, 'inpLastpriceso','lpinvalid');" disabled="" class="xx" />
                          	<span class="TextBox_MsgContainer_span" id="lpinvalidxx" style="display: none;" >
                          		<table class="TextBox_MsgContainer_table">
                           		  <tbody><tr class="TextBox_MsgContainer_tr">
@@ -478,7 +478,7 @@ function validate(action) {
                           		</table>
                         	</span>
                         </td>
-                        <td width="7%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" id="fieldQty" style="font-weight: normal;" name="inpquantityxx" type="text" size="5" value="0" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="validateNumber(this, 'inpquantity','qtyinvalid');" disabled="" />
+                        <td width="7%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" id="fieldQty" style="font-weight: normal;" name="inpquantityxx" type="text" size="5" value="0" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="isValidNumber(this, 'inpquantity','qtyinvalid');" disabled="" />
                          	<span class="TextBox_MsgContainer_span" id="qtyinvalidxx" style="display: none;">
                        		 	<table class="TextBox_MsgContainer_table">
                            			 <tbody><tr class="TextBox_MsgContainer_tr">
