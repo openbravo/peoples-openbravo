@@ -303,9 +303,14 @@
             target = $el.attr('target');
 
         if (target === '_self') {
-          e.preventDefault();
-          OB.UTIL.showLoading(true);
-          window.location = href;
+          if (OB.POS.modelterminal.get('connectedToERP')) {
+            e.preventDefault();
+            OB.UTIL.showLoading(true);
+            window.location = href;
+          } else {
+            alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
+            return false;
+          }
         }
       });
     },
