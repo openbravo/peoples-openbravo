@@ -102,7 +102,7 @@
       ordersToJson.push(order.serializeToJSON());
     });
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
-    if (OB.UTIL.connectedToERP) {
+    if (OB.POS.modelterminal.get('connectedToERP')) {
       this.proc.exec({
         order: ordersToJson
       }, function (data, message) {
@@ -129,10 +129,9 @@
     }
   };
 
-  OB.UTIL.connectedToERP = null;
-
   OB.UTIL.checkConnectivityStatus = function() {
-    var ajaxParams;
+    var ajaxParams,
+    currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
     if (navigator.onLine) {
       // It can be a false positive, make sure with the ping
       ajaxParams = {
@@ -141,16 +140,14 @@
           context: $("#status"),
           dataType: "json",
           error: function (req, status, ex) {
-            if (OB.UTIL.connectedToERP !== false) {
-              OB.UTIL.connectedToERP = false;
+            if (currentlyConnected !== false) {
               if (OB.POS.modelterminal) {
                 OB.POS.modelterminal.triggerOffLine();
               }
             }
           },
           success: function (data, status, req) {
-            if (OB.UTIL.connectedToERP !== true) {
-              OB.UTIL.connectedToERP = true;
+            if (currentlyConnected !== true) {
               if (OB.POS.modelterminal) {
                 OB.POS.modelterminal.triggerOnLine();
               }
@@ -162,8 +159,7 @@
       };
       $.ajax(ajaxParams);
     } else {
-      if (OB.UTIL.connectedToERP) {
-        OB.UTIL.connectedToERP = false;
+      if (currentlyConnected) {
         if (OB.POS.modelterminal) {
           OB.POS.modelterminal.triggerOffLine();
         }

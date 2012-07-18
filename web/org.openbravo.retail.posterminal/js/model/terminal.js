@@ -47,7 +47,8 @@
       location: null,
       pricelist: null,
       pricelistversion: null,
-      currency: null
+      currency: null,
+      connectedToERP: null
     },
 
     initialize: function() {
@@ -356,10 +357,12 @@
     },
 
     triggerOnLine: function() {
+      this.set('connectedToERP', true);
       this.trigger('online');
     },
 
     triggerOffLine: function() {
+      this.set('connectedToERP', false);
       this.trigger('offline');
     },
 

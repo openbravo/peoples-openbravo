@@ -145,7 +145,7 @@
               criteria = {
                 hasbeenpaid:'Y'
               };
-            if (OB.UTIL.connectedToERP) {
+            if (OB.POS.modelterminal.get('connectedToERP')) {
               OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
                 var successCallback, errorCallback;
                 if (!ordersPaidNotProcessed) {
