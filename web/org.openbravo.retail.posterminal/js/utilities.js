@@ -132,9 +132,10 @@
   OB.UTIL.connectedToERP = null;
 
   OB.UTIL.checkConnectivityStatus = function() {
+    var ajaxParams;
     if (navigator.onLine) {
       // It can be a false positive, make sure with the ping
-      $.ajaxSetup({
+      ajaxParams = {
           async: true,
           cache: false,
           context: $("#status"),
@@ -158,8 +159,8 @@
           timeout: 5000,
           type: "GET",
           url: "../../security/SessionActive?id=0"
-      });
-      $.ajax();
+      };
+      $.ajax(ajaxParams);
     } else {
       if (OB.UTIL.connectedToERP) {
         OB.UTIL.connectedToERP = false;
