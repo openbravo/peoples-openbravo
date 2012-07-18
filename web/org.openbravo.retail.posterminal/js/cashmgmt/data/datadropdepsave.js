@@ -23,7 +23,6 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
           me.context.trigger('print');
-          window.location=OB.POS.hrefWindow('retail.pointofsale');
         }
        });
      }, this);

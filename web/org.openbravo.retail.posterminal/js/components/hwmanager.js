@@ -54,6 +54,14 @@
     }
   }
 
+  function cashMgmthwcallback(e) {
+    if (e.result==='OK') {
+      window.location=OB.POS.hrefWindow('retail.pointofsale');
+    }else if (e.exception) {
+      OB.UTIL.showError(e.exception.message);
+    }
+  }
+
   OB.COMP.HWManager.prototype.printLine = function() {
     var line = this.line;
     if (line) {
@@ -104,7 +112,7 @@
     this.templatecashmgmt.getData(function (data) {
       OB.POS.hwserver.print(data, {
         cashmgmt: depsdropstosend
-      }, hwcallback);
+      }, cashMgmthwcallback);
     });
   };
 
