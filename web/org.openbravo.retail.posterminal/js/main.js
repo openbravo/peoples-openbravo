@@ -142,7 +142,7 @@
     });
 
     OB.UTIL.checkConnectivityStatus(); //Initial check;
-    setInterval(OB.UTIL.checkConnectivityStatus, 30*1000);
+    setInterval(OB.UTIL.checkConnectivityStatus, 5000);
   });
 
 }());
