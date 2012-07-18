@@ -915,6 +915,12 @@ public class AdvancedQueryBuilder {
           .getVariablesSecureApp(), param,
           RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
               .getRequestParameter("windowId") : "");
+
+      // not found, try to get the parameter directly from the request object
+      if (paramValue.equals("") && RequestContext.get().getRequestParameter(param) != null) {
+        paramValue = RequestContext.get().getRequestParameter(param);
+      }
+
       localWhereClause = prefix + getTypedParameterAlias() + suffix;
       typedParameters.add(paramValue);
     }

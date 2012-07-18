@@ -102,7 +102,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     });
 
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
-
+    
+    this.editFormProperties = {
+      view: this.view.parentWindow.activeView
+    };
+    
     this.Super('initWidget', arguments);
   },
 

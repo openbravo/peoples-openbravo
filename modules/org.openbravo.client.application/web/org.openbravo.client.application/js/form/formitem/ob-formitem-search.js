@@ -54,11 +54,15 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         }
       }
       targetFld._hasChanged = true;
-      targetFld.form.handleItemChange(targetFld);
+      if (targetFld.form.handleItemChange) {
+        targetFld.form.handleItemChange(targetFld);
+      }
       // fire with a delay otherwise results in strange errors
       targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
 
-      targetFld.form.focusInNextItem(targetFld.name);
+      if (targetFld.form.focusInNextItem) {
+        targetFld.form.focusInNextItem(targetFld.name);
+      }
     }
     isc.OBSearchItem.openedWindow.close();
     isc.OBSearchItem.openSearchItem = null;
@@ -173,7 +177,7 @@ isc.OBSearchItem.addProperties({
     var hidden, i;
     var displayedValue = '';
 
-    if (this.valueMap[this.getValue()]) {
+    if (this.valueMap && this.valueMap[this.getValue()]) {
       displayedValue = this.valueMap[this.getValue()];
     }
 

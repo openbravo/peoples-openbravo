@@ -605,6 +605,14 @@ isc.OBSelectorItem.addProperties({
     // on purpose not passing the third boolean param
     isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
 
+    if (this.form.view.standardWindow) {
+      isc.addProperties(requestProperties.params, {
+        windowId: this.form.view.standardWindow.windowId,
+        tabId: this.form.view.tabId,
+        moduleId: this.form.view.moduleId
+      });
+    }
+    
     // also add the special ORG parameter
     if (requestProperties.params.inpadOrgId) {
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
