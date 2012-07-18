@@ -107,7 +107,11 @@ public class CashCloseProcessor {
       transaction.setStatus("RPPC");
       transaction.setReconciliation(reconciliation);
 
-      transaction.getFinPayment().setStatus("RPPC");
+      // not all transactions have payment (i.e. deposits don't have), if there is payment, set it
+      // as cleared
+      if (transaction.getFinPayment() != null) {
+        transaction.getFinPayment().setStatus("RPPC");
+      }
     }
 
   }
