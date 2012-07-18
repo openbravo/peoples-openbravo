@@ -129,6 +129,7 @@
   });
 
   $(document).ready(function () {
+    var pageHideCallback, beforeUnloadCallback;
     // Entry Point
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
     modelterminal.load();
@@ -143,6 +144,22 @@
 
     OB.UTIL.checkConnectivityStatus(); //Initial check;
     setInterval(OB.UTIL.checkConnectivityStatus, 5000);
+    
+    pageHideCallback = function() {
+      if (!OB.POS.modelterminal.get('connectedToERP')) {
+        alert (OB.I18N.getLabel('OBPOS_CannotCloseWindow')); 
+        return false; 
+      }
+    };
+    beforeUnloadCallback = function() {
+      if (!OB.POS.modelterminal.get('connectedToERP')) {
+        return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow'); 
+      } 
+    };
+    
+    $(window).on('pagehide',pageHideCallback);
+    $(window).on('beforeunload', beforeUnloadCallback);
+    
   });
 
 }());
