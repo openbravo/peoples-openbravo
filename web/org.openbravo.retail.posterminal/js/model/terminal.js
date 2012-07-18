@@ -53,10 +53,10 @@
     initialize: function() {
       var me = this;
       $(window).bind('online', function() {
-        me.triggerOnLine();
+        OB.UTIL.checkConnectivityStatus();
       });
       $(window).bind('offline', function() {
-        me.triggerOffLine();
+        OB.UTIL.checkConnectivityStatus();
       });
     },
 
