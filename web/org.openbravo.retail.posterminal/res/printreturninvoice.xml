@@ -92,7 +92,7 @@
     <line>
       <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_breakdown'))%></text>
       <text align ="left" length="9"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_base'))%></text>
-      <text align ="left" length="9"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_VAT'))%></text>
+      <text align ="left" length="9"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_TAX'))%></text>
       <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
     </line>
     <line>
