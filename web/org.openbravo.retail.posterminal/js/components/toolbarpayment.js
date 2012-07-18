@@ -6,7 +6,7 @@
   OB.UI = window.OB.UI || {};
   
   function payment(amount, modalpayment, receipt, key, name, provider) {
-    if (OB.DEC.compare(amount, OB.DEC.Zero) > 0) {
+    if (OB.DEC.compare(amount) > 0) {
       var providerview = OB.POS.paymentProviders[provider];
       if (providerview) {
         modalpayment.show(receipt, key, name, providerview, amount);

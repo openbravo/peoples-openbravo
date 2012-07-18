@@ -9,6 +9,7 @@
       uOM: null,
       qty: OB.DEC.Zero,
       price: OB.DEC.Zero,
+      priceList: OB.DEC.Zero,
       gross: OB.DEC.Zero
     },
 
@@ -19,6 +20,7 @@
         this.set('uOM', attributes.uOM);
         this.set('qty', attributes.qty);
         this.set('price', attributes.price);
+        this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
         if (attributes.product && attributes.product.price) {
           this.set('grossListPrice', attributes.product.price.listPrice);
@@ -32,6 +34,15 @@
 
     printPrice: function() {
       return OB.I18N.formatCurrency(this.get('price'));
+    },
+    
+    printDiscount: function () {
+      var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
+      if (OB.DEC.compare(d) === 0) {
+        return '';      
+      } else {
+        return OB.I18N.formatCurrency(d);
+      }
     },
 
     calculateGross: function() {
@@ -320,7 +331,7 @@
 
       if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
-        if (OB.DEC.compare(price) > 0) {
+        if (OB.DEC.compare(price) >= 0) {
           var me = this;
           // sets the new price
           line.set('price', price);
@@ -398,7 +409,8 @@
         product: p,
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
-        price: OB.DEC.number(p.get('price').get('listPrice'))
+        price: OB.DEC.number(p.get('price').get('listPrice')),
+        priceList: OB.DEC.number(p.get('price').get('listPrice'))
       });
       newline.calculateGross();
 

@@ -12,10 +12,14 @@
 
     this.receipt.on('discount', function(line, percentage) {
 
-      if (line && OB.DEC.compare(percentage, OB.DEC.Zero) > 0) {
-        this.receipt.setPrice(line, OB.DEC.div(
-            OB.DEC.mul(line.get('price'), OB.DEC.sub(OB.DEC.number(100), percentage)),
-            OB.DEC.number(100)));
+      if (line) {
+        if (OB.DEC.compare(percentage) > 0 && OB.DEC.compare(OB.DEC.sub(percentage, OB.DEC.number(100))) <= 0) {
+          this.receipt.setPrice(line, OB.DEC.div(
+              OB.DEC.mul(line.get('priceList'), OB.DEC.sub(OB.DEC.number(100), percentage)),
+              OB.DEC.number(100)));
+        } else if (OB.DEC.compare(percentage) === 0) {
+          this.receipt.setPrice(line, line.get('priceList'));
+        }
       }
     }, this);
   };

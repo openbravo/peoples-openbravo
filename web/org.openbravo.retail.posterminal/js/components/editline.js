@@ -144,7 +144,7 @@
                 },
                 content: [{
                   tag: 'span',
-                  content: []
+                  id: 'editlinediscount'
                 }]
               }]
             }, {
@@ -238,7 +238,8 @@
         this.editlineimage.img = this.line.get('product').get('img');
         this.editlineimage.render();
         this.editlinename.text(this.line.get('product').get('_identifier'));
-        this.editlineqty.text(this.line.printQty());
+        this.editlineqty.text(this.line.printQty());       
+        this.editlinediscount.text(this.line.printDiscount());
         this.editlineprice.text(this.line.printPrice());
         this.editlinegross.text(this.line.printGross());
       } else {
@@ -249,6 +250,7 @@
         this.editlineimage.render();
         this.editlinename.empty();
         this.editlineqty.empty();
+        this.editlinediscount.empty();
         this.editlineprice.empty();
         this.editlinegross.empty();
       }
