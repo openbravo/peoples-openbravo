@@ -106,6 +106,8 @@ public class CashCloseProcessor {
       FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
       transaction.setStatus("RPPC");
       transaction.setReconciliation(reconciliation);
+
+      transaction.getFinPayment().setStatus("RPPC");
     }
 
   }
