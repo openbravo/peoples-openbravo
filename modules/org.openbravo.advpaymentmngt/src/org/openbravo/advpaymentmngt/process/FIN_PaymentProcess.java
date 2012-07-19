@@ -342,7 +342,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 // when generating credit for a BP SO_CreditUsed is also updated
                 if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
                     && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null) {
+                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
+                    && !paymentDetail.isRefund()) {
                   // BP SO_CreditUsed
                   if (isReceipt) {
                     decreaseCustomerCredit(businessPartner, amount);
