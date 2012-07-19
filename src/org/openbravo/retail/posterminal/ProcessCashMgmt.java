@@ -128,6 +128,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         respArray.put(jsonData);
       }
     } finally {
+      OBDal.getInstance().flush();
       OBContext.restorePreviousMode();
     }
 
