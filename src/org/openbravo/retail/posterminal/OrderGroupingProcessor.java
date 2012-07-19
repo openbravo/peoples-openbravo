@@ -220,11 +220,14 @@ public class OrderGroupingProcessor {
           paymentScheduleDetail);
       paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
 
+      paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
+          paymentScheduleDetail.getAmount()));
+
       FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
           FIN_OrigPaymentScheduleDetail.class);
       origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
       origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
-      origDetail.setAmount(order.getGrandTotalAmount());
+      origDetail.setAmount(paymentScheduleDetail.getAmount());
       origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
 
       OBDal.getInstance().save(origDetail);
@@ -345,9 +348,8 @@ public class OrderGroupingProcessor {
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
-    paymentSchedule.setAmount(grossamount);
-    paymentSchedule.setPaidAmount(grossamount);
-    origPaymentSchedule.setAmount(grossamount);
+    paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
+    origPaymentSchedule.setAmount(paymentSchedule.getAmount());
 
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));
