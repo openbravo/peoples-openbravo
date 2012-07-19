@@ -202,37 +202,41 @@ public class OrderGroupingProcessor {
   protected boolean processPaymentsFromOrder(Invoice invoice, Order order,
       FIN_PaymentSchedule paymentScheduleInvoice, Fin_OrigPaymentSchedule originalPaymentSchedule) {
     FIN_PaymentSchedule orderPaymentSchedule = null;
+    // In case order is payed using different payment methods, payment schedule list size will be >1
     for (FIN_PaymentSchedule sched : order.getFINPaymentScheduleList()) {
       orderPaymentSchedule = sched;
+
+      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
+      for (FIN_PaymentScheduleDetail detail : sched
+          .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+        paymentScheduleDetail = detail; // XXX: assuming just 1 oder payment sched??
+      }
+      if (paymentScheduleDetail == null) {
+        log.error("Couldn't find payment schedule detail for order : " + order.getDocumentNo()
+            + ". Ignoring order");
+        return false;
+      }
+      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+          paymentScheduleDetail);
+      paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+
+      FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
+          FIN_OrigPaymentScheduleDetail.class);
+      origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
+      origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
+      origDetail.setAmount(order.getGrandTotalAmount());
+      origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
+
+      OBDal.getInstance().save(origDetail);
     }
+
     if (orderPaymentSchedule == null) {
       log.error("Couldn't find payment schedule for order: " + order.getDocumentNo()
           + ". Ignoring order");
       return false;
+    } else {
+      return true;
     }
-    FIN_PaymentScheduleDetail paymentScheduleDetail = null;
-    for (FIN_PaymentScheduleDetail detail : orderPaymentSchedule
-        .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
-      paymentScheduleDetail = detail;
-    }
-    if (paymentScheduleDetail == null) {
-      log.error("Couldn't find payment schedule detail for order: " + order.getDocumentNo()
-          + ". Ignoring order");
-      return false;
-    }
-    paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-        paymentScheduleDetail);
-    paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-
-    FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
-        FIN_OrigPaymentScheduleDetail.class);
-    origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
-    origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
-    origDetail.setAmount(order.getGrandTotalAmount());
-    origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
-
-    OBDal.getInstance().save(origDetail);
-    return true;
   }
 
   protected List<InvoiceLineTax> createInvoiceLineTaxes(OrderLine orderLine) {
