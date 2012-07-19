@@ -3,6 +3,8 @@ package org.openbravo.retail.posterminal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
@@ -192,12 +194,13 @@ public class POSUtils {
         "documentNo like :value");
     obqOrders.setNamedParameter("value", POSTerminal.getOrderdocnoPrefix() + "%");
 
-    List<Order> POSOrders = obqOrders.list();
+    ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
     int maxNumber = 0;
-    for (Order order : POSOrders) {
+    while (POSOrders.next()) {
+      Order order = (Order) POSOrders.get()[0];
       String documentNo = order.getDocumentNo();
       // documentNo = prefix + '/' + number
-      String onlyNumber = documentNo.substring(searchKey.length() + 1);
+      String onlyNumber = documentNo.substring(POSTerminal.getOrderdocnoPrefix().length() + 1);
       try {
         int number = Integer.parseInt(onlyNumber);
         if (number > maxNumber) {
