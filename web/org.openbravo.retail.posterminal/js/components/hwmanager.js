@@ -67,6 +67,7 @@
     if (e.result==='OK') {
       window.location=OB.POS.hrefWindow('retail.pointofsale');
     }else if (e.exception) {
+      OB.UTIL.showLoading(false);
       OB.UTIL.showError(e.exception.message);
     }
   }

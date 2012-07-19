@@ -25,13 +25,16 @@
         window.location=OB.POS.hrefWindow('retail.pointofsale');
         return true;
       }
+      OB.UTIL.showLoading(true);
        this.proc.exec({
           depsdropstosend:me.context.depsdropstosend
         }, function (data, message) {
         if (data && data.exception) {
+          OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
           me.context.trigger('print');
+          //Disable loading in hwmanager print callback
         }
        });
      }, this);
