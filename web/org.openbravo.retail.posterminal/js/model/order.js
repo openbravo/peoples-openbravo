@@ -630,22 +630,10 @@
       documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
       documentseqstr = OB.UTIL.padNumber(documentseq, 5);
       OB.POS.modelterminal.set('documentsequence', documentseq);
-      this.updateDocumentSequenceInDB(documentseq);
       order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
 
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       return order;
-    },
-
-    updateDocumentSequenceInDB: function(documentseq) {
-      var docSeqModel, criteria = {
-        'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
-      };
-      OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
-        docSeqModel = documentSequenceList.models[0];
-        docSeqModel.set('documentSequence', documentseq);
-        OB.Dal.save(docSeqModel, null, null);
-      });
     },
 
     addNewOrder: function() {

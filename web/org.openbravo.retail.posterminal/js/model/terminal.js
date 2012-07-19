@@ -280,29 +280,58 @@
     },
 
     setDocumentSequence: function() {
-      var me = this,
-          maxDocumentSequence, criteria = {
-          'hasbeenpaid': 'N'
-          };
+      var me = this;
+      // Obtains the persisted document number (documentno of the last processed order)
+      OB.Dal.find(OB.Model.DocumentSequence, {'posSearchKey':OB.POS.modelterminal.get('terminal').searchKey}, function(documentsequence) {
+        var lastInternalDocumentSequence, max;
+        if (documentsequence && documentsequence.length > 0) {
+          lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
+          // Compares the persisted document number with the fetched from the server
+          if (lastInternalDocumentSequence > OB.POS.modelterminal.get('terminal').lastDocumentNumber) {
+            max = lastInternalDocumentSequence;
+          } else {
+            max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+          }
+          // Compares the maximum with the document number of the paid pending orders
+          me.compareDocSeqWithPendingOrdersAndSave(max);
+        } else {
+          max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+          // Compares the maximum with the document number of the paid pending orders
+          me.compareDocSeqWithPendingOrdersAndSave(max);
+        }
+
+      }, function() {
+        var max = OB.POS.modelterminal.get('terminal').lastDocumentNumber;
+        // Compares the maximum with the document number of the paid pending orders
+        me.compareDocSeqWithPendingOrdersAndSave(max);
+      });
+    },
+
+    compareDocSeqWithPendingOrdersAndSave: function(maxDocumentSequence) {
+      var me = this;
       // compare the last document number returned from the ERP with
       // the last document number of the unprocessed pending lines (if any)
-      OB.Dal.find(OB.Model.Order, criteria, function(fetchedOrderList) {
-        var criteria;
+      OB.Dal.find(OB.Model.Order, {}, function(fetchedOrderList) {
+        var criteria, maxDocumentSequencePendingOrders;
         if (!fetchedOrderList || fetchedOrderList.length === 0) {
           // There are no pending orders, the initial document sequence
           // will be the one fetched from the database
-          me.saveDocumentSequenceAndGo(OB.POS.modelterminal.get('terminal').lastDocumentNumber);
+          me.saveDocumentSequenceAndGo(maxDocumentSequence);
         } else {
           // There are pending orders. The document sequence will be set
           // to the maximum of the pending order document sequence and the
           // document sequence retrieved from the server
-          maxDocumentSequence = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
-          me.saveDocumentSequenceAndGo(maxDocumentSequence);
+          maxDocumentSequencePendingOrders = me.getMaxDocumentSequenceFromPendingOrders(fetchedOrderList.models);
+          if (maxDocumentSequencePendingOrders > maxDocumentSequence) {
+            me.saveDocumentSequenceAndGo(maxDocumentSequencePendingOrders);
+          } else {
+            me.saveDocumentSequenceAndGo(maxDocumentSequence);
+          }
         }
       }, function () {
         // If c_order does not exist yet, go with the sequence
         // number fetched from the server
-        me.saveDocumentSequenceAndGo(OB.POS.modelterminal.get('terminal').lastDocumentNumber);
+        me.saveDocumentSequenceAndGo(maxDocumentSequence);
       });
     },
 

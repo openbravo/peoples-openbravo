@@ -187,4 +187,25 @@
     }
   };
 
+  OB.UTIL.updateDocumentSequenceInDB = function(documentNo) {
+    var docSeqModel, criteria = {
+      'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+    };
+    OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
+      var posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
+      orderDocumentSequence = parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10), docSeqModel;
+      if (documentSequenceList) {
+        docSeqModel = documentSequenceList.at(0);
+        if (orderDocumentSequence > docSeqModel.get('documentSequence')) {
+          docSeqModel.set('documentSequence', orderDocumentSequence);
+        }
+      } else {
+        docSeqModel = new OB.Model.DocumentSequence();
+        docSeqModel.set('posSearchKey', OB.POS.modelterminal.get('terminal').searchKey);
+        docSeqModel.set('documentSequence', orderDocumentSequence);
+      }
+      OB.Dal.save(docSeqModel, null, null);
+    });
+  };
+
 }());

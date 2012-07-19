@@ -27,6 +27,8 @@
 
       this.receipt.set('hasbeenpaid', 'Y');
 
+      OB.UTIL.updateDocumentSequenceInDB(docno);
+
       delete this.receipt.attributes.json;
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
