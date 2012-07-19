@@ -183,24 +183,21 @@ public class POSUtils {
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey) {
-
-    OBQuery<OBPOSApplications> obqPOSTerminal = OBDal.getInstance().createQuery(
-        OBPOSApplications.class, "searchKey = :value");
-    obqPOSTerminal.setNamedParameter("value", searchKey);
-    List<OBPOSApplications> POSTerminals = obqPOSTerminal.list();
-    OBPOSApplications POSTerminal = POSTerminals.get(0);
+    OBPOSApplications POSTerminal = POSUtils.getTerminal(searchKey);
 
     OBQuery<Order> obqOrders = OBDal.getInstance().createQuery(Order.class,
-        "documentNo like :value");
-    obqOrders.setNamedParameter("value", POSTerminal.getOrderdocnoPrefix() + "%");
+        "em_obpos_applications_id = :value");
+    obqOrders.setNamedParameter("value", POSTerminal.getId());
 
     ScrollableResults POSOrders = obqOrders.scroll(ScrollMode.FORWARD_ONLY);
     int maxNumber = 0;
+    int i = 0;
+    int prefixLength = POSTerminal.getOrderdocnoPrefix().length() + 1;
     while (POSOrders.next()) {
-      Order order = (Order) POSOrders.get()[0];
+      Order order = (Order) POSOrders.get(0);
       String documentNo = order.getDocumentNo();
       // documentNo = prefix + '/' + number
-      String onlyNumber = documentNo.substring(POSTerminal.getOrderdocnoPrefix().length() + 1);
+      String onlyNumber = documentNo.substring(prefixLength);
       try {
         int number = Integer.parseInt(onlyNumber);
         if (number > maxNumber) {
@@ -209,6 +206,10 @@ public class POSUtils {
       } catch (NumberFormatException e) {
         // If the parsed result is not a number (i.e. because the searchKey is a
         // prefix of another POS searchKey, the result is ignored
+      }
+      i++;
+      if (i % 100 == 0) {
+        OBDal.getInstance().getSession().clear();
       }
     }
     return maxNumber;
