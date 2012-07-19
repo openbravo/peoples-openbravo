@@ -272,6 +272,7 @@ public class OrderLoader {
       lineReferences.get(i).setInvoicedQuantity(qty);
       line.setInvoice(invoice);
       line.setSalesOrderLine(lineReferences.get(i));
+      line.setGrossAmount(lineReferences.get(i).getLineGrossAmount());
       invoice.getInvoiceLineList().add(line);
 
       InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);

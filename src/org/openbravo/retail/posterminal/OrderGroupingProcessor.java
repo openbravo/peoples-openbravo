@@ -250,6 +250,7 @@ public class OrderGroupingProcessor {
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
     invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+    invoiceLine.setGrossAmount(orderLine.getLineGrossAmount());
 
     invoiceLine.setSalesOrderLine(orderLine);
     invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
