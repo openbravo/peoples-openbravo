@@ -47,14 +47,14 @@ public class CashCloseReport extends JSONProcessSimple {
     // Total sales computation
 
     String hqlTaxes = "select ordertax.tax.id, ordertax.tax.name, sum(ordertax.taxAmount) from OrderTax as ordertax "
-        + "join ordertax.salesOrder as ord,  "
-        + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
-        + "inner join det.paymentDetails as sdet "
-        + "inner join sdet.finPayment as pay, "
-        + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-        + "where trans.reconciliation is null and ord.documentType.id=? "
-        + "and ord.obposApplications.id=?"
-        + " and sched.order=ord and trans.finPayment=pay "
+        + " where exists (select 1 "
+        + "                 from FIN_Payment_ScheduleDetail d"
+        + "              where d.orderPaymentSchedule.order = ordertax.salesOrder"
+        + "                 and exists (select 1 "
+        + "                               from FIN_Finacc_Transaction t"
+        + "                              where t.reconciliation is null"
+        + "                                and t.finPayment = d.paymentDetails.finPayment))"
+        + "and ordertax.salesOrder.documentType.id=? and ordertax.salesOrder.obposApplications.id=? "
         + "group by ordertax.tax.id, ordertax.tax.name";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     salesTaxesQuery.setString(0,
@@ -72,12 +72,14 @@ public class CashCloseReport extends JSONProcessSimple {
       totalSalesTax = totalSalesTax.add((BigDecimal) sales[2]);
     }
 
-    String hqlSales = "select sum(ord.summedLineAmount) from Order as ord,  "
-        + "org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail as det join det.orderPaymentSchedule as sched "
-        + "inner join det.paymentDetails as sdet inner join sdet.finPayment as pay, "
-        + "org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
-        + "where trans.reconciliation is null and ord.documentType.id=? "
-        + "and ord.obposApplications.id=?" + " and sched.order=ord and trans.finPayment=pay ";
+    String hqlSales = "select sum(ord.summedLineAmount) from Order as ord"
+        + " where exists (select 1 from FIN_Payment_ScheduleDetail d"
+        + "              where d.orderPaymentSchedule.order = ord"
+        + "                 and exists (select 1 "
+        + "                               from FIN_Finacc_Transaction t"
+        + "                              where t.reconciliation is null"
+        + "                                and t.finPayment = d.paymentDetails.finPayment))"
+        + "and ord.documentType.id=? and ord.obposApplications.id=? ";
 
     Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
     salesQuery.setString(0,
