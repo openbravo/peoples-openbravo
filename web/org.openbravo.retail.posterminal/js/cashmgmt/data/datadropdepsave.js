@@ -33,6 +33,7 @@
           OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
+          me.context.depsdropstosend = [];
           me.context.trigger('print');
           //Disable loading in hwmanager print callback
         }
