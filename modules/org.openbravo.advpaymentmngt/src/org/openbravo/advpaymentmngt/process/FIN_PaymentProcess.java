@@ -712,7 +712,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
                   && paymentScheduleDetail.getOrderPaymentSchedule() == null
                   && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
-                  && restorePaidAmounts) {
+                  && restorePaidAmounts && !paymentDetail.isRefund()) {
                 // BP SO_CreditUsed
                 if (isReceipt) {
                   increaseCustomerCredit(businessPartner, amount);
