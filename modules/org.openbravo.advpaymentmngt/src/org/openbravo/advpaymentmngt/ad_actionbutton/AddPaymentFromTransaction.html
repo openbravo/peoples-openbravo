@@ -668,7 +668,11 @@ function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         var resp = decodeJSON(XMLHttpRequestObj.responseText);
-          document.getElementById('paramExchangeRate').value=resp.exchangeRate;
+        if (resp.exchangeRate) {
+          document.getElementById('paramExchangeRate').value=applyFormatJSToOBMasked(resp.exchangeRate, resp.formatOutput);
+        } else {
+          document.getElementById('paramExchangeRate').value='';
+        }
       } 
       updateConvertedAmounts();
       displayMulticurrencyControls();
@@ -1261,7 +1265,7 @@ function closeProcessPayment() {
               <td class="Textbox_ContentCell">
                 <table style="border: 0px none; border-collapse: collapse;">
                   <tr><td style="padding-top: 0px;">
-                    <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="generalQtyEdition" onchange="updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpExchangeRate" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramExchangeRate"/>
+                    <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="generalQtyRelation" onchange="updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpExchangeRate" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramExchangeRate"/>
                   </td></tr>
                 </table>
                 <span id="paramExchangeRateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
