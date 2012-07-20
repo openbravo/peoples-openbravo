@@ -513,6 +513,20 @@ public class OrderLoader {
       paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
       OBDal.getInstance().save(paymentSchedule);
 
+      FIN_PaymentSchedule paymentScheduleInvoice = null;
+      if (invoice != null) {
+        paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+        paymentScheduleInvoice.setCurrency(order.getCurrency());
+        paymentScheduleInvoice.setInvoice(invoice);
+        paymentScheduleInvoice.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
+        paymentScheduleInvoice.setAmount(amt);
+        paymentScheduleInvoice.setOutstandingAmount(amt);
+        paymentScheduleInvoice.setDueDate(order.getOrderDate());
+        paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
+
+        OBDal.getInstance().save(paymentScheduleInvoice);
+      }
+
       for (int i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         OBPOSAppPayment paymentType = null;
@@ -529,7 +543,8 @@ public class OrderLoader {
               + posTerminalId + " didn't have a payment defined with name: " + paymentTypeName);
           return jsonResponse;
         } else {
-          processPayments(paymentSchedule, order, invoice, paymentType, payment);
+          processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
+              payment);
         }
       }
 
@@ -538,7 +553,8 @@ public class OrderLoader {
 
   }
 
-  protected void processPayments(FIN_PaymentSchedule paymentSchedule, Order order, Invoice invoice,
+  protected void processPayments(FIN_PaymentSchedule paymentSchedule,
+      FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
       OBPOSAppPayment paymentType, JSONObject payment) throws JSONException {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
@@ -553,21 +569,10 @@ public class OrderLoader {
           paymentScheduleDetail);
 
       OBDal.getInstance().save(paymentScheduleDetail);
-      if (invoice != null) {
-        FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
-            FIN_PaymentSchedule.class);
-        paymentScheduleInvoice.setCurrency(order.getCurrency());
-        paymentScheduleInvoice.setInvoice(invoice);
-        paymentScheduleInvoice.setFinPaymentmethod(paymentType.getPaymentMethod()
-            .getPaymentMethod());
-        paymentScheduleInvoice.setAmount(amount);
-        paymentScheduleInvoice.setOutstandingAmount(amount);
-        paymentScheduleInvoice.setDueDate(order.getOrderDate());
-        paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
+      if (paymentScheduleInvoice != null) {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
             paymentScheduleDetail);
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-        OBDal.getInstance().save(paymentScheduleInvoice);
 
         Fin_OrigPaymentSchedule origPaymentSchedule = OBProvider.getInstance().get(
             Fin_OrigPaymentSchedule.class);
@@ -605,8 +610,8 @@ public class OrderLoader {
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
           getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail, paymentAmount,
-          false, false);
+          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
+          paymentAmount, false, false);
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";
