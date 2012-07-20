@@ -209,28 +209,30 @@ public class OrderGroupingProcessor {
       FIN_PaymentScheduleDetail paymentScheduleDetail = null;
       for (FIN_PaymentScheduleDetail detail : sched
           .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
-        paymentScheduleDetail = detail; // XXX: assuming just 1 oder payment sched??
+        paymentScheduleDetail = detail;
+
+        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+            paymentScheduleDetail);
+        paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+
+        paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
+            paymentScheduleDetail.getAmount()));
+
+        FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
+            FIN_OrigPaymentScheduleDetail.class);
+        origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
+        origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
+        origDetail.setAmount(paymentScheduleDetail.getAmount());
+        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
+
+        OBDal.getInstance().save(origDetail);
       }
+
       if (paymentScheduleDetail == null) {
         log.error("Couldn't find payment schedule detail for order : " + order.getDocumentNo()
             + ". Ignoring order");
         return false;
       }
-      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-          paymentScheduleDetail);
-      paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-
-      paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
-          paymentScheduleDetail.getAmount()));
-
-      FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
-          FIN_OrigPaymentScheduleDetail.class);
-      origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
-      origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
-      origDetail.setAmount(paymentScheduleDetail.getAmount());
-      origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
-
-      OBDal.getInstance().save(origDetail);
     }
 
     if (orderPaymentSchedule == null) {
