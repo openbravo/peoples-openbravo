@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -499,6 +500,19 @@ public class OrderLoader {
       return jsonResponse;
     } else {
       JSONArray payments = jsonorder.getJSONArray("payments");
+
+      // Create a unique payment schedule for all payments
+      BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
+      FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+      paymentSchedule.setCurrency(order.getCurrency());
+      paymentSchedule.setOrder(order);
+      paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
+      paymentSchedule.setAmount(amt);
+      paymentSchedule.setOutstandingAmount(amt);
+      paymentSchedule.setDueDate(order.getOrderDate());
+      paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+      OBDal.getInstance().save(paymentSchedule);
+
       for (int i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         OBPOSAppPayment paymentType = null;
@@ -515,28 +529,21 @@ public class OrderLoader {
               + posTerminalId + " didn't have a payment defined with name: " + paymentTypeName);
           return jsonResponse;
         } else {
-          processPayments(order, invoice, paymentType, payment);
+          processPayments(paymentSchedule, order, invoice, paymentType, payment);
         }
       }
+
       return null;
     }
 
   }
 
-  protected void processPayments(Order order, Invoice invoice, OBPOSAppPayment paymentType,
-      JSONObject payment) throws JSONException {
+  protected void processPayments(FIN_PaymentSchedule paymentSchedule, Order order, Invoice invoice,
+      OBPOSAppPayment paymentType, JSONObject payment) throws JSONException {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
-      FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-      paymentSchedule.setCurrency(order.getCurrency());
-      paymentSchedule.setOrder(order);
-      paymentSchedule.setFinPaymentmethod(paymentType.getPaymentMethod().getPaymentMethod());
-      paymentSchedule.setAmount(amount);
-      paymentSchedule.setOutstandingAmount(amount);
-      paymentSchedule.setDueDate(order.getOrderDate());
-      paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
@@ -545,7 +552,6 @@ public class OrderLoader {
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
 
-      OBDal.getInstance().save(paymentSchedule);
       OBDal.getInstance().save(paymentScheduleDetail);
       if (invoice != null) {
         FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
@@ -592,12 +598,15 @@ public class OrderLoader {
 
       long t2 = System.currentTimeMillis();
       // Save Payment
+
+      List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
+      detail.add(paymentScheduleDetail);
+
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true,
           getPaymentDocumentType(order.getOrganization()), order.getDocumentNo(),
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
-          paymentSchedule.getAmount().toString(), order.getOrderDate(), order.getOrganization(),
-          null, paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList(),
-          paymentAmount, false, false);
+          amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail, paymentAmount,
+          false, false);
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";
