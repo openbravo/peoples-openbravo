@@ -31,7 +31,6 @@ isc.OBPickAndExecuteGrid.addProperties({
   // Editing
   canEdit: true,
   editEvent: isc.EH.CLICK,
-  autoSaveEdits: false,
 
   selectionAppearance: 'checkbox',
   autoFitFieldWidths: true,
@@ -110,6 +109,33 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  // when starting row editing make sure that the current
+  // value and identifier are part of a valuemap
+  // so that the combo shows the correct value without 
+  // loading it from the backend
+  rowEditorEnter: function(record, editValues, rowNum) {
+    var i = 0, gridFld, identifier, formFld, value, form = this.getEditForm();
+    // go through the fields and set the edit values
+    for (i = 0; i < this.getFields().length;i++) {
+      gridFld = this.getFields()[i];
+      formFld = form.getField(gridFld.name);
+      value = record[gridFld.name];
+      identifier = record[gridFld.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]; 
+      if (value && identifier) {
+        if (formFld.setEntry) {
+          formFld.setEntry(value, identifier);
+        } else {
+          if (!formFld.valueMap) {
+            formFld.valueMap = {};
+          }
+          formFld.valueMap[value] = identifier;
+          form.setValue(formFld, value);
+        }
+      }
+    }
+    return this.Super('rowEditorEnter', arguments);
+  },
+  
   selectionChanged: function (record, state) {
     var recordIdx;
 
@@ -225,7 +251,13 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
     return this.Super('recordClick', arguments);
   },
-
+ 
+  // always save locally, as the real save is done when pressing
+  // the done button
+  shouldSaveLocally: function() {
+    return true;
+  },
+  
   getOrgParameter: function () {
     var view = this.view.parentWindow.activeView,
         context, i;

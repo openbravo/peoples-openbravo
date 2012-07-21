@@ -97,8 +97,6 @@ isc.OBPickAndExecuteView.addProperties({
       selectionAppearance: (this.viewProperties.showSelect ? 'checkbox' : 'rowStyle'),
       selectionType: 'simple',
       canRemoveRecords: (this.viewProperties.allowDelete ? true : false),
-      saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
-      autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       showGridSummary: this.showGridSummary
     });
