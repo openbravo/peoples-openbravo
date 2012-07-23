@@ -20,6 +20,7 @@ import org.hibernate.Query;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
@@ -170,7 +171,8 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : salesDepositsQuery.list()) {
       Object[] obja = (Object[]) obj;
       JSONObject salesDep = new JSONObject();
-      salesDep.put("description", obja[0] + " sales");
+      salesDep.put("description",
+          OBMessageUtils.getI18NMessage("OBPOS_Sales", new String[] { (String) obja[0] }));
       salesDep.put("amount", obja[1]);
       deposits.put(salesDep);
       totalDeposits = totalDeposits.add((BigDecimal) obja[1]);
@@ -189,7 +191,8 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : returnDropsQuery.list()) {
       Object[] obja = (Object[]) obj;
       JSONObject returnDrop = new JSONObject();
-      returnDrop.put("description", obja[0] + " returns");
+      returnDrop.put("description",
+          OBMessageUtils.getI18NMessage("OBPOS_Returns", new String[] { (String) obja[0] }));
       returnDrop.put("amount", obja[1]);
       drops.put(returnDrop);
       totalDrops = totalDrops.add((BigDecimal) obja[1]);

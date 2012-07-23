@@ -16,7 +16,7 @@
 
   OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
     id: 'modaldepositevents',
-    header: 'Select Destinations',
+    header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
     initialize: function () {
       var theModal, theHeader, theBody, theHeaderText;
       OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();

@@ -16,7 +16,7 @@
 
   OB.UI.ModalDropEvents = OB.COMP.Modal.extend({
     id: 'modaldropevents',
-    header: 'Select Destinations',
+    header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
     initialize: function () {
       var theModal, theHeader, theBody, theHeaderText;
       OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
