@@ -375,6 +375,7 @@ public class OrderLoader {
 
         ScrollableResults bins = query.scroll(ScrollMode.FORWARD_ONLY);
         while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+          // TODO: Can we safely clear session here?
           StorageDetail storage = (StorageDetail) bins.get(0);
           BigDecimal qty;
 
