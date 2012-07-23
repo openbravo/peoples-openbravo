@@ -74,6 +74,8 @@ public class OrderLoader {
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
+  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
     OBContext.setAdminMode(true);
@@ -480,7 +482,7 @@ public class OrderLoader {
       transaction.setOrderUOM(line.getOrderUOM());
       transaction.setUOM(line.getUOM());
       transaction.setOrderQuantity(line.getOrderQuantity());
-      transaction.setMovementQuantity(line.getMovementQuantity());
+      transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
       transaction.setMovementDate(shipment.getMovementDate());
       transaction.setGoodsShipmentLine(line);
 
