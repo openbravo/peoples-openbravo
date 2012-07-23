@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -35,12 +37,14 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -57,6 +61,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -345,21 +350,74 @@ public class OrderLoader {
 
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+    int lineNo = 0;
+    Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
     for (int i = 0; i < orderlines.length(); i++) {
+      String hqlWhereClause;
 
-      ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
-      Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
-      fillBobFromJSON(shplineentity, line, orderlines.getJSONObject(i));
-      fillBobFromJSON(ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line,
-          jsonorder);
-      line.setLineNo((long) ((i + 1) * 10));
-      line.setMovementQuantity(lineReferences.get(i).getOrderedQuantity());
-      line.setShipmentReceipt(shipment);
-      line.setSalesOrderLine(lineReferences.get(i));
-      line.setStorageBin(order.getWarehouse().getLocatorList().get(0));
-      shipment.getMaterialMgmtShipmentInOutLineList().add(line);
+      OrderLine orderLine = lineReferences.get(i);
+      BigDecimal pendingQty = orderLine.getOrderedQuantity();
+
+      if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+        // Returns have qty<0
+        // In case of standard sales (no return), take bins with product ordered by prio. Using same
+        // logic as in M_InOut_Create PL code
+        hqlWhereClause = " as t, Locator as l" + " where t.product = :product"
+            + "   and t.uOM = :uom" + "   and l.warehouse = :warehouse" + "   and t.storageBin = l"
+            + "   and l.active = true" + "   and coalesce(t.quantityOnHand,0)>0"
+            + " order by l.relativePriority, t.creationDate";
+
+        OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
+            hqlWhereClause);
+        query.setNamedParameter("product", orderLine.getProduct());
+        query.setNamedParameter("uom", orderLine.getUOM());
+        query.setNamedParameter("warehouse", order.getWarehouse());
+
+        ScrollableResults bins = query.scroll(ScrollMode.FORWARD_ONLY);
+        while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+          StorageDetail storage = (StorageDetail) bins.get(0);
+          BigDecimal qty;
+
+          if (pendingQty.compareTo(storage.getQuantityOnHand()) > 0) {
+            qty = storage.getQuantityOnHand();
+            pendingQty = pendingQty.subtract(qty);
+          } else {
+            qty = pendingQty;
+            pendingQty = BigDecimal.ZERO;
+          }
+          lineNo += 10;
+          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+              jsonorder, lineNo, qty, storage.getStorageBin());
+        }
+      }
+
+      if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
+        // still qty to ship or return: let's use the bin with highest prio
+        hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
+        OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class, hqlWhereClause);
+        queryLoc.setNamedParameter("warehouse", order.getWarehouse());
+        queryLoc.setMaxResult(1);
+        lineNo += 10;
+        addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
+            lineNo, pendingQty, queryLoc.list().get(0));
+      }
     }
+  }
 
+  private void addShipemntline(ShipmentInOut shipment, Entity shplineentity,
+      JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
+      BigDecimal qty, Locator bin) throws JSONException {
+    ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
+
+    fillBobFromJSON(shplineentity, line, jsonOrderLine);
+    fillBobFromJSON(ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder);
+    line.setLineNo(lineNo);
+    line.setShipmentReceipt(shipment);
+    line.setSalesOrderLine(orderLine);
+
+    line.setMovementQuantity(qty);
+    line.setStorageBin(bin);
+    shipment.getMaterialMgmtShipmentInOutLineList().add(line);
   }
 
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
