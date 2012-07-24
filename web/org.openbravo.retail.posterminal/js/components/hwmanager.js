@@ -104,7 +104,12 @@
     template.getData(function (data) {
       OB.POS.hwserver.print(data, {
         order: receipt
-      }, hwcallback);
+      },  function (e){
+        receipt.trigger('printFinished');
+        if (e.exception) {
+          OB.UTIL.showError(e.exception.message);
+        }
+      });
     });
   };
 

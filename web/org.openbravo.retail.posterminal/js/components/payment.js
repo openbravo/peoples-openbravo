@@ -20,7 +20,9 @@
       var parent = this.options.parent;
       parent.receipt.calculateTaxes(function () {
         parent.receipt.trigger('closed');
-        parent.modelorderlist.deleteCurrent();
+        parent.receipt.on('printFinished', function(){
+          parent.modelorderlist.deleteCurrent();
+        });
       });
     }
   });
