@@ -284,6 +284,7 @@
       _order.get('payments').forEach(function(elem) {
         this.get('payments').add(elem);
       }, this);
+      this.set('taxes', _order.get('taxes'));
       this.set('payment', _order.get('payment'));
       this.set('change', _order.get('change'));
       this.set('gross', _order.get('gross'));

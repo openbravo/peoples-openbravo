@@ -85,16 +85,19 @@
 
   OB.COMP.HWManager.prototype.printOrder = function() {
 
-    var receipt = this.receipt;
+    // Clone the receipt
+    var receipt = new OB.Model.Order();
+    receipt.clearWith(this.receipt);
+    
     var template;
-    if (this.receipt.get('generateInvoice')) {
-      if (this.receipt.get('orderType') === 1) {
+    if (receipt.get('generateInvoice')) {
+      if (receipt.get('orderType') === 1) {
         template = this.templatereturninvoice;
       } else {
         template = this.templateinvoice;
       }
     } else {
-      if (this.receipt.get('orderType') === 1) {
+      if (receipt.get('orderType') === 1) {
         template = this.templatereturn;
       } else {
         template = this.templatereceipt;
@@ -104,12 +107,7 @@
     template.getData(function (data) {
       OB.POS.hwserver.print(data, {
         order: receipt
-      },  function (e){
-        receipt.trigger('printFinished');
-        if (e.exception) {
-          OB.UTIL.showError(e.exception.message);
-        }
-      });
+      }, hwcallback);
     });
   };
 
