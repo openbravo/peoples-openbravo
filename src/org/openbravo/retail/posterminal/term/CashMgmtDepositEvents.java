@@ -17,6 +17,7 @@ public class CashMgmtDepositEvents extends ProcessHQLQuery {
   @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "select c.id as id, c.name as name from OBRETCO_CashManagementEvents c "
-        + "where $readableCriteria and c.eventtype like '%IN%'";
+        + "where c.organization.id='" + jsonsent.getString("organization")
+        + "' and c.eventtype like '%IN%'";
   }
 }
