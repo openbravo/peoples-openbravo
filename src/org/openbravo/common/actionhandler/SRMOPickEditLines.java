@@ -65,7 +65,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
-      final String strOrderId = jsonRequest.getString("inpcOrderId");
+      final String strOrderId = jsonRequest.getString("C_Order_ID");
       Order order = OBDal.getInstance().get(Order.class, strOrderId);
       if (cleanOrderLines(order)) {
         createOrderLines(jsonRequest);
@@ -119,7 +119,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     if (selectedLines.length() == 0) {
       return;
     }
-    final String strOrderId = jsonRequest.getString("inpcOrderId");
+    final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     boolean isSOTrx = order.isSalesTransaction();
     for (long i = 0; i < selectedLines.length(); i++) {
