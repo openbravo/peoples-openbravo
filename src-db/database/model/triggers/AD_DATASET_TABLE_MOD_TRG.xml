@@ -70,6 +70,8 @@ BEGIN
         COALESCE(:NEW.IncludeAllColumns , '.') != COALESCE(:OLD.IncludeAllColumns , '.') OR
         COALESCE(:NEW.WhereClause , '.') != COALESCE(:OLD.WhereClause , '.') OR
         COALESCE(:NEW.excludeAuditInfo , '.') != COALESCE(:OLD.excludeAuditInfo , '.') OR
+        COALESCE(:NEW.IsBusinessObject , '.') != COALESCE(:OLD.IsBusinessObject , '.') OR
+        COALESCE(:NEW.SecondaryWhereClause , '.') != COALESCE(:OLD.SecondaryWhereClause , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

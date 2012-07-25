@@ -105,6 +105,12 @@ BEGIN
         COALESCE(:NEW.Position , 0) != COALESCE(:OLD.Position , 0) OR
         COALESCE(:NEW.IsTransient , '.') != COALESCE(:OLD.IsTransient , '.') OR
         COALESCE(:NEW.isTransientCondition , '.') != COALESCE(:OLD.isTransientCondition , '.') OR
+        COALESCE(:NEW.isautosave , '.') != COALESCE(:OLD.isautosave , '.') OR
+        COALESCE(:NEW.validateonnew , '.') != COALESCE(:OLD.validateonnew , '.') OR
+        COALESCE(:NEW.imagesizevaluesaction , '.') != COALESCE(:OLD.imagesizevaluesaction , '.') OR
+        COALESCE(:NEW.imagewidth , 1) != COALESCE(:OLD.imagewidth , 1) OR
+        COALESCE(:NEW.imageheight , 1) != COALESCE(:OLD.imageheight , 1) OR
+        COALESCE(:NEW.isusedsequence , '.') != COALESCE(:OLD.isusedsequence , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
@@ -167,6 +173,10 @@ BEGIN
 	COALESCE(:OLD.ISTRANSIENTCONDITION	,'.') = COALESCE(:NEW.ISTRANSIENTCONDITION	,'.')AND
 	COALESCE(:OLD.ISAUTOSAVE			,'.') = COALESCE(:NEW.ISAUTOSAVE			,'.')AND
 	COALESCE(:OLD.VALIDATEONNEW		,'.') = COALESCE(:NEW.VALIDATEONNEW		,'.')AND
+        COALESCE(:NEW.imagesizevaluesaction      ,'.') = COALESCE(:OLD.imagesizevaluesaction      ,'.')AND
+        COALESCE(:NEW.imagewidth                 , 1 ) = COALESCE(:OLD.imagewidth                 , 1 )AND
+        COALESCE(:NEW.imageheight                , 1 ) = COALESCE(:OLD.imageheight                , 1 )AND
+        COALESCE(:NEW.isusedsequence             ,'.') = COALESCE(:OLD.isusedsequence             ,'.')AND
 	COALESCE(:OLD.ISEXCLUDEAUDIT		,'.') != COALESCE(:NEW.ISEXCLUDEAUDIT		,'.')) THEN
       
 		:NEW.UPDATED := :OLD.UPDATED;

@@ -77,6 +77,8 @@ BEGIN
         COALESCE(:NEW.Processing , '.') != COALESCE(:OLD.Processing , '.') OR
         COALESCE(:NEW.AD_Image_ID , '.') != COALESCE(:OLD.AD_Image_ID , '.') OR
         COALESCE(:NEW.IsDefault , '.') != COALESCE(:OLD.IsDefault , '.') OR
+        COALESCE(:NEW.IsThreadSafe , '.') != COALESCE(:OLD.IsThreadSafe , '.') OR
+        COALESCE(:NEW.IsAdvancedFeature , '.') != COALESCE(:OLD.IsAdvancedFeature , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.')) THEN
       
       RAISE_APPLICATION_ERROR(-20000, '@20532@');

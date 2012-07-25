@@ -85,6 +85,14 @@ BEGIN
             COALESCE(:NEW.WHERECLAUSE , '.') != COALESCE(:OLD.WHERECLAUSE , '.') OR
             COALESCE(:NEW.OBSERDS_DATASOURCE_ID , '.') != COALESCE(:OLD.OBSERDS_DATASOURCE_ID , '.') OR
             COALESCE(:NEW.OBCLKER_TEMPLATE_ID , '.') != COALESCE(:OLD.OBCLKER_TEMPLATE_ID , '.') OR
+            COALESCE(:NEW.ValueField_ID , '.') != COALESCE(:OLD.ValueField_ID , '.') OR
+            COALESCE(:NEW.DisplayField_ID , '.') != COALESCE(:OLD.DisplayField_ID , '.') OR
+            COALESCE(:NEW.SuggestionTextMatchStyle , '.') != COALESCE(:OLD.SuggestionTextMatchStyle , '.') OR
+            COALESCE(:NEW.PopUpTextMatchStyle , '.') != COALESCE(:OLD.PopUpTextMatchStyle , '.') OR
+            COALESCE(:NEW.HQL , '.') != COALESCE(:OLD.HQL , '.') OR
+            COALESCE(:NEW.Entity_Alias , '.') != COALESCE(:OLD.Entity_Alias , '.') OR
+            COALESCE(:NEW.Custom_Query , '.') != COALESCE(:OLD.Custom_Query , '.') OR
+            COALESCE(:NEW.Filter_Expression , '.') != COALESCE(:OLD.Filter_Expression , '.') OR
             1=2) THEN
             RAISE_APPLICATION_ERROR(-20000, '@20532@');
         END IF;

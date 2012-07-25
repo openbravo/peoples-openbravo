@@ -76,6 +76,12 @@ BEGIN
             COALESCE(:NEW.height , 0) != COALESCE(:OLD.height , 0) OR
             COALESCE(:NEW.description , '.') != COALESCE(:OLD.description , '.') OR
             COALESCE(:NEW.allow_anonymous_access , '.') != COALESCE(:OLD.allow_anonymous_access , '.') OR
+            COALESCE(:NEW.IsSuperClass , '.') != COALESCE(:OLD.IsSuperClass , '.') OR
+            COALESCE(:NEW.Widget_Superclass_ID , '.') != COALESCE(:OLD.Widget_Superclass_ID , '.') OR
+            COALESCE(:NEW.Can_Maximize , '.') != COALESCE(:OLD.Can_Maximize , '.') OR
+            COALESCE(:NEW.AccessLevel , '.') != COALESCE(:OLD.AccessLevel , '.') OR
+            COALESCE(:NEW.Author_Msg , '.') != COALESCE(:OLD.Author_Msg , '.') OR
+            COALESCE(:NEW.Author_URL , '.') != COALESCE(:OLD.Author_URL , '.') OR
             1=2) THEN
             RAISE_APPLICATION_ERROR(-20000, '@20532@');
         END IF;
