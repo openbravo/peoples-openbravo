@@ -16,11 +16,9 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -42,16 +40,11 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         JSONObject jsonsent = array.getJSONObject(i);
         String description = jsonsent.getString("description");
         BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
-        String key = jsonsent.getString("key");
         String type = jsonsent.getString("type");
         String cashManagementReasonId = jsonsent.getString("reasonId");
 
-        OBCriteria<OBPOSAppPayment> payments = OBDal.getInstance().createCriteria(
-            OBPOSAppPayment.class);
-        payments.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, key));
-        payments.setFilterOnActive(false);
-
-        OBPOSAppPayment paymentMethod = payments.list().get(0);
+        OBPOSAppPayment paymentMethod = OBDal.getInstance().get(OBPOSAppPayment.class,
+            jsonsent.getString("paymentMethodId"));
         TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
 
         GLItem glItemMain;

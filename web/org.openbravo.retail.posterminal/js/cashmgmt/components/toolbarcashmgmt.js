@@ -14,10 +14,11 @@
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
 
-  var getPayment = function(receipt, key, name, identifier, type) {
+  var getPayment = function(receipt, id, key, name, identifier, type) {
       return {
         'permission': key,
         'action': function(txt) {
+          this.options.id = id;
           this.options.amountToDrop = txt;
           this.options.destinationKey = key;
           this.options.identifier = identifier;
@@ -43,14 +44,14 @@
         if (me.payments.at(i).get('allowdeposits')) {
           me.toolbar.push({
             command: me.payments.at(i).get('payment').searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-            definition: getPayment(this.receipt, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'deposit'),
+            definition: getPayment(this.receipt, me.payments.at(i).get('payment').id, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'deposit'),
             label: me.payments.at(i).get('payment')._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
           });
         }
         if (me.payments.at(i).get('allowdrops')) {
           me.toolbar.push({
             command: me.payments.at(i).get('payment').searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
-            definition: getPayment(this.receipt, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'drop'),
+            definition: getPayment(this.receipt, me.payments.at(i).get('payment').id, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'drop'),
             label: me.payments.at(i).get('payment')._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
           });
         }

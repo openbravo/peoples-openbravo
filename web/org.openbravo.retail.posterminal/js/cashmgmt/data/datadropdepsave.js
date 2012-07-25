@@ -48,7 +48,7 @@
             return true;
           }
             me.context.ListDepositsDrops.listdepositsdrops.models[i].get('listdepositsdrops').push({deposit: 0, drop: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date()});
-            me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
+            me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), paymentMethodId: me.context.id, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
             me.context.ListDepositsDrops.listdepositsdrops.trigger('reset');
         }
       }
@@ -61,7 +61,7 @@
             return true;
           }
           me.context.ListDepositsDrops.listdepositsdrops.models[i].get('listdepositsdrops').push({deposit: me.context.amountToDrop, drop: 0, description: me.context.identifier+' - '+model.get('name'), name: me.context.destinationKey, user: OB.POS.modelterminal.get('context').user._identifier, time: new Date()});
-          me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), key: me.context.destinationKey, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
+          me.context.depsdropstosend.push({amount: me.context.amountToDrop, description: me.context.identifier+' - '+model.get('name'), paymentMethodId: me.context.id, type: me.context.type, reasonId:model.get('id'), user: OB.POS.modelterminal.get('context').user._identifier, time: new Date().toString().substring(16,21)});
           me.context.ListDepositsDrops.listdepositsdrops.trigger('reset');
         }
      }
