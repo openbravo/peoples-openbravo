@@ -78,12 +78,24 @@
     <Sql>
     <![CDATA[
       INSERT INTO ad_process_request
+      (ad_process_request_id, ad_client_id, ad_org_id, isactive,
+       created, createdby, updated, updatedby, ad_process_id,
+       ad_user_id, isrolesecurity, ob_context,
+       status, channel, timing_option, start_time,
+       start_date, frequency, daily_interval,
+       day_mon, day_tue, day_wed,
+       day_thu, day_fri, day_sat, day_sun, monthly_option,
+       finishes, daily_option,
+       schedule, reschedule, unschedule)
       VALUES (get_uuid(), '0', '0', 'Y',
               NOW(), '100', NOW(), '100', '1005800000',
-              NULL, '100', 'Y', ? ,
-              'SCH', NULL, NULL, NULL, 'Process Scheduler', 'S', NOW(),
-              NOW(), '4', NULL, NULL, NULL, 7, NULL, NULL, NULL, 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'S',
-              NULL, NULL, 'N', NULL, NULL, 'N', NULL, NULL, 'N', 'N', 'N', NULL)
+              '100', 'Y', ? ,
+              'SCH', 'Process Scheduler', 'S', NOW(),
+              NOW(), '4', 7,
+              'N', 'N', 'N',
+              'N', 'N', 'N', 'N', 'S',
+              'N', 'N',
+              'N', 'N', 'N')
     ]]>
     </Sql>
     <Parameter name="obContext" />
