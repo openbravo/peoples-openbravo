@@ -26,6 +26,7 @@ public class DeleteInventoryLines extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
+      DeleteInventoryLinesData.deleteStockAuxLines(cp);
       DeleteInventoryLinesData.deleteInventoryLines(cp);
     } catch (Exception e) {
       handleError(e);
