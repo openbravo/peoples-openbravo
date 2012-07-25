@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -135,8 +136,16 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;
         }
-        int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-        int pricePrecision = order.getCurrency().getPricePrecision().intValue();
+
+        int stdPrecision = 2;
+        int pricePrecision = 2;
+        OBContext.setAdminMode(true);
+        try {
+          stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+          pricePrecision = order.getCurrency().getPricePrecision().intValue();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
 
         if (order.getPriceList().isPriceIncludesTax()) {
           BigDecimal qty = new BigDecimal(strQty);
