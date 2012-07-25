@@ -414,7 +414,7 @@
     },
 
     hasPermission: function(p) {
-      return !this.get('context').role.manual || this.get('permissions')[p];
+      return !this.get('context').role.manual || this.get('permissions')[p] || this.get('permissions')['OBPOS_' + p];
     },
 
     getPaymentName: function(key) {

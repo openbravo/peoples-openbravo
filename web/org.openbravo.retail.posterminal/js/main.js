@@ -87,29 +87,34 @@
     webwindow = OB.POS.windows[OB.POS.paramWindow];
 
     if (webwindow) {
-      if (OB.DATA[OB.POS.paramWindow]) {
-        // loading/refreshing required data/models for window
-        _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-          var ds;
-          if (model.prototype.local) {
-            OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
-          } else {
-            ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
-            ds.on('ready', function () {
-
-              queue[model.prototype.source] = true;
-              emptyQueue = OB.UTIL.queueStatus(queue);
-
-              if(emptyQueue) {
-                searchCurrentBP();
-              }
-            });
-            ds.load();
-            queue[model.prototype.source] = false;
-          }
-        });
+      if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
+        if (OB.DATA[OB.POS.paramWindow]) {
+          // loading/refreshing required data/models for window
+          _.each(OB.DATA[OB.POS.paramWindow], function (model) {
+            var ds;
+            if (model.prototype.local) {
+              OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
+            } else {
+              ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
+              ds.on('ready', function () {
+  
+                queue[model.prototype.source] = true;
+                emptyQueue = OB.UTIL.queueStatus(queue);
+  
+                if(emptyQueue) {
+                  searchCurrentBP();
+                }
+              });
+              ds.load();
+              queue[model.prototype.source] = false;
+            }
+          });
+        } else {
+          createWindow();
+        }
       } else {
-        createWindow();
+        OB.UTIL.showLoading(false);
+        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));        
       }
     } else {
       OB.UTIL.showLoading(false);

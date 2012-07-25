@@ -66,8 +66,8 @@
                       {kind: OB.COMP.MenuInvoice},
                       {kind: OB.COMP.MenuSeparator},
                       {kind: OB.COMP.MenuItem.extend({href: '../..', target: '_blank', onclick: 'return true;', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
-                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})},
-                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})}
+                      {kind: OB.COMP.MenuItem.extend({permission: 'retail.cashmanagement', href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})},
+                      {kind: OB.COMP.MenuItem.extend({permission: 'retail.cashup', href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})}
                     ]}
                   ]}
                 ]}
