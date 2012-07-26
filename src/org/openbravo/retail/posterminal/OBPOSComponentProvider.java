@@ -115,13 +115,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/listreceiptscounter",
         "windows/pointofsale",
         // Cash Management window
-        "cashmgmt/data/datadropdepsave",
         "cashmgmt/components/cashmgmtbuttons",
         "cashmgmt/components/cashmgmtkeyboard",
         "cashmgmt/components/renderdropdepdestinations",
         "cashmgmt/components/searchdepositevents",
         "cashmgmt/components/modaldepositevents",
-        "cashmgmt/components/toolbarcashmgmt",
         "cashmgmt/data/datamaster",
         "cashmgmt/windows/cashmgmtinfo",
         "cashmgmt/components/renderdepositsdrops",
