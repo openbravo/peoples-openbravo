@@ -30,7 +30,7 @@
     className: 'btnlink-green',
     attributes: {style: 'width: 69px'},
     'clickEvent': function () {
-      this.options.parent.options.keyboard.execStatelessCommand('cashexact');
+      this.options.root.keyboard.execStatelessCommand('cashexact');
     }
   });
 
@@ -222,8 +222,8 @@
       var i, max;
       var me = this;
 
-      this.modelorderlist = this.options.modelorderlist;
-      this.receipt = this.options.modelorder;
+      this.modelorderlist = this.options.root.modelorderlist;
+      this.receipt = this.options.root.modelorder;
       var payments = this.receipt.get('payments');
       var lines = this.receipt.get('lines');
 

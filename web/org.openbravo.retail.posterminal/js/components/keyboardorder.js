@@ -115,8 +115,8 @@
         }
       });
 
-      this.products = this.options.DataProductPrice;
-      this.receipt = this.options.modelorder;
+      this.products = this.options.root.DataProductPrice;
+      this.receipt = this.options.root.modelorder;
       this.line = null;
 
       this.receipt.get('lines').on('selected', function (line) {

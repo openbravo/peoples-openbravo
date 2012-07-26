@@ -119,7 +119,7 @@
       OB.UTIL.initContentView(this);
 
       // Set Model
-      this.receipt = this.options.modelorder;
+      this.receipt = this.options.root.modelorder;
       var lines = this.receipt.get('lines');
 
       this.tableview.registerCollection(lines);

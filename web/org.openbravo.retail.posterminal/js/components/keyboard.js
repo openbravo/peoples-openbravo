@@ -303,7 +303,7 @@
     }],
     initialize: function () {
 
-      this.options[this.optionsid] = this;
+      this.options.root[this.optionsid] = this;
       OB.UTIL.initContentView(this);
 
       var me = this;

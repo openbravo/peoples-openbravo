@@ -44,7 +44,7 @@
 
       OB.UTIL.initContentView(this);
 
-      this.receiptlist = this.options.modelorderlist;
+      this.receiptlist = this.options.root.modelorderlist;
       this.receiptlist.on('reset add remove', function () {
         if (this.receiptlist.length > 1) {
           this.$el.show();
