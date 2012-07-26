@@ -1920,7 +1920,9 @@ isc.OBViewGrid.addProperties({
     // update after the error message has been removed
     this.view.updateTabTitle();
     this.view.toolBar.updateButtonState(true);
-    this.view.messageBar.hide();
+    if (this.view.messageBar.type === isc.OBMessageBar.TYPE_ERROR) {
+      this.view.messageBar.hide();
+    }
     this.view.refreshParentRecord();
     this.refreshRow(rowNum);
   },
@@ -2085,9 +2087,9 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    
+
     this._leavingCell = true;
-    
+
     if (newValue) {
       this.Super('cellEditEnd', [editCompletionEvent, newValue]);
     } else {
