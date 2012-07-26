@@ -57,12 +57,24 @@
   OB.Model.CashManagement = OB.Model.WindowModel.extend({
     models: [OB.Model.DepositsDrops, OB.Model.CashMgmtPaymentMethod, OB.Model.DropEvents, OB.Model.DepositEvents],
     init: function() {
-      var depList = this.getData('DataDepositsDrops'),
-          deposits = this.getData('DataDepositsDrops').at(0).get('listdepositsdrops');
+      var depList = this.getData('DataDepositsDrops');
+
 
       this.depsdropstosend = new Backbone.Collection();
 
       this.depsdropstosend.on('paymentDone', function(model, p) {
+        var deposits, error = false;
+        depList.each(function(dep) {
+          if (p.destinationKey === dep.get('paySearchKey')) {
+            error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), p.amount) < 0);
+            deposits = dep.get('listdepositsdrops');
+          }
+        });
+        if (error) {
+          console.log('eerr');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
+          return;
+        }
         console.log('paymentDone', this, p);
         var payment = {
           description: p.identifier + ' - ' + model.get('name'),
