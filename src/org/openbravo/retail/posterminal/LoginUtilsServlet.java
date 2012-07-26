@@ -77,6 +77,7 @@ public class LoginUtilsServlet extends WebServiceAbstractServlet {
         data.put(item);
 
         item = new JSONObject();
+        // TODO: Don't retrieve only OBPOS messages but also messages in modules depending on it
         String hqlLabel = "select message.searchKey, message.messageText "
             + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
         Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);

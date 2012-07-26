@@ -12,10 +12,10 @@
 (function () {
 
   OB = window.OB || {};
-  OB.MODEL = window.OB.MODEL || {};
+  OB.Model = window.OB.Model || {};
+  OB.Collection = window.OB.Collection || {};
 
-  OB.MODEL.PaymentMethod = Backbone.Model.extend({
-    _id: 'paymentmethod',
+  OB.Model.PaymentMethod = Backbone.Model.extend({
       defaults : {
         id: null,
         name: null,
@@ -24,10 +24,10 @@
       }
     });
 //DayCash.PaymentMethodCol Model.
-  OB.MODEL.PaymentMethodCol = Backbone.Collection.extend({
-    model: OB.MODEL.PaymentMethod,
+  OB.Collection.PaymentMethodList = Backbone.Collection.extend({
+    model: OB.Model.PaymentMethod,
     serializeToJSON: function () {
-        var jsonpayment = JSON.parse(JSON.stringify(this.toJSON()));
+        var jsonpayment = this.toJSON();
 
         // remove not needed members
         delete jsonpayment.undo;
@@ -44,15 +44,18 @@
         return jsonpayment;
       }
     });
-  OB.MODEL.DayCash = Backbone.Model.extend({
-    _id: 'modeldaycash',
+
+  OB.Model.DayCash = Backbone.Model.extend({
       defaults : {
-        paymentmethods: new OB.MODEL.PaymentMethodCol(),
         totalExpected: OB.DEC.Zero,
         totalCounted: OB.DEC.Zero,
         totalDifference: OB.DEC.Zero,
         step: 0,
         allowedStep: 0
+      },
+      
+      initialize: function() {
+    	 this.set('paymentmethods', new OB.Model.PaymentMethodList());
       }
     });
 }());

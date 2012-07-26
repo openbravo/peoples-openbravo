@@ -10,7 +10,10 @@ package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -48,11 +51,18 @@ public abstract class ProcessHQLQuery implements JSONProcess {
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(querybuilder.getHQLQuery());
 
+      List<String> queryParams = new ArrayList<String>(Arrays.asList(query.getNamedParameters()));
+
       if (jsonsent.has("parameters")) {
         JSONObject jsonparams = jsonsent.getJSONObject("parameters");
         Iterator<?> it = jsonparams.keys();
         while (it.hasNext()) {
           String key = (String) it.next();
+          if (!queryParams.contains(key)) {
+            continue;
+          }
+          queryParams.remove(key);
+
           Object value = jsonparams.get(key);
           if (value instanceof JSONObject) {
             JSONObject jsonvalue = (JSONObject) value;
@@ -63,6 +73,25 @@ public abstract class ProcessHQLQuery implements JSONProcess {
           } else {
             query.setParameter(key,
                 JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.infer(value), value));
+          }
+        }
+      }
+
+      // XXX: for standard params (client, org, pos), no need to add as extra
+      if (!queryParams.isEmpty()) {
+        for (String param : queryParams) {
+          if (jsonsent.has(param)) {
+            Object value = jsonsent.get(param);
+            if (value instanceof JSONObject) {
+              JSONObject jsonvalue = (JSONObject) value;
+              query.setParameter(
+                  param,
+                  JsonToDataConverter.convertJsonToPropertyValue(
+                      PropertyByType.get(jsonvalue.getString("type")), jsonvalue.get("value")));
+            } else {
+              query.setParameter(param, JsonToDataConverter.convertJsonToPropertyValue(
+                  PropertyByType.infer(value), value));
+            }
           }
         }
       }

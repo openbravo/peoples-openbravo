@@ -89,5 +89,6 @@
   });
 
   // register
-  OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
+ // OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
+  OB.POS.registerWindow('retail.cashup', OB.COMP.CloseCash);
 }());

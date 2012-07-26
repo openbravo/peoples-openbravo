@@ -14,7 +14,7 @@
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
 
-  var getPayment = function(receipt, id, key, name, identifier, type) {
+  var getPayment = function(id, key, name, identifier, type) {
       return {
         'permission': key,
         'action': function(txt) {
@@ -30,13 +30,14 @@
           }
         }
       };
-      };
+   };
 
   OB.UI.ToolbarCashMgmt = function(context) {
     var i, max, payments, ctx = context,
         me = this;
     this.toolbar = [];
     this.receipt = context.modelorder;
+    debugger;
     this.payments = new OB.Model.Collection(context.DataCashMgmtPaymentMethod);
     context.DataCashMgmtPaymentMethod.ds.on('ready', function() {
       me.payments.reset(this.cache);
@@ -44,7 +45,12 @@
         if (me.payments.at(i).get('allowdeposits')) {
           me.toolbar.push({
             command: me.payments.at(i).get('payment').searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-            definition: getPayment(this.receipt, me.payments.at(i).get('payment').id, me.payments.at(i).get('payment').searchKey, me.payments.at(i).get('payment')._identifier, me.payments.at(i).get('payment')._identifier, 'deposit'),
+            definition: getPayment(this.receipt, 
+            		me.payments.at(i).get('payment').id, 
+                    me.payments.at(i).get('payment').searchKey, 
+                    me.payments.at(i).get('payment')._identifier, 
+                    me.payments.at(i).get('payment')._identifier, 
+                    'deposit'),
             label: me.payments.at(i).get('payment')._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
           });
         }

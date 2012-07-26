@@ -415,7 +415,7 @@
 
     addButton: function (cmd, btn) {
       if (this.buttons[cmd]) {
-        this.buttons[cmd] = this.buttons[cmd].add(btn);
+       if (this.buttons[cmd].add) this.buttons[cmd] = this.buttons[cmd].add(btn);
       } else {
         this.buttons[cmd] = btn;
       }

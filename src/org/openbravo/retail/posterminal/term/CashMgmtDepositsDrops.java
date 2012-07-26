@@ -35,8 +35,7 @@ public class CashMgmtDepositsDrops extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
-    String posTerminalId = jsonsent.getJSONObject("parameters").getJSONObject("pos")
-        .getString("value");
+    String posTerminalId = jsonsent.getString("pos");
 
     OBPOSApplications terminal;
     OBContext.setAdminMode();

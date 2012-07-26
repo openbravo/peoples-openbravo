@@ -315,7 +315,7 @@
           e.preventDefault();
           if (OB.POS.modelterminal.get('connectedToERP')) {
             OB.UTIL.showLoading(true);
-            window.location = href;
+            OB.POS.navigate(href);
           } else {
             alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
           }

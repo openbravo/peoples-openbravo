@@ -45,6 +45,7 @@
     }
   });
 
+
   // Terminal model.
   OB.Model.Terminal = Backbone.Model.extend({
 
@@ -68,6 +69,76 @@
       $(window).bind('offline', function() {
         OB.UTIL.checkConnectivityStatus();
       });
+
+      this.router = new OB.Router();
+
+      if (!Backbone.History.started) {
+        Backbone.history.start();
+      }
+      this.router.terminal = this;
+
+      this.router.route('login', 'login', this.renderLogin);
+      this.router.route('main', 'main', this.renderMain);
+    },
+
+    renderLogin: function() {
+      console.log('renderLogin');
+      var c = _.extend({}, Backbone.Events);
+      $("#containerWindow").empty().append((new OB.COMP.Login(c)).$el);
+      c.trigger('domready');
+    },
+
+
+    renderMain: function() {
+      console.log('renderMain');
+      var oldOB = OB;
+
+      $LAB.setGlobalDefaults({
+        AppendTo: 'body'
+      });
+      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
+        var newFormat = OB.Format;
+        _.extend(OB, oldOB);
+        OB.Format = newFormat;
+        $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Labels').wait(function() {
+          $LAB.script('js/i18n.js').wait(function() {
+            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+            $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS');
+          })
+        })
+      });
+    },
+    
+    registerWindow: function(windowName, window) {
+        console.log('registering window', windowName);
+        OB.POS.windows[windowName] = window;
+        this.router.route(windowName, windowName, function() {
+          this.renderGenericWindow(windowName);
+        });
+        
+        //TODO: load OB.DATA??? It should be done only if needed...
+      },
+
+    renderGenericWindow: function(windowName) {
+      OB.UTIL.showLoading(true);
+      console.log('renderGenericWindow', arguments, windowName, OB.POS.windows[windowName]);
+
+      var webwindow, w, c = _.extend({}, Backbone.Events),
+          terminal = OB.POS.modelterminal.get('terminal'),
+          queue = {},
+          emptyQueue = false;
+
+      var w = new OB.POS.windows[windowName](c);
+      w.on('ready', function () {
+    	  w.render();
+          $("#containerWindow").empty().append(w.$el);
+          c.trigger('domready');
+          OB.UTIL.showLoading(false);
+       });
+
+
+      //TODO: load OB.DATA??? It should be done only if needed...
     },
 
     login: function(user, password, mode) {
@@ -85,7 +156,11 @@
       this.set('currencyPrecision', null);
 
       // Remove the pending orders that have not been paid
-      OB.Dal.removeAll(OB.Model.Order, {'hasbeenpaid':'N'}, null, null);
+      if (OB.Dal) { //TODO: check this...
+        OB.Dal.removeAll(OB.Model.Order, {
+          'hasbeenpaid': 'N'
+        }, null, null);
+      }
 
       $.ajax({
         url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
@@ -103,9 +178,12 @@
             me.triggerLoginFail(401, mode, data);
             return;
           }
-          pos = location.pathname.indexOf('login.jsp');
-          baseUrl = window.location.pathname.substring(0, pos);
-          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+          //          pos = location.pathname.indexOf('login.jsp');
+          //          baseUrl = window.location.pathname.substring(0, pos);
+          //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+          OB.POS.navigate('main', {
+            trigger: true
+          });
         },
         error: function(jqXHR, textStatus, errorThrown) {
           me.triggerLoginFail(jqXHR.status, mode);
@@ -282,7 +360,9 @@
     setDocumentSequence: function() {
       var me = this;
       // Obtains the persisted document number (documentno of the last processed order)
-      OB.Dal.find(OB.Model.DocumentSequence, {'posSearchKey':OB.POS.modelterminal.get('terminal').searchKey}, function(documentsequence) {
+      OB.Dal.find(OB.Model.DocumentSequence, {
+        'posSearchKey': OB.POS.modelterminal.get('terminal').searchKey
+      }, function(documentsequence) {
         var lastInternalDocumentSequence, max;
         if (documentsequence && documentsequence.length > 0) {
           lastInternalDocumentSequence = documentsequence.at(0).get('documentSequence');
@@ -328,7 +408,7 @@
             me.saveDocumentSequenceAndGo(maxDocumentSequence);
           }
         }
-      }, function () {
+      }, function() {
         // If c_order does not exist yet, go with the sequence
         // number fetched from the server
         me.saveDocumentSequenceAndGo(maxDocumentSequence);

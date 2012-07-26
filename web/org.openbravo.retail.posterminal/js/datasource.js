@@ -259,7 +259,7 @@
 
       me.cache = data;
 
-      if (me.request.model) {
+      if (me.request.model && !me.request.model.prototype.online) {
         OB.Dal.initCache(me.request.model, data, function() {
           me.trigger('ready');
         }, function() {

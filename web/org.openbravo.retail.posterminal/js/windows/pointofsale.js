@@ -9,7 +9,7 @@
 
 /*global B, $, _ */
 
-(function () {
+//(function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -66,8 +66,8 @@
                       {kind: OB.COMP.MenuInvoice},
                       {kind: OB.COMP.MenuSeparator},
                       {kind: OB.COMP.MenuItem.extend({href: '../..', target: '_blank', onclick: 'return true;', label:OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace')})},
-                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashmanagement'), label: OB.I18N.getLabel('OBPOS_LblCashManagement')})},
-                      {kind: OB.COMP.MenuItem.extend({href: OB.POS.hrefWindow('retail.cashup'), label: OB.I18N.getLabel('OBPOS_LblCloseCash')})}
+                      {kind: OB.COMP.MenuItem.extend({href: 'retail.cashmanagement', label: OB.I18N.getLabel('OBPOS_LblCashManagement')})},
+                      {kind: OB.COMP.MenuItem.extend({href: 'retail.cashup'	/*OB.POS.hrefWindow('retail.cashup')*/, label: OB.I18N.getLabel('OBPOS_LblCloseCash')})}
                     ]}
                   ]}
                 ]}
@@ -222,8 +222,10 @@
   });
 
   // Register window
-  OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
+  //OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
+  console.log('register');
+  OB.POS.registerWindow('retail.pointofsale', OB.COMP.PointOfSale);
 
   // Register required models/data
   OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence];
-}());
+//}());

@@ -38,13 +38,16 @@
 
   // Exit
   OB.COMP.CancelDialogOk = OB.COMP.Button.extend({
+	    attributes: {
+	        'data-dismiss': 'modal'
+	      },
     className: 'btnlink btnlink-gray modal-dialog-content-button',
     render: function () {
       this.$el.html(OB.I18N.getLabel('OBPOS_LblOk'));
       return this;
     },
     clickEvent: function (e) {
-      window.location=OB.POS.hrefWindow('retail.pointofsale');
+    	OB.POS.navigate('retail.pointofsale');
     }
   });
 

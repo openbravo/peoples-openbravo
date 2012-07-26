@@ -88,8 +88,8 @@
         if (this.style) {
           this.$el.attr('style', this.style);
         }
-
-        this.registerCollection(attr.collection);
+if (attr.collection){
+        this.registerCollection(attr.collection);}
       }
     });
   };
@@ -98,15 +98,18 @@
   OB.UI.TableView = Backbone.View.extend({
     tagName: 'div',
     initialize: function () {
+    	console.log('init tableview')
       this.theader = $('<div/>');
       this.tbody = $('<ul/>').addClass('unstyled').css('display', 'none');
       this.tempty = $('<div/>');
       this.tinfo = $('<div/>').css('display', 'none').css('border-bottom', '1px solid #cccccc').css('padding', '15px').css('font-weight', 'bold').css('color', '#cccccc');
       this.$el.empty().append(this.theader).append(this.tbody).append(this.tinfo).append(this.tempty);
+      
     },
+    
+
 
     registerCollection: function (collection) {
-
       this.collection = collection;
       this.selected = null;
 
@@ -197,7 +200,12 @@
           this.tinfo.hide();
         }
       }, this);
+      
+      // XXX: Reseting to show the collection if registered with data
+      this.collection.trigger('reset');
     },
+    
+    
 
     _addModelToCollection: function (model, index) { // means after...
       var me = this,
@@ -238,8 +246,8 @@
       this.renderHeader = attr.renderHeader;
       this.renderEmpty = attr.renderEmpty;
       this.renderLine = attr.renderLine;
-
-      this.registerCollection(attr.collection);
+if (attr.collection){
+      this.registerCollection(attr.collection);}
     }
   });
 

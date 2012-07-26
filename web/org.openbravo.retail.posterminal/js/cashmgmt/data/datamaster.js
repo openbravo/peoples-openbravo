@@ -16,6 +16,33 @@
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
+  OB.Model = OB.Model || {};
+  
+  OB.Model.DepositsDrops = Backbone.Model.extend({
+	  source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositsDrops',
+	  modelName: 'DataDepositsDrops',
+	  online: true
+  });
+  
+  OB.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
+	  source: 'org.openbravo.retail.posterminal.term.CashMgmtPayments',
+	  modelName: 'DataCashMgmtPaymentMethod',
+	  online: true
+  });
+  
+  OB.Model.DropEvents = Backbone.Model.extend({
+	  source: 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents',
+	  modelName: 'DataDropEvents',
+	  online: true
+  });
+  
+  OB.Model.DepositEvents = Backbone.Model.extend({
+	  source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents',
+	  modelName: 'DataDepositEvents',
+	  online: true
+  });
+  // -------------------------------------------------------------------------------------------
+
   OB.DATA.DepositsDrops = function (context, id) {
     this._id = 'DataDepositsDrops';
     this.context = context;
@@ -35,6 +62,7 @@
     };
   };
   _.extend(OB.DATA.CashMgmtPaymentMethod.prototype, OB.DATA.Base);
+  
 
   OB.DATA.DropEvents = function (context, id) {
     this._id = 'DataDropEvents';

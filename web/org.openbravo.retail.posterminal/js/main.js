@@ -10,8 +10,9 @@
 /*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
 (function () {
+	console.log('Entry Point1');
 
-  var modelterminal = new OB.Model.Terminal();
+  var modelterminal = OB.POS.modelterminal;
 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
   terminal.setModel(modelterminal);
@@ -26,23 +27,24 @@
     }
   };
 
-  // global components.
-  OB.POS = {
-    modelterminal: modelterminal,
-    paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
-    paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
-    hrefWindow: function (windowname) {
-      return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
-    },
-    logout: function (callback) {
-      modelterminal.logout();
-    },
-    lock: function (callback) {
-      modelterminal.lock();
-    },
-    paymentProviders: {},
-    windows: {}
-  };
+//  // global components.
+//  debugger;
+//  OB.POS = {
+//    modelterminal: modelterminal,
+//    paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
+//    paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
+//    hrefWindow: function (windowname) {
+//      return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
+//    },
+//    logout: function (callback) {
+//      modelterminal.logout();
+//    },
+//    lock: function (callback) {
+//      modelterminal.lock();
+//    },
+//    paymentProviders: {},
+//    windows: {}
+//  };
 
   modelterminal.on('ready', function () {
     var webwindow, w,
@@ -90,10 +92,13 @@
       if (OB.DATA[OB.POS.paramWindow]) {
         // loading/refreshing required data/models for window
         _.each(OB.DATA[OB.POS.paramWindow], function (model) {
+        	console.log('loading model', model.prototype.modelName,model.prototype.local);
           var ds;
           if (model.prototype.local) {
+        	  console.log('local');
             OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
           } else {
+        	  console.log('no local');
             ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
             ds.on('ready', function () {
 
@@ -134,11 +139,12 @@
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
-    window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
+    //window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
-  $(document).ready(function () {
+ // function () {
     // Entry Point
+  console.log('Entry Point');
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
     modelterminal.load();
 
@@ -164,6 +170,6 @@
         return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
       }
     });
-  });
+ // }
 
 }());

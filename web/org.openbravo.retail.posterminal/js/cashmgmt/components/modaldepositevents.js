@@ -32,9 +32,14 @@
       theHeaderText.attr('color', 'black');
     },
     getContentView: function () {
-      return ({
-        kind: OB.COMP.SearchDepositEvents
-      });
+      return OB.COMP.SearchDepositEvents;
+      
+//      Backbone.View.extend({
+//    		    tagName: 'div',
+//    		    contentView: [{tag:'input'}]
+//    		    });
+      
+    //kind: OB.COMP.SearchDepositEvents
     },
     showEvent: function (e) {
       // custom bootstrap event, no need to prevent default
