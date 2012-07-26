@@ -65,8 +65,8 @@
 
   function cashMgmthwcallback(e) {
     if (e.result==='OK') {
-      window.location=OB.POS.hrefWindow('retail.pointofsale');
-    }else if (e.exception) {
+      OB.POS.navigate('main');
+    } else if (e.exception) {
       OB.UTIL.showLoading(false);
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMgmtDonePrintNot'));
     }

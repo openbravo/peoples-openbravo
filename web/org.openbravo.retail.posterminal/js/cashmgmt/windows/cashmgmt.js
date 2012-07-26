@@ -65,20 +65,20 @@
       this.depsdropstosend.on('paymentDone', function(model, p) {
         console.log('paymentDone', this, p);
         var payment = {
-                description: p.identifier + ' - ' + model.get('name'),
-                name: p.destinationKey,
-                user: OB.POS.modelterminal.get('context').user._identifier,
-                time: new Date()
-              };
-        
+          description: p.identifier + ' - ' + model.get('name'),
+          name: p.destinationKey,
+          user: OB.POS.modelterminal.get('context').user._identifier,
+          time: new Date()
+        };
+
         if (p.type === 'drop') {
-        	payment.deposit = 0;
-        	payment.drop = p.amount;
+          payment.deposit = 0;
+          payment.drop = p.amount;
         } else {
-        	payment.deposit = p.amount;
-        	payment.drop = 0
+          payment.deposit = p.amount;
+          payment.drop = 0
         }
-        
+
         deposits.push(payment);
 
         this.depsdropstosend.add({
@@ -94,10 +94,18 @@
       }, this);
 
       this.depsdropstosend.on('makeDeposits', function() {
-        var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
+            me = this;
         process.exec({
           depsdropstosend: this.depsdropstosend.toJSON()
         }, function(data, message) {
+          // XXX: is this the way to print?
+          var hw = new OB.COMP.HWManager(me);
+          hw.depsdropstosend = me.depsdropstosend.toJSON();
+          hw.attr({
+            templatecashmgmt: 'res/printcashmgmt.xml'
+          });
+          me.trigger('print');
           console.log('done...', data, message);
         });
       }, this);
@@ -189,7 +197,7 @@
       }, this);
 
       dropEvent.on('click', function(model) {
-    	  this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
+        this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
         delete this.options.currentPayment;
       }, this);
     }
