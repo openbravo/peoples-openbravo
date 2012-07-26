@@ -50,6 +50,8 @@
         terminal = OB.POS.modelterminal.get('terminal'),
         queue = {}, emptyQueue = false;
 
+    c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
+
     // We are Logged !!!
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'visible');

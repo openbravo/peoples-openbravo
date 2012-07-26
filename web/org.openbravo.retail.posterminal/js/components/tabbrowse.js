@@ -27,16 +27,13 @@
     attributes: {
       'style': 'overflow:auto; height: 612px; margin: 5px;'
     },
+    contentView: [
+      {tag: 'div', attributes: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
+        {view: OB.COMP.ListCategories, id: 'listCategories'}
+      ]}
+    ],
     initialize: function() {
-      var $child = $('<div/>');
-      $child.css({
-        'background-color': '#ffffff',
-        'color': 'black',
-        'padding': '5px'
-      });
-      this.listCategories = new OB.COMP.ListCategories(this.options);
-      $child.append(this.listCategories.$el);
-      this.$el.append($child);
+      OB.UTIL.initContentView(this);
     }
   });
 
@@ -45,16 +42,13 @@
     attributes: {
       'style': 'overflow:auto; height: 612px; margin: 5px;'
     },
+    contentView: [
+      {tag: 'div', attributes: {'style': 'background-color: #ffffff; color: black; padding: 5px'}, content: [
+        {view: OB.COMP.ListProducts, id: 'listProducts'}
+      ]}
+    ],    
     initialize: function() {
-      var $child = $('<div/>');
-      $child.css({
-        'background-color': '#ffffff',
-        'color': 'black',
-        'padding': '5px'
-      });
-      this.listProducts = new OB.COMP.ListProducts(this.options);
-      $child.append(this.listProducts.$el);
-      this.$el.append($child);
+      OB.UTIL.initContentView(this);
     }
   });
 
@@ -64,29 +58,22 @@
       'id': 'catalog',
       'class': 'tab-pane'
     },
+    contentView: [
+      {tag: 'div', attributes: {'class': 'row-fluid'}, content: [
+        {tag: 'div', attributes: {'class': 'span6'}, content: [
+          {view: OB.UI.BrowseProducts, id: 'browseProducts'}
+        ]},
+        {tag: 'div', attributes: {'class': 'span6'}, content: [
+          {view: OB.UI.BrowseCategories, id: 'browseCategories'}
+        ]}
+      ]}
+    ],     
     initialize: function() {
-      var $container, $productListContainer, browseProd, $categoriesListContainer, browseCateg;
-      $container = $('<div/>');
-      $container.addClass('row-fluid');
-
-      $productListContainer = $('<div/>');
-      $productListContainer.addClass('span6');
-
-      browseProd = new OB.UI.BrowseProducts(this.options);
-      $productListContainer.append(browseProd.$el);
-
-      $categoriesListContainer = $('<div/>');
-      $categoriesListContainer.addClass('span6');
-      browseCateg = new OB.UI.BrowseCategories(this.options);
-      $categoriesListContainer.append(browseCateg.$el);
-
-      $container.append($productListContainer);
-      $container.append($categoriesListContainer);
-
-      this.$el.append($container);
-
-      browseCateg.listCategories.categories.on('selected', function(category) {
-        browseProd.listProducts.loadCategory(category);
+      OB.UTIL.initContentView(this);
+      
+//      this.options.root.ListCategories.categories.on('selected', function(category) { // Another option
+      this.browseCategories.listCategories.categories.on('selected', function(category) {     
+        this.browseProducts.listProducts.loadCategory(category);
       }, this);
     }
   });

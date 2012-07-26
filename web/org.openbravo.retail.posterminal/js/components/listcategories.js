@@ -37,10 +37,10 @@
     }],
     initialize: function () {
 
-      this.options[this.optionsid] = this;
+      this.options.root[this.optionsid] = this;
       OB.UTIL.initContentView(this);
 
-      this.receipt = this.options.modelorder;
+      this.receipt = this.options.root.modelorder;
       this.categories = new OB.Collection.ProductCategoryList();
       this.tableview.registerCollection(this.categories);
 

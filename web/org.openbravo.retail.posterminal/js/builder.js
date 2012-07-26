@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, $, _ */
+/*global window, $, _, Backbone */
 
 (function () {
 
@@ -17,7 +17,10 @@
 
     var mycontext = context || {};
 
-    var inst = new b.kind(mycontext);
+    var inst = (Backbone.Model.prototype.isPrototypeOf(b.kind.prototype))
+      ? new b.kind()
+      : new b.kind(mycontext);
+
     inst._id = b.id || inst._id;
     if (inst._id) {
       mycontext[inst._id] = inst;

@@ -85,7 +85,7 @@
         view[child.id] = inst;
       }
     } else if (child.view) {
-      obj = new child.view({parent: view});
+      obj = new child.view({root: view.options.root, parent: view});
       inst = obj.render().$el;
       if (child.id) {
         view[child.id] = obj;
