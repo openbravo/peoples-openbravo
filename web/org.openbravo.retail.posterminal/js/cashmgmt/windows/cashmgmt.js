@@ -96,17 +96,27 @@
       this.depsdropstosend.on('makeDeposits', function() {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
             me = this;
+        OB.UTIL.showLoading(true);
+        if (this.depsdropstosend.length === 0) {
+          OB.POS.navigate('main');
+          return true;
+        }
+
         process.exec({
           depsdropstosend: this.depsdropstosend.toJSON()
         }, function(data, message) {
-          // XXX: is this the way to print?
-          var hw = new OB.COMP.HWManager(me);
-          hw.depsdropstosend = me.depsdropstosend.toJSON();
-          hw.attr({
-            templatecashmgmt: 'res/printcashmgmt.xml'
-          });
-          me.trigger('print');
-          console.log('done...', data, message);
+          if (data && data.exception) {
+            OB.UTIL.showLoading(false);
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          } else {
+            // XXX: is this the way to print?
+            var hw = new OB.COMP.HWManager(me);
+            hw.depsdropstosend = me.depsdropstosend.toJSON();
+            hw.attr({
+              templatecashmgmt: 'res/printcashmgmt.xml'
+            });
+            me.trigger('print');
+          }
         });
       }, this);
     }
