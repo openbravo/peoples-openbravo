@@ -36,32 +36,30 @@
 //    this.$el = this.component.$el;
 //    this.tableview = this.component.context.tableview;
 //  };
-  
 OB.COMP.SearchDepositEvents = Backbone.View.extend({
   tagName: 'div',
   className: 'row-fluid',
-  
+
   contentView: [{
+    tag: 'div',
+    attributes: {
+      'class': 'span12'
+    },
+    content: [{
       tag: 'div',
-      attributes: {
-        'class': 'span12'
-      },
       content: [{
-        tag: 'div',
-        content: [{
-          id: 'tableview',
-          view: OB.UI.TableView.extend({
-            renderLine: OB.COMP.RenderDropDepDestinations,
-            renderEmpty: OB.COMP.RenderEmpty
-          })
-        }]
+        id: 'tableview',
+        view: OB.UI.TableView.extend({
+          renderLine: OB.COMP.RenderDropDepDestinations,
+          renderEmpty: OB.COMP.RenderEmpty
+        })
       }]
-    }],
+    }]
+  }],
 
   initialize: function() {
-	  console.log('sde.........................');;
-	OB.UTIL.initContentView(this);
-	
+    OB.UTIL.initContentView(this);
+
     this.tableview.registerCollection(this.options.parent.model.getData('DataDepositEvents'));
   }
 });
