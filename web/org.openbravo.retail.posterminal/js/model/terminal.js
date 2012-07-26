@@ -44,6 +44,17 @@
       }
     }
   });
+  
+  function fillPaymentMethodView(paymentMethod) {
+    var i, max, paymentProvider;
+    for (i = 0, max = OB.POS.paymentProviders.length; i < max; i++) {
+      paymentProvider = OB.POS.paymentProviders[i];
+      if (paymentMethod[paymentProvider.property]) {
+        paymentMethod.view = paymentProvider.view;
+        return;
+      }
+    }
+  }  
 
   // Terminal model.
   OB.Model.Terminal = Backbone.Model.extend({
@@ -196,6 +207,7 @@
           me.set('payments', data);
           me.paymentnames = {};
           for (i = 0, max = data.length; i < max; i++) {
+            fillPaymentMethodView(data[i].paymentMethod);
             me.paymentnames[data[i].payment.searchKey] = data[i].payment._identifier;
           }
           me.triggerReady();

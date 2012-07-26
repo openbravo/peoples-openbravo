@@ -13,12 +13,11 @@
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
-
-  function payment(amount, modalpayment, receipt, key, name, provider) {
+  
+  function payment(amount, modalpayment, receipt, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
-      var providerview = OB.POS.paymentProviders[provider];
-      if (providerview) {
-        modalpayment.show(receipt, key, name, providerview, amount);
+      if (paymentMethod.view) {
+        modalpayment.show(receipt, key, name, paymentMethod.view, amount);
       } else {
         receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
@@ -29,14 +28,14 @@
     }
   }
 
-  function getPayment(modalpayment, receipt, key, name, provider) {
+  function getPayment(modalpayment, receipt, key, name, paymentMethod) {
     return ({
       'permission': key,
       'stateless': false,
       'action': function (txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? receipt.getPending() : amount;
-        payment(amount, modalpayment, receipt, key, name, provider);
+        payment(amount, modalpayment, receipt, key, name, paymentMethod);
       }
     });
   }
@@ -96,7 +95,7 @@
 
         Btn = OB.COMP.ButtonKey.extend({
           command: payments[i].payment.searchKey,
-          definition: getPayment(modalpayment, receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].provider),
+          definition: getPayment(modalpayment, receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].paymentMethod),
           classButtonActive: 'btnactive-green',
           permission: payments[i].payment.searchKey,
           contentViewButton: [payments[i].payment._identifier]
@@ -114,7 +113,7 @@
           var exactpayment = allpayments[this.status] || defaultpayment;
           var amount = receipt.getPending();
           if (amount > 0 && exactpayment) {
-            payment(amount, modalpayment, receipt, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.provider);
+            payment(amount, modalpayment, receipt, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
           }
         }
       });

@@ -40,7 +40,7 @@
     lock: function (callback) {
       modelterminal.lock();
     },
-    paymentProviders: {},
+    paymentProviders: [],
     windows: {}
   };
 
