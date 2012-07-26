@@ -18,7 +18,7 @@
     tabpanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
     shownEvent: function(e) {
-      this.options.keyboard.hide();
+      this.options.root.keyboard.hide();
     }
   });
 

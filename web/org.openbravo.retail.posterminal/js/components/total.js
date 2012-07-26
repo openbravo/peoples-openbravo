@@ -17,20 +17,17 @@
   // Order list
   OB.COMP.Total = Backbone.View.extend({
     tagName: 'span',
+    attributes: {'style': 'font-weight:bold;'},
     initialize: function () {
-
-      this.totalgross = $('<strong/>');
-      this.$el.append(this.totalgross);
-
-      // Set Model
-      this.receipt = this.options.modelorder;
+      this.receipt = this.options.root.modelorder;
 
       this.receipt.on('change:gross', function() {
-        this.totalgross.text(this.receipt.printTotal());
+        this.render();
       }, this);
-
-      // Initial total display
-      this.totalgross.text(this.receipt.printTotal());
+    },
+    render: function () {
+      this.$el.text(this.receipt.printTotal());
+      return this;
     }
   });
 }());

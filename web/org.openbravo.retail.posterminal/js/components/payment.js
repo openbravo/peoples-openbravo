@@ -30,7 +30,7 @@
     className: 'btnlink-green',
     attributes: {style: 'width: 69px'},
     'clickEvent': function () {
-      this.options.root.keyboard.execStatelessCommand('cashexact');
+      this.options.parent.options.keyboard.execStatelessCommand('cashexact');
     }
   });
 
