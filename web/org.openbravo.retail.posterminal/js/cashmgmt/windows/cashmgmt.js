@@ -60,8 +60,11 @@
       var depositEvent = this.getData('DataDepositEvents'),
           depList = this.getData('DataDepositsDrops'),
           deposits = this.getData('DataDepositsDrops').at(0).get('listdepositsdrops');
+
+      this.depsdropstosend = new Backbone.Collection();
+
       depositEvent.on('paymentDone', function(model, p) {
-        console.log('paymentDone', this,p);
+        console.log('paymentDone', this, p);
         deposits.push({
           deposit: p.amount,
           drop: 0,
@@ -70,7 +73,26 @@
           user: OB.POS.modelterminal.get('context').user._identifier,
           time: new Date()
         });
+
+        this.depsdropstosend.add({
+          amount: p.amount,
+          description: p.identifier + ' - ' + model.get('name'),
+          paymentMethodId: p.id,
+          type: p.type,
+          reasonId: model.get('id'),
+          user: OB.POS.modelterminal.get('context').user._identifier,
+          time: new Date().toString().substring(16, 21)
+        });
         depList.trigger('reset');
+      }, this);
+
+      this.depsdropstosend.on('makeDeposits', function() {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
+        process.exec({
+        	depsdropstosend: this.depsdropstosend.toJSON()
+        }, function(data, message){
+        	console.log('done...',data,message);
+        });
       }, this);
     }
   });
@@ -144,8 +166,8 @@
     init: function() {
       var depositEvent = this.model.getData('DataDepositEvents');
       depositEvent.on('click', function(model) {
-    	  depositEvent.trigger('paymentDone',model, this.options.currentPayment);
-    	  delete this.options.currentPayment;
+        depositEvent.trigger('paymentDone', model, this.options.currentPayment);
+        delete this.options.currentPayment;
       }, this);
     }
   });

@@ -24,9 +24,11 @@
             'action': function(txt) {
             	//XXX: is this the way to communicate with the view
             	this.options.parent.options.currentPayment = {
+            			id: id,
             			amount: txt,
             			identifier: identifier,
-            			destinationKey: key
+            			destinationKey: key,
+            			type: type
             	}
             	
             	console.log('amnt',txt);

@@ -26,7 +26,8 @@
       return this;
     },
     clickEvent: function (e) {
-       this.options.ListDepositsDrops.listdepositsdrops.trigger('depositdrop');
-   }
+    	//TODO: make some util to do this cleaner
+       this.options.parent.options.parent.model.depsdropstosend.trigger('makeDeposits');
+   }  
   });
 }());
