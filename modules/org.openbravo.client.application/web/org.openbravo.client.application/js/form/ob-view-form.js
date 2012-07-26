@@ -719,7 +719,7 @@ OB.ViewFormProperties = {
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[calloutMessages.length - 1].text !== '') {
       // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, calloutMessages[calloutMessages.length - 1].text);
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[calloutMessages.length - 1].severity], null, calloutMessages[calloutMessages.length - 1].text);
     }
 
     // edit row has changed when returning, don't update the form anymore
