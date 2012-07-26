@@ -110,7 +110,7 @@
             me = this;
         OB.UTIL.showLoading(true);
         if (this.depsdropstosend.length === 0) {
-          OB.POS.navigate('main');
+          OB.POS.navigate('retail.pointofsale');
           return true;
         }
 
@@ -206,6 +206,8 @@
             header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
             type: 'DataDropEvents'
           })
+        }, {
+          view: OB.COMP.ModalCancel
         }]
       }]
     }],
