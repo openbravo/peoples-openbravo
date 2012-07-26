@@ -15,6 +15,7 @@
   OB.DATA = window.OB.DATA || {};
 
   OB.DATA.DropDepSave = function (context) {
+	  console.log('DropDepSave');
     var i;
     var me = this;
     this._id = 'dropdepsave';

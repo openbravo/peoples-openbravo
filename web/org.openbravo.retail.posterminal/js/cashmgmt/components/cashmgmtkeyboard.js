@@ -22,6 +22,15 @@
           return {
             'permission': key,
             'action': function(txt) {
+            	//XXX: is this the way to communicate with the view
+            	this.options.parent.options.currentPayment = {
+            			amount: txt,
+            			identifier: identifier,
+            			destinationKey: key
+            	}
+            	
+            	console.log('amnt',txt);
+            	this.options.parent.options.amt = txt;
               this.options.id = id;
               this.options.amountToDrop = txt;
               this.options.destinationKey = key;

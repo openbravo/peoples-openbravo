@@ -22,39 +22,57 @@
     initialize: function() {
       var me = this,
           queue = {};
-      _.each(this.get('models'), function(item) {
+      _.each(this.models, function(item) {
         var ds;
 
         if (item.prototype.online) {
           ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
-
 
           queue[item.prototype.modelName] = false;
           ds.on('ready', function() {
             me.data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
             console.log('loaded model', item);
             queue[item.prototype.modelName] = true;
-            if (OB.UTIL.queueStatus(queue)) me.trigger('ready');
+            if (OB.UTIL.queueStatus(queue)) {
+              me.trigger('ready');
+            }
           });
           ds.load(item.params);
         }
       });
+
+      this.on('ready', function() {
+        if (this.init) {
+          this.init();
+        }
+      }, this)
       //TODO: load offline models when regesitering window
     },
 
     getData: function(dsName) {
-      console.log('getData', dsName);
       return this.data[dsName];
     }
-
   });
 
   OB.Model.CashManagement = OB.Model.WindowModel.extend({
-    defaults: {
-      models: [OB.Model.DepositsDrops, OB.Model.CashMgmtPaymentMethod, OB.Model.DropEvents, OB.Model.DepositEvents]
+    models: [OB.Model.DepositsDrops, OB.Model.CashMgmtPaymentMethod, OB.Model.DropEvents, OB.Model.DepositEvents],
+    init: function() {
+      var depositEvent = this.getData('DataDepositEvents'),
+          depList = this.getData('DataDepositsDrops'),
+          deposits = this.getData('DataDepositsDrops').at(0).get('listdepositsdrops');
+      depositEvent.on('paymentDone', function(model, p) {
+        console.log('paymentDone', this,p);
+        deposits.push({
+          deposit: p.amount,
+          drop: 0,
+          description: p.identifier + ' - ' + model.get('name'),
+          name: p.destinationKey,
+          user: OB.POS.modelterminal.get('context').user._identifier,
+          time: new Date()
+        });
+        depList.trigger('reset');
+      }, this);
     }
-
-
   });
 
   OB.UI.WindowView = Backbone.View.extend({
@@ -65,6 +83,9 @@
       this.model = new this.windowmodel();
       this.model.on('ready', function() {
         OB.UTIL.initContentView(me);
+        if (me.init) {
+          me.init();
+        }
         console.log('ready...');
         me.trigger('ready');
       });
@@ -120,9 +141,12 @@
       }]
     }],
 
-    initialize: function() {
-      OB.UI.WindowView.prototype.initialize.call(this, arguments);
-      this.modalCancel = new OB.COMP.ModalCancel();
+    init: function() {
+      var depositEvent = this.model.getData('DataDepositEvents');
+      depositEvent.on('click', function(model) {
+    	  depositEvent.trigger('paymentDone',model, this.options.currentPayment);
+    	  delete this.options.currentPayment;
+      }, this);
     }
   });
 
