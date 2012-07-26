@@ -699,6 +699,11 @@ isc.OBSelectorItem.addProperties({
       } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
         return '';
       }
+    } else {
+      if (!this.valueMap) {
+        this.valueMap = {};
+      }
+      this.valueMap[value] = ret;
     }
     return ret;
   },
