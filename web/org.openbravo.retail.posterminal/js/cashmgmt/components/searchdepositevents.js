@@ -60,6 +60,6 @@ OB.COMP.SearchDepositEvents = Backbone.View.extend({
   initialize: function() {
     OB.UTIL.initContentView(this);
 
-    this.tableview.registerCollection(this.options.parent.model.getData('DataDepositEvents'));
+    this.tableview.registerCollection(this.options.parent.model.getData(this.type));
   }
 });

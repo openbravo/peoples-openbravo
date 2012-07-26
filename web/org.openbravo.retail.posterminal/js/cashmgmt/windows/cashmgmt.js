@@ -57,22 +57,29 @@
   OB.Model.CashManagement = OB.Model.WindowModel.extend({
     models: [OB.Model.DepositsDrops, OB.Model.CashMgmtPaymentMethod, OB.Model.DropEvents, OB.Model.DepositEvents],
     init: function() {
-      var depositEvent = this.getData('DataDepositEvents'),
-          depList = this.getData('DataDepositsDrops'),
+      var depList = this.getData('DataDepositsDrops'),
           deposits = this.getData('DataDepositsDrops').at(0).get('listdepositsdrops');
 
       this.depsdropstosend = new Backbone.Collection();
 
-      depositEvent.on('paymentDone', function(model, p) {
+      this.depsdropstosend.on('paymentDone', function(model, p) {
         console.log('paymentDone', this, p);
-        deposits.push({
-          deposit: p.amount,
-          drop: 0,
-          description: p.identifier + ' - ' + model.get('name'),
-          name: p.destinationKey,
-          user: OB.POS.modelterminal.get('context').user._identifier,
-          time: new Date()
-        });
+        var payment = {
+                description: p.identifier + ' - ' + model.get('name'),
+                name: p.destinationKey,
+                user: OB.POS.modelterminal.get('context').user._identifier,
+                time: new Date()
+              };
+        
+        if (p.type === 'drop') {
+        	payment.deposit = 0;
+        	payment.drop = p.amount;
+        } else {
+        	payment.deposit = p.amount;
+        	payment.drop = 0
+        }
+        
+        deposits.push(payment);
 
         this.depsdropstosend.add({
           amount: p.amount,
@@ -89,9 +96,9 @@
       this.depsdropstosend.on('makeDeposits', function() {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt');
         process.exec({
-        	depsdropstosend: this.depsdropstosend.toJSON()
-        }, function(data, message){
-        	console.log('done...',data,message);
+          depsdropstosend: this.depsdropstosend.toJSON()
+        }, function(data, message) {
+          console.log('done...', data, message);
         });
       }, this);
     }
@@ -158,15 +165,31 @@
       {
         tag: 'div',
         content: [{
-          view: OB.UI.ModalDepositEvents
+          view: OB.UI.ModalDepositEvents.extend({
+            id: 'modaldepositevents',
+            header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
+            type: 'DataDepositEvents'
+          })
+        }, {
+          view: OB.UI.ModalDepositEvents.extend({
+            id: 'modaldropevents',
+            header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
+            type: 'DataDropEvents'
+          })
         }]
       }]
     }],
 
     init: function() {
-      var depositEvent = this.model.getData('DataDepositEvents');
+      var depositEvent = this.model.getData('DataDepositEvents'),
+          dropEvent = this.model.getData('DataDropEvents');
       depositEvent.on('click', function(model) {
-        depositEvent.trigger('paymentDone', model, this.options.currentPayment);
+        this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
+        delete this.options.currentPayment;
+      }, this);
+
+      dropEvent.on('click', function(model) {
+    	  this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
         delete this.options.currentPayment;
       }, this);
     }

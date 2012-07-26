@@ -12,8 +12,6 @@
 
 
 OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
-  id: 'modaldepositevents',
-  header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
   initialize: function() {
     var theModal, theHeader, theBody, theHeaderText;
     OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
@@ -29,7 +27,9 @@ OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
     theHeaderText.attr('color', 'black');
   },
   getContentView: function() {
-    return OB.COMP.SearchDepositEvents;
+    return OB.COMP.SearchDepositEvents.extend({
+      type: this.type
+    });
   },
   showEvent: function(e) {
     // custom bootstrap event, no need to prevent default
