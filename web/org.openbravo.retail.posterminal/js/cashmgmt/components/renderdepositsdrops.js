@@ -7,140 +7,250 @@
  ************************************************************************************
  */
 
-/*global B, $ , Backbone */
-
-(function () {
-
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
-
-  OB.COMP.RenderDepositsDrops = OB.COMP.CustomView.extend({
-    render: function() {
-      var i;
-      var me = this;
-      this.total= OB.DEC.add(this.model.get('startingCash'),this.model.get('totalTendered'));
-      if(!this.model.get('total')){
-        this.model.set('total', this.total);
-      }
-      this.dropsdeps = this.model.get('listdepositsdrops');
-      if(this.dropsdeps.length!==0){
-        this.model.set('total', this.total);
-      }
-
-      this.$el.append(B(
-          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px;  float: left;'}, content: [
-                 {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
-              ]}
-             ]}
-          ]}).$el);
-      this.$el.append(B(
-      {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-        {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 6px 20px 6px 10px;  float: left; width: 70%'}, content: [
-            OB.I18N.getLabel('OBPOS_LblStarting')+' '+this.model.get('payName')
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: right;'}, content: [
-            OB.I18N.formatCurrency(OB.DEC.add(0,this.model.get('startingCash')))
-          ]}
-         ]}
-      ]}).$el);
-      this.$el.append(B(
-      {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-        {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-          {kind: B.KindJQuery('div'), attr: {'style': 'padding: 6px 20px 6px 10px;  float: left; width: 70%'}, content: [
-            OB.I18N.getLabel('OBPOS_LblTotalTendered')+' '+this.model.get('payName')
-          ]},
-          {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: right;'}, content: [
-            OB.I18N.formatCurrency(OB.DEC.add(0,this.model.get('totalTendered')))
-          ]}
-         ]}
-      ]}).$el);
-
-      for(i=0; i< this.dropsdeps.length; i++) {
-        var time = new Date(this.dropsdeps[i].time);
-        if(this.dropsdeps[i].timeOffset){
-          time.setMinutes(time.getMinutes()+ this.dropsdeps[i].timeOffset + time.getTimezoneOffset());
+OB.COMP.RenderDepositLine = Backbone.View.extend({
+  contentView: [{
+    tag: 'div',
+    attributes: {
+      'class': 'row-fluid'
+    },
+    content: [{
+      tag: 'div',
+      attributes: {
+        'class': 'span12',
+        style: 'border-bottom: 1px solid #cccccc;'
+      },
+      content: [{
+        tag: 'div',
+        id: 'description',
+        attributes: {
+          style: 'padding: 6px 20px 6px 10px;  float: left; width: 40%'
         }
-        if(this.dropsdeps[i].drop!==0){
-          this.$el.append(B(
-          {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 6px 20px 6px 10px;  float: left; width: 40%'}, content: [
-                OB.I18N.getLabel('OBPOS_LblWithdrawal')+': '+this.dropsdeps[i].description
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 15%'}, content: [
-                this.dropsdeps[i].user
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 10%'}, content: [
-                time.toString().substring(16,21)
-              ]},
-              {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: right;'}, content: [
-                OB.I18N.formatCurrency(OB.DEC.sub(0,this.dropsdeps[i].drop))
-              ]}
-             ]}
-          ]}).$el);
-          this.total= OB.DEC.sub(this.total,this.dropsdeps[i].drop);
-          this.model.set('total', this.total);
-        }else{
-          this.$el.append(B(
-            {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'class': 'span12','style': 'border-bottom: 1px solid #cccccc;'}, content: [
-                {kind: B.KindJQuery('div'), attr: {'style': 'padding: 6px 20px 6px 10px; float: left; width: 40%'}, content: [
-                  OB.I18N.getLabel('OBPOS_LblDeposit')+': '+this.dropsdeps[i].description
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 15%'}, content: [
-                    this.dropsdeps[i].user
-                 ]},
-                 {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 10%'}, content: [
-                   time.toString().substring(16,21)
-                 ]},
-                {kind: B.KindJQuery('div'), attr: {'style': 'text-align:right; padding: 6px 20px 6px 10px; float: right;'}, content: [
-                  OB.I18N.formatCurrency(OB.DEC.add(0,this.dropsdeps[i].deposit))
-                ]}
-               ]}
-            ]}).$el);
-          this.total= OB.DEC.add(this.total,this.dropsdeps[i].deposit);
-          this.model.set('total', this.total);
+      }, {
+        tag: 'div',
+        id: 'user',
+        attributes: {
+          style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 15%'
         }
-        me.trigger('change:total');
-      }
-      this.$el.append(B(
-      {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-        {kind: B.KindJQuery('div'), attr: {'class': 'span12', 'style': 'border-bottom: 1px solid #cccccc;'}, content: [
-            {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px 20px 10px 10px; float: left; width: 70%; font-weight:bold;'}, content: [
-                    OB.I18N.getLabel('OBPOS_LblNewAvailableIn')+' '+this.model.get('payName')
-            ]},
-        {kind: B.KindJQuery('div'), id: 'total', attr: {'style': 'padding: 10px 20px 10px 0px;  float: right; '}, content: [
-         {kind: Backbone.View.extend({
-           tagName: 'span',
-           attributes: {'style': 'float:right;'},
-           initialize: function () {
-                this.total = $('<strong/>');
-                this.$el.append(this.total);
-                this.total.text(OB.I18N.formatCurrency(me.total));
-                me.on('change:total', function() {
-                  this.total.text(OB.I18N.formatCurrency(me.total));
-                if(OB.DEC.compare(me.total) < 0){
-                   this.$el.css("color","red");//negative value
-                }else{
-                   this.$el.css("color","black");
-                }
-                }, this);
-                 // Initial total display
-                this.total.text(OB.I18N.formatCurrency(me.total));
-               if(OB.DEC.compare(me.total) < 0){
-                   this.$el.css("color","red");//negative value
-               }else{
-                   this.$el.css("color","black");
-               }
-              }
-            })}
-          ]}
-    ]}
-    ]}).$el);
-      return this;
+      }, {
+        tag: 'div',
+        id: 'time',
+        attributes: {
+          style: 'text-align:right; padding: 6px 20px 6px 10px; float: left;  width: 10%'
+        }
+      }, {
+        tag: 'div',
+        id: 'amt',
+        attributes: {
+          style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
+        }
+      }]
+    }]
+  }],
+  
+  initialize: function() {
+    OB.UTIL.initContentView(this);
+  },
+  
+  render: function() {
+    console.log(this.model);
+    var amnt, lbl, time = new Date(this.model.get('time'));
+    if (this.model.get('timeOffset')) {
+      time.setMinutes(time.getMinutes() + this.model.get('timeOffset') + time.getTimezoneOffset());
     }
-  });
-}());
+    if (this.model.get('drop') !== 0) {
+      amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('drop')));
+      lbl = OB.I18N.getLabel('OBPOS_LblWithdrawal') + ': ';
+    } else {
+      amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('deposit')));
+      lbl = OB.I18N.getLabel('OBPOS_LblDeposit') + ': ';
+    }
+
+    this.description.text(lbl + this.model.get('description'));
+    this.user.text(this.model.get('user'));
+    this.time.text(time.toString().substring(16, 21));
+    this.amt.text(amnt);
+    return this;
+  }
+});
+
+OB.COMP.RenderDepositsDrops = Backbone.View.extend({
+  contentView: [
+  //Separator
+  {
+    tag: 'div',
+    attributes: {
+      'class': 'row-fluid'
+    },
+    content: [{
+      tag: 'div',
+      attributes: {
+        'class': 'span12',
+        style: 'border-bottom: 1px solid #cccccc;'
+      },
+      content: [{
+        tag: 'div',
+        attributes: {
+          style: 'padding: 10px 20px 10px 10px;  float: left;'
+        },
+        content: [{
+          tag: 'div',
+          attributes: {
+            style: 'clear: both'
+          }
+        }]
+      }]
+    }]
+  },
+
+  // Total per payment type
+  {
+    tag: 'div',
+    attributes: {
+      'class': 'row-fluid'
+    },
+    content: [{
+      tag: 'div',
+      attributes: {
+        'class': 'span12',
+        style: 'border-bottom: 1px solid #cccccc;'
+      },
+      content: [{
+        tag: 'div',
+        id: 'startingCashPayName',
+        attributes: {
+          style: 'padding: 6px 20px 6px 10px;  float: left; width: 70%'
+        }
+      }, {
+        tag: 'div',
+        id: 'startingCashAmnt',
+        attributes: {
+          style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
+        }
+      }]
+    }]
+  },
+
+  // Tendered per payment type
+  {
+    tag: 'div',
+    attributes: {
+      'class': 'row-fluid'
+    },
+    content: [{
+      tag: 'div',
+      attributes: {
+        'class': 'span12',
+        style: 'border-bottom: 1px solid #cccccc;'
+      },
+      content: [{
+        tag: 'div',
+        id: 'tenderedLbl',
+        attributes: {
+          style: 'padding: 6px 20px 6px 10px;  float: left; width: 70%'
+        }
+      }, {
+        tag: 'div',
+        id: 'tenderedAmnt',
+        attributes: {
+          style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
+        }
+      }]
+    }]
+  },
+  // Drops/deposits
+  {
+    id: 'theList',
+    view: OB.UI.TableView.extend({
+      style: 'list',
+      renderEmpty: Backbone.View,
+      // Not to show anything in case of empty
+      renderLine: OB.COMP.RenderDepositLine
+    })
+  },
+
+  // Available per payment type
+  {
+    tag: 'div',
+    attributes: {
+      'class': 'row-fluid'
+    },
+    content: [{
+      tag: 'div',
+      attributes: {
+        'class': 'span12',
+        style: 'border-bottom: 1px solid #cccccc;'
+      },
+      content: [{
+        tag: 'div',
+        id: 'availableLbl',
+        attributes: {
+          style: 'padding: 10px 20px 10px 10px; float: left; width: 70%; font-weight:bold;'
+        }
+      }, {
+        tag: 'div',
+        attributes: {
+          style: 'padding: 10px 20px 10px 0px;  float: right;'
+        },
+        content: [{
+          view: Backbone.View.extend({
+            contentView: [{
+              tag: 'span',
+              id: 'total',
+              attributes: {
+                'style': 'float:right; font-weight: bold;'
+              }
+            }],
+
+            initialize: function() {
+              OB.UTIL.initContentView(this);
+              this.options.parent.model.on('change:total', function(model) {
+                this.newTotal = model.get('total');
+                this.render(model.get('total'));
+              }, this);
+            },
+
+            render: function(amnt) {
+              if (!amnt) {
+                return this;
+              }
+              this.total.text(OB.I18N.formatCurrency(amnt));
+              if (OB.DEC.compare(amnt) < 0) {
+                this.$el.css("color", "red"); //negative value
+              } else {
+                this.$el.css("color", "black");
+              }
+              return this;
+            }
+          })
+        }]
+      }]
+    }]
+  }],
+  
+  initialize: function() {
+    var transactionsArray = this.model.get('listdepositsdrops'),
+        transactionsCollection = new Backbone.Collection(),
+        total;
+
+    // listdepositsdrops is an array that needs to be transformed into a Collection
+    transactionsCollection.add(this.model.get('listdepositsdrops'));
+
+    OB.UTIL.initContentView(this);
+
+    total = _.reduce(transactionsArray, function(total, trx) {
+      return total + trx.deposit - trx.drop;
+    }, 0);
+
+    this.model.set('total', total);
+    this.theList.registerCollection(transactionsCollection);
+  },
+  render: function() {
+    this.startingCashPayName.text(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('payName'));
+    this.startingCashAmnt.text(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))));
+    this.tenderedLbl.text(OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('payName'));
+    this.tenderedAmnt.text(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalTendered'))));
+    this.availableLbl.text(OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('payName'));
+
+    return this;
+  }
+});

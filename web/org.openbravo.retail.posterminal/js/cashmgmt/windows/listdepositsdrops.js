@@ -80,12 +80,13 @@ OB.COMP.ListDepositsDrops = Backbone.View.extend({
   initialize: function() {
     OB.UTIL.initContentView(this);
     this.depositDropsList.registerCollection(this.options.parent.model.getData('DataDepositsDrops'));
-
-    //XXX: do it in a cleaner way!!!
-    this.userName[0].innerHTML = OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier;
-    this.time[0].innerHTML = OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24);
-    this.store[0].innerHTML = OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier;
-    this.terminal[0].innerHTML = OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier;
+  },
+  render: function() {
+    this.userName.text(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
+    this.time.text(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
+    this.store.text(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
+    this.terminal.text(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
+    return this;
   }
-  
+
 });
