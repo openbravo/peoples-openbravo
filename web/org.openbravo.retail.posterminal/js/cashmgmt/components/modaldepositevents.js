@@ -9,8 +9,6 @@
 
 /*global window, define, Backbone */
 
-
-
 OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
   initialize: function() {
     var theModal, theHeader, theBody, theHeaderText;

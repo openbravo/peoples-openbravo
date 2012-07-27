@@ -8,22 +8,19 @@
  */
 
 OB.COMP.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
-
   attributes: {
     'style': 'background-color:#dddddd;  border: 1px solid #ffffff;'
   },
+  contentView: [{
+    tag: 'div',
+    id: 'divcontent',
+    attributes: {
+      style: 'padding: 1px 0px 1px 5px;'
+    }
+  }],
+
   render: function() {
-    this.$el.append(B({
-      kind: B.KindJQuery('div'),
-      content: [{
-        kind: B.KindJQuery('div'),
-        attr: {
-          style: 'padding: 1px 0px 1px 5px;'
-        },
-        content: [
-        this.model.get('name')]
-      }]
-    }).$el);
+    this.divcontent.text(this.model.get('name'));
     return this;
   }
 });
