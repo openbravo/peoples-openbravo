@@ -104,7 +104,7 @@
           $LAB.script('js/i18n.js').wait(function() {
             $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
             $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
-            $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_appName=WebPOS');
+            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           })
         })
       });

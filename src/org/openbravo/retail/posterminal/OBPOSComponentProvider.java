@@ -28,6 +28,7 @@ import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.KernelConstants;
 
 /**
  * @author iperdomo
@@ -51,6 +52,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     } else if (componentId.equals(CLIENT_MODEL_COMPONENT)) {
       final ClientModelComponent component = getComponent(ClientModelComponent.class);
       component.setId(CLIENT_MODEL_COMPONENT);
+      component.setParameters(parameters);
+      return component;
+    } else if (componentId.equals(KernelConstants.RESOURCE_COMPONENT_ID)) {
+      final OBPOSStaticResorcesComponent component = getComponent(OBPOSStaticResorcesComponent.class);
+      component.setId(KernelConstants.RESOURCE_COMPONENT_ID);
       component.setParameters(parameters);
       return component;
     }
