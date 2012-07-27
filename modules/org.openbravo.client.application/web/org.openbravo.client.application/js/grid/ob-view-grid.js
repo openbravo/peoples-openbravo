@@ -26,7 +26,16 @@ isc.OBViewGrid.addClassProperties({
   // ListGrid._$ArrowUp and ListGrid._$ArrowDown
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
-  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP
+  ERROR_MESSAGE_PROP: isc.OBViewGrid.ERROR_MESSAGE_PROP,
+  ICONS: {
+    PROGRESS: 0,
+    OPEN_IN_FORM: 1,
+    SEPARATOR1: 2,
+    EDIT_IN_GRID: 3,
+    CANCEL: 4,
+    SEPARATOR2: 5,
+    SAVE: 6
+  }
 });
 
 if (!isc.Browser.isIE) {
@@ -2760,29 +2769,35 @@ isc.OBGridButtonsComponent.addProperties({
 
   toggleProgressIcon: function (toggle) {
     if (toggle) {
-      this.hideMember(6);
-      this.hideMember(5);
-      this.hideMember(4);
-      this.showMember(0);
+      this.hideAllMembers();
+      this.showMember(isc.OBViewGrid.PROGRESS);
     } else {
-      var offset = 0;
-      if (this.cancelButton) {
-        offset = 1;
-        this.hideMember(0);
+      this.hideMember(isc.OBViewGrid.PROGRESS);
+      if (this.grid.view.isEditingGrid) {
+        this.showSaveCancel();
+      } else {
+        this.showEditOpen();
       }
-      this.showMember(2 + offset);
-      this.showMember(1 + offset);
-      this.showMember(offset);
     }
+  },
+
+  hideAllMembers: function () {
+    this.hideMember(isc.OBViewGrid.ICONS.EDIT_IN_GRID);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR1);
+    this.hideMember(isc.OBViewGrid.ICONS.OPEN_IN_FORM);
+    this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
+    this.hideMember(isc.OBViewGrid.ICONS.CANCEL);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+    this.hideMember(isc.OBViewGrid.ICONS.SAVE);
   },
 
   showEditOpen: function () {
     var offset = 0;
     if (this.cancelButton) {
-      this.hideMember(6);
-      this.hideMember(5);
-      this.hideMember(4);
-      this.hideMember(0);
+      this.hideMember(isc.OBViewGrid.ICONS.SAVE);
+      this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+      this.hideMember(isc.OBViewGrid.ICONS.CANCEL);
+      this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
       offset = 1;
     }
     this.showMember(offset);
@@ -2799,14 +2814,14 @@ isc.OBGridButtonsComponent.addProperties({
   showSaveCancel: function () {
     this.addSaveCancelProgressButtons();
 
-    this.hideMember(3);
-    this.hideMember(2);
-    this.hideMember(1);
-    this.hideMember(0);
+    this.hideMember(isc.OBViewGrid.ICONS.EDIT_IN_GRID);
+    this.hideMember(isc.OBViewGrid.ICONS.SEPARATOR1);
+    this.hideMember(isc.OBViewGrid.ICONS.OPEN_IN_FORM);
+    this.hideMember(isc.OBViewGrid.ICONS.PROGRESS);
 
-    this.showMember(4);
-    this.showMember(5);
-    this.showMember(6);
+    this.showMember(isc.OBViewGrid.ICONS.CANCEL);
+    this.showMember(isc.OBViewGrid.ICONS.SEPARATOR2);
+    this.showMember(isc.OBViewGrid.ICONS.SAVE);
 
     this.grid.currentEditColumnLayout = this;
   },
