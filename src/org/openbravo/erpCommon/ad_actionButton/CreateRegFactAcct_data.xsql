@@ -225,7 +225,7 @@
             AND ACCOUNT_ID = C_ELEMENTVALUE_ID)
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
-        AND FACTACCTTYPE <>'C' 
+        AND (FACTACCTTYPE <>'C' or FACT_ACCT_GROUP_ID = ?) 
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
              C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID, C_ACCTSCHEMA_ID
         HAVING SUM(AMTACCTDR)-SUM(AMTACCTCR)<>0
@@ -249,6 +249,7 @@
     <Parameter name="accounttype" optional="true" type="replace" after="WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
     <Parameter name="ad_org_id"/>
     <Parameter name="acctSchema"/>
+    <Parameter name="divideUpFactAcctGroupId"/>
   </SqlMethod>
   <SqlMethod name="insertSelectOpening" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -289,7 +290,7 @@
             AND ACCOUNT_ID = C_ELEMENTVALUE_ID)
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
-        AND FACTACCTTYPE <>'C' 
+        AND (FACTACCTTYPE <>'C' or FACT_ACCT_GROUP_ID = ?) 
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
              C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID, C_ACCTSCHEMA_ID
         HAVING SUM(AMTACCTDR)-SUM(AMTACCTCR)<>0
@@ -313,6 +314,7 @@
     <Parameter name="accounttype" optional="true" type="replace" after="WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
     <Parameter name="ad_org_id"/>
     <Parameter name="acctSchema"/>
+    <Parameter name="divideUpFactAcctGroupId"/>
   </SqlMethod>
   <SqlMethod name="getEndDate" type="preparedStatement" return="Date">
     <SqlMethodComment></SqlMethodComment>
