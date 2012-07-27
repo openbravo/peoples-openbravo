@@ -36,6 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
@@ -99,6 +100,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       final List<JSONObject> definitions = new ArrayList<JSONObject>();
       final List<String> tmp = new ArrayList<String>();
       String classDef = "";
+      boolean hasNullMandatory = false;
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
           WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
@@ -107,7 +109,18 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
           if (!widgetProvider.validate()) {
             continue;
           }
-          definitions.add(widgetProvider.getWidgetClassDefinition());
+          for (Parameter p : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+            if (p.isMandatory() && p.getDefaultValue() == null) {
+              hasNullMandatory = true;
+              break;
+            }
+          }
+          if (!hasNullMandatory) {
+            definitions.add(widgetProvider.getWidgetClassDefinition());
+          } else {
+            hasNullMandatory = false;
+          }
+
           try {
             classDef = widgetProvider.generate();
             classDef = classDef.substring(0, classDef.length() - 1);
