@@ -17,7 +17,7 @@
   function payment(amount, modalpayment, receipt, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
       if (paymentMethod.view) {
-        modalpayment.show(receipt, key, name, paymentMethod.view, amount);
+        modalpayment.show(receipt, key, name, paymentMethod, amount);
       } else {
         receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
