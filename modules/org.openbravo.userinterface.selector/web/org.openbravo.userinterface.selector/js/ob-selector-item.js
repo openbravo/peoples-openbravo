@@ -691,7 +691,9 @@ isc.OBSelectorItem.addProperties({
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    if (ret === value) {
+    // if value is null then don't set it in the valueMap, this results 
+    // in null being displayed in the combobox
+    if (ret === value && value) {
       if (!this.valueMap) {
         this.valueMap = {};
         this.valueMap[value] = '';
@@ -703,6 +705,13 @@ isc.OBSelectorItem.addProperties({
     return ret;
   },
 
+  mapDisplayToValue: function(value) {
+    if (value === '') {
+      return null;
+    }
+    return this.Super('mapDisplayToValue', arguments);
+  },
+  
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
     if (this.selectorWindow) {
@@ -719,7 +728,7 @@ isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
   canFocus: true,
-  showFocused: true,
+  showFocused: true, 
   wrap: false,
   clipValue: true,
 
