@@ -130,12 +130,15 @@
           emptyQueue = false;
 
       var w = new OB.POS.windows[windowName](c);
-      w.on('ready', function () {
+      console.log('after new');
+      //XXX: Is this the way to sync?
+      this.on('window:ready', function(w){
     	  w.render();
           $("#containerWindow").empty().append(w.$el);
           c.trigger('domready');
           OB.UTIL.showLoading(false);
-       });
+      });
+
 
 
       //TODO: load OB.DATA??? It should be done only if needed...

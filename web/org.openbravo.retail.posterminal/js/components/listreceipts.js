@@ -39,7 +39,6 @@
       }]
     }],
     initialize: function () {
-
       this.options[this.optionsid] = this;
       OB.UTIL.initContentView(this);
 

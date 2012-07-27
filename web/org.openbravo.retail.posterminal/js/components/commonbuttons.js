@@ -459,6 +459,7 @@
     initialize: function () {
       this.component = B(this.createView(), this.options);
       this.setElement(this.component.$el);
+      OB.POS.modelterminal.trigger('window:ready', this);
     },
     createView: function () {
       return ({kind: B.KindJQuery('div')});

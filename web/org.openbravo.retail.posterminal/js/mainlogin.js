@@ -30,6 +30,8 @@
 
     }
   });
+  
+ // var modelterminal= ;
   OB.POS = {
     modelterminal: new OB.Model.Terminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",

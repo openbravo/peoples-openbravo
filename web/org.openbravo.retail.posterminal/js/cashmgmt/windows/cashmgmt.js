@@ -102,6 +102,7 @@ OB.Model.CashManagement = OB.Model.WindowModel.extend({
     this.depsdropstosend.on('makeDeposits', function() {
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
           me = this;
+
       OB.UTIL.showLoading(true);
       if (this.depsdropstosend.length === 0) {
         OB.POS.navigate('retail.pointofsale');
@@ -139,11 +140,8 @@ OB.UI.WindowView = Backbone.View.extend({
       if (me.init) {
         me.init();
       }
-      console.log('ready...');
-      me.trigger('ready');
+      OB.POS.modelterminal.trigger('window:ready', me);
     });
-    // OB.UTIL.initContentView(this);
-    // debugger;
   }
 
 });

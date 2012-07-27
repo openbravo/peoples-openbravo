@@ -78,7 +78,11 @@
     render: function () {
       this.divdate.text(OB.I18N.formatHour(this.model.get('orderDate')));
       this.divdocumentno.text(this.model.get('documentNo'));
-      this.divbp.text(this.model.get('bp').get('_identifier'));
+      if (this.model.get('bp')) {
+        this.divbp.text(this.model.get('bp').get('_identifier'));
+      } else {
+    	  this.divbp.text('--');  
+      }
       this.divreturn.text(this.model.get('orderType') === 1 ? OB.I18N.getLabel('OBPOS_ToReturn') : '');
       this.divinvoice.text(this.model.get('generateInvoice') ? OB.I18N.getLabel('OBPOS_ToInvoice') : '');
       this.divgross.text(this.model.printGross());

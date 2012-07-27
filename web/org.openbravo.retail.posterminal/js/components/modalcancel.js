@@ -9,7 +9,7 @@
 
 /*global window, B, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -19,35 +19,35 @@
     header: OB.I18N.getLabel('OBPOS_LblCancel'),
 
     setBodyContent: function() {
-      return(
-        {kind: B.KindJQuery('div'), content: [
-          OB.I18N.getLabel('OBPOS_ProcessCancelDialog')
-        ]}
-      );
+      return ({
+        kind: B.KindJQuery('div'),
+        content: [
+        OB.I18N.getLabel('OBPOS_ProcessCancelDialog')]
+      });
     },
 
     setBodyButtons: function() {
-      return(
-        {kind: B.KindJQuery('div'), content: [
-          {kind: OB.COMP.CancelDialogOk},
-          {kind: OB.COMP.CancelDialogCancel}
-        ]}
-      );
+      return ({
+        kind: B.KindJQuery('div'),
+        content: [{
+          kind: OB.COMP.CancelDialogOk
+        }, {
+          kind: OB.COMP.CancelDialogCancel
+        }]
+      });
     }
   });
 
   // Exit
   OB.COMP.CancelDialogOk = OB.COMP.Button.extend({
-	    attributes: {
-	        'data-dismiss': 'modal'
-	      },
     className: 'btnlink btnlink-gray modal-dialog-content-button',
-    render: function () {
+    render: function() {
       this.$el.html(OB.I18N.getLabel('OBPOS_LblOk'));
       return this;
     },
-    clickEvent: function (e) {
-    	OB.POS.navigate('retail.pointofsale');
+    clickEvent: function(e) {
+      $('#modalCancel').modal('hide');
+      OB.POS.navigate('retail.pointofsale');
     }
   });
 
@@ -57,12 +57,11 @@
       'data-dismiss': 'modal'
     },
     className: 'btnlink btnlink-gray modal-dialog-content-button',
-    render: function () {
+    render: function() {
       this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
       return this;
     },
-    clickEvent: function (e) {
-    }
+    clickEvent: function(e) {}
   });
 
 }());

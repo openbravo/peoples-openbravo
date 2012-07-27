@@ -244,6 +244,7 @@ OB.COMP.RenderDepositsDrops = Backbone.View.extend({
     this.model.set('total', total);
     this.theList.registerCollection(transactionsCollection);
   },
+  
   render: function() {
     this.startingCashPayName.text(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('payName'));
     this.startingCashAmnt.text(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))));
