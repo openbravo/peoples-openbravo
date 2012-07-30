@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global Backbone, confirm  */
 
 (function () {
 
@@ -40,8 +40,11 @@
     initialize: function () {
       OB.UTIL.initContentView(this);
       var parent = this.options.parent;
-      this.$el.click(function (e) {
+      this.$el.click(function (e) {       
         e.preventDefault();
+        if (parent.options.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+          return;  
+        }
         parent.options.parent.options.parent.receipt.removePayment(parent.options.model);
       });
     }
@@ -57,18 +60,24 @@
         tag: 'div',
         id: 'divname',
         attributes: {
-          style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
+          style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
+        }
+      }, {
+        tag: 'div',
+        id: 'divinfo',
+        attributes: {
+          style: 'float: left; width: 50%; padding: 5px 0px 0px 0px;'
         }
       }, {
         tag: 'div',
         id: 'divamount',
         attributes: {
-          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; text-align: right;'
+          style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
         }
       }, {
         tag: 'div',
         attributes: {
-          style: 'float: left; width: 25%; text-align: right;'
+          style: 'float: left; width: 15%; text-align: right;'
         },
         content: [{
           view: RemovePayment
@@ -83,6 +92,11 @@
     render: function () {
       this.divname.text(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
       this.divamount.text(this.model.printAmount());
+      if (this.model.get('paymentData')) {
+        this.divinfo.text(this.model.get('paymentData').Name);
+      } else {
+        this.divinfo.text('');
+      }
       return this;
     }
   });
@@ -116,7 +130,7 @@
         content: [{
           tag: 'div',
           attributes: {
-            'class': 'span7'
+            'class': 'span10'
           },
           content: [{
             tag: 'div',
@@ -191,7 +205,7 @@
         }, {
           tag: 'div',
           attributes: {
-            'class': 'span5'
+            'class': 'span2'
           },
           content: [{
             tag: 'div',

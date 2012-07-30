@@ -538,12 +538,16 @@
 
       var payments = this.get('payments');
 
-      for (i = 0, max = payments.length; i < max; i++) {
-        p = payments.at(i);
-        if (p.get('kind') === payment.get('kind')) {
-          p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-          this.adjustPayment();
-          return;
+      if (!payment.get('paymentData')) {
+        // search for an existing payment only if there is not paymentData info.
+        // this avoids to merge for example card payments of different cards.
+        for (i = 0, max = payments.length; i < max; i++) {
+          p = payments.at(i);
+          if (p.get('kind') === payment.get('kind')) {
+            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+            this.adjustPayment();
+            return;
+          }
         }
       }
       payments.add(payment);

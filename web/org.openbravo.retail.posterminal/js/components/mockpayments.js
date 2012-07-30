@@ -92,6 +92,8 @@
       this.key = key;
       this.name = name;
       this.amount = amount;
+    },
+    close: function() {
     }
   });
 

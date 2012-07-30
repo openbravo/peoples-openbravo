@@ -74,17 +74,50 @@
       <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>
       <text align ="right" length="14"><%= order.printGross() %></text>
     </line>
-    <line>
       <%
         var payments = order.get('payments');
         for (var i = 0; i < payments.length; i++) {
       %>
-        <text align="left" length="20"><%= payments.at(i).get('name') %></text>
-        <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
+        <line>
+          <text align="left" length="20"><%= payments.at(i).get('name') %></text>
+          <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
+        </line>
       <%
-        }
+          if (payments.at(i).get('paymentData')) {
+          var pinfo = payments.at(i).get('paymentData');
       %>
-    </line>
+        <line>
+          <text align="left" length="2"></text>
+          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentTran') %></text>
+          <text align="left" length="20"><%= pinfo.TransactionID %></text>
+        </line>      
+        <line>
+          <text align="left" length="2"></text>
+          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentApproval') %></text>
+          <text align="left" length="20"><%= pinfo.ApprovalNumber %></text>
+        </line>      
+        <line>
+          <text align="left" length="2"></text>
+          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentAct') %></text>
+          <text align="left" length="20"><%= pinfo.CardNumberMasked %></text>
+        </line>      
+        <line>
+          <text align="left" length="2"></text>
+          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentExp') %></text>
+          <text align="left" length="2"><%= pinfo.ExpirationMonth %></text>
+          <text align="left" length="1">/</text>
+          <text align="left" length="2"><%= pinfo.ExpirationYear %></text>
+        </line>      
+        <line>
+          <text align="left" length="2"></text>
+          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentLogo') %></text>
+          <text align="left" length="20"><%= pinfo.CardLogo %></text>
+        </line>      
+            
+      <%
+          }
+        }
+      %>   
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>

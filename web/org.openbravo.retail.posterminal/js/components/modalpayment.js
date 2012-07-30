@@ -29,6 +29,10 @@
       this.contentview.$el.empty().append(this.paymentcomponent.$el);
       this.paymentcomponent.show(receipt, key, name, amount);
       this.$el.modal();
+    },
+    hideEvent: function(e) {
+      this.paymentcomponent.close();
+      this.paymentcomponent = null;
     }
   });
 

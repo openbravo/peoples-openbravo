@@ -385,9 +385,13 @@
       OB.UTIL.focusInModal(this.$el);
     },
     events: {
-      'show': 'showEvent' // attach the click event as part of the element
+      'show': 'showEvent', // attach the click event as part of the element
+      'hide': 'hideEvent'
     },
     showEvent: function (e) {
+      // custom bootstrap event, no need to prevent default
+    },
+    hideEvent: function (e) {
       // custom bootstrap event, no need to prevent default
     }
   });
