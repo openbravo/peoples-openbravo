@@ -535,6 +535,7 @@ public class OrderLoader {
   protected void handleStock(ShipmentInOut shipment) {
     for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
       MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
+      transaction.setOrganization(line.getOrganization());
       transaction.setMovementType(shipment.getMovementType());
       transaction.setProduct(line.getProduct());
       transaction.setStorageBin(line.getStorageBin());
