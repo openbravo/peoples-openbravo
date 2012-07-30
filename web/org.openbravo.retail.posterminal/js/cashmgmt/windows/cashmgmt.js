@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global B, $ */
-
 OB.Model.WindowModel = Backbone.Model.extend({
   models: [],
   data: {},
@@ -40,7 +38,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
         this.init();
       }
     }, this);
-    
+
     //TODO: load offline models when regesitering window
   },
 
@@ -208,7 +206,9 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
   init: function() {
     var depositEvent = this.model.getData('DataDepositEvents'),
         dropEvent = this.model.getData('DataDropEvents');
-    // XXX: comment
+
+    // DepositEvent Collection is shown by TableView, when selecting an option 'click' event 
+    // is triggered, propagating this UI event to model here
     depositEvent.on('click', function(model) {
       this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
       delete this.options.currentPayment;
