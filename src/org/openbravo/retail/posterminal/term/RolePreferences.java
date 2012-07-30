@@ -22,7 +22,9 @@ public class RolePreferences implements JSONProcess {
     // List of all permissions with its defaults in POS
     buildResponse(w, new Pref[] { new Pref("OBPOS_order.changePrice", false),
         new Pref("OBPOS_order.discount", false), new Pref("OBPOS_payment.cash", true),
-        new Pref("OBPOS_payment.voucher", true), new Pref("OBPOS_payment.card", true) });
+        new Pref("OBPOS_payment.voucher", true), new Pref("OBPOS_payment.card", true),
+        new Pref("OBPOS_retail.pointofsale", true), new Pref("OBPOS_retail.cashup", false),
+        new Pref("OBPOS_retail.cashmanagement", false) });
   }
 
 

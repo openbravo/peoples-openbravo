@@ -42,7 +42,7 @@
 //    lock: function (callback) {
 //      modelterminal.lock();
 //    },
-//    paymentProviders: {},
+//    paymentProviders: [],
 //    windows: {}
 //  };
 
@@ -51,6 +51,8 @@
         c = _.extend({}, Backbone.Events),
         terminal = OB.POS.modelterminal.get('terminal'),
         queue = {}, emptyQueue = false;
+
+    c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
 
     // We are Logged !!!
     $(window).off('keypress');
@@ -89,32 +91,34 @@
     webwindow = OB.POS.windows[OB.POS.paramWindow];
 
     if (webwindow) {
-      if (OB.DATA[OB.POS.paramWindow]) {
-        // loading/refreshing required data/models for window
-        _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-        	console.log('loading model', model.prototype.modelName,model.prototype.local);
-          var ds;
-          if (model.prototype.local) {
-        	  console.log('local');
-            OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
-          } else {
-        	  console.log('no local');
-            ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
-            ds.on('ready', function () {
-
-              queue[model.prototype.source] = true;
-              emptyQueue = OB.UTIL.queueStatus(queue);
-
-              if(emptyQueue) {
-                searchCurrentBP();
-              }
-            });
-            ds.load();
-            queue[model.prototype.source] = false;
-          }
-        });
+      if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
+        if (OB.DATA[OB.POS.paramWindow]) {
+          // loading/refreshing required data/models for window
+          _.each(OB.DATA[OB.POS.paramWindow], function (model) {
+            var ds;
+            if (model.prototype.local) {
+              OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
+            } else {
+              ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
+              ds.on('ready', function () {
+  
+                queue[model.prototype.source] = true;
+                emptyQueue = OB.UTIL.queueStatus(queue);
+  
+                if(emptyQueue) {
+                  searchCurrentBP();
+                }
+              });
+              ds.load();
+              queue[model.prototype.source] = false;
+            }
+          });
+        } else {
+          createWindow();
+        }
       } else {
-        createWindow();
+        OB.UTIL.showLoading(false);
+        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));        
       }
     } else {
       OB.UTIL.showLoading(false);
@@ -142,7 +146,7 @@
     //window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
- // function () {
+  $(document).ready(function () {
     // Entry Point
   console.log('Entry Point');
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
@@ -170,6 +174,6 @@
         return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
       }
     });
- // }
+  });
 
 }());

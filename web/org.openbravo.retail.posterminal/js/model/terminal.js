@@ -44,6 +44,17 @@
       }
     }
   });
+  
+  function fillPaymentMethodView(paymentMethod) {
+    var i, max, paymentProvider;
+    for (i = 0, max = OB.POS.paymentProviders.length; i < max; i++) {
+      paymentProvider = OB.POS.paymentProviders[i];
+      if (paymentMethod[paymentProvider.property]) {
+        paymentMethod.view = paymentProvider.view;
+        return;
+      }
+    }
+  }  
 
 
   // Terminal model.
@@ -274,6 +285,7 @@
           me.set('payments', data);
           me.paymentnames = {};
           for (i = 0, max = data.length; i < max; i++) {
+            fillPaymentMethodView(data[i].paymentMethod);
             me.paymentnames[data[i].payment.searchKey] = data[i].payment._identifier;
           }
           me.triggerReady();
@@ -494,7 +506,7 @@
     },
 
     hasPermission: function(p) {
-      return !this.get('context').role.manual || this.get('permissions')[p];
+      return !this.get('context').role.manual || this.get('permissions')[p] || this.get('permissions')['OBPOS_' + p];
     },
 
     getPaymentName: function(key) {

@@ -7,64 +7,64 @@
  ************************************************************************************
  */
 
-/*global B, setInterval */
+/*global setInterval, Backbone */
 
 (function () {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
-  OB.COMP.Scan = function (context) {
-    var me = this;
-
-    var undoclick;
-
-    this.component = B(
-      {kind: B.KindJQuery('div'), content: [
-        {kind: B.KindJQuery('div'), attr: {'style': 'position:relative; background-color: #7da7d9; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-          {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'}},
-          {kind: B.KindJQuery('div'), content: [
-            {kind: B.KindJQuery('div'), id: 'msgwelcome', attr: {'style': 'padding: 10px; display: none;'}, content: [
-              {kind: B.KindJQuery('div'), attr: {'style': 'float:right;'}, content: [
-                OB.I18N.getLabel('OBPOS_WelcomeMessage')
-              ]}
-            ]},
-            {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'display: none;'}, content: [
-              {kind: B.KindJQuery('div'), id: 'txtaction', attr: {'style': 'padding: 10px; float: left; width: 320px; line-height: 23px;'}},
-              {kind: B.KindJQuery('div'), attr: {'style': 'float: right;'}, content: [
-                {kind: OB.COMP.SmallButton, attr: { 'label': OB.I18N.getLabel('OBPOS_LblUndo'), 'className': 'btnlink-white btnlink-fontblue',
-                  'clickEvent': function() {
-                    if (undoclick) {
-                      undoclick();
-                    }
-                  }
-                }}
-              ]}
+  OB.COMP.Scan = Backbone.View.extend({
+    tagName: 'div',
+    contentView: [
+      {tag: 'div', attributes: {'style': 'position:relative; background-color: #7da7d9; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
+        {view: OB.COMP.Clock.extend({'className': 'pos-clock'})},
+        {tag: 'div', content: [
+          {tag: 'div', id: 'msgwelcome', attributes: {'style': 'padding: 10px; display: none;'}, content: [
+            {tag: 'div', attributes: {'style': 'float:right;'}, content: [
+              OB.I18N.getLabel('OBPOS_WelcomeMessage')
+            ]}
+          ]},
+          {tag: 'div', id: 'msgaction', attributes: {'style': 'display: none;'}, content: [
+            {tag: 'div', id: 'txtaction', attributes: {'style': 'padding: 10px; float: left; width: 320px; line-height: 23px;'}},
+            {tag: 'div', attributes: {'style': 'float: right;'}, content: [
+              {view: OB.COMP.SmallButton.extend({ 'label': OB.I18N.getLabel('OBPOS_LblUndo'), 'className': 'btnlink-white btnlink-fontblue'}), id: 'btnundo'}
             ]}
           ]}
         ]}
-      ]}
-    );
-    this.$el = this.component.$el;
-    var msgwelcome = this.component.context.msgwelcome.$el;
-    var txtaction = this.component.context.txtaction.$el;
-    var msgaction = this.component.context.msgaction.$el;
-
-    this.receipt = context.modelorder;
-
-    this.receipt.on('clear change:undo', function() {
-      var undoaction = this.receipt.get('undo');
-      if (undoaction) {
-        msgwelcome.hide();
-        msgaction.show();
-        txtaction.text(undoaction.text);
-        undoclick = undoaction.undo;
-      } else {
-        msgaction.hide();
-        msgwelcome.show();
-      }
-    }, this);
-
-  };
+      ]}                  
+    ],
+    initialize: function() {
+      
+      OB.UTIL.initContentView(this);
+      var me = this;
+      this.undoclick = null;  
+      this.receipt = this.options.root.modelorder;
+      
+      this.btnundo.clickEvent = function() {
+        if (me.undoclick) {
+          me.undoclick();
+        }
+      };
+  
+      this.receipt.on('clear change:undo', function() {
+        this.render();
+      }, this);     
+    },
+    render: function () {
+        var undoaction = this.receipt.get('undo');
+        if (undoaction) {
+          this.msgwelcome.hide();
+          this.msgaction.show();
+          this.txtaction.text(undoaction.text);
+          this.undoclick = undoaction.undo;
+        } else {
+          this.msgaction.hide();
+          this.msgwelcome.show();
+          this.undoclick = null;
+        }      
+        return this;
+    }
+  });
 
 }());

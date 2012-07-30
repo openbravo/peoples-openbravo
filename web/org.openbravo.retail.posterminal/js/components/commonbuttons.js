@@ -305,22 +305,28 @@
     tagName: 'li',
     initialize: function () {
       var opts = this.options;
-      this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).append($('<span/>').text(this.label)));
-      this.$el.find('a').first().click(function (e) {
-        var $el = $(this),
-            href = $el.attr('href'),
-            target = $el.attr('target');
-
-        if (target === '_self') {
-          e.preventDefault();
-          if (OB.POS.modelterminal.get('connectedToERP')) {
-            OB.UTIL.showLoading(true);
-            OB.POS.navigate(href);
-          } else {
-            alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
+      
+      if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
+        // disabled entry
+        this.$el.append($('<div/>').attr('style', 'color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').append($('<span/>').text(this.label)));
+      } else {
+        this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).append($('<span/>').text(this.label)));
+        this.$el.find('a').first().click(function (e) {
+          var $el = $(this),
+              href = $el.attr('href'),
+              target = $el.attr('target');
+  
+          if (target === '_self') {
+            e.preventDefault();
+            if (OB.POS.modelterminal.get('connectedToERP')) {
+              OB.UTIL.showLoading(true);
+              OB.POS.navigate(href);
+            } else {
+              alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
+            }
           }
-        }
-      });
+        });
+      }
     },
     href: '',
     target: '_self',

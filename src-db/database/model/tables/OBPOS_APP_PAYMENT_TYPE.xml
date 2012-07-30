@@ -53,10 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROVIDER" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="OBPOS_TERMINALTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -109,6 +105,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISTESTPAYMENTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -159,5 +159,6 @@
       <check name="OBPOS_APPPAYTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_ISTESTPAYMENTS_CHK"><![CDATA[ISTESTPAYMENTS IN ('Y', 'N')]]></check>
     </table>
   </database>

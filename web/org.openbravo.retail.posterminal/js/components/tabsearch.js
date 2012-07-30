@@ -19,7 +19,7 @@
     tabpanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
     shownEvent: function(e) {
-      this.options.keyboard.hide();
+      this.options.root.keyboard.hide();
     }
   });
   OB.UI.TabSearch = Backbone.View.extend({

@@ -96,5 +96,5 @@
   });
 
   // register
-  OB.POS.paymentProviders.MockPayment = OB.COMP.MockPayment;
+  OB.POS.paymentProviders.push({ property: "testPayments", view: OB.COMP.MockPayment});
 }());

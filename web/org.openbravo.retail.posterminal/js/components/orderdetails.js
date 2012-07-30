@@ -21,7 +21,7 @@
     },
     initialize: function() {
 
-      this.receipt = this.options.modelorder;
+      this.receipt = this.options.root.modelorder;
       this.receipt.on('clear change:orderDate change:documentNo', function() {
         this.$el.text(OB.I18N.formatHour(this.receipt.get('orderDate')) + ' - ' + this.receipt.get('documentNo'));
       }, this);

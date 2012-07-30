@@ -23,9 +23,9 @@
         tagName: 'div'
       });
     },
-    show: function(receipt, key, name, providerview, amount) {
+    show: function(receipt, key, name, paymentMethod, amount) {
 
-      this.paymentcomponent = new providerview().render();
+      this.paymentcomponent = new paymentMethod.view({paymentMethod: paymentMethod}).render();
       this.contentview.$el.empty().append(this.paymentcomponent.$el);
       this.paymentcomponent.show(receipt, key, name, amount);
       this.$el.modal();
