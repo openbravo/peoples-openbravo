@@ -115,7 +115,7 @@ OB.Model.CashManagement = OB.Model.WindowModel.extend({
           OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
-          // XXX: is this the way to print?
+          // XXX: is this the way to print?: HWManager needs to be refactored
           var hw = new OB.COMP.HWManager(me);
           hw.depsdropstosend = me.depsdropstosend.toJSON();
           hw.attr({

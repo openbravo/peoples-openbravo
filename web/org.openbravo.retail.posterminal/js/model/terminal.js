@@ -140,6 +140,7 @@
           queue = {},
           emptyQueue = false;
 
+      c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       var w = new OB.POS.windows[windowName](c);
       console.log('after new');
       this.on('window:ready', function(w){

@@ -45,7 +45,7 @@
     lock: function(callback) {
       this.modelterminal.lock();
     },
-    paymentProviders: {},
+    paymentProviders: [],
     windows: {},
     navigate: function(route) {
       this.modelterminal.router.navigate(route, {
@@ -94,7 +94,7 @@
 
   $(document).ready(function() {
 
-    modelterminal.off('loginfail');
+	  OB.POS.modelterminal.off('loginfail');
     $(window).off('keypress');
 
     //    function renderLoginPage() {
