@@ -107,7 +107,6 @@
   <script src="js/model/businesspartner.js"></script>
   <script src="js/model/document-sequence.js"></script>
   
-<script src="js/model/router.js"></script>
 
 
 
@@ -133,8 +132,7 @@
         return (id === 'focuskeeper' || (t !=='INPUT' && t !=='SELECT' && t !=='TEXTAREA')); // process key
       }
       
-      OB = window.OB || {};
-      OB.app = new App({router: new OBRouter()});
+
 
       $.ajax({
           url: '../../org.openbravo.retail.posterminal.service.loginutils',
@@ -151,18 +149,15 @@
             OB.I18N.labels = data.response[0].data[1];
             OB.Format = data.response[0].data[2];
             if ((data.response[0].data[0].strClient) !== 'none') {
-            //	$(document).ready(function () {
-            	      //TODO: check here if already logged in
-            	      if (true) {
-            	          console.log('navigate to login');
-            	          OB.app.router.navigate('login', {trigger: true});
-            	        // navigate login  
-            	      } else {
-            	          
-            	        // navigate main
-            	    	  OB.app.router.navigate('main', {trigger: true});
-            	      }
-            	   //   });
+            //  $(document).ready(function () {
+                      //TODO: check here if already logged in
+                      if (true) {
+                          console.log('navigate to login');
+                          OB.POS.navigate('login');
+                      } else {
+                          OB.POS.navigate('main');
+                      }
+                   //   });
             } else {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
             }
