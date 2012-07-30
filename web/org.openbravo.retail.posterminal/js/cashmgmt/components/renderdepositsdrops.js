@@ -46,11 +46,11 @@ OB.COMP.RenderDepositLine = Backbone.View.extend({
       }]
     }]
   }],
-  
+
   initialize: function() {
     OB.UTIL.initContentView(this);
   },
-  
+
   render: function() {
     console.log(this.model);
     var amnt, lbl, time = new Date(this.model.get('time'));
@@ -226,14 +226,11 @@ OB.COMP.RenderDepositsDrops = Backbone.View.extend({
       }]
     }]
   }],
-  
+
   initialize: function() {
     var transactionsArray = this.model.get('listdepositsdrops'),
-        transactionsCollection = new Backbone.Collection(),
+        transactionsCollection = new Backbone.Collection(transactionsArray),
         total;
-
-    // listdepositsdrops is an array that needs to be transformed into a Collection
-    transactionsCollection.add(this.model.get('listdepositsdrops'));
 
     OB.UTIL.initContentView(this);
 
@@ -244,7 +241,7 @@ OB.COMP.RenderDepositsDrops = Backbone.View.extend({
     this.model.set('total', total);
     this.theList.registerCollection(transactionsCollection);
   },
-  
+
   render: function() {
     this.startingCashPayName.text(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('payName'));
     this.startingCashAmnt.text(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))));

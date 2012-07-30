@@ -87,11 +87,6 @@
     } else if (child.view) {
       obj = new child.view({parent: view});
      
-      // XXX: Compatibility with B (Builder), calling attr function in case of attr object is present
-      if (child.attr && obj.attr){
-    	obj.attr(child.attr);
-      }
-      
       inst = obj.render().$el;
       if (child.id) {
         view[child.id] = obj;

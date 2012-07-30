@@ -13,11 +13,7 @@ OB.COMP.ButtonNextCashMgmt = OB.COMP.RegularButton.extend({
   attributes: {
     'style': 'min-width: 115px;'
   },
-  render: function() {
-    OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
-    this.$el.addClass('btnlink-white').addClass('btnlink-fontgray');
-    return this;
-  },
+  className: 'btnlink-white btnlink-fontgray',
   clickEvent: function(e) {
     //TODO: make some util to do this cleaner
     this.options.parent.options.parent.model.depsdropstosend.trigger('makeDeposits');

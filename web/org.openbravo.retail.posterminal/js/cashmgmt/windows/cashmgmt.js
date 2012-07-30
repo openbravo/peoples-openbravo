@@ -39,7 +39,8 @@ OB.Model.WindowModel = Backbone.Model.extend({
       if (this.init) {
         this.init();
       }
-    }, this)
+    }, this);
+    
     //TODO: load offline models when regesitering window
   },
 
@@ -183,7 +184,7 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
         view: OB.COMP.CashMgmtKeyboard
       }]
     },
-    //hidden stuff XXX:???
+    //hidden stuff 
     {
       tag: 'div',
       content: [{
@@ -207,6 +208,7 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
   init: function() {
     var depositEvent = this.model.getData('DataDepositEvents'),
         dropEvent = this.model.getData('DataDropEvents');
+    // XXX: comment
     depositEvent.on('click', function(model) {
       this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
       delete this.options.currentPayment;
@@ -220,4 +222,4 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
 });
 
 
-OB.POS.registerWindow('retail.cashmanagement', OB.UI.CashManagement);
+OB.POS.registerWindow('retail.cashmanagement', OB.UI.CashManagement, 10);
