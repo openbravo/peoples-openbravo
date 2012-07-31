@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+// Renders lines of deposits/drops
 OB.OBPOSCasgMgmt.UI.RenderDepositLine = Backbone.View.extend({
   contentView: [{
     tag: 'div',
@@ -73,6 +74,7 @@ OB.OBPOSCasgMgmt.UI.RenderDepositLine = Backbone.View.extend({
   }
 });
 
+// Renders summary of deposits/drops and contains its list
 OB.OBPOSCasgMgmt.UI.RenderDepositsDrops = Backbone.View.extend({
   contentView: [
   //Separator

@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+// Numeric keyboard with buttons for each payment method accepting drops/deposits
+
 OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
   _id: 'cashmgmtkeyboard',
   getPayment: function(id, key, name, identifier, type) {
@@ -29,6 +31,7 @@ OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
       }
     };
   },
+  
   initialize: function() {
     var buttons = [];
 

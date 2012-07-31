@@ -126,9 +126,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Cash Management window
         "cashmgmt/model/cashmgmt-model",
 
-        "cashmgmt/view/cashmgmtbuttons",
         "cashmgmt/view/cashmgmtkeyboard",
-        "cashmgmt/view/renderdropdepdestinations",
         "cashmgmt/view/searchdepositevents",
         "cashmgmt/view/modaldepositevents",
         "cashmgmt/view/cashmgmtinfo",

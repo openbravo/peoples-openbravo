@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+// Cash Management window view
 OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
   windowmodel: OB.OBPOSCasgMgmt.Model.CashManagement,
   tagName: 'section',

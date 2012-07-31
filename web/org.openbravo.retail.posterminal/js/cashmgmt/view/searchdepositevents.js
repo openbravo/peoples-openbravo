@@ -7,35 +7,28 @@
  ************************************************************************************
  */
 
-/*global B, $ , Backbone */
+
+// Renders each of the deposit/drops destinations
+OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
+  attributes: {
+    'style': 'background-color:#dddddd;  border: 1px solid #ffffff;'
+  },
+  contentView: [{
+    tag: 'div',
+    id: 'divcontent',
+    attributes: {
+      style: 'padding: 1px 0px 1px 5px;'
+    }
+  }],
+
+  render: function() {
+    this.divcontent.text(this.model.get('name'));
+    return this;
+  }
+});
 
 
-
-//  OB.COMP.SearchDepositEvents = function (context) {
-//    var ctx = context;
-//    this._id = 'SearchDepositEvents';
-//    var me = this;
-//    this.destinations = new OB.Model.Collection(context.DataDepositEvents);
-//    context.DataDepositEvents.ds.on('ready', function(){
-//      me.destinations.reset(this.cache);
-//    });
-//    this.destinations.exec();
-//    this.component = B(
-//      {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//        {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//          {kind: B.KindJQuery('div'), content: [
-//            {kind: OB.UI.TableView, id: 'tableview', attr: {
-//              collection: this.destinations,
-//              renderLine: OB.COMP.RenderDropDepDestinations,
-//              renderEmpty: OB.COMP.RenderEmpty
-//            }}
-//          ]}
-//        ]}
-//      ]}
-//    );
-//    this.$el = this.component.$el;
-//    this.tableview = this.component.context.tableview;
-//  };
+// Popup with the destinations for deposits/drops
 OB.OBPOSCasgMgmt.UI.SearchDepositEvents = Backbone.View.extend({
   tagName: 'div',
   className: 'row-fluid',
