@@ -19593,7 +19593,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <VALUE><![CDATA[NotExistTaxRateForTaxZone]]></VALUE>
-<!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <MSGTEXT><![CDATA[Does not exist any tax rate defined for product/GLItem '%s' in tax category '%s' and tax zone '%s']]></MSGTEXT>
+<!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <MSGTEXT><![CDATA[There is no tax rate for product/GLItem '%s' in tax category '%s' and tax zone '%s'. Please review your tax configuration.]]></MSGTEXT>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C112334AFC4844F68BCACBA8D1D4FEF3--></AD_MESSAGE>
