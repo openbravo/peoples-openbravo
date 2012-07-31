@@ -24,7 +24,7 @@ OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
         'class': 'span6'
       },
       content: [{
-        view: OB.COMP.ListDepositsDrops
+        view: OB.OBPOSCasgMgmt.UI.ListDepositsDrops
       }]
     },
     //2nd column:

@@ -96,8 +96,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/toolbarscan", "components/keypadcoins", "components/keyboardorder",
         "windows/login", "windows/posbuttons", "data/datamaster", "data/dataordersave",
         "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
-        "components/listreceipts",
-        "components/modalreceipts",
+        "components/listreceipts", "components/modalreceipts",
         "components/renderbusinesspartner",
         "components/searchbps",
         "components/modalbps",
@@ -130,7 +129,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/view/searchdepositevents",
         "cashmgmt/view/modaldepositevents",
         "cashmgmt/view/cashmgmtinfo",
-        "cashmgmt/view/renderdepositsdrops",
         "cashmgmt/view/listdepositsdrops",
         "cashmgmt/view/cashmgmt",
 
