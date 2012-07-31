@@ -62,6 +62,8 @@ OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         return;
       }
 
+      p.amount = OB.DEC.add(p.amount, 0);
+
       var payment = {
         description: p.identifier + ' - ' + model.get('name'),
         name: p.destinationKey,

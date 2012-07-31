@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+
 // Renders lines of deposits/drops
 OB.OBPOSCasgMgmt.UI.RenderDepositLine = Backbone.View.extend({
   contentView: [{
@@ -53,7 +54,6 @@ OB.OBPOSCasgMgmt.UI.RenderDepositLine = Backbone.View.extend({
   },
 
   render: function() {
-    console.log(this.model);
     var amnt, lbl, time = new Date(this.model.get('time'));
     if (this.model.get('timeOffset')) {
       time.setMinutes(time.getMinutes() + this.model.get('timeOffset') + time.getTimezoneOffset());
