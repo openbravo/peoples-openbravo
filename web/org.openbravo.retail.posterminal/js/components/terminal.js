@@ -10,7 +10,6 @@
 /*global B, $ */
 
 (function () {
-
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 

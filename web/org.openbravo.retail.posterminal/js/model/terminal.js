@@ -44,7 +44,7 @@
       }
     }
   });
-  
+
   function fillPaymentMethodView(paymentMethod) {
     var i, max, paymentProvider;
     for (i = 0, max = OB.POS.paymentProviders.length; i < max; i++) {
@@ -54,7 +54,7 @@
         return;
       }
     }
-  }  
+  }
 
 
   // Terminal model.
@@ -101,35 +101,69 @@
 
 
     renderMain: function() {
-      console.log('renderMain');
-      var oldOB = OB;
+      var me = OB.POS.modelterminal;
 
-      $LAB.setGlobalDefaults({
-        AppendTo: 'body'
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec({
+        terminal: OB.POS.paramTerminal
+      }, function(data) {
+        if (data.exception) {
+          me.logout();
+        } else if (data[0]) {
+          me.set('terminal', data[0]);
+          me.trigger('terminal.loaded')
+        } else {
+          OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+        }
       });
-      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
-        var newFormat = OB.Format;
-        _.extend(OB, oldOB);
-        OB.Format = newFormat;
-        $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Labels').wait(function() {
-          $LAB.script('js/i18n.js').wait(function() {
-            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
-            $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+
+      OB.POS.modelterminal.on('terminal.loaded', function() {
+        console.log('renderMain terminal loaded');
+        var oldOB = OB;
+
+        $LAB.setGlobalDefaults({
+          AppendTo: 'body'
+        });
+        $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
+          var newFormat = OB.Format;
+          _.extend(OB, oldOB);
+          OB.Format = newFormat;
+          $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Labels').wait(function() {
+            $LAB.script('js/i18n.js').wait(function() {
+              $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+              $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+              $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+            })
           })
-        })
+        });
       });
     },
-    
+
     registerWindow: function(windowName, window) {
-        console.log('registering window', windowName);
-        OB.POS.windows[windowName] = window;
-        this.router.route(windowName, windowName, function() {
-          this.renderGenericWindow(windowName);
-        });
-        
-        //TODO: load OB.DATA??? It should be done only if needed...
-      },
+      var datasources = [];
+
+      console.log('registering window', windowName);
+      OB.POS.windows[windowName] = window;
+
+      if (OB.DATA[windowName]) {
+        // old way of defining datasources...
+        datasources = OB.DATA[windowName];
+      } else if (window.prototype && window.prototype.windowmodel && window.prototype.windowmodel.prototype && window.prototype.windowmodel.prototype.models) {
+        datasources = window.prototype.windowmodel.prototype.models;
+      }
+
+      _.extend(datasources, Backbone.Events);
+
+      //window.
+        OB.Model.Util.loadModels(false, datasources);
+
+
+      this.router.route(windowName, windowName, function() {
+        this.renderGenericWindow(windowName);
+      });
+
+
+      //TODO: load OB.DATA??? It should be done only if needed...
+    },
 
     renderGenericWindow: function(windowName) {
       OB.UTIL.showLoading(true);
@@ -141,14 +175,16 @@
           emptyQueue = false;
 
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
-      var w = new OB.POS.windows[windowName](c);
+      
       console.log('after new');
-      this.on('window:ready', function(w){
-    	  w.render();
-          $("#containerWindow").empty().append(w.$el);
-          c.trigger('domready');
-          OB.UTIL.showLoading(false);
+      this.on('window:ready', function(w) {
+        w.render();
+        $("#containerWindow").empty().append(w.$el);
+        c.trigger('domready');
+        OB.UTIL.showLoading(false);
       });
+      
+      var w = new OB.POS.windows[windowName](c);
 
       //TODO: load OB.DATA??? It should be done only if needed...
     },
@@ -238,7 +274,7 @@
 
       // reset all application state.
       $(window).off('keypress');
-      this.set('terminal', null);
+    //  this.set('terminal', null);
       this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);
@@ -476,6 +512,7 @@
       var undef;
       if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
         this.trigger('ready');
+        console.log('modelterminal ready');
       }
     },
 

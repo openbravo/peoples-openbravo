@@ -15,6 +15,49 @@
 
   // global components.
   OB = window.OB || {};
+  OB.Model = OB.Model || {};
+  OB.Model.Util = {
+    loadModels: function(online, models, data) {
+      var queue = {};
+      if (models.length === 0) {
+        models.trigger('ready');
+      }
+
+      _.each(models, function(item) {
+        var ds, load;
+
+        load = (online && item.prototype.online) || (!online && !item.prototype.online);
+        //TODO: check permissions
+        if (load) {
+          if (item.prototype.local) {
+            OB.Dal.initCache(item, [], function() {
+              window.console.log('init success: ' + item.prototype.modelName);
+            }, function() {
+              window.console.error('init error', arguments);
+            });
+          } else {
+            ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
+
+            queue[item.prototype.modelName] = false;
+            ds.on('ready', function() {
+              console.log('loaded:', item.prototype.modelName);
+              if (data) {
+                data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
+              }
+              console.log('loaded model', item);
+              queue[item.prototype.modelName] = true;
+              if (OB.UTIL.queueStatus(queue)) {
+                models.trigger('ready');
+              }
+            });
+            console.log('load', item.prototype.modelName);
+            ds.load(item.params);
+          }
+        }
+      });
+    }
+  };
+
   OB.Router = Backbone.Router.extend({
     routes: {
       main: 'main'
@@ -30,8 +73,8 @@
 
     }
   });
-  
- // var modelterminal= ;
+
+  // var modelterminal= ;
   OB.POS = {
     modelterminal: new OB.Model.Terminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
@@ -94,7 +137,7 @@
 
   $(document).ready(function() {
 
-	  OB.POS.modelterminal.off('loginfail');
+    OB.POS.modelterminal.off('loginfail');
     $(window).off('keypress');
 
     //    function renderLoginPage() {

@@ -292,7 +292,6 @@
   }
 
   function initCache(model, initialData, success, error) {
-
     if (db) {
       if (!model.prototype.createStatement || !model.prototype.dropStatement) {
         throw 'Model requires a create and drop statement';

@@ -7,37 +7,28 @@
  ************************************************************************************
  */
 
+
+
 OB.Model.WindowModel = Backbone.Model.extend({
-  models: [],
   data: {},
 
   initialize: function() {
     var me = this,
         queue = {};
-    _.each(this.models, function(item) {
-      var ds;
+    if (!this.models) {
+      this.models = [];
+    }
 
-      if (item.prototype.online) {
-        ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
+    _.extend(this.models, Backbone.Events);
 
-        queue[item.prototype.modelName] = false;
-        ds.on('ready', function() {
-          me.data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
-          console.log('loaded model', item);
-          queue[item.prototype.modelName] = true;
-          if (OB.UTIL.queueStatus(queue)) {
-            me.trigger('ready');
-          }
-        });
-        ds.load(item.params);
-      }
-    });
-
-    this.on('ready', function() {
+    this.models.on('ready', function() {
+      this.trigger('ready');
       if (this.init) {
         this.init();
       }
     }, this);
+
+    OB.Model.Util.loadModels(true, this.models, this.data);
 
     //TODO: load offline models when regesitering window
   },

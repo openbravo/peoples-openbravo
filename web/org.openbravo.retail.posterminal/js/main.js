@@ -16,6 +16,7 @@
 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
   terminal.setModel(modelterminal);
+  OB.POS.terminal = terminal;
 
   var modalProfile = new OB.COMP.ModalProfile($('#dialogsContainer'));
   modalProfile.setModel(modelterminal);
@@ -27,46 +28,13 @@
     }
   };
 
-//  // global components.
-//  debugger;
-//  OB.POS = {
-//    modelterminal: modelterminal,
-//    paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
-//    paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
-//    hrefWindow: function (windowname) {
-//      return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
-//    },
-//    logout: function (callback) {
-//      modelterminal.logout();
-//    },
-//    lock: function (callback) {
-//      modelterminal.lock();
-//    },
-//    paymentProviders: [],
-//    windows: {}
-//  };
-
   modelterminal.on('ready', function () {
-    var webwindow, w,
-        c = _.extend({}, Backbone.Events),
-        terminal = OB.POS.modelterminal.get('terminal'),
-        queue = {}, emptyQueue = false;
-
-    c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
+    var webwindow,
+        terminal = OB.POS.modelterminal.get('terminal');
 
     // We are Logged !!!
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'visible');
-
-    function createWindow() {
-      w = new webwindow(c);
-      if (w.render) {
-        w = w.render();
-      }
-      $("#containerWindow").empty().append(w.$el);
-      c.trigger('domready');
-      OB.UTIL.showLoading(false);
-    }
 
     function searchCurrentBP (){
       function errorCallback(tx, error) {
@@ -76,7 +44,7 @@
       function successCallbackBPs(dataBps) {
         if (dataBps){
           OB.POS.modelterminal.set('businessPartner', dataBps);
-          createWindow();
+          OB.POS.navigate('retail.pointofsale');
         }
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
@@ -87,35 +55,11 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-
     webwindow = OB.POS.windows[OB.POS.paramWindow];
 
     if (webwindow) {
       if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
-        if (OB.DATA[OB.POS.paramWindow]) {
-          // loading/refreshing required data/models for window
-          _.each(OB.DATA[OB.POS.paramWindow], function (model) {
-            var ds;
-            if (model.prototype.local) {
-              OB.Dal.initCache(model, [], function () { window.console.log('init success: ' + model.prototype.modelName);}, function () { window.console.error('init error', arguments);});
-            } else {
-              ds = new OB.DS.DataSource(new OB.DS.Request(model, terminal.client, terminal.organization, terminal.id));
-              ds.on('ready', function () {
-  
-                queue[model.prototype.source] = true;
-                emptyQueue = OB.UTIL.queueStatus(queue);
-  
-                if(emptyQueue) {
-                  searchCurrentBP();
-                }
-              });
-              ds.load();
-              queue[model.prototype.source] = false;
-            }
-          });
-        } else {
-          createWindow();
-        }
+    	  searchCurrentBP();
       } else {
         OB.UTIL.showLoading(false);
         alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));        
@@ -137,12 +81,9 @@
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'hidden');
 
-//    var c = _.extend({}, Backbone.Events);
-//    $("#containerWindow").empty().append((new login(c)).$el);
-//    c.trigger('domready'); window.location=
-
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
+    OB.POS.navigate('login');
     //window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
@@ -150,7 +91,7 @@
     // Entry Point
   console.log('Entry Point');
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
-    modelterminal.load();
+   modelterminal.load();
 
     modelterminal.on('online', function () {
       OB.UTIL.setConnectivityLabel('Online');
