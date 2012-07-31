@@ -31,6 +31,7 @@
   <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript">
 
@@ -151,6 +152,7 @@ function validate(action) {
 
     function submitThisPage(strCommand) {
       if (validate(strCommand)) {
+        setProcessingMode('popup', true);
         submitCommandForm(strCommand, false, null, 'CopyFromOrder.html', null);
         return true;
       }
