@@ -60,7 +60,7 @@ OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
           type: 'DataDropEvents'
         })
       }, {
-        view: OB.OBPOSCasgMgmt.UI.ModalCancel
+        view: OB.COMP.ModalCancel
       }]
     }]
   }],
