@@ -56,3 +56,30 @@ OB.OBPOSCasgMgmt.UI.SearchDepositEvents = Backbone.View.extend({
     this.tableview.registerCollection(this.options.parent.model.getData(this.type));
   }
 });
+
+
+// Renders a modal popup with a list of reasons for drops/deposits
+OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
+  initialize: function() {
+    var theModal, theHeader, theBody, theHeaderText;
+    OB.COMP.Modal.prototype.initialize.call(this); // super.initialize();
+    theModal = this.$el;
+    theHeader = theModal.children(':first');
+    theBody = theModal.children(':nth-child(2)');
+    theHeaderText = theHeader.children(':nth-child(2)');
+    theModal.addClass('modal-dialog');
+    theBody.addClass('modal-dialog-body');
+    theHeaderText.attr('text-align', 'left');
+    theHeaderText.attr('font-weight', '150%');
+    theHeaderText.attr('padding-top', '10px');
+    theHeaderText.attr('color', 'black');
+  },
+  getContentView: function() {
+    return OB.OBPOSCasgMgmt.UI.SearchDepositEvents.extend({
+      type: this.type
+    });
+  },
+  showEvent: function(e) {
+    // custom bootstrap event, no need to prevent default
+  }
+});
