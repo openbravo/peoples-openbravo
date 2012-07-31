@@ -123,17 +123,18 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "windows/pointofsale",
 
         // Cash Management window
-        "cashmgmt/components/cashmgmtbuttons",
-        "cashmgmt/components/cashmgmtkeyboard",
-        "cashmgmt/components/renderdropdepdestinations",
-        "cashmgmt/components/searchdepositevents",
-        "cashmgmt/components/modaldepositevents",
         "cashmgmt/model/cashmgmt-model",
-        "cashmgmt/windows/cashmgmtinfo",
-        "cashmgmt/components/renderdepositsdrops",
-        "cashmgmt/windows/listdepositsdrops",
 
-        "cashmgmt/windows/cashmgmt",
+        "cashmgmt/view/cashmgmtbuttons",
+        "cashmgmt/view/cashmgmtkeyboard",
+        "cashmgmt/view/renderdropdepdestinations",
+        "cashmgmt/view/searchdepositevents",
+        "cashmgmt/view/modaldepositevents",
+        "cashmgmt/view/cashmgmtinfo",
+        "cashmgmt/view/renderdepositsdrops",
+        "cashmgmt/view/listdepositsdrops",
+        "cashmgmt/view/cashmgmt",
+
         // Cash Up window
         "closecash/components/closebuttons", "closecash/components/closekeyboard",
         "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
