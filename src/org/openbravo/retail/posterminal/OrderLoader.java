@@ -39,6 +39,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
@@ -589,6 +590,9 @@ public class OrderLoader {
         OBDal.getInstance().save(paymentScheduleInvoice);
       }
 
+      BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
+      BigDecimal writeoffAmt = amt.subtract(gross);
+
       for (int i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
         OBPOSAppPayment paymentType = null;
@@ -606,7 +610,7 @@ public class OrderLoader {
           return jsonResponse;
         } else {
           processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment);
+              payment, i == (payments.length() - 1) ? writeoffAmt : BigDecimal.ZERO);
         }
       }
 
@@ -617,11 +621,17 @@ public class OrderLoader {
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
-      OBPOSAppPayment paymentType, JSONObject payment) throws JSONException {
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt) throws JSONException {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"));
+      if (amount.signum() == 0) {
+        return;
+      }
+      if (writeoffAmt.signum() != 0) {
+        amount = amount.subtract(writeoffAmt);
+      }
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
@@ -674,6 +684,10 @@ public class OrderLoader {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), order.getOrderDate(), order.getOrganization(), null, detail,
           paymentAmount, false, false);
+      if (writeoffAmt.signum() != 0) {
+        FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
+            .getGlitemWriteoff());
+      }
       String description = getPaymentDescription();
       description += ": " + order.getDocumentNo().substring(1, order.getDocumentNo().length() - 1)
           + "\n";
@@ -690,7 +704,12 @@ public class OrderLoader {
       parameters.put("Fin_Payment_ID", finPayment.getId());
       parameters.put("isPOSOrder", "Y");
       pb.setParams(parameters);
-      new FIN_PaymentProcess().execute(pb);
+      FIN_PaymentProcess process = new FIN_PaymentProcess();
+      process.execute(pb);
+      OBError result = (OBError) pb.getResult();
+      if (result.getType().equalsIgnoreCase("Error")) {
+        throw new OBException(result.getMessage());
+      }
       vars.setSessionValue("POSOrder", "Y");
       log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
           + "; Process payment: " + (System.currentTimeMillis() - t3));

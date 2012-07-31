@@ -53,6 +53,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PROVIDER" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="OBPOS_TERMINALTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -109,6 +113,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="C_GLITEM_WRITEOFF_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault>SELECT MAX(C_GLITEM_ID) FROM C_GLITEM</onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -133,6 +141,9 @@
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_DROPS">
         <reference local="C_GLITEM_DROPS_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_WOFF">
+        <reference local="C_GLITEM_WRITEOFF_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="OBPOS_APPPAYTYPE_PAYMTH">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
@@ -144,6 +155,9 @@
       </foreign-key>
       <index name="OBPOS_APPPAYTYPE_CURR" unique="false">
         <index-column name="C_CURRENCY_ID"/>
+      </index>
+      <index name="OBPOS_APPPAYTYPE_GLITEM_WOFF" unique="false">
+        <index-column name="C_GLITEM_WRITEOFF_ID"/>
       </index>
       <index name="OBPOS_APPPAYTYPE_TERM" unique="false">
         <index-column name="OBPOS_TERMINALTYPE_ID"/>
