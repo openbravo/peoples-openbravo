@@ -93,7 +93,6 @@
     },
 
     renderLogin: function() {
-      console.log('renderLogin');
       var c = _.extend({}, Backbone.Events);
       $("#containerWindow").empty().append((new OB.COMP.Login(c)).$el);
       c.trigger('domready');
@@ -117,7 +116,6 @@
       });
 
       OB.POS.modelterminal.on('terminal.loaded', function() {
-        console.log('renderMain terminal loaded');
         var oldOB = OB;
 
         $LAB.setGlobalDefaults({
@@ -141,7 +139,6 @@
     registerWindow: function(windowName, window) {
       var datasources = [];
 
-      console.log('registering window', windowName);
       OB.POS.windows[windowName] = window;
 
       if (OB.DATA[windowName]) {
@@ -167,7 +164,6 @@
 
     renderGenericWindow: function(windowName) {
       OB.UTIL.showLoading(true);
-      console.log('renderGenericWindow', arguments, windowName, OB.POS.windows[windowName]);
 
       var webwindow, w, c = _.extend({}, Backbone.Events),
           terminal = OB.POS.modelterminal.get('terminal'),
@@ -176,7 +172,6 @@
 
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       
-      console.log('after new');
       this.on('window:ready', function(w) {
         w.render();
         $("#containerWindow").empty().append(w.$el);
@@ -512,7 +507,6 @@
       var undef;
       if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
         this.trigger('ready');
-        console.log('modelterminal ready');
       }
     },
 

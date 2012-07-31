@@ -10,8 +10,6 @@
 /*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
 (function () {
-	console.log('Entry Point1');
-
   var modelterminal = OB.POS.modelterminal;
 
   var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
@@ -89,7 +87,6 @@
 
   $(document).ready(function () {
     // Entry Point
-  console.log('Entry Point');
     $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
    modelterminal.load();
 

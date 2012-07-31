@@ -40,17 +40,14 @@
 
             queue[item.prototype.modelName] = false;
             ds.on('ready', function() {
-              console.log('loaded:', item.prototype.modelName);
               if (data) {
                 data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
               }
-              console.log('loaded model', item);
               queue[item.prototype.modelName] = true;
               if (OB.UTIL.queueStatus(queue)) {
                 models.trigger('ready');
               }
             });
-            console.log('load', item.prototype.modelName);
             ds.load(item.params);
           }
         }
@@ -64,13 +61,10 @@
     },
 
     main: function(query, page) {
-      console.log(arguments);
     },
 
     renderGenericWindow: function(windowName) {
-      console.log('rotuer renderGenericWindow', windowName);
       this.terminal.renderGenericWindow(windowName);
-
     }
   });
 

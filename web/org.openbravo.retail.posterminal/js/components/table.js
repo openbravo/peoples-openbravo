@@ -98,7 +98,6 @@ if (attr.collection){
   OB.UI.TableView = Backbone.View.extend({
     tagName: 'div',
     initialize: function () {
-    	console.log('init tableview')
       this.theader = $('<div/>');
       this.tbody = $('<ul/>').addClass('unstyled').css('display', 'none');
       this.tempty = $('<div/>');
