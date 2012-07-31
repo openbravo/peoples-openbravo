@@ -52,7 +52,8 @@ public class CostingBackground extends DalBaseProcess {
 
     List<MaterialTransaction> trxs = getTransactionsBatch();
     int counter = 0, total = trxs.size(), batch = 0;
-    while (trxs.size() > 0) {
+    boolean pendingTrx = areTransactionsPending();
+    while (pendingTrx) {
       batch++;
       for (MaterialTransaction transaction : trxs) {
         counter++;
@@ -84,6 +85,7 @@ public class CostingBackground extends DalBaseProcess {
       }
       OBDal.getInstance().getSession().clear();
       trxs = getTransactionsBatch();
+      pendingTrx = areTransactionsPending();
       total += trxs.size();
     }
     logger.logln(OBMessageUtils.messageBD("Success"));
@@ -95,6 +97,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
@@ -105,5 +108,23 @@ public class CostingBackground extends DalBaseProcess {
     trxQry.setNamedParameter("now", new Date());
 
     return trxQry.list();
+  }
+
+  private boolean areTransactionsPending() {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " = 'NC'");
+    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
+    where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setMaxResult(1);
+    trxQry.setNamedParameter("now", new Date());
+
+    return trxQry.list().size() > 0;
   }
 }
