@@ -225,7 +225,8 @@ public class OBViewFieldHandler {
         }
 
         // change in fieldgroup
-        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+        if (field.isDisplayed() && field.getFieldGroup() != null
+            && field.getFieldGroup() != currentADFieldGroup) {
           // start of a fieldgroup use it
           final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
           fields.add(viewFieldGroup);
@@ -269,7 +270,8 @@ public class OBViewFieldHandler {
         }
 
         // change in fieldgroup
-        if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
+        if (field.isDisplayed() && field.getFieldGroup() != null
+            && field.getFieldGroup() != currentADFieldGroup) {
           // start of a fieldgroup use it
           final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
           fields.add(viewFieldGroup);
