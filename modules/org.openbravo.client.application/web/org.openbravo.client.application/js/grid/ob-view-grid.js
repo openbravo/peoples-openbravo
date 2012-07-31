@@ -541,6 +541,17 @@ isc.OBViewGrid.addProperties({
       delete localState.selected;
       this.deselectAllRecords();
 
+      // remove focus as this results in blur behavior before the 
+      // (filter)editor is redrawn with new fields when
+      // doing setviewstate
+      // https://issues.openbravo.com/view.php?id=21249
+      if (this.getEditForm() && this.getEditForm().getFocusItem()) {
+        this.getEditForm().getFocusItem().hasFocus = false;
+      }
+      if (this.filterEditor && this.filterEditor.getEditForm() && this.filterEditor.getEditForm().getFocusItem()) {
+        this.filterEditor.getEditForm().getFocusItem().hasFocus = false;
+      }
+      
       this.deleteSelectedParentRecordFilter(localState);
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
