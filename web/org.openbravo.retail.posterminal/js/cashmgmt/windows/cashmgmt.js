@@ -7,37 +7,6 @@
  ************************************************************************************
  */
 
-
-
-OB.Model.WindowModel = Backbone.Model.extend({
-  data: {},
-
-  initialize: function() {
-    var me = this,
-        queue = {};
-    if (!this.models) {
-      this.models = [];
-    }
-
-    _.extend(this.models, Backbone.Events);
-
-    this.models.on('ready', function() {
-      this.trigger('ready');
-      if (this.init) {
-        this.init();
-      }
-    }, this);
-
-    OB.Model.Util.loadModels(true, this.models, this.data);
-
-    //TODO: load offline models when regesitering window
-  },
-
-  getData: function(dsName) {
-    return this.data[dsName];
-  }
-});
-
 OB.UI.WindowView = Backbone.View.extend({
   windowmodel: null,
 
