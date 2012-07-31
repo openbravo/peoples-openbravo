@@ -78,6 +78,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utilitiesui",
         "arithmetic",
         "i18n",
+        "data/windowmodel",
         "components/clock",
         "model/order",
         "model/terminal",
@@ -120,13 +121,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/businesspartner",
         "components/listreceiptscounter",
         "windows/pointofsale",
+
         // Cash Management window
         "cashmgmt/components/cashmgmtbuttons",
         "cashmgmt/components/cashmgmtkeyboard",
         "cashmgmt/components/renderdropdepdestinations",
         "cashmgmt/components/searchdepositevents",
         "cashmgmt/components/modaldepositevents",
-        "cashmgmt/data/datamaster",
+        "cashmgmt/model/cashmgmt-model",
         "cashmgmt/windows/cashmgmtinfo",
         "cashmgmt/components/renderdepositsdrops",
         "cashmgmt/windows/listdepositsdrops",
