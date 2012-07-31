@@ -7,23 +7,6 @@
  ************************************************************************************
  */
 
-OB.UI.WindowView = Backbone.View.extend({
-  windowmodel: null,
-
-  initialize: function() {
-    var me = this;
-    this.model = new this.windowmodel();
-    this.model.on('ready', function() {
-      OB.UTIL.initContentView(me);
-      if (me.init) {
-        me.init();
-      }
-      OB.POS.modelterminal.trigger('window:ready', me);
-    });
-  }
-
-});
-
 OB.UI.CashManagement = OB.UI.WindowView.extend({
   windowmodel: OB.Model.CashManagement,
   tagName: 'section',

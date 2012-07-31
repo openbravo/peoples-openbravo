@@ -89,6 +89,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalprofile",
         "components/modallogout",
         "components/modalcancel",
+        "components/windowview",
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/toolbarpayment",
