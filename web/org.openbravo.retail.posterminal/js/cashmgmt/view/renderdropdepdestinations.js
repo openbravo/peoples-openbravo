@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.COMP.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
+OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
   attributes: {
     'style': 'background-color:#dddddd;  border: 1px solid #ffffff;'
   },

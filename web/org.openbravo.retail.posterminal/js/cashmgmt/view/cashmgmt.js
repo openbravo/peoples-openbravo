@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-OB.UI.CashManagement = OB.UI.WindowView.extend({
-  windowmodel: OB.Model.CashManagement,
+OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
+  windowmodel: OB.OBPOSCasgMgmt.Model.CashManagement,
   tagName: 'section',
   contentView: [{
     tag: 'div',
@@ -38,10 +38,10 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
           'class': 'span6'
         },
         content: [{
-          view: OB.COMP.CashMgmtInfo
+          view: OB.OBPOSCasgMgmt.UI.CashMgmtInfo
         }]
       }, {
-        view: OB.COMP.CashMgmtKeyboard
+        view: OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard
       }]
     },
     //hidden stuff 
@@ -60,7 +60,7 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
           type: 'DataDropEvents'
         })
       }, {
-        view: OB.COMP.ModalCancel
+        view: OB.OBPOSCasgMgmt.UI.ModalCancel
       }]
     }]
   }],
@@ -84,4 +84,4 @@ OB.UI.CashManagement = OB.UI.WindowView.extend({
 });
 
 
-OB.POS.registerWindow('retail.cashmanagement', OB.UI.CashManagement, 10);
+OB.POS.registerWindow('retail.cashmanagement', OB.OBPOSCasgMgmt.UI.CashManagement, 10);

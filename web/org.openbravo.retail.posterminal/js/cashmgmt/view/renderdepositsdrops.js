@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.COMP.RenderDepositLine = Backbone.View.extend({
+OB.OBPOSCasgMgmt.UI.RenderDepositLine = Backbone.View.extend({
   contentView: [{
     tag: 'div',
     attributes: {
@@ -73,7 +73,7 @@ OB.COMP.RenderDepositLine = Backbone.View.extend({
   }
 });
 
-OB.COMP.RenderDepositsDrops = Backbone.View.extend({
+OB.OBPOSCasgMgmt.UI.RenderDepositsDrops = Backbone.View.extend({
   contentView: [
   //Separator
   {
@@ -164,7 +164,7 @@ OB.COMP.RenderDepositsDrops = Backbone.View.extend({
       style: 'list',
       renderEmpty: Backbone.View,
       // Not to show anything in case of empty
-      renderLine: OB.COMP.RenderDepositLine
+      renderLine: OB.OBPOSCasgMgmt.UI.RenderDepositLine
     })
   },
 

@@ -36,7 +36,7 @@
 //    this.$el = this.component.$el;
 //    this.tableview = this.component.context.tableview;
 //  };
-OB.COMP.SearchDepositEvents = Backbone.View.extend({
+OB.OBPOSCasgMgmt.UI.SearchDepositEvents = Backbone.View.extend({
   tagName: 'div',
   className: 'row-fluid',
 
@@ -50,7 +50,7 @@ OB.COMP.SearchDepositEvents = Backbone.View.extend({
       content: [{
         id: 'tableview',
         view: OB.UI.TableView.extend({
-          renderLine: OB.COMP.RenderDropDepDestinations,
+          renderLine: OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations,
           renderEmpty: OB.COMP.RenderEmpty
         })
       }]

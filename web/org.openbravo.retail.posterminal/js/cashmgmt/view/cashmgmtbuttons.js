@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.COMP.ButtonNextCashMgmt = OB.COMP.RegularButton.extend({
+OB.OBPOSCasgMgmt.UI.ButtonNextCashMgmt = OB.COMP.RegularButton.extend({
   _id: 'cashmgmtnextbutton',
   label: OB.I18N.getLabel('OBPOS_LblDone'),
   attributes: {

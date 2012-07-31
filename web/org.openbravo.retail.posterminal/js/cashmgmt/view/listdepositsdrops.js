@@ -68,8 +68,8 @@ OB.COMP.ListDepositsDrops = Backbone.View.extend({
             id: 'depositDropsList',
             view: OB.UI.TableView.extend({
               style: 'list',
-              renderLine: OB.COMP.RenderDepositsDrops,
-              renderEmpty: OB.COMP.RenderEmpty
+              renderLine: OB.OBPOSCasgMgmt.UI.RenderDepositsDrops,
+              renderEmpty: OB.OBPOSCasgMgmt.UI.RenderEmpty
             })
           }]
         }]

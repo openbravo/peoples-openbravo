@@ -25,7 +25,7 @@ OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
     theHeaderText.attr('color', 'black');
   },
   getContentView: function() {
-    return OB.COMP.SearchDepositEvents.extend({
+    return OB.OBPOSCasgMgmt.UI.SearchDepositEvents.extend({
       type: this.type
     });
   },

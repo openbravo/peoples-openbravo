@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.COMP.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
+OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
   _id: 'cashmgmtkeyboard',
   getPayment: function(id, key, name, identifier, type) {
     return {

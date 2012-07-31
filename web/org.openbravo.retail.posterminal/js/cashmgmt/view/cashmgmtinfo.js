@@ -8,7 +8,7 @@
  */
 
 
-OB.COMP.CashMgmtInfo = Backbone.View.extend({
+OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
   tagName: 'div',
   contentView: [{
     tag: 'div',
@@ -52,7 +52,7 @@ OB.COMP.CashMgmtInfo = Backbone.View.extend({
         'style': 'width: 100%; float: left;'
       },
       content: [{
-        view: OB.COMP.ButtonNextCashMgmt
+        view: OB.OBPOSCasgMgmt.UI.ButtonNextCashMgmt
       }]
     }]
   }],

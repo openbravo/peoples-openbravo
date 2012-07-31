@@ -8,34 +8,37 @@
  */
 
 
-OB.Model = OB.Model || {};
+OB.OBPOSCasgMgmt = OB.OBPOSCasgMgmt || {};
+OB.OBPOSCasgMgmt.Model = OB.OBPOSCasgMgmt.Model || {};
+OB.OBPOSCasgMgmt.UI = OB.OBPOSCasgMgmt.UI || {}
 
-OB.Model.DepositsDrops = Backbone.Model.extend({
+
+OB.OBPOSCasgMgmt.Model.DepositsDrops = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositsDrops',
   modelName: 'DataDepositsDrops',
   online: true
 });
 
-OB.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
+OB.OBPOSCasgMgmt.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtPayments',
   modelName: 'DataCashMgmtPaymentMethod',
   online: true
 });
 
-OB.Model.DropEvents = Backbone.Model.extend({
+OB.OBPOSCasgMgmt.Model.DropEvents = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents',
   modelName: 'DataDropEvents',
   online: true
 });
 
-OB.Model.DepositEvents = Backbone.Model.extend({
+OB.OBPOSCasgMgmt.Model.DepositEvents = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents',
   modelName: 'DataDepositEvents',
   online: true
 });
 
-OB.Model.CashManagement = OB.Model.WindowModel.extend({
-  models: [OB.Model.DepositsDrops, OB.Model.CashMgmtPaymentMethod, OB.Model.DropEvents, OB.Model.DepositEvents],
+OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
+  models: [OB.OBPOSCasgMgmt.Model.DepositsDrops, OB.OBPOSCasgMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCasgMgmt.Model.DropEvents, OB.OBPOSCasgMgmt.Model.DepositEvents],
   init: function() {
     var depList = this.getData('DataDepositsDrops');
 
@@ -51,7 +54,6 @@ OB.Model.CashManagement = OB.Model.WindowModel.extend({
         }
       });
       if (error) {
-        console.log('eerr');
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
         return;
       }
