@@ -104,8 +104,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     if (_strPriceStd.startsWith("\"")) {
       strPriceStd = _strPriceStd.substring(1, _strPriceStd.length() - 1);
     }
-    boolean isTaxIncludedPriceList = OBDal.getInstance().get(Order.class, strCOrderId).getPriceList()
-        .isPriceIncludesTax();
+    boolean isTaxIncludedPriceList = OBDal.getInstance().get(Order.class, strCOrderId)
+        .getPriceList().isPriceIncludesTax();
 
     if (!strMProductID.equals("")) {
       SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
@@ -115,12 +115,12 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           + strPriceStd.replace("\"", ""));
       if (isTaxIncludedPriceList) {
         strNetPriceList = "0";
+      } else {
+        strGrossPriceList = "0";
         strPriceActual = SLOrderProductData.getOffersPrice(this, dataOrder[0].dateordered,
             dataOrder[0].cBpartnerId, strMProductID, (strPriceStd.equals("undefined") ? "0"
                 : strPriceStd.replace("\"", "")), strQty, dataOrder[0].mPricelistId,
             dataOrder[0].id);
-      } else {
-        strGrossPriceList = "0";
       }
       log4j.debug("get Offers price:" + strPriceActual);
 
