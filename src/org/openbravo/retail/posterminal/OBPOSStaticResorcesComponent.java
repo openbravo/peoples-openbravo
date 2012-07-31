@@ -9,8 +9,11 @@
 
 package org.openbravo.retail.posterminal;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
+import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.StaticResourceComponent;
 
 /**
@@ -21,14 +24,25 @@ import org.openbravo.client.kernel.StaticResourceComponent;
  * 
  */
 
-@ApplicationScoped
-public class OBPOSStaticResorcesComponent extends StaticResourceComponent {
+public class OBPOSStaticResorcesComponent extends BaseComponent {
   private static final String GEN_TARGET_LOCATION = "web/js/gen";
 
-  @Override
+  @Inject
+  @Any
+  private Instance<StaticResourceComponent> rc;
+
   public String generate() {
+    StaticResourceComponent sr = rc.get();
+
+    sr.setParameters(getParameters());
     final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION + "/"
-        + getStaticResourceFileName() + ".js";
+        + sr.getStaticResourceFileName() + ".js";
     return "$LAB.script('" + scriptPath + "');";
+  }
+
+  @Override
+  public Object getData() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
