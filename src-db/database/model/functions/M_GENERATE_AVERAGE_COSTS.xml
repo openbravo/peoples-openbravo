@@ -148,6 +148,7 @@
       IF (v_MinDateCosting IS NULL OR v_MinFirstInOut < v_MinDateCosting) THEN
         v_MinDateCosting := v_MinFirstInOut;
       END IF;
+    END IF;
 
       SELECT GREATEST(MAX(enddate),v_MinDateCosting) ENDDATE
       INTO v_MinDateCosting 
@@ -159,8 +160,6 @@
                                WHERE c_period_id=cp.c_period_id AND periodstatus='O')
             ) periodClosed;
 	
-    END IF;
-
     v_CheckResultStr := '';
    IF (NOT v_doNothing) THEN
     SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_MOVEMENT WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
