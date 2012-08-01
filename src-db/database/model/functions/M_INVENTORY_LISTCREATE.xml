@@ -213,8 +213,8 @@
         s.M_Product_UOM_ID,
         s.M_AttributeSetInstance_ID
       FROM M_Product p
-      INNER JOIN M_Storage_Detail s
-        ON(s.M_Product_ID=p.M_Product_ID)
+      INNER JOIN M_Storage_Detail s ON(s.M_Product_ID=p.M_Product_ID) 
+      LEFT JOIN m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id	
       WHERE p.AD_Client_ID=v_Client_ID  --    only ..
         AND(v_ProductValue IS NULL
         OR UPPER(p.Value) LIKE v_ProductValue)
@@ -233,15 +233,13 @@
           AND l.M_Product_ID=s.M_Product_ID
           AND l.M_Locator_ID=s.M_Locator_ID
         )
-        AND NOT EXISTS (SELECT 1
-			FROM M_STORAGE_DETAIL MS
-			WHERE m_product_id IN (SELECT po.m_product_id
-				      FROM m_product po JOIN m_attributeset aset ON po.m_attributeset_id = aset.m_attributeset_id
-				      WHERE coalesce(po.attrsetvaluetype, '-') <> 'F'
-				      AND aset.isoneattrsetvalrequired = 'Y'
-				      AND po.M_PRODUCT_ID = p.m_product_id)
-			AND COALESCE(m_attributesetinstance_id, '0') = '0'
-			)
+        AND NOT (coalesce(p.attrsetvaluetype, '-') <> 'F'
+		 AND aset.isoneattrsetvalrequired = 'Y'
+		 AND COALESCE(s.m_attributesetinstance_id, '0') = '0'
+		 AND QTYONHAND = 0
+		 AND COALESCE(QTYORDERONHAND,0) = 0
+		 AND PREQTYONHAND=0
+		 AND COALESCE(PREQTYORDERONHAND,0) = 0)
       ORDER BY s.M_Locator_ID,
         p.Value,
         s.Created
