@@ -26324,12 +26324,12 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--85CB18B5AB81403889F19977C22B5561-->  <COLUMNNAME><![CDATA[Isquantityvariable]]></COLUMNNAME>
 <!--85CB18B5AB81403889F19977C22B5561-->  <NAME><![CDATA[Is Quantity Variable]]></NAME>
 <!--85CB18B5AB81403889F19977C22B5561-->  <PRINTNAME><![CDATA[Is Quantity Variable]]></PRINTNAME>
-<!--85CB18B5AB81403889F19977C22B5561-->  <DESCRIPTION><![CDATA[If it's checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></DESCRIPTION>
-<!--85CB18B5AB81403889F19977C22B5561-->  <HELP><![CDATA[If it's checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></HELP>
+<!--85CB18B5AB81403889F19977C22B5561-->  <DESCRIPTION><![CDATA[If checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></DESCRIPTION>
+<!--85CB18B5AB81403889F19977C22B5561-->  <HELP><![CDATA[If checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></HELP>
 <!--85CB18B5AB81403889F19977C22B5561-->  <PO_NAME><![CDATA[Is Quantity Variable]]></PO_NAME>
 <!--85CB18B5AB81403889F19977C22B5561-->  <PO_PRINTNAME><![CDATA[Is Quantity Variable]]></PO_PRINTNAME>
-<!--85CB18B5AB81403889F19977C22B5561-->  <PO_DESCRIPTION><![CDATA[If it's checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></PO_DESCRIPTION>
-<!--85CB18B5AB81403889F19977C22B5561-->  <PO_HELP><![CDATA[If it's checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></PO_HELP>
+<!--85CB18B5AB81403889F19977C22B5561-->  <PO_DESCRIPTION><![CDATA[If checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></PO_DESCRIPTION>
+<!--85CB18B5AB81403889F19977C22B5561-->  <PO_HELP><![CDATA[If checked, goods shipment lines and sales invoice lines with quantity greater than quantity ordered are permitted for this product.]]></PO_HELP>
 <!--85CB18B5AB81403889F19977C22B5561-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--85CB18B5AB81403889F19977C22B5561-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--85CB18B5AB81403889F19977C22B5561--></AD_ELEMENT>
