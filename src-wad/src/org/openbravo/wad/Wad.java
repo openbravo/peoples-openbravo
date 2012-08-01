@@ -817,7 +817,7 @@ public class Wad extends DefaultHandler {
             tabsData.tabid);
         sinParent = true;
         if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-          log4j.warn("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
+          log4j.info("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
         }
       }
 

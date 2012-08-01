@@ -558,6 +558,7 @@ public class AdvPaymentMngtDao {
     ps.setOrder(order);
     ps.setCurrency(invoice.getCurrency());
     ps.setDueDate(dueDate);
+    ps.setOrigDueDate(dueDate);
     ps.setFinPaymentmethod(paymentMethod);
     ps.setOutstandingAmount(amount);
     ps.setPaidAmount(BigDecimal.ZERO);
@@ -842,7 +843,10 @@ public class AdvPaymentMngtDao {
     Iterator<FIN_PaymentScheduleDetail> itPSD = lPSD.iterator();
 
     while (itPSD.hasNext()) {
-      removePaymentScheduleDetail(itPSD.next());
+      FIN_PaymentScheduleDetail psdToRemove = itPSD.next();
+      fin_PaymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(
+          psdToRemove);
+      removePaymentScheduleDetail(psdToRemove);
     }
     OBDal.getInstance().remove(fin_PaymentSchedule);
     OBDal.getInstance().flush();
@@ -853,10 +857,6 @@ public class AdvPaymentMngtDao {
    * 
    */
   public void removePaymentScheduleDetail(FIN_PaymentScheduleDetail fin_PaymentScheduleDetail) {
-
-    fin_PaymentScheduleDetail.setInvoicePaymentSchedule(null);
-    fin_PaymentScheduleDetail.setOrderPaymentSchedule(null);
-    OBDal.getInstance().save(fin_PaymentScheduleDetail);
     OBDal.getInstance().remove(fin_PaymentScheduleDetail);
     OBDal.getInstance().flush();
   }

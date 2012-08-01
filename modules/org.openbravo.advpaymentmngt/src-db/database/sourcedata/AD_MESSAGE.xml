@@ -854,7 +854,7 @@ Please, unpost the reconciliation if you wan to split a bank statement line.]]><
 <!--EDEA16A966B94F63A7C1E339FC095B08-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EDEA16A966B94F63A7C1E339FC095B08-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EDEA16A966B94F63A7C1E339FC095B08-->  <VALUE><![CDATA[APRM_AlreadyPaidInvoice]]></VALUE>
-<!--EDEA16A966B94F63A7C1E339FC095B08-->  <MSGTEXT><![CDATA[Archived payment plan cannot be modified as invoice is already paid (at least partially) even if the payment was afterwards voided.]]></MSGTEXT>
+<!--EDEA16A966B94F63A7C1E339FC095B08-->  <MSGTEXT><![CDATA[Payment plan cannot be modified as invoice is already paid (at least partially) even if the payment was afterwards voided.]]></MSGTEXT>
 <!--EDEA16A966B94F63A7C1E339FC095B08-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--EDEA16A966B94F63A7C1E339FC095B08-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--EDEA16A966B94F63A7C1E339FC095B08--></AD_MESSAGE>
