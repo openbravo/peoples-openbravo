@@ -579,7 +579,7 @@ isc.OBGrid.addProperties({
     }
     return ret;
   },
-  
+
   // = exportData =
   // The exportData function exports the data of the grid to a file. The user will 
   // be presented with a save-as dialog.

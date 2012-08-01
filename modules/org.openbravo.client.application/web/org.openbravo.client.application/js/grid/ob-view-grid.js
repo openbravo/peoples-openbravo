@@ -551,7 +551,7 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && this.filterEditor.getEditForm() && this.filterEditor.getEditForm().getFocusItem()) {
         this.filterEditor.getEditForm().getFocusItem().hasFocus = false;
       }
-      
+
       this.deleteSelectedParentRecordFilter(localState);
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);

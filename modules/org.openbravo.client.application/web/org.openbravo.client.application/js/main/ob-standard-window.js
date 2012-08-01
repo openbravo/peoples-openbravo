@@ -410,7 +410,7 @@ isc.OBStandardWindow.addProperties({
         return 1;
       });
     }
-    
+
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();

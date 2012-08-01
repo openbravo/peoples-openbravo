@@ -825,7 +825,8 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setAdminMode: function (level, levelValue) {
-    var leftColumn = this.leftColumnLayout, levelLabel, levelValueLabel;
+    var leftColumn = this.leftColumnLayout,
+        levelLabel, levelValueLabel;
 
     this.adminMode = true;
     this.portalLayout.sendEvents = false;
