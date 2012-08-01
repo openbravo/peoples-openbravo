@@ -95,7 +95,8 @@
       v_PriceLimit NUMBER;
       v_gross_unit_price NUMBER;
       v_line_gross_amount NUMBER;
-      v_precision NUMBER;
+      v_priceprecision NUMBER;
+      v_stdprecision NUMBER;
       --
       v_taxBaseAmt NUMBER;
       v_LineNetAmt NUMBER;
@@ -196,7 +197,8 @@
             WHERE c_bpartner_id = CUR_Shipment.C_BPartner_ID;
           END IF;
           
-          SELECT PricePrecision INTO v_precision
+          SELECT PricePrecision, stdprecision
+            INTO v_priceprecision, v_stdprecision
           FROM C_CURRENCY
           WHERE C_CURRENCY_ID = v_C_Currency_ID;
           
@@ -293,12 +295,12 @@
               v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;
               IF (v_istaxincluded = 'Y') THEN
                 v_gross_unit_price:= v_PriceActual;
-                v_line_gross_amount:= ROUND(v_gross_unit_price * CUR_ShipmentLines.MovementQty, v_precision);
-                v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_C_Tax_ID, v_PriceActual, 0, v_precision, 1);
-                v_LineNetAmt:= ROUND(v_PriceActual * CUR_ShipmentLines.MovementQty, v_precision);
+                v_line_gross_amount:= ROUND(v_gross_unit_price * CUR_ShipmentLines.MovementQty, v_stdprecision);
+                v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_C_Tax_ID, v_PriceActual, 0, v_priceprecision, 1);
+                v_LineNetAmt:= ROUND(v_PriceActual * CUR_ShipmentLines.MovementQty, v_stdprecision);
               ELSE
                 v_PriceActual:=M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID);
-                v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
+                v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, v_stdprecision) ;
               END IF;
             END IF;
             -- Get UOM + Tax -- VERY simplified, but should work in most cases

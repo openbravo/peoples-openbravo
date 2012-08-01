@@ -371,6 +371,7 @@
                 v_PERCENTAGE:=100 - v_PERCENTAGE;
                 finish:=true;
                 FINISH_PROCESS:=true;
+                v_inserted:=v_inserted - v_depreciatedLines;
               ELSE v_AMOUNT:=v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100;
               end if;
               IF(v_AMOUNT>0) THEN

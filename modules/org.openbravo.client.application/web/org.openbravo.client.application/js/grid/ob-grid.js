@@ -565,6 +565,21 @@ isc.OBGrid.addProperties({
     return !field.name.startsWith('_') && field.canFilter;
   },
 
+  // the valuemap is updated in the form item, make sure that the
+  // grid field also has it
+  getEditorValueMap: function (field, values) {
+    var form, ret = this.Super('getEditorValueMap', arguments);
+    if (!ret) {
+      if (this.getEditForm()) {
+        form = this.getEditForm();
+        if (form.getItem(field.name) && form.getItem(field.name).valueMap) {
+          return form.getItem(field.name).valueMap;
+        }
+      }
+    }
+    return ret;
+  },
+
   // = exportData =
   // The exportData function exports the data of the grid to a file. The user will 
   // be presented with a save-as dialog.

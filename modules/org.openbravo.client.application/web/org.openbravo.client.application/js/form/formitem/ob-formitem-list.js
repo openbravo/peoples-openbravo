@@ -140,11 +140,11 @@ isc.OBListItem.addProperties({
     if (this.valueMap && this.valueMap[value]) {
       return this.valueMap[value];
     }
-    
+
     if (ret === value && this.isDisabled()) {
       return '';
     }
-    
+
     // don't update the valuemap if the value is null or undefined
     if (ret === value && value) {
       if (!this.valueMap) {
@@ -158,7 +158,7 @@ isc.OBListItem.addProperties({
     return ret;
   },
 
-  mapDisplayToValue: function(value) {
+  mapDisplayToValue: function (value) {
     if (value === '') {
       return null;
     }

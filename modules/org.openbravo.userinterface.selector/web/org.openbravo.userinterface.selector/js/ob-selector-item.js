@@ -612,7 +612,7 @@ isc.OBSelectorItem.addProperties({
         moduleId: this.form.view.moduleId
       });
     }
-    
+
     // also add the special ORG parameter
     if (requestProperties.params.inpadOrgId) {
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
@@ -705,13 +705,13 @@ isc.OBSelectorItem.addProperties({
     return ret;
   },
 
-  mapDisplayToValue: function(value) {
+  mapDisplayToValue: function (value) {
     if (value === '') {
       return null;
     }
     return this.Super('mapDisplayToValue', arguments);
   },
-  
+
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
     if (this.selectorWindow) {
@@ -728,7 +728,7 @@ isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
   canFocus: true,
-  showFocused: true, 
+  showFocused: true,
   wrap: false,
   clipValue: true,
 
