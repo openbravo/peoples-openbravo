@@ -9,12 +9,12 @@
 
 /*global B, Backbone, $, _ */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
 
-  OB.UTIL.getParameterByName = function (name) {
+  OB.UTIL.getParameterByName = function(name) {
     var n = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regexS = '[\\?&]' + n + '=([^&#]*)';
     var regex = new RegExp(regexS);
@@ -22,11 +22,11 @@
     return (results) ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : '';
   };
 
-  OB.UTIL.escapeRegExp = function (text) {
+  OB.UTIL.escapeRegExp = function(text) {
     return text.replace(/[\-\[\]{}()+?.,\\\^$|#\s]/g, '\\$&');
   };
 
-  OB.UTIL.padNumber = function (n, p) {
+  OB.UTIL.padNumber = function(n, p) {
     var s = n.toString();
     while (s.length < p) {
       s = '0' + s;
@@ -34,30 +34,30 @@
     return s;
   };
 
-  OB.UTIL.encodeXMLComponent = function (s, title, type) {
+  OB.UTIL.encodeXMLComponent = function(s, title, type) {
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('\'', '&apos;').replace('\"', '&quot;');
   };
 
-  OB.UTIL.loadResource = function (res, callback, context) {
+  OB.UTIL.loadResource = function(res, callback, context) {
     $.ajax({
       url: res,
       dataType: 'text',
       type: 'GET',
-      success: function (data, textStatus, jqXHR) {
+      success: function(data, textStatus, jqXHR) {
         callback.call(context || this, data);
       },
-      error: function (jqXHR, textStatus, errorThrown) {
+      error: function(jqXHR, textStatus, errorThrown) {
         callback.call(context || this);
       }
     });
   };
 
-  OB.UTIL.queueStatus = function (queue) {
+  OB.UTIL.queueStatus = function(queue) {
     // Expects an object where the value element is true/false depending if is processed or not
     if (!_.isObject(queue)) {
       throw 'Object expected';
     }
-    return _.reduce(queue, function (memo, val) {
+    return _.reduce(queue, function(memo, val) {
       return memo && val;
     }, true);
   };
@@ -65,7 +65,7 @@
 
   function _initContentView(view, child) {
     var obj, inst, i, max;
-    if (typeof (child) === 'string') {
+    if (typeof(child) === 'string') {
       inst = $(document.createTextNode(child));
     } else if (child.tag) {
       inst = $('<' + child.tag + '/>');
@@ -85,7 +85,10 @@
         view[child.id] = inst;
       }
     } else if (child.view) {
-      obj = new child.view({root: view.options.root, parent: view});
+      obj = new child.view({
+        root: view.options.root,
+        parent: view
+      });
       inst = obj.render().$el;
       if (child.id) {
         view[child.id] = obj;
@@ -96,7 +99,7 @@
     return inst;
   }
 
-  OB.UTIL.initContentView = function (view) {
+  OB.UTIL.initContentView = function(view) {
     var i, max;
     if (view.contentView) {
       for (i = 0, max = view.contentView.length; i < max; i++) {
@@ -105,30 +108,45 @@
     }
   };
 
-  OB.UTIL.processOrders = function (context, orders, successCallback, errorCallback) {
+  OB.UTIL.initContentView2 = function(enyoView, viewClass) {
+    var i, max, view;
+    view = new viewClass();
+    if (view.contentView) {
+      for (i = 0, max = view.contentView.length; i < max; i++) {
+        view.$el.append(_initContentView(enyoView, view.contentView[i]));
+      }
+    }
+    return view.$el;
+  };
+
+  OB.UTIL.processOrders = function(context, orders, successCallback, errorCallback) {
     var ordersToJson = [];
-    orders.each(function (order){
+    orders.each(function(order) {
       ordersToJson.push(order.serializeToJSON());
     });
     this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
     if (OB.POS.modelterminal.get('connectedToERP')) {
       this.proc.exec({
         order: ordersToJson
-      }, function (data, message) {
+      }, function(data, message) {
         if (data && data.exception) {
           // Orders have not been processed
-          orders.each(function (order){
+          orders.each(function(order) {
             order.set('isbeingprocessed', 'N');
-            OB.Dal.save(order, null, function (tx, err) { OB.UTIL.showError(err);});
+            OB.Dal.save(order, null, function(tx, err) {
+              OB.UTIL.showError(err);
+            });
           });
           if (errorCallback) {
             errorCallback();
           }
         } else {
           // Orders have been processed, delete them
-          orders.each(function (order){
+          orders.each(function(order) {
             context.modelorderlist.remove(order);
-            OB.Dal.remove(order,null, function (tx, err) { OB.UTIL.showError(err);});
+            OB.Dal.remove(order, null, function(tx, err) {
+              OB.UTIL.showError(err);
+            });
           });
           if (successCallback) {
             successCallback();
@@ -139,32 +157,31 @@
   };
 
   OB.UTIL.checkConnectivityStatus = function() {
-    var ajaxParams,
-    currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
+    var ajaxParams, currentlyConnected = OB.POS.modelterminal.get('connectedToERP');
     if (navigator.onLine) {
       // It can be a false positive, make sure with the ping
       ajaxParams = {
-          async: true,
-          cache: false,
-          context: $("#status"),
-          dataType: "json",
-          error: function (req, status, ex) {
-            if (currentlyConnected !== false) {
-              if (OB.POS.modelterminal) {
-                OB.POS.modelterminal.triggerOffLine();
-              }
+        async: true,
+        cache: false,
+        context: $("#status"),
+        dataType: "json",
+        error: function(req, status, ex) {
+          if (currentlyConnected !== false) {
+            if (OB.POS.modelterminal) {
+              OB.POS.modelterminal.triggerOffLine();
             }
-          },
-          success: function (data, status, req) {
-            if (currentlyConnected !== true) {
-              if (OB.POS.modelterminal) {
-                OB.POS.modelterminal.triggerOnLine();
-              }
+          }
+        },
+        success: function(data, status, req) {
+          if (currentlyConnected !== true) {
+            if (OB.POS.modelterminal) {
+              OB.POS.modelterminal.triggerOnLine();
             }
-          },
-          timeout: 5000,
-          type: "GET",
-          url: "../../security/SessionActive?id=0"
+          }
+        },
+        timeout: 5000,
+        type: "GET",
+        url: "../../security/SessionActive?id=0"
       };
       $.ajax(ajaxParams);
     } else {
@@ -183,7 +200,9 @@
       $($('#online > span')[1]).text(label);
       $($('#online')[0]).css('visibility', 'visible');
     } else { // else, retry after 300ms
-      setTimeout(function() { OB.UTIL.setConnectivityLabel(status); }, 300);
+      setTimeout(function() {
+        OB.UTIL.setConnectivityLabel(status);
+      }, 300);
     }
   };
 
@@ -193,7 +212,8 @@
     };
     OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
       var posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
-      orderDocumentSequence = parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10), docSeqModel;
+          orderDocumentSequence = parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10),
+          docSeqModel;
       if (documentSequenceList) {
         docSeqModel = documentSequenceList.at(0);
         if (orderDocumentSequence > docSeqModel.get('documentSequence')) {

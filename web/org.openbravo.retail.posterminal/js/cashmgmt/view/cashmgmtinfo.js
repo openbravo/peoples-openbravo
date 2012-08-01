@@ -20,6 +20,16 @@ OB.OBPOSCasgMgmt.UI.DoneButton = OB.COMP.RegularButton.extend({
   }
 });
 
+enyo.kind({
+	name: 'OB.OBPOSCasgMgmt.UI.DoneButton',
+	kind: 'OB.UI.RegularButton',
+	classes: 'btnlink-white btnlink-fontgray',
+	style:  'min-width: 115px;',
+	tap: function(){
+		alert('1');
+	}
+});
+
 // Top-right panel with clock and buttons
 OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
   tagName: 'div',
@@ -98,7 +108,7 @@ enyo.kind({
     	tad: 'div',
     	style: 'width: 100%; float: left; align: center;',
     	components: [{
-    		kind: OB.OBPOSCasgMgmt.UI.DoneButton
+    		kind: 'OB.OBPOSCasgMgmt.UI.DoneButton'
     	}]
     }]
   }]

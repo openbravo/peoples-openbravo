@@ -16,10 +16,19 @@
 
   enyo.kind({
 	  name: 'OB.UI.Button',
-	  tag: 'button'
+	  kind: 'enyo.Button'
 		  //TODO: implement fast buttons
 		  //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
   });
+  
+  enyo.kind({
+	  name: 'OB.UI.RegularButton',
+	  kind: 'OB.UI.Button',
+	  icon: '',
+	    iconright: '',
+	    label: '',
+	  classes: 'btnlink'
+  })
   
   // Base button
   OB.COMP.Button = Backbone.View.extend({
