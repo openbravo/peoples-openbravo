@@ -14,6 +14,13 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  enyo.kind({
+	  name: 'OB.UI.Button',
+	  tag: 'button'
+		  //TODO: implement fast buttons
+		  //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
+  });
+  
   // Base button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
@@ -304,28 +311,47 @@
   OB.COMP.MenuItem = Backbone.View.extend({
     tagName: 'li',
     initialize: function () {
-      var opts = this.options;
+      var opts = this.options, me=this;
       
       if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
         // disabled entry
         this.$el.append($('<div/>').attr('style', 'color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').append($('<span/>').text(this.label)));
       } else {
-        this.$el.append($('<a/>').attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', this.href).attr('target', this.target).append($('<span/>').text(this.label)));
-        this.$el.find('a').first().click(function (e) {
-          var $el = $(this),
-              href = $el.attr('href'),
-              target = $el.attr('target');
-  
-          if (target === '_self') {
-            e.preventDefault();
-            if (OB.POS.modelterminal.get('connectedToERP')) {
-              OB.UTIL.showLoading(true);
-              OB.POS.navigate(href);
-            } else {
-              alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
-            }
-          }
-        });
+//    	  var a = this.$el.append($('<a/>')).attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', '#');
+//    	  //debugger;
+//    	  a.append($('<span/>').text(this.label));
+//    	  a.click(function (e) {
+//            var $el = $(this);
+//  console.log('click');
+//              e.preventDefault();
+//              if (OB.POS.modelterminal.get('connectedToERP')) {
+//                OB.UTIL.showLoading(true);
+//                OB.POS.navigate(me.href);
+//              } else {
+//                alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
+//              }
+//          });
+    	  var id;
+    	  if (me.href === '../..') id= 'aa'; else id = me.href.replace('.','');
+    	  this.$el.append($('<a/>').attr('id', id).attr('style', 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;').attr('href', '#').append($('<span/>').text(this.label)));
+          console.log(me.target,me.href, this.$el.find('#'+id));
+         // debugger;
+          this.$el.find('#'+id).click(function (e) {
+        	  console.log('click');
+            var $el = $(this);
+
+              e.preventDefault();
+              if (OB.POS.modelterminal.get('connectedToERP')) {
+                OB.UTIL.showLoading(true);
+                OB.POS.navigate(me.href);
+              } else {
+                alert(OB.I18N.getLabel('OBPOS_OnlineRequiredFunctionality'));
+              }
+          });
+    	  
+    	  
+
+        
       }
     },
     href: '',

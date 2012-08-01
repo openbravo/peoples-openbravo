@@ -7,18 +7,35 @@
  ************************************************************************************
  */
 
-OB.UI.WindowView = Backbone.View.extend({
-  windowmodel: null,
+//OB.UI.WindowView = Backbone.View.extend({
+//  windowmodel: null,
+//
+//  initialize: function() {
+//    var me = this;
+//    this.model = new this.windowmodel();
+//    this.model.on('ready', function() {
+//      OB.UTIL.initContentView(me);
+//      if (me.init) {
+//        me.init();
+//      }
+//      OB.POS.modelterminal.trigger('window:ready', me);
+//    });
+//  }
+//});
 
-  initialize: function() {
-    var me = this;
-    this.model = new this.windowmodel();
-    this.model.on('ready', function() {
-      OB.UTIL.initContentView(me);
-      if (me.init) {
-        me.init();
-      }
-      OB.POS.modelterminal.trigger('window:ready', me);
-    });
-  }
+enyo.kind({
+	name: 'OB.UI.WindowView',
+	windowmodel: null,
+	create: function () {
+	  this.inherited(arguments);
+	  this.model = new this.windowmodel();
+	  this.model.on('ready', function() {
+	      //OB.UTIL.initContentView(this);
+	      if (this.init) {
+	        this.init();
+	      }
+	      OB.POS.modelterminal.trigger('window:ready', this);
+	    }, this);
+	}
 });
+

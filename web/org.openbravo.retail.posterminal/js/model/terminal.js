@@ -163,8 +163,7 @@
     },
 
     renderGenericWindow: function(windowName) {
-      OB.UTIL.showLoading(true);
-
+     OB.UTIL.showLoading(true);
       var webwindow, w, c = _.extend({}, Backbone.Events),
           terminal = OB.POS.modelterminal.get('terminal'),
           queue = {},
@@ -173,13 +172,18 @@
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       
       this.on('window:ready', function(w) {
-        w.render();
-        $("#containerWindow").empty().append(w.$el);
+    	if (w.renderInto) {
+    		 //enyo window
+      	  w.renderInto(document.getElementById('containerWindow'));
+    	} else {
+	        w.render();
+	        $("#containerWindow").empty().append(w.$el);
+    	}
         c.trigger('domready');
         OB.UTIL.showLoading(false);
       });
       
-      var w = new OB.POS.windows[windowName](c);
+     
 
       //TODO: load OB.DATA??? It should be done only if needed...
     },

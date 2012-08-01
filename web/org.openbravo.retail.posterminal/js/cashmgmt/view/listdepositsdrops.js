@@ -326,7 +326,7 @@ OB.OBPOSCasgMgmt.UI.ListDepositsDrops = Backbone.View.extend({
 
   initialize: function() {
     OB.UTIL.initContentView(this);
-    this.depositDropsList.registerCollection(this.options.parent.model.getData('DataDepositsDrops'));
+   // this.depositDropsList.registerCollection(this.options.parent.model.getData('DataDepositsDrops'));
   },
   render: function() {
     this.userName.text(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
