@@ -710,7 +710,7 @@ Check if the core version is before 3.0MP3(3.0.13698)
     strSql = strSql + 
       "       SELECT count(*) STARTVERSION " +
       "       FROM ad_module " +
-      "       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698;";
+      "       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698";
 
     ResultSet result;
     boolean boolReturn = false;
