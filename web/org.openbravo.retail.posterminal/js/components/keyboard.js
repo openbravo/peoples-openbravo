@@ -765,7 +765,7 @@ enyo.kind({
       kind: 'OB.UI.BtnSide', btn: {}
     }, i = 0;
 
-    _.each(buttons, function(btnDef) {
+    enyo.forEach(buttons, function(btnDef) {
       this.$.toolbarcontainer.createComponent({
         kind: 'OB.UI.BtnSide',
         btn: btnDef

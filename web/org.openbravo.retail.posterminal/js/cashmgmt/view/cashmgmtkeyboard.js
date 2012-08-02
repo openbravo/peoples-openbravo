@@ -64,10 +64,52 @@ OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
 enyo.kind({
   name: 'OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
-  initComponents: function() {
-	  debugger;
+  getPayment: function(id, key, name, identifier, type) {
+    return {
+      permission: key,
+      action: function(txt) {
+        this.options.parent.options.currentPayment = {
+          id: id,
+          amount: txt,
+          identifier: identifier,
+          destinationKey: key,
+          type: type
+        }
+
+        if (type === 'drop') {
+          $('#modaldropevents').modal('show');
+        } else {
+          $('#modaldepositevents').modal('show');
+        }
+      }
+    };
+  },
+
+  init: function() {
+    var buttons = [];
     this.inherited(arguments);
-    var buttons = [{label:'a'},{label: 'b'}];
+    _.bind(this.getPayment, this)
+
+
+    this.owner.model.getData('DataCashMgmtPaymentMethod').each(function(paymentMethod) {
+      var payment = paymentMethod.get('payment');
+      if (paymentMethod.get('allowdeposits')) {
+        buttons.push({
+          command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
+          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'deposit'),
+          label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
+        });
+      }
+
+      if (paymentMethod.get('allowdrops')) {
+        buttons.push({
+          command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
+          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'drop'),
+          label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
+        });
+      }
+    }, this);
+
     this.addToolbar(buttons);
   }
 });

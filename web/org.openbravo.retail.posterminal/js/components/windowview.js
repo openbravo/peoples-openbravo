@@ -22,20 +22,28 @@
 //    });
 //  }
 //});
-
 enyo.kind({
-	name: 'OB.UI.WindowView',
-	windowmodel: null,
-	create: function () {
-	  this.inherited(arguments);
-	  this.model = new this.windowmodel();
-	  this.model.on('ready', function() {
-	      //OB.UTIL.initContentView(this);
-	      if (this.init) {
-	        this.init();
-	      }
-	      OB.POS.modelterminal.trigger('window:ready', this);
-	    }, this);
-	}
+  name: 'OB.UI.WindowView',
+  windowmodel: null,
+  create: function() {
+    this.inherited(arguments);
+    this.model = new this.windowmodel();
+    console.log('model in window created');
+    this.model.on('ready', function() {
+      console.log('now ready');
+      debugger;
+      if (this.init) {
+        this.init();
+      }
+      OB.POS.modelterminal.trigger('window:ready', this);
+    }, this);
+  },
+  init: function() {
+    // Calling init in sub components
+    enyo.forEach(this.getComponents(), function(component) {
+      if (component.init) {
+        component.init();
+      }
+    });
+  }
 });
-
