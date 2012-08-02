@@ -16,9 +16,16 @@
 
   enyo.kind({
 	  name: 'OB.UI.Button',
-	  kind: 'enyo.Button'
+	  kind: 'enyo.Button',
+	  handlers:{
+	  onmouseover: 'mouseOverOut',
+	  onmouseout: 'mouseOverOut'},
 		  //TODO: implement fast buttons
 		  //TODO: support windows 7  setTimeout(function() { me.$el.removeClass('btn-down'); }, 125);
+	  mouseOverOut: function(sender, event){
+		  
+		this.addRemoveClass('btn-over',event.type === 'mouseover');
+	  }
   });
   
   enyo.kind({
@@ -28,7 +35,13 @@
 	    iconright: '',
 	    label: '',
 	  classes: 'btnlink'
-  })
+  });
+  
+  enyo.kind({
+	 name: 'OB.UI.SmallButton',
+	 kind: 'OB.UI.RegularButton',
+	 classes: 'btnlink-small'
+  });
   
   // Base button
   OB.COMP.Button = Backbone.View.extend({

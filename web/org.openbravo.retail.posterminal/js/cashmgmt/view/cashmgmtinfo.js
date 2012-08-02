@@ -20,15 +20,7 @@ OB.OBPOSCasgMgmt.UI.DoneButton = OB.COMP.RegularButton.extend({
   }
 });
 
-enyo.kind({
-	name: 'OB.OBPOSCasgMgmt.UI.DoneButton',
-	kind: 'OB.UI.RegularButton',
-	classes: 'btnlink-white btnlink-fontgray',
-	style:  'min-width: 115px;',
-	tap: function(){
-		alert('1');
-	}
-});
+
 
 // Top-right panel with clock and buttons
 OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
@@ -92,24 +84,48 @@ enyo.kind({
     tag: 'div',
     style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{ //clock here
+    	kind: 'OB.UI.Clock',
+    	classes: 'pos-clock'
     }, {
       // process info
       tag: 'div',
       style: 'padding: 10px; float: left; width: 320px; line-height: 23px;',
       content: OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg')
-    },{
-    	tag: 'div',
-    	style: 'padding: 5px; float: right;',
-        components: [{
-        	// cancel button
-        }]
-    },{
-    	// done button
-    	tad: 'div',
-    	style: 'width: 100%; float: left; align: center;',
-    	components: [{
-    		kind: 'OB.OBPOSCasgMgmt.UI.DoneButton'
-    	}]
+    }, {
+      tag: 'div',
+      style: 'padding: 5px; float: right;',
+      components: [{
+        kind: 'OB.OBPOSCasgMgmt.UI.CancelButton'
+      }]
+    }, {
+      // done button
+      tad: 'div',
+      style: 'width: 100%; float: left;',
+      align: 'center', //TODO: not working: how to align?
+      components: [{
+        kind: 'OB.OBPOSCasgMgmt.UI.DoneButton'
+      }]
     }]
   }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.DoneButton',
+  kind: 'OB.UI.RegularButton',
+  classes: 'btnlink-white btnlink-fontgray',
+  style: 'min-width: 115px;',
+  content: OB.I18N.getLabel('OBPOS_LblDone'),
+  tap: function() {
+    // TODO implement me!!
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.CancelButton',
+  kind: 'OB.UI.SmallButton',
+  classes: 'btnlink-white btnlink-fontgray',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  tap: function() {
+    // TODO implement me!!
+  }
 });
