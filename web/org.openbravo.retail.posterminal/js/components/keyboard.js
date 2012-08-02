@@ -9,15 +9,19 @@
 
 /*global $, _, Backbone */
 
-(function () {
+
+(function() {
+
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
   var BtnSide = Backbone.View.extend({
     tagName: 'div',
-    attributes: {'style': 'display:table; width:100%'},
-    initialize: function () {
+    attributes: {
+      'style': 'display:table; width:100%'
+    },
+    initialize: function() {
       var inst = new this.options.btn({
         parent: this.options.parent
       });
@@ -119,7 +123,9 @@
             },
             content: [{
               id: 'sideenabled',
-              attributes: {'style': 'display:none'},
+              attributes: {
+                'style': 'display:none'
+              },
               tag: 'div',
               content: [{
                 tag: 'div',
@@ -204,10 +210,12 @@
                     })
                   }]
                 }]
-              }
-            ]}, {
+              }]
+            }, {
               id: 'sidedisabled',
-              attributes: {'style': 'display:none'},
+              attributes: {
+                'style': 'display:none'
+              },
               tag: 'div',
               content: [{
                 tag: 'div',
@@ -273,8 +281,8 @@
                     view: OB.COMP.ButtonKey
                   }]
                 }]
-              }
-            ]}, {
+              }]
+            }, {
               tag: 'div',
               attributes: {
                 'class': 'row-fluid'
@@ -301,7 +309,7 @@
         }]
       }]
     }],
-    initialize: function () {
+    initialize: function() {
 
       this.options.root[this.optionsid] = this;
       OB.UTIL.initContentView(this);
@@ -316,7 +324,7 @@
       this.showKeypad();
       this.showSidepad('sidedisabled');
 
-      this.on('command', function (cmd) {
+      this.on('command', function(cmd) {
         var txt;
         var me = this;
         if (this.editbox.text() && cmd === String.fromCharCode(13)) {
@@ -361,7 +369,7 @@
       }, this);
 
       //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
-      $(window).keydown(function (e) {
+      $(window).keydown(function(e) {
         if (window.fixFocus()) {
           if (OB.Format.defaultDecimalSymbol !== '.') {
             if (e.keyCode === 110) { //Numeric keypad dot (.)
@@ -377,7 +385,7 @@
         return true;
       });
 
-      $(window).keypress(function (e) {
+      $(window).keypress(function(e) {
         if (window.fixFocus()) {
           if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
             me.keyPressed(String.fromCharCode(e.which));
@@ -386,7 +394,7 @@
       });
     },
 
-    setStatus: function (newstatus) {
+    setStatus: function(newstatus) {
       var btn = this.buttons[this.status];
       if (btn) {
         btn.$el.removeClass(btn.classButtonActive);
@@ -399,34 +407,34 @@
       }
     },
 
-    execCommand: function (cmddefinition, txt) {
+    execCommand: function(cmddefinition, txt) {
       if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
         cmddefinition.action.call(this, txt);
       }
     },
 
-    execStatelessCommand: function (cmd, txt) {
+    execStatelessCommand: function(cmd, txt) {
       this.commands[cmd].action.call(this, txt);
     },
 
-    addCommand: function (cmd, definition) {
+    addCommand: function(cmd, definition) {
       this.commands[cmd] = definition;
     },
 
-    addButton: function (cmd, btn) {
+    addButton: function(cmd, btn) {
       if (this.buttons[cmd]) {
-       if (this.buttons[cmd].add) this.buttons[cmd] = this.buttons[cmd].add(btn);
+        if (this.buttons[cmd].add) this.buttons[cmd] = this.buttons[cmd].add(btn);
       } else {
         this.buttons[cmd] = btn;
       }
     },
 
-    clear: function () {
+    clear: function() {
       this.editbox.empty();
       this.setStatus('');
     },
 
-    show: function (toolbar) {
+    show: function(toolbar) {
       var t;
       var mytoolbar;
 
@@ -447,23 +455,23 @@
       this.$el.show();
     },
 
-    hide: function () {
+    hide: function() {
       this.$el.hide();
     },
 
-    getNumber: function () {
+    getNumber: function() {
       var i = OB.I18N.parseNumber(this.editbox.text());
       this.editbox.empty();
       return i;
     },
 
-    getString: function () {
+    getString: function() {
       var s = this.editbox.text();
       this.editbox.empty();
       return s;
     },
 
-    keyPressed: function (key) {
+    keyPressed: function(key) {
 
       var t;
       if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
@@ -479,12 +487,14 @@
       }
     },
 
-    addToolbar: function (name, value) {
+    addToolbar: function(name, value) {
       var i, max;
 
       var Toolbar = Backbone.View.extend({
         tag: 'div',
-        attributes: {'style': 'display:none'}
+        attributes: {
+          'style': 'display:none'
+        }
       });
 
       this.toolbars[name] = new Toolbar();
@@ -516,19 +526,23 @@
       this.toolbarcontainer.append(this.toolbars[name].$el);
     },
 
-    addToolbarView: function (name, component) {
-      this.toolbars[name] = new component({parent: this}).render();
+    addToolbarView: function(name, component) {
+      this.toolbars[name] = new component({
+        parent: this
+      }).render();
       this.toolbarcontainer.append(this.toolbars[name].$el);
     },
 
-    addKeypad: function (component) {
+    addKeypad: function(component) {
       // Initialize keypad...
-      var inst = new component({parent: this}).render();
+      var inst = new component({
+        parent: this
+      }).render();
       this.keypads[inst.name] = inst;
       this.keypadcontainer.append(inst.$el);
     },
 
-    showKeypad: function (padname) {
+    showKeypad: function(padname) {
       var t;
       for (t in this.keypads) {
         if (this.keypads.hasOwnProperty(t)) {
@@ -540,13 +554,13 @@
       this.trigger('keypad', this.keypad.name);
     },
 
-    showSidepad: function (sidepadname) {
+    showSidepad: function(sidepadname) {
       this.sideenabled.hide();
       this.sidedisabled.hide();
       this[sidepadname].show();
     },
 
-    attr: function (attrs) {
+    attr: function(attrs) {
       var attr;
       for (attr in attrs) {
         if (attrs.hasOwnProperty(attr)) {
@@ -557,9 +571,224 @@
   });
 
   OB.COMP.KeyboardCash = OB.COMP.Keyboard.extend({
-    initialize: function () {
+    initialize: function() {
       OB.COMP.Keyboard.prototype.initialize.call(this); // super.initialize();
     }
   });
 
 }());
+
+
+enyo.kind({
+  name: 'OB.UI.Keyboard',
+  tag: 'div',
+  classes: 'row-fluid',
+  components: [{
+    name: 'toolbarcontainer',
+    tag: 'div',
+    classes: 'span3'
+  }, {
+    tag: 'div',
+    classes: 'span9',
+    components: [{
+      tag: 'div',
+      classes: 'row-fluid',
+      components: [{
+        tag: 'div',
+        classes: 'span8',
+        components: [{
+          tag: 'div',
+          style: 'margin:5px',
+          components: [{
+            tag: 'div',
+            style: 'text-align: right; width: 100%; height: 40px;',
+            components: [{
+              tag: 'pre',
+              style: 'font-size: 35px; height: 33px; padding: 22px 5px 0px 0px;',
+              components: [
+              // ' ', XXX:???
+              { //editbox
+                tag: 'span',
+                style: 'margin-left: -10px;'
+              }]
+            }]
+          }]
+        }]
+      }, {
+        tag: 'div',
+        classes: 'span4',
+        components: [{
+          kind: 'OB.UI.ButtonKey',
+          // label: '<-',
+          classButton: 'btn-icon btn-icon-backspace'
+        }]
+      }, {
+        tag: 'div',
+        classes: 'row-fluid',
+        components: [{ // keypadcontainer
+          tag: 'div',
+          classes: 'span8',
+          components: [{
+            kind: 'OB.UI.KeypadBasic'
+          }]
+        }, {
+          tag: 'div',
+          classes: 'span4',
+          components: [{
+            //sideenabled
+            tag: 'div',
+            // style: 'display:none',
+            components: [{
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: '-',
+                  classButton: 'btnkeyboard-num btnkeyboard-minus'
+                }]
+              }, {
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: '+',
+                  classButton: 'btnkeyboard-num btnkeyboard-plus'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: OB.I18N.getLabel('OBPOS_KbQuantity')
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: OB.I18N.getLabel('OBPOS_KbPrice')
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey',
+                  label: OB.I18N.getLabel('OBPOS_KbDiscount')
+                }]
+              }]
+            }]
+          }, {
+            //sidedisabled
+            tag: 'div',
+            style: 'display:none',
+            components: [{
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }, {
+                tag: 'div',
+                classes: 'span6',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }, {
+              tag: 'div',
+              classes: 'row-fluid',
+              components: [{
+                tag: 'div',
+                classes: 'span12',
+                components: [{
+                  kind: 'OB.UI.ButtonKey'
+                }]
+              }]
+            }]
+          }, {
+            tag: 'div',
+            classes: 'row-fluid',
+            components: [{
+              tag: 'div',
+              classes: 'span12',
+              components: [{
+                kind: 'OB.UI.ButtonKey',
+                classButton: 'btn-icon btn-icon-enter'
+              }]
+            }]
+          }]
+        }]
+      }]
+    }]
+  }],
+
+  addToolbar: function(buttons) {
+    var emptyBtn = {
+      kind: 'OB.UI.BtnSide', btn: {}
+    }, i = 0;
+
+    _.each(buttons, function(btnDef) {
+      this.$.toolbarcontainer.createComponent({
+        kind: 'OB.UI.BtnSide',
+        btn: btnDef
+      });
+      i++;
+    }, this);
+
+    // populate toolbar up to 6 empty buttons
+    for (; i < 6; i++) {
+      this.$.toolbarcontainer.createComponent(emptyBtn);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.BtnSide',
+  tag: 'div',
+  style: 'display:table; width:100%',
+  initComponents: function() {
+    console.log('a');
+    this.createComponent({
+      kind: 'OB.UI.ButtonKey',
+      label: this.btn.label
+    });
+  }
+});

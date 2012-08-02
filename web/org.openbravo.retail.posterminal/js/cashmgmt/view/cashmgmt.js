@@ -113,7 +113,7 @@ enyo.kind({
         components: [{
           kind: 'OB.OBPOSCasgMgmt.UI.CashMgmtInfo'
         }, {
-          //keyboard
+          kind: 'OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard'
         }]
       }]
     },

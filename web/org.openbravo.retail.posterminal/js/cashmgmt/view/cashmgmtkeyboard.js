@@ -60,3 +60,14 @@ OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard = OB.COMP.Keyboard.extend({
     this.show('toolbarcashmgmt');
   }
 });
+
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard',
+  kind: 'OB.UI.Keyboard',
+  initComponents: function() {
+	  debugger;
+    this.inherited(arguments);
+    var buttons = [{label:'a'},{label: 'b'}];
+    this.addToolbar(buttons);
+  }
+});

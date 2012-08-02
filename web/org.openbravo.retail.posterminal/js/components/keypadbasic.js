@@ -9,20 +9,20 @@
 
 /*global $, _, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
   var ButtonDummy = Backbone.View.extend({
     tagName: 'button',
-    initialize: function () {
+    initialize: function() {
       this.$el.attr('class', this.options.className);
     }
   });
 
   OB.COMP.KeyboardComponent = Backbone.View.extend({
-    initialize: function () {
+    initialize: function() {
 
       // bind Keyboard properties to parent that is the real Keyboard...
       this.receipt = this.options.parent.receipt;
@@ -30,8 +30,7 @@
       this.addCommand = _.bind(this.options.parent.addCommand, this.options.parent);
       this.addButton = _.bind(this.options.parent.addButton, this.options.parent);
       this.keyPressed = _.bind(this.options.parent.keyPressed, this.options.parent);
-//      this.showKeypad =  _.bind(this.options.parent.showKeypad, this.options.parent);
-
+      //      this.showKeypad =  _.bind(this.options.parent.showKeypad, this.options.parent);
       OB.UTIL.initContentView(this);
     }
   });
@@ -46,7 +45,7 @@
     attributes: {
       'style': 'margin: 5px;'
     },
-    initialize: function (attr) {
+    initialize: function(attr) {
 
       this.kb = this.options.parent;
       var me = this;
@@ -70,7 +69,7 @@
       if (this.command) {
         this.button = new OB.COMP.Button();
         this.button.$el.attr('class', 'btnkeyboard ' + this.classButton);
-        this.button.clickEvent = function (e) {
+        this.button.clickEvent = function(e) {
           me.kb.keyPressed(me.command);
         };
         this.kb.addButton(this.command, this.button);
@@ -87,7 +86,7 @@
 
       this.$el.append(this.button.$el);
     },
-    append: function (child) {
+    append: function(child) {
       if (child.$el) {
         this.button.$el.append(child.$el);
       }
@@ -103,17 +102,25 @@
       content: [{
         view: OB.COMP.Button.extend({
           className: 'btnkeyboard'
-        }), id: 'button'
+        }),
+        id: 'button'
       }]
     }],
     background: '#6cb33f',
-    initialize: function () {
+    initialize: function() {
       OB.UTIL.initContentView(this);
       var me = this;
-      this.button.$el.css({'background-color': this.background, 'border': '10px solid' + (this.bordercolor || this.background)});
+      this.button.$el.css({
+        'background-color': this.background,
+        'border': '10px solid' + (this.bordercolor || this.background)
+      });
       this.button.$el.text(this.label || OB.I18N.formatCoins(this.amount));
-      this.button.clickEvent = function (e) {
-        me.options.parent.receipt.addPayment(new OB.Model.PaymentLine({'kind': me.paymenttype, 'name': OB.POS.modelterminal.getPaymentName(me.paymenttype), 'amount': OB.DEC.number(me.amount)}));
+      this.button.clickEvent = function(e) {
+        me.options.parent.receipt.addPayment(new OB.Model.PaymentLine({
+          'kind': me.paymenttype,
+          'name': OB.POS.modelterminal.getPaymentName(me.paymenttype),
+          'amount': OB.DEC.number(me.amount)
+        }));
       };
     }
   });
@@ -339,3 +346,162 @@
   });
 
 }());
+
+enyo.kind({
+  name: 'OB.UI.ButtonKey',
+  tag: 'div',
+  style: 'margin: 5px;',
+  components: [{
+    kind: 'OB.UI.Button',
+    name: 'button',
+    classes: 'btnkeyboard' //param btnkeyboard-num
+  }],
+  initComponents: function() {
+    this.inherited(arguments);
+    if (this.classButton) {
+      this.$.button.addClass(this.classButton);
+    }
+    this.$.button.setContent(this.label);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.KeypadBasic',
+  // kind: OB.UI.KeyboardComponent ???
+  tag: 'div',
+  //name index??? label??
+  // style: 'display:none', ???
+  components: [{
+    tag: 'div',
+    classes: 'row-fluid',
+    components: [{
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '/'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '*'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '%'
+      }]
+    }]
+  }, {
+    tag: 'div',
+    classes: 'row-fluid',
+    components: [{
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '7'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '8'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '9'
+      }]
+    }]
+  }, {
+    tag: 'div',
+    classes: 'row-fluid',
+    components: [{
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '4'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '5'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '6'
+      }]
+    }]
+  }, {
+    tag: 'div',
+    classes: 'row-fluid',
+    components: [{
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '1'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '2'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '3'
+      }]
+    }]
+  }, {
+    tag: 'div',
+    classes: 'row-fluid',
+    components: [{
+      tag: 'div',
+      classes: 'span8',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: '0'
+      }]
+    }, {
+      tag: 'div',
+      classes: 'span4',
+      components: [{
+        kind: 'OB.UI.ButtonKey',
+        classButton: 'btnkeyboard-num',
+        label: OB.Format.defaultDecimalSymbol
+      }]
+    }]
+  }]
+});
