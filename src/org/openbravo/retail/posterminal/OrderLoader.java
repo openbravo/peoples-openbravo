@@ -575,6 +575,7 @@ public class OrderLoader {
       paymentSchedule.setAmount(amt);
       paymentSchedule.setOutstandingAmount(amt);
       paymentSchedule.setDueDate(order.getOrderDate());
+      paymentSchedule.setOrigDueDate(paymentSchedule.getDueDate());
       paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
       OBDal.getInstance().save(paymentSchedule);
 
