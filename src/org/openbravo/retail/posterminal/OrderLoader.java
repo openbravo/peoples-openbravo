@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -137,7 +139,7 @@ public class OrderLoader {
     return jsonResponse;
   }
 
-  public JSONObject saveOrder(JSONObject jsonorder) throws JSONException {
+  public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
 
     long t0 = System.currentTimeMillis();
     long t1, t11, t2, t3;
@@ -552,7 +554,7 @@ public class OrderLoader {
   }
 
   protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice)
-      throws JSONException {
+      throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     if (posTerminal == null) {
@@ -621,7 +623,7 @@ public class OrderLoader {
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
       FIN_PaymentSchedule paymentScheduleInvoice, Order order, Invoice invoice,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt) throws JSONException {
+      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt) throws Exception {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
@@ -713,9 +715,6 @@ public class OrderLoader {
       vars.setSessionValue("POSOrder", "Y");
       log.debug("Payment. Create entities: " + (t2 - t1) + "; Save payment: " + (t3 - t2)
           + "; Process payment: " + (System.currentTimeMillis() - t3));
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -775,16 +774,8 @@ public class OrderLoader {
   }
 
   public static String getErrorMessage(Exception e) {
-    StringBuffer sb = new StringBuffer();
-    Throwable et = e;
-    while (et != null) {
-      sb.append(et.getMessage() + "\n");
-      if (et instanceof SQLException) {
-        et = ((SQLException) et).getNextException();
-      } else {
-        et = et.getCause();
-      }
-    }
+    StringWriter sb = new StringWriter();
+    e.printStackTrace(new PrintWriter(sb));
     return sb.toString();
   }
 
