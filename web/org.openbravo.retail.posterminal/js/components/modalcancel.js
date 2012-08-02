@@ -9,11 +9,51 @@
 
 /*global window, B, Backbone */
 
+enyo.kind({
+  kind: 'OB.UI.ModalAction',
+  name: 'OB.UI.ModalCancel',
+  attributes: {
+    id: 'modalCancel'
+  },
+  header: OB.I18N.getLabel('OBPOS_LblCancel'),
+  bodyContent: {
+    tag: 'div',
+    content: OB.I18N.getLabel('OBPOS_ProcessCancelDialog')
+  },
+  bodyButtons: {
+    tag: 'div',
+    components: [{
+      //OK button
+      kind: 'OB.UI.Button',
+      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      content: OB.I18N.getLabel('OBPOS_LblOk'),
+      tap: function() {
+        $('#modalCancel').modal('hide');
+        OB.POS.navigate('retail.pointofsale');
+      }
+    }, {
+      //Cancel button	
+      kind: 'OB.UI.Button',
+      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      attributes: {
+        'data-dismiss': 'modal'
+      },
+      content: OB.I18N.getLabel('OBPOS_LblCancel')
+    }]
+  },
+
+  makeId: function() {
+    // ensure id is fixed
+    return 'modalCancel'
+  }
+});
+
 (function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  // reimplemented with enyo: OB.UI.ModalAction
   OB.COMP.ModalCancel = OB.COMP.ModalAction.extend({
     id: 'modalCancel',
     header: OB.I18N.getLabel('OBPOS_LblCancel'),

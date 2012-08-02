@@ -84,8 +84,8 @@ enyo.kind({
     tag: 'div',
     style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{ //clock here
-    	kind: 'OB.UI.Clock',
-    	classes: 'pos-clock'
+      kind: 'OB.UI.Clock',
+      classes: 'pos-clock'
     }, {
       // process info
       tag: 'div',
@@ -101,7 +101,9 @@ enyo.kind({
       // done button
       tad: 'div',
       style: 'width: 100%; float: left;',
-      align: 'center', //TODO: not working: how to align?
+      attributes: {
+        align: 'center'
+      },
       components: [{
         kind: 'OB.OBPOSCasgMgmt.UI.DoneButton'
       }]
@@ -125,7 +127,8 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-white btnlink-fontgray',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  tap: function() {
-    // TODO implement me!!
+  attributes: {
+    href: '#modalCancel',
+    'data-toggle': 'modal'
   }
 });
