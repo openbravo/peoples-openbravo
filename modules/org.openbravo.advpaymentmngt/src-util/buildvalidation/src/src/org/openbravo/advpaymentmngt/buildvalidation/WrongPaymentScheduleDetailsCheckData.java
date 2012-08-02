@@ -701,4 +701,42 @@ Check if the FIN_Payment_ScheduleDetail table exist
     }
     return(boolReturn);
   }
+
+/**
+Check if the core version is before 3.0MP3(3.0.13698)
+ */
+  public static boolean before30MP3(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT count(*) STARTVERSION " +
+      "       FROM ad_module " +
+      "       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698;";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "startversion").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
 }

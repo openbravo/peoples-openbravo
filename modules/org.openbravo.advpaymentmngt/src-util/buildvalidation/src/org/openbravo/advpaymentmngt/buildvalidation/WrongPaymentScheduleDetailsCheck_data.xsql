@@ -204,4 +204,13 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="before30MP3" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Check if the core version is before 3.0MP3(3.0.13698)</SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT count(*) STARTVERSION 
+       FROM ad_module 
+       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698;
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>
