@@ -607,7 +607,8 @@ enyo.kind({
               style: 'font-size: 35px; height: 33px; padding: 22px 5px 0px 0px;',
               components: [
               // ' ', XXX:???
-              { //editbox
+              {
+                name: 'editbox',
                 tag: 'span',
                 style: 'margin-left: -10px;'
               }]
@@ -619,8 +620,8 @@ enyo.kind({
         classes: 'span4',
         components: [{
           kind: 'OB.UI.ButtonKey',
-          // label: '<-',
-          classButton: 'btn-icon btn-icon-backspace'
+          classButton: 'btn-icon btn-icon-backspace',
+          command: 'del'
         }]
       }, {
         tag: 'div',
@@ -647,7 +648,8 @@ enyo.kind({
                 components: [{
                   kind: 'OB.UI.ButtonKey',
                   label: '-',
-                  classButton: 'btnkeyboard-num btnkeyboard-minus'
+                  classButton: 'btnkeyboard-num btnkeyboard-minus',
+                  command: '-'
                 }]
               }, {
                 tag: 'div',
@@ -655,7 +657,8 @@ enyo.kind({
                 components: [{
                   kind: 'OB.UI.ButtonKey',
                   label: '+',
-                  classButton: 'btnkeyboard-num btnkeyboard-plus'
+                  classButton: 'btnkeyboard-num btnkeyboard-plus',
+                  command: '+'
                 }]
               }]
             }, {
@@ -666,7 +669,8 @@ enyo.kind({
                 classes: 'span12',
                 components: [{
                   kind: 'OB.UI.ButtonKey',
-                  label: OB.I18N.getLabel('OBPOS_KbQuantity')
+                  label: OB.I18N.getLabel('OBPOS_KbQuantity'),
+                  command: 'line:qty'
                 }]
               }]
             }, {
@@ -677,7 +681,8 @@ enyo.kind({
                 classes: 'span12',
                 components: [{
                   kind: 'OB.UI.ButtonKey',
-                  label: OB.I18N.getLabel('OBPOS_KbPrice')
+                  label: OB.I18N.getLabel('OBPOS_KbPrice'),
+                  command: 'line:price'
                 }]
               }]
             }, {
@@ -688,7 +693,8 @@ enyo.kind({
                 classes: 'span12',
                 components: [{
                   kind: 'OB.UI.ButtonKey',
-                  label: OB.I18N.getLabel('OBPOS_KbDiscount')
+                  label: OB.I18N.getLabel('OBPOS_KbDiscount'),
+                  command: 'line:dto'
                 }]
               }]
             }]
@@ -751,7 +757,8 @@ enyo.kind({
               classes: 'span12',
               components: [{
                 kind: 'OB.UI.ButtonKey',
-                classButton: 'btn-icon btn-icon-enter'
+                classButton: 'btn-icon btn-icon-enter',
+                command: 'OK'
               }]
             }]
           }]
@@ -760,10 +767,59 @@ enyo.kind({
     }]
   }],
 
+  initComponents: function() {
+    var me = this;
+
+    this.inherited(arguments);
+
+    //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
+    $(window).keydown(function(e) {
+      if (window.fixFocus()) {
+        if (OB.Format.defaultDecimalSymbol !== '.') {
+          if (e.keyCode === 110) { //Numeric keypad dot (.)
+            me.keyPressed(OB.Format.defaultDecimalSymbol);
+          } else if (e.keyCode === 190) { //Character keyboard dot (.)
+            me.keyPressed('.');
+          }
+        }
+        if (e.keyCode === 8) { //del key
+          me.keyPressed('del');
+        }
+      }
+      return true;
+    });
+
+    $(window).keypress(function(e) {
+      if (window.fixFocus()) {
+        if (e.which !== 46 || OB.Format.defaultDecimalSymbol === '.') { //Any keypress except any kind of dot (.)
+          me.keyPressed(String.fromCharCode(e.which));
+        }
+      }
+    });
+  },
+
+  keyPressed: function(key) {
+	  console.log('key pressed',key);
+    var t;
+    if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
+      t = this.$.editbox.getContent();
+      this.$.editbox.setContent(t + key);
+    } else if (key === 'del') {
+      t = this.$.editbox.getContent();
+      if (t.length > 0) {
+        this.$.editbox.setContent(t.substring(0, t.length - 1));
+      }
+    } else {
+     //TODO: this.trigger('command', key);
+    }
+  },
+
   addToolbar: function(buttons) {
     var emptyBtn = {
-      kind: 'OB.UI.BtnSide', btn: {}
-    }, i = 0;
+      kind: 'OB.UI.BtnSide',
+      btn: {}
+    },
+        i = 0;
 
     enyo.forEach(buttons, function(btnDef) {
       this.$.toolbarcontainer.createComponent({

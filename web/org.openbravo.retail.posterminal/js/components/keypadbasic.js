@@ -351,16 +351,30 @@ enyo.kind({
   name: 'OB.UI.ButtonKey',
   tag: 'div',
   style: 'margin: 5px;',
+  classButton: '',
+  command: false,
+  permission: null,
+  label: null,
+  classButtonActive: 'btnactive',
   components: [{
     kind: 'OB.UI.Button',
     name: 'button',
     classes: 'btnkeyboard' //param btnkeyboard-num
   }],
   initComponents: function() {
+    var me = this,
+        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner;
+    debugger;
     this.inherited(arguments);
-    if (this.classButton) {
+
+    if (this.command) {
       this.$.button.addClass(this.classButton);
     }
+
+    this.$.button.tap = function() {
+      keyboard.keyPressed(me.command);
+    }
+    //this.$.button.addClass(this.classButton);
     this.$.button.setContent(this.label);
   }
 });
@@ -380,7 +394,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '/'
+        label: '/',
+        command: '/'
       }]
     }, {
       tag: 'div',
@@ -388,7 +403,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '*'
+        label: '*',
+        command: '*'
       }]
     }, {
       tag: 'div',
@@ -396,7 +412,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '%'
+        label: '%',
+        command: '%'
       }]
     }]
   }, {
@@ -408,7 +425,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '7'
+        label: '7',
+        command: '7'
       }]
     }, {
       tag: 'div',
@@ -416,7 +434,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '8'
+        label: '8',
+        command: '8'
       }]
     }, {
       tag: 'div',
@@ -424,7 +443,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '9'
+        label: '9',
+        command: '9'
       }]
     }]
   }, {
@@ -436,7 +456,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '4'
+        label: '4',
+        command: '4'
       }]
     }, {
       tag: 'div',
@@ -444,7 +465,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '5'
+        label: '5',
+        command: '5'
       }]
     }, {
       tag: 'div',
@@ -452,7 +474,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '6'
+        label: '6',
+        command: '6'
       }]
     }]
   }, {
@@ -464,7 +487,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '1'
+        label: '1',
+        command: '1'
       }]
     }, {
       tag: 'div',
@@ -472,7 +496,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '2'
+        label: '2',
+        command: '2'
       }]
     }, {
       tag: 'div',
@@ -480,7 +505,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '3'
+        label: '3',
+        command: '3'
       }]
     }]
   }, {
@@ -492,7 +518,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: '0'
+        label: '0',
+        command: '0'
       }]
     }, {
       tag: 'div',
@@ -500,7 +527,8 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        label: OB.Format.defaultDecimalSymbol
+        label: OB.Format.defaultDecimalSymbol,
+        command: OB.Format.defaultDecimalSymbol
       }]
     }]
   }]
