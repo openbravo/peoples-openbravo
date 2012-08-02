@@ -233,18 +233,19 @@
           AND l.M_Product_ID=s.M_Product_ID
           AND l.M_Locator_ID=s.M_Locator_ID
         )
-        AND NOT (coalesce(p.attrsetvaluetype, '-') <> 'F'
+        AND (NOT (coalesce(p.attrsetvaluetype, '-') <> 'F'
 		 AND aset.isoneattrsetvalrequired = 'Y'
 		 AND COALESCE(s.m_attributesetinstance_id, '0') = '0'
 		 AND QTYONHAND = 0
 		 AND COALESCE(QTYORDERONHAND,0) = 0
 		 AND PREQTYONHAND=0
-		 AND COALESCE(PREQTYORDERONHAND,0) = 0)
+		 AND COALESCE(PREQTYORDERONHAND,0) = 0) OR v_QtyRange = '=')
       ORDER BY s.M_Locator_ID,
         p.Value,
         s.Created
       )
     LOOP
+
       v_ResultStr:='CheckingInventoryLine';
       DBMS_OUTPUT.PUT_LINE('  QtyRange=' || v_QtyRange || ', OnHand=' || Cur_Storage.QtyOnHand) ;
       --
