@@ -137,7 +137,7 @@ if (attr.collection){
       }
 
       this.collection.on('selected', function (model) {
-        if (!model && this.style) {
+        if (!model && this.listStyle) {
           if (this.selected) {
             this.selected.removeClass('selected');
           }
@@ -152,11 +152,11 @@ if (attr.collection){
 
         this._addModelToCollection(model, options.index);
 
-        if (this.style === 'list') {
+        if (this.listStyle === 'list') {
           if (!this.selected) {
             model.trigger('selected', model);
           }
-        } else if (this.style === 'edit') {
+        } else if (this.listStyle === 'edit') {
           model.trigger('selected', model);
         }
       }, this);
@@ -201,7 +201,7 @@ if (attr.collection){
             this._addModelToCollection(model);
           }, this);
 
-          if (this.style === 'list' || this.style === 'edit') {
+          if (this.listStyle === 'list' || this.listStyle === 'edit') {
             lastmodel = this.collection.at(this.collection.size() - 1);
             lastmodel.trigger('selected', lastmodel);
           }
@@ -234,7 +234,7 @@ if (attr.collection){
       }, this);
 
       model.on('selected', function () {
-        if (this.style) {
+        if (this.listStyle) {
           if (this.selected) {
             this.selected.addRemoveClass('selected', false);
           }
