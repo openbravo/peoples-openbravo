@@ -575,7 +575,12 @@ public class OrderLoader {
       paymentSchedule.setAmount(amt);
       paymentSchedule.setOutstandingAmount(amt);
       paymentSchedule.setDueDate(order.getOrderDate());
-      paymentSchedule.setOrigDueDate(paymentSchedule.getDueDate());
+      if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+          .hasProperty("origDueDate")) {
+        // This property is checked and set this way to force compatibility with both MP13, MP14 and
+        // later releases of Openbravo. This property is mandatory and must be set. Check issue
+        paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+      }
       paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
       OBDal.getInstance().save(paymentSchedule);
 
@@ -588,6 +593,13 @@ public class OrderLoader {
         paymentScheduleInvoice.setAmount(amt);
         paymentScheduleInvoice.setOutstandingAmount(amt);
         paymentScheduleInvoice.setDueDate(order.getOrderDate());
+        if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+            .hasProperty("origDueDate")) {
+          // This property is checked and set this way to force compatibility with both MP13, MP14
+          // and
+          // later releases of Openbravo. This property is mandatory and must be set. Check issue
+          paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+        }
         paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
 
         OBDal.getInstance().save(paymentScheduleInvoice);
