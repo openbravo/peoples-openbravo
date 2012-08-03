@@ -135,33 +135,25 @@ enyo.kind({
         kind: OB.UI.ModalCancel
       }]
     }]
-  }]
+  }],
 
-  // ,
-  //  initComponents: function () {
-  //	  this.inherited(arguments);
-  //	  this.options = {root:this};
-  //	  debugger;
-  //	  this.$.container.node = OB.UTIL.initContentView2(this, OB.OBPOSCasgMgmt.UI.ListDepositsDrops);
-  //  },
-  //  
-  //
-  //  init: function() {
-  //    var depositEvent = this.model.getData('DataDepositEvents'),
-  //        dropEvent = this.model.getData('DataDropEvents');
-  //
-  //    // DepositEvent Collection is shown by TableView, when selecting an option 'click' event 
-  //    // is triggered, propagating this UI event to model here
-  //    depositEvent.on('click', function(model) {
-  //      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
-  //      delete this.options.currentPayment;
-  //    }, this);
-  //
-  //    dropEvent.on('click', function(model) {
-  //      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
-  //      delete this.options.currentPayment;
-  //    }, this);
-  //  }
+  init: function() {
+    this.inherited(arguments);
+    var depositEvent = this.model.getData('DataDepositEvents'),
+        dropEvent = this.model.getData('DataDropEvents');
+
+    // DepositEvent Collection is shown by OB.UI.Table, when selecting an option 'click' event 
+    // is triggered, propagating this UI event to model here
+    depositEvent.on('click', function(model) {
+      this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
+      delete this.currentPayment;
+    }, this);
+
+    dropEvent.on('click', function(model) {
+      this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
+      delete this.currentPayment;
+    }, this);
+  }
 });
 
 
