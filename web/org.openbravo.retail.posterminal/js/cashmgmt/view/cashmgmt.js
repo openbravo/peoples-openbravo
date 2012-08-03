@@ -100,7 +100,7 @@ enyo.kind({
       tag: 'div',
       classes: 'span6',
       components: [{
-        tag: 'input'
+        kind: 'OB.OBPOSCasgMgmt.UI.ListDepositsDrops'
       }]
     },
     //2nd column
