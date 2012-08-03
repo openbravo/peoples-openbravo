@@ -22,6 +22,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -180,6 +181,12 @@ public class OrderGroupingProcessor {
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setDueDate(new Date());
+    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
+      // This property is checked and set this way to force compatibility with both MP13, MP14
+      // and
+      // later releases of Openbravo. This property is mandatory and must be set. Check issue
+      paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+    }
     paymentScheduleInvoice.setFINPaymentPriority(invoice.getFINPaymentPriority());
     return paymentScheduleInvoice;
   }
