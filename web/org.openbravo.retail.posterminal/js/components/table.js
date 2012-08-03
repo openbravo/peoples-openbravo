@@ -88,8 +88,9 @@
         if (this.style) {
           this.$el.attr('style', this.style);
         }
-if (attr.collection){
-        this.registerCollection(attr.collection);}
+        if (attr.collection) {
+          this.registerCollection(attr.collection);
+        }
       }
     });
   };
@@ -101,33 +102,35 @@ if (attr.collection){
     },
     create: function () {
       var listName: this.name || '';
-    
+
       this.inherited(arguments);
 
       // helping developers
-      if(!this.renderLine) {
+      if (!this.renderLine) {
         throw enyo.format('Your list %s needs to define a renderLine kind', listName);
       }
-      
-      if(!this.renderEmpty) {
+
+      if (!this.renderEmpty) {
         throw enyo.format('Your list %s needs to define a renderEmpty kind', listName);
       }
 
       this.header = this.renderHeader ? 1 : 0
 
-      if(this.collection) {
+      if (this.collection) {
         this.collectionChanged(null);
       }
     },
     collectionChanged: function (oldCollection) {
       if (this.renderHeader) {
-        this.createComponent({kind: this.renderHeader}).render();
+        this.createComponent({
+          kind: this.renderHeader
+        }).render();
       }
 
       if (!this.collection) { // set to null ?
         return;
       }
-      
+
       this.collection.on('change', function (model, prop) {
         var index = this.collection.indexOf(model);
         // FIXME: instead of recreate the item, we call changed? init ?
@@ -147,23 +150,28 @@ if (attr.collection){
       this.collection.on('reset', function () {
         this.destroyComponents();
         if (this.renderHeader) {
-          this.createComponent({kind: this.renderHeader}).render();
+          this.createComponent({
+            kind: this.renderHeader
+          }).render();
         }
         this.collection.each(function (model) {
           this._addModelToCollection(model);
         }, this);
       }, this);
-      
+
     },
     _addModelToCollection: function (model, index) {
-      var tr = this.createComponent({kind: this.renderLine, model: model});
+      var tr = this.createComponent({
+        kind: this.renderLine,
+        model: model
+      });
       tr.render();
       //FIXME: can we add a model in the middle of a collection?
-//      if (_.isNumber(index) && index < this.collection.length - 1) {
-//        this.$el.children().eq(index + this.header).before(tr);
-//      } else {
-//        this.$el.append(tr);
-//      }
+      //      if (_.isNumber(index) && index < this.collection.length - 1) {
+      //        this.$el.children().eq(index + this.header).before(tr);
+      //      } else {
+      //        this.$el.append(tr);
+      //      }
     }
   });
 
@@ -173,23 +181,31 @@ if (attr.collection){
       collection: null
     },
     listStyle: 'list',
-    components: [
-      {name: 'theader'},
-      {name: 'tbody', tag: 'ul', classes: 'unstyled', showing: false},
-      {name: 'tinfo', showing: false, style: 'border-bottom: 1px solid #cccccc; padding: 15px; font-weight: bold; color: #cccccc'},
-      {name: 'tempty'}
-    ],
+    components: [{
+      name: 'theader'
+    }, {
+      name: 'tbody',
+      tag: 'ul',
+      classes: 'unstyled',
+      showing: false
+    }, {
+      name: 'tinfo',
+      showing: false,
+      style: 'border-bottom: 1px solid #cccccc; padding: 15px; font-weight: bold; color: #cccccc'
+    }, {
+      name: 'tempty'
+    }],
     create: function () {
       var tableName = this.name || '';
 
       this.inherited(arguments);
 
       // helping developers
-      if(!this.renderLine) {
+      if (!this.renderLine) {
         throw enyo.format('Your list %s needs to define a renderLine kind', tableName);
       }
-      
-      if(!this.renderEmpty) {
+
+      if (!this.renderEmpty) {
         throw enyo.format('Your list %s needs to define a renderEmpty kind', tableName);
       }
 
@@ -201,15 +217,19 @@ if (attr.collection){
       this.selected = null;
 
       if (this.renderHeader && this.$.theader.getComponents().length === 0) {
-        this.$.theader.createComponent({kind: this.renderHeader});
+        this.$.theader.createComponent({
+          kind: this.renderHeader
+        });
       }
 
       if (this.renderEmpty && this.$.tempty.getComponents().length === 0) {
-        this.$.tempty.createComponent({kind: this.renderEmpty});
+        this.$.tempty.createComponent({
+          kind: this.renderEmpty
+        });
       }
 
       if (!this.collection) { // set to null?
-        return; 
+        return;
       }
 
       this.collection.on('selected', function (model) {
@@ -241,7 +261,6 @@ if (attr.collection){
         var index = options.index;
 
         this.$.tbody.getComponents()[index].destroy(); // controlAtIndex ?
-
         if (index >= this.collection.length) {
           if (this.collection.length === 0) {
             this.collection.trigger('selected');
@@ -298,14 +317,25 @@ if (attr.collection){
     },
 
     _addModelToCollection: function (model, index) {
-      var me = this, tr;
+      var me = this,
+          tr;
 
-      tr = this.$.tbody.createComponent({tag: 'li'});
-      tr.createComponent({kind: this.renderLine, model: model, parent: me}).render();
+      tr = this.$.tbody.createComponent({
+        tag: 'li'
+      });
+      tr.createComponent({
+        kind: this.renderLine,
+        model: model,
+        parent: me
+      }).render();
 
       model.on('change', function () {
         tr.destroyComponents();
-        tr.createComponent({kind: this.renderLine, model: model, parent: me}).render();
+        tr.createComponent({
+          kind: this.renderLine,
+          model: model,
+          parent: me
+        }).render();
       }, this);
 
       model.on('selected', function () {
@@ -330,9 +360,9 @@ if (attr.collection){
       this.tempty = $('<div/>');
       this.tinfo = $('<div/>').css('display', 'none').css('border-bottom', '1px solid #cccccc').css('padding', '15px').css('font-weight', 'bold').css('color', '#cccccc');
       this.$el.empty().append(this.theader).append(this.tbody).append(this.tinfo).append(this.tempty);
-      
+
     },
-    
+
     registerCollection: function (collection) {
       this.collection = collection;
       this.selected = null;
@@ -424,12 +454,12 @@ if (attr.collection){
           this.tinfo.hide();
         }
       }, this);
-      
+
       // XXX: Reseting to show the collection if registered with data
       this.collection.trigger('reset');
     },
-    
-    
+
+
 
     _addModelToCollection: function (model, index) { // means after...
       var me = this,
@@ -470,8 +500,9 @@ if (attr.collection){
       this.renderHeader = attr.renderHeader;
       this.renderEmpty = attr.renderEmpty;
       this.renderLine = attr.renderLine;
-if (attr.collection){
-      this.registerCollection(attr.collection);}
+      if (attr.collection) {
+        this.registerCollection(attr.collection);
+      }
     }
   });
 
