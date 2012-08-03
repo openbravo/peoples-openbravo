@@ -16,7 +16,7 @@ enyo.kind({
     return {
       permission: key,
       action: function(txt) {
-        this.options.parent.options.currentPayment = {
+        this.owner.currentPayment = {
           id: id,
           amount: txt,
           identifier: identifier,

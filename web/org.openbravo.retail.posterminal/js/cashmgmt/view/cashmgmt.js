@@ -66,22 +66,22 @@ OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
     }]
   }],
 
-//  init: function() {
-//    var depositEvent = this.model.getData('DataDepositEvents'),
-//        dropEvent = this.model.getData('DataDropEvents');
-//
-//    // DepositEvent Collection is shown by TableView, when selecting an option 'click' event 
-//    // is triggered, propagating this UI event to model here
-//    depositEvent.on('click', function(model) {
-//      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
-//      delete this.options.currentPayment;
-//    }, this);
-//
-//    dropEvent.on('click', function(model) {
-//      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
-//      delete this.options.currentPayment;
-//    }, this);
-//  }
+  //  init: function() {
+  //    var depositEvent = this.model.getData('DataDepositEvents'),
+  //        dropEvent = this.model.getData('DataDropEvents');
+  //
+  //    // DepositEvent Collection is shown by TableView, when selecting an option 'click' event 
+  //    // is triggered, propagating this UI event to model here
+  //    depositEvent.on('click', function(model) {
+  //      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
+  //      delete this.options.currentPayment;
+  //    }, this);
+  //
+  //    dropEvent.on('click', function(model) {
+  //      this.model.depsdropstosend.trigger('paymentDone', model, this.options.currentPayment);
+  //      delete this.options.currentPayment;
+  //    }, this);
+  //  }
 });
 
 
@@ -121,6 +121,10 @@ enyo.kind({
     {
       tag: 'div',
       components: [{
+    	  kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+    	  header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
+    	  myId: 'modaldepositevents'
+      }, {
         kind: OB.UI.ModalCancel
       }]
     }]

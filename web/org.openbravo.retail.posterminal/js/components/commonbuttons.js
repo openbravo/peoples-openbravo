@@ -44,6 +44,56 @@
     classes: 'btnlink-small'
   });
 
+  enyo.kind({
+    name: 'OB.UI.Modal',
+    tag: 'div',
+    classes: 'modal hide fade',
+    style: 'display: none;',
+    components: [{
+      tag: 'div',
+      classes: 'modal-header',
+      components: [{
+        tag: 'a',
+        classes: 'close',
+        attributes: {
+          'data-dismiss': 'modal'
+        },
+        components: [{
+          tag: 'span',
+          style: 'font-size: 150%',
+          content: 'x' //TODO: '&times;'
+        }]
+      }, {
+        tag: 'h3',
+        name: 'divheader'
+      }],
+    }, {
+      tag: 'div',
+      name: 'body',
+      classes: 'modal-header'
+    }],
+    //TODO: maxheight: null,
+    initComponents: function() {
+      this.inherited(arguments);
+      debugger;
+      if (this.modalClass) {
+        this.addClass(this.modalClass);
+      }
+
+      if (this.bodyClass) {
+        this.$.body.addClass(this.bodyClass);
+      }
+
+      this.$.divheader.setContent(this.header);
+
+
+    },
+    makeId: function() {
+      return this.myId || this.inherited(arguments);
+    }
+  });
+
+
   // Base button: Implemented as enyo: OB.UI.Button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
@@ -409,6 +459,8 @@
     clickEvent: function(e) {}
   });
 
+
+  // refactored with enyo: OB.UI.Modal
   OB.COMP.Modal = Backbone.View.extend({
     tagName: 'div',
     className: 'modal hide fade',
@@ -610,10 +662,10 @@
     initComponents: function() {
       this.inherited(arguments);
       this.$.header.setContent(this.header);
-      
+
       this.$.bodyContent.setClasses(this.bodyContentClass);
       this.$.bodyContent.createComponent(this.bodyContent);
-      
+
       this.$.bodyButtons.setClasses(this.bodyButtonsClass);
       this.$.bodyButtons.createComponent(this.bodyButtons);
     }

@@ -83,3 +83,11 @@ OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
     // custom bootstrap event, no need to prevent default
   }
 });
+
+//Renders a modal popup with a list of reasons for drops/deposits
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+  kind: 'OB.UI.Modal',
+  modalClass: 'modal-dialog',
+  bodyClass: 'modal-dialog-body'
+});
