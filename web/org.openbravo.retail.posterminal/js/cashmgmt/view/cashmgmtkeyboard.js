@@ -1,3 +1,5 @@
+/*global OB, $, _,  enyo */
+
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -22,7 +24,7 @@ enyo.kind({
           identifier: identifier,
           destinationKey: key,
           type: type
-        }
+        };
 
         if (type === 'drop') {
           $('#modaldropevents').modal('show');
@@ -36,7 +38,7 @@ enyo.kind({
   init: function() {
     var buttons = [];
     this.inherited(arguments);
-    _.bind(this.getPayment, this)
+    _.bind(this.getPayment, this);
 
 
     this.owner.model.getData('DataCashMgmtPaymentMethod').each(function(paymentMethod) {

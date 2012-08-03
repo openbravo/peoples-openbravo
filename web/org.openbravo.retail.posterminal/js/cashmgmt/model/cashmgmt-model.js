@@ -1,3 +1,5 @@
+/*global OB, Backbone */
+
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -10,7 +12,7 @@
 
 OB.OBPOSCasgMgmt = OB.OBPOSCasgMgmt || {};
 OB.OBPOSCasgMgmt.Model = OB.OBPOSCasgMgmt.Model || {};
-OB.OBPOSCasgMgmt.UI = OB.OBPOSCasgMgmt.UI || {}
+OB.OBPOSCasgMgmt.UI = OB.OBPOSCasgMgmt.UI || {};
 
 // Data models
 OB.OBPOSCasgMgmt.Model.DepositsDrops = Backbone.Model.extend({
@@ -77,7 +79,7 @@ OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         payment.drop = p.amount;
       } else {
         payment.deposit = p.amount;
-        payment.drop = 0
+        payment.drop = 0;
       }
 
       deposits.push(payment);

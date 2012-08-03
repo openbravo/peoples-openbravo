@@ -1,13 +1,15 @@
-///*
-// ************************************************************************************
-// * Copyright (C) 2012 Openbravo S.L.U.
-// * Licensed under the Openbravo Commercial License version 1.0
-// * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
-// * or in the legal folder of this module distribution.
-// ************************************************************************************
-// */
-//
-//// Cash Management main window view
+/*global OB, enyo */
+
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+// Cash Management main window view
 OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
   windowmodel: OB.OBPOSCasgMgmt.Model.CashManagement,
   tagName: 'section',
@@ -64,7 +66,7 @@ OB.OBPOSCasgMgmt.UI.CashManagement = OB.UI.WindowView.extend({
         view: OB.COMP.ModalCancel
       }]
     }]
-  }],
+  }]
 
   //  init: function() {
   //    var depositEvent = this.model.getData('DataDepositEvents'),
