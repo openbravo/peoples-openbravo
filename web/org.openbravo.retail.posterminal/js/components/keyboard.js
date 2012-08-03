@@ -309,6 +309,9 @@
         }]
       }]
     }],
+
+
+
     initialize: function() {
 
       this.options.root[this.optionsid] = this;
@@ -581,6 +584,11 @@
 
 enyo.kind({
   name: 'OB.UI.Keyboard',
+
+  commands: {},
+  buttons: {},
+  status: '',
+
   tag: 'div',
   classes: 'row-fluid',
   components: [{
@@ -767,6 +775,96 @@ enyo.kind({
     }]
   }],
 
+  events: {
+    onCommandFired: ''
+  },
+
+  handlers: {
+    onCommandFired: 'commandHandler'
+  },
+
+  setStatus: function(newstatus) {
+    var btn = this.buttons[this.status];
+    if (btn) {
+      //TODO: btn.$el.removeClass(btn.classButtonActive);
+    }
+    this.status = newstatus;
+    //TODO: used in coins this.trigger('status', this.status);
+    btn = this.buttons[this.status];
+    if (btn) {
+      // TODO:btn.$el.addClass(btn.classButtonActive);
+    }
+  },
+
+  execCommand: function(cmddefinition, txt) {
+	  console.log('execCommand', arguments);
+    if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
+      cmddefinition.action.call(this, txt);
+    }
+  },
+
+  execStatelessCommand: function(cmd, txt) {
+    this.commands[cmd].action.call(this, txt);
+  },
+
+  getNumber: function() {
+    return OB.I18N.parseNumber(this.getString());
+  },
+
+  getString: function() {
+    var s = this.$.editbox.getContent();
+    this.$.editbox.setContent('');
+    return s;
+  },
+
+  commandHandler: function(snender, event) {
+    console.log('command fired', arguments);
+    var txt, me = this,
+        cmd = event.key;
+
+
+    if (this.$.editbox.getContent() && cmd === String.fromCharCode(13)) {
+      txt = this.getString();
+
+      if (this.defaultcommand) {
+        this.execCommand(this.commands[this.defaultcommand], txt);
+      } else {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
+      }
+    } else if (cmd === 'OK') {
+      txt = this.getString();
+
+      if (txt && this.status === '') {
+        if (this.defaultcommand) {
+          this.execCommand(this.commands[this.defaultcommand], txt);
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoDefaultActionDefined'));
+        }
+      } else if (txt && this.status !== '') {
+        this.execCommand(this.commands[this.status], txt);
+        this.setStatus('');
+      }
+    } else if (this.commands[cmd]) {
+      txt = this.getString();
+      if (this.commands[cmd].stateless) {
+        // Stateless commands: add, subs, ...
+        this.execStatelessCommand(cmd, txt);
+      } else {
+        // Statefull commands: quantity, price, discounts, payments ...
+        if (txt && this.status === '') { // Short cut: type + action
+          this.execCommand(this.commands[cmd], txt);
+        } else if (this.status === cmd) { // Reset status
+          this.setStatus('');
+        } else {
+          this.setStatus(cmd);
+        }
+      }
+    } else {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoActionDefined'));
+    }
+
+  },
+
   initComponents: function() {
     var me = this;
 
@@ -799,7 +897,7 @@ enyo.kind({
   },
 
   keyPressed: function(key) {
-	  console.log('key pressed',key);
+    console.log('key pressed', key);
     var t;
     if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
       t = this.$.editbox.getContent();
@@ -810,7 +908,10 @@ enyo.kind({
         this.$.editbox.setContent(t.substring(0, t.length - 1));
       }
     } else {
-     //TODO: this.trigger('command', key);
+      //TODO: this.trigger('command', key);
+      this.doCommandFired({
+        key: key
+      });
     }
   },
 
@@ -833,6 +934,20 @@ enyo.kind({
     for (; i < 6; i++) {
       this.$.toolbarcontainer.createComponent(emptyBtn);
     }
+  },
+
+  addCommand: function(cmd, definition) {
+    this.commands[cmd] = definition;
+  },
+
+  addButton: function(cmd, btn) {
+    if (this.buttons[cmd]) {
+      if (this.buttons[cmd].add) {
+        this.buttons[cmd] = this.buttons[cmd].add(btn);
+      }
+    } else {
+      this.buttons[cmd] = btn;
+    }
   }
 });
 
@@ -844,7 +959,9 @@ enyo.kind({
     console.log('a');
     this.createComponent({
       kind: 'OB.UI.ButtonKey',
-      label: this.btn.label
+      label: this.btn.label,
+      command: this.btn.command,
+      definition: this.btn.definition
     });
   }
 });

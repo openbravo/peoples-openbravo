@@ -363,18 +363,37 @@ enyo.kind({
   }],
   initComponents: function() {
     var me = this,
-        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner;
-    debugger;
+        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner.keyPressed ? this.owner.owner : this.owner.owner.owner;
+
     this.inherited(arguments);
 
     if (this.command) {
-      this.$.button.addClass(this.classButton);
+      if (this.definition) {
+        keyboard.addCommand(this.command, this.definition);
+      }
+      if (this.command === '---') {
+        // It is the null command
+        this.command = false;
+      } else if (!this.command.match(/^([0-9]|\.|,|[a-z])$/) && this.command !== 'OK' && this.command !== 'del' && this.command !== String.fromCharCode(13) && !keyboard.commands[this.command]) {
+        // is not a key and does not exists the command
+        this.command = false;
+      } else if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
+        // does not have permissions.
+        this.command = false;
+      }
     }
 
-    this.$.button.tap = function() {
-      keyboard.keyPressed(me.command);
+    if (this.command) {
+      this.$.button.tap = function() {
+        keyboard.keyPressed(me.command);
+      }
+      // this.kb.addButton(this.command, this.button); TODO: check this
+    } else {
+      this.$.button.addClass('btnkeyboard-inactive');
     }
-    //this.$.button.addClass(this.classButton);
+    this.$.button.addClass(this.classButton);
+
+
     this.$.button.setContent(this.label);
   }
 });
