@@ -128,6 +128,7 @@ enyo.kind({
 //Renders each of the deposit/drops destinations
 enyo.kind({
   name: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
+  kind: 'OB.UI.SelectButton',
   //tag: 'div',
   style: 'background-color:#dddddd;  border: 1px solid #ffffff;',
   components: [{

@@ -75,7 +75,6 @@
     //TODO: maxheight: null,
     initComponents: function() {
       this.inherited(arguments);
-      debugger;
       if (this.modalClass) {
         this.addClass(this.modalClass);
       }
@@ -105,6 +104,18 @@
     }
   });
 
+
+  enyo.kind({
+    name: 'OB.UI.SelectButton',
+    kind: 'OB.UI.Button',
+    classes: 'btnselect',
+
+    tap: function() {
+      this.model.trigger('selected', this.model);
+      this.model.trigger('click', this.model);
+      $('#' + this.id).parents('.modal').filter(':first').modal('hide')
+    }
+  });
 
   // Base button: Implemented as enyo: OB.UI.Button
   OB.COMP.Button = Backbone.View.extend({
@@ -373,6 +384,7 @@
   });
 
   // Select Button
+  // refactored with enyo: OB.UI.SelectButton
   OB.COMP.SelectButton = OB.COMP.Button.extend({
     className: 'btnselect',
     initialize: function() {
