@@ -120,7 +120,9 @@
         this.collectionChanged(null);
       }
     },
+
     collectionChanged: function (oldCollection) {
+
       if (this.renderHeader) {
         this.createComponent({
           kind: this.renderHeader
@@ -166,6 +168,7 @@
         model: model
       });
       tr.render();
+
       //FIXME: can we add a model in the middle of a collection?
       //      if (_.isNumber(index) && index < this.collection.length - 1) {
       //        this.$el.children().eq(index + this.header).before(tr);
@@ -213,6 +216,7 @@
         this.collectionChanged(null);
       }
     },
+
     collectionChanged: function (oldCollection) {
       this.selected = null;
 
@@ -235,7 +239,7 @@
       this.collection.on('selected', function (model) {
         if (!model && this.listStyle) {
           if (this.selected) {
-            this.selected.removeClass('selected');
+            this.selected.addRemoveClass('selected', false);
           }
           this.selected = null;
         }
@@ -317,24 +321,20 @@
     },
 
     _addModelToCollection: function (model, index) {
-      var me = this,
-          tr;
-
-      tr = this.$.tbody.createComponent({
+      var tr = this.$.tbody.createComponent({
         tag: 'li'
       });
+
       tr.createComponent({
         kind: this.renderLine,
-        model: model,
-        parent: me
-      }).render();
+        model: model
+      });
 
       model.on('change', function () {
         tr.destroyComponents();
         tr.createComponent({
           kind: this.renderLine,
-          model: model,
-          parent: me
+          model: model
         }).render();
       }, this);
 
