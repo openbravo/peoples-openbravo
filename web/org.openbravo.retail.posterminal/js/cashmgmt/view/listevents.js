@@ -111,7 +111,7 @@ enyo.kind({
       tag: 'div',
       components: [{
         //tableview
-        name: 'theList',
+        name: 'eventList',
         kind: 'OB.UI.Table',
         renderLine: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
         renderEmpty: 'OB.UI.RenderEmpty'
@@ -120,7 +120,7 @@ enyo.kind({
   }],
 
   init: function() {
-    this.$.theList.setCollection(this.owner.owner.owner.model.getData(this.owner.owner.type));
+    this.$.eventList.setCollection(this.owner.owner.owner.model.getData(this.owner.owner.type));
   }
 
 });
