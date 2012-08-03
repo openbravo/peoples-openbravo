@@ -121,9 +121,16 @@ enyo.kind({
     {
       tag: 'div',
       components: [{
-    	  kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
-    	  header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
-    	  myId: 'modaldepositevents'
+        kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+        header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
+        myId: 'modaldepositevents',
+        type: 'DataDepositEvents'
+      }, {
+        kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+        header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
+        myId: 'modaldropevents',
+        type: 'DataDropEvents'
+
       }, {
         kind: OB.UI.ModalCancel
       }]

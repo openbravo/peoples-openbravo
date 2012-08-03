@@ -89,5 +89,56 @@ enyo.kind({
   name: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
   kind: 'OB.UI.Modal',
   modalClass: 'modal-dialog',
-  bodyClass: 'modal-dialog-body'
+  bodyClass: 'modal-dialog-body',
+  body: {
+    kind: 'OB.OBPOSCasgMgmt.UI.ListEvents'
+  },
+
+  init: function() {
+    this.$.body.$.listEvents.init();
+  }
+});
+
+//Popup with the destinations for deposits/drops
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.ListEvents',
+  tag: 'div',
+  classes: 'row-fluid',
+  components: [{
+    tag: 'div',
+    classes: 'span12',
+    components: [{
+      tag: 'div',
+      components: [{
+        //tableview
+        name: 'theList',
+        kind: 'OB.UI.Table',
+        renderLine: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
+        renderEmpty: 'OB.UI.RenderEmpty'
+      }]
+    }]
+  }],
+
+  init: function() {
+    this.$.theList.setCollection(this.owner.owner.owner.model.getData(this.owner.owner.type));
+  }
+
+});
+
+//Renders each of the deposit/drops destinations
+enyo.kind({
+  name: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
+  //tag: 'div',
+  style: 'background-color:#dddddd;  border: 1px solid #ffffff;',
+  components: [{
+    tag: 'div',
+    name: 'line',
+    style: 'padding: 1px 0px 1px 5px;'
+
+  }],
+
+  create: function() {
+    this.inherited(arguments);
+    this.$.line.setContent(this.model.get('name'));
+  }
 });

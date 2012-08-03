@@ -80,16 +80,28 @@
         this.addClass(this.modalClass);
       }
 
+      this.$.divheader.setContent(this.header);
+
       if (this.bodyClass) {
         this.$.body.addClass(this.bodyClass);
       }
+      this.$.body.createComponent(this.body);
 
-      this.$.divheader.setContent(this.header);
-
-
+      //TODO: OB.UTIL.adjustModalPosition(this.$el);
+      //TODO: OB.UTIL.focusInModal(this.$el);
     },
+
     makeId: function() {
       return this.myId || this.inherited(arguments);
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.RenderEmpty',
+    style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setContent(this.label || OB.I18N.getLabel('OBPOS_SearchNoResults'));
     }
   });
 
@@ -375,6 +387,8 @@
     }
   });
 
+
+  // refactored using enyo: OB.UI.RenderEmpty
   OB.COMP.RenderEmpty = Backbone.View.extend({
     tagName: 'div',
     attributes: {

@@ -30,8 +30,6 @@ enyo.kind({
     this.model = new this.windowmodel();
     console.log('model in window created');
     this.model.on('ready', function() {
-      console.log('now ready');
-      debugger;
       if (this.init) {
         this.init();
       }
