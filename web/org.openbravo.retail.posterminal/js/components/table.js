@@ -101,7 +101,7 @@
       collection: null
     },
     create: function () {
-      var listName: this.name || '';
+      var listName = this.name || '';
 
       this.inherited(arguments);
 
