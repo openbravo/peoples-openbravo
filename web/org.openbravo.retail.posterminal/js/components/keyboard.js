@@ -588,6 +588,7 @@ enyo.kind({
   commands: {},
   buttons: {},
   status: '',
+  sideBarEnabled: false,
 
   tag: 'div',
   classes: 'row-fluid',
@@ -644,9 +645,10 @@ enyo.kind({
           tag: 'div',
           classes: 'span4',
           components: [{
-            //sideenabled
+            // rigth toolbar with qty, discount... buttons
             tag: 'div',
-            // style: 'display:none',
+            //  style: 'display:none',
+            name: 'sideenabled',
             components: [{
               tag: 'div',
               classes: 'row-fluid',
@@ -707,9 +709,11 @@ enyo.kind({
               }]
             }]
           }, {
-            //sidedisabled
+            // empty right toolbar used in case the keyboard
+            // shouldn't support these buttons
             tag: 'div',
-            style: 'display:none',
+            name: 'sidedisabled',
+            // style: 'display:none',
             components: [{
               tag: 'div',
               classes: 'row-fluid',
@@ -871,6 +875,15 @@ enyo.kind({
 
     this.inherited(arguments);
 
+    if (this.sideBarEnabled) {
+      this.$.sideenabled.show();
+      this.$.sidedisabled.hide();
+    } else {
+      this.$.sideenabled.hide();
+      this.$.sidedisabled.show();
+    }
+
+
     //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
     $(window).keydown(function(e) {
       if (window.fixFocus()) {
@@ -962,7 +975,8 @@ enyo.kind({
       kind: 'OB.UI.ButtonKey',
       label: this.btn.label,
       command: this.btn.command,
-      definition: this.btn.definition
+      definition: this.btn.definition,
+      classButtonActive: this.btn.classButtonActive || 'btnactive-green'
     });
   }
 });
