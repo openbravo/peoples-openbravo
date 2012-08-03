@@ -1,3 +1,5 @@
+/*global _, Backbone, $, enyo */
+
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -6,8 +8,6 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-
-/*global _, Backbone, $ */
 
 (function () {
 
@@ -94,6 +94,158 @@ if (attr.collection){
     });
   };
 
+  enyo.kind({
+    name: 'OB.UI.Table',
+    published: {
+      collection: null
+    },
+    style: 'list',
+    components: [
+      {name: 'theader'},
+      {name: 'tbody', tag: 'ul', classes: 'unstyled', showing: false},
+      {name: 'tinfo', showing: false, style: 'border-bottom: 1px solid #cccccc; padding: 15px; font-weight: bold; color: #cccccc'},
+      {name: 'tempty'}
+    ],
+    create: function () {
+      this.inherited(arguments);
+
+      // helping developers
+      if(!this.renderLine) {
+        throw 'Your table view must define a renderLine kind';
+      }
+      if(!this.renderEmpty) {
+        throw 'Your table view must define a renderEmpty kind';
+      }
+
+      if (this.collection) {
+        this.collectionChanged();
+      }
+    },
+    collectionChanged: function (oldCollection) {
+      this.selected = null;
+
+      if (this.renderHeader && this.$.theader.getComponents().length === 0) {
+        this.$.theader.createComponent({kind: this.renderHeader});
+      }
+
+      if (this.renderEmpty && this.$.tempty.getComponents().length === 0) {
+        this.$.tempty.createComponent({kind: this.renderEmpty});
+      }
+
+      if (!this.collection) { // set to null?
+        return;
+      }
+
+      this.collection.on('selected', function (model) {
+        if (!model && this.style) {
+          if (this.selected) {
+            this.selected.removeClass('selected');
+          }
+          this.selected = null;
+        }
+      }, this);
+
+      this.collection.on('add', function (model, prop, options) {
+
+        this.$.tempty.hide();
+        this.$.tbody.show();
+
+        this._addModelToCollection(model, options.index);
+
+        if (this.style === 'list') {
+          if (!this.selected) {
+            model.trigger('selected', model);
+          }
+        } else if (this.style === 'edit') {
+          model.trigger('selected', model);
+        }
+      }, this);
+
+      this.collection.on('remove', function (model, prop, options) {
+        var index = options.index;
+
+        this.$.tbody.getComponents()[index].destroy(); // controlAtIndex ?
+
+        if (index >= this.collection.length) {
+          if (this.collection.length === 0) {
+            this.collection.trigger('selected');
+          } else {
+            this.collection.at(this.collection.length - 1).trigger('selected', this.collection.at(this.collection.length - 1));
+          }
+        } else {
+          this.collection.at(index).trigger('selected', this.collection.at(index));
+        }
+
+        if (this.collection.length === 0) {
+          this.$.tbody.hide();
+          this.$.tempty.show();
+        }
+      }, this);
+
+      this.collection.on('reset', function (a, b, c) {
+        var lastmodel;
+
+        this.$.tbody.hide();
+        this.$.tempty.show();
+
+        this.$.tbody.destroyComponents();
+
+        if (this.collection.size() === 0) {
+          this.$.tbody.hide();
+          this.$.tempty.show();
+          this.collection.trigger('selected');
+        } else {
+          this.$.tempty.hide();
+          this.$.tbody.show();
+          this.collection.each(function (model) {
+            this._addModelToCollection(model);
+          }, this);
+
+          if (this.style === 'list' || this.style === 'edit') {
+            lastmodel = this.collection.at(this.collection.size() - 1);
+            lastmodel.trigger('selected', lastmodel);
+          }
+        }
+      }, this);
+
+      this.collection.on('info', function (info) {
+        if (info) {
+          this.$.tinfo.setContent(OB.I18N.getLabel(info));
+          this.$.tinfo.show();
+        } else {
+          this.$.tinfo.hide();
+        }
+      }, this);
+
+      // XXX: Reseting to show the collection if registered with data
+      this.collection.trigger('reset');
+    },
+
+    //* @protected
+    _addModelToCollection: function (model, index) {
+      var me = this, tr;
+
+      tr = this.$.tbody.createComponent({tag: 'li'});
+      tr.createComponent({kind: this.renderLine, model: model, parent: me}).render();
+
+      model.on('change', function () {
+        tr.destroyComponents();
+        tr.createComponent({kind: this.renderLine, model: model, parent: me}).render();
+      }, this);
+
+      model.on('selected', function () {
+        if (this.style) {
+          if (this.selected) {
+            this.selected.addRemoveClass('selected', false);
+          }
+          this.selected = tr;
+          this.selected.addRemoveClass('selected', true);
+          // FIXME: OB.UTIL.makeElemVisible(this.node, this.selected);
+        }
+      }, this);
+    }
+  });
+
   // Table View
   OB.UI.TableView = Backbone.View.extend({
     tagName: 'div',
@@ -106,8 +258,6 @@ if (attr.collection){
       
     },
     
-
-
     registerCollection: function (collection) {
       this.collection = collection;
       this.selected = null;
