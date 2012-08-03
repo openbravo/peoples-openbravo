@@ -14,6 +14,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  // No need to refactor
   var ButtonDummy = Backbone.View.extend({
     tagName: 'button',
     initialize: function() {
@@ -21,6 +22,7 @@
     }
   });
 
+  // Is this needed to be refactored?
   OB.COMP.KeyboardComponent = Backbone.View.extend({
     initialize: function() {
 
@@ -35,6 +37,7 @@
     }
   });
 
+  // Refactored with enyo: OB.UI.ButtonKey
   OB.COMP.ButtonKey = Backbone.View.extend({
     classButton: '',
     command: false,
@@ -125,6 +128,7 @@
     }
   });
 
+  //Refactored with enyo: OB.UI.KeypadBasic
   OB.COMP.KeypadBasic = OB.COMP.KeyboardComponent.extend({
     tag: 'div',
     name: 'index',
@@ -402,8 +406,6 @@ enyo.kind({
   name: 'OB.UI.KeypadBasic',
   // kind: OB.UI.KeyboardComponent ???
   tag: 'div',
-  //name index??? label??
-  // style: 'display:none', ???
   components: [{
     tag: 'div',
     classes: 'row-fluid',

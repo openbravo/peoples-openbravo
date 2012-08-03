@@ -16,6 +16,7 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  // reimplemented with enyo: OB.UI.BtnSide
   var BtnSide = Backbone.View.extend({
     tagName: 'div',
     attributes: {
@@ -30,8 +31,8 @@
     }
   });
 
+  // reimplemented with enyo: OB.UI.Keyboard
   OB.COMP.Keyboard = Backbone.View.extend({
-
     optionsid: 'keyboard',
     status: '',
     commands: {},
@@ -647,7 +648,6 @@ enyo.kind({
           components: [{
             // rigth toolbar with qty, discount... buttons
             tag: 'div',
-            //  style: 'display:none',
             name: 'sideenabled',
             components: [{
               tag: 'div',
@@ -713,7 +713,6 @@ enyo.kind({
             // shouldn't support these buttons
             tag: 'div',
             name: 'sidedisabled',
-            // style: 'display:none',
             components: [{
               tag: 'div',
               classes: 'row-fluid',
@@ -802,7 +801,6 @@ enyo.kind({
   },
 
   execCommand: function(cmddefinition, txt) {
-    console.log('execCommand', arguments);
     if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
       cmddefinition.action.call(this, txt);
     }
@@ -823,7 +821,6 @@ enyo.kind({
   },
 
   commandHandler: function(snender, event) {
-    console.log('command fired', arguments);
     var txt, me = this,
         cmd = event.key;
 
@@ -911,7 +908,6 @@ enyo.kind({
   },
 
   keyPressed: function(key) {
-    console.log('key pressed', key);
     var t;
     if (key.match(/^([0-9]|\.|,|[a-z])$/)) {
       t = this.$.editbox.getContent();
@@ -922,7 +918,6 @@ enyo.kind({
         this.$.editbox.setContent(t.substring(0, t.length - 1));
       }
     } else {
-      //TODO: this.trigger('command', key);
       this.doCommandFired({
         key: key
       });
@@ -970,7 +965,6 @@ enyo.kind({
   tag: 'div',
   style: 'display:table; width:100%',
   initComponents: function() {
-    console.log('a');
     this.createComponent({
       kind: 'OB.UI.ButtonKey',
       label: this.btn.label,
