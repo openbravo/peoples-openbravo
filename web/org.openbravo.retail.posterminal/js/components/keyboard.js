@@ -785,19 +785,20 @@ enyo.kind({
 
   setStatus: function(newstatus) {
     var btn = this.buttons[this.status];
+
     if (btn) {
-      //TODO: btn.$el.removeClass(btn.classButtonActive);
+      btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive)
     }
     this.status = newstatus;
     //TODO: used in coins this.trigger('status', this.status);
     btn = this.buttons[this.status];
     if (btn) {
-      // TODO:btn.$el.addClass(btn.classButtonActive);
+      btn.addClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
   },
 
   execCommand: function(cmddefinition, txt) {
-	  console.log('execCommand', arguments);
+    console.log('execCommand', arguments);
     if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
       cmddefinition.action.call(this, txt);
     }

@@ -351,6 +351,7 @@ enyo.kind({
   name: 'OB.UI.ButtonKey',
   tag: 'div',
   style: 'margin: 5px;',
+  classButtonActive: 'btnactive',
   classButton: '',
   command: false,
   permission: null,
@@ -359,7 +360,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.Button',
     name: 'button',
-    classes: 'btnkeyboard' //param btnkeyboard-num
+    classes: 'btnkeyboard'
   }],
   initComponents: function() {
     var me = this,
@@ -387,13 +388,12 @@ enyo.kind({
       this.$.button.tap = function() {
         keyboard.keyPressed(me.command);
       }
-      // this.kb.addButton(this.command, this.button); TODO: check this
+      keyboard.addButton(this.command, this.$.button);
     } else {
       this.$.button.addClass('btnkeyboard-inactive');
     }
+
     this.$.button.addClass(this.classButton);
-
-
     this.$.button.setContent(this.label);
   }
 });
