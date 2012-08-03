@@ -48,12 +48,13 @@ OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
 
     this.depsdropstosend.on('paymentDone', function(model, p) {
       // Payment done locally, saving it in local list
-      var deposits, error = false;
+      var deposits, error = false, tmp;
 
       depList.each(function(dep) {
         if (p.destinationKey === dep.get('paySearchKey')) {
           error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), p.amount) < 0);
           deposits = dep.get('listdepositsdrops');
+          tmp = dep;
         }
       });
 
@@ -90,7 +91,7 @@ OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         user: OB.POS.modelterminal.get('context').user._identifier,
         time: new Date().toString().substring(16, 21)
       });
-      depList.trigger('reset');
+      tmp.trigger('change');
     }, this);
 
     this.depsdropstosend.on('makeDeposits', function() {
