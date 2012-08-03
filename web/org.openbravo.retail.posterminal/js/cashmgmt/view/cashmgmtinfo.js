@@ -118,7 +118,7 @@ enyo.kind({
   style: 'min-width: 115px;',
   content: OB.I18N.getLabel('OBPOS_LblDone'),
   tap: function() {
-    // TODO implement me!!
+    this.owner.owner.model.depsdropstosend.trigger('makeDeposits');
   }
 });
 
