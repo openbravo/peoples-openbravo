@@ -95,11 +95,84 @@ if (attr.collection){
   };
 
   enyo.kind({
+    name: 'OB.UI.List',
+    published: {
+      collection: null
+    },
+    create: function () {
+      var listName: this.name || '';
+    
+      this.inherited(arguments);
+
+      // helping developers
+      if(!this.renderLine) {
+        throw enyo.format('Your list %s needs to define a renderLine kind', listName);
+      }
+      
+      if(!this.renderEmpty) {
+        throw enyo.format('Your list %s needs to define a renderEmpty kind', listName);
+      }
+
+      this.header = this.renderHeader ? 1 : 0
+
+      if(this.collection) {
+        this.collectionChanged(null);
+      }
+    },
+    collectionChanged: function (oldCollection) {
+      if (this.renderHeader) {
+        this.createComponent({kind: this.renderHeader}).render();
+      }
+
+      if (!this.collection) { // set to null ?
+        return;
+      }
+      
+      this.collection.on('change', function (model, prop) {
+        var index = this.collection.indexOf(model);
+        // FIXME: instead of recreate the item, we call changed? init ?
+        // repeated items needs to reset the values
+        // e.g. this.controlAtIndex(index + this.header).changed();
+      }, this);
+
+      this.collection.on('add', function (model, prop, options) {
+        this._addModelToCollection(model, options.index);
+      }, this);
+
+      this.collection.on('remove', function (model, prop, options) {
+        var index = options.index;
+        this.controlAtIndex(index + this.header).destroy();
+      }, this);
+
+      this.collection.on('reset', function () {
+        this.destroyComponents();
+        if (this.renderHeader) {
+          this.createComponent({kind: this.renderHeader}).render();
+        }
+        this.collection.each(function (model) {
+          this._addModelToCollection(model);
+        }, this);
+      }, this);
+      
+    },
+    _addModelToCollection: function (model, index) {
+      var tr = this.createComponent({kind: this.renderLine, model: model});
+      tr.render();
+      //FIXME: can we add a model in the middle of a collection?
+//      if (_.isNumber(index) && index < this.collection.length - 1) {
+//        this.$el.children().eq(index + this.header).before(tr);
+//      } else {
+//        this.$el.append(tr);
+//      }
+    }
+  });
+
+  enyo.kind({
     name: 'OB.UI.Table',
     published: {
       collection: null
     },
-    style: 'list',
+    listStyle: 'list',
     components: [
       {name: 'theader'},
       {name: 'tbody', tag: 'ul', classes: 'unstyled', showing: false},
@@ -107,18 +180,21 @@ if (attr.collection){
       {name: 'tempty'}
     ],
     create: function () {
+      var tableName = this.name || '';
+
       this.inherited(arguments);
 
       // helping developers
       if(!this.renderLine) {
-        throw 'Your table view must define a renderLine kind';
+        throw enyo.format('Your list %s needs to define a renderLine kind', tableName);
       }
+      
       if(!this.renderEmpty) {
-        throw 'Your table view must define a renderEmpty kind';
+        throw enyo.format('Your list %s needs to define a renderEmpty kind', tableName);
       }
 
       if (this.collection) {
-        this.collectionChanged();
+        this.collectionChanged(null);
       }
     },
     collectionChanged: function (oldCollection) {
@@ -133,7 +209,7 @@ if (attr.collection){
       }
 
       if (!this.collection) { // set to null?
-        return;
+        return; 
       }
 
       this.collection.on('selected', function (model) {
@@ -221,7 +297,6 @@ if (attr.collection){
       this.collection.trigger('reset');
     },
 
-    //* @protected
     _addModelToCollection: function (model, index) {
       var me = this, tr;
 
