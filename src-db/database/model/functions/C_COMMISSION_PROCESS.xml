@@ -36,6 +36,9 @@
     v_DocBasisType VARCHAR(60);
     v_ListDetails VARCHAR(60);
     v_SalesRep_ID VARCHAR2(32) ;
+    v_BasisStatus VARCHAR(60) ;
+    v_BasisAmt VARCHAR(60) ;
+    v_day NUMBER;
     --
     v_StartDate DATE;
     v_EndDate DATE;
@@ -82,14 +85,18 @@
       FrequencyType,
       DocBasisType,
       ListDetails,
-      C_BPartner_ID
+      C_BPartner_ID, 
+      BasisStatus, 
+      BasisAmt
     INTO v_AD_Client_ID,
       v_AD_Org_ID,
       v_Name,
       v_FrequencyType,
       v_DocBasisType,
       v_ListDetails,
-      v_SalesRep_ID
+      v_SalesRep_ID, 
+      v_BasisStatus, 
+      v_BasisAmt
     FROM C_Commission
     WHERE C_Commission_ID=v_Record_ID;
     --
@@ -111,9 +118,18 @@
     ELSIF(v_FrequencyType='W') THEN -- Weekly
       v_StartDate:=TRUNC(p_StartDate, 'DAY') ;
       v_EndDate:=TRUNC(v_StartDate+7, 'DAY') -1;
-    ELSE -- Month
+    ELSIF(v_FrequencyType='M') THEN-- Month
       v_StartDate:=TRUNC(p_StartDate, 'MM') ;
       v_EndDate:=TRUNC(v_StartDate+32, 'MM') -1;
+    ELSE --Semi-monthly (StartDate 1s or 16th of Month)
+      select to_number(to_char(p_StartDate, 'DD')) into v_day from dual;
+      IF (v_day<16) THEN 
+        v_StartDate:=TRUNC(p_StartDate, 'MM') ;
+        v_EndDate:=TRUNC(v_StartDate, 'MM') +14 ;
+      ELSE
+        v_StartDate:=TRUNC(p_StartDate, 'MM')+15 ;
+        v_EndDate:=TRUNC(v_StartDate+20, 'MM') -1;
+      END IF;
     END IF;
     -- Name 01-Jan-2000 - 31-Jan-2001 - USD
     v_Name:=v_Name || ' ' || TO_CHAR(v_StartDate) || ' - ' || TO_CHAR(v_EndDate) || ' - ' || v_Currency;
@@ -213,29 +229,145 @@
           -- Invoice Basis
         ELSIF(v_DocBasisType='I') THEN
           IF(v_ListDetails='Y') THEN
-            v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
-            || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
-            || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
-            || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
-            || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
-            || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
-            || 'WHERE h.DocStatus IN (''CL'',''CO'')'
-            || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = '':1'''
-            || ' AND h.DateInvoiced >= to_date('':2'')'
-            || ' AND h.DateInvoiced < to_date('':3'') +1';
+            IF(v_BasisStatus='A') THEN
+              IF(v_BasisAmt='N') THEN
+                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
+                || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
+                || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
+                || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
+                || 'WHERE h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              ELSE
+                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * CASE WHEN (prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN l.linenetamt - (qtyinvoiced*(COST.cost/(-1*m_transaction.movementqty))) ELSE l.linenetamt - (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID)*l.QTYINVOICED) END as margin, '
+                || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
+                || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
+                || 'FROM m_transaction inner join m_inoutline on m_transaction.m_inoutline_id = m_inoutline.m_inoutline_id '
+                || 'inner join m_inout on m_inoutline.m_inout_id = m_inout.m_inout_id, '
+                || 'c_invoiceline l inner join C_Invoice h on l.C_Invoice_ID = h.C_Invoice_ID '
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID, '
+                || '(select SUM(m_transaction_cost.cost) as cost ,m_transaction_id '
+                || '  FROM m_transaction_cost '
+                || '  GROUP BY m_transaction_id) as COST '
+                || 'WHERE m_transaction.m_transaction_id = COST.m_transaction_id '
+                || ' AND m_inoutline.m_inoutline_id = l.m_inoutline_id'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              END IF;
+            ELSE
+              IF(v_BasisAmt='N') THEN
+                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt,'
+                || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
+                || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
+                || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
+                || 'WHERE h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ispaid = ''Y'''
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              ELSE
+                v_Cmd:='SELECT h.C_Currency_ID, CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * CASE WHEN (prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN l.linenetamt - (qtyinvoiced*(COST.cost/(-1*m_transaction.movementqty))) ELSE l.linenetamt - (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID)*l.QTYINVOICED) END as margin, '
+                || 'CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced, '
+                || 'NULL, l.C_InvoiceLine_ID, h.DocumentNo, substr(COALESCE(prd.Name,l.Description),1,60) '
+                || 'FROM m_transaction inner join m_inoutline on m_transaction.m_inoutline_id = m_inoutline.m_inoutline_id '
+                || 'inner join m_inout on m_inoutline.m_inout_id = m_inout.m_inout_id, '
+                || 'c_invoiceline l inner join C_Invoice h on l.C_Invoice_ID = h.C_Invoice_ID '
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID, '
+                || '(select SUM(m_transaction_cost.cost) as cost ,m_transaction_id '
+                || '  FROM m_transaction_cost '
+                || '  GROUP BY m_transaction_id) as COST '
+                || 'WHERE m_transaction.m_transaction_id = COST.m_transaction_id '
+                || ' AND m_inoutline.m_inoutline_id = l.m_inoutline_id'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ispaid = ''Y'''
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              END IF;
+            END IF;
           ELSE
-            v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
-            || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
-            || 'NULL, NULL, NULL, NULL '
-            || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
-            || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id '
-            || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
-            || ' AND h.DocStatus IN (''CL'',''CO'')'
-            || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = '':1'''
-            || ' AND h.DateInvoiced >= to_date('':2'')'
-            || ' AND h.DateInvoiced < to_date('':3'') +1';
+            IF(v_BasisStatus='A') THEN
+              IF(v_BasisAmt='N') THEN
+                v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
+                || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
+                || 'NULL, NULL, NULL, NULL '
+                || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id '
+                || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              ELSE
+                v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * CASE WHEN (prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN l.linenetamt - (qtyinvoiced*(COST.cost/(-1*m_transaction.movementqty))) ELSE l.linenetamt - (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID)*l.QTYINVOICED) END) AS Amt,'
+                || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
+                || 'NULL, NULL, NULL, NULL '
+                || 'FROM m_transaction inner join m_inoutline on m_transaction.m_inoutline_id = m_inoutline.m_inoutline_id '
+                || 'inner join m_inout on m_inoutline.m_inout_id = m_inout.m_inout_id, '
+                || 'c_invoiceline l inner join C_Invoice h on l.C_Invoice_ID = h.C_Invoice_ID '
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID, '
+                || '(select SUM(m_transaction_cost.cost) as cost ,m_transaction_id '
+                || '  FROM m_transaction_cost '
+                || '  GROUP BY m_transaction_id) as COST '
+                || 'WHERE m_transaction.m_transaction_id = COST.m_transaction_id '
+                || ' AND m_inoutline.m_inoutline_id = l.m_inoutline_id'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              END IF;
+            ELSE
+              IF(v_BasisAmt='N') THEN
+                v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
+                || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
+                || 'NULL, NULL, NULL, NULL '
+                || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id '
+                || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ispaid = ''Y'''
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              ELSE
+                v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * CASE WHEN (prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN l.linenetamt - (qtyinvoiced*(COST.cost/(-1*m_transaction.movementqty))) ELSE l.linenetamt - (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID)*l.QTYINVOICED) END) as Amt, '
+                || 'SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
+                || 'NULL, NULL, NULL, NULL '
+                || 'FROM m_transaction inner join m_inoutline on m_transaction.m_inoutline_id = m_inoutline.m_inoutline_id '
+                || 'inner join m_inout on m_inoutline.m_inout_id = m_inout.m_inout_id, '
+                || 'c_invoiceline l inner join C_Invoice h on l.C_Invoice_ID = h.C_Invoice_ID '
+                || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id'
+                || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID, '
+                || '(select SUM(m_transaction_cost.cost) as cost ,m_transaction_id '
+                || '  FROM m_transaction_cost '
+                || '  GROUP BY m_transaction_id) as COST '
+                || 'WHERE m_transaction.m_transaction_id = COST.m_transaction_id '
+                || ' AND m_inoutline.m_inoutline_id = l.m_inoutline_id'
+                || ' AND h.DocStatus IN (''CL'',''CO'')'
+                || ' AND h.ispaid = ''Y'''
+                || ' AND h.ISSOTRX = ''Y'''
+                || ' AND h.AD_Client_ID = '':1'''
+                || ' AND h.DateInvoiced >= to_date('':2'')'
+                || ' AND h.DateInvoiced < to_date('':3'') +1';
+              END IF;
+            END IF;
           END IF;
           -- Order Basis
         ELSE
