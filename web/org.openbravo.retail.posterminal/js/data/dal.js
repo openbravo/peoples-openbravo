@@ -137,7 +137,7 @@
               collection = new collectionType(),
               len = result.rows.length;
           if (len === 0) {
-            success(null, args);
+            success(collection, args);
           } else {
             for (i = 0; i < len; i++) {
               collection.add(transform(model, result.rows.item(i)));
