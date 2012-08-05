@@ -60,10 +60,10 @@
 
   function getWhereClause(criteria, propertyMap) {
     var appendWhere = true,
-    firstParam = true,
-    sql = '',
-    params = [],
-    res = {};
+        firstParam = true,
+        sql = '',
+        params = [],
+        res = {};
     if (criteria && !_.isEmpty(criteria)) {
       _.each(_.keys(criteria), function (k) {
 
@@ -250,8 +250,8 @@
 
   function removeAll(model, criteria, success, error) {
     var tableName = model.prototype.tableName,
-    propertyMap = model.prototype.propertyMap,
-    sql, params, whereClause;
+        propertyMap = model.prototype.propertyMap,
+        sql, params, whereClause;
     if (db) {
       // websql
       if (!tableName) {
