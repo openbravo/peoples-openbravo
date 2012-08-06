@@ -979,7 +979,14 @@ isc.OBViewGrid.addProperties({
     }, this.Super('getFilterEditorProperties', arguments));
   },
 
-  refreshGrid: function (callback) {
+  removeOrClause: function(criteria) {
+    // The original criteria is stored in the position #1
+    // The criteria to select the selected record is stored in position #0
+    return criteria.criteria.get(1);
+  },
+
+  refreshGrid: function (callback, forceCurrentRecordID) {
+    var originalCriteria, criteria = {};
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
@@ -991,7 +998,39 @@ isc.OBViewGrid.addProperties({
     var context = {
       showPrompt: false
     };
-    this.filterData(this.getCriteria(), null, context);
+
+    // Removes the 'or' clause, if there is one
+    // See note at the function foot
+    originalCriteria = this.getCriteria();
+    if (this._criteriaWithOrClause) {
+      originalCriteria = this.removeOrClause(originalCriteria);
+      this._criteriaWithOrClause = false;
+    }
+
+    // If a record has to be included in the refresh, it must be included
+    // in the filter with an 'or' operator, along with the original filter,
+    // but only if there is an original filter
+    if (forceCurrentRecordID && originalCriteria.criteria.length > 0) {
+      // Adds the current record to the criteria
+      this._criteriaWithOrClause = true;
+      criteria._constructor = 'AdvancedCriteria';
+      criteria._OrExpression = true; // trick to get a really _or_ in the backend
+      criteria.operator = 'or';
+      criteria.criteria = [{
+        fieldName: 'id',
+        operator: 'equals',
+        value: forceCurrentRecordID
+      }];
+      criteria.criteria.push(originalCriteria); // original filter
+    } else {
+      criteria = originalCriteria;
+    }
+    this.filterData(criteria, null, context);
+    // At this point the original criteria should be restored, to prevent
+    // the 'or' clause that was just added to be used in subsequent refreshes.
+    // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
+    // would trigger an automatic refresh that would leave without effect that last filterData
+    // The additional criteria will be removed in the next call to refreshGrid
   },
 
   // with a delay to handle the target record when the body has been drawn

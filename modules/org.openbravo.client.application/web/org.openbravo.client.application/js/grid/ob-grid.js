@@ -267,6 +267,25 @@ isc.OBGrid.addProperties({
       this.fireOnPause("performFilter", {}, this.fetchDelay);
     },
 
+    // If the criteria contains an 'or' operator due to the changes made for solving
+    // issue 20722 (https://issues.openbravo.com/view.php?id=20722), remove the criteria
+    // that makes reference to a specific id and return the original one
+    removeSpecificIdFilter: function (criteria) {
+      if (!criteria) {
+        return criteria;
+      }
+      if (criteria.operator !== 'or') {
+        return criteria;
+      }
+      if (criteria.criteria && criteria.criteria.length !== 2) {
+        return criteria;
+      }
+      if (criteria.criteria.get(0).fieldName !== 'id') {
+        return criteria;
+      }
+      return criteria.criteria.get(1);
+    },
+
     // repair that filter criteria on fk fields can be 
     // on the identifier instead of the field itself.
     // after applying the filter the grid will set the criteria
@@ -281,6 +300,9 @@ isc.OBGrid.addProperties({
       // make a copy so that we don't change the object
       // which is maybe used somewhere else
       criteria = isc.clone(criteria);
+      // If a criterion has been added to include the selected record, remove it
+      // See issue https://issues.openbravo.com/view.php?id=20722
+      criteria = this.removeSpecificIdFilter(criteria);
       var internCriteria = criteria.criteria;
       if (internCriteria && this.getEditForm()) {
         // now remove anything which is not a field
@@ -321,7 +343,6 @@ isc.OBGrid.addProperties({
           }
         }
       }
-
       return this.Super('setValuesAsCriteria', [criteria, refresh]);
     },
 

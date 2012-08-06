@@ -1347,7 +1347,10 @@ isc.OBStandardView.addProperties({
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
-  refresh: function (refreshCallback, autoSaveDone) {
+  refresh: function (refreshCallback, autoSaveDone, forceCurrentRecordId) {
+    // If a record should be visible after the refresh, even if it does not comply with the
+    // current filter, its ID should be entered in the forceCurrentRecordId parameter
+    // See issue https://issues.openbravo.com/view.php?id=20722
     var me = this,
         view = this,
         actionObject, formRefresh, callback;
@@ -1357,7 +1360,7 @@ isc.OBStandardView.addProperties({
       actionObject = {
         target: this,
         method: this.refresh,
-        parameters: [refreshCallback, true]
+        parameters: [refreshCallback, true, forceCurrentRecordId]
       };
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
@@ -1375,17 +1378,17 @@ isc.OBStandardView.addProperties({
     };
 
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback);
+      this.viewGrid.refreshGrid(refreshCallback, forceCurrentRecordId);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
           if (ok) {
-            view.viewGrid.refreshGrid(formRefresh);
+            view.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid(formRefresh);
+        this.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
       }
     }
   },
