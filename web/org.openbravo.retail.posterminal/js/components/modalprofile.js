@@ -9,207 +9,192 @@
 
 /*global window, B, Backbone, $ */
 
-(function () {
-
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
-
-  OB.COMP.ModalProfile = function (dialogsContainer) {
-    this.dialogsContainer = dialogsContainer;
-  };
-
-  OB.COMP.ModalProfile.prototype.setModel = function (terminal) {
-    this.terminal = terminal;
-
-    this.terminal.on('change:context', function() {
-      var ctx = this.terminal.get('context');
-
-      if (!ctx) {
-        return;
-      }
-
-      var terminalName = OB.POS.paramTerminal;
-      var roleId = ctx.role.id;
-      var languageId = OB.Application.language;
-      var userId = ctx.user.id;
-
-      var RoleModel = Backbone.Model.extend({});
-      var RoleCollection = Backbone.Collection.extend({
-        model: RoleModel,
-        url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
-        parse: function (response, error) {
-          if (response && response.response[0] && response.response[0].data) {
-            return response.response[0].data;
-          } else {
-            return null;
-          }
-        }
-      });
-      var myRoleCollection = new RoleCollection();
-      myRoleCollection.fetch();
-
-      var LanguageModel = Backbone.Model.extend({});
-      var LanguageCollection = Backbone.Collection.extend({
-        model: LanguageModel,
-        url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableLanguages',
-        parse: function (response, error) {
-          if (response && response.response[0] && response.response[0].data) {
-            return response.response[0].data;
-          } else {
-            return null;
-          }
-        }
-      });
-      var myLanguageCollection = new LanguageCollection();
-      myLanguageCollection.fetch();
-
-
-      OB.COMP.ModalProfile = OB.COMP.ModalAction.extend({
-        id: 'profileDialog',
-        header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
-        width: '500px',
-
-        bodyContentClass: 'modal-dialog-content-profile',
-        setBodyContent: function () {
-          return (
-            {kind: B.KindJQuery('div'), attr: {'style': 'height: 127px; background-color: #ffffff;'}, content: [
-              {kind: B.KindJQuery('div'), content: [
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Role')]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                 {kind: OB.UI.ListView('select'), attr: {
-                    collection: myRoleCollection,
-                    htmlId: 'profileRoleId',
-                    className: 'modal-dialog-profile-combo',
-                    renderLine: Backbone.View.extend({
-                      tagName: 'option',
-                      initialize: function () {
-                        this.model = this.options.model;
-                      },
-                      render: function () {
-                        this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
-                        if (roleId === this.model.get('id')) {
-                          this.$el.attr('selected', 'selected');
-                        }
-                        return this;
-                      }
-                    })
-                  }}
-                ]}
-              ]},
-              {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
-              {kind: B.KindJQuery('div'), content: [
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_Language')]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                  {kind: OB.UI.ListView('select'), attr: {
-                    collection: myLanguageCollection,
-                    className: 'modal-dialog-profile-combo',
-                    htmlId: 'profileLanguageId',
-                    renderLine: Backbone.View.extend({
-                      tagName: 'option',
-                      initialize: function () {
-                        this.model = this.options.model;
-                      },
-                      render: function () {
-                        this.$el.attr('value', this.model.get('id')).text(this.model.get('_identifier'));
-                        if (languageId === this.model.get('id')) {
-                          this.$el.attr('selected', 'selected');
-                        }
-                        return this;
-                      }
-                    })
-                  }}
-                ]}
-              ]},
-              {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}},
-              {kind: B.KindJQuery('div'), content: [
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 8px 0px 0px; font-size: 15px;'}, content: [OB.I18N.getLabel('OBPOS_SetAsDefault')]}
-                ]},
-                {kind: B.KindJQuery('div'), attr: {'style': 'border: 1px solid #F0F0F0; float: left;'}, content: [
-                  {kind: B.KindJQuery('div'), attr: {'class': 'modal-dialog-profile-combo'}, content: [
-                    {kind: OB.COMP.CheckboxButton, attr: {'className': 'modal-dialog-btn-check', 'id': 'profileDefault'}}
-                  ]}
-                ]}
-              ]}
-            ]}
-          );
-        },
-
-        setBodyButtons: function () {
-          return (
-            {kind: B.KindJQuery('div'), content: [
-              {kind: OB.COMP.ProfileDialogApply},
-              {kind: OB.COMP.ProfileDialogCancel}
-            ]}
-          );
-        }
-      });
-
-      // Apply the changes
-      OB.COMP.ProfileDialogApply = OB.COMP.Button.extend({
-        isActive: true,
-        className: 'btnlink btnlink-gray modal-dialog-content-button',
-        render: function () {
-          this.$el.html(OB.I18N.getLabel('OBPOS_LblApply'));
-          return this;
-        },
-        clickEvent: function (e) {
-          if (OB.COMP.ProfileDialogApply.prototype.isActive) {
-            OB.COMP.ProfileDialogApply.prototype.isActive = false;
-            var newLanguageId = $('#profileLanguageId').val(),
-                newRoleId = $('#profileRoleId').val(),
-                isDefault = $('#profileDefault').hasClass('active'),
-                actionURL = '../../org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
-                postData = {
-                  'language': newLanguageId,
-                  'role': newRoleId,
-                  'default': isDefault,
-                  'defaultRoleProperty': 'oBPOSDefaultPOSRole'
-                };
-            $.ajax({
-              url: actionURL,
-              type: 'POST',
-              contentType: 'application/json;charset=utf-8',
-              dataType: 'json',
-              data: JSON.stringify(postData),
-              success: function (data, textStatus, jqXHR) {
-                if(data.result === 'success') {
-                  window.location.reload();
-                } else {
-                  OB.UTIL.showError(data.result);
-                }
-                OB.COMP.ProfileDialogApply.prototype.isActive = true;
-              },
-              error: function (jqXHR, textStatus, errorThrown) {
-                OB.UTIL.showError(errorThrown);
-                OB.COMP.ProfileDialogApply.prototype.isActive = true;
+enyo.kind({
+  name: 'OB.UI.ModalProfile',
+  kind: 'OB.UI.ModalAction',
+  myId: 'profileDialog',
+  header: OB.I18N.getLabel('OBPOS_ProfileDialogTitle'),
+  bodyContentClass: 'modal-dialog-content-profile',
+  bodyContent: {
+    style: 'height: 127px; background-color: #ffffff;',
+    components: [{
+      components: [{
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+        components: [{
+          style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+          content: OB.I18N.getLabel('OBPOS_Role')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        components: [{
+          kind: 'OB.UI.List',
+          name: 'roleList',
+          classes: 'modal-dialog-profile-combo',
+          renderEmpty: enyo.Control,
+          renderLine: enyo.kind({
+            kind: 'enyo.Option',
+            initComponents: function() {
+              this.setValue(this.model.get('id'));
+              this.setContent(this.model.get('_identifier'));
+              if (this.model.get('id') === this.owner.owner.owner.ctx.role.id) {
+                this.setAttribute('selected', 'selected');
               }
-            });
-          }
+            }
+          })
+        }]
+      }]
+    }, {
+      style: 'clear: both'
+    }, {
+      components: [{
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+        components: [{
+          style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+          content: OB.I18N.getLabel('OBPOS_Language')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        name: 'lang',
+        components: [{
+          kind: 'OB.UI.List',
+          name: 'langList',
+          tag: 'select',
+          classes: 'modal-dialog-profile-combo',
+          renderEmpty: enyo.Control,
+          renderLine: enyo.kind({
+            kind: 'enyo.Option',
+            initComponents: function() {
+              this.setValue(this.model.get('id'));
+              this.setContent(this.model.get('_identifier'));
+              this.setContent(this.model.get('_identifier'));
+              if (this.model.get('id') === OB.Application.language) {
+                this.setAttribute('selected', 'selected');
+              }
+            }
+          })
+        }]
+      }]
+    }, {
+      style: 'clear: both'
+    }, {
+      components: [{
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 150px; height: 40px; float: left; text-align: right;',
+        components: [{
+          style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+          content: OB.I18N.getLabel('OBPOS_SetAsDefault')
+        }]
+      }, {
+        style: 'border: 1px solid #F0F0F0; float: left;',
+        components: [{
+          classes: 'modal-dialog-profile-combo',
+          components: [{
+            kind: 'OB.UI.CheckboxButton',
+            name: 'defaultBox',
+            classes: 'modal-dialog-btn-check'
+          }]
+        }]
+      }]
+    }]
+  },
+  bodyButtons: {
+    components: [{
+      kind: 'OB.UI.ProfileDialogApply'
+    }, {
+      kind: 'OB.UI.ProfileDialogCancel'
+    }]
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    // TODO: check this, not working: this.addStyles('width: 500px;');
+    this.ctx = OB.POS.modelterminal.get('context');
+    var terminalName = OB.POS.paramTerminal;
+    var userId = this.ctx.user.id;
+    var RoleModel = Backbone.Model.extend({});
+    var RoleCollection = Backbone.Collection.extend({
+      model: RoleModel,
+      url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableRoles&terminalName=' + terminalName + '&userId=' + userId,
+      parse: function(response, error) {
+        if (response && response.response[0] && response.response[0].data) {
+          return response.response[0].data;
+        } else {
+          return null;
         }
-      });
+      }
+    });
+    var myRoleCollection = new RoleCollection();
+    myRoleCollection.fetch();
+    this.$.bodyContent.$.roleList.setCollection(myRoleCollection);
 
-      // Cancel
-      OB.COMP.ProfileDialogCancel = OB.COMP.Button.extend({
-        attributes: {
-          'data-dismiss': 'modal'
-        },
-        className: 'btnlink btnlink-gray modal-dialog-content-button',
-        render: function () {
-          this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
-          return this;
-        },
-        clickEvent: function (e) {
+
+    var LanguageModel = Backbone.Model.extend({});
+    var LanguageCollection = Backbone.Collection.extend({
+      model: LanguageModel,
+      url: '../../org.openbravo.retail.posterminal.service.profileutils?command=availableLanguages',
+      parse: function(response, error) {
+        if (response && response.response[0] && response.response[0].data) {
+          return response.response[0].data;
+        } else {
+          return null;
         }
-      });
+      }
+    });
+    var myLanguageCollection = new LanguageCollection();
+    myLanguageCollection.fetch();
+    this.$.bodyContent.$.langList.setCollection(myLanguageCollection);
+  }
+});
 
-      this.dialogsContainer.append(B({kind: OB.COMP.ModalProfile}).$el);
 
-    },this);
-  };
+enyo.kind({
+  name: 'OB.UI.ProfileDialogApply',
+  kind: 'OB.UI.Button',
+  isActive: true,
+  content: OB.I18N.getLabel('OBPOS_LblApply'),
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  tap: function() {
+    if (!this.isActive) {
+      return;
+    }
+    this.isActive = false;
 
-}());
+    var newLanguageId = this.owner.owner.$.bodyContent.$.langList.getValue(),
+        newRoleId = this.owner.owner.$.bodyContent.$.roleList.getValue(),
+        isDefault = this.owner.owner.$.bodyContent.$.defaultBox.checked,
+        actionURL = '../../org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
+        postData = {
+        'language': newLanguageId,
+        'role': newRoleId,
+        'default': isDefault,
+        'defaultRoleProperty': 'oBPOSDefaultPOSRole'
+        };
+    $.ajax({
+      url: actionURL,
+      type: 'POST',
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      data: JSON.stringify(postData),
+      success: function(data, textStatus, jqXHR) {
+        if (data.result === 'success') {
+          window.location.reload();
+        } else {
+          OB.UTIL.showError(data.result);
+        }
+        this.isActive = true;
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        OB.UTIL.showError(errorThrown);
+        this.isActive = true;
+      }
+    });
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ProfileDialogCancel',
+  kind: 'OB.UI.Button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel'),
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  attributes: {
+    'data-dismiss': 'modal'
+  }
+});

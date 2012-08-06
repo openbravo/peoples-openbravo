@@ -336,7 +336,6 @@ enyo.kind({
   initComponents: function() {
     //this.terminal = terminal;
     this.inherited(arguments);
-    debugger;
 
     this.terminal.on('change:context', function() {
       var ctx = this.terminal.get('context');
@@ -520,7 +519,6 @@ enyo.kind({
   }],
   initComponents: function() {
     this.inherited(arguments);
-    debugger;
     this.$.username.setContent(this.username);
     this.$.role.setContent(this.role);
   }

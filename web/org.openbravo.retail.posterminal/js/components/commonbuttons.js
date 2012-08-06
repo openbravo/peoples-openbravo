@@ -242,8 +242,20 @@
       return this;
     }
   });
+  
+  enyo.kind({
+	  name: 'OB.UI.CheckboxButton',
+	  tag: 'button',
+	  classes: 'btn-check',
+	  checked: false,
+	  tap: function() {
+		  this.checked = !this.checked;
+		  this.addRemoveClass('active', this.checked);
+	  }
+	  
+  });
 
-  // Checkbox Button
+  // Checkbox Button: OB.UI.CheckboxButton
   OB.COMP.CheckboxButton = Backbone.View.extend({
     tagName: 'button',
     attributes: {
@@ -704,6 +716,7 @@
     }],
 
     initComponents: function() {
+    	console.log('initComponents modalAction')
       this.inherited(arguments);
       this.$.header.setContent(this.header);
 

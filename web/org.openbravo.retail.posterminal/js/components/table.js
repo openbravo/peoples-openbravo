@@ -95,8 +95,11 @@
     });
   };
 
+  
+  
   enyo.kind({
     name: 'OB.UI.List',
+    kind: 'enyo.Select',
     published: {
       collection: null
     },
@@ -177,6 +180,7 @@
       //      }
     }
   });
+  
 
   enyo.kind({
     name: 'OB.UI.Table',

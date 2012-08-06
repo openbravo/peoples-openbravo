@@ -9,38 +9,30 @@
 
 /*global B, $, _, Backbone, window, confirm, OB, localStorage */
 
-(function () {
+(function() {
   var modelterminal = OB.POS.modelterminal;
 
- // var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
- //terminal.setModel(modelterminal);
- // OB.POS.terminal = terminal;
-
-  var modalProfile = new OB.COMP.ModalProfile($('#dialogsContainer'));
-  modalProfile.setModel(modelterminal);
-
   // alert all errors
-  window.onerror = function (e) {
+  window.onerror = function(e) {
     if (typeof(e) === 'string') {
       OB.UTIL.showError(e);
     }
   };
 
-  modelterminal.on('ready', function () {
-    var webwindow,
-        terminal = OB.POS.modelterminal.get('terminal');
+  modelterminal.on('ready', function() {
+    var webwindow, terminal = OB.POS.modelterminal.get('terminal');
 
     // We are Logged !!!
     $(window).off('keypress');
     $('#logoutlink').css('visibility', 'visible');
 
-    function searchCurrentBP (){
+    function searchCurrentBP() {
       function errorCallback(tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
       }
 
       function successCallbackBPs(dataBps) {
-        if (dataBps){
+        if (dataBps) {
           OB.POS.modelterminal.set('businessPartner', dataBps);
           OB.POS.navigate('retail.pointofsale');
         }
@@ -57,10 +49,10 @@
 
     if (webwindow) {
       if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
-    	  searchCurrentBP();
+        searchCurrentBP();
       } else {
         OB.UTIL.showLoading(false);
-        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));        
+        alert(OB.I18N.getLabel('OBPOS_WindowNotPermissions', [OB.POS.paramWindow]));
       }
     } else {
       OB.UTIL.showLoading(false);
@@ -68,11 +60,11 @@
     }
   });
 
-  modelterminal.on('loginsuccess', function () {
+  modelterminal.on('loginsuccess', function() {
     modelterminal.load();
   });
 
-  modelterminal.on('logout', function () {
+  modelterminal.on('logout', function() {
 
     // Logged out. go to login window
     modelterminal.off('loginfail');
@@ -85,17 +77,27 @@
     //window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
-  $(document).ready(function () {
-    
-    OB.POS.terminal.$.dialogsContainer.createComponent({kind: 'OB.UI.ModalLogout'}).render();
-    
-   modelterminal.load();
+  $(document).ready(function() {
 
-    modelterminal.on('online', function () {
+	  modelterminal.load();
+	  modelterminal.on('ready', function(){
+		  debugger;
+    OB.POS.terminal.$.dialogsContainer.createComponent({
+      kind: 'OB.UI.ModalLogout'
+    }).render();
+    OB.POS.terminal.$.dialogsContainer.createComponent({
+      kind: 'OB.UI.ModalProfile'
+    }).render();
+	  });
+
+
+    
+
+    modelterminal.on('online', function() {
       OB.UTIL.setConnectivityLabel('Online');
     });
 
-    modelterminal.on('offline', function () {
+    modelterminal.on('offline', function() {
       OB.UTIL.setConnectivityLabel('Offline');
     });
 
@@ -104,7 +106,7 @@
 
     beforeUnloadCallback = function() {
       if (!OB.POS.modelterminal.get('connectedToERP')) {
-        return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow'); 
+        return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
       }
     };
 
