@@ -92,7 +92,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       }
 
       // throw error message will be caught by LoginHandler
-      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+      throw new AuthenticationException(Utility.messageBD(this.conn, "IDENTIFICATION_FAILURE_TITLE", variables.getLanguage()), errorMsg);
     }
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
