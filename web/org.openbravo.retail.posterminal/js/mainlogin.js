@@ -60,8 +60,7 @@
       main: 'main'
     },
 
-    main: function(query, page) {
-    },
+    main: function(query, page) {},
 
     renderGenericWindow: function(windowName) {
       this.terminal.renderGenericWindow(windowName);
@@ -73,6 +72,10 @@
     modelterminal: new OB.Model.Terminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
+//    terminal: new OB.UI.Terminal({
+//    	test:'1',
+//      terminal: this.modelterminal
+//    }),
     hrefWindow: function(windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
     },
@@ -94,6 +97,8 @@
 
     }
   };
+  
+  OB.POS.terminal = new OB.UI.Terminal({terminal:OB.POS.modelterminal});
 
   OB.Constants = {
     FIELDSEPARATOR: '$'

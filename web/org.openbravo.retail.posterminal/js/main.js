@@ -12,9 +12,9 @@
 (function () {
   var modelterminal = OB.POS.modelterminal;
 
-  var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
-  terminal.setModel(modelterminal);
-  OB.POS.terminal = terminal;
+ // var terminal = new OB.COMP.Terminal($("#terminal"), $('#yourcompany'), $('#yourcompanyproperties'), $('#loggeduser'), $('#loggeduserproperties'));
+ //terminal.setModel(modelterminal);
+ // OB.POS.terminal = terminal;
 
   var modalProfile = new OB.COMP.ModalProfile($('#dialogsContainer'));
   modalProfile.setModel(modelterminal);

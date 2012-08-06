@@ -28,7 +28,7 @@
 </head>
 
 <body style="background-color: darkgray; background: url(img/BACKGROUND-PNG24.png) top left">
-  <div id="container" class="container">
+  <!-- div id="container" class="container">
     <div id="topsection" class="section">
       <div class="row" style="height: 50px; vertical-align: middle; display: table-cell;">
         <div class="span12" style="color: white; font-size: 16px;">
@@ -54,9 +54,9 @@
             <div style="display: inline-block; float: left; margin: 4px 10px 0px 0px;">Openbravo Web POS</div>
             <div style="width: 30px; height: 30px; float: right; margin: 0px 12px 0px 0px;">
               <div class="top-right-logo">
+              </div>
             </div>
-          </div>
-          <div id="dialogsContainer"></div>
+            <div id="dialogsContainer"></div>
         </div>
 
       </div>
@@ -71,11 +71,10 @@
         </div>
       </div>
       <div id="containerWindow" style="display: none;">
-        <!-- Here it goes the POS window... -->
       </div>
     </div>
   </div>
-
+</div-->
   <script src="../org.openbravo.client.kernel/js/BigDecimal-all-1.0.1.min.js"></script>
 
 <script src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
@@ -100,6 +99,7 @@
 <script src="js/components/clock.js"></script>
 <script src="js/components/commonbuttons.js"></script>
 <script src="js/model/terminal.js"></script>
+<script src="js/components/terminal.js"></script>
 <script src="js/windows/login.js"></script>
 <script src="js/mainlogin.js"></script>
 
@@ -127,8 +127,14 @@
   </script>
 
   <script>
+ 
+  
     // Hack focus captured by location bar in android browser.
     (function () {
+        debugger;
+           
+            OB.POS.terminal.renderInto(document.body);
+        
       var locationwarning = true;
       var focuskeeper = $('<input id="focuskeeper" style="position:fixed; top:-1000px; left:-1000px;" type="text"/>');
       $("body").append(focuskeeper);

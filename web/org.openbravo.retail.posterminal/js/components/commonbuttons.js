@@ -469,7 +469,8 @@
     target: '_self',
     label: ''
   });
-
+  
+  //refactored with enyo: OB.UI.MenuAction
   OB.COMP.MenuAction = Backbone.View.extend({
     tagName: 'li',
     initialize: function() {
@@ -483,6 +484,21 @@
     },
     label: '',
     clickEvent: function(e) {}
+  });
+  
+  enyo.kind( {
+	 tag: 'li',
+	 name: 'OB.UI.MenuAction',
+	 components: [{
+		 name: 'lbl',
+		 tag:'a',
+		 style: 'padding: 12px 15px 12px 15px;',
+		 attributes: {href: '#'},
+	 }],
+	 initComponents: function(){
+		 this.inherited(arguments);
+		 this.$.lbl.setContent(this.label);
+	 }
   });
 
 
