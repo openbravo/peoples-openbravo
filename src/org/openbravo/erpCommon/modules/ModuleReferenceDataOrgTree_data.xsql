@@ -83,7 +83,7 @@
                      CASE WHEN AD_ORGMODULE.CHECKSUM NOT LIKE '%'|| AD_DATASET.CHECKSUM  ||'%' THEN 'Y' ELSE '' END AS Update_Available,
                      m.seqno
            FROM AD_Module M left join AD_DATASET on M.ad_module_id = AD_DATASET.ad_module_id
-			    LEFT JOIN AD_ORGMODULE ON M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID
+			    LEFT JOIN AD_ORGMODULE ON (M.AD_MODULE_ID = AD_ORGMODULE.AD_MODULE_ID AND AD_ORGMODULE.AD_Client_ID = ? AND AD_ORGMODULE.AD_ORG_ID = ? )
           WHERE M.TYPE = 'M'
             AND M.ISACTIVE = 'Y'
             AND AD_DATASET.ISACTIVE = 'Y'
@@ -113,6 +113,8 @@
           ]]>
       </Sql>
       <Parameter name="lang"/>
+      <Parameter name="client"/>
+      <Parameter name="org"/>
       <Parameter name="client"/>
       <Parameter name="client"/>
       <Parameter name="org"/>
