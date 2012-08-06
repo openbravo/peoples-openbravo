@@ -324,7 +324,7 @@ isc.OBGrid.addProperties({
           var fnd = false,
               j;
           for (j = 0; j < length; j++) {
-            if (fields[j].displayField === fullPropName) {
+            if (fields[j].displayField === fullPropName || fields[j].criteriaField === fullPropName) {
               fnd = true;
               break;
             }
@@ -398,6 +398,10 @@ isc.OBGrid.addProperties({
         }
 
         field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
+
+        if (field.criteriaField) {
+          field.filterEditorProperties.criteriaField = field.criteriaField;
+        }
 
         if (field.isLink) {
           // store the originalFormatCellValue if not already set
@@ -559,11 +563,10 @@ isc.OBGrid.addProperties({
       }
       var value = criterion.value;
       // see the description in setValuesAsCriteria above
-      if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
-        var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
-        prop = prop.substring(0, index);
+      var separatorIndex = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
+      if (separatorIndex !== -1) {
+        prop = prop.substring(0, separatorIndex);
       }
-
       var field = this.filterEditor.getField(prop);
       // criterion.operator is set in case of an and/or expression
       if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {
