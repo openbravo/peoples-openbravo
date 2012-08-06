@@ -223,22 +223,17 @@
 
 enyo.kind({
   name: 'OB.UI.Terminal',
-  tag: 'div',
   classes: 'container',
   components: [{
-    tag: 'div',
     classes: 'section',
     name: 'topsection',
     components: [{
-      tag: 'div',
       classes: 'row',
       style: 'height: 50px; vertical-align: middle; display: table-cell;',
       components: [{
-        tag: 'div',
         classes: 'span12',
         style: 'color: white; font-size: 16px;',
         components: [{
-          tag: 'div',
           style: 'display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;',
           components: [{
             name: 'online',
@@ -252,11 +247,9 @@ enyo.kind({
               content: 'Online'
             }]
           }, {
-            tag: 'div',
             name: 'terminal',
             style: 'display: inline-block; margin-left: 50px;'
           }, {
-            tag: 'div',
             classes: 'dropdown',
             style: 'display: inline-block; margin-left: 50px;',
             components: [{
@@ -268,24 +261,19 @@ enyo.kind({
                 'data-toggle': 'dropdown'
               }
             }, {
-              tag: 'div',
               classes: 'dropdown-menu',
               style: 'color: black; width: 350px;',
               components: [{
-                tag: 'div',
                 style: 'height: 60px; background-repeat: no-repeat; background-position: center center; background-image: url("../../utility/ShowImageLogo?logo=yourcompanymenu");'
               }, {
-                tag: 'div',
                 name: 'yourcompanyproperties',
                 style: 'display: block; padding: 10px; float: left; background-color: #FFF899; line-height: 23px;'
 
               }, {
-                tag: 'div',
                 style: 'clear: both;'
               }]
             }]
           }, {
-            tag: 'div',
             style: 'display: inline-block; margin-left: 50px;',
             classes: 'dropdown',
             components: [{
@@ -297,7 +285,6 @@ enyo.kind({
                 href: '#'
               }
             }, {
-              tag: 'div',
               name: 'loggeduserproperties',
               classes: 'dropdown-menu',
               style: 'color: black; padding: 0px; width: 350px;'
@@ -305,21 +292,16 @@ enyo.kind({
           }]
 
         }, {
-          tag: 'div',
           style: 'display: inline-block; float: right;',
           components: [{
-            tag: 'div',
             style: 'display: inline-block; float: left; margin: 4px 10px 0px 0px;',
             content: 'Openbravo Web POS'
           }, {
-            tag: 'div',
             style: 'width: 30px; height: 30px; float: right; margin: 0px 12px 0px 0px;',
             components: [{
-              tag: 'div',
               classes: 'top-right-logo'
             }]
           }, {
-            tag: 'div',
             name: 'dialogsContainer'
           }]
         }]
