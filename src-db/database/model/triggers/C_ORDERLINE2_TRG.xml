@@ -80,7 +80,15 @@ BEGIN
         v_QtyReservedPO := -:old.qtyordered;
         v_QtyOrderReservedPO := -:old.quantityorder;
       END IF;
-      M_UPDATE_STORAGE_PENDING(:old.AD_Client_ID, :old.AD_Org_ID, :old.UpdatedBy, :old.M_Product_ID, :old.M_Warehouse_ID, :old.M_AttributeSetInstance_ID, :old.C_UOM_ID, :old.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+      SELECT COUNT(*)
+        INTO V_STOCKED
+        FROM M_PRODUCT
+        WHERE M_Product_ID=:old.M_PRODUCT_ID
+          AND IsStocked='Y'
+          AND ProductType='I';
+      IF V_STOCKED > 0 THEN
+        M_UPDATE_STORAGE_PENDING(:old.AD_Client_ID, :old.AD_Org_ID, :old.UpdatedBy, :old.M_Product_ID, :old.M_Warehouse_ID, :old.M_AttributeSetInstance_ID, :old.C_UOM_ID, :old.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+      END IF;
     END IF;
   END IF;
 
@@ -102,7 +110,15 @@ BEGIN
         v_QtyReservedPO := :new.qtyordered;
         v_QtyOrderReservedPO := :new.quantityorder;
       END IF;
-      M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+      SELECT COUNT(*)
+      INTO V_STOCKED
+      FROM M_PRODUCT
+      WHERE M_Product_ID=:NEW.M_PRODUCT_ID
+        AND IsStocked='Y'
+        AND ProductType='I';
+      IF V_STOCKED > 0 THEN
+        M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
+      END IF;
     END IF;
   END IF;
 
