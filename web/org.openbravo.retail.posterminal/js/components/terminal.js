@@ -325,30 +325,26 @@ enyo.kind({
         }]
       }]
     }, {
-      tag: 'div',
       components: [{
-        tag: 'div',
         name: 'containerLoading',
         components: [{
-          tag: 'div',
           classes: 'POSLoadingCenteredBox',
           components: [{
-            tag: 'div',
             classes: 'POSLoadingPromptLabel',
             content: 'Loading...'
           }, {
-            tag: 'div',
             classes: 'POSLoadingProgressBar',
             components: [{
-              tag: 'div',
               classes: 'POSLoadingProgressBarImg'
             }]
           }]
-        }]
-      }, {
-        tag: 'div',
+        }],
         makeId: function() {
-          return 'containerWindow'
+        	return 'containerLoading';
+        }
+      }, {
+        makeId: function() {
+          return 'containerWindow';
         },
         name: 'containerWindow'
       }]
