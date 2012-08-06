@@ -86,8 +86,9 @@
   });
 
   $(document).ready(function () {
-    // Entry Point
-    $('#dialogsContainer').append(B({kind: OB.COMP.ModalLogout}).$el);
+    
+    OB.POS.terminal.$.dialogsContainer.createComponent({kind: 'OB.UI.ModalLogout'}).render();
+    
    modelterminal.load();
 
     modelterminal.on('online', function () {

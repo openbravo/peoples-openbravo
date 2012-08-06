@@ -469,7 +469,7 @@
     target: '_self',
     label: ''
   });
-  
+
   //refactored with enyo: OB.UI.MenuAction
   OB.COMP.MenuAction = Backbone.View.extend({
     tagName: 'li',
@@ -485,20 +485,22 @@
     label: '',
     clickEvent: function(e) {}
   });
-  
-  enyo.kind( {
-	 tag: 'li',
-	 name: 'OB.UI.MenuAction',
-	 components: [{
-		 name: 'lbl',
-		 tag:'a',
-		 style: 'padding: 12px 15px 12px 15px;',
-		 attributes: {href: '#'},
-	 }],
-	 initComponents: function(){
-		 this.inherited(arguments);
-		 this.$.lbl.setContent(this.label);
-	 }
+
+  enyo.kind({
+    tag: 'li',
+    name: 'OB.UI.MenuAction',
+    components: [{
+      name: 'lbl',
+      tag: 'a',
+      style: 'padding: 12px 15px 12px 15px;',
+      attributes: {
+        href: '#'
+      },
+    }],
+    initComponents: function() {
+      this.inherited(arguments);
+      this.$.lbl.setContent(this.label);
+    }
   });
 
 
@@ -572,7 +574,7 @@
       // custom bootstrap event, no need to prevent default
     }
   });
-
+  
   // reimplemented with enyo: OB.UI.ModalAction
   OB.COMP.ModalAction = Backbone.View.extend({
     tagName: 'div',
@@ -710,7 +712,10 @@
 
       this.$.bodyButtons.setClasses(this.bodyButtonsClass);
       this.$.bodyButtons.createComponent(this.bodyButtons);
-    }
+    }, 
+    makeId: function() {
+        return this.myId || this.inherited(arguments);
+      }
   });
 
   OB.COMP.CustomView = Backbone.View.extend({
