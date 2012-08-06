@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-OB.OBPOSCasgMgmt.UI.DoneButton = OB.COMP.RegularButton.extend({
+OB.OBPOSCashMgmt.UI.DoneButton = OB.COMP.RegularButton.extend({
   _id: 'cashmgmtnextbutton',
   label: OB.I18N.getLabel('OBPOS_LblDone'),
   attributes: {
@@ -25,7 +25,7 @@ OB.OBPOSCasgMgmt.UI.DoneButton = OB.COMP.RegularButton.extend({
 
 
 // Top-right panel with clock and buttons
-OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
+OB.OBPOSCashMgmt.UI.CashMgmtInfo = Backbone.View.extend({
   tagName: 'div',
   contentView: [{
     tag: 'div',
@@ -69,7 +69,7 @@ OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
         'style': 'width: 100%; float: left;'
       },
       content: [{
-        view: OB.OBPOSCasgMgmt.UI.DoneButton
+        view: OB.OBPOSCashMgmt.UI.DoneButton
       }]
     }]
   }],
@@ -80,7 +80,7 @@ OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.CashMgmtInfo',
+  name: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
   components: [{
     style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{ //clock here
@@ -93,7 +93,7 @@ enyo.kind({
     }, {
       style: 'padding: 5px; float: right;',
       components: [{
-        kind: 'OB.OBPOSCasgMgmt.UI.CancelButton'
+        kind: 'OB.OBPOSCashMgmt.UI.CancelButton'
       }]
     }, {
       // done button
@@ -102,14 +102,14 @@ enyo.kind({
         align: 'center'
       },
       components: [{
-        kind: 'OB.OBPOSCasgMgmt.UI.DoneButton'
+        kind: 'OB.OBPOSCashMgmt.UI.DoneButton'
       }]
     }]
   }]
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.DoneButton',
+  name: 'OB.OBPOSCashMgmt.UI.DoneButton',
   kind: 'OB.UI.RegularButton',
   classes: 'btnlink-white btnlink-fontgray',
   style: 'min-width: 115px;',
@@ -120,7 +120,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.CancelButton',
+  name: 'OB.OBPOSCashMgmt.UI.CancelButton',
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-white btnlink-fontgray',
   content: OB.I18N.getLabel('OBPOS_LblCancel'),

@@ -11,7 +11,7 @@
 
 // Renders lines of deposits/drops
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.RenderDepositLine',
+  name: 'OB.OBPOSCashMgmt.UI.RenderDepositLine',
   components: [{
     classes: 'row-fluid',
     components: [{
@@ -56,7 +56,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.RenderTotal',
+  name: 'OB.OBPOSCashMgmt.UI.RenderTotal',
   tag: 'span',
   published: {
     total: null
@@ -77,9 +77,9 @@ enyo.kind({
   }
 });
 
-//Renders each of the payment types with their summary and a list of deposits/drops (OB.OBPOSCasgMgmt.UI.RenderDepositLine)
+//Renders each of the payment types with their summary and a list of deposits/drops (OB.OBPOSCashMgmt.UI.RenderDepositLine)
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.RenderDepositsDrops',
+  name: 'OB.OBPOSCashMgmt.UI.RenderDepositsDrops',
   components: [
   // separator
   {
@@ -132,7 +132,7 @@ enyo.kind({
     name: 'theList',
     listStyle: 'list',
     kind: 'OB.UI.Table',
-    renderLine: 'OB.OBPOSCasgMgmt.UI.RenderDepositLine',
+    renderLine: 'OB.OBPOSCashMgmt.UI.RenderDepositLine',
     renderEmpty: 'enyo.Control'
   },
 
@@ -149,7 +149,7 @@ enyo.kind({
         style: 'padding: 10px 20px 10px 0px;  float: right;',
         components: [{
           name: 'total',
-          kind: 'OB.OBPOSCasgMgmt.UI.RenderTotal',
+          kind: 'OB.OBPOSCashMgmt.UI.RenderTotal',
           style: 'float:right; font-weight: bold;'
         }]
       }]
@@ -181,10 +181,10 @@ enyo.kind({
   }
 });
 
-//Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
+//Renders the summary of deposits/drops and contains a list (OB.OBPOSCashMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment type
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.ListDepositsDrops',
+  name: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops',
   components: [{
     style: 'overflow:auto; height: 500px; margin: 5px',
     components: [{
@@ -212,7 +212,7 @@ enyo.kind({
           }, {
             name: 'depositDropsList',
             kind: 'OB.UI.Table',
-            renderLine: 'OB.OBPOSCasgMgmt.UI.RenderDepositsDrops',
+            renderLine: 'OB.OBPOSCashMgmt.UI.RenderDepositsDrops',
             renderEmpty: 'enyo.Control',
             listStyle: 'list'
           }]

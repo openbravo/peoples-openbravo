@@ -12,7 +12,7 @@
 
 // Numeric keyboard with buttons for each payment method accepting drops/deposits
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard',
+  name: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
   getPayment: function(id, key, name, identifier, type) {
     return {

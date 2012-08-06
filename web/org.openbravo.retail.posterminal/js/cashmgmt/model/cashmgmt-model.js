@@ -10,30 +10,30 @@
  */
 
 
-OB.OBPOSCasgMgmt = OB.OBPOSCasgMgmt || {};
-OB.OBPOSCasgMgmt.Model = OB.OBPOSCasgMgmt.Model || {};
-OB.OBPOSCasgMgmt.UI = OB.OBPOSCasgMgmt.UI || {};
+OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
+OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
+OB.OBPOSCashMgmt.UI = OB.OBPOSCashMgmt.UI || {};
 
 // Data models
-OB.OBPOSCasgMgmt.Model.DepositsDrops = Backbone.Model.extend({
+OB.OBPOSCashMgmt.Model.DepositsDrops = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositsDrops',
   modelName: 'DataDepositsDrops',
   online: true
 });
 
-OB.OBPOSCasgMgmt.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
+OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtPayments',
   modelName: 'DataCashMgmtPaymentMethod',
   online: true
 });
 
-OB.OBPOSCasgMgmt.Model.DropEvents = Backbone.Model.extend({
+OB.OBPOSCashMgmt.Model.DropEvents = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents',
   modelName: 'DataDropEvents',
   online: true
 });
 
-OB.OBPOSCasgMgmt.Model.DepositEvents = Backbone.Model.extend({
+OB.OBPOSCashMgmt.Model.DepositEvents = Backbone.Model.extend({
   source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents',
   modelName: 'DataDepositEvents',
   online: true
@@ -41,8 +41,8 @@ OB.OBPOSCasgMgmt.Model.DepositEvents = Backbone.Model.extend({
 
 
 // Window model
-OB.OBPOSCasgMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
-  models: [OB.OBPOSCasgMgmt.Model.DepositsDrops, OB.OBPOSCasgMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCasgMgmt.Model.DropEvents, OB.OBPOSCasgMgmt.Model.DepositEvents],
+OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
+  models: [OB.OBPOSCashMgmt.Model.DepositsDrops, OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCashMgmt.Model.DropEvents, OB.OBPOSCashMgmt.Model.DepositEvents],
   init: function() {
     var depList = this.getData('DataDepositsDrops');
 

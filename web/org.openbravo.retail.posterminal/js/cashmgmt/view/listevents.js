@@ -10,7 +10,7 @@
 
 
 // Renders each of the deposit/drops destinations
-OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
+OB.OBPOSCashMgmt.UI.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
   attributes: {
     'style': 'background-color:#dddddd;  border: 1px solid #ffffff;'
   },
@@ -30,7 +30,7 @@ OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations = OB.COMP.SelectButton.extend({
 
 
 // Popup with the destinations for deposits/drops
-OB.OBPOSCasgMgmt.UI.SearchDepositEvents = Backbone.View.extend({
+OB.OBPOSCashMgmt.UI.SearchDepositEvents = Backbone.View.extend({
   tagName: 'div',
   className: 'row-fluid',
 
@@ -44,7 +44,7 @@ OB.OBPOSCasgMgmt.UI.SearchDepositEvents = Backbone.View.extend({
       content: [{
         id: 'tableview',
         view: OB.UI.TableView.extend({
-          renderLine: OB.OBPOSCasgMgmt.UI.RenderDropDepDestinations,
+          renderLine: OB.OBPOSCashMgmt.UI.RenderDropDepDestinations,
           renderEmpty: OB.COMP.RenderEmpty
         })
       }]
@@ -76,7 +76,7 @@ OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
     theHeaderText.attr('color', 'black');
   },
   getContentView: function() {
-    return OB.OBPOSCasgMgmt.UI.SearchDepositEvents.extend({
+    return OB.OBPOSCashMgmt.UI.SearchDepositEvents.extend({
       type: this.type
     });
   },
@@ -87,12 +87,12 @@ OB.UI.ModalDepositEvents = OB.COMP.Modal.extend({
 
 //Renders a modal popup with a list of reasons for drops/deposits
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+  name: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
   kind: 'OB.UI.Modal',
   modalClass: 'modal-dialog',
   bodyClass: 'modal-dialog-body',
   body: {
-    kind: 'OB.OBPOSCasgMgmt.UI.ListEvents'
+    kind: 'OB.OBPOSCashMgmt.UI.ListEvents'
   },
 
   init: function() {
@@ -102,7 +102,7 @@ enyo.kind({
 
 //Popup with the destinations for deposits/drops
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.ListEvents',
+  name: 'OB.OBPOSCashMgmt.UI.ListEvents',
   tag: 'div',
   classes: 'row-fluid',
   components: [{
@@ -114,7 +114,7 @@ enyo.kind({
         //tableview
         name: 'eventList',
         kind: 'OB.UI.Table',
-        renderLine: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
+        renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]
     }]
@@ -128,7 +128,7 @@ enyo.kind({
 
 //Renders each of the deposit/drops destinations
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.ListEventLine',
+  name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
   //tag: 'div',
   style: 'background-color:#dddddd;  border: 1px solid #ffffff;',

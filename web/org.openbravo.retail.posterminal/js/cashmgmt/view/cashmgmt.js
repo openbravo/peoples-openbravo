@@ -11,9 +11,9 @@
 
 // Cash Management main window view
 enyo.kind({
-  name: 'OB.OBPOSCasgMgmt.UI.CashManagement',
+  name: 'OB.OBPOSCashMgmt.UI.CashManagement',
   kind: 'OB.UI.WindowView',
-  windowmodel: OB.OBPOSCasgMgmt.Model.CashManagement,
+  windowmodel: OB.OBPOSCashMgmt.Model.CashManagement,
   tag: 'section',
   components: [{
     classes: 'row',
@@ -22,7 +22,7 @@ enyo.kind({
     {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCasgMgmt.UI.ListDepositsDrops'
+        kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
       }]
     },
     //2nd column
@@ -31,21 +31,21 @@ enyo.kind({
       components: [{
         classes: 'span6',
         components: [{
-          kind: 'OB.OBPOSCasgMgmt.UI.CashMgmtInfo'
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
         }, {
-          kind: 'OB.OBPOSCasgMgmt.UI.CashMgmtKeyboard'
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
         }]
       }]
     },
     //hidden stuff
     {
       components: [{
-        kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
         header: OB.I18N.getLabel('OBPOS_SelectDepositDestinations'),
         myId: 'modaldepositevents',
         type: 'DataDepositEvents'
       }, {
-        kind: 'OB.OBPOSCasgMgmt.UI.ModalDepositEvents',
+        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
         header: OB.I18N.getLabel('OBPOS_SelectDropDestinations'),
         myId: 'modaldropevents',
         type: 'DataDropEvents'
@@ -76,4 +76,4 @@ enyo.kind({
 });
 
 
-OB.POS.registerWindow('retail.cashmanagement', OB.OBPOSCasgMgmt.UI.CashManagement, 10);
+OB.POS.registerWindow('retail.cashmanagement', OB.OBPOSCashMgmt.UI.CashManagement, 10);
