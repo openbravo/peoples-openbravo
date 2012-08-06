@@ -93,13 +93,16 @@
     },
 
     renderLogin: function() {
-      var c = _.extend({}, Backbone.Events);
-      $("#containerWindow").empty().append((new OB.COMP.Login(c)).$el);
-      c.trigger('domready');
+      var loginWindow = new OB.OBPOSLogin.UI.Login({});
+      loginWindow.renderInto($('#containerWindow')[0]);
     },
 
 
     renderMain: function() {
+      if (!OB.UTIL.isSupportedBrowser()) {
+        OB.POS.modelterminal.renderLogin();
+        return false;
+      }
       var me = OB.POS.modelterminal;
 
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec({

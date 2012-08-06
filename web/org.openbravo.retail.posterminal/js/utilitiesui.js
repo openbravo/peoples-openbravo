@@ -136,6 +136,14 @@
     }, 5000);
   };
 
+  OB.UTIL.isSupportedBrowser = function () {
+    if ($.browser.webkit && window.openDatabase) { //If the browser is not supported, show message and finish.
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   OB.UTIL.showLoading = function(value) {
     if (value) {
       $('#containerLoading').css('display', '');

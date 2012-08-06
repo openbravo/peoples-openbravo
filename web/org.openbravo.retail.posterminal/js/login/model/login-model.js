@@ -9,7 +9,7 @@
 
 /*global B, $, _, Backbone, window, confirm */
 
-(function() {
+(function () {
 
 
 
@@ -17,29 +17,29 @@
   OB = window.OB || {};
   OB.Model = OB.Model || {};
   OB.Model.Util = {
-    loadModels: function(online, models, data) {
+    loadModels: function (online, models, data) {
       var queue = {};
       if (models.length === 0) {
         models.trigger('ready');
       }
 
-      _.each(models, function(item) {
+      _.each(models, function (item) {
         var ds, load;
 
         load = (online && item.prototype.online) || (!online && !item.prototype.online);
         //TODO: check permissions
         if (load) {
           if (item.prototype.local) {
-            OB.Dal.initCache(item, [], function() {
+            OB.Dal.initCache(item, [], function () {
               window.console.log('init success: ' + item.prototype.modelName);
-            }, function() {
+            }, function () {
               window.console.error('init error', arguments);
             });
           } else {
             ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
 
             queue[item.prototype.modelName] = false;
-            ds.on('ready', function() {
+            ds.on('ready', function () {
               if (data) {
                 data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
               }
@@ -60,9 +60,9 @@
       main: 'main'
     },
 
-    main: function(query, page) {},
+    main: function (query, page) {},
 
-    renderGenericWindow: function(windowName) {
+    renderGenericWindow: function (windowName) {
       this.terminal.renderGenericWindow(windowName);
     }
   });
@@ -72,33 +72,35 @@
     modelterminal: new OB.Model.Terminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
-//    terminal: new OB.UI.Terminal({
-//    	test:'1',
-//      terminal: this.modelterminal
-//    }),
-    hrefWindow: function(windowname) {
+    //    terminal: new OB.UI.Terminal({
+    //      test:'1',
+    //      terminal: this.modelterminal
+    //    }),
+    hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal) + '&window=' + window.encodeURIComponent(windowname);
     },
-    logout: function(callback) {
+    logout: function (callback) {
       this.modelterminal.logout();
     },
-    lock: function(callback) {
+    lock: function (callback) {
       this.modelterminal.lock();
     },
     paymentProviders: [],
     windows: {},
-    navigate: function(route) {
+    navigate: function (route) {
       this.modelterminal.router.navigate(route, {
         trigger: true
       });
     },
-    registerWindow: function(windowName, window) {
+    registerWindow: function (windowName, window) {
       this.modelterminal.registerWindow(windowName, window);
 
     }
   };
-  
-  OB.POS.terminal = new OB.UI.Terminal({terminal:OB.POS.modelterminal});
+
+  OB.POS.terminal = new OB.UI.Terminal({
+    terminal: OB.POS.modelterminal
+  });
 
   OB.Constants = {
     FIELDSEPARATOR: '$'
@@ -110,7 +112,7 @@
 
   OB.I18N.labels = {};
 
-  OB.I18N.getLabel = function(key, params, object, property) {
+  OB.I18N.getLabel = function (key, params, object, property) {
     if (!OB.I18N.labels[key]) {
       if (object && property) {
         OB.I18N.getLabelFromServer(key, params, object, property);
@@ -134,7 +136,7 @@
     return label;
   };
 
-  $(document).ready(function() {
+  $(document).ready(function () {
 
     OB.POS.modelterminal.off('loginfail');
     $(window).off('keypress');
@@ -169,11 +171,11 @@
     //    }
     //
     //    preRenderActions();
-    OB.POS.modelterminal.on('online', function() {
+    OB.POS.modelterminal.on('online', function () {
       OB.UTIL.setConnectivityLabel('Online');
     });
 
-    OB.POS.modelterminal.on('offline', function() {
+    OB.POS.modelterminal.on('offline', function () {
       OB.UTIL.setConnectivityLabel('Offline');
     });
 
