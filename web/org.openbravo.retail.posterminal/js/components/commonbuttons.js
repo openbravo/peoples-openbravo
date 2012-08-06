@@ -45,6 +45,12 @@
   });
 
   enyo.kind({
+    name: 'OB.UI.ModalDialogButton',
+    kind: 'OB.UI.RegularButton',
+    classes: 'btnlink-gray modal-dialog-content-button'
+  });
+
+  enyo.kind({
     name: 'OB.UI.Modal',
     tag: 'div',
     classes: 'modal hide fade',
