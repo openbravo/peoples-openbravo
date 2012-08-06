@@ -94,7 +94,7 @@
 
     renderLogin: function() {
       var loginWindow = new OB.OBPOSLogin.UI.Login({});
-      loginWindow.renderInto($('#containerWindow')[0]);
+      loginWindow.renderInto(enyo.dom.byId('containerWindow'));
     },
 
 
