@@ -10,7 +10,7 @@
 OB.Model.WindowModel = Backbone.Model.extend({
   data: {},
 
-  initialize: function() {
+  load: function() {
     var me = this,
         queue = {};
     if (!this.models) {

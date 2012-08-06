@@ -35,6 +35,7 @@ enyo.kind({
       }
       OB.POS.modelterminal.trigger('window:ready', this);
     }, this);
+    this.model.load();
   },
   init: function() {
     // Calling init in sub components
