@@ -354,7 +354,10 @@
                     v_QtyStorage:=0;
                     v_ResultStr:='FetchingData';
                     FETCH CUR_STOCK INTO v_storage;
-                    EXIT WHEN CUR_STOCK%NOTFOUND;
+                    IF CUR_STOCK%NOTFOUND THEN
+                      CUR_STOCK_ISOPEN:=false;
+                      EXIT;
+                    END IF;
                     v_QtyStorage:=v_storage.Qty;
                   END LOOP;
                 END IF; --NEXT_PRODUCT
