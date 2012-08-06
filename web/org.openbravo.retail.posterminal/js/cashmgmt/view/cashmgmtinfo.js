@@ -81,27 +81,22 @@ OB.OBPOSCasgMgmt.UI.CashMgmtInfo = Backbone.View.extend({
 
 enyo.kind({
   name: 'OB.OBPOSCasgMgmt.UI.CashMgmtInfo',
-  tag: 'div',
   components: [{
-    tag: 'div',
     style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{ //clock here
       kind: 'OB.UI.Clock',
       classes: 'pos-clock'
     }, {
       // process info
-      tag: 'div',
       style: 'padding: 10px; float: left; width: 320px; line-height: 23px;',
       content: OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg')
     }, {
-      tag: 'div',
       style: 'padding: 5px; float: right;',
       components: [{
         kind: 'OB.OBPOSCasgMgmt.UI.CancelButton'
       }]
     }, {
       // done button
-      tad: 'div',
       style: 'width: 100%; float: left;',
       attributes: {
         align: 'center'
