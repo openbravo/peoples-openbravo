@@ -310,7 +310,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="50" y="0" width="230" height="13"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -375,7 +375,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="900" y="0" width="200" height="13"/>
 				<box rightPadding="2"/>
 				<textElement>
@@ -383,7 +383,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="1100" y="0" width="200" height="13"/>
 				<box rightPadding="2"/>
 				<textElement>
@@ -391,7 +391,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{PDNAME}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="1300" y="0" width="200" height="13"/>
 				<box rightPadding="2"/>
 				<textElement>
