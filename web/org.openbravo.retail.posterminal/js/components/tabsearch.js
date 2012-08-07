@@ -14,14 +14,29 @@
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
 
-
-  OB.UI.ButtonTabSearch = OB.COMP.ToolbarButtonTab.extend({
-    tabpanel: '#search',
+  enyo.kind({
+    name: 'OB.UI.ButtonTabSearch',
+    kind: 'OB.UI.ToolbarButtonTab',
+    tabPanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
-    shownEvent: function(e) {
-      this.options.root.keyboard.hide();
+    tap: function() {
+      //FIXME
+      //this.options.root.keyboard.show('toolbarscan');
+    },
+    initComponents: function() {
+      this.inherited(arguments);
     }
   });
+
+  //Refacorized using enyo -> OB.UI.ButtonTabSearch
+  //  OB.UI.ButtonTabSearch = OB.COMP.ToolbarButtonTab.extend({
+  //    tabpanel: '#search',
+  //    label: OB.I18N.getLabel('OBPOS_LblSearch'),
+  //    shownEvent: function(e) {
+  //      this.options.root.keyboard.hide();
+  //    }
+  //  });
+  
   OB.UI.TabSearch = Backbone.View.extend({
     tagName: 'div',
     attributes: {

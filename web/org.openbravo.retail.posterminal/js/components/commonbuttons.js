@@ -331,6 +331,33 @@
     clickEvent: function(e) {}
   });
 
+  // Order list
+  enyo.kind({
+    kind: 'OB.UI.Button',
+    name: 'OB.UI.ButtonTab',
+    attributes: {
+      'data-toggle': 'tab'
+    },
+    classes: 'btnlink btnlink-gray',
+    tabPanel: '#',
+    initComponents: function(){
+      this.inherited(arguments);
+      this.setAttribute('href', this.tabPanel);
+      if (this.label){
+        this.createComponent({
+          name: 'lbl',
+          tag: 'span',
+          content: this.label
+        })
+      }
+      //TODO
+      //this.receipt.on('change:gross', function() {
+      //  this.render();
+      //}, this)
+    }
+  });
+  
+  // refactored using enyo -> OB.UI.ButtonTab
   // Generic Tab Button
   OB.COMP.ButtonTab = OB.COMP.Button.extend({
     className: 'btnlink btnlink-gray',
@@ -351,7 +378,27 @@
       // custom bootstrap event, no need to prevent default
     }
   });
-
+  
+  // Order list
+  enyo.kind({
+    name: 'OB.UI.ToolbarButtonTab',
+    kind: 'OB.UI.ButtonTab',
+    attributes: {
+      'data-toggle': 'tab'
+    },
+    tap: function(){
+      //TODO
+      //OB.COMP.ButtonTab.prototype.clickEvent.call(this); // super.initialize();
+      OB.UTIL.setOrderLineInEditMode(false);
+    },
+    initComponents: function(){
+      this.inherited(arguments);
+      this.addClass('btnlink-toolbar');
+    },
+  });
+  
+  
+  // refactored using enyo -> OB.UI.ToolbarButtonTab
   // Toolbar Tab Button
   OB.COMP.ToolbarButtonTab = OB.COMP.ButtonTab.extend({
     render: function() {
