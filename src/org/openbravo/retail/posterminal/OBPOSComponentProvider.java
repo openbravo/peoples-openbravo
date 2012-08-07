@@ -92,7 +92,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/windowview",
         "main",
         // Web POS window
-        "components/keypadbasic", "components/keyboard", "components/toolbarpayment",
+        "components/keypadbasic", "components/keyboard",
+        "components/toolbarpayment",
         "components/toolbarscan",
         "components/keypadcoins",
         "components/keyboardorder",
@@ -133,6 +134,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale
         "pointofsale/model/pointofsale-model",
         "pointofsale/view/pointofsale",
+        "pointofsale/view/ps-receiptview",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-model",
