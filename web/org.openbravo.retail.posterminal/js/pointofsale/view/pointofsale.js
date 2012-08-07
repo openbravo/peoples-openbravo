@@ -137,8 +137,14 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl'
     }]
+  }, {
+    classes: 'row',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.ReceiptView'
+    }]
   }]
 });
+
 OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,
   route: 'retail.pointofsale',
