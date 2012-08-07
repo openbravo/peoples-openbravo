@@ -224,10 +224,10 @@
 
   // Register window
   //OB.POS.windows['retail.pointofsale'] = OB.COMP.PointOfSale;
-  console.log('register');
+  //console.log('register');
 //Register required models/data
-  OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence];
-  OB.POS.registerWindow('retail.pointofsale', OB.COMP.PointOfSale);
+  //OB.DATA['retail.pointofsale'] = [OB.Model.TaxRate, OB.Model.Product, OB.Model.ProductPrice, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.Order, OB.Model.DocumentSequence];
+  //OB.POS.registerWindow('retail.pointofsale', OB.COMP.PointOfSale);
 
   
 //}());

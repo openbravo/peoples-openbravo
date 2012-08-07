@@ -241,6 +241,19 @@
   });
 
   // Toolbar Button
+  enyo.kind({
+    name: 'OB.UI.ToolbarButton',
+    kind: 'OB.UI.RegularButton',
+    classes: 'btnlink-toolbar',
+    initComponents: function() {
+      this.inherited(arguments);
+      if (this.icon) {
+        this.addClass(this.icon);
+      }
+    }
+  });
+
+  //  // Toolbar Button
   OB.COMP.ToolbarButton = OB.COMP.RegularButton.extend({
     render: function() {
       OB.COMP.RegularButton.prototype.render.call(this); // super.initialize();
@@ -353,10 +366,24 @@
   });
 
   // Menu Button
+  // Toolbar Button
+  enyo.kind({
+    name: 'OB.UI.ToolbarMenuButton',
+    kind: 'OB.UI.ToolbarButton',
+    attributes: {
+      'data-toggle': 'dropdown'
+    }
+  });
+
   OB.COMP.ToolbarMenuButton = OB.COMP.ToolbarButton.extend({
     attributes: {
       'data-toggle': 'dropdown'
     }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.ToolbarMenu',
+    tag: 'textarea'
   });
 
   OB.COMP.ToolbarMenu = Backbone.View.extend({

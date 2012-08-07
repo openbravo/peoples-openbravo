@@ -190,6 +190,7 @@
       if (w.renderInto) {
     	  //enyo window
     	  w.renderInto(document.getElementById('containerWindow'));
+    	  OB.UTIL.showLoading(false);
       }
 
       //TODO: load OB.DATA??? It should be done only if needed...

@@ -93,10 +93,19 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/toolbarpayment",
-        "components/toolbarscan", "components/keypadcoins", "components/keyboardorder",
-        "windows/login", "windows/posbuttons", "data/datamaster", "data/dataordersave",
-        "data/dataordertaxes", "data/dataorderdiscount", "components/renderorder",
-        "components/listreceipts", "components/modalreceipts", "components/renderbusinesspartner",
+        "components/toolbarscan",
+        "components/keypadcoins",
+        "components/keyboardorder",
+        "windows/login",
+        "windows/posbuttons",
+        "data/datamaster",
+        "data/dataordersave",
+        "data/dataordertaxes",
+        "data/dataorderdiscount",
+        "components/renderorder",
+        "components/listreceipts",
+        "components/modalreceipts",
+        "components/renderbusinesspartner",
         "components/searchbps",
         "components/modalbps",
         "components/scan",
@@ -120,6 +129,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/businesspartner",
         "components/listreceiptscounter",
         "windows/pointofsale",
+
+        // Point of sale
+        "pointofsale/model/pointofsale-model",
+        "pointofsale/view/pointofsale",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-model",
