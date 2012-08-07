@@ -14,6 +14,21 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  enyo.kind({
+    name: 'OB.UI.ButtonTabScan',
+    kind: 'OB.UI.ToolbarButtonTab',
+    tabPanel: '#scan',
+    label: OB.I18N.getLabel('OBPOS_LblScan'),
+    tap: function() {
+      //FIXME
+      //this.options.root.keyboard.show('toolbarscan');
+    },
+    initComponents: function() {
+      this.inherited(arguments);
+    }
+  });
+  
+  //Refacorized using enyo -> OB.UI.ButtonTabScan
   OB.COMP.ButtonTabScan = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),

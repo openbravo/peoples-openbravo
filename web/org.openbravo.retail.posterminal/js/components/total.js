@@ -9,23 +9,41 @@
 
 /*global B, $, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
   // Order list
+  enyo.kind({
+    name: 'OB.UI.Total',
+    tag: 'span',
+    attributes: {
+      style: 'font-weight:bold;'
+    },
+    initComponents: function() {
+      //FIXME
+      this.setContent('100.25');
+      //TODO
+      //this.receipt.on('change:gross', function() {
+      //  this.render();
+      //}, this)
+    }
+  });
+
   OB.COMP.Total = Backbone.View.extend({
     tagName: 'span',
-    attributes: {'style': 'font-weight:bold;'},
-    initialize: function () {
+    attributes: {
+      'style': 'font-weight:bold;'
+    },
+    initialize: function() {
       this.receipt = this.options.root.modelorder;
 
       this.receipt.on('change:gross', function() {
         this.render();
       }, this);
     },
-    render: function () {
+    render: function() {
       this.$el.text(this.receipt.printTotal());
       return this;
     }
