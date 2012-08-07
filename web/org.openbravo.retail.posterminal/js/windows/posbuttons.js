@@ -30,7 +30,6 @@
   //      this.options.modelorderlist.addNewOrder();
   //    }
   //  });
-  
   enyo.kind({
     name: 'OB.UI.ButtonDelete',
     kind: 'OB.UI.ToolbarButton',
@@ -47,7 +46,6 @@
   //      $('#modalDeleteReceipt').modal('show');
   //    }
   //  });
-  
   enyo.kind({
     name: 'OB.UI.ButtonPrint',
     kind: 'OB.UI.ToolbarButton',
@@ -70,7 +68,15 @@
   //      });
   //    }
   //  });
-  
+  enyo.kind({
+    name: 'OB.UI.MenuReturn',
+    kind: 'OB.UI.MenuAction',
+    label: OB.I18N.getLabel('OBPOS_LblReturn'),
+    tap: function () {
+    	//TODO: do this...
+    }
+  });
+
   OB.COMP.MenuReturn = OB.COMP.MenuAction.extend({
     label: OB.I18N.getLabel('OBPOS_LblReturn'),
     clickEvent: function(e) {
@@ -78,6 +84,16 @@
     }
   });
 
+  
+  enyo.kind({
+	    name: 'OB.UI.MenuInvoice',
+	    kind: 'OB.UI.MenuAction',
+	    label: OB.I18N.getLabel('OBPOS_LblInvoice'),
+	    tap: function () {
+	    	//TODO: do this...
+	    }
+	  });
+  
   OB.COMP.MenuInvoice = OB.COMP.MenuAction.extend({
     label: OB.I18N.getLabel('OBPOS_LblInvoice'),
     clickEvent: function(e) {

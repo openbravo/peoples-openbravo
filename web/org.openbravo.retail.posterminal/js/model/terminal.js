@@ -139,16 +139,17 @@
       });
     },
 
-    registerWindow: function(windowName, window) {
-      var datasources = [];
+    registerWindow: function(window) {
+      var datasources = [], windowClass, windowName=window.route;
 
-      OB.POS.windows[windowName] = window;
-
+      OB.POS.windows.add(window);
+      
+      windowClass = window.windowClass;
       if (OB.DATA[windowName]) {
         // old way of defining datasources...
         datasources = OB.DATA[windowName];
-      } else if (window.prototype && window.prototype.windowmodel && window.prototype.windowmodel.prototype && window.prototype.windowmodel.prototype.models) {
-        datasources = window.prototype.windowmodel.prototype.models;
+      } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
+        datasources = windowClass.prototype.windowmodel.prototype.models;
       }
 
       _.extend(datasources, Backbone.Events);
@@ -170,7 +171,7 @@
       var webwindow, w, c = _.extend({}, Backbone.Events),
           terminal = OB.POS.modelterminal.get('terminal'),
           queue = {},
-          emptyQueue = false;
+          emptyQueue = false, windowClass;
 
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       
@@ -186,7 +187,14 @@
         OB.UTIL.showLoading(false);
       });
       
-     var w = new OB.POS.windows[windowName](c);
+     windowClass = OB.POS.windows.where({route:windowName})[0].get('windowClass');
+     w = new windowClass(c);
+     
+     if (w.renderInto) {
+		 //enyo window
+  	  w.renderInto(document.getElementById('containerWindow'));
+  	OB.UTIL.showLoading(false);
+     }
     },
 
     login: function(user, password, mode) {

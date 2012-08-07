@@ -261,17 +261,17 @@
       return this;
     }
   });
-  
+
   enyo.kind({
-	  name: 'OB.UI.CheckboxButton',
-	  tag: 'button',
-	  classes: 'btn-check',
-	  checked: false,
-	  tap: function() {
-		  this.checked = !this.checked;
-		  this.addRemoveClass('active', this.checked);
-	  }
-	  
+    name: 'OB.UI.CheckboxButton',
+    tag: 'button',
+    classes: 'btn-check',
+    checked: false,
+    tap: function() {
+      this.checked = !this.checked;
+      this.addRemoveClass('active', this.checked);
+    }
+
   });
 
   // Checkbox Button: OB.UI.CheckboxButton
@@ -383,7 +383,73 @@
 
   enyo.kind({
     name: 'OB.UI.ToolbarMenu',
-    tag: 'textarea'
+    classes: 'dropdown',
+    style: 'display: inline-block; width: 100%;',
+    components: [{
+      kind: 'OB.UI.ToolbarMenuButton',
+      components: [{
+        name: 'leftIcon'
+      }, {
+        tag: 'span'
+      }, {
+        name: 'rightIcon'
+      }],
+    }, {
+      tag: 'ul',
+      classes: 'dropdown-menu',
+      name: 'menu'
+    }],
+    initComponents: function() {
+      this.inherited(arguments);
+      if (this.icon) {
+        this.$.leftIcon.addClass(this.icon);
+      }
+      if (this.iconright) {
+        this.$.rightIcon.addClass(this.iconright);
+      }
+
+      enyo.forEach(this.menuEntries, function(entry) {
+        this.$.menu.createComponent(entry);
+      }, this)
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.OBPOSPointOfSale.UI.StandardMenu',
+    kind: 'OB.UI.ToolbarMenu',
+    icon: 'btn-icon btn-icon-menu',
+    initComponents: function() {
+      // dynamically generating the menu
+      this.menuEntries = [];
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuReturn'
+      });
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuInvoice'
+      });
+
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuSeparator'
+      });
+
+      this.menuEntries.push({
+        kind: 'OB.UI.MenuItem',
+        label: OB.I18N.getLabel('OBPOS_LblOpenbravoWorkspace'),
+        url: '../..'
+      });
+
+      enyo.forEach(OB.POS.windows.filter(function(window) {
+        // show in menu only the ones with menuPosition
+        return window.get('menuPosition');
+      }), function(window) {
+        this.menuEntries.push({
+          kind: 'OB.UI.MenuItem',
+          label: window.get('menuLabel'),
+          route: window.get('route')
+        });
+      }, this);
+      this.inherited(arguments);
+    }
   });
 
   OB.COMP.ToolbarMenu = Backbone.View.extend({
@@ -457,9 +523,42 @@
     }
   });
 
+  enyo.kind({
+    name: 'OB.UI.MenuSeparator',
+    tag: 'li',
+    classes: 'divider'
+  });
+
   OB.COMP.MenuSeparator = Backbone.View.extend({
     tagName: 'li',
     className: 'divider'
+  });
+
+  enyo.kind({
+    name: 'OB.UI.MenuItem',
+    tag: 'li',
+    components: [{
+      tag: 'a',
+      name: 'item',
+      style: 'padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;',
+      attributes: {
+        href: '#'
+      }
+    }],
+    initComponents: function() {
+    	//TODO permissions + online
+      this.inherited(arguments);
+      this.$.item.setContent(this.label);
+    },
+    tap: function() {
+      debugger;
+      if (this.route) {
+        OB.POS.navigate(this.route);
+      }
+      if (this.url) {
+        window.open(this.url, '_blank');
+      }
+    }
   });
 
   OB.COMP.MenuItem = Backbone.View.extend({
@@ -619,7 +718,7 @@
       // custom bootstrap event, no need to prevent default
     }
   });
-  
+
   // reimplemented with enyo: OB.UI.ModalAction
   OB.COMP.ModalAction = Backbone.View.extend({
     tagName: 'div',
@@ -749,7 +848,7 @@
     }],
 
     initComponents: function() {
-    	console.log('initComponents modalAction')
+      console.log('initComponents modalAction')
       this.inherited(arguments);
       this.$.header.setContent(this.header);
 
@@ -758,10 +857,10 @@
 
       this.$.bodyButtons.setClasses(this.bodyButtonsClass);
       this.$.bodyButtons.createComponent(this.bodyButtons);
-    }, 
+    },
     makeId: function() {
-        return this.myId || this.inherited(arguments);
-      }
+      return this.myId || this.inherited(arguments);
+    }
   });
 
   OB.COMP.CustomView = Backbone.View.extend({

@@ -45,7 +45,8 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-    webwindow = OB.POS.windows[OB.POS.paramWindow];
+    debugger;
+    webwindow = OB.POS.windows.where({route:OB.POS.paramWindow})[0].get('windowClass');
 
     if (webwindow) {
       if (OB.POS.modelterminal.hasPermission(OB.POS.paramWindow)) {
@@ -81,7 +82,6 @@
 
 	  modelterminal.load();
 	  modelterminal.on('ready', function(){
-		  debugger;
     OB.POS.terminal.$.dialogsContainer.createComponent({
       kind: 'OB.UI.ModalLogout'
     }).render();

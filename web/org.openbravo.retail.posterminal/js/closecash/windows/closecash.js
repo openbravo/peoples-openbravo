@@ -90,5 +90,13 @@
 
   // register
  // OB.POS.windows['retail.cashup'] = OB.COMP.CloseCash;
-  OB.POS.registerWindow('retail.cashup', OB.COMP.CloseCash);
+ // OB.POS.registerWindow('retail.cashup', OB.COMP.CloseCash);
+  
+  OB.POS.registerWindow({
+	  windowClass: OB.COMP.CloseCash,
+	  route: 'retail.cashup',
+	  menuPosition: 20,
+	  menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash')
+	});
+  
 }());

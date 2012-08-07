@@ -54,7 +54,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.ButtonPrint'
   }, {
-    kind: 'OB.UI.ToolbarMenu'
+    kind: 'OB.OBPOSPointOfSale.UI.StandardMenu'
   }]
 });
 
@@ -134,4 +134,9 @@ enyo.kind({
   //  }
   ]
 });
-OB.POS.registerWindow('retail.pointofsale', OB.OBPOSPointOfSale.UI.PointOfSale, 10);
+OB.POS.registerWindow({
+  windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,
+  route: 'retail.pointofsale',
+  menuPosition: null,
+  menuLabel: 'POS'
+});
