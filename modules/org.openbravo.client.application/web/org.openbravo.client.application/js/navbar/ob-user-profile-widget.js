@@ -371,7 +371,7 @@ isc.OBUserProfile.addProperties({
     buttonLayout.addMembers(isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function () {
-        isc.OBQuickRun.hide();
+        isc.OBQuickRun.currentQuickRun.doHide();
         roleForm.doSave();
       }
     }));
