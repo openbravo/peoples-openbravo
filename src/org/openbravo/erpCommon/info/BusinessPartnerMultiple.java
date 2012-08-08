@@ -88,15 +88,22 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       if (vars.getStringParameter("clear").equals("true")) {
         vars.removeSessionValue("BusinessPartnerMultiple.key");
         vars.removeSessionValue("BusinessPartnerMultiple.name");
+        vars.removeSessionValue("BusinessPartnerMultiple.contact");
+        vars.removeSessionValue("BusinessPartnerMultiple.zip");
+        vars.removeSessionValue("BusinessPartnerMultiple.provincia");
+        vars.removeSessionValue("BusinessPartnerMultiple.bpartner");
+        vars.removeSessionValue("BusinessPartnerMultiple.city");
       }
       String strKey = vars.getGlobalVariable("inpKey", "BusinessPartnerMultiple.key", "");
       String strName = vars.getGlobalVariable("inpName", "BusinessPartnerMultiple.name", "");
-      String strContact = vars.getStringParameter("inpContact");
-      String strZIP = vars.getStringParameter("inpZIP");
-      String strProvincia = vars.getStringParameter("inpProvincia");
+      String strContact = vars.getGlobalVariable("inpContact", "BusinessPartnerMultiple.contact",
+          "");
+      String strZIP = vars.getGlobalVariable("inpZIP", "BusinessPartnerMultiple.zip", "");
+      String strProvincia = vars.getGlobalVariable("inpProvincia",
+          "BusinessPartnerMultiple.provincia", "");
       String strBpartners = vars.getGlobalVariable("inpBpartner",
           "BusinessPartnerMultiple.bpartner", "all");
-      String strCity = vars.getStringParameter("inpCity");
+      String strCity = vars.getGlobalVariable("inpCity", "BusinessPartnerMultiple.city", "");
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
