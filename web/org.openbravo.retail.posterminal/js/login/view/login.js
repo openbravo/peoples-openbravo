@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $, enyo */
+/*global enyo */
 
 (function () {
 
@@ -16,22 +16,15 @@
   OB.OBPOSLogin = window.OB.OBPOSLogin || {};
   OB.OBPOSLogin.UI = window.OB.OBPOSLogin.UI || {};
 
-  OB.OBPOSLogin.loginButtonAction = function () {
-    var u = $('#username').val();
-    var p = $('#password').val();
-    if (!u || !p) {
-      alert('Please enter your username and password');
-    } else {
-      OB.POS.modelterminal.login(u, p);
-    }
-  };
-
   enyo.kind({
     name: 'OB.OBPOSLogin.UI.UserButton',
     classes: 'login-user-button',
     user: null,
     userImage: null,
     userConnected: null,
+    events: {
+      onUserImgClick: ''
+    },
     components: [{
       classes: 'login-user-button-bottom',
       components: [{
@@ -44,11 +37,7 @@
       }]
     }],
     tap: function () {
-      var u = this.user;
-      $('#username').val(u);
-      $('#password').val('');
-      $('#password').focus();
-      //OB.POS.modelterminal.login(u, p, 'userImgPress'); // Disable 'openbravo' autologin feature
+      this.doUserImgClick();
     },
     create: function () {
       this.inherited(arguments);
@@ -70,9 +59,6 @@
     kind: 'OB.UI.ModalDialogButton',
     style: 'min-width: 115px;',
     id: 'loginaction',
-    tap: function () {
-      OB.OBPOSLogin.loginButtonAction();
-    },
     initComponents: function () {
       this.inherited(arguments);
       this.content = OB.I18N.getLabel('OBPOS_LoginButton');
@@ -116,14 +102,11 @@
               components: [{
                 classes: 'span6 login-inputs-userpassword',
                 components: [{
-                  tag: 'input',
+                  kind: 'enyo.Input',
+                  type: 'text',
                   name: 'username',
-                  id: 'username',
                   classes: 'login-inputs-username',
-                  attributes: {
-                    type: 'text',
-                    onkeydown: 'if(event && event.keyCode == 13) { OB.OBPOSLogin.loginButtonAction(); }; return true;'
-                  }
+                  onkeydown: 'handleEnterKeyDown'
                 }]
               }]
             }, {
@@ -131,14 +114,11 @@
               components: [{
                 classes: 'span6 login-inputs-userpassword',
                 components: [{
-                  tag: 'input',
+                  kind: 'enyo.Input',
+                  type: 'password',
                   name: 'password',
-                  id: 'password',
                   classes: 'login-inputs-password',
-                  attributes: {
-                    type: 'password',
-                    onkeydown: 'if(event && event.keyCode == 13) { OB.OBPOSLogin.loginButtonAction(); }; return true;'
-                  }
+                  onkeydown: 'handleEnterKeyDown'
                 }]
               }]
             }, {
@@ -155,7 +135,8 @@
                 classes: 'span2',
                 style: 'margin: 20px 0px 0px 0px; text-align: center;',
                 components: [{
-                  kind: 'OB.OBPOSLogin.UI.LoginButton'
+                  kind: 'OB.OBPOSLogin.UI.LoginButton',
+                  ontap: 'loginButtonAction'
                 }]
               }, {
                 classes: 'span2',
@@ -204,6 +185,7 @@
     }
 
     ],
+
     initComponents: function () {
       this.inherited(arguments);
 
@@ -215,13 +197,75 @@
       this.$.LoginBrowserNotSupported_P1_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P1'));
       this.$.LoginBrowserNotSupported_P2_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P2', ['Chrome, Safari, Safari (iOS)', 'Android']));
       this.$.LoginBrowserNotSupported_P3_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P3'));
+    },
 
-      this.postRenderActions();
+    handlers: {
+      onUserImgClick: 'handleUserImgClick'
+    },
+
+    handleUserImgClick: function (inSender, inEvent) {
+      var u = inEvent.originator.user;
+      this.$.username.setValue(u);
+      this.$.password.setValue('');
+      this.$.password.focus();
+      return true;
+    },
+
+    handleEnterKeyDown: function (caller, event) {
+      if (event && event.keyCode === 13) {
+        this.loginButtonAction();
+      }
+      return true;
+    },
+
+    loginButtonAction: function () {
+      var u = this.$.username.getValue(),
+          p = this.$.password.getValue();
+      if (!u || !p) {
+        alert('Please enter your username and password');
+      } else {
+        OB.POS.modelterminal.login(u, p);
+      }
+    },
+
+    setCompanyLogo: function (inSender, jsonCompanyLogo) {
+      var logoUrl = [];
+      jsonCompanyLogo = jsonCompanyLogo.response[0].data;
+      enyo.forEach(jsonCompanyLogo, function (v) {
+        logoUrl.push(v.logoUrl);
+      });
+      this.$.loginHeaderCompany.applyStyle('background-image', 'url("' + logoUrl[0] + '")');
+      return true;
+    },
+
+    setUserImages: function (inSender, jsonImgData) {
+      var name = [],
+          userName = [],
+          image = [],
+          connected = [],
+          target = this.$.loginUserContainer,
+          i;
+      jsonImgData = jsonImgData.response[0].data;
+      enyo.forEach(jsonImgData, function (v) {
+        name.push(v.name);
+        userName.push(v.userName);
+        image.push(v.image);
+        connected.push(v.connected);
+      });
+      for (i = 0; i < name.length; i++) {
+        target.createComponent({
+          kind: 'OB.OBPOSLogin.UI.UserButton',
+          user: userName[i],
+          userImage: image[i],
+          userConnected: connected[i]
+        });
+      }
+      target.render();
+      OB.UTIL.showLoading(false);
+      return true;
     },
 
     postRenderActions: function () {
-      var me = this,
-          requestA, requestB;
       OB.POS.modelterminal.on('loginfail', function (status, data) {
         var msg;
         if (data && data.messageTitle) {
@@ -233,92 +277,42 @@
         }
         msg = msg || 'Invalid user name or password.\nPlease try again.';
         alert(msg);
-        $('#password').val('');
-        $('#username').focus();
-      });
+        this.$.password.setValue('');
+        this.$.username.focus();
+      }, this);
       OB.POS.modelterminal.on('loginUserImgPressfail', function (status) {
         //If the user image press (try to login with default password) fails, then no alert is shown and the focus goes directly to the password input
-        $('#password').val('');
-        $('#password').focus();
-      });
+        this.$.password.setValue('');
+        this.$.password.focus();
+      }, this);
 
-      function setUserImages(jsonImgData) {
-        var name = [],
-            userName = [],
-            image = [],
-            connected = [],
-            target = me.$.loginUserContainer,
-            i;
-        jsonImgData = jsonImgData.response[0].data;
-        enyo.forEach(jsonImgData, function (v) {
-          name.push(v.name);
-          userName.push(v.userName);
-          image.push(v.image);
-          connected.push(v.connected);
-        });
-        for (i = 0; i < name.length; i++) {
-          target.createComponent({
-            kind: 'OB.OBPOSLogin.UI.UserButton',
-            user: userName[i],
-            userImage: image[i],
-            userConnected: connected[i]
-          });
-        }
-        target.render();
-        OB.UTIL.showLoading(false);
-        return true;
-      }
-
-      function setCompanyLogo(jsonCompanyLogo) {
-        var logoUrl = [];
-        jsonCompanyLogo = jsonCompanyLogo.response[0].data;
-        enyo.forEach(jsonCompanyLogo, function (v) {
-          logoUrl.push(v.logoUrl);
-        });
-        me.$.loginHeaderCompany.applyStyle('background-image', 'url("' + logoUrl[0] + '")');
-        return true;
-      }
-
-      requestA = new enyo.Ajax({
+      enyo.kind({
+        kind: 'enyo.Ajax',
+        name: 'OB.OBPOSLogin.UI.LoginRequest',
         url: "../../org.openbravo.retail.posterminal.service.loginutils",
         method: "GET",
         handleAs: "json",
-        contentType: 'application/json;charset=utf-8',
-        data: {
-          command: 'companyLogo',
-          terminalName: OB.POS.paramTerminal
-        },
-        success: function (inSender, inResponse) {
-          setCompanyLogo(inResponse);
-        }
+        contentType: 'application/json;charset=utf-8'
       });
-      requestA.response('success');
-      requestA.go(requestA.data);
+
+      new OB.OBPOSLogin.UI.LoginRequest({}).response(this, 'setCompanyLogo').go({
+        command: 'companyLogo',
+        terminalName: OB.POS.paramTerminal
+      });
 
       if (!OB.UTIL.isSupportedBrowser()) { //If the browser is not supported, show message and finish.
-        me.$.loginInputs.setStyle('display: none');
-        me.$.loginBrowserNotSupported.setStyle('display: block');
+        this.$.loginInputs.setStyle('display: none');
+        this.$.loginBrowserNotSupported.setStyle('display: block');
         OB.UTIL.showLoading(false);
         return true;
       }
 
-      requestB = new enyo.Ajax({
-        url: "../../org.openbravo.retail.posterminal.service.loginutils",
-        method: "GET",
-        handleAs: "json",
-        contentType: 'application/json;charset=utf-8',
-        data: {
-          command: 'userImages',
-          terminalName: OB.POS.paramTerminal
-        },
-        success: function (inSender, inResponse) {
-          setUserImages(inResponse);
-        }
+      new OB.OBPOSLogin.UI.LoginRequest({}).response(this, 'setUserImages').go({
+        command: 'userImages',
+        terminalName: OB.POS.paramTerminal
       });
-      requestB.response('success');
-      requestB.go(requestB.data);
 
-      $('#username').focus();
+      this.$.username.focus();
     }
 
   });

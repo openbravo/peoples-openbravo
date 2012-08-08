@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, Backbone */
+/*global B, $, enyo, Backbone */
 
 (function() {
 
@@ -95,6 +95,7 @@
     renderLogin: function() {
       var loginWindow = new OB.OBPOSLogin.UI.Login({});
       loginWindow.renderInto(enyo.dom.byId('containerWindow'));
+      loginWindow.postRenderActions();
     },
 
 
