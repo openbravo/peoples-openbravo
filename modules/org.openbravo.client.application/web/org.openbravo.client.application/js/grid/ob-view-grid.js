@@ -980,7 +980,7 @@ isc.OBViewGrid.addProperties({
     }, this.Super('getFilterEditorProperties', arguments));
   },
 
-  removeOrClause: function(criteria) {
+  removeOrClause: function (criteria) {
     // The original criteria is stored in the position #1
     // The criteria to select the selected record is stored in position #0
     return criteria.criteria.get(1);
