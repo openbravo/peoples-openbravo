@@ -20,8 +20,7 @@
     tabPanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
     tap: function() {
-      //FIXME
-      //this.options.root.keyboard.show('toolbarscan');
+      this.owner.owner.owner.owner.owner.$.keyboard.hide()
     },
     initComponents: function() {
       this.inherited(arguments);
@@ -41,12 +40,12 @@
 
     classes: 'tab-pane',
     components: [{
-      style:'overflow: auto; margin: 5px',
+      style: 'overflow: auto; margin: 5px',
       components: [{
-    	  style: 'background-color: #ffffff; color: black; padding: 5px',
-    	  components: [{
-    		  kind: 'OB.UI.SearchProduct'
-    	  }]
+        style: 'background-color: #ffffff; color: black; padding: 5px',
+        components: [{
+          kind: 'OB.UI.SearchProduct'
+        }]
       }]
     }],
     makeId: function() {
@@ -55,29 +54,29 @@
 
   });
 
-//    OB.UI.TabSearch = Backbone.View.extend({
-//      tagName: 'div',
-//      attributes: {
-//        'id': 'search',
-//        'class': 'tab-pane'
-//      },
-//      initialize: function() {
-//        var $container, $subContainer, searchProd;
-//        $container = $('<div/>');
-//        $container.css({
-//          'overflow': "auto",
-//          'margin': '5px'
-//        });
-//        $subContainer = $('<div/>');
-//        $subContainer.css({
-//          'background-color': "#ffffff",
-//          'color': 'black',
-//          'padding': '5px'
-//        });
-//        searchProd = new OB.COMP.SearchProduct(this.options);
-//        $subContainer.append(searchProd.$el);
-//        $container.append($subContainer);
-//        this.$el.append($container);
-//      }
-//    });
+  //    OB.UI.TabSearch = Backbone.View.extend({
+  //      tagName: 'div',
+  //      attributes: {
+  //        'id': 'search',
+  //        'class': 'tab-pane'
+  //      },
+  //      initialize: function() {
+  //        var $container, $subContainer, searchProd;
+  //        $container = $('<div/>');
+  //        $container.css({
+  //          'overflow': "auto",
+  //          'margin': '5px'
+  //        });
+  //        $subContainer = $('<div/>');
+  //        $subContainer.css({
+  //          'background-color': "#ffffff",
+  //          'color': 'black',
+  //          'padding': '5px'
+  //        });
+  //        searchProd = new OB.COMP.SearchProduct(this.options);
+  //        $subContainer.append(searchProd.$el);
+  //        $container.append($subContainer);
+  //        this.$el.append($container);
+  //      }
+  //    });
 }());

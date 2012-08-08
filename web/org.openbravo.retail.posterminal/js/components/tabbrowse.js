@@ -19,9 +19,8 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
-    tab: function() {
-      //FIXME
-      //this.options.root.keyboard.hide();
+    tap: function() {
+      this.owner.owner.owner.owner.owner.$.keyboard.hide();
     },
     initComponents: function() {
       this.inherited(arguments);

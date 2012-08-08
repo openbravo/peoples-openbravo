@@ -150,6 +150,9 @@ enyo.kind({
         }, {
           kind: 'OB.UI.TabSearch'
         }]
+      },{
+      	kind: 'OB.UI.KeyboardOrder',
+      	name: 'keyboard'
       }]
     }]
   }],

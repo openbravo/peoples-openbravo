@@ -9,6 +9,12 @@
 
 /*global $, _, Backbone */
 
+
+enyo.kind({
+ name: 'OB.UI.KeyboardOrder',
+ kind: 'OB.UI.Keyboard'
+});
+
 (function () {
 
   OB = window.OB || {};
