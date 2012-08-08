@@ -928,25 +928,52 @@ enyo.kind({
     }
   },
 
-  addToolbar: function(buttons) {
+  addToolbar: function(newToolbar) {
+	  console.log('addToolbar',newToolbar);
+    var toolbar = this.$.toolbarcontainer.createComponent({
+      toolbarName: newToolbar.name,
+      shown: newToolbar.shown
+    });
+
     var emptyBtn = {
       kind: 'OB.UI.BtnSide',
       btn: {}
     },
         i = 0;
 
-    enyo.forEach(buttons, function(btnDef) {
-      this.$.toolbarcontainer.createComponent({
-        kind: 'OB.UI.BtnSide',
-        btn: btnDef
-      });
+    enyo.forEach(newToolbar.buttons, function(btnDef) {
+      if (btnDef.command) {
+        toolbar.createComponent({
+          kind: 'OB.UI.BtnSide',
+          btn: btnDef
+        });
+      } else {
+        toolbar.createComponent(emptyBtn);
+      }
       i++;
     }, this);
 
+
     // populate toolbar up to 6 empty buttons
     for (; i < 6; i++) {
-      this.$.toolbarcontainer.createComponent(emptyBtn);
+      toolbar.createComponent(emptyBtn);
     }
+  },
+
+  showToolbar: function(toolbarName) {
+    console.log('showToolbar', toolbarName);
+    enyo.forEach(this.$.toolbarcontainer.getComponents(), function(toolbar) {
+      console.log(toolbar);
+      if (toolbar.toolbarName === toolbarName) {
+        toolbar.show();
+        if (toolbar.shown) {
+          toolbar.shown();
+        }
+      } else {
+        toolbar.hide();
+      }
+    }, this);
+    this.show();
   },
 
   addCommand: function(cmd, definition) {
@@ -964,19 +991,21 @@ enyo.kind({
   },
 
   addKeypad: function(keypad) {
-	  console.log(keypad);
-    this.$.keypadcontainer.createComponent({kind:keypad}).hide();
+    console.log(keypad);
+    this.$.keypadcontainer.createComponent({
+      kind: keypad
+    }).hide();
   },
 
   showKeypad: function(keypadName) {
-	  console.log('showKeypad');
+    console.log('showKeypad');
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
-    	console.log(pad,keypadName);
-    	if (pad.padName === keypadName) {
-    		pad.show();
-    	} else {
-    		pad.hide();
-    	}
+      console.log(pad, keypadName);
+      if (pad.padName === keypadName) {
+        pad.show();
+      } else {
+        pad.hide();
+      }
     }, this);
   }
 });

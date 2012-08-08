@@ -96,32 +96,32 @@
     }
   });
 
-  
+
   enyo.kind({
-	name: 'OB.UI.PaymentButton',
-	style: 'margin: 5px;',
-	components: [{
-		kind: 'OB.UI.Button',
-		classes: 'btnkeyboard',
-		name: 'btn'
-	}],
-	background: '#6cb33f',
-	initComponents: function () {
-		var btn;
-		this.inherited(arguments);
-		
-		btn = this.$.btn;
-		btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
-		btn.applyStyle('background-color',this.background);
-		btn.applyStyle('border','10px solid' + (this.bordercolor || this.background));
-	},
-	tap: function(){
-		//TODO: implement
-		console.log('add coin',this.amount);
-	}
-		
+    name: 'OB.UI.PaymentButton',
+    style: 'margin: 5px;',
+    components: [{
+      kind: 'OB.UI.Button',
+      classes: 'btnkeyboard',
+      name: 'btn'
+    }],
+    background: '#6cb33f',
+    initComponents: function() {
+      var btn;
+      this.inherited(arguments);
+
+      btn = this.$.btn;
+      btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
+      btn.applyStyle('background-color', this.background);
+      btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
+    },
+    tap: function() {
+      //TODO: implement
+      console.log('add coin', this.amount);
+    }
+
   });
-  
+
   OB.COMP.PaymentButton = Backbone.View.extend({
     contentView: [{
       tag: 'div',
@@ -394,7 +394,7 @@ enyo.kind({
   }],
   initComponents: function() {
     var me = this,
-        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner.keyPressed ? this.owner.owner : this.owner.owner.owner;
+        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner.keyPressed ? this.owner.owner : this.owner.owner.owner.keyPressed ? this.owner.owner.owner : this.owner.owner.owner.owner;
 
     this.inherited(arguments);
 

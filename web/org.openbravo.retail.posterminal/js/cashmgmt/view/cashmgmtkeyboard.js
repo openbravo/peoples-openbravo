@@ -60,6 +60,9 @@ enyo.kind({
       }
     }, this);
 
-    this.addToolbar(buttons);
+    this.addToolbar({
+      name: 'cashmgmt',
+      buttons: buttons
+    });
   }
 });
