@@ -754,7 +754,8 @@ isc.OBViewGrid.addProperties({
     });
 
     ksAction_DeleteSelectedRecords = function () {
-      if (me.getSelectedRecords().length > 0) {
+      var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
+      if (me.getSelectedRecords().length > 0 && isDeletingEnabled) {
         me.view.deleteSelectedRows();
         return false; //To avoid keyboard shortcut propagation
       } else {
