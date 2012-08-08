@@ -75,6 +75,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     final Date docDate = productionRun.getDocumentDate();
 
     try {
+      log4j.debug("Prepare process delete not fixed lines and set exploded to false.");
 
       deleteNotFixedLines(strManufacturingMRPID);
 
@@ -91,6 +92,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
         }
       }
 
+      log4j.debug("Call MRP_Run_Initialize process");
       // v_ResultStr:='Initialize';
       // MRP_RUN_INITIALIZE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID,
       // v_Product_ID,
@@ -115,6 +117,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       OBDal.getInstance().commitAndClose();
       OBDal.getInstance().getSession().clear();
 
+      log4j.debug("Call MRP_Run_Explode process");
       // v_ResultStr:='Explode';
       // MRP_RUN_EXPLODE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
@@ -131,6 +134,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       OBDal.getInstance().commitAndClose();
       OBDal.getInstance().getSession().clear();
 
+      log4j.debug("Call MRP_ProcessPlan process");
       // v_ResultStr:='ProcessPlan';
       // MRP_PROCESSPLAN(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
