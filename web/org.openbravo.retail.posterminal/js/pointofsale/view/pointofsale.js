@@ -151,6 +151,8 @@ enyo.kind({
           kind: 'OB.UI.TabBrowse'
         }, {
           kind: 'OB.UI.TabSearch'
+        },{
+        	kind: 'OB.UI.TabPayment',
         }]
       },{
       	kind: 'OB.UI.KeyboardOrder',

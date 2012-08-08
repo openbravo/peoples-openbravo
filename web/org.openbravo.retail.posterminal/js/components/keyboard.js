@@ -639,9 +639,10 @@ enyo.kind({
         components: [{ // keypadcontainer
           tag: 'div',
           classes: 'span8',
-          components: [{
+          name: 'keypadcontainer'
+/* components: [{
             kind: 'OB.UI.KeypadBasic'
-          }]
+          }]*/
         }, {
           tag: 'div',
           classes: 'span4',
@@ -880,6 +881,9 @@ enyo.kind({
       this.$.sidedisabled.show();
     }
 
+    this.addKeypad('OB.UI.KeypadBasic');
+    this.showKeypad('basic');
+
 
     //Special case to manage the dot (.) pressing in the numeric keypad (only can be managed using keydown)
     $(window).keydown(function(e) {
@@ -957,6 +961,23 @@ enyo.kind({
     } else {
       this.buttons[cmd] = btn;
     }
+  },
+
+  addKeypad: function(keypad) {
+	  console.log(keypad);
+    this.$.keypadcontainer.createComponent({kind:keypad}).hide();
+  },
+
+  showKeypad: function(keypadName) {
+	  console.log('showKeypad');
+    enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
+    	console.log(pad,keypadName);
+    	if (pad.padName === keypadName) {
+    		pad.show();
+    	} else {
+    		pad.hide();
+    	}
+    }, this);
   }
 });
 

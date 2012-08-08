@@ -9,16 +9,16 @@
 
 /*global Backbone, confirm  */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
   var DoneButton = OB.COMP.RegularButton.extend({
     'label': OB.I18N.getLabel('OBPOS_LblDone'),
-    'clickEvent': function () {
+    'clickEvent': function() {
       var parent = this.options.parent;
-      parent.receipt.calculateTaxes(function () {
+      parent.receipt.calculateTaxes(function() {
         parent.receipt.trigger('closed');
         parent.modelorderlist.deleteCurrent();
       });
@@ -28,8 +28,10 @@
   var ExactButton = OB.COMP.RegularButton.extend({
     icon: 'btn-icon-small btn-icon-check',
     className: 'btnlink-green',
-    attributes: {style: 'width: 69px'},
-    'clickEvent': function () {
+    attributes: {
+      style: 'width: 69px'
+    },
+    'clickEvent': function() {
       this.options.parent.options.keyboard.execStatelessCommand('cashexact');
     }
   });
@@ -37,13 +39,13 @@
   var RemovePayment = OB.COMP.SmallButton.extend({
     className: 'btnlink-darkgray btnlink-payment-clear',
     icon: 'btn-icon-small btn-icon-clearPayment',
-    initialize: function () {
+    initialize: function() {
       OB.UTIL.initContentView(this);
       var parent = this.options.parent;
-      this.$el.click(function (e) {       
+      this.$el.click(function(e) {
         e.preventDefault();
         if (parent.options.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
-          return;  
+          return;
         }
         parent.options.parent.options.parent.receipt.removePayment(parent.options.model);
       });
@@ -89,7 +91,7 @@
         }
       }]
     }],
-    render: function () {
+    render: function() {
       this.divname.text(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
       this.divamount.text(this.model.printAmount());
       if (this.model.get('paymentData')) {
@@ -101,6 +103,104 @@
     }
   });
 
+  enyo.kind({
+    name: 'OB.UI.Payment',
+    components: [{
+      style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
+      components: [{
+        classname: 'row-fluid',
+        classes: 'span12'
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span10',
+          components: [{
+            style: 'padding: 10px 0px 0px 10px;',
+            components: [{
+              tag: 'span',
+              name: 'totalpending',
+              style: 'font-size: 24px; font-weight: bold;'
+            }, {
+              tag: 'span',
+              content: OB.I18N.getLabel('OBPOS_PaymentsRemaining')
+            }, {
+              tag: 'span',
+              name: 'change',
+              style: 'font-size: 24px; font-weight: bold;'
+            }, {
+              tag: 'span',
+              name: 'changelbl',
+              content: OB.I18N.getLabel('OBPOS_PaymentsChange')
+            }, {
+              tag: 'span',
+              name: 'overpayment',
+              style: 'font-size: 24px; font-weight: bold;'
+            }, {
+              tag: 'span',
+              name: 'overpaymentlbl',
+              content: OB.I18N.getLabel('OBPOS_PaymentsOverpayment')
+            }, {
+              tag: 'span',
+              name: 'exactlbl',
+              content: OB.I18N.getLabel('OBPOS_PaymentsExact')
+            }]
+          }, {
+            style: 'overflow:auto; width: 100%;',
+            components: [{
+              style: 'padding: 5px',
+              components: [{
+                style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
+              }]
+            }, {
+              kind: 'OB.UI.Table',
+              renderEmpty: enyo.kind({
+                style: 'height: 36px'
+              }),
+              renderLine: 'OB.UI.RenderPayementLine'
+            }]
+          }]
+        }, {
+          classes: 'span12',
+          components: [{
+            style: 'float: right;',
+            components: [{
+              kind: 'OB.UI.DoneButton'
+            }]
+          }, {
+            style: 'float: right;',
+            components: [{
+              kind: 'OB.UI.ExactButton'
+            }]
+          }]
+        }]
+
+      }]
+    }]
+  });
+
+  enyo.kind({
+    name: 'OB.UI.DoneButton',
+    kind: 'OB.UI.RegularButton',
+    content: OB.I18N.getLabel('OBPOS_LblDone'),
+    tap: function() {
+      console.log('done');
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.ExactButton',
+    kind: 'OB.UI.RegularButton',
+    classes: 'btn-icon-small btn-icon-check btnlink-green',
+    style: 'width: 69px',
+    tap: function() {
+      console.log('exact');
+    }
+  });
+
+  enyo.kind({
+	 name: 'OB.UI.RenderPaymentLine'
+  });
+  
   OB.COMP.Payment = Backbone.View.extend({
     tag: 'div',
     contentView: [
@@ -229,7 +329,7 @@
         }]
       }]
     }],
-    initialize: function () {
+    initialize: function() {
 
       OB.UTIL.initContentView(this);
 
@@ -243,12 +343,12 @@
 
       this.tableview.registerCollection(payments);
 
-      this.receipt.on('change:payment change:change change:gross', function () {
+      this.receipt.on('change:payment change:change change:gross', function() {
         this.updatePending();
       }, this);
       this.updatePending();
     },
-    updatePending: function () {
+    updatePending: function() {
       var paymentstatus = this.receipt.getPaymentStatus();
       if (paymentstatus.change) {
         this.change.text(paymentstatus.change);

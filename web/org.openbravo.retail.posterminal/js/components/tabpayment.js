@@ -19,8 +19,10 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#payment',
     tap: function() {
-      //FIXME
-      //this.options.keyboard.show('toolbarpayment');
+    	var keyboard = this.owner.owner.owner.owner.owner.$.keyboard;
+    	keyboard.show();
+    	keyboard.showKeypad('coins');
+    	
     },
     attributes: {
       style: 'text-align: center; font-size: 30px;',
@@ -73,6 +75,17 @@
     },
     shownEvent: function(e) {
       this.options.keyboard.show('toolbarpayment');
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.TabPayment',
+    classes: 'tab-pane',
+    components: [{
+      kind: 'OB.UI.Payment'
+    }],
+    makeId: function() {
+      return 'payment';
     }
   });
 

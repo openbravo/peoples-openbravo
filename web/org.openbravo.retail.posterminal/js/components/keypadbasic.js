@@ -96,6 +96,32 @@
     }
   });
 
+  
+  enyo.kind({
+	name: 'OB.UI.PaymentButton',
+	style: 'margin: 5px;',
+	components: [{
+		kind: 'OB.UI.Button',
+		classes: 'btnkeyboard',
+		name: 'btn'
+	}],
+	background: '#6cb33f',
+	initComponents: function () {
+		var btn;
+		this.inherited(arguments);
+		
+		btn = this.$.btn;
+		btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
+		btn.applyStyle('background-color',this.background);
+		btn.applyStyle('border','10px solid' + (this.bordercolor || this.background));
+	},
+	tap: function(){
+		//TODO: implement
+		console.log('add coin',this.amount);
+	}
+		
+  });
+  
   OB.COMP.PaymentButton = Backbone.View.extend({
     contentView: [{
       tag: 'div',
@@ -405,12 +431,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.KeypadBasic',
   // kind: OB.UI.KeyboardComponent ???
-  tag: 'div',
+  padName: 'basic',
   components: [{
-    tag: 'div',
     classes: 'row-fluid',
     components: [{
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -419,7 +443,6 @@ enyo.kind({
         command: '/'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -428,7 +451,6 @@ enyo.kind({
         command: '*'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -438,10 +460,8 @@ enyo.kind({
       }]
     }]
   }, {
-    tag: 'div',
     classes: 'row-fluid',
     components: [{
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -450,7 +470,6 @@ enyo.kind({
         command: '7'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -459,7 +478,6 @@ enyo.kind({
         command: '8'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -469,10 +487,8 @@ enyo.kind({
       }]
     }]
   }, {
-    tag: 'div',
     classes: 'row-fluid',
     components: [{
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -481,7 +497,6 @@ enyo.kind({
         command: '4'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -490,7 +505,6 @@ enyo.kind({
         command: '5'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -500,10 +514,8 @@ enyo.kind({
       }]
     }]
   }, {
-    tag: 'div',
     classes: 'row-fluid',
     components: [{
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -512,7 +524,6 @@ enyo.kind({
         command: '1'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -521,7 +532,6 @@ enyo.kind({
         command: '2'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -531,10 +541,8 @@ enyo.kind({
       }]
     }]
   }, {
-    tag: 'div',
     classes: 'row-fluid',
     components: [{
-      tag: 'div',
       classes: 'span8',
       components: [{
         kind: 'OB.UI.ButtonKey',
@@ -543,7 +551,6 @@ enyo.kind({
         command: '0'
       }]
     }, {
-      tag: 'div',
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',

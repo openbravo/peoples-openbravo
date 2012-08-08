@@ -123,6 +123,8 @@ enyo.kind({
     // calling super after setting keyboard properties
     this.inherited(arguments);
     
+    this.addKeypad('OB.UI.KeypadCoins');
+    
     this.addToolbar([]);
   }
 });
