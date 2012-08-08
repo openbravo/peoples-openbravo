@@ -15,7 +15,7 @@
   OB.COMP = window.OB.COMP || {};
   enyo.kind({
     kind: 'OB.UI.SelectButton',
-    name: 'OB.UI.OrderLine',
+    name: 'OB.UI.RenderOrderLine',
     components: [{
       name:'divProduct',
       attributes: {

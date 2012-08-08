@@ -46,8 +46,10 @@
       components: [{
         kind: 'OB.UI.Table',
         name: 'tableView',
-        renderLine: 'OB.UI.OrderLine',
-        renderEmpty: 'enyo.Control',
+        renderLine: 'OB.UI.RenderOrderLine',
+        renderEmpty: {kind: 'OB.UI.RenderEmpty',
+          label: OB.I18N.getLabel('OBPOS_ReceiptNew')
+        },
         listStyle: 'edit'
       },{
         tag: 'ul',
