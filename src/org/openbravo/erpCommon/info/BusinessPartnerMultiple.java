@@ -58,6 +58,13 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
+      // When the pop up is opened, values of the previous session must be removed
+      vars.removeSessionValue("BusinessPartnerMultiple.contact");
+      vars.removeSessionValue("BusinessPartnerMultiple.zip");
+      vars.removeSessionValue("BusinessPartnerMultiple.provincia");
+      vars.removeSessionValue("BusinessPartnerMultiple.bpartner");
+      vars.removeSessionValue("BusinessPartnerMultiple.city");
+
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue",
           "BusinessPartnerMultiple.name");
