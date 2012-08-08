@@ -123,6 +123,20 @@
     }
   });
 
+  enyo.kind({
+    name: 'OB.UI.CancelButton',
+    kind: 'OB.UI.SmallButton',
+    classes: 'btnlink-white btnlink-fontgray',
+    attributes: {
+      href: '#modalCancel',
+      'data-toggle': 'modal'
+    },
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setContent(this.label || OB.I18N.getLabel('OBPOS_LblCancel'));
+    }
+  });
+
   // Base button: Implemented as enyo: OB.UI.Button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
