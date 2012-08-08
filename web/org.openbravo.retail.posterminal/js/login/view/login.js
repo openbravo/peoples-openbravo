@@ -211,8 +211,8 @@
       return true;
     },
 
-    handleEnterKeyDown: function (caller, event) {
-      if (event && event.keyCode === 13) {
+    handleEnterKeyDown: function (inSender, inEvent) {
+      if (inEvent && inEvent.keyCode === 13) {
         this.loginButtonAction();
       }
       return true;
