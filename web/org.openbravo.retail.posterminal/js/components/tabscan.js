@@ -20,12 +20,22 @@
     tabPanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
     tap: function() {
-      //FIXME
-      //this.options.root.keyboard.show('toolbarscan');
+    	this.owner.owner.owner.owner.owner.$.keyboard.show();
     },
     initComponents: function() {
       this.inherited(arguments);
     }
+  });
+  
+  enyo.kind({
+	 name: 'OB.UI.TabScan',
+	 classes: 'tab-pane',
+	 components: [{
+		 kind: 'OB.UI.Scan'
+	 }],
+	 makeId: function () {
+		 return 'scan';
+	 }
   });
   
   //Refacorized using enyo -> OB.UI.ButtonTabScan
@@ -50,15 +60,15 @@
     }
   });
 
-  OB.COMP.TabScan = Backbone.View.extend({
-    tagName: 'div',
-    attributes: {'id': 'scan', 'class': 'tab-pane'},
-    contentView: [
-      {view: OB.COMP.Scan}
-    ],
-    initialize: function () {
-      OB.UTIL.initContentView(this);
-    }
-  });
+//  OB.COMP.TabScan = Backbone.View.extend({
+//    tagName: 'div',
+//    attributes: {'id': 'scan', 'class': 'tab-pane'},
+//    contentView: [
+//      {view: OB.COMP.Scan}
+//    ],
+//    initialize: function () {
+//      OB.UTIL.initContentView(this);
+//    }
+//  });
 
 }());

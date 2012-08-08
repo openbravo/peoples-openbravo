@@ -146,6 +146,8 @@ enyo.kind({
       components: [{
         classes: 'tab-content',
         components: [{
+          kind: 'OB.UI.TabScan'
+        },{
           kind: 'OB.UI.TabBrowse'
         }, {
           kind: 'OB.UI.TabSearch'
