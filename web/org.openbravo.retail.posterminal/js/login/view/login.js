@@ -78,7 +78,7 @@
     name: 'OB.OBPOSLogin.UI.Login',
     tag: 'section',
     components: [{
-      classes: 'row login-header-row',
+      classes: 'login-header-row',
       components: [{
         name: 'loginHeaderCompany',
         classes: 'login-header-company'
@@ -86,30 +86,27 @@
         classes: 'login-header-ob'
       }]
     }, {
-      classes: 'row',
       components: [{
-        classes: 'span6',
+        style: 'float: left; width: 50%;',
         components: [{
           name: 'loginUserContainer',
-          classes: 'row login-user-container',
+          classes: 'login-user-container',
           content: ['.']
         }]
       }, {
-        classes: 'span6',
+        style: 'float: left; width: 50%;',
         components: [{
-          classes: 'row-fluid login-inputs-container',
+          classes: 'login-inputs-container',
           components: [{
             name: 'loginInputs',
             components: [{
-              classes: 'row',
               components: [{
-                classes: 'span6 login-inputs-screenlocked',
+                classes: 'login-inputs-screenlocked',
                 name: 'screenLockedLbl'
               }]
             }, {
-              classes: 'row',
               components: [{
-                classes: 'span6 login-inputs-userpassword',
+                classes: 'login-inputs-userpassword',
                 components: [{
                   kind: 'enyo.Input',
                   type: 'text',
@@ -119,9 +116,8 @@
                 }]
               }]
             }, {
-              classes: 'row',
               components: [{
-                classes: 'span6 login-inputs-userpassword',
+                classes: 'login-inputs-userpassword',
                 components: [{
                   kind: 'enyo.Input',
                   type: 'password',
@@ -131,24 +127,17 @@
                 }]
               }]
             }, {
-              classes: 'row',
               components: [{
-                classes: 'span1',
-                style: 'color: transparent;',
+                style: 'float: left; width: 33%; color: transparent;',
                 content: ['.']
               }, {
-                classes: 'span1',
-                style: 'color: transparent;',
-                content: ['.']
-              }, {
-                classes: 'span2',
-                style: 'margin: 20px 0px 0px 0px; text-align: center;',
+                style: 'float: left; width: 33%; margin: 20px 0px 0px 0px; text-align: center;',
                 components: [{
                   kind: 'OB.OBPOSLogin.UI.LoginButton',
                   ontap: 'loginButtonAction'
                 }]
               }, {
-                classes: 'span2',
+                style: 'float: left; width: 33%;',
                 components: [{
                   kind: 'OB.UI.Clock',
                   classes: 'login-clock'
@@ -159,15 +148,13 @@
             name: 'loginBrowserNotSupported',
             style: 'display: none;',
             components: [{
-              classes: 'row',
               components: [{
                 name: 'LoginBrowserNotSupported_Title_Lbl',
-                classes: 'span6 login-browsernotsupported-title'
+                classes: 'login-browsernotsupported-title'
               }]
             }, {
-              classes: 'row',
               components: [{
-                classes: 'span4',
+                style: 'float: left; width: 66%',
                 components: [{
                   name: 'LoginBrowserNotSupported_P1_Lbl',
                   classes: 'login-browsernotsupported-content'
@@ -179,7 +166,7 @@
                   classes: 'login-browsernotsupported-content'
                 }]
               }, {
-                classes: 'span2',
+                style: 'float: left; width: 33%; padding: 78px 0px 0px 0px',
                 components: [{
                   kind: 'OB.UI.Clock',
                   classes: 'login-clock'
