@@ -43,7 +43,7 @@
     components: [{
       style:'overflow: auto; margin: 5px',
       components: [{
-    	  style: 'background-color: "#ffffff"; color: black; padding: 5px',
+    	  style: 'background-color: #ffffff; color: black; padding: 5px',
     	  components: [{
     		  kind: 'OB.UI.SearchProduct'
     	  }]

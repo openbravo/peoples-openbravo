@@ -285,10 +285,10 @@
                     name: 'productname',
                     classes: 'input',
                     attributes: {
-                      xWebkitSpeech: 'x-webkit-speech'
+                      'x-webkit-speech': 'x-webkit-speech'
                     },
                     style: 'width: 100%;',
-                    ontap: 'searchAction'
+                    onchange: 'searchAction'
                   }]
                 }, {
                   style: 'display: table-cell;',
@@ -429,7 +429,6 @@
       }
 
       // Initializing combo of categories without filtering
-
 
       function successCallbackProducts(dataProducts) {
         if (dataProducts && dataProducts.length > 0) {
