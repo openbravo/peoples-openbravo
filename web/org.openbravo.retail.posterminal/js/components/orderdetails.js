@@ -14,17 +14,28 @@
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
 
-  OB.UI.OrderDetails = Backbone.View.extend({
-    tagName: 'div',
+  enyo.kind({
+    name: 'OB.UI.OrderDetails',
     attributes: {
-      'style': 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
+      style: 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
     },
-    initialize: function() {
-
-      this.receipt = this.options.root.modelorder;
-      this.receipt.on('clear change:orderDate change:documentNo', function() {
-        this.$el.text(OB.I18N.formatHour(this.receipt.get('orderDate')) + ' - ' + this.receipt.get('documentNo'));
-      }, this);
+    initComponents: function() {
+      //FIXME
+      this.setContent('08:45 - POS-1/0001');
     }
   });
+  //  Refactored as enyo view -> OB.UI.OrderDetails
+  //  OB.UI.OrderDetails = Backbone.View.extend({
+  //    tagName: 'div',
+  //    attributes: {
+  //      'style': 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
+  //    },
+  //    initialize: function() {
+  //
+  //      this.receipt = this.options.root.modelorder;
+  //      this.receipt.on('clear change:orderDate change:documentNo', function() {
+  //        this.$el.text(OB.I18N.formatHour(this.receipt.get('orderDate')) + ' - ' + this.receipt.get('documentNo'));
+  //      }, this);
+  //    }
+  //  });
 }());

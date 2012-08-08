@@ -14,6 +14,21 @@
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
 
+  enyo.kind({
+    kind: 'OB.UI.SmallButton',
+    name: 'OB.UI.BusinessPartner',
+    classes: 'btnlink btnlink-small btnlink-gray',
+    attributes: {
+      'data-toggle': 'modal',
+      'href': '#modalcustomer'
+    },
+    initComponents: function() {
+      //FIXME
+      this.setContent('POS Customer');
+    }
+  });
+  
+  //  Refactored as enyo view -> OB.UI.BusinessPartner
   OB.COMP.BusinessPartner = OB.COMP.SmallButton.extend({
       className: 'btnlink btnlink-small btnlink-gray',
       attributes: {'href': '#modalcustomer', 'data-toggle': 'modal'},

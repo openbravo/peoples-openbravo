@@ -42,7 +42,6 @@
     initComponents: function() {
       this.inherited(arguments);
       //FIXME
-      debugger;
       //OB.UTIL.initContentView(this);
       this.$.counter.setContent("1");
       //      this.receiptlist = this.options.root.modelorderlist;

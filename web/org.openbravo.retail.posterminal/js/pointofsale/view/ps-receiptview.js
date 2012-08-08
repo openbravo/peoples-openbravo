@@ -1,15 +1,5 @@
 /*global OB, Backbone, enyo */
 enyo.kind({
-  name: 'OB.UIL.OrderDetails',
-  tag: 'textarea'
-});
-
-enyo.kind({
-  name: 'OB.UIL.BusinessPartner',
-  tag: 'textarea'
-});
-
-enyo.kind({
   name: 'OB.UIL.OrderView',
   tag: 'textarea'
 });
@@ -37,9 +27,9 @@ enyo.kind({
                 style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;'
               },
               components: [{
-                kind: 'OB.UIL.OrderDetails',
+                kind: 'OB.UI.OrderDetails',
               }, {
-                kind: 'OB.UIL.BusinessPartner'
+                kind: 'OB.UI.BusinessPartner'
               }, {
                 attributes: {
                   style: 'clear:both;'
