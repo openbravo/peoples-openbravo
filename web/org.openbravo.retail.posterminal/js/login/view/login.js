@@ -66,6 +66,15 @@
   });
 
   enyo.kind({
+    kind: 'enyo.Ajax',
+    name: 'OB.OBPOSLogin.UI.LoginRequest',
+    url: "../../org.openbravo.retail.posterminal.service.loginutils",
+    method: "GET",
+    handleAs: "json",
+    contentType: 'application/json;charset=utf-8'
+  });
+
+  enyo.kind({
     name: 'OB.OBPOSLogin.UI.Login',
     tag: 'section',
     components: [{
@@ -286,16 +295,7 @@
         this.$.password.focus();
       }, this);
 
-      enyo.kind({
-        kind: 'enyo.Ajax',
-        name: 'OB.OBPOSLogin.UI.LoginRequest',
-        url: "../../org.openbravo.retail.posterminal.service.loginutils",
-        method: "GET",
-        handleAs: "json",
-        contentType: 'application/json;charset=utf-8'
-      });
-
-      new OB.OBPOSLogin.UI.LoginRequest({}).response(this, 'setCompanyLogo').go({
+      new OB.OBPOSLogin.UI.LoginRequest().response(this, 'setCompanyLogo').go({
         command: 'companyLogo',
         terminalName: OB.POS.paramTerminal
       });
@@ -307,7 +307,7 @@
         return true;
       }
 
-      new OB.OBPOSLogin.UI.LoginRequest({}).response(this, 'setUserImages').go({
+      new OB.OBPOSLogin.UI.LoginRequest().response(this, 'setUserImages').go({
         command: 'userImages',
         terminalName: OB.POS.paramTerminal
       });
