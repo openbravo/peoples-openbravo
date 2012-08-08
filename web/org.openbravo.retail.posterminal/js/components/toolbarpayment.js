@@ -9,11 +9,11 @@
 
 /*global Backbone, $, _ */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.UI = window.OB.UI || {};
-  
+
   function payment(amount, modalpayment, receipt, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
       if (paymentMethod.view) {
@@ -32,7 +32,7 @@
     return ({
       'permission': key,
       'stateless': false,
-      'action': function (txt) {
+      'action': function(txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? receipt.getPending() : amount;
         payment(amount, modalpayment, receipt, key, name, paymentMethod);
@@ -40,14 +40,14 @@
     });
   }
 
-  OB.UI.ButtonSwitch = OB.COMP.Button.extend({
+  OB.UI.ButtonSwitch_old = OB.COMP.Button.extend({
     className: 'btnkeyboard',
 
-    initialize: function () {
+    initialize: function() {
       OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
       this.options.parent.on('keypad', this.render, this);
     },
-    clickEvent: function (e) {
+    clickEvent: function(e) {
       if (this.options.parent.keypad.name === 'coins') {
         this.options.parent.showKeypad('index'); // show index
       } else {
@@ -55,7 +55,7 @@
       }
       this.render();
     },
-    render: function () {
+    render: function() {
       // this.$el.text(this.options.parent.keypad.label);
       if (this.options.parent.keypad.name === 'coins') {
         this.$el.text(this.options.parent.keypads.index.label);
@@ -67,14 +67,14 @@
 
   });
 
-  OB.UI.ToolbarPayment = Backbone.View.extend({
+  OB.UI.ToolbarPayment_old = Backbone.View.extend({
     tagName: 'div',
     attributes: {
       'style': 'display:none'
     },
 
 
-    initialize: function () {
+    initialize: function() {
       var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
 
       var modalpayment = new OB.UI.ModalPayment({
@@ -109,7 +109,7 @@
       }
 
       this.options.parent.addCommand('cashexact', {
-        'action': function (txt) {
+        'action': function(txt) {
           var exactpayment = allpayments[this.status] || defaultpayment;
           var amount = receipt.getPending();
           if (amount > 0 && exactpayment) {
@@ -139,7 +139,7 @@
       }).append(inst.$el));
       this.$el.append(cont);
     },
-    shown: function () {
+    shown: function() {
       this.options.parent.showKeypad('coins');
       this.options.parent.showSidepad('sidedisabled');
       this.options.parent.defaultcommand = 'OBPOS_payment.cash';
@@ -147,4 +147,109 @@
     }
   });
 
+
+  enyo.kind({
+    name: 'OB.UI.ToolbarPayment',
+    toolbarName: 'toolbarpayment',
+    initComponents: function() {
+      //TODO: modal payments
+      var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
+
+      payments = OB.POS.modelterminal.get('payments');
+
+      enyo.forEach(payments, function(payment) {
+        if (payment.payment.searchKey === 'OBPOS_payment.cash') {
+          defaultpayment = payment;
+        }
+        allpayments[payment.payment.searchKey] = payment;
+
+        //        Btn = OB.COMP.ButtonKey.extend({
+        //          command: payments[i].payment.searchKey,
+        //          definition: getPayment(modalpayment, receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].paymentMethod),
+        //          classButtonActive: 'btnactive-green',
+        //          permission: payments[i].payment.searchKey,
+        //          contentViewButton: [payments[i].payment._identifier]
+        //        });
+        this.createComponent({
+          kind: 'OB.UI.BtnSide',
+          btn: {
+            command: payment.payment.searchKey,
+            label: payment.payment._identifier,
+            permission: payment.payment.searchKey
+          }
+        });
+      }, this);
+
+      for (i = payments.length - 1; i < 4; i++) {
+        this.createComponent({
+          kind: 'OB.UI.BtnSide',
+          btn: {}
+        })
+      }
+
+      this.createComponent({
+        kind: 'OB.UI.ButtonSwitch'
+      });
+    },
+    shown: function() {
+      var keyboard = this.owner.owner;
+      keyboard.showKeypad('coins')
+      keyboard.showSidepad('sidedisabled');
+
+      //TODO: defaulting to cash using its hardcoded value, should be configurable
+      keyboard.defaultcommand = 'OBPOS_payment.cash';
+      keyboard.setStatus('OBPOS_payment.cash');
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.ButtonSwitch',
+
+    style: 'display:table; width:100%;',
+    components: [{
+      style: 'margin: 5px;',
+      components: [{
+        kind: 'OB.UI.Button',
+        classes: 'btnkeyboard',
+        name: 'btn',
+        content: 'aa'
+      }]
+    }],
+    getLbl: function() {
+      console.log('getLbl')
+    },
+    tap: function() {
+      console.log('tap');
+      var newKeypad = this.owner.owner.owner.keypadName === 'coins' ? 'basic' : 'coins';
+      this.owner.owner.owner.showKeypad(newKeypad);
+    }
+
+  });
+
+  OB.UI.ButtonSwitch_old = OB.COMP.Button.extend({
+    className: 'btnkeyboard',
+
+    initialize: function() {
+      OB.COMP.Button.prototype.initialize.call(this); // super.initialize();
+      this.options.parent.on('keypad', this.render, this);
+    },
+    clickEvent: function(e) {
+      if (this.options.parent.keypad.name === 'coins') {
+        this.options.parent.showKeypad('index'); // show index
+      } else {
+        this.options.parent.showKeypad('coins');
+      }
+      this.render();
+    },
+    render: function() {
+      // this.$el.text(this.options.parent.keypad.label);
+      if (this.options.parent.keypad.name === 'coins') {
+        this.$el.text(this.options.parent.keypads.index.label);
+      } else {
+        this.$el.text(this.options.parent.keypads.coins.label);
+      }
+      return this;
+    }
+
+  });
 }());

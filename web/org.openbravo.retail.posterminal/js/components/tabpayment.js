@@ -20,8 +20,7 @@
     tabPanel: '#payment',
     tap: function() {
     	var keyboard = this.owner.owner.owner.owner.owner.$.keyboard;
-    	keyboard.show();
-    	keyboard.showKeypad('coins');
+    	keyboard.showToolbar('toolbarpayment');
     	
     },
     attributes: {

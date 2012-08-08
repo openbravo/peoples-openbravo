@@ -865,13 +865,14 @@ enyo.kind({
     } else {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoActionDefined'));
     }
-
   },
+
 
   initComponents: function() {
     var me = this;
 
     this.inherited(arguments);
+    this.showSidepad('sidedisabled');
 
     if (this.sideBarEnabled) {
       this.$.sideenabled.show();
@@ -929,7 +930,7 @@ enyo.kind({
   },
 
   addToolbar: function(newToolbar) {
-	  console.log('addToolbar',newToolbar);
+    console.log('addToolbar', newToolbar);
     var toolbar = this.$.toolbarcontainer.createComponent({
       toolbarName: newToolbar.name,
       shown: newToolbar.shown
@@ -958,6 +959,12 @@ enyo.kind({
     for (; i < 6; i++) {
       toolbar.createComponent(emptyBtn);
     }
+  },
+
+  addToolbarComponent: function(newToolbar) {
+    this.$.toolbarcontainer.createComponent({
+      kind: newToolbar
+    });
   },
 
   showToolbar: function(toolbarName) {
@@ -998,7 +1005,7 @@ enyo.kind({
   },
 
   showKeypad: function(keypadName) {
-    console.log('showKeypad');
+    this.keypadName = keypadName;
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
       console.log(pad, keypadName);
       if (pad.padName === keypadName) {
@@ -1007,12 +1014,17 @@ enyo.kind({
         pad.hide();
       }
     }, this);
+  },
+
+  showSidepad: function(sidepadname) {
+    this.$.sideenabled.hide();
+    this.$.sidedisabled.hide();
+    this.$[sidepadname].show();
   }
 });
 
 enyo.kind({
   name: 'OB.UI.BtnSide',
-  tag: 'div',
   style: 'display:table; width:100%',
   initComponents: function() {
     this.createComponent({

@@ -124,8 +124,8 @@ enyo.kind({
     this.inherited(arguments);
     
     this.addKeypad('OB.UI.KeypadCoins');
-    
-    this.addToolbar([]);
+    this.addToolbarComponent('OB.UI.ToolbarPayment');
+    this.addToolbar(OB.UI.ToolbarScan);
   }
 });
 
