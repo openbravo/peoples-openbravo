@@ -340,10 +340,10 @@
     },
     classes: 'btnlink btnlink-gray',
     tabPanel: '#',
-    initComponents: function(){
+    initComponents: function() {
       this.inherited(arguments);
       this.setAttribute('href', this.tabPanel);
-      if (this.label){
+      if (this.label) {
         this.createComponent({
           name: 'lbl',
           tag: 'span',
@@ -356,7 +356,7 @@
       //}, this)
     }
   });
-  
+
   // refactored using enyo -> OB.UI.ButtonTab
   // Generic Tab Button
   OB.COMP.ButtonTab = OB.COMP.Button.extend({
@@ -378,7 +378,7 @@
       // custom bootstrap event, no need to prevent default
     }
   });
-  
+
   // Order list
   enyo.kind({
     name: 'OB.UI.ToolbarButtonTab',
@@ -386,18 +386,18 @@
     attributes: {
       'data-toggle': 'tab'
     },
-    tap: function(){
+    tap: function() {
       //TODO
       //OB.COMP.ButtonTab.prototype.clickEvent.call(this); // super.initialize();
       OB.UTIL.setOrderLineInEditMode(false);
     },
-    initComponents: function(){
+    initComponents: function() {
       this.inherited(arguments);
       this.addClass('btnlink-toolbar');
     },
   });
-  
-  
+
+
   // refactored using enyo -> OB.UI.ToolbarButtonTab
   // Toolbar Tab Button
   OB.COMP.ToolbarButtonTab = OB.COMP.ButtonTab.extend({
@@ -593,12 +593,17 @@
       }
     }],
     initComponents: function() {
-    	//TODO permissions + online
       this.inherited(arguments);
       this.$.item.setContent(this.label);
+      if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+        this.$.item.setStyle('color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;');
+      }
     },
     tap: function() {
-      debugger;
+      // TODO: check online for required windows
+      if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+        return;
+      }
       if (this.route) {
         OB.POS.navigate(this.route);
       }
@@ -923,6 +928,11 @@
     }
   });
 
+  enyo.kind({
+	 name: 'OB.UI.SearchInput',
+	 kind: 'enyo.Input',
+  });
+  
   OB.COMP.SearchInput = Backbone.View.extend({
     tagName: 'input',
     attr: function(attributes) {

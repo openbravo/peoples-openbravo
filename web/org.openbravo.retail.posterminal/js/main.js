@@ -45,7 +45,6 @@
 
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_EVEN);
-    debugger;
     webwindow = OB.POS.windows.where({route:OB.POS.paramWindow})[0].get('windowClass');
 
     if (webwindow) {

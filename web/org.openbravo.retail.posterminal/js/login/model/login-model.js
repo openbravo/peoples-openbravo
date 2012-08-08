@@ -52,6 +52,9 @@
           }
         }
       });
+      if (OB.UTIL.queueStatus(queue)) {
+        models.trigger('ready');
+      }
     }
   };
 

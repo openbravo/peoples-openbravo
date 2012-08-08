@@ -125,13 +125,6 @@
     },
 
     collectionChanged: function (oldCollection) {
-
-      if (this.renderHeader) {
-        this.createComponent({
-          kind: this.renderHeader
-        }).render();
-      }
-
       if (!this.collection) { // set to null ?
         return;
       }
@@ -328,11 +321,12 @@
       var tr = this.$.tbody.createComponent({
         tag: 'li'
       });
-
       tr.createComponent({
         kind: this.renderLine,
         model: model
       });
+      
+      tr.render();
 
       model.on('change', function () {
         tr.destroyComponents();

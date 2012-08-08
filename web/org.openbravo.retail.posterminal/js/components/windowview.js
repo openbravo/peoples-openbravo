@@ -39,10 +39,22 @@ enyo.kind({
   },
   init: function() {
     // Calling init in sub components
-    enyo.forEach(this.getComponents(), function(component) {
-      if (component.init) {
-        component.init();
+	  this.initChildren(this);
+//    enyo.forEach(this.getComponents(), function(component) {
+//      if (component.init) {
+//        component.init();
+//      }
+//    });
+  },
+  initChildren: function(view) {
+    if (!view || !view.getComponents) {
+      return;
+    }
+    enyo.forEach(view.getComponents(), function(child) {
+      if (child.init) {
+        child.init();
       }
-    });
+      this.initChildren(child);
+    },this);
   }
 });

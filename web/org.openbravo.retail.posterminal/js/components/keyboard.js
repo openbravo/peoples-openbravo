@@ -820,7 +820,7 @@ enyo.kind({
     return s;
   },
 
-  commandHandler: function(snender, event) {
+  commandHandler: function(sender, event) {
     var txt, me = this,
         cmd = event.key;
 

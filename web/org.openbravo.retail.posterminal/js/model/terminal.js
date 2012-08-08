@@ -140,10 +140,10 @@
     },
 
     registerWindow: function(window) {
-      var datasources = [], windowClass, windowName=window.route;
-
+      var datasources = [],
+          windowClass, windowName = window.route;
       OB.POS.windows.add(window);
-      
+
       windowClass = window.windowClass;
       if (OB.DATA[windowName]) {
         // old way of defining datasources...
@@ -153,48 +153,51 @@
       }
 
       _.extend(datasources, Backbone.Events);
-
+      datasources.on('ready', function() {
+        console.log('ready datasoureces', windowName)
+      });
       //window.
-        OB.Model.Util.loadModels(false, datasources);
+      OB.Model.Util.loadModels(false, datasources);
 
 
       this.router.route(windowName, windowName, function() {
         this.renderGenericWindow(windowName);
       });
 
-
       //TODO: load OB.DATA??? It should be done only if needed...
     },
 
     renderGenericWindow: function(windowName) {
-     OB.UTIL.showLoading(true);
+      OB.UTIL.showLoading(true);
       var webwindow, w, c = _.extend({}, Backbone.Events),
           terminal = OB.POS.modelterminal.get('terminal'),
           queue = {},
-          emptyQueue = false, windowClass;
+          emptyQueue = false,
+          windowClass;
 
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
-      
       this.on('window:ready', function(w) {
-    	if (w.renderInto) {
-    		 //enyo window
-      	  w.renderInto(document.getElementById('containerWindow'));
-    	} else {
-	        w.render();
-	        $("#containerWindow").empty().append(w.$el);
-    	}
+        if (w.renderInto) {
+          //enyo window
+          w.renderInto(document.getElementById('containerWindow'));
+        } else {
+          w.render();
+          $("#containerWindow").empty().append(w.$el);
+        }
         c.trigger('domready');
         OB.UTIL.showLoading(false);
       });
-      
-     windowClass = OB.POS.windows.where({route:windowName})[0].get('windowClass');
-     w = new windowClass(c);
-     
-     if (w.renderInto) {
-		 //enyo window
-  	  w.renderInto(document.getElementById('containerWindow'));
-  	OB.UTIL.showLoading(false);
-     }
+
+      windowClass = OB.POS.windows.where({
+        route: windowName
+      })[0].get('windowClass');
+      w = new windowClass(c);
+
+      if (w.renderInto) {
+        //enyo window
+        w.renderInto(document.getElementById('containerWindow'));
+        OB.UTIL.showLoading(false);
+      }
     },
 
     login: function(user, password, mode) {
@@ -282,7 +285,7 @@
 
       // reset all application state.
       $(window).off('keypress');
-    //  this.set('terminal', null);
+      //  this.set('terminal', null);
       this.set('payments', null);
       this.set('context', null);
       this.set('permissions', null);

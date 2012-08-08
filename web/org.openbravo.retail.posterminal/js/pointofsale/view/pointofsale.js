@@ -141,8 +141,21 @@ enyo.kind({
     classes: 'row',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.ReceiptView'
+    }, {
+      classes: 'span6',
+      components: [{
+        classes: 'tab-content',
+        components: [{
+          kind: 'OB.UI.TabSearch'
+        }]
+      }]
     }]
-  }]
+  }],
+  init: function(){
+	  this.inherited(arguments);
+	  console.log('main init')
+  }
+  
 });
 
 OB.POS.registerWindow({

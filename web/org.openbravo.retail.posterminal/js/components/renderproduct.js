@@ -9,10 +9,38 @@
 
 /*global B, $ */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
+
+  enyo.kind({
+    name: 'OB.UI.RenderProduct',
+
+    kind: 'OB.UI.SelectButton',
+    components: [{
+      style: 'float: left; width: 25%',
+      components: [{
+        kind: 'OB.UI.Thumbnail'
+      }]
+    }, {
+      style: 'float: left; width: 55%;',
+      components: [{
+        name: 'identifier',
+        style: 'padding-left: 5px;'
+      }]
+    },{
+    	name: 'price',
+    	style: 'float: left; width: 20%; text-align: right; font-weight:bold;'
+    },{
+    	style:'clear:both;'
+    }],
+    initComponents: function() {
+      this.inherited(arguments);
+      this.$.identifier.setContent(this.model.get('_identifier'));
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price').get('listPrice')));
+    }
+  });
 
   OB.COMP.RenderProduct = OB.COMP.SelectButton.extend({
     contentView: [{
@@ -48,7 +76,7 @@
         style: 'clear: both;'
       }
     }],
-    render: function () {
+    render: function() {
       this.viewthumbnail.img = this.model.get('img');
       this.viewthumbnail.render();
       this.dividentifier.text(this.model.get('_identifier'));

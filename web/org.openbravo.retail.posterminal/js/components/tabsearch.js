@@ -36,31 +36,48 @@
   //      this.options.root.keyboard.hide();
   //    }
   //  });
-  
-  OB.UI.TabSearch = Backbone.View.extend({
-    tagName: 'div',
-    attributes: {
-      'id': 'search',
-      'class': 'tab-pane'
-    },
-    initialize: function() {
-      var $container, $subContainer, searchProd;
-      $container = $('<div/>');
-      $container.css({
-        'overflow': "auto",
-        'margin': '5px'
-      });
-      $subContainer = $('<div/>');
-      $subContainer.css({
-        'background-color': "#ffffff",
-        'color': 'black',
-        'padding': '5px'
-      });
-      searchProd = new OB.COMP.SearchProduct(this.options);
-      $subContainer.append(searchProd.$el);
-      $container.append($subContainer);
-      this.$el.append($container);
+  enyo.kind({
+    name: 'OB.UI.TabSearch',
+
+    classes: 'tab-pane',
+    components: [{
+      style:'overflow: auto; margin: 5px',
+      components: [{
+    	  style: 'background-color: "#ffffff"; color: black; padding: 5px',
+    	  components: [{
+    		  kind: 'OB.UI.SearchProduct'
+    	  }]
+      }]
+    }],
+    makeId: function() {
+      return 'search';
     }
+
   });
 
+//    OB.UI.TabSearch = Backbone.View.extend({
+//      tagName: 'div',
+//      attributes: {
+//        'id': 'search',
+//        'class': 'tab-pane'
+//      },
+//      initialize: function() {
+//        var $container, $subContainer, searchProd;
+//        $container = $('<div/>');
+//        $container.css({
+//          'overflow': "auto",
+//          'margin': '5px'
+//        });
+//        $subContainer = $('<div/>');
+//        $subContainer.css({
+//          'background-color': "#ffffff",
+//          'color': 'black',
+//          'padding': '5px'
+//        });
+//        searchProd = new OB.COMP.SearchProduct(this.options);
+//        $subContainer.append(searchProd.$el);
+//        $container.append($subContainer);
+//        this.$el.append($container);
+//      }
+//    });
 }());
