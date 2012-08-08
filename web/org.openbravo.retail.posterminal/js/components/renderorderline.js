@@ -13,7 +13,38 @@
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
-
+  enyo.kind({
+    kind: 'OB.UI.SelectButton',
+    name: 'OB.UI.OrderLine',
+    components: [{
+      name:'divProduct',
+      attributes: {
+        style: 'float: left; width: 40%;'
+      },
+    },{
+      name: 'divquantity',
+      attributes: {
+        style: 'float: left; width: 20%; text-align: right;'
+      }
+    },{
+      id: 'divprice',
+      attributes: {
+        style: 'float: left; width: 20%; text-align: right;'
+      }
+    },{
+      id: 'divgross',
+      tag: 'div',
+      attributes: {
+        style: 'float: left; width: 20%; text-align: right;'
+      }
+    },{
+      style: 'clear: both;'
+    }],
+    initComponents: function(){
+      this.inherited(arguments);
+    }
+  });
+  //refactored as enyo view -> OB.UI.OrderLine 
   OB.COMP.RenderOrderLine = OB.COMP.SelectButton.extend({
     contentView: [{
       id: 'divproduct',

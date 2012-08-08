@@ -1,10 +1,5 @@
 /*global OB, Backbone, enyo */
 enyo.kind({
-  name: 'OB.UIL.OrderView',
-  tag: 'textarea'
-});
-
-enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReceiptView',
   components: [{
     classes: 'span6',
@@ -44,7 +39,7 @@ enyo.kind({
             components: [{
               clases: 'span12',
               components: [{
-                kind: 'OB.UIL.OrderView'
+                kind: 'OB.UI.OrderView'
               }]
             }]
           }]
