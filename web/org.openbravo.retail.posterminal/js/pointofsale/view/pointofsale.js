@@ -146,16 +146,18 @@ enyo.kind({
       components: [{
         classes: 'tab-content',
         components: [{
+          kind: 'OB.UI.TabBrowse'
+        }, {
           kind: 'OB.UI.TabSearch'
         }]
       }]
     }]
   }],
-  init: function(){
-	  this.inherited(arguments);
-	  console.log('main init')
+  init: function() {
+    this.inherited(arguments);
+    console.log('main init')
   }
-  
+
 });
 
 OB.POS.registerWindow({

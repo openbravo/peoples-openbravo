@@ -9,10 +9,50 @@
 
 /*global Backbone */
 
-(function () {
+
+enyo.kind({
+  name: 'OB.UI.ListCategories',
+  components: [{
+    style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
+    components: [{
+      tag: 'h3',
+      content: OB.I18N.getLabel('OBPOS_LblCategories')
+    }]
+  }, {
+    name: 'categoryTable',
+    kind: 'OB.UI.Table',
+    renderEmpty: 'OB.UI.RenderEmpty',
+    renderLine: 'OB.UI.RenderCategory'
+  }],
+
+  init: function() {
+	  console.log('init categories');
+    var me = this;
+    this.categories = new OB.Collection.ProductCategoryList();
+    this.$.categoryTable.setCollection(this.categories);
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackCategories(dataCategories, me) {
+      if (dataCategories && dataCategories.length > 0) {
+        me.categories.reset(dataCategories.models);
+      } else {
+        me.categories.reset();
+      }
+    }
+
+    OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
+  }
+});
+
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
+
+
 
   OB.COMP.ListCategories = Backbone.View.extend({
     optionsid: 'ListCategories',
@@ -35,7 +75,7 @@
         renderLine: OB.COMP.RenderCategory
       })
     }],
-    initialize: function () {
+    initialize: function() {
 
       this.options.root[this.optionsid] = this;
       OB.UTIL.initContentView(this);
@@ -44,7 +84,7 @@
       this.categories = new OB.Collection.ProductCategoryList();
       this.tableview.registerCollection(this.categories);
 
-      this.receipt.on('clear', function () {
+      this.receipt.on('clear', function() {
         if (this.categories.length > 0) {
           this.categories.at(0).trigger('selected', this.categories.at(0));
         }

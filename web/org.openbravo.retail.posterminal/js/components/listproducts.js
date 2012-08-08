@@ -9,7 +9,92 @@
 
 /*global Backbone, _ */
 
-(function () {
+enyo.kind({
+  name: 'OB.UI.ListProducts',
+  components: [{
+    style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
+    components: [{
+      tag: 'h3',
+      name: 'title'
+    }]
+  }, {
+    kind: 'OB.UI.Table',
+    name: 'productTable',
+    renderEmpty: 'OB.UI.RenderEmpty',
+    renderLine: 'OB.UI.RenderProduct'
+  }],
+
+  init: function() {
+    this.inherited(arguments);
+    this.products = new OB.Collection.ProductList();
+    this.$.productTable.setCollection(this.products);
+
+    this.products.on('click', function(model) {
+      //TODO: implement logic
+      console.log('selected product', model);
+    }, this);
+  },
+
+  loadCategory: function(category) {
+    var criteria, me = this;
+
+    function successCallbackPrices(dataPrices, dataProducts) {
+      if (dataPrices && dataPrices.length > 0) {
+        _.each(dataPrices.models, function(currentPrice) {
+          if (dataProducts.get(currentPrice.get('product'))) {
+            dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
+          }
+        });
+        _.each(dataProducts.models, function(currentProd) {
+          if (currentProd.get('price') === undefined) {
+            var price = new OB.Model.ProductPrice({
+              'listPrice': 0
+            });
+            dataProducts.get(currentProd.get('id')).set('price', price);
+            OB.UTIL.showWarning("No price found for product " + currentProd.get('_identifier'));
+          }
+        });
+      } else {
+        OB.UTIL.showWarning("OBDAL No prices found for products");
+        _.each(dataProducts.models, function(currentProd) {
+          var price = new OB.Model.ProductPrice({
+            'listPrice': 0
+          });
+          currentProd.set('price', price);
+        });
+      }
+      me.products.reset(dataProducts.models);
+    }
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackProducts(dataProducts) {
+      if (dataProducts && dataProducts.length > 0) {
+        criteria = {
+          'priceListVersion': OB.POS.modelterminal.get('pricelistversion').id
+        };
+        OB.Dal.find(OB.Model.ProductPrice, criteria, successCallbackPrices, errorCallback, dataProducts);
+      } else {
+        me.products.reset();
+      }
+      me.$.title.setContent(category.get('_identifier'));
+    }
+
+    if (category) {
+      criteria = {
+        'productCategory': category.get('id')
+      };
+      OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
+    } else {
+      this.products.reset();
+      this.title.text(OB.I18N.getLabel('OBPOS_LblNoCategory'));
+    }
+  }
+});
+
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -33,7 +118,7 @@
         renderLine: OB.COMP.RenderProduct
       })
     }],
-    initialize: function () {
+    initialize: function() {
 
       this.options.root[this.optionsid] = this;
       OB.UTIL.initContentView(this);
@@ -43,21 +128,21 @@
       this.products = new OB.Collection.ProductList();
       this.tableview.registerCollection(this.products);
 
-      this.products.on('click', function (model) {
+      this.products.on('click', function(model) {
         this.receipt.addProduct(model);
       }, this);
     },
-    loadCategory: function (category) {
+    loadCategory: function(category) {
       var criteria, me = this;
 
       function successCallbackPrices(dataPrices, dataProducts) {
         if (dataPrices && dataPrices.length > 0) {
-          _.each(dataPrices.models, function (currentPrice) {
+          _.each(dataPrices.models, function(currentPrice) {
             if (dataProducts.get(currentPrice.get('product'))) {
               dataProducts.get(currentPrice.get('product')).set('price', currentPrice);
             }
           });
-          _.each(dataProducts.models, function (currentProd) {
+          _.each(dataProducts.models, function(currentProd) {
             if (currentProd.get('price') === undefined) {
               var price = new OB.Model.ProductPrice({
                 'listPrice': 0
@@ -68,7 +153,7 @@
           });
         } else {
           OB.UTIL.showWarning("OBDAL No prices found for products");
-          _.each(dataProducts.models, function (currentProd) {
+          _.each(dataProducts.models, function(currentProd) {
             var price = new OB.Model.ProductPrice({
               'listPrice': 0
             });

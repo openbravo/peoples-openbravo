@@ -9,7 +9,32 @@
 
 /*global B, $ */
 
-(function () {
+enyo.kind({
+  name: 'OB.UI.RenderCategory',
+  kind: 'OB.UI.SelectButton',
+  components: [{
+    style: 'float: left; width: 25%',
+    components: [{
+      kind: 'OB.UI.Thumbnail'
+    }]
+  }, {
+    style: 'float: left; width: 75%;',
+    components: [{
+      name: 'identifier',
+      style: 'padding-left: 5px;'
+    }, {
+      style: 'clear:both;'
+    }]
+  }],
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.identifier.setContent(this.model.get('_identifier'));
+  }
+});
+
+(function() {
+
+
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -42,7 +67,7 @@
         }
       }]
     }],
-    render: function () {
+    render: function() {
       this.$el.addClass('btnselect-browse');
       this.modelthumbnail.img = this.model.get('img');
       this.modelthumbnail.render();
