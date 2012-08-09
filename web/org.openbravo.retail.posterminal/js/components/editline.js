@@ -16,7 +16,7 @@ enyo.kind({
     components: [{
       name: 'msgedit',
       classes: 'row-fluid',
-      showing: true,
+      showing: false,
       components: [{
         classes: 'span7',
         components: [{
