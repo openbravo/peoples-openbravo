@@ -13,18 +13,27 @@
 
 //  OB = window.OB || {};
 //  OB.COMP = window.OB.COMP || {};
-
+  enyo.kind({
+    kind: 'OB.UI.SmallButton',
+    name: 'OB.UI.BtnReceiptToInvoice',
+    events: {
+      onInvoiceReceipt:''
+    },
+    tag: 'button',
+    style: 'width: 50px;',
+    classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
+    tap: function(){
+      this.doInvoiceReceipt();
+      console.log('invoice button click');
+    }
+  });
+  
   enyo.kind({
     name: 'btninvoice',
+    showing: false,
     style: 'float: left; width: 50%;',
     components: [{
-      kind: 'OB.UI.SmallButton',
-      tag: 'button',
-      style: 'width: 50px;',
-      classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
-      tap: function(){
-        console.log('invoice button click');
-      }
+      kind: 'OB.UI.BtnReceiptToInvoice'
     },{
       tag: 'span',
       content: ' '
@@ -84,6 +93,7 @@
               kind: 'btninvoice'
             },{
               name: 'return',
+              showing: false,
               style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
               content: 'To be returned'
             },{
@@ -93,12 +103,13 @@
         }]
       }],
       renderTotal: function(newTotal){
-        this.$.totalgross.setContent(newTotal);
+        this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
       },
       initComponents: function(){
         this.inherited(arguments);
       },
       orderChanged: function(order) {
+        this.renderTotal(this.order.getTotal());
         this.$.listOrderLines.setCollection(this.order.get('lines'));
         this.order.on('change:gross', function (model) {
           this.renderTotal(model.getTotal());

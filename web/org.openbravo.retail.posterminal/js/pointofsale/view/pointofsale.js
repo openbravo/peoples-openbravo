@@ -128,7 +128,10 @@ enyo.kind({
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   handlers: {
-    onAddProduct: 'addProductToOrder'
+    onAddProduct: 'addProductToOrder',
+    onInvoiceReceipt: 'receiptToInvoice',
+    onShowInvoiceButton: 'showInvoiceButton',
+    onShowReturnText: 'showReturnText'
   },
   components: [{
     classes: 'row',
@@ -167,6 +170,20 @@ enyo.kind({
   addProductToOrder: function(inSender, inEvent){
     this.model.get('order').addProduct(inEvent.originator.modelAdd);
     return true;// not continue
+  },
+  showInvoiceButton: function (){
+    this.$.receiptview.$.orderview.$.btninvoice.show();
+    return true;
+  },
+  showReturnText: function (){
+    this.$.receiptview.$.orderview.$.return.show();
+    return true;
+  },
+  receiptToInvoice: function(inSender, inEvent){
+    console.log('Invoice receipt handler');
+    this.model.get('order').resetOrderInvoice();
+    this.$.receiptview.$.orderview.$.btninvoice.hide();
+    return true;
   },
   init: function() {
     this.inherited(arguments);

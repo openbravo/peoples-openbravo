@@ -71,8 +71,12 @@
   enyo.kind({
     name: 'OB.UI.MenuReturn',
     kind: 'OB.UI.MenuAction',
+    events: {
+      onShowReturnText:''
+    },
     label: OB.I18N.getLabel('OBPOS_LblReturn'),
     tap: function () {
+      this.doShowReturnText();
     	//TODO: do this...
     }
   });
@@ -88,9 +92,13 @@
   enyo.kind({
 	    name: 'OB.UI.MenuInvoice',
 	    kind: 'OB.UI.MenuAction',
+	    events: {
+	      onShowInvoiceButton:''
+	    },
 	    label: OB.I18N.getLabel('OBPOS_LblInvoice'),
 	    tap: function () {
-	    	//TODO: do this...
+	    	this.doShowInvoiceButton();
+	      //TODO: do this...
 	    }
 	  });
   
