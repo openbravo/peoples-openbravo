@@ -18,8 +18,7 @@ enyo.kind({
     onPrev: 'prevStep'
   },
   prevStep: function(inSender, inEvent) {
-    switch( this.model.get('step'))
-    {
+    switch (this.model.get('step')) {
     case 0:
       break;
     case 1:
@@ -27,46 +26,45 @@ enyo.kind({
       this.$.listPaymentMethods.hide();
       this.$.cashUpInfo.$.buttonPrev.setDisabled(true);
       //show toolbarempty
-      this.model.set('step',this.model.get('step')-1);
-  //    if($('button[button="okbutton"][style!="display: none; "]').length!==0){
-  //      this.$el.attr('disabled','disabled');
-  //    }
+      this.model.set('step', this.model.get('step') - 1);
+      //    if($('button[button="okbutton"][style!="display: none; "]').length!==0){
+      //      this.$el.attr('disabled','disabled');
+      //    }
       break;
     case 2:
       this.$.cashToKeep.hide();
       this.$.listPaymentMethods.show();
-      this.model.set('step',this.model.get('step')-1);
+      this.model.set('step', this.model.get('step') - 1);
       break;
     case 3:
       this.$.postPrintClose.hide();
       this.$.cashToKeep.show();
-      this.model.set('step',this.model.get('step')-1);
+      this.model.set('step', this.model.get('step') - 1);
       break;
     default:
     }
   },
   nextStep: function(inSender, inEvent) {
-    switch( this.model.get('step'))
-    {
+    switch (this.model.get('step')) {
     case 0:
       this.$.listPendingReceipts.hide();
       this.$.listPaymentMethods.show();
       this.$.cashUpInfo.$.buttonPrev.setDisabled(false);
-      this.model.set('step',this.model.get('step')+1);
+      this.model.set('step', this.model.get('step') + 1);
       //show toolbarcountcash
-//      if($('button[button="okbutton"][style!="display: none; "]').length!==0){
-//        this.$el.attr('disabled','disabled');
-//      }
+      //      if($('button[button="okbutton"][style!="display: none; "]').length!==0){
+      //        this.$el.attr('disabled','disabled');
+      //      }
       break;
     case 1:
       this.$.cashToKeep.show();
       this.$.listPaymentMethods.hide();
-      this.model.set('step',this.model.get('step')+1);
+      this.model.set('step', this.model.get('step') + 1);
       break;
     case 2:
       this.$.postPrintClose.show();
       this.$.cashToKeep.hide();
-      this.model.set('step',this.model.get('step')+1);
+      this.model.set('step', this.model.get('step') + 1);
       break;
     default:
     }
@@ -116,7 +114,7 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalCancel'
     }, {
-    //  kind: OB.UI.ModalFinishClose
+      //  kind: OB.UI.ModalFinishClose
     }]
   }],
   init: function() {
@@ -127,7 +125,13 @@ enyo.kind({
   }
 });
 
-OB.POS.registerWindow('retail.cashup', OB.OBPOSCashUp.UI.CashUp, 10);
+OB.POS.registerWindow({
+  windowClass: OB.OBPOSCashUp.UI.CashUp,
+  route: 'retail.cashup',
+  menuPosition: 20,
+  menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash')
+});
+
 //  return (
 //      {kind: B.KindJQuery('section'), content: [
 //
