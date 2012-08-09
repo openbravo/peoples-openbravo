@@ -30,8 +30,12 @@ enyo.kind({
                 content: OB.I18N.getLabel('OBPOS_ButtonDelete'),
                 classes: 'btnlink-orange',
                 tap: function() {
-                  //TODO implement
-                  console.log('tap delete');
+                  var line = this.owner.line,
+                      receipt = this.owner.receipt;
+                  if (line && receipt) {
+                    receipt.deleteLine(line)
+                    receipt.trigger('scan');
+                  }
                 }
               }]
             }]
