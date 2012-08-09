@@ -31,6 +31,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   models: [OB.OBPOSCashUp.Model.CloseCashPaymentMethod, OB.OBPOSCashUp.Model.CashCloseReport, OB.Model.Order],
   defaults : {
     step: OB.DEC.Zero,
+    allowedStep: OB.DEC.Zero,
     totalExpected: OB.DEC.Zero,
     totalCounted: OB.DEC.Zero,
     totalDifference: OB.DEC.Zero

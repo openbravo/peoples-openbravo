@@ -12,11 +12,11 @@
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
   kind: 'OB.UI.RadioButton',
+  events: {
+    onTapRadio: ''
+  },
   tap: function() {
-//    if(this.$el.attr('id')==='allowvariableamount'){
-//      $('#variableamount').focus();
-//    }
-//    this.options.closenextbutton.$el.removeAttr('disabled');
+    this.doTapRadio();
   }
 });
 
@@ -35,7 +35,6 @@ enyo.kind({
             components: [ {
               id: 'cashtokeepheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              content: 'Cassssssssh to keep'
             }]
           }]
         },
@@ -46,28 +45,30 @@ enyo.kind({
             attributes: {classes: 'btn-group','data-toggle':'buttons-radio'},
             components: [{
               name: 'keepfixedamount',
+              value: '',
               kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-              content: '100'
             },
             {style: 'clear: both;'},
             {
               name: 'allowmoveeverything',
+              value: '',
               kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-              content: 'All'
             },
             {style: 'clear: both;'},
             {
               name: 'allowdontmove',
+              value: '',
               kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-              content: 'Nothing'
             },
             {style: 'clear: both;'},
             {
               name: 'allowvariableamount',
+              value: '',
               kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
               components: [{
                 style: 'display: table-cell; vertical-align: middle;'
               },{
+                name: 'variableamount',
                 tag: 'input',
                 type:'text',
                 classes: 'span1',
