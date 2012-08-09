@@ -589,6 +589,7 @@ enyo.kind({
   commands: {},
   buttons: {},
   status: '',
+  state: new Backbone.Model(), 
   sideBarEnabled: false,
 
   tag: 'div',
@@ -933,7 +934,8 @@ enyo.kind({
     console.log('addToolbar', newToolbar);
     var toolbar = this.$.toolbarcontainer.createComponent({
       toolbarName: newToolbar.name,
-      shown: newToolbar.shown
+      shown: newToolbar.shown,
+      keboard: this
     });
 
     var emptyBtn = {
@@ -963,7 +965,8 @@ enyo.kind({
 
   addToolbarComponent: function(newToolbar) {
     this.$.toolbarcontainer.createComponent({
-      kind: newToolbar
+      kind: newToolbar,
+      keyboard: this
     });
   },
 
@@ -1005,10 +1008,12 @@ enyo.kind({
   },
 
   showKeypad: function(keypadName) {
-    this.keypadName = keypadName;
+	  this.state.set('keypadName', keypadName);
+    //this.keypadName = keypadName;
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
       console.log(pad, keypadName);
       if (pad.padName === keypadName) {
+    	this.state.set('keypadLabel', pad.label);
         pad.show();
       } else {
         pad.hide();

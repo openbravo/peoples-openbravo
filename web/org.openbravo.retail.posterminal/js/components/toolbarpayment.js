@@ -151,9 +151,35 @@
   enyo.kind({
     name: 'OB.UI.ToolbarPayment',
     toolbarName: 'toolbarpayment',
+    payment: function(amount, modalpayment, receipt, key, name, paymentMethod) {
+      if (OB.DEC.compare(amount) > 0) {
+        if (paymentMethod.view) {
+          modalpayment.show(receipt, key, name, paymentMethod, amount);
+        } else {
+          receipt.addPayment(new OB.Model.PaymentLine({
+            'kind': key,
+            'name': name,
+            'amount': amount
+          }));
+        }
+      }
+    },
+
+    getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
+      return ({
+        'permission': key,
+        'stateless': false,
+        'action': function(txt) {
+          var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+          amount = _.isNaN(amount) ? receipt.getPending() : amount;
+          payment(amount, modalpayment, receipt, key, name, paymentMethod);
+        }
+      });
+    },
+
     initComponents: function() {
       //TODO: modal payments
-      var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {};
+      var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {},modalpayment;
 
       payments = OB.POS.modelterminal.get('payments');
 
@@ -175,7 +201,8 @@
           btn: {
             command: payment.payment.searchKey,
             label: payment.payment._identifier,
-            permission: payment.payment.searchKey
+            permission: payment.payment.searchKey,
+            definition: this.getPayment(modalpayment, receipt, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
           }
         });
       }, this);
@@ -188,7 +215,8 @@
       }
 
       this.createComponent({
-        kind: 'OB.UI.ButtonSwitch'
+        kind: 'OB.UI.ButtonSwitch',
+        keyboard: this.keyboard
       });
     },
     shown: function() {
@@ -215,13 +243,22 @@
         content: 'aa'
       }]
     }],
-    getLbl: function() {
-      console.log('getLbl')
+    setLabel: function() {
+      this.$.btn.setContent(this.keyboard.state.get('keypadLabel'));
     },
     tap: function() {
       console.log('tap');
-      var newKeypad = this.owner.owner.owner.keypadName === 'coins' ? 'basic' : 'coins';
-      this.owner.owner.owner.showKeypad(newKeypad);
+      var newKeypad = this.keyboard.state.get('keypadName') === 'coins' ? 'basic' : 'coins';
+      this.keyboard.showKeypad(newKeypad);
+    },
+    
+    create: function() {
+    	this.inherited(arguments);
+    	debugger;
+    	this.keyboard.state.on('change:keypadLabel', function(){
+    		this.setLabel();
+        },this);
+    	this.setLabel();
     }
 
   });

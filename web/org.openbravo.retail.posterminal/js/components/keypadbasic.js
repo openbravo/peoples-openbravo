@@ -430,7 +430,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.KeypadBasic',
-  // kind: OB.UI.KeyboardComponent ???
+  label: OB.I18N.getLabel('OBPOS_KeypadBasic'),
   padName: 'basic',
   components: [{
     classes: 'row-fluid',

@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.KeypadCoins',
-  // kind: OB.UI.KeyboardComponent ???
+  label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
   padName: 'coins',
   components: [{
     classes: 'row-fluid',
