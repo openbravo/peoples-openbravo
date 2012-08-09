@@ -20,6 +20,7 @@ enyo.kind({
     }]
   }, {
     name: 'categoryTable',
+    listStyle: 'list',
     kind: 'OB.UI.Table',
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderCategory'

@@ -180,7 +180,6 @@
     published: {
       collection: null
     },
-    listStyle: 'list',
     components: [{
       name: 'theader'
     }, {

@@ -345,13 +345,14 @@
                 renderEmpty: 'OB.UI.RenderEmpty',
                 renderLine: 'OB.UI.RenderProduct'
               }]
-            }, ]
+            }]
           }]
         }]
       }]
     }],
     init: function() {
-      var me = this, receipt = this.owner.owner.model.get('order');
+      var me = this,
+          receipt = this.owner.owner.model.get('order');
       this.inherited(arguments);
       this.categories = new OB.Collection.ProductCategoryList();
       this.products = new OB.Collection.ProductList();
@@ -359,16 +360,15 @@
       this.$.products.setCollection(this.products);
 
       this.products.on('click', function(model) {
-    	  receipt.addProduct(model);
+        receipt.addProduct(model);
       });
 
-      //      this.receipt.on('clear', function() {
-      //        this.productname.setValue('');
-      //        this.productcategory.setValue('');
-      //        //A filter should be set before show products. -> Big data!!
-      //        //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
-      //      }, this);
-      //FIXME: this.productname = this.component.context.productname.$el;
+      receipt.on('clear', function() {
+        this.$.productname.setValue('');
+        this.$.productcategory.setValue('');
+        //A filter should be set before show products. -> Big data!!
+        //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
+      }, this);
 
       function errorCallback(tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
