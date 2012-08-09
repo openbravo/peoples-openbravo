@@ -42,6 +42,7 @@ import org.openbravo.service.db.DalBaseProcess;
 public class CostingBackground extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   private ProcessLogger logger;
+  private int maxTransactions = 0;
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -52,8 +53,8 @@ public class CostingBackground extends DalBaseProcess {
 
     List<MaterialTransaction> trxs = getTransactionsBatch();
     int counter = 0, total = trxs.size(), batch = 0;
-    boolean pendingTrx = areTransactionsPending();
-    while (pendingTrx) {
+    boolean pendingTrx = trxs.size() > 0;
+    while (pendingTrx && counter < maxTransactions) {
       batch++;
       for (MaterialTransaction transaction : trxs) {
         counter++;
@@ -104,8 +105,12 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
-    trxQry.setMaxResult(1000);
     trxQry.setNamedParameter("now", new Date());
+
+    if (maxTransactions == 0) {
+      maxTransactions = trxQry.count();
+    }
+    trxQry.setMaxResult(1000);
 
     return trxQry.list();
   }
