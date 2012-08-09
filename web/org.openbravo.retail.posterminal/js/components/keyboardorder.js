@@ -16,11 +16,24 @@ enyo.kind({
   sideBarEnabled: true,
 
 
-  initComponents: function() {
+  init: function() {
+    this.inherited(arguments);
+    //this.products = this.options.root.DataProductPrice;
+    this.receipt = this.owner.model.get('order');
+    this.line = null;
 
+    this.receipt.get('lines').on('selected', function(line) {
+      this.line = line;
+      //TODO:do this   this.clear();
+    }, this);
+  },
+  initComponents: function() {
     this.addCommand('line:qty', {
       action: function(txt) {
-        console.log('qty', txt);
+        if (this.line) {
+          this.receipt.setUnit(this.line, OB.I18N.parseNumber(txt));
+          this.receipt.trigger('scan');
+        }
       }
     });
 
@@ -28,19 +41,19 @@ enyo.kind({
       permission: 'OBPOS_order.changePrice',
       action: function(txt) {
         console.log('price', txt);
-        //        if (this.line) {
-        //          this.receipt.setPrice(this.line, OB.I18N.parseNumber(txt));
-        //          this.receipt.trigger('scan');
-        //        }
+        if (this.line) {
+          this.receipt.setPrice(this.line, OB.I18N.parseNumber(txt));
+          this.receipt.trigger('scan');
+        }
       }
     });
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function(txt) {
         console.log('dto', txt);
-        //        if (this.line) {
-        //          this.receipt.trigger('discount', this.line, OB.I18N.parseNumber(txt));
-        //        }
+        if (this.line) {
+          this.receipt.trigger('discount', this.line, OB.I18N.parseNumber(txt));
+        }
       }
     });
     this.addCommand('code', {
@@ -103,26 +116,26 @@ enyo.kind({
       stateless: true,
       action: function(txt) {
         console.log('+', txt);
-        //        if (this.line) {
-        //          this.receipt.addUnit(this.line, OB.I18N.parseNumber(txt));
-        //          this.receipt.trigger('scan');
-        //        }
+        if (this.line) {
+          this.receipt.addUnit(this.line, OB.I18N.parseNumber(txt));
+          this.receipt.trigger('scan');
+        }
       }
     });
     this.addCommand('-', {
       stateless: true,
       action: function(txt) {
         console.log('-', txt);
-        //        if (this.line) {
-        //          this.receipt.removeUnit(this.line, OB.I18N.parseNumber(txt));
-        //          this.receipt.trigger('scan');
-        //        }
+        if (this.line) {
+          this.receipt.removeUnit(this.line, OB.I18N.parseNumber(txt));
+          this.receipt.trigger('scan');
+        }
       }
     });
 
     // calling super after setting keyboard properties
     this.inherited(arguments);
-    
+
     this.addKeypad('OB.UI.KeypadCoins');
     this.addToolbarComponent('OB.UI.ToolbarPayment');
     this.addToolbar(OB.UI.ToolbarScan);

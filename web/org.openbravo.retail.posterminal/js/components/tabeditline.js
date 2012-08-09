@@ -22,6 +22,7 @@
     tap: function() {
     	this.inherited(arguments);
     	OB.UTIL.setOrderLineInEditMode(true);
+    	this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
     },
     initComponents: function() {
       this.inherited(arguments);
