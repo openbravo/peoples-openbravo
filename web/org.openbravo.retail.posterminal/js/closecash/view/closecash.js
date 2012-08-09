@@ -126,6 +126,16 @@ enyo.kind({
   }],
   init: function() {
     this.inherited(arguments);
+    var me = this;
+    OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
+      if (fetchedOrderList && fetchedOrderList.length !== 0) {
+        me.model.orderlist.reset(fetchedOrderList.models);
+        me.$.listPendingReceipts.$.pendingReceiptList.setCollection(fetchedOrderList);
+//        ctx.closenextbutton.$el.attr('disabled','disabled');
+//        orderlist.reset(fetchedOrderList.models);
+      }
+    }, function () { }); //OB.Dal.find error
+    
     this.model.payList.each(function(payList) {
       this.model.set('totalExpected', OB.DEC.add(this.model.get('totalExpected'),payList.get('expected')));
     }, this);

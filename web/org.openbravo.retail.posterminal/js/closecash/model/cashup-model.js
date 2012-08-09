@@ -28,7 +28,7 @@ OB.OBPOSCashUp.Model.CashCloseReport = Backbone.Model.extend({
 
 //Window model
 OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
-  models: [OB.OBPOSCashUp.Model.CloseCashPaymentMethod, OB.OBPOSCashUp.Model.CashCloseReport],
+  models: [OB.OBPOSCashUp.Model.CloseCashPaymentMethod, OB.OBPOSCashUp.Model.CashCloseReport, OB.Model.Order],
   defaults : {
     step: OB.DEC.Zero,
     totalExpected: OB.DEC.Zero,
@@ -36,6 +36,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     totalDifference: OB.DEC.Zero
   },
   init: function() {
+    this.orderlist= new Backbone.Collection();
     this.payList = this.getData('DataCloseCashPaymentMethod');
   }
 });

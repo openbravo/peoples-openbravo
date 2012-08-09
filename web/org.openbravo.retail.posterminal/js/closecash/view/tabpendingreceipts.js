@@ -10,6 +10,25 @@
 /*global window, B, Backbone */
 
 enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ButtonVoid',
+  kind: 'OB.UI.SmallButton',
+  classes: 'btnlink-gray',
+  style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
+  label: OB.I18N.getLabel('OBUIAPP_Delete'),
+  tap: function() {
+//    this.owner.owner.model.orderlist.remove(this.order);
+//    if(this.owner.owner.model.orderlist.length===0){
+//      this.owner.owner.$.cashUpInfo.$.prevButton.setDisabled(false);
+//    }
+//    OB.Dal.remove(this.order, function(){
+//      return true;
+//    }, function(){
+//      OB.UTIL.showError('Error removing');
+//    });
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
   components: [{
     classes: 'display: table-row; height: 42px;',
@@ -27,11 +46,25 @@ enyo.kind({
         components: [{
           name: 'printGross',
           style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 15%;  text-align:right;'
-        }]
+        },
+        {
+          style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 15%;',
+          components:[{
+             name: 'buttonVoid',
+             kind:'OB.OBPOSCashUp.UI.ButtonVoid',
+             order: ''
+           }]
+        },]
       }]
   }],
   create: function () {
     this.inherited(arguments);
+    debugger;
+    this.$.orderDate.setContent(this.model.get('orderDate'));
+    this.$.documentNo.setContent(this.model.get('documentNo'));
+    this.$.bp.setContent(this.model.get('bp'));
+    this.$.printGross.setContent(this.model.get('printGross'));
+    this.$.buttonVoid.order=this.model.get('id');
   }
 });
 
@@ -76,8 +109,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   init: function () {
-    //FIXME: Temporal solution
-    this.$.pendingReceiptList.setCollection(new Backbone.Collection());
+    
   }
 });
 

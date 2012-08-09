@@ -77,7 +77,6 @@ enyo.kind({
 //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
 //                 ]
 //     });
-    debugger;
     this.addToolbar( {
         name: 'toolbarempty',
         buttons: []
