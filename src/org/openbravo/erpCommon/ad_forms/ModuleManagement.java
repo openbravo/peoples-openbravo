@@ -82,6 +82,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -1097,7 +1098,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    boolean localChanges = verifyLocalChanges();
+    boolean localChanges = verifyLocalChanges(vars);
     if (localChanges) {
       final PrintWriter out = response.getWriter();
       final String discardlc[] = {};
@@ -2605,7 +2606,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Checks if there are local changes in the application
    */
-  private boolean verifyLocalChanges() {
+  private boolean verifyLocalChanges(VariablesSecureApp vars){
     long t1 = System.currentTimeMillis();
     Connection connection = OBDal.getInstance().getConnection();
     PreparedStatement ps = null;
@@ -2631,6 +2632,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     File sources = new File(sourcePath);
+    //Added file exists condition to check invalid source path
+    if(!sources.exists()
+    {
+      throw new OBException(Utility.messageBD(this,"WrongPathError",vars.getLanguage()));
+    }
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
       modelFiles.add(model);
