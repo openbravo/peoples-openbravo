@@ -147,16 +147,18 @@ enyo.kind({
         classes: 'tab-content',
         components: [{
           kind: 'OB.UI.TabScan'
-        },{
+        }, {
           kind: 'OB.UI.TabBrowse'
         }, {
           kind: 'OB.UI.TabSearch'
-        },{
-        	kind: 'OB.UI.TabPayment',
+        }, {
+          kind: 'OB.UI.TabPayment',
+        }, {
+          kind: 'OB.UI.TabEditLine'
         }]
-      },{
-      	kind: 'OB.UI.KeyboardOrder',
-      	name: 'keyboard'
+      }, {
+        kind: 'OB.UI.KeyboardOrder',
+        name: 'keyboard'
       }]
     }]
   }],

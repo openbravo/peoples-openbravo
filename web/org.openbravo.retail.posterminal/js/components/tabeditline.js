@@ -19,7 +19,7 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#edition',
     label: OB.I18N.getLabel('OBPOS_LblEdit'),
-    tab: function() {
+    tap: function() {
       //FIXME
       //OB.COMP.ToolbarButtonTab.prototype.clickEvent.call(this); // super.initialize();
       //OB.UTIL.setOrderLineInEditMode(true);
@@ -49,6 +49,15 @@
     shownEvent: function(e) {
       this.options.keyboard.show('toolbarscan');
     }
+  });
+  
+  enyo.kind({
+	  name: 'OB.UI.TabEditLine',
+	  classes: 'tab-pane',
+	  components: [{kind: 'OB.UI.EditLine'}],
+	  makeId: function () {
+		  return 'edition'
+	  }
   });
 
   OB.COMP.TabEditLine = Backbone.View.extend({

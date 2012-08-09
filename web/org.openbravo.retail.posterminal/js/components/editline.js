@@ -9,7 +9,124 @@
 
 /*global Backbone */
 
-(function () {
+enyo.kind({
+  name: 'OB.UI.EditLine',
+  components: [{
+    style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
+    components: [{
+      name: 'msgedit',
+      classes: 'row-fluid',
+      showing: true,
+      components: [{
+        classes: 'span7',
+        components: [{
+          style: 'padding: 5px; width:100%',
+          components: [{
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span12',
+              components: [{
+                kind: 'OB.UI.SmallButton',
+                content: OB.I18N.getLabel('OBPOS_ButtonDelete'),
+                classes: 'btnlink-orange',
+                tap: function() {
+                  //TODO implement
+                  console.log('tap delete');
+                }
+              }]
+            }]
+          }]
+        }, {
+          style: 'padding: 0px 0px 0px 25px; width:100%; line-height: 140%;',
+          components: [{
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span4',
+              content: OB.I18N.getLabel('OBPOS_LineDescription')
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlinename'
+              }]
+            }]
+          }, {
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span4',
+              content: OB.I18N.getLabel('OBPOS_LineQuantity')
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlineqty'
+              }]
+            }]
+          }, {
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span4',
+              content: OB.I18N.getLabel('OBPOS_LinePrice')
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlineprice'
+              }]
+            }]
+          }, {
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span4',
+              content: OB.I18N.getLabel('OBPOS_LineDiscount')
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlinediscount'
+              }]
+            }]
+          }, {
+            classes: 'row-fluid',
+            components: [{
+              classes: 'span4',
+              content: OB.I18N.getLabel('OBPOS_LineTotal')
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlinegross'
+              }]
+            }]
+          }]
+        }]
+      }, {
+        classes: 'span5',
+        sytle: 'text-align: right',
+        components: [{
+          style: 'padding: 60px 10px 20px 10px;',
+          components: [{
+            name: 'editlineimage',
+            kind: 'OB.UI.Thumbnail',
+            classes: 'image-wrap image-editline',
+            width: '128px',
+            height: '128px'
+          }]
+        }]
+      }]
+    }, {
+      name: 'msgaction',
+      style: 'padding: 10px; display: none;',
+      components: [{
+        name: 'txtaction',
+        style: 'float:left;'
+      }]
+    }]
+  }]
+//TODO: implement this!
+});
+
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -52,7 +169,7 @@
                   view: OB.COMP.SmallButton.extend({
                     'label': OB.I18N.getLabel('OBPOS_ButtonDelete'),
                     'className': 'btnlink-orange',
-                    'clickEvent': function () {
+                    'clickEvent': function() {
                       var parent = this.options.parent;
                       if (parent.line) {
                         parent.receipt.deleteLine(parent.line);
@@ -191,17 +308,15 @@
             attributes: {
               'style': 'padding: 60px 10px 20px 10px;'
             },
-            content: [
-                 {
-                   id: 'editlineimage',
+            content: [{
+              id: 'editlineimage',
 
-                   view: OB.UTIL.Thumbnail.extend({
-                     className: 'image-wrap image-editline',
-                     width: 128,
-                     height: 128
-                   })
-                 }
-              ]
+              view: OB.UTIL.Thumbnail.extend({
+                className: 'image-wrap image-editline',
+                width: 128,
+                height: 128
+              })
+            }]
 
           }]
         }]
@@ -220,7 +335,7 @@
         }]
       }]
     }],
-    initialize: function () {
+    initialize: function() {
       var me = this;
       OB.UTIL.initContentView(this);
 
@@ -228,7 +343,7 @@
       this.receipt = this.options.root.modelorder;
       this.line = null;
 
-      this.receipt.get('lines').on('selected', function (line) {
+      this.receipt.get('lines').on('selected', function(line) {
         if (this.line) {
           this.line.off('change', this.render);
         }
@@ -239,7 +354,7 @@
         this.render();
       }, this);
     },
-    render: function () {
+    render: function() {
 
       if (this.line) {
         this.msgaction.hide();

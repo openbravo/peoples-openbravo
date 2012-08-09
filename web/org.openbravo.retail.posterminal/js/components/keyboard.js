@@ -1009,8 +1009,7 @@ enyo.kind({
 
   showKeypad: function(keypadName) {
 	  this.state.set('keypadName', keypadName);
-    //this.keypadName = keypadName;
-    enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
+      enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
       console.log(pad, keypadName);
       if (pad.padName === keypadName) {
     	this.state.set('keypadLabel', pad.label);
