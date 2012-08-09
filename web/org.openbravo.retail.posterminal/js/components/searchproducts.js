@@ -351,20 +351,17 @@
       }]
     }],
     init: function() {
-      var me = this;
+      var me = this, receipt = this.owner.owner.model.get('order');
       this.inherited(arguments);
       this.categories = new OB.Collection.ProductCategoryList();
       this.products = new OB.Collection.ProductList();
       this.$.productcategory.setCollection(this.categories);
       this.$.products.setCollection(this.products);
 
-      //TODO: implement actions
       this.products.on('click', function(model) {
-        debugger;
-        this.owner.owner.model.order.addProduct(model)
-        console.log('click', model.get('id'));
-      }, this);
-      //
+    	  receipt.addProduct(model);
+      });
+
       //      this.receipt.on('clear', function() {
       //        this.productname.setValue('');
       //        this.productcategory.setValue('');
