@@ -137,6 +137,16 @@
     }
   });
 
+  enyo.kind({
+    name: 'OB.UI.RadioButton',
+    tag: 'button',
+    classes: 'btn btn-radio',
+    style: 'padding: 0px 0px 0px 40px; margin: 10px;',
+    initComponents: function() {
+      this.inherited(arguments);
+    }
+  });
+
   // Base button: Implemented as enyo: OB.UI.Button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',

@@ -1,0 +1,192 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+/*global OB, enyo*/
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.CashUp',
+  kind: 'OB.UI.WindowView',
+  windowmodel: OB.OBPOSCashUp.Model.CashUp,
+  handlers: {
+    onNext: 'nextStep',
+    onPrev: 'prevStep'
+  },
+  prevStep: function(inSender, inEvent) {
+    switch( this.model.get('step'))
+    {
+    case 0:
+      break;
+    case 1:
+      this.$.listPendingReceipts.show();
+      this.$.listPaymentMethods.hide();
+      this.$.cashUpInfo.$.buttonPrev.setDisabled(true);
+      //show toolbarempty
+      this.model.set('step',this.model.get('step')-1);
+  //    if($('button[button="okbutton"][style!="display: none; "]').length!==0){
+  //      this.$el.attr('disabled','disabled');
+  //    }
+      break;
+    case 2:
+      this.$.cashToKeep.hide();
+      this.$.listPaymentMethods.show();
+      this.model.set('step',this.model.get('step')-1);
+      break;
+    case 3:
+      this.$.postPrintClose.hide();
+      this.$.cashToKeep.show();
+      this.model.set('step',this.model.get('step')-1);
+      break;
+    default:
+    }
+  },
+  nextStep: function(inSender, inEvent) {
+    switch( this.model.get('step'))
+    {
+    case 0:
+      this.$.listPendingReceipts.hide();
+      this.$.listPaymentMethods.show();
+      this.$.cashUpInfo.$.buttonPrev.setDisabled(false);
+      this.model.set('step',this.model.get('step')+1);
+      //show toolbarcountcash
+//      if($('button[button="okbutton"][style!="display: none; "]').length!==0){
+//        this.$el.attr('disabled','disabled');
+//      }
+      break;
+    case 1:
+      this.$.cashToKeep.show();
+      this.$.listPaymentMethods.hide();
+      this.model.set('step',this.model.get('step')+1);
+      break;
+    case 2:
+      this.$.postPrintClose.show();
+      this.$.cashToKeep.hide();
+      this.model.set('step',this.model.get('step')+1);
+      break;
+    default:
+    }
+  },
+  components: [{
+    classes: 'row',
+    components: [
+    // 1st column: list of pending receipts
+    {
+      classes: 'span6',
+      components: [{
+        kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts'
+      }]
+    },
+    // 1st column: list of count cash per payment method
+    {
+      classes: 'span6',
+      components: [{
+        kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods'
+      }]
+    },
+    // 1st column: Radio buttons to choose how much to keep in cash
+    {
+      classes: 'span6',
+      components: [{
+        kind: 'OB.OBPOSCashUp.UI.CashToKeep'
+      }]
+    },
+    // 1st column: Cash up Report previous to finish the proccess
+    {
+      classes: 'span6',
+      components: [{
+        kind: 'OB.OBPOSCashUp.UI.PostPrintClose'
+      }]
+    },
+    //2nd column
+    {
+      classes: 'span6',
+      components: [{
+        classes: 'span6',
+        components: [{
+          kind: 'OB.OBPOSCashUp.UI.CashUpInfo'
+        }, {
+          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard'
+        }]
+      }]
+    }, {
+      kind: 'OB.UI.ModalCancel'
+    }, {
+    //  kind: OB.UI.ModalFinishClose
+    }]
+  }],
+  init: function() {
+    this.inherited(arguments);
+    this.$.listPaymentMethods.hide();
+    this.$.cashToKeep.hide();
+    this.$.postPrintClose.hide();
+  }
+});
+
+OB.POS.registerWindow('retail.cashup', OB.OBPOSCashUp.UI.CashUp, 10);
+//  return (
+//      {kind: B.KindJQuery('section'), content: [
+//
+//        {kind: OB.MODEL.DayCash},
+//        {kind: OB.Model.Order},
+//        {kind: OB.Collection.OrderList},
+//        {kind: OB.DATA.CloseCashPaymentMethod},
+//        {kind: OB.DATA.PaymentCloseCash},
+//        {kind: OB.COMP.ModalCancel},
+//        {kind: OB.COMP.ModalFinishClose},
+//        {kind: OB.COMP.ModalProcessReceipts},
+//        {kind: OB.DATA.Container, content: [
+//             {kind: OB.DATA.CloseCashPaymentMethod},
+//             {kind: OB.DATA.CashCloseReport},
+//             {kind: OB.COMP.HWManager, attr: {'templatecashup': 'res/printcashup.xml'}}
+//        ]},
+//        {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
+//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+//             {kind: OB.COMP.PendingReceipts},
+//             {kind: OB.COMP.CountCash},
+//             {kind: OB.COMP.CashToKeep},
+//             {kind: OB.COMP.PostPrintClose}
+//           ]},
+//
+//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
+//            {kind: B.KindJQuery('div'), content: [
+//              {kind: OB.COMP.CloseInfo }
+//            ]},
+//            {kind: OB.COMP.CloseKeyboard }
+//          ]}
+//        ]}
+//
+//      ], init: function () {
+//        var ctx = this.context;
+//        OB.UTIL.showLoading(true);
+//        ctx.on('domready', function () {
+//          var orderlist = this.context.modelorderlist;
+//          OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
+//            var currentOrder = {};
+//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
+//              ctx.orderlisttoprocess = fetchedOrderList;
+//              OB.UTIL.showLoading(false);
+//              $('#modalprocessreceipts').modal('show');
+//            }else{
+//              OB.UTIL.showLoading(false);
+//            }
+//          }, function () { //OB.Dal.find error
+//          });
+//
+//          OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
+//            var currentOrder = {};
+//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
+//              ctx.closenextbutton.$el.attr('disabled','disabled');
+//              orderlist.reset(fetchedOrderList.models);
+//            }
+//          }, function () { //OB.Dal.find error
+//          });
+//        }, this);
+//      }}
+//    );
+//  }
+//});

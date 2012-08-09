@@ -146,16 +146,20 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/view/cashmgmt",
 
         // Cash Up window
-        "closecash/components/closebuttons", "closecash/components/closekeyboard",
-        "closecash/components/listpaymentmethod", "closecash/components/renderpayments",
-        "closecash/components/renderpaymentlines", "closecash/components/renderretailtransactions",
+        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
+        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
+        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
+        "closecash/view/tabpostprintclose",
+
+        "closecash/components/closebuttons", "closecash/components/listpaymentmethod",
+        "closecash/components/renderpayments", "closecash/components/renderpaymentlines",
+        "closecash/components/renderretailtransactions",
         "closecash/components/renderpendingreceipt", "closecash/components/listpendingreceipts",
         "closecash/components/searchretailtransactions", "closecash/components/toolbarcountcash",
         "closecash/components/modalfinishclose", "closecash/components/modalprocessreceipts",
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
-        "closecash/windows/closeinfo", "closecash/windows/tabcountcash",
-        "closecash/windows/tabcashtokeep", "closecash/windows/tabpendingreceipts",
-        "closecash/windows/tabpostprintclose", "closecash/windows/closecash",
+        "closecash/windows/tabcountcash", "closecash/windows/tabcashtokeep",
+        "closecash/windows/tabpostprintclose",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",

@@ -9,6 +9,71 @@
 
 /*global window, B, Backbone */
 
+//Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
+//with detailed information for each payment type
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.PostPrintClose',
+  components: [ {
+    classes: 'tab-pane',
+    components: [ {
+      style: 'overflow:auto; height: 500px; margin: 5px',
+      components: [ {
+        style: 'background-color: #ffffff; color: black; padding: 5px;',
+        components: [ {
+          classes: 'row-fluid',
+          components: [ {
+            classes: 'span12',
+            components: [ {
+              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+              content: OB.I18N.getLabel('OBPOS_LblStep4of4')
+            }]
+          }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            style: 'border-bottom: 1px solid #cccccc;',
+            components:[{
+              style: 'padding: 10px; text-align:center;',
+              components:[{
+                tag: 'img',
+                style: 'padding: 20px 20px 20px 10px;',
+                attributes: {src:'../../utility/ShowImageLogo?logo=yourcompanymenu'}
+              },
+              {
+                style: 'padding: 5px; text-align:center;',
+                content: 'User'
+              },
+              {
+                style: 'padding: 5px 5px 15px 5px; text-align:center;',
+                content: new Date().toString().substring(16, 21)
+              }]
+            }]
+          }]
+        }]
+      }]
+    }]
+  }],
+  create: function () {
+    this.inherited(arguments);
+    // explicitly set the total
+//    this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
+//    this.$.userName.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
+//    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
+//    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
+//    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
+//
+//    this.$.paymentsList.setCollection(this.owner.model && this.owner.model.getData('DataCloseCashPaymentMethod'));
+  },
+  init: function () {
+    // this.owner is the window (OB.UI.WindowView)
+    // this.parent is the DOM object on top of the list (usually a DIV)
+//    this.$.paymentsList.setCollection( this.owner.model.getData('DataCloseCashPaymentMethod'));
+  }
+});
+
+
 (function () {
 
   OB = window.OB || {};
