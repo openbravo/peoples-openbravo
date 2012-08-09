@@ -24,7 +24,7 @@ enyo.kind({
     }, {
       style: 'padding: 5px; float: right;',
       components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.CancelButton'
+        kind: 'OB.UI.CancelButton'
       }]
     }, {
       // done button
@@ -47,16 +47,5 @@ enyo.kind({
   content: OB.I18N.getLabel('OBPOS_LblDone'),
   tap: function() {
     this.owner.owner.model.depsdropstosend.trigger('makeDeposits');
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCashMgmt.UI.CancelButton',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-white btnlink-fontgray',
-  content: OB.I18N.getLabel('OBPOS_LblCancel'),
-  attributes: {
-    href: '#modalCancel',
-    'data-toggle': 'modal'
   }
 });
