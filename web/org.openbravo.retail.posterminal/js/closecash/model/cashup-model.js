@@ -36,8 +36,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     totalDifference: OB.DEC.Zero
   },
   init: function() {
-    this.on('change:totalExpected', function() {
-       this.set('totalDifference', OB.DEC.sub(totalCounted,totalExpected));
-    }, this);
+    this.payList = this.getData('DataCloseCashPaymentMethod');
   }
 });

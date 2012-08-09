@@ -25,6 +25,7 @@ enyo.kind({
       this.$.listPendingReceipts.show();
       this.$.listPaymentMethods.hide();
       this.$.cashUpInfo.$.buttonPrev.setDisabled(true);
+      this.$.cashUpKeyboard.showToolbar('toolbarempty');
       //show toolbarempty
       this.model.set('step', this.model.get('step') - 1);
       //    if($('button[button="okbutton"][style!="display: none; "]').length!==0){
@@ -34,6 +35,7 @@ enyo.kind({
     case 2:
       this.$.cashToKeep.hide();
       this.$.listPaymentMethods.show();
+      this.$.cashUpKeyboard.showToolbar('toolbarcountcash');
       this.model.set('step', this.model.get('step') - 1);
       break;
     case 3:
@@ -50,6 +52,7 @@ enyo.kind({
       this.$.listPendingReceipts.hide();
       this.$.listPaymentMethods.show();
       this.$.cashUpInfo.$.buttonPrev.setDisabled(false);
+      this.$.cashUpKeyboard.showToolbar('toolbarcountcash');
       this.model.set('step', this.model.get('step') + 1);
       //show toolbarcountcash
       //      if($('button[button="okbutton"][style!="display: none; "]').length!==0){
@@ -59,6 +62,7 @@ enyo.kind({
     case 1:
       this.$.cashToKeep.show();
       this.$.listPaymentMethods.hide();
+      this.$.cashUpKeyboard.showToolbar('toolbarempty');
       this.model.set('step', this.model.get('step') + 1);
       break;
     case 2:
@@ -83,21 +87,24 @@ enyo.kind({
     {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods'
+        kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
+        showing: false
       }]
     },
     // 1st column: Radio buttons to choose how much to keep in cash
     {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.CashToKeep'
+        kind: 'OB.OBPOSCashUp.UI.CashToKeep',
+        showing: false
       }]
     },
     // 1st column: Cash up Report previous to finish the proccess
     {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.PostPrintClose'
+        kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
+        showing: false
       }]
     },
     //2nd column
@@ -119,9 +126,10 @@ enyo.kind({
   }],
   init: function() {
     this.inherited(arguments);
-    this.$.listPaymentMethods.hide();
-    this.$.cashToKeep.hide();
-    this.$.postPrintClose.hide();
+    this.model.payList.each(function(payList) {
+      this.model.set('totalExpected', OB.DEC.add(this.model.get('totalExpected'),payList.get('expected')));
+    }, this);
+    this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
   }
 });
 

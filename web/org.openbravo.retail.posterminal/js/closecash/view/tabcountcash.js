@@ -71,7 +71,7 @@ enyo.kind({
     this.$.buttonOk.type = this.model.get('id');
 //    this.$.counted.setContent(0);
     //FIXME: Use events and handlers
-    this.owner.owner.owner.owner.owner.model.set('totalExpected',OB.DEC.add(this.owner.owner.owner.owner.owner.model.get('totalExpected'),this.model.get('expected')));
+//    this.owner.owner.owner.owner.owner.model.set('totalExpected',OB.DEC.add(this.owner.owner.owner.owner.owner.model.get('totalExpected'),this.model.get('expected')));
   }
 });
 
@@ -83,9 +83,6 @@ enyo.kind({
   },
   create: function () {
     this.inherited(arguments);
-//    this.owner.model.on('change:totalDifference', function (model) {
-//      this.setTotal(model.get('totalDifference'));
-//    }, this);
   },
   totalChanged: function (oldValue) {
     this.setContent(this.total);

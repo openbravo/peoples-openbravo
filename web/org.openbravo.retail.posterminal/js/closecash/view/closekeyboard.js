@@ -63,8 +63,31 @@ enyo.kind({
         label: payment.get('name')
       });
     }, this);
-
-    this.addToolbar(buttons);
+    this.addToolbar({
+      name: 'toolbarcountcash',
+      buttons: buttons
+    });
+//    this.addToolbar('toolbarempty', {
+//    toolbarempty: [
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
+//                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
+//                 ]
+//     });
+    debugger;
+    this.addToolbar( {
+        name: 'toolbarempty',
+        buttons: []
+      });
+    
+    
+    
+    
+    this.showToolbar('toolbarempty');
+//    this.addToolbar(buttons);
 //    for (i = 0, max = payments.length; i < max; i++) {
 //      this.toolbar.push({definition: getPayment(this.modalpayment, this.receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].payment.provider), label: payments[i].payment._identifier});
 //    }
