@@ -42,8 +42,7 @@ public class SL_TaxCategory_Org extends SimpleCallout {
     Organization organization = OBDal.getInstance().get(Organization.class, strOrgId);
     String taxCategoryId = "";
     String parentOrgId = "";
-    String whereClause = "as tn where tn.node = '" + organization.getId()
-        + "' and tn.client.id = '" + organization.getClient().getId() + "'";
+    String whereClause = "";
 
     while ("".equals(taxCategoryId)) {
       whereClause = "as tn where tn.node = '" + organization.getId() + "' and tn.client.id = '"
