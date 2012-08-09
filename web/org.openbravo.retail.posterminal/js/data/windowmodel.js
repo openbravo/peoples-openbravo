@@ -20,10 +20,10 @@ OB.Model.WindowModel = Backbone.Model.extend({
     _.extend(this.models, Backbone.Events);
 
     this.models.on('ready', function() {
-      this.trigger('ready');
       if (this.init) {
         this.init();
       }
+      this.trigger('ready');
     }, this);
 
     OB.Model.Util.loadModels(true, this.models, this.data);
