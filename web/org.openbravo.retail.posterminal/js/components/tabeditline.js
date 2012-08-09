@@ -20,9 +20,8 @@
     tabPanel: '#edition',
     label: OB.I18N.getLabel('OBPOS_LblEdit'),
     tap: function() {
-      //FIXME
-      //OB.COMP.ToolbarButtonTab.prototype.clickEvent.call(this); // super.initialize();
-      //OB.UTIL.setOrderLineInEditMode(true);
+    	this.inherited(arguments);
+    	OB.UTIL.setOrderLineInEditMode(true);
     },
     initComponents: function() {
       this.inherited(arguments);

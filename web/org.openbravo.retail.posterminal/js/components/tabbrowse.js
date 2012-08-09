@@ -20,6 +20,7 @@
     tabPanel: '#catalog',
     label: OB.I18N.getLabel('OBPOS_LblBrowse'),
     tap: function() {
+      this.inherited(arguments);
       this.owner.owner.owner.owner.owner.$.keyboard.hide();
     },
     initComponents: function() {

@@ -21,6 +21,7 @@
     label: OB.I18N.getLabel('OBPOS_LblScan'),
     tap: function() {
     //	this.owner.owner.owner.owner.owner.$.keyboard.show();
+    	this.inherited(arguments);
     	this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
     },
     initComponents: function() {

@@ -16,6 +16,7 @@
   enyo.kind({
     kind: 'OB.UI.SelectButton',
     name: 'OB.UI.RenderOrderLine',
+    classes: 'btnselect-orderline',
     components: [{
       name:'product',
       attributes: {

@@ -20,6 +20,7 @@
     tabPanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
     tap: function() {
+      this.inherited(arguments);
       this.owner.owner.owner.owner.owner.$.keyboard.hide()
     },
     initComponents: function() {

@@ -411,8 +411,6 @@
       'data-toggle': 'tab'
     },
     tap: function() {
-      //TODO
-      //OB.COMP.ButtonTab.prototype.clickEvent.call(this); // super.initialize();
       OB.UTIL.setOrderLineInEditMode(false);
     },
     initComponents: function() {
