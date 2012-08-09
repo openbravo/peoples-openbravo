@@ -14,7 +14,11 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonOk',
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+  events: {
+    onButtonOk:''
+  },
   tap: function() {
+    this.doButtonOk();
   }
 });
 

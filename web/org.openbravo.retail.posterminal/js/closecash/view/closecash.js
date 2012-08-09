@@ -15,7 +15,20 @@ enyo.kind({
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
   handlers: {
     onNext: 'nextStep',
-    onPrev: 'prevStep'
+    onPrev: 'prevStep',
+    onButtonOk: 'buttonOk'
+  },
+  buttonOk: function(inSender, inEvent) {
+    debugger;
+//    $('button[button*="allokbutton"]').css('visibility','hidden');
+//    var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
+//    this.options['counted_'+this.options[this._id].rowid].$el.text(OB.I18N.formatCurrency(elem.get('expected')));
+//    elem.set('counted',OB.DEC.add(0,elem.get('expected')));
+//    this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
+//    this.options['counted_'+this.rowid].$el.show();
+//    if($('button[button="okbutton"][style!="display: none; "]').length===0){
+//      this.me.options.closenextbutton.$el.removeAttr('disabled');
+//    }
   },
   prevStep: function(inSender, inEvent) {
     switch (this.model.get('step')) {
