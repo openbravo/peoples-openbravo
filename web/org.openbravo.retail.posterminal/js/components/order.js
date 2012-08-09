@@ -15,17 +15,24 @@
 //  OB.COMP = window.OB.COMP || {};
 
   enyo.kind({
-    kind: 'OB.UI.SmallButton',
     name: 'btninvoice',
-    classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
-    label: 'Invoice',
-    attributes: {
-      style: 'width: 50px;'
-    },
-    tap: function(){
-      //FIXME
-      //this.options.parent.receipt.resetOrderInvoice();
-    }
+    style: 'float: left; width: 50%;',
+    components: [{
+      kind: 'OB.UI.SmallButton',
+      tag: 'button',
+      style: 'width: 50px;',
+      classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
+      tap: function(){
+        console.log('invoice button click');
+      }
+    },{
+      tag: 'span',
+      content: ' '
+    },{
+      tag: 'span',
+      style: 'font-weight:bold; ',
+      content: 'Invoice'
+    }]
   });
     
     //Refactored as enyo view -> InvoiceButton
@@ -75,14 +82,13 @@
         },{
           tag: 'li',
           components:[{
-            attributes: {
-              style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;'
-            },
+            style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
             components: [{
               kind: 'btninvoice'
             },{
-              name: 'divreturn',
-              style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;'
+              name: 'return',
+              style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
+              content: 'To be returned'
             },{
               style: 'clear: both;'
             }]
