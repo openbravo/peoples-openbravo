@@ -37,24 +37,27 @@ enyo.kind({
     }, this);
     this.model.load();
   },
+  statics: {
+    initChildren: function(view) {
+      if (!view || !view.getComponents) {
+        return;
+      }
+      enyo.forEach(view.getComponents(), function(child) {
+        OB.UI.WindowView.initChildren(child);
+        if (child.init) {
+          child.init();
+        }
+      });
+    }
+  },
   init: function() {
     // Calling init in sub components
-    this.initChildren(this);
+    OB.UI.WindowView.initChildren(this);
     //    enyo.forEach(this.getComponents(), function(component) {
     //      if (component.init) {
     //        component.init();
     //      }
     //    });
-  },
-  initChildren: function(view) {
-    if (!view || !view.getComponents) {
-      return;
-    }
-    enyo.forEach(view.getComponents(), function(child) {
-      this.initChildren(child);
-      if (child.init) {
-        child.init();
-      }
-    }, this);
   }
+
 });
