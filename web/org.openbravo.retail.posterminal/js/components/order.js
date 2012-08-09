@@ -58,9 +58,6 @@
         name: 'listOrderLines',
         renderLine: 'OB.UI.RenderOrderLine',
         renderEmpty: 'OB.UI.RenderOrderLineEmpty', //defined on redenderorderline.js
-//        {kind: 'OB.UI.RenderEmpty',
-//          label: OB.I18N.getLabel('OBPOS_ReceiptNew')
-//        },
         listStyle: 'edit'
       },{
         tag: 'ul',
@@ -95,36 +92,17 @@
           }]
         }]
       }],
-      renderTotal: function(){
-        this.$.totalgross.setContent('12.25');
+      renderTotal: function(newTotal){
+        this.$.totalgross.setContent(newTotal);
       },
       initComponents: function(){
         this.inherited(arguments);
-//        debugger;
-        //this.listOrderLines.setCollection(this.owner.owner.model.order.);
-        //FIXME
-        //OB.UTIL.initContentView(this);
-        // Set Model
-//        this.receipt = this.options.root.modelorder;
-//        var lines = this.receipt.get('lines');
-//
-//        this.tableview.registerCollection(lines);
-//        this.receipt.on('change:gross', this.renderTotal, this);
-//        this.receipt.on('change:orderType', this.renderFooter, this);
-//        this.receipt.on('change:generateInvoice', this.renderFooter, this);
-
-        // Initial total display...
-        //this.renderFooter();
-        //this.$.divinvoice.setContent('divInvoice');
-        //this.$.divreturn.setContent('divReturn');
-        //this.renderTotal();
-        this.$.totalgross.setContent('100,25');
       },
       orderChanged: function(order) {
         this.$.listOrderLines.setCollection(this.order.get('lines'));
-//        this.order.on('total:change', function (model) {
-//          this.$.total.setTotal(model.get('total'));
-//        }, this);
+        this.order.on('change:gross', function (model) {
+          this.renderTotal(model.getTotal());
+        }, this);
       }
       });
   // Order list
