@@ -127,11 +127,12 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
+  handlers: {
+    onAddProduct: 'addProductToOrder'
+  },
   components: [{
     classes: 'row',
-    attributes: {
-      style: 'margin-bottom: 5px;'
-    },
+    style: 'margin-bottom: 5px;',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
     }, {
@@ -140,7 +141,8 @@ enyo.kind({
   }, {
     classes: 'row',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.ReceiptView'
+      kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
+      name: 'receiptview'
     }, {
       classes: 'span6',
       components: [{
@@ -162,8 +164,15 @@ enyo.kind({
       }]
     }]
   }],
+  addProductToOrder: function(inSender, inEvent){
+    this.model.get('order').addProduct(inEvent.originator.modelAdd);
+    return true;// not continue
+  },
   init: function() {
     this.inherited(arguments);
+    debugger;
+    this.$.receiptview.setOrder(this.model.get('order'));
+    console.log('order: ' + this.model.get('order'));
     console.log('main init')
   }
 

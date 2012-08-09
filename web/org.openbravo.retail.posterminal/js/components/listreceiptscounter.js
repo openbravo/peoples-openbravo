@@ -17,9 +17,7 @@
 
   enyo.kind({
     name: 'OB.UI.ReceiptsCounter',
-    attributes: {
-      style: 'position: absolute; top:0px; right: 0px;'
-    },
+    style: 'position: absolute; top:0px; right: 0px;',
     components: [{
       tag: 'button',
       classes: 'btnlink btnlink-gray',

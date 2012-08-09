@@ -353,7 +353,6 @@
     init: function() {
       var me = this;
       this.inherited(arguments);
-      debugger;
       this.categories = new OB.Collection.ProductCategoryList();
       this.products = new OB.Collection.ProductList();
       this.$.productcategory.setCollection(this.categories);
@@ -361,7 +360,8 @@
 
       //TODO: implement actions
       this.products.on('click', function(model) {
-        // this.receipt.addProduct(model);
+        debugger;
+        this.owner.owner.model.order.addProduct(model)
         console.log('click', model.get('id'));
       }, this);
       //

@@ -17,23 +17,22 @@
     kind: 'OB.UI.SelectButton',
     name: 'OB.UI.RenderOrderLine',
     components: [{
-      name:'divProduct',
+      name:'product',
       attributes: {
         style: 'float: left; width: 40%;'
       },
     },{
-      name: 'divquantity',
+      name: 'quantity',
       attributes: {
         style: 'float: left; width: 20%; text-align: right;'
       }
     },{
-      id: 'divprice',
+      name: 'price',
       attributes: {
         style: 'float: left; width: 20%; text-align: right;'
       }
     },{
-      id: 'divgross',
-      tag: 'div',
+      name: 'gross',
       attributes: {
         style: 'float: left; width: 20%; text-align: right;'
       }
@@ -42,8 +41,22 @@
     }],
     initComponents: function(){
       this.inherited(arguments);
+      this.$.product.setContent(this.model.get('product').get('_identifier'));
+      this.$.quantity.setContent(this.model.printQty());
+      this.$.price.setContent(this.model.printPrice());
+      this.$.gross.setContent(this.model.printGross());
     }
   });
+  
+  enyo.kind({
+    name: 'OB.UI.RenderOrderLineEmpty',
+    style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+    }
+  });
+  
   //refactored as enyo view -> OB.UI.OrderLine 
   OB.COMP.RenderOrderLine = OB.COMP.SelectButton.extend({
     contentView: [{

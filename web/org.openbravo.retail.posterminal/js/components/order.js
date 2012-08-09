@@ -43,13 +43,17 @@
 
     enyo.kind({
       name: 'OB.UI.OrderView',
+      published: {
+        order : null,
+      },
       components: [{
         kind: 'OB.UI.Table',
-        name: 'tableView',
+        name: 'listOrderLines',
         renderLine: 'OB.UI.RenderOrderLine',
-        renderEmpty: {kind: 'OB.UI.RenderEmpty',
-          label: OB.I18N.getLabel('OBPOS_ReceiptNew')
-        },
+        renderEmpty: 'OB.UI.RenderOrderLineEmpty', //defined on redenderorderline.js
+//        {kind: 'OB.UI.RenderEmpty',
+//          label: OB.I18N.getLabel('OBPOS_ReceiptNew')
+//        },
         listStyle: 'edit'
       },{
         tag: 'ul',
@@ -57,57 +61,43 @@
         components: [{
           tag: 'li',
           components: [{
-            attributes: {
-              style: 'position: relative; padding: 10px;'
-            },
-            content: OB.I18N.getLabel('OBPOS_ReceiptTotal')
-          },{
-            name: 'totalgross',
-            attributes: {
-              style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
-            }
-          },{
-            attributes: {
+            style: 'position: relative; padding: 10px;',
+            components:[{
+              style: 'float: left; width: 80%;',
+              content: 'TOTAL'
+            },{
+              name: 'totalgross',
+              style: 'float: left; width: 20%; text-align:right; font-weight:bold;',
+            },{
               style: 'clear: both;'
-            }
+            }]
           }]
         },{
           tag: 'li',
           components:[{
-            tag: 'div',
             attributes: {
               style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;'
             },
             components: [{
               kind: 'btninvoice'
             },{
-              tag: 'span',
-              content: '&nbsp;'
-            },{
-              name: 'divinvoice',
-              tag: 'span',
-              attributes: {
-                style: 'font-weight:bold; '
-              }
-            }]
-          },{
-            name: 'divreturn',
-            attributes: {
+              name: 'divreturn',
               style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;'
-            }
-          }, {
-            tag: 'div',
-            attributes: {
+            },{
               style: 'clear: both;'
-            }
+            }]
           }]
         }]
       }],
+      renderTotal: function(){
+        this.$.totalgross.setContent('12.25');
+      },
       initComponents: function(){
         this.inherited(arguments);
+//        debugger;
+        //this.listOrderLines.setCollection(this.owner.owner.model.order.);
         //FIXME
-        OB.UTIL.initContentView(this);
-
+        //OB.UTIL.initContentView(this);
         // Set Model
 //        this.receipt = this.options.root.modelorder;
 //        var lines = this.receipt.get('lines');
@@ -119,10 +109,16 @@
 
         // Initial total display...
         //this.renderFooter();
-        this.$.divinvoice.setContent('divInvoice');
-        this.$.divreturn.setContent('divReturn');
+        //this.$.divinvoice.setContent('divInvoice');
+        //this.$.divreturn.setContent('divReturn');
         //this.renderTotal();
         this.$.totalgross.setContent('100,25');
+      },
+      orderChanged: function(order) {
+        this.$.listOrderLines.setCollection(this.order.get('lines'));
+//        this.order.on('total:change', function (model) {
+//          this.$.total.setTotal(model.get('total'));
+//        }, this);
       }
       });
   // Order list

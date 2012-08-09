@@ -11,6 +11,9 @@
 
 enyo.kind({
   name: 'OB.UI.ListProducts',
+  events: {
+    onAddProduct:''
+  },
   components: [{
     style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
     components: [{
@@ -23,7 +26,6 @@ enyo.kind({
     renderEmpty: 'OB.UI.RenderEmpty',
     renderLine: 'OB.UI.RenderProduct'
   }],
-
   init: function() {
     this.inherited(arguments);
     this.products = new OB.Collection.ProductList();
@@ -31,6 +33,8 @@ enyo.kind({
 
     this.products.on('click', function(model) {
       //TODO: implement logic
+      this.modelAdd = model;
+      this.doAddProduct();
       console.log('selected product', model);
     }, this);
   },
