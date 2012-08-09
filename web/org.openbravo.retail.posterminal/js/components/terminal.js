@@ -166,7 +166,7 @@ enyo.kind({
       }
 
       this.$.terminal.setContent(name);
-      
+
       this.$.yourcompany.setContent(orgname);
       this.$.yourcompanyproperties.destroyComponents();
       this.$.yourcompanyproperties.createComponent({
@@ -179,6 +179,9 @@ enyo.kind({
       }).render();
 
     }, this);
+  },
+  makeId: function() {
+    return 'container';
   }
 
 });
@@ -227,7 +230,7 @@ enyo.kind({
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
         console.log('tap');
-        $('#profileDialog').modal('show'); 
+        $('#profileDialog').modal('show');
       }
     }, {
       style: 'height: 5px;'
@@ -237,7 +240,7 @@ enyo.kind({
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
         console.log('tap');
-        $('#logoutDialog').modal('show'); 
+        $('#logoutDialog').modal('show');
       }
     }, {
       style: 'height: 5px;'
