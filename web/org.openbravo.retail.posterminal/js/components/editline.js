@@ -116,14 +116,59 @@ enyo.kind({
       }]
     }, {
       name: 'msgaction',
-      style: 'padding: 10px; display: none;',
+      style: 'padding: 10px;',
       components: [{
         name: 'txtaction',
         style: 'float:left;'
       }]
     }]
-  }]
-//TODO: implement this!
+  }],
+
+  init: function() {
+    this.inherited(arguments);
+
+    this.receipt = this.owner.owner.model.get('order');
+    this.line = null;
+
+
+    this.receipt.get('lines').on('selected', function(line) {
+      if (this.line) {
+        this.line.off('change', this.render);
+      }
+      this.line = line;
+      if (this.line) {
+        this.line.on('change', this.render, this);
+      }
+      this.render();
+    }, this);
+  },
+
+  render: function() {
+    this.inherited(arguments);
+
+    if (this.line) {
+      this.$.msgaction.hide();
+      this.$.msgedit.show();
+      this.$.editlineimage.img = this.line.get('product').get('img');
+      this.$.editlineimage.render();
+      this.$.editlinename.setContent(this.line.get('product').get('_identifier'));
+      this.$.editlineqty.setContent(this.line.printQty());
+      this.$.editlinediscount.setContent(this.line.printDiscount());
+      this.$.editlineprice.setContent(this.line.printPrice());
+      this.$.editlinegross.setContent(this.line.printGross());
+    } else {
+      this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
+      this.$.msgedit.hide();
+      this.$.msgaction.show();
+      this.$.editlineimage.img = null;
+      this.$.editlineimage.render();
+      this.$.editlinename.setContent('');
+      this.$.editlineqty.setContent('');
+      this.$.editlinediscount.setContent('');
+      this.$.editlineprice.setContent('');
+      this.$.editlinegross.setContent('');
+    }
+  }
 });
 
 (function() {
