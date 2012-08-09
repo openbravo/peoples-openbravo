@@ -9,7 +9,7 @@
 
 /*global window, B, Backbone */
 
-(function () {
+(function() {
 
   OB = window.OB || {};
   OB.COMP = window.OB.COMP || {};
@@ -20,57 +20,81 @@
     tabPanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
     tap: function() {
-    //	this.owner.owner.owner.owner.owner.$.keyboard.show();
-    	this.inherited(arguments);
-    	this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
-    },
-    initComponents: function() {
+      //	this.owner.owner.owner.owner.owner.$.keyboard.show();
       this.inherited(arguments);
+      this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
+    },
+    manualTap: function() {
+      // Hack to manually tap on bootstrap tab
+      var domButton = $('#scan_button');
+      domButton.tab('show');
+      domButton.parent().parent().addClass('active');
+      this.tap();
+    },
+    init: function() {
+      var receipt;
+      this.inherited(arguments);
+
+      receipt = this.owner.owner.owner.owner.owner.model.get('order');
+
+      receipt.on('clear scan', function() {
+        this.manualTap();
+      }, this);
+
+      //TODO: do this     
+      //        this.options.root.SearchBPs.bps.on('click', function (model, index) {
+      //          this.$el.tab('show');
+      //          this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
+      //          OB.UTIL.setOrderLineInEditMode(false);
+      //        }, this);
+      console.log('tabscan init');
+    },
+    makeId: function() {
+      return 'scan_button';
     }
   });
-  
+
   enyo.kind({
-	 name: 'OB.UI.TabScan',
-	 classes: 'tab-pane',
-	 components: [{
-		 kind: 'OB.UI.Scan'
-	 }],
-	 makeId: function () {
-		 return 'scan';
-	 }
+    name: 'OB.UI.TabScan',
+    classes: 'tab-pane',
+    components: [{
+      kind: 'OB.UI.Scan'
+    }],
+    makeId: function() {
+      return 'scan';
+    }
   });
-  
+
   //Refacorized using enyo -> OB.UI.ButtonTabScan
   OB.COMP.ButtonTabScan = OB.COMP.ToolbarButtonTab.extend({
     tabpanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
-    initialize: function () {
+    initialize: function() {
       OB.COMP.ToolbarButtonTab.prototype.initialize.call(this); // super.initialize();
       this.options.root.modelorder.on('clear scan', function() {
         this.$el.tab('show');
         this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
         OB.UTIL.setOrderLineInEditMode(false);
       }, this);
-      this.options.root.SearchBPs.bps.on('click', function (model, index) {
+      this.options.root.SearchBPs.bps.on('click', function(model, index) {
         this.$el.tab('show');
         this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
         OB.UTIL.setOrderLineInEditMode(false);
       }, this);
     },
-    shownEvent: function (e) {
+    shownEvent: function(e) {
       this.options.root.keyboard.show('toolbarscan');
     }
   });
 
-//  OB.COMP.TabScan = Backbone.View.extend({
-//    tagName: 'div',
-//    attributes: {'id': 'scan', 'class': 'tab-pane'},
-//    contentView: [
-//      {view: OB.COMP.Scan}
-//    ],
-//    initialize: function () {
-//      OB.UTIL.initContentView(this);
-//    }
-//  });
-
+  //  OB.COMP.TabScan = Backbone.View.extend({
+  //    tagName: 'div',
+  //    attributes: {'id': 'scan', 'class': 'tab-pane'},
+  //    contentView: [
+  //      {view: OB.COMP.Scan}
+  //    ],
+  //    initialize: function () {
+  //      OB.UTIL.initContentView(this);
+  //    }
+  //  });
 }());
