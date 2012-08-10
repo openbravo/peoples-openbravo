@@ -268,6 +268,9 @@
     published: {
       receipt: null
     },
+    events: {
+      onAddProduct: ''
+    },
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -377,7 +380,9 @@
     },
     receiptChanged: function() {
       this.products.on('click', function(model) {
-        this.receipt.addProduct(model);
+        this.doAddProduct({
+          product: model
+        });
       }, this);
 
       this.receipt.on('clear', function() {

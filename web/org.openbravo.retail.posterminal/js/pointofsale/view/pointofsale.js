@@ -104,7 +104,7 @@ enyo.kind({
     this.model.get('orderList').addNewOrder();
   },
   addProductToOrder: function(inSender, inEvent) {
-    this.model.get('order').addProduct(inEvent.originator.modelAdd);
+    this.model.get('order').addProduct(inEvent.product);
     return true; // not continue
   },
   showInvoiceButton: function() {

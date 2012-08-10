@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ListProducts',
   events: {
-    onAddProduct:''
+    onAddProduct: ''
   },
   components: [{
     style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
@@ -32,8 +32,9 @@ enyo.kind({
     this.$.productTable.setCollection(this.products);
 
     this.products.on('click', function(model) {
-      this.modelAdd = model;
-      this.doAddProduct();
+      this.doAddProduct({
+        product: model
+      });
     }, this);
   },
 
