@@ -8,7 +8,7 @@
  */
 
 enyo.kind({
-  name: 'OB.UI.EditLine',
+  name: 'OB.OBPOSPointOfSale.UI.EditLine',
   published: {
     receipt: null
   },

@@ -329,7 +329,7 @@ enyo.kind({
   },
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.UI.EditLine',
+    kind: 'OB.OBPOSPointOfSale.UI.EditLine',
     name: 'edit'
   }],
   makeId: function() {
