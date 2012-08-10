@@ -212,12 +212,14 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.TabEditLine'
+    kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
+    name: 'edit'
   }],
   modelChanged: function() {
     var receipt = this.model.get('order');
     this.$.scan.setReceipt(receipt);
     this.$.search.setReceipt(receipt);
+    this.$.edit.setReceipt(receipt);
   }
 });
 
@@ -322,12 +324,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabEditLine',
+  published: {
+    receipt: null
+  },
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.UI.EditLine'
+    kind: 'OB.UI.EditLine',
+    name: 'edit'
   }],
   makeId: function() {
     return 'edition'
+  },
+  receiptChanged: function() {
+    this.$.edit.setReceipt(this.receipt);
   }
 });
 

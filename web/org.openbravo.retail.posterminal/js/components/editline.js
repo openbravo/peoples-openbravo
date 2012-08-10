@@ -11,6 +11,9 @@
 
 enyo.kind({
   name: 'OB.UI.EditLine',
+  published: {
+    receipt: null
+  },
   components: [{
     style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
     components: [{
@@ -128,12 +131,10 @@ enyo.kind({
     }]
   }],
 
-  init: function() {
+  receiptChanged: function() {
     this.inherited(arguments);
 
-    this.receipt = this.owner.owner.owner.model.get('order');
     this.line = null;
-
 
     this.receipt.get('lines').on('selected', function(line) {
       if (this.line) {
