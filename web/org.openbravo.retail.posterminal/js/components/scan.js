@@ -19,14 +19,16 @@ enyo.kind({
       classes: 'pos-clock'
     }, {
       components: [{
+        name: 'msgwelcome',
+        showing: false,
         style: 'padding: 10px;',
-        // display: none;',
         components: [{
           style: 'float:right;',
           content: OB.I18N.getLabel('OBPOS_WelcomeMessage')
         }]
       }, {
         name: 'msgaction',
+        showing: false,
         //  style: 'display: none;',
         components: [{
           name: 'txtaction',
@@ -34,14 +36,49 @@ enyo.kind({
         }, {
           style: 'float: right;',
           components: [{
+            name: 'undobutton',
             kind: 'OB.UI.SmallButton',
             content: OB.I18N.getLabel('OBPOS_LblUndo'),
-            classes: 'btnlink-white btnlink-fontblue'
+            classes: 'btnlink-white btnlink-fontblue',
+            tap: function() {
+              if (this.undoclick) {
+                this.undoclick();
+              }
+            }
           }]
         }]
       }]
     }]
-  }]
+  }],
+
+  init: function() {
+    var receipt;
+    this.inherited(arguments);
+
+    receipt = this.owner.owner.model.get('order');
+
+    receipt.on('clear change:undo', function() {
+      this.manageUndo(receipt);
+    }, this);
+
+    this.manageUndo(receipt);
+  },
+
+  manageUndo: function(receipt) {
+    var undoaction = receipt.get('undo');
+
+    if (undoaction) {
+      this.$.msgwelcome.hide();
+      this.$.msgaction.show();
+      this.$.txtaction.setContent(undoaction.text);
+      this.$.undobutton.undoclick = undoaction.undo;
+    } else {
+      this.$.msgaction.hide();
+      this.$.msgwelcome.show();
+      delete this.$.undobutton.undoclick;
+    }
+  }
+
 });
 
 (function() {
