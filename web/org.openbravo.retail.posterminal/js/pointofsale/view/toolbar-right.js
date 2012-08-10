@@ -311,7 +311,7 @@ enyo.kind({
   },
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.UI.Scan',
+    kind: 'OB.OBPOSPointOfSale.UI.Scan',
     name: 'scan'
   }],
   makeId: function() {

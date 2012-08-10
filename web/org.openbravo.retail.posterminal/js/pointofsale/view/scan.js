@@ -8,7 +8,7 @@
  */
 
 enyo.kind({
-  name: 'OB.UI.Scan',
+  name: 'OB.OBPOSPointOfSale.UI.Scan',
   published: {
     receipt: null
   },

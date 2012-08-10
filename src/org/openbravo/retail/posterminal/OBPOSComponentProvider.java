@@ -110,7 +110,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/renderbusinesspartner",
         "components/searchbps",
         "components/modalbps",
-        "components/scan",
         "components/rendercategory",
         "components/listcategories",
         "components/renderproduct",
@@ -133,6 +132,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
         "pointofsale/view/toolbar-right",
+        "pointofsale/view/scan",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-model",
