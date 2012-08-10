@@ -131,7 +131,8 @@ enyo.kind({
     onAddProduct: 'addProductToOrder',
     onInvoiceReceipt: 'receiptToInvoice',
     onShowInvoiceButton: 'showInvoiceButton',
-    onShowReturnText: 'showReturnText'
+    onShowReturnText: 'showReturnText',
+    onAddNewOrder: 'addNewOrder'
   },
   components: [{
     classes: 'row',
@@ -167,6 +168,9 @@ enyo.kind({
       }]
     }]
   }],
+  addNewOrder: function(inSender, inEvent){
+    this.model.get('orderList').addNewOrder();
+  },
   addProductToOrder: function(inSender, inEvent){
     this.model.get('order').addProduct(inEvent.originator.modelAdd);
     return true;// not continue
@@ -187,7 +191,6 @@ enyo.kind({
   },
   init: function() {
     this.inherited(arguments);
-    debugger;
     this.$.receiptview.setOrder(this.model.get('order'));
     console.log('order: ' + this.model.get('order'));
     console.log('main init')

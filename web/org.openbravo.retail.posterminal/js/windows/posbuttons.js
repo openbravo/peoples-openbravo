@@ -18,8 +18,11 @@
     name: 'OB.UI.ButtonNew',
     kind: 'OB.UI.ToolbarButton',
     icon: 'btn-icon btn-icon-new',
+    events: {
+      onAddNewOrder: ''
+    },
     tap: function() {
-      this.options.modelorderlist.addNewOrder();
+      this.doAddNewOrder();
     }
   });
 

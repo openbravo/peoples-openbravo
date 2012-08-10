@@ -21,8 +21,10 @@ enyo.kind({
               style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
               components: [{
                 kind: 'OB.UI.OrderDetails',
+                name: 'orderdetails'
               }, {
-                kind: 'OB.UI.BusinessPartner'
+                kind: 'OB.UI.BusinessPartner',
+                name: 'bpbutton'
               }, {
                 style: 'clear:both;'
               }]
@@ -43,6 +45,8 @@ enyo.kind({
     }]
   }],
   orderChanged: function(oldValue) {
+    this.$.bpbutton.setCustomer(this.order.get('bp'));
+    this.$.orderdetails.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
   }
 });

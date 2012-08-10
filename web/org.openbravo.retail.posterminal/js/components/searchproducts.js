@@ -364,8 +364,8 @@
       });
 
       receipt.on('clear', function() {
-        this.$.productname.setValue('');
-        this.$.productcategory.setValue('');
+        this.$.productname.setContent('');
+        this.$.productcategory.setContent('');
         //A filter should be set before show products. -> Big data!!
         //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
       }, this);

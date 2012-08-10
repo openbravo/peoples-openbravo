@@ -18,13 +18,23 @@
     kind: 'OB.UI.SmallButton',
     name: 'OB.UI.BusinessPartner',
     classes: 'btnlink btnlink-small btnlink-gray',
+    published: {
+      customer: null
+    },
     attributes: {
       'data-toggle': 'modal',
       'href': '#modalcustomer'
     },
     initComponents: function() {
-      //FIXME
-      this.setContent('POS Customer');
+    },
+    renderCustomer: function(newCustomer){
+      this.setContent(newCustomer);
+    },
+    customerChanged: function (oldValue){
+      this.renderCustomer(this.customer.get('_identifier'));
+      this.customer.on('change:id', function (model) {
+        this.renderCustomer(model.get('_identifier'));
+      }, this);
     }
   });
   

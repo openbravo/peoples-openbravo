@@ -21,7 +21,6 @@
     tap: function() {
     	var keyboard = this.owner.owner.owner.owner.owner.$.keyboard;
     	keyboard.showToolbar('toolbarpayment');
-    	
     },
     attributes: {
       style: 'text-align: center; font-size: 30px;',
@@ -37,7 +36,7 @@
     }],
     initComponents: function() {
       this.inherited(arguments);
-      this.removeClass('btnlink-gray', false);
+      this.addRemoveClass('btnlink-gray', true);
     }
   });
 
