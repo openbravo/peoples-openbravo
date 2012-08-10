@@ -251,57 +251,12 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabBrowse',
   classes: 'tab-pane',
   components: [{
-    classes: 'row-fluid',
-    components: [{
-      classes: 'span6',
-      components: [{
-        kind: 'OB.UI.OBPOSPointOfSale.BrowseProducts',
-        name: 'browseProducts'
-      }]
-    }, {
-      classes: 'span6',
-      components: [{
-        kind: 'OB.UI.OBPOSPointOfSale.BrowseCategories',
-        name: 'browseCategories'
-      }]
-    }]
+    kind: 'OB.UI.ProductBrowser'
   }],
 
   makeId: function() {
     return 'catalog';
-  },
-
-  init: function() {
-    console.log('init tab ')
-    this.$.browseCategories.$.listCategories.categories.on('selected', function(category) {
-      console.log('selected')
-      this.$.browseProducts.$.listProducts.loadCategory(category);
-    }, this);
   }
-});
-
-enyo.kind({
-  name: 'OB.UI.OBPOSPointOfSale.BrowseCategories',
-  style: 'overflow:auto; height: 612px; margin: 5px;',
-  components: [{
-    style: 'background-color: #ffffff; color: black; padding: 5px',
-    components: [{
-      kind: 'OB.UI.ListCategories',
-      name: 'listCategories'
-    }]
-  }]
-});
-
-enyo.kind({
-  name: 'OB.UI.OBPOSPointOfSale.BrowseProducts',
-  style: 'overflow:auto; height: 612px; margin: 5px;',
-  components: [{
-    style: 'background-color: #ffffff; color: black; padding: 5px',
-    components: [{
-      kind: 'OB.UI.ListProducts',
-      name: 'listProducts'
-    }]
-  }]
 });
 
 enyo.kind({

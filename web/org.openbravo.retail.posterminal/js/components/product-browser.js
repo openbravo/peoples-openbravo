@@ -7,7 +7,91 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
+enyo.kind({
+  name: 'OB.UI.ProductBrowser',
+  classes: 'row-fluid',
+  components: [{
+    classes: 'span6',
+    components: [{
+      kind: 'OB.UI.BrowseProducts',
+      name: 'browseProducts'
+    }]
+  }, {
+    classes: 'span6',
+    components: [{
+      kind: 'OB.UI.BrowseCategories',
+      name: 'browseCategories'
+    }]
+  }],
+  init: function() {
+    console.log('init tab ')
+    this.$.browseCategories.$.listCategories.categories.on('selected', function(category) {
+      console.log('selected')
+      this.$.browseProducts.$.listProducts.loadCategory(category);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.BrowseCategories',
+  style: 'overflow:auto; height: 612px; margin: 5px;',
+  components: [{
+    style: 'background-color: #ffffff; color: black; padding: 5px',
+    components: [{
+      kind: 'OB.UI.ListCategories',
+      name: 'listCategories'
+    }]
+  }]
+});
+
+enyo.kind({
+  name: 'OB.UI.BrowseProducts',
+  style: 'overflow:auto; height: 612px; margin: 5px;',
+  components: [{
+    style: 'background-color: #ffffff; color: black; padding: 5px',
+    components: [{
+      kind: 'OB.UI.ListProducts',
+      name: 'listProducts'
+    }]
+  }]
+});
+
+enyo.kind({
+  name: 'OB.UI.ListCategories',
+  components: [{
+    style: 'padding: 10px; border-bottom: 1px solid #cccccc;',
+    components: [{
+      tag: 'h3',
+      content: OB.I18N.getLabel('OBPOS_LblCategories')
+    }]
+  }, {
+    name: 'categoryTable',
+    listStyle: 'list',
+    kind: 'OB.UI.Table',
+    renderEmpty: 'OB.UI.RenderEmpty',
+    renderLine: 'OB.UI.RenderCategory'
+  }],
+
+  init: function() {
+    var me = this;
+    this.categories = new OB.Collection.ProductCategoryList();
+    this.$.categoryTable.setCollection(this.categories);
+
+    function errorCallback(tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }
+
+    function successCallbackCategories(dataCategories, me) {
+      if (dataCategories && dataCategories.length > 0) {
+        me.categories.reset(dataCategories.models);
+      } else {
+        me.categories.reset();
+      }
+    }
+
+    OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
+  }
+});
 
 enyo.kind({
   name: 'OB.UI.ListProducts',

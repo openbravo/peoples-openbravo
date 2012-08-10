@@ -111,9 +111,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/searchbps",
         "components/modalbps",
         "components/rendercategory",
-        "components/listcategories",
         "components/renderproduct",
-        "components/listproducts",
         "components/searchproducts",
         "components/tabsearch",
         "components/total",
@@ -124,7 +122,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/orderdetails",
         "components/businesspartner",
         "components/listreceiptscounter",
-        "windows/pointofsale",
+        "components/product-browser",
 
         // Point of sale
         "pointofsale/model/pointofsale-model",
