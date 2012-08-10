@@ -19,10 +19,14 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#scan',
     label: OB.I18N.getLabel('OBPOS_LblScan'),
+    events: {
+      onTabChange: ''
+    },
     tap: function() {
-      //	this.owner.owner.owner.owner.owner.$.keyboard.show();
-      this.inherited(arguments);
-      this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
+      this.doTabChange({
+        keyboard: 'toolbarscan',
+        edit: false
+      });
     },
     manualTap: function() {
       // Hack to manually tap on bootstrap tab

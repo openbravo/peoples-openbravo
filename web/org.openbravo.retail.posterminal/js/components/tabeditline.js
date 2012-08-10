@@ -19,10 +19,15 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#edition',
     label: OB.I18N.getLabel('OBPOS_LblEdit'),
+    events: {
+      onTabChange: ''
+    },
     tap: function() {
-    	this.inherited(arguments);
-    	OB.UTIL.setOrderLineInEditMode(true);
-    	this.owner.owner.owner.owner.owner.$.keyboard.showToolbar('toolbarscan');
+    console.log('tap')	
+    	this.doTabChange({
+        keyboard: 'toolbarscan',
+        edit: true
+      });
     },
     initComponents: function() {
       this.inherited(arguments);
@@ -50,14 +55,16 @@
       this.options.keyboard.show('toolbarscan');
     }
   });
-  
+
   enyo.kind({
-	  name: 'OB.UI.TabEditLine',
-	  classes: 'tab-pane',
-	  components: [{kind: 'OB.UI.EditLine'}],
-	  makeId: function () {
-		  return 'edition'
-	  }
+    name: 'OB.UI.TabEditLine',
+    classes: 'tab-pane',
+    components: [{
+      kind: 'OB.UI.EditLine'
+    }],
+    makeId: function() {
+      return 'edition'
+    }
   });
 
   OB.COMP.TabEditLine = Backbone.View.extend({

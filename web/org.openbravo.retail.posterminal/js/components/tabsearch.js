@@ -19,9 +19,14 @@
     kind: 'OB.UI.ToolbarButtonTab',
     tabPanel: '#search',
     label: OB.I18N.getLabel('OBPOS_LblSearch'),
+    events: {
+      onTabChange: ''
+    },
     tap: function() {
-      this.inherited(arguments);
-      this.owner.owner.owner.owner.owner.$.keyboard.hide()
+      this.doTabChange({
+        keyboard: false,
+        edit: false
+      });
     },
     initComponents: function() {
       this.inherited(arguments);

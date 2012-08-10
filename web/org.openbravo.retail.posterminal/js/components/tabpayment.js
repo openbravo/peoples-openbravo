@@ -19,9 +19,14 @@
     kind: 'OB.UI.ToolbarButtonTab',
     classes: 'btnlink',
     tabPanel: '#payment',
+    events: {
+      onTabChange: ''
+    },
     tap: function() {
-    	var keyboard = this.owner.owner.owner.owner.owner.$.keyboard;
-    	keyboard.showToolbar('toolbarpayment');
+      this.doTabChange({
+        keyboard: 'toolbarpayment',
+        edit: false
+      });
     },
     attributes: {
       style: 'text-align: center; font-size: 30px;',

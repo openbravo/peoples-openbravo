@@ -410,8 +410,8 @@
     attributes: {
       'data-toggle': 'tab'
     },
-    tap: function() {
-      OB.UTIL.setOrderLineInEditMode(false);
+    events: {
+        onTabChange: ''
     },
     initComponents: function() {
       this.inherited(arguments);
@@ -951,10 +951,10 @@
   });
 
   enyo.kind({
-	 name: 'OB.UI.SearchInput',
-	 kind: 'enyo.Input',
+    name: 'OB.UI.SearchInput',
+    kind: 'enyo.Input',
   });
-  
+
   OB.COMP.SearchInput = Backbone.View.extend({
     tagName: 'input',
     attr: function(attributes) {

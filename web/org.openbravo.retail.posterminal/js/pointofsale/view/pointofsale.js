@@ -147,7 +147,9 @@ enyo.kind({
     onInvoiceReceipt: 'receiptToInvoice',
     onShowInvoiceButton: 'showInvoiceButton',
     onShowReturnText: 'showReturnText',
-    onAddNewOrder: 'addNewOrder'
+    onAddNewOrder: 'addNewOrder',
+    
+    onTabChange: 'tabChange'
   },
   components: [{
     classes: 'row',
@@ -205,6 +207,15 @@ enyo.kind({
     this.$.receiptview.$.orderview.$.btninvoice.hide();
     return true;
   },
+  tabChange: function(sender, event){
+	OB.UTIL.setOrderLineInEditMode(event.edit);
+	if (event.keyboard){
+		this.$.keyboard.showToolbar(event.keyboard);
+	} else {
+		this.$.keyboard.hide();
+	}
+	console.log('tab change',arguments);  
+  },
   init: function() {
     this.inherited(arguments);
     this.$.rightToolbar.setOrder(this.model.get('order'));
@@ -218,6 +229,6 @@ enyo.kind({
 OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,
   route: 'retail.pointofsale',
-  menuPosition: null,
+  menuPosition: null, // Not to display it in the menu
   menuLabel: 'POS'
 });
