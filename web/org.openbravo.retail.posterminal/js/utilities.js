@@ -214,7 +214,7 @@
       var posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
           orderDocumentSequence = parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10),
           docSeqModel;
-      if (documentSequenceList) {
+      if (documentSequenceList && documentSequenceList.length !== 0) {
         docSeqModel = documentSequenceList.at(0);
         if (orderDocumentSequence > docSeqModel.get('documentSequence')) {
           docSeqModel.set('documentSequence', orderDocumentSequence);

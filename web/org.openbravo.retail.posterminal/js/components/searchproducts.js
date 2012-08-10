@@ -190,7 +190,7 @@
         var criteria = {};
 
         function successCallbackPrices(dataPrices, dataProducts) {
-          if (dataPrices) {
+          if (dataPrices && dataPrices.length !== 0) {
             _.each(dataPrices.models, function(currentPrice) {
               if (dataProducts.get(currentPrice.get('product'))) {
                 dataProducts.get(currentPrice.get('product')).set('price', currentPrice);

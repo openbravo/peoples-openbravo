@@ -106,6 +106,7 @@
       }
       var me = OB.POS.modelterminal;
 
+      
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec({
         terminal: OB.POS.paramTerminal
       }, function(data) {
@@ -505,7 +506,7 @@
           };
       OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
         var docSeq;
-        if (documentSequenceList) {
+        if (documentSequenceList && documentSequenceList.length!==0) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
           // There exists already a document sequence, update it
