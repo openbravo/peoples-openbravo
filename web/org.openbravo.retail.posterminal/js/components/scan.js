@@ -29,7 +29,6 @@ enyo.kind({
       }, {
         name: 'msgaction',
         showing: false,
-        //  style: 'display: none;',
         components: [{
           name: 'txtaction',
           style: 'padding: 10px; float: left; width: 320px; line-height: 23px;'

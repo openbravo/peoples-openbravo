@@ -108,8 +108,8 @@
     components: [{
       style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
       components: [{
-        classname: 'row-fluid',
-        classes: 'span12'
+        classes: 'row-fluid',
+        components: [{classes: 'span12'}]
       }, {
         classes: 'row-fluid',
         components: [{
@@ -122,6 +122,7 @@
               style: 'font-size: 24px; font-weight: bold;'
             }, {
               tag: 'span',
+              name: 'totalpendinglbl',
               content: OB.I18N.getLabel('OBPOS_PaymentsRemaining')
             }, {
               tag: 'span',
@@ -153,6 +154,7 @@
               }]
             }, {
               kind: 'OB.UI.Table',
+              name: 'payments',
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
               }),
@@ -163,11 +165,13 @@
           classes: 'span12',
           components: [{
             style: 'float: right;',
+            name: 'doneaction',
             components: [{
               kind: 'OB.UI.DoneButton'
             }]
           }, {
             style: 'float: right;',
+            name: 'exactaction',
             components: [{
               kind: 'OB.UI.ExactButton'
             }]
@@ -175,7 +179,64 @@
         }]
 
       }]
-    }]
+    }],
+
+    init: function() {
+      this.inherited(arguments);
+
+      var receipt = this.owner.owner.model.get('order');
+
+      console.log('init payemnt');
+
+      this.$.payments.setCollection(receipt.get('payments'));
+
+      receipt.on('change:payment change:change change:gross', function() {
+        this.updatePending(receipt);
+      }, this);
+      this.updatePending(receipt);
+    },
+
+    updatePending: function(receipt) {
+      var paymentstatus = receipt.getPaymentStatus();
+      if (paymentstatus.change) {
+        this.$.change.setContent(paymentstatus.change);
+        this.$.change.show();
+        this.$.changelbl.show();
+      } else {
+        this.$.change.hide();
+        this.$.changelbl.hide();
+      }
+      if (paymentstatus.overpayment) {
+        this.$.overpayment.v(paymentstatus.overpayment);
+        this.$.overpayment.show();
+        this.$.overpaymentlbl.show();
+      } else {
+        this.$.overpayment.hide();
+        this.$.overpaymentlbl.hide();
+      }
+      if (paymentstatus.done) {
+        this.$.totalpending.hide();
+        this.$.totalpendinglbl.hide();
+        this.$.doneaction.show();
+      } else {
+        this.$.totalpending.setContent(paymentstatus.pending);
+        this.$.totalpending.show();
+        this.$.totalpendinglbl.show();
+        this.$.doneaction.hide();
+      }
+
+      if (paymentstatus.done || receipt.getGross() === 0) {
+        this.$.exactaction.hide();
+      } else {
+        this.$.exactaction.show();
+      }
+
+      if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
+        this.$.exactlbl.show();
+      } else {
+        this.$.exactlbl.hide();
+      }
+    }
   });
 
   enyo.kind({
@@ -193,14 +254,54 @@
     classes: 'btn-icon-small btn-icon-check btnlink-green',
     style: 'width: 69px',
     tap: function() {
+    	this.owner.owner.owner.$.keyboard.execStatelessCommand('cashexact');
       console.log('exact');
     }
   });
 
   enyo.kind({
-	 name: 'OB.UI.RenderPaymentLine'
+    name: 'OB.UI.RenderPaymentLine',
+    style: 'color:white;',
+    components: [{
+      name: 'name',
+      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
+    }, {
+      name: 'info',
+      style: 'float: left; width: 50%; padding: 5px 0px 0px 0px;'
+    }, {
+      name: 'amount',
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+    }, {
+      style: 'float: left; width: 15%; text-align: right;',
+      components: [{
+        kind: 'OB.UI.RemovePayment'
+      }]
+    }, {
+      style: 'clear: both;'
+    }],
+    initComponents: function() {
+      this.inherited(arguments);
+      console.log('RenderPaymentLine initComponents');
+      this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')));
+      this.$.amount.setContent(this.model.printAmount());
+      if (this.model.get('paymentData')) {
+        this.$.info.setContent(this.model.get('paymentData').Name);
+      } else {
+        this.$.info.setContent('');
+      }
+    }
   });
-  
+
+  enyo.kind({
+    name: 'OB.UI.RemovePayment',
+    kind: 'OB.UI.SmallButton',
+    classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
+    tap: function() {
+      // TODO implement
+      console.log('remove')
+    }
+  });
+
   OB.COMP.Payment = Backbone.View.extend({
     tag: 'div',
     contentView: [
