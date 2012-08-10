@@ -265,6 +265,9 @@
 
   enyo.kind({
     name: 'OB.UI.SearchProduct',
+    published: {
+      receipt: null
+    },
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -351,24 +354,12 @@
       }]
     }],
     init: function() {
-      var me = this,
-          receipt = this.owner.owner.owner.model.get('order');
+      var me = this;
       this.inherited(arguments);
       this.categories = new OB.Collection.ProductCategoryList();
       this.products = new OB.Collection.ProductList();
       this.$.productcategory.setCollection(this.categories);
       this.$.products.setCollection(this.products);
-
-      this.products.on('click', function(model) {
-        receipt.addProduct(model);
-      });
-
-      receipt.on('clear', function() {
-        this.$.productname.setContent('');
-        this.$.productcategory.setContent('');
-        //A filter should be set before show products. -> Big data!!
-        //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
-      }, this);
 
       function errorCallback(tx, error) {
         OB.UTIL.showError("OBDAL error: " + error);
@@ -383,6 +374,18 @@
       }
 
       OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
+    },
+    receiptChanged: function() {
+      this.products.on('click', function(model) {
+        this.receipt.addProduct(model);
+      }, this);
+
+      this.receipt.on('clear', function() {
+        this.$.productname.setContent('');
+        this.$.productcategory.setContent('');
+        //A filter should be set before show products. -> Big data!!
+        //this.products.exec({priceListVersion: OB.POS.modelterminal.get('pricelistversion').id, product: {}});
+      }, this);
     },
     clearAction: function() {
       this.$.productname.setValue('');

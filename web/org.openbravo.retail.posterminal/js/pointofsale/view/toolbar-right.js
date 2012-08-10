@@ -207,31 +207,41 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabBrowse'
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.TabSearch'
+    kind: 'OB.OBPOSPointOfSale.UI.TabSearch',
+    name: 'search'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine'
   }],
   modelChanged: function() {
-    this.$.scan.setReceipt(this.model.get('order'));
+    var receipt = this.model.get('order');
+    this.$.scan.setReceipt(receipt);
+    this.$.search.setReceipt(receipt);
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabSearch',
+  published: {
+    receipt: null
+  },
   classes: 'tab-pane',
   components: [{
     style: 'overflow: auto; margin: 5px',
     components: [{
       style: 'background-color: #ffffff; color: black; padding: 5px',
       components: [{
-        kind: 'OB.UI.SearchProduct'
+        kind: 'OB.UI.SearchProduct',
+        name: 'search'
       }]
     }]
   }],
   makeId: function() {
     return 'search';
+  },
+  receiptChanged: function() {
+    this.$.search.setReceipt(this.receipt);
   }
 });
 

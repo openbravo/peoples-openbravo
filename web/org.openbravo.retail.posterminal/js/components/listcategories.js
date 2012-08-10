@@ -27,7 +27,6 @@ enyo.kind({
   }],
 
   init: function() {
-	  console.log('init categories');
     var me = this;
     this.categories = new OB.Collection.ProductCategoryList();
     this.$.categoryTable.setCollection(this.categories);

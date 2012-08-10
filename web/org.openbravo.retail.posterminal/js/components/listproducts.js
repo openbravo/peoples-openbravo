@@ -32,10 +32,8 @@ enyo.kind({
     this.$.productTable.setCollection(this.products);
 
     this.products.on('click', function(model) {
-      //TODO: implement logic
       this.modelAdd = model;
       this.doAddProduct();
-      console.log('selected product', model);
     }, this);
   },
 
