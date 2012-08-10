@@ -72,7 +72,8 @@ enyo.kind({
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
 
-    onTabChange: 'tabChange'
+    onTabChange: 'tabChange',
+    onDeleteLine: 'deleteLine'
   },
   components: [{
     classes: 'row',
@@ -129,6 +130,14 @@ enyo.kind({
       this.$.keyboard.hide();
     }
     console.log('tab change', arguments);
+  },
+  deleteLine: function(seneder, event) {
+    var line = event.line,
+        receipt = this.model.get('order');
+    if (line && receipt) {
+      receipt.deleteLine(line)
+      receipt.trigger('scan');
+    }
   },
   init: function() {
     this.inherited(arguments);
