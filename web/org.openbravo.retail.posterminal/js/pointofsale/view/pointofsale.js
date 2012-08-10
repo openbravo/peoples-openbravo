@@ -83,6 +83,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
+  published: {
+    order: null
+  },
   classes: 'span8',
   components: [{
     tag: 'ul',
@@ -97,6 +100,17 @@ enyo.kind({
         button: btn
       });
     }, this);
+  },
+  orderChanged: function(oldValue){
+    //TODO
+    //Mechanism to search which button are able to print total
+    var totalPrinterComponent;
+    //hardcoded
+    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.btnPayment;
+    totalPrinterComponent.renderTotal(this.order.getTotal());
+    this.order.on('change:gross', function (model) {
+      totalPrinterComponent.renderTotal(model.getTotal());
+    }, this);
   }
 });
 
@@ -105,6 +119,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.UI.ButtonTabPayment',
+    name: 'btnPayment',
     containerCssClass: 'span3'
   }, {
     kind: 'OB.UI.ButtonTabScan',
@@ -140,7 +155,8 @@ enyo.kind({
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl'
+      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+      name: 'rightToolbar'
     }]
   }, {
     classes: 'row',
@@ -191,6 +207,7 @@ enyo.kind({
   },
   init: function() {
     this.inherited(arguments);
+    this.$.rightToolbar.setOrder(this.model.get('order'));
     this.$.receiptview.setOrder(this.model.get('order'));
     console.log('order: ' + this.model.get('order'));
     console.log('main init')

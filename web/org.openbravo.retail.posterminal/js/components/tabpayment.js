@@ -17,6 +17,7 @@
   enyo.kind({
     name: 'OB.UI.ButtonTabPayment',
     kind: 'OB.UI.ToolbarButtonTab',
+    classes: 'btnlink',
     tabPanel: '#payment',
     tap: function() {
     	var keyboard = this.owner.owner.owner.owner.owner.$.keyboard;
@@ -31,12 +32,16 @@
         style: 'font-weight: bold; margin: 0px 5px 0px 0px;'
       },
       components: [{
-        kind: 'OB.UI.Total'
+        kind: 'OB.UI.Total',
+        name: 'totalPrinter'
       }]
     }],
+    renderTotal: function(total){
+      this.$.totalPrinter.renderTotal(total);
+    },
     initComponents: function() {
       this.inherited(arguments);
-      this.addRemoveClass('btnlink-gray', true);
+      this.removeClass('btnlink-gray', false);
     }
   });
 
