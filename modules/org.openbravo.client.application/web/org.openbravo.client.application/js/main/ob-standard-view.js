@@ -1146,6 +1146,14 @@ isc.OBStandardView.addProperties({
     if (!this.hasSelectionStateChanged()) {
       return;
     }
+
+    // If the record has been automatically selected because was the only record in the header tab,
+    // only select the record if the window has not been opened by clicking on the recent views icon to
+    // create a new record
+    // see issue https://issues.openbravo.com/view.php?id=20564
+    if (this.isShowingForm && this.viewForm.isNew) {
+      return;
+    }
     var me = this,
         callback = function () {
         me.delayedRecordSelected();
