@@ -108,7 +108,7 @@
       initComponents: function(){
         this.inherited(arguments);
       },
-      orderChanged: function(order) {
+      orderChanged: function(oldValue) {
         this.renderTotal(this.order.getTotal());
         this.$.listOrderLines.setCollection(this.order.get('lines'));
         this.order.on('change:gross', function (model) {

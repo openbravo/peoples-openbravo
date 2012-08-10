@@ -19,7 +19,7 @@
     name: 'OB.UI.BusinessPartner',
     classes: 'btnlink btnlink-small btnlink-gray',
     published: {
-      customer: null
+      order: null
     },
     attributes: {
       'data-toggle': 'modal',
@@ -30,10 +30,19 @@
     renderCustomer: function(newCustomer){
       this.setContent(newCustomer);
     },
-    customerChanged: function (oldValue){
-      this.renderCustomer(this.customer.get('_identifier'));
-      this.customer.on('change:id', function (model) {
-        this.renderCustomer(model.get('_identifier'));
+    orderChanged: function (oldValue){
+      if(this.order.get('bp')){
+        this.renderCustomer(this.order.get('bp').get('_identifier'));  
+      } else {
+        this.renderCustomer('');
+      }
+      
+      this.order.on('change:bp', function (model) {
+        if(model.get('bp')){
+          this.renderCustomer(model.get('bp').get('_identifier'));
+        } else {
+          this.renderCustomer('');
+        }
       }, this);
     }
   });

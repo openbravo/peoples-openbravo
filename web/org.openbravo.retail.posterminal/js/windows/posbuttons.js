@@ -37,8 +37,11 @@
     name: 'OB.UI.ButtonDelete',
     kind: 'OB.UI.ToolbarButton',
     icon: 'btn-icon btn-icon-delete',
+    events: {
+      onDeleteOrder: ''
+    },
     tap: function() {
-      $('#modalDeleteReceipt').modal('show');
+      this.doDeleteOrder();
     }
   });
 

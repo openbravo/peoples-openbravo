@@ -4,13 +4,15 @@ enyo.kind({
   classes: 'span6',
   published: {
     order: null,
+    orderList: null
   },
   components: [{
     style: 'overflow:auto; margin: 5px',
     components: [{
       style: 'position: relative;background-color: #ffffff; color: black;',
       components: [{
-        kind: 'OB.UI.ReceiptsCounter'
+        kind: 'OB.UI.ReceiptsCounter',
+        name: 'receiptcounter'
       }, {
         style: 'padding: 5px;',
         components: [{
@@ -45,8 +47,11 @@ enyo.kind({
     }]
   }],
   orderChanged: function(oldValue) {
-    this.$.bpbutton.setCustomer(this.order.get('bp'));
+    this.$.bpbutton.setOrder(this.order);
     this.$.orderdetails.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
+  },
+  orderListChanged: function(oldValue) {
+    this.$.receiptcounter.setOrderList(this.orderList);
   }
 });

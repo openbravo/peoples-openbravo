@@ -71,7 +71,7 @@ enyo.kind({
     onShowInvoiceButton: 'showInvoiceButton',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
-
+    onDeleteOrder: 'deleteCurrentOrder',
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
     onExactPayment: 'exactPayment',
@@ -106,8 +106,11 @@ enyo.kind({
   addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
   },
-  addProductToOrder: function(inSender, inEvent) {
-    this.model.get('order').addProduct(inEvent.product);
+  deleteCurrentOrder: function() {
+    this.model.get('orderList').deleteCurrent();
+  },
+  addProductToOrder: function(inSender, inEvent){
+    this.model.get('order').addProduct(inEvent.originator.modelAdd);
     return true; // not continue
   },
   showInvoiceButton: function() {
@@ -156,7 +159,9 @@ enyo.kind({
     var receipt;
     this.inherited(arguments);
     receipt = this.model.get('order');
+    receiptList = this.model.get('orderList');
     this.$.receiptview.setOrder(receipt);
+    this.$.receiptview.setOrderList(receiptList);
     this.$.toolbarpane.setModel(this.model);
     this.$.keyboard.setReceipt(receipt);
     this.$.rightToolbar.setReceipt(receipt);
