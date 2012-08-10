@@ -211,6 +211,7 @@ enyo.kind({
     name: 'search'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
+    name: 'payment'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
     name: 'edit'
@@ -219,6 +220,7 @@ enyo.kind({
     var receipt = this.model.get('order');
     this.$.scan.setReceipt(receipt);
     this.$.search.setReceipt(receipt);
+    this.$.payment.setReceipt(receipt);
     this.$.edit.setReceipt(receipt);
   }
 });
@@ -297,11 +299,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabPayment',
+  published: {
+    receipt: null
+  },
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.Payment'
+    kind: 'OB.OBPOSPointOfSale.UI.Payment',
+    name: 'payment'
   }],
   makeId: function() {
     return 'payment';
+  },
+  receiptChanged: function() {
+    this.$.payment.setReceipt(this.receipt);
   }
 });

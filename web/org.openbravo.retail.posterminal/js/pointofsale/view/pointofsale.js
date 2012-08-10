@@ -73,7 +73,9 @@ enyo.kind({
     onAddNewOrder: 'addNewOrder',
 
     onTabChange: 'tabChange',
-    onDeleteLine: 'deleteLine'
+    onDeleteLine: 'deleteLine',
+    onExactPayment: 'exactPayment',
+    onRemovePayment: 'removePayment'
   },
   components: [{
     classes: 'row',
@@ -131,13 +133,23 @@ enyo.kind({
     }
     console.log('tab change', arguments);
   },
-  deleteLine: function(seneder, event) {
+  deleteLine: function(sender, event) {
     var line = event.line,
         receipt = this.model.get('order');
     if (line && receipt) {
       receipt.deleteLine(line)
       receipt.trigger('scan');
     }
+  },
+  exactPayment: function(sender, event) {
+    this.$.keyboard.execStatelessCommand('cashexact');
+  },
+
+  removePayment: function(sender, event) {
+    if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+      return;
+    }
+    this.model.get('order').removePayment(event.payment);
   },
   init: function() {
     this.inherited(arguments);

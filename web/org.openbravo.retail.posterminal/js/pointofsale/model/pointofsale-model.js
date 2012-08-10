@@ -38,9 +38,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   processPaidOrders: function() {
     // Processes the paid, unprocessed orders
     var orderlist = this.get('orderList');
-        criteria = {
-        hasbeenpaid: 'Y'
-        };
+    criteria = {
+      hasbeenpaid: 'Y'
+    };
     if (OB.POS.modelterminal.get('connectedToERP')) {
       OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
@@ -62,18 +62,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   init: function() {
-    var modelOrder = new OB.Model.Order(),
-        discounts, ordersave, taxes;
-    this.set('order', modelOrder);
-    this.set('orderList', new OB.Collection.OrderList(modelOrder));
+    var receipt = new OB.Model.Order(),
+        discounts, ordersave, taxes, orderList;
+    this.set('order', receipt);
+    orderList = new OB.Collection.OrderList(receipt);
+    this.set('orderList', orderList);
 
-    discounts = new OB.DATA.OrderDiscount(modelOrder);
+    discounts = new OB.DATA.OrderDiscount(receipt);
     ordersave = new OB.DATA.OrderSave(this);
-    taxes = new OB.DATA.OrderTaxes(modelOrder);
-    
+    taxes = new OB.DATA.OrderTaxes(receipt);
+
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processPaidOrders();
     this.loadUnpaidOrders();
-    
+
+    receipt.on('paymentDone', function() {
+      receipt.calculateTaxes(function() {
+        receipt.trigger('closed');
+        orderList.deleteCurrent();
+      });
+    }, this);
+
   }
 });
