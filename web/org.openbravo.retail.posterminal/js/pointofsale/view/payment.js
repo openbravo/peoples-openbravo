@@ -104,7 +104,7 @@
   });
 
   enyo.kind({
-    name: 'OB.UI.Payment',
+    name: 'OB.OBPOSPointOfSale.UI.Payment',
     components: [{
       style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
       components: [{
@@ -169,13 +169,13 @@
             style: 'float: right;',
             name: 'doneaction',
             components: [{
-              kind: 'OB.UI.DoneButton'
+              kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
             }]
           }, {
             style: 'float: right;',
             name: 'exactaction',
             components: [{
-              kind: 'OB.UI.ExactButton'
+              kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
             }]
           }]
         }]
@@ -242,7 +242,7 @@
   });
 
   enyo.kind({
-    name: 'OB.UI.DoneButton',
+    name: 'OB.OBPOSPointOfSale.UI.DoneButton',
     kind: 'OB.UI.RegularButton',
     content: OB.I18N.getLabel('OBPOS_LblDone'),
     tap: function() {
@@ -257,7 +257,7 @@
   });
 
   enyo.kind({
-    name: 'OB.UI.ExactButton',
+    name: 'OB.OBPOSPointOfSale.UI.ExactButton',
     kind: 'OB.UI.RegularButton',
     classes: 'btn-icon-small btn-icon-check btnlink-green',
     style: 'width: 69px',
@@ -268,7 +268,7 @@
   });
 
   enyo.kind({
-    name: 'OB.UI.RenderPaymentLine',
+    name: 'OB.UI.OBPOSPointOfSale.RenderPaymentLine',
     style: 'color:white;',
     components: [{
       name: 'name',
@@ -282,7 +282,7 @@
     }, {
       style: 'float: left; width: 15%; text-align: right;',
       components: [{
-        kind: 'OB.UI.RemovePayment'
+        kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
       }]
     }, {
       style: 'clear: both;'
@@ -301,7 +301,7 @@
   });
 
   enyo.kind({
-    name: 'OB.UI.RemovePayment',
+    name: 'OB.UI.OBPOSPointOfSale.RemovePayment',
     kind: 'OB.UI.SmallButton',
     classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
     tap: function() {

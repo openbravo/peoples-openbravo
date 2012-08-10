@@ -299,7 +299,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabPayment',
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.UI.Payment'
+    kind: 'OB.OBPOSPointOfSale.UI.Payment'
   }],
   makeId: function() {
     return 'payment';
