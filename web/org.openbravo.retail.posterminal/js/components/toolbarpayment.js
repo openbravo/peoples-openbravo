@@ -151,34 +151,21 @@
   enyo.kind({
     name: 'OB.UI.ToolbarPayment',
     toolbarName: 'toolbarpayment',
-    //    pay: function(amount, modalpayment, receipt, key, name, paymentMethod) {
-    //      if (OB.DEC.compare(amount) > 0) {
-    //        if (paymentMethod.view) {
-    //          modalpayment.show(receipt, key, name, paymentMethod, amount);
-    //        } else {
-    //          receipt.addPayment(new OB.Model.PaymentLine({
-    //            'kind': key,
-    //            'name': name,
-    //            'amount': amount
-    //          }));
-    //        }
-    //      }
-    //    },
-    getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
-      var me = this;
-      function pay(amount, modalpayment, receipt, key, name, paymentMethod) {
-        if (OB.DEC.compare(amount) > 0) {
-          if (paymentMethod.view) {
-            modalpayment.show(receipt, key, name, paymentMethod, amount);
-          } else {
-            receipt.addPayment(new OB.Model.PaymentLine({
-              'kind': key,
-              'name': name,
-              'amount': amount
-            }));
-          }
+    pay: function(amount, modalpayment, receipt, key, name, paymentMethod) {
+      if (OB.DEC.compare(amount) > 0) {
+        if (paymentMethod.view) {
+          modalpayment.show(receipt, key, name, paymentMethod, amount);
+        } else {
+          receipt.addPayment(new OB.Model.PaymentLine({
+            'kind': key,
+            'name': name,
+            'amount': amount
+          }));
         }
       }
+    },
+    getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
+      var me = this;
 
       return ({
         'permission': key,
@@ -186,7 +173,7 @@
         'action': function(txt) {
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? receipt.getPending() : amount;
-          pay(amount, modalpayment, me.receipt, key, name, paymentMethod);
+          me.pay(amount, modalpayment, me.receipt, key, name, paymentMethod);
         }
       });
     },
@@ -199,7 +186,7 @@
     initComponents: function() {
       //TODO: modal payments
       var i, max, payments, Btn, inst, cont, defaultpayment, allpayments = {},
-          modalpayment;
+          modalpayment, me = this;
 
       this.inherited(arguments);
 
@@ -241,6 +228,18 @@
       this.createComponent({
         kind: 'OB.UI.ButtonSwitch',
         keyboard: this.keyboard
+      });
+
+      this.owner.owner.addCommand('cashexact', {
+        action: function(txt) {
+          var receipt = me.owner.owner.owner.model.get('order');
+
+          var exactpayment = allpayments[this.status] || defaultpayment;
+          var amount = receipt.getPending();
+          if (amount > 0 && exactpayment) {
+            me.pay(amount, modalpayment, receipt, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
+          }
+        }
       });
     },
     shown: function() {
