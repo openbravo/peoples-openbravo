@@ -96,7 +96,7 @@ enyo.kind({
         kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
         name: 'toolbarpane'
       }, {
-        kind: 'OB.UI.KeyboardOrder',
+        kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
         name: 'keyboard'
       }]
 

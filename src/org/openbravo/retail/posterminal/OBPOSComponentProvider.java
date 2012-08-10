@@ -97,7 +97,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/toolbarpayment",
         "components/toolbarscan",
         "components/keypadcoins",
-        "components/keyboardorder",
         "windows/login",
         "windows/posbuttons",
         "data/datamaster",
@@ -131,6 +130,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/scan",
         "pointofsale/view/editline",
         "pointofsale/view/payment",
+        "pointofsale/view/keyboardorder",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-model",

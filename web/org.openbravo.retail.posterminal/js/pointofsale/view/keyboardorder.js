@@ -11,7 +11,7 @@
 
 
 enyo.kind({
-  name: 'OB.UI.KeyboardOrder',
+  name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
   sideBarEnabled: true,
 
