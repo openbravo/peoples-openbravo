@@ -155,8 +155,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.receiptview.setOrder(this.model.get('order'));
     this.$.toolbarpane.setModel(this.model);
-    console.log('order: ' + this.model.get('order'));
-    console.log('main init')
+    this.$.keyboard.setReceipt(this.model.get('order'));
   }
 
 });

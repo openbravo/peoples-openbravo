@@ -13,13 +13,12 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
   kind: 'OB.UI.Keyboard',
+  published: {
+    receipt: null
+  },
   sideBarEnabled: true,
 
-
-  init: function() {
-    this.inherited(arguments);
-    //this.products = this.options.root.DataProductPrice;
-    this.receipt = this.owner.model.get('order');
+  receiptChanged: function() {
     this.line = null;
 
     this.receipt.get('lines').on('selected', function(line) {
