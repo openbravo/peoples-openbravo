@@ -304,6 +304,18 @@ enyo.kind({
       this.model.set('totalExpected', OB.DEC.add(this.model.get('totalExpected'),payList.get('expected')));
     }, this);
     this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
+    
+    //Cash Up Report
+    this.$.postPrintClose.$.netSales.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('netSales')));
+    //FIXME: Include taxes
+    this.$.postPrintClose.$.grossSales.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('grossSales')));
+    
+    this.$.postPrintClose.$.netReturns.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('netReturns')));
+    //FIXME: Include taxes
+    this.$.postPrintClose.$.grossReturns.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('grossReturns')));
+    debugger;
+    this.$.postPrintClose.$.totalRetailTransacntions.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('totalRetailTransactions')));
+    
   }
 });
 

@@ -39,5 +39,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   init: function() {
     this.orderlist= new Backbone.Collection();
     this.payList = this.getData('DataCloseCashPaymentMethod');
+    this.cashUpReport = this.getData('DataCashCloseReport');
   }
 });

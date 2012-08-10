@@ -33,7 +33,6 @@ enyo.kind({
           classes: 'row-fluid',
           components: [{
             classes: 'span12',
-            style: 'border-bottom: 1px solid #cccccc;',
             components:[{
               style: 'padding: 10px; text-align:center;',
               components:[{
@@ -43,14 +42,191 @@ enyo.kind({
               },
               {
                 style: 'padding: 5px; text-align:center;',
-                content: 'User'
+                name: 'user'
               },
               {
+                name: 'time',
                 style: 'padding: 5px 5px 15px 5px; text-align:center;',
-                content: new Date().toString().substring(16, 21)
               }]
             }]
           }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+                content: OB.I18N.getLabel('OBPOS_LblNetSales')
+              },
+              {
+                name: 'netSales',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        //FIXME: Iterate taxes
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                name: 'taxSalesName',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+                content: 'Entregas IVA 18% * 125.00'
+              },
+              {
+                name: 'taxSalesAmount',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+                content: '125.00'
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;',
+                content: OB.I18N.getLabel('OBPOS_LblGrossSales')
+              },
+              {
+                name: 'grossSales',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;',
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc;  float: left; width: 60%',
+                content: ''
+              },
+              {
+                style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+                content: ''
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+                content: OB.I18N.getLabel('OBPOS_LblNetReturns')
+              },
+              {
+                name: 'netReturns',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        //FIXME: Iterate taxes
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                name: 'taxReturnsName',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+                content: 'Entregas IVA 18% * 125.00'
+              },
+              {
+                name: 'taxReturnsAmount',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+                content: '125.00'
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold; ',
+                content: OB.I18N.getLabel('OBPOS_LblGrossReturns')
+              },
+              {
+                name: 'grossReturns',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;  font-weight:bold;',
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc;  float: left; width: 60%',
+                content: ''
+              },
+              {
+                style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+                content: ''
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
+        },
+        {
+          classes: 'row-fluid',
+          components: [{
+            classes: 'span12',
+            components:[{
+              style: 'width: 10%; float: left; clear: both;'},
+              {
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;',
+                content: OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')
+              },
+              {
+                name: 'totalRetailTransacntions',
+                style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;',
+              },
+              {
+                style: 'width: 10%; float: left;  clear: both;',
+              }]
+            }]
         }]
       }]
     }]
@@ -59,8 +235,8 @@ enyo.kind({
     this.inherited(arguments);
     // explicitly set the total
 //    this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
-//    this.$.userName.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
-//    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
+    this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
+    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
 //    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
 //    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
 //
