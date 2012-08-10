@@ -33,7 +33,32 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       // add an initial empty order
       orderlist.addNewOrder();
     });
+  },
 
+  processPaidOrders: function() {
+    // Processes the paid, unprocessed orders
+    var orderlist = this.get('orderList');
+        criteria = {
+        hasbeenpaid: 'Y'
+        };
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!ordersPaidNotProcessed) {
+          return;
+        }
+        successCallback = function() {
+          $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
+        };
+        errorCallback = function() {
+          $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
+        };
+        OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
+        OB.UTIL.processOrders(this, ordersPaidNotProcessed, successCallback, errorCallback);
+      });
+    }
   },
 
   init: function() {
@@ -45,38 +70,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     discounts = new OB.DATA.OrderDiscount(modelOrder);
     ordersave = new OB.DATA.OrderSave(this);
 
-
-    var loadUnpaidOrders;
-    //   modelterminal.saveDocumentSequenceInDB();
-
-    processPaidOrders = function() {
-      // Processes the paid, unprocessed orders
-      var orderlist = me.context.modelorderlist,
-          criteria = {
-          hasbeenpaid: 'Y'
-          };
-      if (OB.POS.modelterminal.get('connectedToERP')) {
-        OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
-          var successCallback, errorCallback;
-          if (!ordersPaidNotProcessed) {
-            return;
-          }
-          successCallback = function() {
-            $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessProcessOrder'));
-          };
-          errorCallback = function() {
-            $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
-          };
-          OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
-          OB.UTIL.processOrders(me.context, ordersPaidNotProcessed, successCallback, errorCallback);
-        });
-      }
-    };
-
-    //processPaidOrders();
+    OB.POS.modelterminal.saveDocumentSequenceInDB();
+    this.processPaidOrders();
     this.loadUnpaidOrders();
-
   }
 });
