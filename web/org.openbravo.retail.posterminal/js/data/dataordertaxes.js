@@ -14,10 +14,10 @@
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
-  OB.DATA.OrderTaxes = function (context) {
+  OB.DATA.OrderTaxes = function (modelOrder) {
     this._id = 'logicOrderTaxes';
 
-    this.receipt = context.modelorder;
+    this.receipt = modelOrder;
 
     this.receipt.calculateTaxes = function (callback) {
       var me = this,

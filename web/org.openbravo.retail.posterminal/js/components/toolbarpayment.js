@@ -276,7 +276,6 @@
 
     create: function() {
       this.inherited(arguments);
-      debugger;
       this.keyboard.state.on('change:keypadLabel', function() {
         this.setLabel();
       }, this);

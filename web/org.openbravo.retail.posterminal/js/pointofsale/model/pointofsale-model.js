@@ -44,7 +44,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     if (OB.POS.modelterminal.get('connectedToERP')) {
       OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
-        if (!ordersPaidNotProcessed) {
+        if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
           return;
         }
         successCallback = function() {
@@ -63,15 +63,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   init: function() {
     var modelOrder = new OB.Model.Order(),
-        discounts, ordersave;
+        discounts, ordersave, taxes;
     this.set('order', modelOrder);
     this.set('orderList', new OB.Collection.OrderList(modelOrder));
 
     discounts = new OB.DATA.OrderDiscount(modelOrder);
     ordersave = new OB.DATA.OrderSave(this);
-
+    taxes = new OB.DATA.OrderTaxes(modelOrder);
+    
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processPaidOrders();
     this.loadUnpaidOrders();
+    
   }
 });
