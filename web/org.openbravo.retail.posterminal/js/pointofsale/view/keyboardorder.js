@@ -24,7 +24,7 @@ enyo.kind({
 
     this.receipt.get('lines').on('selected', function(line) {
       this.line = line;
-      //TODO:do this   this.clear();
+      this.clear();
     }, this);
   },
   initComponents: function() {

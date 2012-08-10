@@ -589,7 +589,7 @@ enyo.kind({
   commands: {},
   buttons: {},
   status: '',
-  state: new Backbone.Model(), 
+  state: new Backbone.Model(),
   sideBarEnabled: false,
 
   tag: 'div',
@@ -822,6 +822,11 @@ enyo.kind({
     return s;
   },
 
+  clear: function() {
+    this.$.editbox.setContent('');
+    this.setStatus('');
+  },
+
   commandHandler: function(sender, event) {
     var txt, me = this,
         cmd = event.key;
@@ -1008,11 +1013,11 @@ enyo.kind({
   },
 
   showKeypad: function(keypadName) {
-	  this.state.set('keypadName', keypadName);
-      enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
+    this.state.set('keypadName', keypadName);
+    enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
       console.log(pad, keypadName);
       if (pad.padName === keypadName) {
-    	this.state.set('keypadLabel', pad.label);
+        this.state.set('keypadLabel', pad.label);
         pad.show();
       } else {
         pad.hide();
