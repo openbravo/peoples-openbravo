@@ -116,7 +116,15 @@
       btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
     },
     tap: function() {
-      //TODO: implement
+      var me = this,
+          receipt = this.owner.owner.owner.owner.model.get('order');
+
+      receipt.addPayment(new OB.Model.PaymentLine({
+        kind: me.paymenttype,
+        name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+        amount: OB.DEC.number(me.amount)
+      }));
+
       console.log('add coin', this.amount);
     }
 
