@@ -362,10 +362,10 @@
     attributes: {
       'data-toggle': 'tab'
     },
+    classes: 'btnlink btnlink-gray',
     tabPanel: '#',
     initComponents: function() {
       this.inherited(arguments);
-      this.addClass('btnlink btnlink-gray');
       this.setAttribute('href', this.tabPanel);
       if (this.label) {
         this.createComponent({
@@ -416,7 +416,7 @@
     initComponents: function() {
       this.inherited(arguments);
       this.addClass('btnlink-toolbar');
-    }
+    },
   });
 
 

@@ -352,7 +352,7 @@
     }],
     init: function() {
       var me = this,
-          receipt = this.owner.owner.model.get('order');
+          receipt = this.owner.owner.owner.model.get('order');
       this.inherited(arguments);
       this.categories = new OB.Collection.ProductCategoryList();
       this.products = new OB.Collection.ProductList();

@@ -186,7 +186,7 @@
     init: function() {
       this.inherited(arguments);
 
-      var receipt = this.owner.owner.model.get('order');
+      var receipt = this.owner.owner.owner.model.get('order');
 
       console.log('init payemnt');
 

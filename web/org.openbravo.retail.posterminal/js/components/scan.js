@@ -54,7 +54,7 @@ enyo.kind({
     var receipt;
     this.inherited(arguments);
 
-    receipt = this.owner.owner.model.get('order');
+    receipt = this.owner.owner.owner.model.get('order');
 
     receipt.on('clear change:undo', function() {
       this.manageUndo(receipt);

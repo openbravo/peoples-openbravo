@@ -131,7 +131,7 @@ enyo.kind({
   init: function() {
     this.inherited(arguments);
 
-    this.receipt = this.owner.owner.model.get('order');
+    this.receipt = this.owner.owner.owner.model.get('order');
     this.line = null;
 
 

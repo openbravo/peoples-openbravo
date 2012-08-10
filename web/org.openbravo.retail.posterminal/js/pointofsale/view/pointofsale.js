@@ -59,83 +59,6 @@ enyo.kind({
   }]
 });
 
-/* right toolbar */
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
-  tag: 'li',
-  components: [{
-    name: 'theButton',
-    attributes: {
-      'data-toggle': 'tab',
-      style: 'margin: 0px 5px 0px 5px;'
-    }
-  }],
-  initComponents: function() {
-    this.inherited(arguments);
-    if (this.button.containerCssClass) {
-      this.setClassAttribute(this.button.containerCssClass);
-      delete this.button.containerCssClass;
-    }
-    this.$.theButton.createComponent(this.button);
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
-  published: {
-    order: null
-  },
-  classes: 'span8',
-  components: [{
-    tag: 'ul',
-    classes: 'unstyled nav-pos row-fluid',
-    name: 'toolbar'
-  }],
-  initComponents: function() {
-    this.inherited(arguments);
-    enyo.forEach(this.buttons, function(btn) {
-      this.$.toolbar.createComponent({
-        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
-        button: btn
-      });
-    }, this);
-  },
-  orderChanged: function(oldValue){
-    //TODO
-    //Mechanism to search which button are able to print total
-    var totalPrinterComponent;
-    //hardcoded
-    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.btnPayment;
-    totalPrinterComponent.renderTotal(this.order.getTotal());
-    this.order.on('change:gross', function (model) {
-      totalPrinterComponent.renderTotal(model.getTotal());
-    }, this);
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-  kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
-  buttons: [{
-    kind: 'OB.UI.ButtonTabPayment',
-    name: 'btnPayment',
-    containerCssClass: 'span3'
-  }, {
-    kind: 'OB.UI.ButtonTabScan',
-    containerCssClass: 'span3'
-  }, {
-    kind: 'OB.UI.ButtonTabBrowse',
-    containerCssClass: 'span2'
-  }, {
-    kind: 'OB.UI.ButtonTabSearch',
-    containerCssClass: 'span2'
-  }, {
-    kind: 'OB.UI.ButtonTabEditLine',
-    containerCssClass: 'span2'
-  }]
-});
-
 // Point of sale main window view
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',
@@ -148,7 +71,7 @@ enyo.kind({
     onShowInvoiceButton: 'showInvoiceButton',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
-    
+
     onTabChange: 'tabChange'
   },
   components: [{
@@ -157,8 +80,7 @@ enyo.kind({
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-      name: 'rightToolbar'
+      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl'
     }]
   }, {
     classes: 'row',
@@ -168,57 +90,47 @@ enyo.kind({
     }, {
       classes: 'span6',
       components: [{
-        classes: 'tab-content',
-        components: [{
-          kind: 'OB.UI.TabScan'
-        }, {
-          kind: 'OB.UI.TabBrowse'
-        }, {
-          kind: 'OB.UI.TabSearch'
-        }, {
-          kind: 'OB.UI.TabPayment',
-        }, {
-          kind: 'OB.UI.TabEditLine'
-        }]
+        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane'
       }, {
         kind: 'OB.UI.KeyboardOrder',
         name: 'keyboard'
       }]
+
     }]
   }],
-  addNewOrder: function(inSender, inEvent){
+  addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
   },
-  addProductToOrder: function(inSender, inEvent){
+  addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.originator.modelAdd);
-    return true;// not continue
+    return true; // not continue
   },
-  showInvoiceButton: function (){
+  showInvoiceButton: function() {
     this.$.receiptview.$.orderview.$.btninvoice.show();
     return true;
   },
-  showReturnText: function (){
-    this.$.receiptview.$.orderview.$.return.show();
+  showReturnText: function() {
+    this.$.receiptview.$.orderview.$.
+    return .show();
     return true;
   },
-  receiptToInvoice: function(inSender, inEvent){
+  receiptToInvoice: function(inSender, inEvent) {
     console.log('Invoice receipt handler');
     this.model.get('order').resetOrderInvoice();
     this.$.receiptview.$.orderview.$.btninvoice.hide();
     return true;
   },
-  tabChange: function(sender, event){
-	OB.UTIL.setOrderLineInEditMode(event.edit);
-	if (event.keyboard){
-		this.$.keyboard.showToolbar(event.keyboard);
-	} else {
-		this.$.keyboard.hide();
-	}
-	console.log('tab change',arguments);  
+  tabChange: function(sender, event) {
+    OB.UTIL.setOrderLineInEditMode(event.edit);
+    if (event.keyboard) {
+      this.$.keyboard.showToolbar(event.keyboard);
+    } else {
+      this.$.keyboard.hide();
+    }
+    console.log('tab change', arguments);
   },
   init: function() {
     this.inherited(arguments);
-    this.$.rightToolbar.setOrder(this.model.get('order'));
     this.$.receiptview.setOrder(this.model.get('order'));
     console.log('order: ' + this.model.get('order'));
     console.log('main init')
@@ -229,6 +141,7 @@ enyo.kind({
 OB.POS.registerWindow({
   windowClass: OB.OBPOSPointOfSale.UI.PointOfSale,
   route: 'retail.pointofsale',
-  menuPosition: null, // Not to display it in the menu
+  menuPosition: null,
+  // Not to display it in the menu
   menuLabel: 'POS'
 });
