@@ -152,3 +152,35 @@ enyo.kind({
     }]
   }]
 });
+
+enyo.kind({
+  name: 'OB.UI.PaymentButton',
+  style: 'margin: 5px;',
+  components: [{
+    kind: 'OB.UI.Button',
+    classes: 'btnkeyboard',
+    name: 'btn'
+  }],
+  background: '#6cb33f',
+  initComponents: function() {
+    var btn;
+    this.inherited(arguments);
+
+    btn = this.$.btn;
+    btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
+    btn.applyStyle('background-color', this.background);
+    btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
+  },
+  tap: function() {
+    var me = this,
+        receipt = this.owner.owner.owner.owner.model.get('order');
+
+    receipt.addPayment(new OB.Model.PaymentLine({
+      kind: me.paymenttype,
+      name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+      amount: OB.DEC.number(me.amount)
+    }));
+
+    console.log('add coin', this.amount);
+  }
+});
