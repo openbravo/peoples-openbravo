@@ -123,10 +123,6 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
     return false;
   }
 
-  if (!isc.isA.Number(paidamount)) {
-    return false;
-  }
-
   for (i = 0; i < allRows.size(); i++) {
     if (record.id === allRows.get(i).id) {
       row = allRows.get(i);
