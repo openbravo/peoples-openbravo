@@ -151,37 +151,61 @@
   enyo.kind({
     name: 'OB.UI.ToolbarPayment',
     toolbarName: 'toolbarpayment',
-    payment: function(amount, modalpayment, receipt, key, name, paymentMethod) {
-      if (OB.DEC.compare(amount) > 0) {
-        if (paymentMethod.view) {
-          modalpayment.show(receipt, key, name, paymentMethod, amount);
-        } else {
-          receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': key,
-            'name': name,
-            'amount': amount
-          }));
+    //    pay: function(amount, modalpayment, receipt, key, name, paymentMethod) {
+    //      if (OB.DEC.compare(amount) > 0) {
+    //        if (paymentMethod.view) {
+    //          modalpayment.show(receipt, key, name, paymentMethod, amount);
+    //        } else {
+    //          receipt.addPayment(new OB.Model.PaymentLine({
+    //            'kind': key,
+    //            'name': name,
+    //            'amount': amount
+    //          }));
+    //        }
+    //      }
+    //    },
+    getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
+      var me = this;
+      function pay(amount, modalpayment, receipt, key, name, paymentMethod) {
+        if (OB.DEC.compare(amount) > 0) {
+          if (paymentMethod.view) {
+            modalpayment.show(receipt, key, name, paymentMethod, amount);
+          } else {
+            receipt.addPayment(new OB.Model.PaymentLine({
+              'kind': key,
+              'name': name,
+              'amount': amount
+            }));
+          }
         }
       }
-    },
 
-    getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
       return ({
         'permission': key,
         'stateless': false,
         'action': function(txt) {
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
           amount = _.isNaN(amount) ? receipt.getPending() : amount;
-          payment(amount, modalpayment, receipt, key, name, paymentMethod);
+          pay(amount, modalpayment, me.receipt, key, name, paymentMethod);
         }
       });
     },
 
+    init: function() {
+      console.log('init toolabar p');
+      this.receipt = this.owner.owner.owner.model.get('order');
+    },
+
     initComponents: function() {
       //TODO: modal payments
-      var i, max, payments, Btn, inst, cont, receipt, defaultpayment, allpayments = {},modalpayment;
+      var i, max, payments, Btn, inst, cont, defaultpayment, allpayments = {},
+          modalpayment;
+
+      this.inherited(arguments);
 
       payments = OB.POS.modelterminal.get('payments');
+
+
 
       enyo.forEach(payments, function(payment) {
         if (payment.payment.searchKey === 'OBPOS_payment.cash') {
@@ -202,7 +226,7 @@
             command: payment.payment.searchKey,
             label: payment.payment._identifier,
             permission: payment.payment.searchKey,
-            definition: this.getPayment(modalpayment, receipt, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
+            definition: this.getPayment(modalpayment, this.receipt, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
           }
         });
       }, this);
@@ -239,8 +263,7 @@
       components: [{
         kind: 'OB.UI.Button',
         classes: 'btnkeyboard',
-        name: 'btn',
-        content: 'aa'
+        name: 'btn'
       }]
     }],
     setLabel: function() {
@@ -251,14 +274,14 @@
       var newKeypad = this.keyboard.state.get('keypadName') === 'coins' ? 'basic' : 'coins';
       this.keyboard.showKeypad(newKeypad);
     },
-    
+
     create: function() {
-    	this.inherited(arguments);
-    	debugger;
-    	this.keyboard.state.on('change:keypadLabel', function(){
-    		this.setLabel();
-        },this);
-    	this.setLabel();
+      this.inherited(arguments);
+      debugger;
+      this.keyboard.state.on('change:keypadLabel', function() {
+        this.setLabel();
+      }, this);
+      this.setLabel();
     }
 
   });

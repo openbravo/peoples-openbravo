@@ -109,11 +109,13 @@
       style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
       components: [{
         classes: 'row-fluid',
-        components: [{classes: 'span12'}]
+        components: [{
+          classes: 'span12'
+        }]
       }, {
         classes: 'row-fluid',
         components: [{
-          classes: 'span10',
+          classes: 'span9',
           components: [{
             style: 'padding: 10px 0px 0px 10px;',
             components: [{
@@ -151,18 +153,18 @@
               style: 'padding: 5px',
               components: [{
                 style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
+              }, {
+                kind: 'OB.UI.Table',
+                name: 'payments',
+                renderEmpty: enyo.kind({
+                  style: 'height: 36px'
+                }),
+                renderLine: 'OB.UI.RenderPaymentLine'
               }]
-            }, {
-              kind: 'OB.UI.Table',
-              name: 'payments',
-              renderEmpty: enyo.kind({
-                style: 'height: 36px'
-              }),
-              renderLine: 'OB.UI.RenderPayementLine'
             }]
           }]
         }, {
-          classes: 'span12',
+          classes: 'span3',
           components: [{
             style: 'float: right;',
             name: 'doneaction',
@@ -207,7 +209,7 @@
         this.$.changelbl.hide();
       }
       if (paymentstatus.overpayment) {
-        this.$.overpayment.v(paymentstatus.overpayment);
+        this.$.overpayment.setContent(paymentstatus.overpayment);
         this.$.overpayment.show();
         this.$.overpaymentlbl.show();
       } else {
@@ -244,7 +246,13 @@
     kind: 'OB.UI.RegularButton',
     content: OB.I18N.getLabel('OBPOS_LblDone'),
     tap: function() {
-      console.log('done');
+      var receipt = this.owner.owner.owner.model.get('order');
+      var orderlist = this.owner.owner.owner.model.get('orderList');
+      receipt.calculateTaxes(function() {
+        console.log('taxes done');
+        receipt.trigger('closed');
+        orderlist.deleteCurrent();
+      });
     }
   });
 
@@ -254,7 +262,7 @@
     classes: 'btn-icon-small btn-icon-check btnlink-green',
     style: 'width: 69px',
     tap: function() {
-    	this.owner.owner.owner.$.keyboard.execStatelessCommand('cashexact');
+      this.owner.owner.owner.$.keyboard.execStatelessCommand('cashexact');
       console.log('exact');
     }
   });
@@ -297,7 +305,11 @@
     kind: 'OB.UI.SmallButton',
     classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
     tap: function() {
-      // TODO implement
+      var model = this.owner.owner.owner.owner.owner.owner.owner.model;
+      if (model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
+        return;
+      }
+      model.get('order').removePayment(this.owner.model);
       console.log('remove')
     }
   });
