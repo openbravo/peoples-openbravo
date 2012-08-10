@@ -141,11 +141,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_TREE_ASSET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_CLIENTINFO_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_ASSET">
+        <reference local="AD_TREE_ASSET_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_BPARTNER">
         <reference local="AD_TREE_BPARTNER_ID" foreign="AD_TREE_ID"/>

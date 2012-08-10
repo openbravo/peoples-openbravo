@@ -19,6 +19,7 @@
 package org.openbravo.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
+import javax.servlet.ServletException;
 
 public class UpdateADClientInfo extends ModuleScript {
 
@@ -28,12 +29,25 @@ public class UpdateADClientInfo extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
       UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsID(cp);
-      
+      // MC tree
       for (UpdateADClientInfoData clientID : clientsID) {
         UpdateADClientInfoData.update(cp,clientID.adClientId);
       }
+      // Asset tree
+      createTreeAndUpdateClientInfo(cp, "Asset", "AS", "AD_TREE_ASSET_ID");
     } catch (Exception e) {
       handleError(e);
     }
   }
+
+    private void createTreeAndUpdateClientInfo(final ConnectionProvider cp, final String treeTypeName, final String treeTypeValue, final String columnName)
+	throws ServletException {
+       UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingTree(cp, columnName);
+      for (UpdateADClientInfoData clientID: clientsID) {
+	final String treeId = UpdateADClientInfoData.getUUID(cp);
+	final String nameAndDesc = clientID.clientname + " " + treeTypeName;
+        UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);	
+	UpdateADClientInfoData.updateClientTree(cp, columnName, treeId, clientID.adClientId);
+      }
+    }
 }

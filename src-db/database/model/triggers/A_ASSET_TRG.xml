@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER A_ASSET_TRG">
-    <trigger name="A_ASSET_TRG" table="A_ASSET" fires="after" insert="true" update="true" delete="false" foreach="row">
+    <trigger name="A_ASSET_TRG" table="A_ASSET" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -23,6 +23,8 @@
   v_Acct_ID VARCHAR2(32);
   Cur_Defaults RECORD;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
+  v_xTree_ID AD_ClientInfo.AD_Tree_Asset_ID%TYPE;
+  v_count NUMBER;
 
 BEGIN
 
@@ -68,6 +70,36 @@ BEGIN
         )
         ;
       END LOOP;
+      
+    --  Create TreeNode --
+    SELECT c.AD_Tree_Asset_ID
+    INTO v_xTree_ID
+    FROM AD_ClientInfo c
+    WHERE c.AD_Client_ID=:new.AD_Client_ID;
+
+    --  Insert into TreeNode
+    INSERT
+    INTO AD_TreeNode
+      (
+        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
+        Created, CreatedBy, Updated,
+        UpdatedBy, AD_Tree_ID, Node_ID,
+        Parent_ID, SeqNo
+      )
+      VALUES
+      (
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        :new.Created, :new.CreatedBy, :new.Updated,
+        :new.UpdatedBy, v_xTree_ID, :new.A_Asset_ID,
+        '0',(
+        CASE :new.IsSummary
+          WHEN 'Y'
+          THEN 100
+          ELSE 999
+        END
+        )
+      )
+      ;
   ELSIF (UPDATING) THEN
     UPDATE A_ASSET_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE A_ASSET_ID = :new.A_ASSET_ID;
@@ -84,6 +116,25 @@ BEGIN
      RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
     END IF;
    END IF;
+  END IF;
+  
+  IF(DELETING) THEN
+    --  Delete TreeNode --
+    --  get AD_Tree_ID
+    SELECT c.AD_Tree_Asset_ID
+    INTO v_xTree_ID
+    FROM AD_ClientInfo c
+    WHERE c.AD_Client_ID=:old.AD_Client_ID;
+    select COUNT(*) INTO v_count from AD_TREENODE where parent_id=:old.A_Asset_ID
+    and AD_TREE_ID=v_xTree_ID;
+    IF(v_count>0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ChildAssetCheck@') ;
+    END IF;
+    DELETE
+    FROM AD_TREENODE
+    WHERE AD_CLIENT_ID=:old.AD_Client_ID
+      AND AD_Tree_ID=v_xTree_ID
+      AND Node_ID=:old.A_Asset_ID;     
   END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN

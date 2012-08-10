@@ -136,6 +136,8 @@ class WindowTreeChecks {
       result = "";
     } else if (TreeType.equals("AR")) { // Accounting report
       result = "";
+    } else if (TreeType.equals("AS")) { // Asset
+      result = "";
     } else
       result = WindowTreeChecksClient.checkChanges(conn, vars, tabId, topNodeId, nodeId, isChild,
           TreeType, key);

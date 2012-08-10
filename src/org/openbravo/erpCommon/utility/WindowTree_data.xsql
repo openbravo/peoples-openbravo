@@ -222,6 +222,20 @@
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
    </SqlMethod>
+   <SqlMethod name="selectAsset" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, a.A_Asset_ID AS ID, a.Name,a.Description,a.IsSummary 
+        FROM AD_TreeNode tn, A_Asset a
+        WHERE tn.Node_ID = a.A_Asset_ID 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
+      </Sql>
+        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND a.isActive='Y' AND "/>
+        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
+        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
+        <Parameter name="adTreeId"/>
+   </SqlMethod>
    <SqlMethod name="selectTreeID" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

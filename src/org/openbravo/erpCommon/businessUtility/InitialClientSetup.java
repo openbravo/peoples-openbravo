@@ -65,11 +65,12 @@ public class InitialClientSetup {
   private static final String STRTREETYPEPRODUCT = "PR";
   private static final String STRTREETYPEACCOUNT = "EV";
   private static final String STRTREETYPECAMPAIGN = "MC";
+  private static final String STRTREETYPEASSET = "AS";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
-      treeMenu, treeCampaign;
+      treeMenu, treeCampaign, treeAsset;
   private Client client;
   private Role role;
   private Currency currency;
@@ -338,6 +339,9 @@ public class InitialClientSetup {
     } else if (strTreeType.endsWith(STRTREETYPECAMPAIGN)) {
       treeCampaign = tree;
       return;
+    } else if (strTreeType.endsWith(STRTREETYPEASSET)) {
+      treeAsset = tree;
+      return;
     }
   }
 
@@ -345,7 +349,7 @@ public class InitialClientSetup {
     log4j.debug("insertClientInfo() - Starting the creation of client information.");
     if (client == null || treeMenu == null || treeOrg == null || treeBPartner == null
         || treeProject == null || treeSalesRegion == null || treeProduct == null
-	|| treeCampaign == null) {
+        || treeCampaign == null || treeAsset == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
@@ -356,9 +360,12 @@ public class InitialClientSetup {
     try {
       clientInfo = InitialSetupUtility.insertClientinfo(client, treeMenu, treeOrg, treeBPartner,
           treeProject, treeSalesRegion, treeProduct, treeCampaign, true);
-      if (clientInfo == null)
+      if (clientInfo == null) {
         return logErrorAndRollback("@CreateClientFailed@",
             "insertClientInfo() - ERROR - Unable to create client information");
+      } else {
+        clientInfo.setPrimaryTreeAsset(treeAsset);
+      }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Unable to create client information", e);
