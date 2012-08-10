@@ -12,6 +12,9 @@
 
 enyo.kind({
   name: 'OB.UI.Scan',
+  published: {
+    receipt: null
+  },
   components: [{
     style: 'position:relative; background-color: #7da7d9; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{
@@ -50,21 +53,16 @@ enyo.kind({
     }]
   }],
 
-  init: function() {
-    var receipt;
-    this.inherited(arguments);
-
-    receipt = this.owner.owner.owner.model.get('order');
-
-    receipt.on('clear change:undo', function() {
-      this.manageUndo(receipt);
+  receiptChanged: function() {
+    this.receipt.on('clear change:undo', function() {
+      this.manageUndo();
     }, this);
 
-    this.manageUndo(receipt);
+    this.manageUndo();
   },
 
-  manageUndo: function(receipt) {
-    var undoaction = receipt.get('undo');
+  manageUndo: function() {
+    var undoaction = this.receipt.get('undo');
 
     if (undoaction) {
       this.$.msgwelcome.hide();

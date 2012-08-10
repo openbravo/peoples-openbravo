@@ -90,7 +90,8 @@ enyo.kind({
     }, {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane'
+        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
+        name: 'toolbarpane'
       }, {
         kind: 'OB.UI.KeyboardOrder',
         name: 'keyboard'
@@ -132,6 +133,7 @@ enyo.kind({
   init: function() {
     this.inherited(arguments);
     this.$.receiptview.setOrder(this.model.get('order'));
+    this.$.toolbarpane.setModel(this.model);
     console.log('order: ' + this.model.get('order'));
     console.log('main init')
   }

@@ -197,9 +197,13 @@ enyo.kind({
 //----------------------------------------------------------------------------
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
+  published: {
+    model: null
+  },
   classes: 'tab-content',
   components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.TabScan'
+    kind: 'OB.OBPOSPointOfSale.UI.TabScan',
+    name: 'scan'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabBrowse'
   }, {
@@ -208,7 +212,10 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine'
-  }]
+  }],
+  modelChanged: function() {
+    this.$.scan.setReceipt(this.model.get('order'));
+  }
 });
 
 enyo.kind({
@@ -287,12 +294,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabScan',
+  published: {
+    receipt: null
+  },
   classes: 'tab-pane',
   components: [{
-    kind: 'OB.UI.Scan'
+    kind: 'OB.UI.Scan',
+    name: 'scan'
   }],
   makeId: function() {
     return 'scan';
+  },
+  receiptChanged: function() {
+    this.$.scan.setReceipt(this.receipt);
   }
 });
 
