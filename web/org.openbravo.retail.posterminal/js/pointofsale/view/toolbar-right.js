@@ -21,6 +21,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+  published: {
+    receipt: null
+  },
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
@@ -37,7 +40,37 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
     containerCssClass: 'span2'
-  }]
+  }],
+
+  manualTap: function(tab) {
+    // Hack to manually tap on bootstrap tab
+    var domButton = $(tab.tabPanel + '_button');
+    domButton.tab('show');
+    domButton.parent().parent().addClass('active');
+    tab.tap();
+  },
+
+  receiptChanged: function() {
+    this.receipt.on('clear scan', function() {
+      this.manualTap(this.scan);
+    }, this);
+
+    this.receipt.get('lines').on('click', function() {
+      this.manualTap(this.edit);
+    }, this);
+  },
+  initComponents: function() {
+    var me = this;
+
+    function getButtonInPos(pos) {
+      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0]
+    }
+
+    this.inherited(arguments);
+
+    this.scan = getButtonInPos(1);
+    this.edit = getButtonInPos(4);
+  }
 });
 
 
@@ -78,31 +111,7 @@ enyo.kind({
       edit: false
     });
   },
-  manualTap: function() {
-    // Hack to manually tap on bootstrap tab
-    var domButton = $('#scan_button');
-    domButton.tab('show');
-    domButton.parent().parent().addClass('active');
-    this.tap();
-  },
-  init: function() {
-    var receipt;
-    this.inherited(arguments);
 
-    receipt = this.owner.owner.owner.owner.owner.model.get('order');
-
-    receipt.on('clear scan', function() {
-      this.manualTap();
-    }, this);
-
-    //TODO: do this     
-    //        this.options.root.SearchBPs.bps.on('click', function (model, index) {
-    //          this.$el.tab('show');
-    //          this.$el.parent().parent().addClass('active'); // Due to the complex construction of the toolbar buttons, forced active tab icon is needed
-    //          OB.UTIL.setOrderLineInEditMode(false);
-    //        }, this);
-    console.log('tabscan init');
-  },
   makeId: function() {
     return 'scan_button';
   }
@@ -114,11 +123,10 @@ enyo.kind({
   tabPanel: '#catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function() {
-    this.inherited(arguments);
-    this.owner.owner.owner.owner.owner.$.keyboard.hide();
-  },
-  initComponents: function() {
-    this.inherited(arguments);
+    this.doTabChange({
+      keyboard: false,
+      edit: false
+    });
   }
 });
 
@@ -174,6 +182,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
+  published: {
+    ticketLines: null
+  },
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: '#edition',
   label: OB.I18N.getLabel('OBPOS_LblEdit'),
@@ -187,8 +198,8 @@ enyo.kind({
       edit: true
     });
   },
-  initComponents: function() {
-    this.inherited(arguments);
+  makeId: function() {
+    return 'edition_button';
   }
 });
 

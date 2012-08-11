@@ -83,7 +83,8 @@ enyo.kind({
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl'
+      kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+      name: 'rightToolbar'
     }]
   }, {
     classes: 'row',
@@ -152,10 +153,13 @@ enyo.kind({
     this.model.get('order').removePayment(event.payment);
   },
   init: function() {
+    var receipt;
     this.inherited(arguments);
-    this.$.receiptview.setOrder(this.model.get('order'));
+    receipt = this.model.get('order');
+    this.$.receiptview.setOrder(receipt);
     this.$.toolbarpane.setModel(this.model);
-    this.$.keyboard.setReceipt(this.model.get('order'));
+    this.$.keyboard.setReceipt(receipt);
+    this.$.rightToolbar.setReceipt(receipt);
   }
 
 });
