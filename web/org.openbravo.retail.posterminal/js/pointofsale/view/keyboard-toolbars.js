@@ -25,13 +25,16 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
+  published: {
+    receipt: null
+  },
   toolbarName: 'toolbarpayment',
-  pay: function(amount, modalpayment, receipt, key, name, paymentMethod) {
+  pay: function(amount, modalpayment, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
       if (paymentMethod.view) {
-        modalpayment.show(receipt, key, name, paymentMethod, amount);
+        modalpayment.show(this.receipt, key, name, paymentMethod, amount);
       } else {
-        receipt.addPayment(new OB.Model.PaymentLine({
+        this.receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
           'name': name,
           'amount': amount
@@ -39,7 +42,7 @@ enyo.kind({
       }
     }
   },
-  getPayment: function(modalpayment, receipt, key, name, paymentMethod) {
+  getPayment: function(modalpayment, key, name, paymentMethod) {
     var me = this;
 
     return ({
@@ -47,15 +50,10 @@ enyo.kind({
       'stateless': false,
       'action': function(txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-        amount = _.isNaN(amount) ? receipt.getPending() : amount;
+        amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
         me.pay(amount, modalpayment, me.receipt, key, name, paymentMethod);
       }
     });
-  },
-
-  init: function() {
-    console.log('init toolabar p');
-    this.receipt = this.owner.owner.owner.model.get('order');
   },
 
   initComponents: function() {
@@ -88,7 +86,7 @@ enyo.kind({
           command: payment.payment.searchKey,
           label: payment.payment._identifier,
           permission: payment.payment.searchKey,
-          definition: this.getPayment(modalpayment, this.receipt, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
+          definition: this.getPayment(modalpayment, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
         }
       });
     }, this);

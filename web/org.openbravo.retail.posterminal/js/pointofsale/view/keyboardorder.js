@@ -19,6 +19,8 @@ enyo.kind({
   sideBarEnabled: true,
 
   receiptChanged: function() {
+    this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
+
     this.line = null;
 
     this.receipt.get('lines').on('selected', function(line) {
