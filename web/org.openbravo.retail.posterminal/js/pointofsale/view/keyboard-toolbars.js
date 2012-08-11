@@ -44,14 +44,13 @@ enyo.kind({
   },
   getPayment: function(modalpayment, key, name, paymentMethod) {
     var me = this;
-
     return ({
       'permission': key,
       'stateless': false,
       'action': function(txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
-        me.pay(amount, modalpayment, me.receipt, key, name, paymentMethod);
+        me.pay(amount, modalpayment, key, name, paymentMethod);
       }
     });
   },
