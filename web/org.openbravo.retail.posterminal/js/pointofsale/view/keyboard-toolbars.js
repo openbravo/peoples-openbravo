@@ -136,7 +136,13 @@ enyo.kind({
     }]
   }],
   setLabel: function() {
-    this.$.btn.setContent(this.keyboard.state.get('keypadLabel'));
+    var lbl;
+    if (this.keyboard.state.get('keypadName') === 'basic') {
+      lbl = OB.I18N.getLabel('OBPOS_KeypadCoins');
+    } else {
+      lbl = OB.I18N.getLabel('OBPOS_KeypadBasic');
+    }
+    this.$.btn.setContent(lbl);
   },
   tap: function() {
     console.log('tap');
