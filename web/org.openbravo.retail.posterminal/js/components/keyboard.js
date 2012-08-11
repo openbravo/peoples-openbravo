@@ -206,7 +206,8 @@ enyo.kind({
   },
 
   handlers: {
-    onCommandFired: 'commandHandler'
+    onCommandFired: 'commandHandler',
+    onRegisterButton: 'registerButton'
   },
 
   setStatus: function(newstatus) {
@@ -294,6 +295,34 @@ enyo.kind({
     }
   },
 
+  registerButton: function(sender, event) {
+    var me = this,
+        button = event.originator;
+    if (button.command) {
+      if (button.definition) {
+        this.addCommand(button.command, button.definition);
+      }
+      if (button.command === '---') {
+        // It is the null command
+        button.command = false;
+      } else if (!button.command.match(/^([0-9]|\.|,|[a-z])$/) && button.command !== 'OK' && button.command !== 'del' && button.command !== String.fromCharCode(13) && !this.commands[button.command]) {
+        // is not a key and does not exists the command
+        button.command = false;
+      } else if (button.permission && !OB.POS.modelterminal.hasPermission(button.permission)) {
+        // does not have permissions.
+        button.command = false;
+      }
+    }
+
+    if (button.command) {
+      button.$.button.tap = function() {
+        me.keyPressed(button.command);
+      }
+      this.addButton(button.command, button.$.button);
+    } else {
+      button.$.button.addClass('btnkeyboard-inactive');
+    }
+  },
 
   initComponents: function() {
     var me = this;

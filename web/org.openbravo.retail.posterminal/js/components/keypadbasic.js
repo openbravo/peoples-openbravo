@@ -143,6 +143,13 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonKey',
+  events: {
+    onAddCommand: '',
+    onAddButton: '',
+    onKeyCommandPressed: '',
+    onRegisterButton: ''
+    	
+  },
   tag: 'div',
   style: 'margin: 5px;',
   classButtonActive: 'btnactive',
@@ -157,35 +164,11 @@ enyo.kind({
     classes: 'btnkeyboard'
   }],
   initComponents: function() {
-    var me = this,
-        keyboard = this.owner.keyPressed ? this.owner : this.owner.owner.keyPressed ? this.owner.owner : this.owner.owner.owner.keyPressed ? this.owner.owner.owner : this.owner.owner.owner.owner;
+    var me = this;
 
     this.inherited(arguments);
 
-    if (this.command) {
-      if (this.definition) {
-        keyboard.addCommand(this.command, this.definition);
-      }
-      if (this.command === '---') {
-        // It is the null command
-        this.command = false;
-      } else if (!this.command.match(/^([0-9]|\.|,|[a-z])$/) && this.command !== 'OK' && this.command !== 'del' && this.command !== String.fromCharCode(13) && !keyboard.commands[this.command]) {
-        // is not a key and does not exists the command
-        this.command = false;
-      } else if (this.permission && !OB.POS.modelterminal.hasPermission(this.permission)) {
-        // does not have permissions.
-        this.command = false;
-      }
-    }
-
-    if (this.command) {
-      this.$.button.tap = function() {
-        keyboard.keyPressed(me.command);
-      }
-      keyboard.addButton(this.command, this.$.button);
-    } else {
-      this.$.button.addClass('btnkeyboard-inactive');
-    }
+    this.doRegisterButton();
 
     this.$.button.addClass(this.classButton);
     this.$.button.setContent(this.label);

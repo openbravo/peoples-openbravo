@@ -180,7 +180,5 @@ enyo.kind({
       name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
       amount: OB.DEC.number(me.amount)
     }));
-
-    console.log('add coin', this.amount);
   }
 });
