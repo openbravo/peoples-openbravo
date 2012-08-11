@@ -136,7 +136,7 @@ enyo.kind({
     this.inherited(arguments);
 
     this.addKeypad('OB.UI.KeypadCoins');
-    this.addToolbarComponent('OB.UI.ToolbarPayment');
-    this.addToolbar(OB.UI.ToolbarScan);
+    this.addToolbarComponent('OB.OBPOSPointOfSale.UI.ToolbarPayment');
+    this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
   }
 });

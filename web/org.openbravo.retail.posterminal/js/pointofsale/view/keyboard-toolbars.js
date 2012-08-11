@@ -7,10 +7,24 @@
  ************************************************************************************
  */
 
-/*global Backbone, $, _ */
+OB.OBPOSPointOfSale.UI.ToolbarScan = {
+  name: 'toolbarscan',
+  buttons: [{
+    command: 'code',
+    label: OB.I18N.getLabel('OBPOS_KbCode'),
+    classButtonActive: 'btnactive-blue'
+  }],
+  shown: function() {
+    var keyboard = this.owner.owner;
+    keyboard.showKeypad('basic')
+    keyboard.showSidepad('sideenabled');
+    keyboard.defaultcommand = 'code';
+  }
+};
+
 
 enyo.kind({
-  name: 'OB.UI.ToolbarPayment',
+  name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
   toolbarName: 'toolbarpayment',
   pay: function(amount, modalpayment, receipt, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
@@ -87,7 +101,7 @@ enyo.kind({
     }
 
     this.createComponent({
-      kind: 'OB.UI.ButtonSwitch',
+      kind: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
       keyboard: this.keyboard
     });
 
@@ -115,7 +129,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ButtonSwitch',
+  name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
 
   style: 'display:table; width:100%;',
   components: [{
