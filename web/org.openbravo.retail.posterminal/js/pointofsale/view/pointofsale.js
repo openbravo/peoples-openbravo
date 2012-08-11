@@ -156,7 +156,7 @@ enyo.kind({
     this.model.get('order').removePayment(event.payment);
   },
   init: function() {
-    var receipt;
+    var receipt, receiptList;
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');

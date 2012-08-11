@@ -14,14 +14,14 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   classes: 'span8',
   published: {
-   order: null
+   receipt: null
   },
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  orderChanged: function(oldValue){
+  receiptChanged: function(oldValue){
     //TODO
     //Mechanism to search which button are able to print total
     var totalPrinterComponent;
