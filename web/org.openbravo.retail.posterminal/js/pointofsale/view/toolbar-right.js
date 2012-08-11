@@ -13,11 +13,26 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   classes: 'span8',
+  published: {
+   order: null
+  },
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
+  orderChanged: function(oldValue){
+    //TODO
+    //Mechanism to search which button are able to print total
+    var totalPrinterComponent;
+    //hardcoded
+    debugger;
+    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
+    totalPrinterComponent.renderTotal(this.order.getTotal());
+    this.order.on('change:gross', function (model) {
+      totalPrinterComponent.renderTotal(model.getTotal());
+    }, this);
+  },
   initComponents: function() {
     this.inherited(arguments);
     enyo.forEach(this.buttons, function(btn) {
@@ -37,7 +52,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    containerCssClass: 'span3'
+    containerCssClass: 'span3',
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     containerCssClass: 'span3'
@@ -181,12 +196,16 @@ enyo.kind({
       style: 'font-weight: bold; margin: 0px 5px 0px 0px;'
     },
     components: [{
-      kind: 'OB.UI.Total'
+      kind: 'OB.UI.Total',
+      name: 'totalPrinter'
     }]
   }],
   initComponents: function() {
     this.inherited(arguments);
-    this.addRemoveClass('btnlink-gray', true);
+    this.removeClass('btnlink-gray');
+  },
+  renderTotal: function(total){
+    this.$.totalPrinter.renderTotal(total);
   }
 });
 
