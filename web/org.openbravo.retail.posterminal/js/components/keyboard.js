@@ -202,7 +202,8 @@ enyo.kind({
   }],
 
   events: {
-    onCommandFired: ''
+    onCommandFired: '',
+    onStatusChanged: '',
   },
 
   handlers: {
@@ -217,7 +218,13 @@ enyo.kind({
       btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive)
     }
     this.status = newstatus;
-    //TODO: used in coins this.trigger('status', this.status);
+
+    // sending the event to the components bellow this one
+    this.waterfall('onStatusChanged', {
+      status: newstatus
+    });
+
+
     btn = this.buttons[this.status];
     if (btn) {
       btn.addClass(btn.classButtonActive || btn.owner.classButtonActive);
@@ -458,7 +465,8 @@ enyo.kind({
   addKeypad: function(keypad) {
     console.log(keypad);
     this.$.keypadcontainer.createComponent({
-      kind: keypad
+      kind: keypad,
+      keyboard: this
     }).hide();
   },
 

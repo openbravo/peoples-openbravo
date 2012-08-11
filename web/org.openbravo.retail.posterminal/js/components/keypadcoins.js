@@ -11,6 +11,9 @@
 
 enyo.kind({
   name: 'OB.UI.KeypadCoins',
+  handlers: {
+    onStatusChanged: 'statusChanged'
+  },
   label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
   padName: 'coins',
   components: [{
@@ -150,7 +153,15 @@ enyo.kind({
         background: '#f3bc9e'
       }]
     }]
-  }]
+  }],
+
+  statusChanged: function(sender, event) {
+    if (event.status === 'OBPOS_payment.cash') {
+      this.keyboard.showKeypad('coins');
+    } else {
+      this.keyboard.showKeypad('basic');
+    }
+  }
 });
 
 enyo.kind({
