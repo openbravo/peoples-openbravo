@@ -65,8 +65,6 @@ enyo.kind({
 
     payments = OB.POS.modelterminal.get('payments');
 
-
-
     enyo.forEach(payments, function(payment) {
       if (payment.payment.searchKey === 'OBPOS_payment.cash') {
         defaultpayment = payment;
@@ -105,12 +103,11 @@ enyo.kind({
 
     this.owner.owner.addCommand('cashexact', {
       action: function(txt) {
-        var receipt = me.owner.owner.owner.model.get('order');
+        var exactpayment = allpayments[this.status] || defaultpayment,
+            amount = me.receipt.getPending();
 
-        var exactpayment = allpayments[this.status] || defaultpayment;
-        var amount = receipt.getPending();
         if (amount > 0 && exactpayment) {
-          me.pay(amount, modalpayment, receipt, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
+          me.pay(amount, modalpayment, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod);
         }
       }
     });

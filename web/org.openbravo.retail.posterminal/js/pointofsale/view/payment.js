@@ -160,7 +160,9 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   classes: 'btn-icon-small btn-icon-check btnlink-green',
   style: 'width: 69px',
-  tap: 'doExactPayment'
+  tap: function() {
+    this.doExactPayment();
+  }
 });
 
 enyo.kind({
