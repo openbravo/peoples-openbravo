@@ -13,26 +13,11 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   classes: 'span8',
-  published: {
-   receipt: null
-  },
   components: [{
     tag: 'ul',
     classes: 'unstyled nav-pos row-fluid',
     name: 'toolbar'
   }],
-  receiptChanged: function(oldValue){
-    //TODO
-    //Mechanism to search which button are able to print total
-    var totalPrinterComponent;
-    //hardcoded
-    debugger;
-    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
-    totalPrinterComponent.renderTotal(this.order.getTotal());
-    this.order.on('change:gross', function (model) {
-      totalPrinterComponent.renderTotal(model.getTotal());
-    }, this);
-  },
   initComponents: function() {
     this.inherited(arguments);
     enyo.forEach(this.buttons, function(btn) {
@@ -76,12 +61,25 @@ enyo.kind({
   },
 
   receiptChanged: function() {
+    var totalPrinterComponent;
+    
     this.receipt.on('clear scan', function() {
       this.manualTap(this.scan);
     }, this);
 
     this.receipt.get('lines').on('click', function() {
       this.manualTap(this.edit);
+    }, this);
+    
+    //TODO
+    //Mechanism to search which button are able to print total
+    var totalPrinterComponent;
+    //hardcoded
+    debugger;
+    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
+    totalPrinterComponent.renderTotal(this.receipt.getTotal());
+    this.receipt.on('change:gross', function (model) {
+      totalPrinterComponent.renderTotal(model.getTotal());
     }, this);
   },
   initComponents: function() {
