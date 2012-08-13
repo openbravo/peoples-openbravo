@@ -92,11 +92,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/keypadcoins",
-        "windows/posbuttons", "data/datamaster", "data/dataordersave", "data/dataordertaxes",
+        "windows/posbuttons", "data/datamaster", "data/dataordersave",
+        "data/dataordertaxes",
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/renderbusinesspartner",
-        "components/searchbps",
         "components/modalbps",
         "components/rendercategory",
         "components/renderproduct",
