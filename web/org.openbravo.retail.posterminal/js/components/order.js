@@ -24,7 +24,6 @@
     classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
     tap: function(){
       this.doInvoiceReceipt();
-      console.log('invoice button click');
     }
   });
   
@@ -113,6 +112,13 @@
         this.$.listOrderLines.setCollection(this.order.get('lines'));
         this.order.on('change:gross', function (model) {
           this.renderTotal(model.getTotal());
+        }, this);
+        this.order.on('change:orderType', function (model) {
+          if(model.get('orderType') === 1){
+            this.$.divreturn.show();
+          }else{
+            this.$.divreturn.hide();  
+          }
         }, this);
       }
       });

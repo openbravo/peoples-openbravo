@@ -117,29 +117,32 @@ enyo.kind({
       this.model.get('orderList').saveCurrent();
       OB.Dal.remove(this.model.get('orderList').current, null, null);
     }
-
     this.model.get('orderList').deleteCurrent();
     return true; // not continue
   },
   addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
+    this.model.get('orderList').saveCurrent();
     return true; // not continue
   },
   changeBusinessPartner: function(inSender, inEvent){
     this.model.get('order').setBPandBPLoc(inEvent.originator.clickedBp, false, true);
+    this.model.get('orderList').saveCurrent();
     return true;
   },
   showInvoiceButton: function() {
     this.$.receiptview.$.orderview.$.btninvoice.show();
     return true;
   },
-  showReturnText: function() {
-    this.$.receiptview.$.orderview.$.divreturn.show();
+  showReturnText: function(inSender, inEvent) {
+    this.model.get('order').setOrderTypeReturn();
+    this.model.get('orderList').saveCurrent();
     return true;
   },
   receiptToInvoice: function(inSender, inEvent) {
     console.log('Invoice receipt handler');
-    this.model.get('order').resetOrderInvoice();
+    this.model.get('order').setOrderInvoice();
+    this.model.get('orderList').saveCurrent();
     this.$.receiptview.$.orderview.$.btninvoice.hide();
     return true;
   },
