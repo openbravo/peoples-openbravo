@@ -84,9 +84,12 @@ enyo.kind({
       this.$.body.addClass(this.bodyClass);
     }
     this.$.body.createComponent(this.body);
+  },
 
-    //TODO: OB.UTIL.adjustModalPosition(this.$el);
-    //TODO: OB.UTIL.focusInModal(this.$el);
+  render: function() {
+    this.inherited(arguments);
+    OB.UTIL.adjustModalPosition($(this.node));
+    OB.UTIL.focusInModal($(this.node));
   },
 
   makeId: function() {
@@ -369,8 +372,6 @@ enyo.kind({
 
 enyo.kind({
   //TODO: maxheight, 
-  //OB.UTIL.adjustModalPosition(this.$el); 
-  //OB.UTIL.focusInModal(this.$el);
   // x -> &times;
   name: 'OB.UI.ModalAction',
   tag: 'div',
@@ -419,6 +420,12 @@ enyo.kind({
 
     this.$.bodyButtons.setClasses(this.bodyButtonsClass);
     this.$.bodyButtons.createComponent(this.bodyButtons);
+  },
+
+  render: function() {
+    this.inherited(arguments);
+    OB.UTIL.adjustModalPosition($(this.node));
+    OB.UTIL.focusInModal($(this.node));
   },
   makeId: function() {
     return this.myId || this.inherited(arguments);
