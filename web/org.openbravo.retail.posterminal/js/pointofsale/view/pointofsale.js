@@ -123,8 +123,6 @@ enyo.kind({
   },
   addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
-
-    this.model.get('orderList').saveCurrent();
     return true; // not continue
   },
   changeBusinessPartner: function(inSender, inEvent){
