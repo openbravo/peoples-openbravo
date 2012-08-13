@@ -42,10 +42,10 @@
     }],
     renderNrItems: function(nrItems){
       if(nrItems > 1){
-        this.$.counter.setContent(nrItems);
+        this.$.counter.setContent(nrItems-1);
         this.show();
       }else{
-        this.$.counter.setContent(nrItems);
+        this.$.counter.setContent('');
         this.hide();
       }
     },
