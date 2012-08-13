@@ -1,3 +1,5 @@
+/*global OB, enyo, */
+
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -7,35 +9,18 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, setInterval */
-
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.ButtonPrev',
+  name: 'OB.OBPOSCashUp.UI.Button',
   kind: 'OB.UI.SmallButton',
   classes: 'btnlink-fontgray',
   style: 'min-width: 115px;',
   disabled: true,
   events: {
-    onPrev:''
+    onChangeStep: ''
   },
-  content: OB.I18N.getLabel('OBPOS_LblPrevStep'),
-  tap: function() {
-    this.doPrev();
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.ButtonNext',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-fontgray',
-  style: 'min-width: 115px;',
-  events: {
-    onNext:''
-  },
-  content: OB.I18N.getLabel('OBPOS_LblNextStep'),
-  tap: function() {
-    this.doNext();
-  }
+  tap: function () {
+   this.doChangeStep();
+  }  
 });
 
 enyo.kind({
@@ -45,37 +30,37 @@ enyo.kind({
     components: [{ //clock here
       kind: 'OB.UI.Clock',
       classes: 'pos-clock'
-    },
-    {
+    }, {
       style: 'padding: 5px; float: right;',
       components: [{
         kind: 'OB.UI.CancelButton'
       }]
-    },
-    {
+    }, {
       // process info
       style: 'padding: 5px',
       content: OB.I18N.getLabel('OBPOS_LblCashUpProcess')
-    },
-    {
+    }, {
       // Prev and Next buttons
       style: 'padding: 5px;',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.ButtonPrev'
-      },
-      {
-        kind: 'OB.OBPOSCashUp.UI.ButtonNext'
+        kind: 'OB.OBPOSCashUp.UI.Button',
+        content: OB.I18N.getLabel('OBPOS_LblPrevStep'),
+        stepCount: -1
+      }, {
+        kind: 'OB.OBPOSCashUp.UI.Button',
+        content: OB.I18N.getLabel('OBPOS_LblNextStep'),
+        stepCount: 1
       }]
-    },  {
+    }, {
       style: 'padding: 3px',
       content: OB.I18N.getLabel('OBPOS_LblStep1')
-    },{
+    }, {
       style: 'padding: 3px',
       content: OB.I18N.getLabel('OBPOS_LblStep2')
-    },{
+    }, {
       style: 'padding: 3px',
       content: OB.I18N.getLabel('OBPOS_LblStep3')
-    },{
+    }, {
       style: 'padding: 3px',
       content: OB.I18N.getLabel('OBPOS_LblStep4')
     }]
