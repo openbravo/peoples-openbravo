@@ -25,8 +25,8 @@
     components: [{
       tag: 'button',
       classes: 'btnlink btnlink-gray',
+      style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
       attributes: {
-        style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
         href: '#modalreceipts',
         'data-toggle': 'modal'
       },

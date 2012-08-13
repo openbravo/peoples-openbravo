@@ -79,6 +79,8 @@ enyo.kind({
     onChangeCurrentOrder: 'changeCurrentOrder'
   },
   components: [{
+    kind: 'OB.UI.ModalDeleteReceipt'
+  },{
     classes: 'row',
     style: 'margin-bottom: 5px;',
     components: [{

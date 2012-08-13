@@ -37,11 +37,9 @@
     name: 'OB.UI.ButtonDelete',
     kind: 'OB.UI.ToolbarButton',
     icon: 'btn-icon btn-icon-delete',
-    events: {
-      onDeleteOrder: ''
-    },
-    tap: function() {
-      this.doDeleteOrder();
+    attributes: {
+      href: '#modalConfirmReceiptDelete',
+      'data-toggle': 'modal'
     }
   });
 
