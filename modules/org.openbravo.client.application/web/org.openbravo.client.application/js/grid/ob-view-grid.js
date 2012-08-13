@@ -484,12 +484,14 @@ isc.OBViewGrid.addProperties({
   hideField: function (field, suppressRelayout) {
     var res = this.Super('hideField', arguments);
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
   showField: function (field, suppressRelayout) {
     var res = this.Super('showField', arguments);
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
