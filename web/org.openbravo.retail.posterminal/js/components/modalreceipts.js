@@ -115,7 +115,7 @@ enyo.kind({
   },
   bodyButtons: {
     components: [{
-      kind: 'OB.UI.btnModalApplyDelete'
+      kind: 'OB.UI.btnModalApplyDelete',
     }, {
       kind: 'OB.UI.btnModalCancelDelete'
     }]
@@ -125,7 +125,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.btnModalApplyDelete',
-  isActive: true,
   classes: 'btnlink btnlink-gray modal-dialog-content-button',
   content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
   events: {
