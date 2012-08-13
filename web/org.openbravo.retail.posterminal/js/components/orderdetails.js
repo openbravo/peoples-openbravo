@@ -16,12 +16,22 @@
 
   enyo.kind({
     name: 'OB.UI.OrderDetails',
+    published: {
+      order: null
+    },
     attributes: {
       style: 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
     },
     initComponents: function() {
-      //FIXME
-      this.setContent('08:45 - POS-1/0001');
+    },
+    renderData: function(docNo){
+      this.setContent(OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo);
+    },
+    orderChanged: function(oldValue) {
+      this.renderData(this.order.get('documentNo'));
+      this.order.on('change:documentNo', function (model) {
+        this.renderData(model.get('documentNo'));
+      }, this);
     }
   });
   //  Refactored as enyo view -> OB.UI.OrderDetails

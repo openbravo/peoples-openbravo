@@ -18,8 +18,11 @@
     name: 'OB.UI.ButtonNew',
     kind: 'OB.UI.ToolbarButton',
     icon: 'btn-icon btn-icon-new',
+    events: {
+      onAddNewOrder: ''
+    },
     tap: function() {
-      this.options.modelorderlist.addNewOrder();
+      this.doAddNewOrder();
     }
   });
 
@@ -34,8 +37,11 @@
     name: 'OB.UI.ButtonDelete',
     kind: 'OB.UI.ToolbarButton',
     icon: 'btn-icon btn-icon-delete',
+    events: {
+      onDeleteOrder: ''
+    },
     tap: function() {
-      $('#modalDeleteReceipt').modal('show');
+      this.doDeleteOrder();
     }
   });
 
@@ -71,8 +77,12 @@
   enyo.kind({
     name: 'OB.UI.MenuReturn',
     kind: 'OB.UI.MenuAction',
+    events: {
+      onShowReturnText:''
+    },
     label: OB.I18N.getLabel('OBPOS_LblReturn'),
     tap: function () {
+      this.doShowReturnText();
     	//TODO: do this...
     }
   });
@@ -88,9 +98,13 @@
   enyo.kind({
 	    name: 'OB.UI.MenuInvoice',
 	    kind: 'OB.UI.MenuAction',
+	    events: {
+	      onShowInvoiceButton:''
+	    },
 	    label: OB.I18N.getLabel('OBPOS_LblInvoice'),
 	    tap: function () {
-	    	//TODO: do this...
+	    	this.doShowInvoiceButton();
+	      //TODO: do this...
 	    }
 	  });
   

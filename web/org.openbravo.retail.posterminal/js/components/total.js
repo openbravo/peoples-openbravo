@@ -21,13 +21,11 @@
     attributes: {
       style: 'font-weight:bold;'
     },
+    renderTotal: function(total){
+      this.setContent(OB.I18N.formatCurrency(total));
+    },
     initComponents: function() {
       //FIXME
-      this.setContent('100.25');
-      //TODO
-      //this.receipt.on('change:gross', function() {
-      //  this.render();
-      //}, this)
     }
   });
 

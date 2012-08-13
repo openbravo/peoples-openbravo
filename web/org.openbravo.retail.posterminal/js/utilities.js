@@ -119,7 +119,7 @@
     return view.$el;
   };
 
-  OB.UTIL.processOrders = function(context, orders, successCallback, errorCallback) {
+  OB.UTIL.processOrders = function(model, orders, successCallback, errorCallback) {
     var ordersToJson = [];
     orders.each(function(order) {
       ordersToJson.push(order.serializeToJSON());
@@ -143,7 +143,7 @@
         } else {
           // Orders have been processed, delete them
           orders.each(function(order) {
-            context.modelorderlist.remove(order);
+            model.get('orderList').remove(order);
             OB.Dal.remove(order, null, function(tx, err) {
               OB.UTIL.showError(err);
             });
@@ -214,7 +214,7 @@
       var posDocumentNoPrefix = OB.POS.modelterminal.get('terminal').docNoPrefix,
           orderDocumentSequence = parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10),
           docSeqModel;
-      if (documentSequenceList) {
+      if (documentSequenceList && documentSequenceList.length !== 0) {
         docSeqModel = documentSequenceList.at(0);
         if (orderDocumentSequence > docSeqModel.get('documentSequence')) {
           docSeqModel.set('documentSequence', orderDocumentSequence);

@@ -123,6 +123,30 @@
     }
   });
 
+  enyo.kind({
+    name: 'OB.UI.CancelButton',
+    kind: 'OB.UI.SmallButton',
+    classes: 'btnlink-white btnlink-fontgray',
+    attributes: {
+      href: '#modalCancel',
+      'data-toggle': 'modal'
+    },
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setContent(this.label || OB.I18N.getLabel('OBPOS_LblCancel'));
+    }
+  });
+
+  enyo.kind({
+    name: 'OB.UI.RadioButton',
+    tag: 'button',
+    classes: 'btn btn-radio',
+    style: 'padding: 0px 0px 0px 40px; margin: 10px;',
+    initComponents: function() {
+      this.inherited(arguments);
+    }
+  });
+
   // Base button: Implemented as enyo: OB.UI.Button
   OB.COMP.Button = Backbone.View.extend({
     tagName: 'button',
@@ -338,10 +362,10 @@
     attributes: {
       'data-toggle': 'tab'
     },
-    classes: 'btnlink btnlink-gray',
     tabPanel: '#',
     initComponents: function() {
       this.inherited(arguments);
+      this.addClass('btnlink btnlink-gray');
       this.setAttribute('href', this.tabPanel);
       if (this.label) {
         this.createComponent({
@@ -386,10 +410,8 @@
     attributes: {
       'data-toggle': 'tab'
     },
-    tap: function() {
-      //TODO
-      //OB.COMP.ButtonTab.prototype.clickEvent.call(this); // super.initialize();
-      OB.UTIL.setOrderLineInEditMode(false);
+    events: {
+        onTabChange: ''
     },
     initComponents: function() {
       this.inherited(arguments);
@@ -929,10 +951,10 @@
   });
 
   enyo.kind({
-	 name: 'OB.UI.SearchInput',
-	 kind: 'enyo.Input',
+    name: 'OB.UI.SearchInput',
+    kind: 'enyo.Input',
   });
-  
+
   OB.COMP.SearchInput = Backbone.View.extend({
     tagName: 'input',
     attr: function(attributes) {

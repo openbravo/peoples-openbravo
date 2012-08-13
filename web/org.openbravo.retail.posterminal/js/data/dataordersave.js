@@ -14,10 +14,9 @@
   OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
-  OB.DATA.OrderSave = function (context) {
-    this._id = 'logicOrderSave';
-    this.context = context;
-    this.receipt = context.modelorder;
+  OB.DATA.OrderSave = function (model) {
+    this.context = model;
+    this.receipt = model.get('order');
 
     this.receipt.on('closed', function () {
       var me = this,
@@ -49,7 +48,7 @@
             };
             orderList = new OB.Collection.OrderList();
             orderList.add(receipt);
-            OB.UTIL.processOrders(context, orderList, successCallback, errorCallback);
+            OB.UTIL.processOrders(model, orderList, successCallback, errorCallback);
           }, null);
         }
       }, function () {

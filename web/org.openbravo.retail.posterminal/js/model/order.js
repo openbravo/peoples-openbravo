@@ -227,6 +227,7 @@
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
+      console.log('triggered clear');
     },
 
     clearOrderAttributes: function() {
@@ -600,10 +601,10 @@
   var OrderList = Backbone.Collection.extend({
     model: Order,
 
-    constructor: function(context) {
-      if (context) {
-        this._id = 'modelorderlist';
-        this.modelorder = context.modelorder;
+    constructor: function(modelOrder) {
+      if (modelOrder) {
+        //this._id = 'modelorderlist';
+        this.modelorder = modelOrder;
       }
       Backbone.Collection.prototype.constructor.call(this);
     },

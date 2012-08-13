@@ -13,19 +13,35 @@
 
 //  OB = window.OB || {};
 //  OB.COMP = window.OB.COMP || {};
-
   enyo.kind({
     kind: 'OB.UI.SmallButton',
-    name: 'btninvoice',
-    classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
-    label: 'Invoice',
-    attributes: {
-      style: 'width: 50px;'
+    name: 'OB.UI.BtnReceiptToInvoice',
+    events: {
+      onInvoiceReceipt:''
     },
+    tag: 'button',
+    style: 'width: 50px;',
+    classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
     tap: function(){
-      //FIXME
-      //this.options.parent.receipt.resetOrderInvoice();
+      this.doInvoiceReceipt();
+      console.log('invoice button click');
     }
+  });
+  
+  enyo.kind({
+    name: 'btninvoice',
+    showing: false,
+    style: 'float: left; width: 50%;',
+    components: [{
+      kind: 'OB.UI.BtnReceiptToInvoice'
+    },{
+      tag: 'span',
+      content: ' '
+    },{
+      tag: 'span',
+      style: 'font-weight:bold; ',
+      content: 'Invoice'
+    }]
   });
     
     //Refactored as enyo view -> InvoiceButton
@@ -43,13 +59,14 @@
 
     enyo.kind({
       name: 'OB.UI.OrderView',
+      published: {
+        order : null,
+      },
       components: [{
         kind: 'OB.UI.Table',
-        name: 'tableView',
+        name: 'listOrderLines',
         renderLine: 'OB.UI.RenderOrderLine',
-        renderEmpty: {kind: 'OB.UI.RenderEmpty',
-          label: OB.I18N.getLabel('OBPOS_ReceiptNew')
-        },
+        renderEmpty: 'OB.UI.RenderOrderLineEmpty', //defined on redenderorderline.js
         listStyle: 'edit'
       },{
         tag: 'ul',
@@ -57,72 +74,46 @@
         components: [{
           tag: 'li',
           components: [{
-            attributes: {
-              style: 'position: relative; padding: 10px;'
-            },
-            content: OB.I18N.getLabel('OBPOS_ReceiptTotal')
-          },{
-            name: 'totalgross',
-            attributes: {
-              style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
-            }
-          },{
-            attributes: {
+            style: 'position: relative; padding: 10px;',
+            components:[{
+              style: 'float: left; width: 80%;',
+              content: 'TOTAL'
+            },{
+              name: 'totalgross',
+              style: 'float: left; width: 20%; text-align:right; font-weight:bold;',
+            },{
               style: 'clear: both;'
-            }
+            }]
           }]
         },{
           tag: 'li',
           components:[{
-            tag: 'div',
-            attributes: {
-              style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;'
-            },
+            style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
             components: [{
               kind: 'btninvoice'
             },{
-              tag: 'span',
-              content: '&nbsp;'
+              name: 'return',
+              showing: false,
+              style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
+              content: 'To be returned'
             },{
-              name: 'divinvoice',
-              tag: 'span',
-              attributes: {
-                style: 'font-weight:bold; '
-              }
-            }]
-          },{
-            name: 'divreturn',
-            attributes: {
-              style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;'
-            }
-          }, {
-            tag: 'div',
-            attributes: {
               style: 'clear: both;'
-            }
+            }]
           }]
         }]
       }],
+      renderTotal: function(newTotal){
+        this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+      },
       initComponents: function(){
         this.inherited(arguments);
-        //FIXME
-        OB.UTIL.initContentView(this);
-
-        // Set Model
-//        this.receipt = this.options.root.modelorder;
-//        var lines = this.receipt.get('lines');
-//
-//        this.tableview.registerCollection(lines);
-//        this.receipt.on('change:gross', this.renderTotal, this);
-//        this.receipt.on('change:orderType', this.renderFooter, this);
-//        this.receipt.on('change:generateInvoice', this.renderFooter, this);
-
-        // Initial total display...
-        //this.renderFooter();
-        this.$.divinvoice.setContent('divInvoice');
-        this.$.divreturn.setContent('divReturn');
-        //this.renderTotal();
-        this.$.totalgross.setContent('100,25');
+      },
+      orderChanged: function(oldValue) {
+        this.renderTotal(this.order.getTotal());
+        this.$.listOrderLines.setCollection(this.order.get('lines'));
+        this.order.on('change:gross', function (model) {
+          this.renderTotal(model.getTotal());
+        }, this);
       }
       });
   // Order list

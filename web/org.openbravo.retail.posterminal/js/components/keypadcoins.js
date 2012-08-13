@@ -11,7 +11,10 @@
 
 enyo.kind({
   name: 'OB.UI.KeypadCoins',
-  // kind: OB.UI.KeyboardComponent ???
+  handlers: {
+    onStatusChanged: 'statusChanged'
+  },
+  label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
   padName: 'coins',
   components: [{
     classes: 'row-fluid',
@@ -150,241 +153,43 @@ enyo.kind({
         background: '#f3bc9e'
       }]
     }]
-  }]
+  }],
+
+  statusChanged: function(sender, event) {
+    if (event.status === 'OBPOS_payment.cash') {
+      this.keyboard.showKeypad('coins');
+    } else {
+      this.keyboard.showKeypad('basic');
+    }
+  }
 });
 
-(function() {
+enyo.kind({
+  name: 'OB.UI.PaymentButton',
+  style: 'margin: 5px;',
+  components: [{
+    kind: 'OB.UI.Button',
+    classes: 'btnkeyboard',
+    name: 'btn'
+  }],
+  background: '#6cb33f',
+  initComponents: function() {
+    var btn;
+    this.inherited(arguments);
 
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
+    btn = this.$.btn;
+    btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
+    btn.applyStyle('background-color', this.background);
+    btn.applyStyle('border', '10px solid' + (this.bordercolor || this.background));
+  },
+  tap: function() {
+    var me = this,
+        receipt = this.owner.owner.owner.owner.model.get('order');
 
-  OB.COMP.KeypadCoins = OB.COMP.KeypadBasic.extend({
-    name: 'coins',
-    label: OB.I18N.getLabel('OBPOS_KeypadCoins'),
-    contentView: [{
-      tag: 'div',
-      attributes: {
-        'class': 'row-fluid'
-      },
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.ButtonKey.extend({
-            command: '/',
-            classButton: 'btnkeyboard-num',
-            contentViewButton: ['/']
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.ButtonKey.extend({
-            command: '*',
-            classButton: 'btnkeyboard-num',
-            contentViewButton: ['*']
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.ButtonKey.extend({
-            command: '%',
-            classButton: 'btnkeyboard-num',
-            contentViewButton: ['%']
-          })
-        }]
-      }]
-    }, {
-      tag: 'div',
-      attributes: {
-        'class': 'row-fluid'
-      },
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 10,
-            background: '#e9b7c3'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 20,
-            background: '#bac3de'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 50,
-            background: '#f9bb92'
-          })
-        }]
-      }]
-    }, {
-      tag: 'div',
-      attributes: {
-        'class': 'row-fluid'
-      },
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 1,
-            background: '#e4e0e3',
-            bordercolor: '#f9e487'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 2,
-            background: '#f9e487',
-            bordercolor: '#e4e0e3'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 5,
-            background: '#bccdc5'
-          })
-        }]
-      }]
-    }, {
-      tag: 'div',
-      attributes: {
-        'class': 'row-fluid'
-      },
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.10,
-            background: '#f9e487'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.20,
-            background: '#f9e487'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.50,
-            background: '#f9e487'
-          })
-        }]
-      }]
-    }, {
-      tag: 'div',
-      attributes: {
-        'class': 'row-fluid'
-      },
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.01,
-            background: '#f3bc9e'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.02,
-            background: '#f3bc9e'
-          })
-        }]
-      }, {
-        tag: 'div',
-        attributes: {
-          'class': 'span4'
-        },
-        content: [{
-          view: OB.COMP.PaymentButton.extend({
-            paymenttype: 'OBPOS_payment.cash',
-            amount: 0.05,
-            background: '#f3bc9e'
-          })
-        }]
-      }]
-    }],
-    initialize: function() {
-      OB.COMP.KeypadCoins.__super__.initialize.call(this);
-
-      this.options.parent.on('status', function(status) {
-        if (status === 'OBPOS_payment.cash') {
-          this.options.parent.showKeypad('coins');
-        } else {
-          this.options.parent.showKeypad('index');
-        }
-      }, this);
-    }
-  });
-
-}());
+    receipt.addPayment(new OB.Model.PaymentLine({
+      kind: me.paymenttype,
+      name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+      amount: OB.DEC.number(me.amount)
+    }));
+  }
+});

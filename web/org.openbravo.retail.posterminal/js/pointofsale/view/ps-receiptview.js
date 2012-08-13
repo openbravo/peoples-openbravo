@@ -1,50 +1,57 @@
 /*global OB, Backbone, enyo */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReceiptView',
+  classes: 'span6',
+  published: {
+    order: null,
+    orderList: null
+  },
   components: [{
-    classes: 'span6',
+    style: 'overflow:auto; margin: 5px',
     components: [{
-      attributes: {
-        style: 'overflow:auto; margin: 5px'
-      },
+      style: 'position: relative;background-color: #ffffff; color: black;',
       components: [{
-        attributes: {
-          style: 'position: relative;background-color: #ffffff; color: black;'
-        },
+        kind: 'OB.UI.ReceiptsCounter',
+        name: 'receiptcounter'
+      }, {
+        style: 'padding: 5px;',
         components: [{
-          kind: 'OB.UI.ReceiptsCounter'
-        }, {
           classes: 'row-fluid',
           components: [{
             classes: 'span12',
             components: [{
-              attributes: {
-                style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;'
-              },
+              style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
               components: [{
                 kind: 'OB.UI.OrderDetails',
+                name: 'orderdetails'
               }, {
-                kind: 'OB.UI.BusinessPartner'
+                kind: 'OB.UI.BusinessPartner',
+                name: 'bpbutton'
               }, {
-                attributes: {
-                  style: 'clear:both;'
-                }
+                style: 'clear:both;'
               }]
             }]
-          }, {
-            clases: 'row-fluid',
-            attributes: {
-              style: 'max-height: 536px; overflow: auto;'
-            },
+          }]
+        }, {
+          classes: 'row-fluid',
+          style: 'max-height: 536px; overflow: auto;',
+          components: [{
+            classes: 'span12',
             components: [{
-              clases: 'span12',
-              components: [{
-                kind: 'OB.UI.OrderView'
-              }]
+              kind: 'OB.UI.OrderView',
+              name: 'orderview'
             }]
           }]
         }]
       }]
     }]
-  }]
+  }],
+  orderChanged: function(oldValue) {
+    this.$.bpbutton.setOrder(this.order);
+    this.$.orderdetails.setOrder(this.order);
+    this.$.orderview.setOrder(this.order);
+  },
+  orderListChanged: function(oldValue) {
+    this.$.receiptcounter.setOrderList(this.orderList);
+  }
 });

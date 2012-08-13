@@ -18,13 +18,32 @@
     kind: 'OB.UI.SmallButton',
     name: 'OB.UI.BusinessPartner',
     classes: 'btnlink btnlink-small btnlink-gray',
+    published: {
+      order: null
+    },
     attributes: {
       'data-toggle': 'modal',
       'href': '#modalcustomer'
     },
     initComponents: function() {
-      //FIXME
-      this.setContent('POS Customer');
+    },
+    renderCustomer: function(newCustomer){
+      this.setContent(newCustomer);
+    },
+    orderChanged: function (oldValue){
+      if(this.order.get('bp')){
+        this.renderCustomer(this.order.get('bp').get('_identifier'));  
+      } else {
+        this.renderCustomer('');
+      }
+      
+      this.order.on('change:bp', function (model) {
+        if(model.get('bp')){
+          this.renderCustomer(model.get('bp').get('_identifier'));
+        } else {
+          this.renderCustomer('');
+        }
+      }, this);
     }
   });
   
