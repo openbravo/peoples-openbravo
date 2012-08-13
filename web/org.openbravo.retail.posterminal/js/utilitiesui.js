@@ -107,14 +107,15 @@
       },
       content: 'x'
     }, {
-      name: 'title'
+      name: 'title',
+      tag: 'strong'
     }, {
       name: 'txt'
     }],
     statics: {
       display: function(txt, title, type) {
-    	  console.log('display');
-        var alert = new (enyo.kind({
+        console.log('display');
+        var alert = new(enyo.kind({
           kind: 'OB.UTIL.showAlert',
           title: title,
           txt: txt,
@@ -129,45 +130,12 @@
       this.$.title.setContent(this.title);
       this.$.txt.setContent(this.txt);
       this.addClass('alert fade in ' + this.type);
-    //  this.doShowAlert();
-      
+
       setTimeout(function() {
-          $('.alert').alert('close');
-        }, 5000);
+        $('.alert').alert('close');
+      }, 5000);
     }
   });
-
-//  OB.UTIL.showAlert = function(s, title, type) {
-//    var c = B({
-//      kind: B.KindJQuery('div'),
-//      attr: {
-//        'class': 'alert fade in ' + type,
-//        style: 'position:absolute; right:35px; top: 5px'
-//      },
-//      content: [{
-//        kind: B.KindJQuery('button'),
-//        attr: {
-//          'class': 'close',
-//          'data-dismiss': 'alert'
-//        },
-//        content: [{
-//          kind: B.KindHTML('<span>&times;</span>')
-//        }]
-//      }, {
-//        kind: B.KindJQuery('strong'),
-//        content: [title]
-//      }, ' ',
-//      {
-//        kind: B.KindJQuery('span'),
-//        content: [s]
-//      }]
-//    });
-//
-//    $("#container").append(c.$el);
-//    setTimeout(function() {
-//      $('.alert').alert('close');
-//    }, 5000);
-//  };
 
   OB.UTIL.isSupportedBrowser = function() {
     if ($.browser.webkit && window.openDatabase) { //If the browser is not supported, show message and finish.
