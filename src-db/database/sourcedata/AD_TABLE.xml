@@ -3697,6 +3697,7 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--539-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--539-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--539-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E24B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--539-->  <TREETYPE><![CDATA[AS]]></TREETYPE>
 <!--539--></AD_TABLE>
 
 <!--542--><AD_TABLE>
