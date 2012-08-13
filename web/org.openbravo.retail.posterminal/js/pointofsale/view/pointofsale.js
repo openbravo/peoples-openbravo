@@ -103,9 +103,6 @@ enyo.kind({
         kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
         name: 'keyboard'
       }]
-
-    },{
-  	  kind: 'OB.UI.ModalCancel'
     }]
   }],
   addNewOrder: function(inSender, inEvent) {
@@ -114,7 +111,7 @@ enyo.kind({
   deleteCurrentOrder: function() {
     this.model.get('orderList').deleteCurrent();
   },
-  addProductToOrder: function(inSender, inEvent){
+  addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
     return true; // not continue
   },
@@ -134,7 +131,9 @@ enyo.kind({
     return true;
   },
   tabChange: function(sender, event) {
-    OB.UTIL.setOrderLineInEditMode(event.edit);
+    this.waterfall('onChangeEditMode', {
+      edit: event.edit
+    });
     if (event.keyboard) {
       this.$.keyboard.showToolbar(event.keyboard);
     } else {

@@ -96,14 +96,6 @@
     }
   });
 
-  OB.UTIL.setOrderLineInEditMode = function(value) {
-    if (value) {
-      $('li.selected button.btnselect-orderline').addClass('btnselect-orderline-edit');
-    } else {
-      $('li.selected button.btnselect-orderline').removeClass('btnselect-orderline-edit');
-    }
-  };
-
   OB.UTIL.showAlert = function(s, title, type) {
     var c = B({
       kind: B.KindJQuery('div'),
