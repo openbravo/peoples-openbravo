@@ -107,6 +107,7 @@ enyo.kind({
   }],
   addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
+    return true; // not continue
   },
   deleteCurrentOrder: function() {
     if (this.model.get('order').get('id')) {
@@ -115,6 +116,7 @@ enyo.kind({
     }
 
     this.model.get('orderList').deleteCurrent();
+    return true; // not continue
   },
   addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
@@ -122,13 +124,16 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true; // not continue
   },
+  changeBusinessPartner: function(){
+    
+    return true; // not continue
+  },
   showInvoiceButton: function() {
     this.$.receiptview.$.orderview.$.btninvoice.show();
     return true;
   },
   showReturnText: function() {
-    this.$.receiptview.$.orderview.$.
-    return .show();
+    this.$.receiptview.$.orderview.$.divreturn.show();
     return true;
   },
   receiptToInvoice: function(inSender, inEvent) {
@@ -161,6 +166,7 @@ enyo.kind({
   },
   changeCurrentOrder: function(sender, event) {
     this.model.get('orderList').load(event.originator.clickedOrder);
+    return true; // not continue
   },
   removePayment: function(sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {

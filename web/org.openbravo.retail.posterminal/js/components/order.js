@@ -92,7 +92,7 @@
             components: [{
               kind: 'btninvoice'
             },{
-              name: 'return',
+              name: 'divreturn',
               showing: false,
               style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
               content: 'To be returned'
