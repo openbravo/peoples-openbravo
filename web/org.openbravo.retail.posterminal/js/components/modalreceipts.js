@@ -16,8 +16,9 @@ enyo.kind({
     receiptsList: null
   },
   kind: 'OB.UI.Modal',
-  modalClass: 'modal-dialog',
-  bodyClass: 'modal-dialog-body',
+  modalClass: 'modal',
+  headerClass: 'modal-header',
+  bodyClass: 'modal-header',
   header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
   body: {
     kind: 'OB.UI.ListReceipts',
@@ -26,9 +27,7 @@ enyo.kind({
   receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   },
-  init: function() {
-    //this.$.body.$.listEvents.init();
-  }
+  init: function() {}
 });
 
 enyo.kind({
@@ -43,10 +42,14 @@ enyo.kind({
   components: [{
     classes: 'span12',
     components: [{
-      name: 'receiptslistitemprinter',
-      kind: 'OB.UI.Table',
-      renderLine: 'OB.UI.ListReceiptLine',
-      renderEmpty: 'OB.UI.RenderEmpty'
+      style: 'border-bottom: 1px solid #cccccc;'
+    }, {
+      components: [{
+        name: 'receiptslistitemprinter',
+        kind: 'OB.UI.Table',
+        renderLine: 'OB.UI.ListReceiptLine',
+        renderEmpty: 'OB.UI.RenderEmpty'
+      }]
     }]
   }],
   receiptsListChanged: function(oldValue) {
@@ -61,14 +64,42 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListReceiptLine',
   kind: 'OB.UI.SelectButton',
-  style: 'background-color:#dddddd;  border: 1px solid #ffffff;',
   components: [{
     name: 'line',
-    style: 'padding: 1px 0px 1px 5px;'
+    style: 'line-height: 23px;',
+    components: [{
+      components: [{
+        style: 'float: left; width: 15%',
+        name: 'time'
+      }, {
+        style: 'float: left; width: 25%',
+        name: 'orderNo'
+      }, {
+        style: 'float: left; width: 60%',
+        name: 'bp'
+      }, {
+        style: 'clear: both;'
+      }]
+    }, {
+      components: [{
+        style: 'float: left; width: 15%; font-weight: bold;',
+      }, {
+        style: 'float: left; width: 25%; font-weight: bold;',
+      }, {
+        style: 'float: right; text-align: right; width: 25%; font-weight: bold;',
+        name: 'total'
+      }, {
+        style: 'clear: both;'
+      }]
+    }]
   }],
   create: function() {
     this.inherited(arguments);
-    this.$.line.setContent(this.model.get('documentNo'));
+    debugger;
+    this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
+    this.$.orderNo.setContent(this.model.get('documentNo'));
+    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    this.$.total.setContent(OB.I18N.formatCurrency(this.model.getTotal()));
   }
 });
 
