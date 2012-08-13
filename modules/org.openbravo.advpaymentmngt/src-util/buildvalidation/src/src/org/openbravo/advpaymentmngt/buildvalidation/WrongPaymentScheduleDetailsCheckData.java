@@ -708,7 +708,7 @@ Check if the core version is before 3.0MP3(3.0.13698)
   public static boolean before30MP3(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "       SELECT count(*) STARTVERSION " +
+      "       SELECT count(*) AS STARTVERSION " +
       "       FROM ad_module " +
       "       WHERE ad_module_id = '0' AND TO_NUMBER(REPLACE(version,'.','')) <= 3013698";
 
