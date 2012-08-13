@@ -385,6 +385,9 @@
           popupURL: url + urlCharacter + 'IsPopUpCall=1'
         });
         cPopup.show();
+        if (cPopup.getIframeHtmlObj) {
+          cPopup.getIframeHtmlObj().name = 'OBClassicPopup_iframe'; //To be used in automated tests: https://issues.openbravo.com/view.php?id=16786
+        }
         cobcomp.Popup.postOpen(cPopup, postParams);
         OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
         return cPopup;
