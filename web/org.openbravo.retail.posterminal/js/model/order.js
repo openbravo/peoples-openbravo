@@ -660,9 +660,6 @@
       }
       
       if (this.current) {
-        if (this.current.get('id')){
-          deleteCurrentFromDatabase(this.current);
-        }
         this.remove(this.current);
         if (this.length > 0) {
           this.current = this.at(this.length - 1);

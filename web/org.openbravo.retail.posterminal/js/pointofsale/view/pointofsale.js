@@ -109,10 +109,16 @@ enyo.kind({
     this.model.get('orderList').addNewOrder();
   },
   deleteCurrentOrder: function() {
+    if (this.model.get('order').get('id')) {
+      this.model.get('orderList').saveCurrent();
+      OB.Dal.remove(this.model.get('orderList').current, null, null);
+    }
+
     this.model.get('orderList').deleteCurrent();
   },
   addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
+
     this.model.get('orderList').saveCurrent();
     return true; // not continue
   },
