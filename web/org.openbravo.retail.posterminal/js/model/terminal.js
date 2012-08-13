@@ -93,9 +93,13 @@
     },
 
     renderLogin: function() {
-      var loginWindow = new OB.OBPOSLogin.UI.Login({});
-      loginWindow.renderInto(enyo.dom.byId('containerWindow'));
-      loginWindow.postRenderActions();
+      //      var loginWindow = new OB.OBPOSLogin.UI.Login({});
+      //      loginWindow.renderInto(enyo.dom.byId('containerWindow'));
+      //      loginWindow.postRenderActions();
+      OB.POS.terminal.$.containerWindow.destroyComponents();
+      OB.POS.terminal.$.containerWindow.createComponent({
+        kind: OB.OBPOSLogin.UI.Login
+      }).render();
     },
 
 
@@ -106,7 +110,7 @@
       }
       var me = OB.POS.modelterminal;
 
-      
+
       new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec({
         terminal: OB.POS.paramTerminal
       }, function(data) {
@@ -179,27 +183,18 @@
 
       c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       this.on('window:ready', function(w) {
-        if (w.renderInto) {
-          //enyo window
-          w.renderInto(document.getElementById('containerWindow'));
-        } else {
-          w.render();
-          $("#containerWindow").empty().append(w.$el);
-        }
-        c.trigger('domready');
+        this.off('window:ready');
+        $("#containerWindow").empty();
         OB.UTIL.showLoading(false);
-      });
+        w.renderInto(document.getElementById('containerWindow'));
+        c.trigger('domready');
+      }, this);
 
       windowClass = OB.POS.windows.where({
         route: windowName
       })[0].get('windowClass');
+      OB.POS.terminal.$.containerWindow.destroyComponents();
       w = new windowClass(c);
-
-      if (w.renderInto) {
-        //enyo window
-        w.renderInto(document.getElementById('containerWindow'));
-        OB.UTIL.showLoading(false);
-      }
     },
 
     login: function(user, password, mode) {
@@ -506,7 +501,7 @@
           };
       OB.Dal.find(OB.Model.DocumentSequence, criteria, function(documentSequenceList) {
         var docSeq;
-        if (documentSequenceList && documentSequenceList.length!==0) {
+        if (documentSequenceList && documentSequenceList.length !== 0) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
           // There exists already a document sequence, update it

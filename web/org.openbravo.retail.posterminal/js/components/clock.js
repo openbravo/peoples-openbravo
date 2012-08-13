@@ -26,6 +26,9 @@ enyo.kind({
     var me = this,
         updateClock = function() {
         var d = new Date();
+        if (!me.$.clock) {
+          return;
+        }
         me.$.clock.setContent(OB.I18N.formatHour(d));
         me.$.date.setContent(OB.I18N.formatDate(d));
         };

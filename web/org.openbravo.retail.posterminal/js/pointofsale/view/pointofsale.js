@@ -80,7 +80,7 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.ModalDeleteReceipt'
-  },{
+  }, {
     classes: 'row',
     style: 'margin-bottom: 5px;',
     components: [{
@@ -172,8 +172,10 @@ enyo.kind({
     this.$.toolbarpane.setModel(this.model);
     this.$.keyboard.setReceipt(receipt);
     this.$.rightToolbar.setReceipt(receipt);
+  },
+  initComponents: function() {
+    this.inherited(arguments);
   }
-
 });
 
 OB.POS.registerWindow({

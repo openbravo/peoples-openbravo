@@ -18,9 +18,10 @@
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function(online, models, data) {
-      var queue = {};
+      var queue = {}, somethigToLoad = false;;
       if (models.length === 0) {
         models.trigger('ready');
+        return;
       }
 
       _.each(models, function(item) {
@@ -37,7 +38,7 @@
             });
           } else {
             ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
-
+            somethigToLoad = true;
             queue[item.prototype.modelName] = false;
             ds.on('ready', function() {
               if (data) {
@@ -52,7 +53,7 @@
           }
         }
       });
-      if (OB.UTIL.queueStatus(queue)) {
+      if (!somethigToLoad) {
         models.trigger('ready');
       }
     }

@@ -393,7 +393,6 @@ enyo.kind({
   },
 
   addToolbar: function(newToolbar) {
-    console.log('addToolbar', newToolbar);
     var toolbar = this.$.toolbarcontainer.createComponent({
       toolbarName: newToolbar.name,
       shown: newToolbar.shown,
@@ -433,9 +432,7 @@ enyo.kind({
   },
 
   showToolbar: function(toolbarName) {
-    console.log('showToolbar', toolbarName);
     enyo.forEach(this.$.toolbarcontainer.getComponents(), function(toolbar) {
-      console.log(toolbar);
       if (toolbar.toolbarName === toolbarName) {
         toolbar.show();
         if (toolbar.shown) {
@@ -463,7 +460,6 @@ enyo.kind({
   },
 
   addKeypad: function(keypad) {
-    console.log(keypad);
     this.$.keypadcontainer.createComponent({
       kind: keypad,
       keyboard: this
@@ -473,7 +469,6 @@ enyo.kind({
   showKeypad: function(keypadName) {
     this.state.set('keypadName', keypadName);
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
-      console.log(pad, keypadName);
       if (pad.padName === keypadName) {
         this.state.set('keypadLabel', pad.label);
         pad.show();
