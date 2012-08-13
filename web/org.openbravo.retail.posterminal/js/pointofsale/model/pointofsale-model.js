@@ -37,7 +37,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   processPaidOrders: function() {
     // Processes the paid, unprocessed orders
-    var orderlist = this.get('orderList');
+    var orderlist = this.get('orderList'), me = this;
     criteria = {
       hasbeenpaid: 'Y'
     };
@@ -56,7 +56,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
         };
         OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
-        OB.UTIL.processOrders(this, ordersPaidNotProcessed, successCallback, errorCallback);
+        OB.UTIL.processOrders(me, ordersPaidNotProcessed, successCallback, errorCallback);
       });
     }
   },
