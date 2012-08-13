@@ -101,7 +101,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "data/dataordertaxes",
         "data/dataorderdiscount",
         "components/renderorder",
-        "components/listreceipts",
         "components/modalreceipts",
         "components/renderbusinesspartner",
         "components/searchbps",

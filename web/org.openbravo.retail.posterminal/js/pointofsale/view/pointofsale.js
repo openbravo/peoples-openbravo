@@ -75,7 +75,8 @@ enyo.kind({
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
     onExactPayment: 'exactPayment',
-    onRemovePayment: 'removePayment'
+    onRemovePayment: 'removePayment',
+    onChangeCurrentOrder: 'changeCurrentOrder'
   },
   components: [{
     classes: 'row',
@@ -148,7 +149,9 @@ enyo.kind({
   exactPayment: function(sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
-
+  changeCurrentOrder: function(sender, event) {
+    this.model.get('orderList').load(event.originator.clickedOrder);
+  },
   removePayment: function(sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
       return;

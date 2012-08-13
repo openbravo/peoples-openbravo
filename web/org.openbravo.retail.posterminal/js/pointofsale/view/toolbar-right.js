@@ -75,7 +75,6 @@ enyo.kind({
     //Mechanism to search which button are able to print total
     var totalPrinterComponent;
     //hardcoded
-    debugger;
     totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
     totalPrinterComponent.renderTotal(this.receipt.getTotal());
     this.receipt.on('change:gross', function (model) {
