@@ -97,9 +97,6 @@
   };
 
   OB.UTIL.showSuccess = function(s) {
-    new enyo.kind({
-      kind: OB.UTIL.showAlert
-    });
     OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
   };
 
