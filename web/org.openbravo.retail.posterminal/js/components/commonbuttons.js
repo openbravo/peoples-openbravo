@@ -411,7 +411,7 @@
       'data-toggle': 'tab'
     },
     events: {
-        onTabChange: ''
+      onTabChange: ''
     },
     initComponents: function() {
       this.inherited(arguments);

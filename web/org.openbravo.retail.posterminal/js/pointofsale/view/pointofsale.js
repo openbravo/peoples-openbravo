@@ -102,6 +102,8 @@ enyo.kind({
         name: 'keyboard'
       }]
 
+    },{
+  	  kind: 'OB.UI.ModalCancel'
     }]
   }],
   addNewOrder: function(inSender, inEvent) {
