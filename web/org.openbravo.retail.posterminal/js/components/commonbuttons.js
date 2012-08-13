@@ -60,7 +60,8 @@ enyo.kind({
       components: [{
         tag: 'span',
         style: 'font-size: 150%',
-        content: 'x' //TODO: '&times;'
+        allowHtml: true,
+        content: '&times;'
       }]
     }, {
       tag: 'h3',
@@ -372,7 +373,6 @@ enyo.kind({
 
 enyo.kind({
   //TODO: maxheight, 
-  // x -> &times;
   name: 'OB.UI.ModalAction',
   tag: 'div',
   classes: 'modal hide fade modal-dialog',
@@ -391,7 +391,8 @@ enyo.kind({
       components: [{
         tag: 'span',
         style: 'font-size: 150%',
-        content: 'x'
+        allowHtml: true,
+        content: '&times'
       }]
     }, {
       name: 'header',

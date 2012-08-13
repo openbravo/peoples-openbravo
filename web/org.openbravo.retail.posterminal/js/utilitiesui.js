@@ -46,7 +46,8 @@
       attributes: {
         'data-dismiss': 'alert'
       },
-      content: 'x'
+      allowHtml: true,
+      content: '&times;'
     }, {
       name: 'title',
       tag: 'strong'
