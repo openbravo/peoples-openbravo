@@ -89,7 +89,7 @@
    <SqlMethod name="selectProductCategory" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_Category_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_Category_ID AS ID, m.Name,m.Description, m.IsSummary 
         FROM AD_TreeNode tn, 
           M_Product_Category m
         WHERE tn.Node_ID = m.M_Product_Category_ID 

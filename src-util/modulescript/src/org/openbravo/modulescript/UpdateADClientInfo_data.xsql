@@ -93,4 +93,58 @@
     <Parameter name="treeID"/>
     <Parameter name="clientID"/>
   </SqlMethod>
+  <SqlMethod name="selectClientsWithoutTree" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT AD_CLIENT_ID 
+      FROM AD_CLIENTINFO CI
+      WHERE CI.AD_TREE_PRODUCT_CATEGORY_ID IS NULL 
+      AND CI.AD_CLIENT_ID <> '0'
+      ]]>
+    </Sql>
+    <Parameter name="columnname" optional="false" type="replace" after="WHERE CI." text="AD_TREE_PRODUCT_CATEGORY_ID"/>
+  </SqlMethod>
+  <SqlMethod name="updateClientTreeAuto" type="preparedStatement" return="rowcount">
+    <SqlMethodComment>Updates client tree info for already created trees</SqlMethodComment>
+    <Sql><![CDATA[
+      UPDATE AD_CLIENTINFO 
+      SET AD_TREE_PRODUCT_CATEGORY_ID = 
+        (SELECT AD_TREE_ID FROM AD_TREE T 
+         WHERE TREETYPE = ? AND AD_CLIENT_ID = ?) 
+        WHERE AD_CLIENT_ID = ? 
+      ]]>
+    </Sql>
+    <Parameter name="columnname" optional="false" type="replace" after="SET " text="AD_TREE_PRODUCT_CATEGORY_ID"/>
+    <Parameter name="treetype"/>
+    <Parameter name="clientID"/>
+    <Parameter name="clientID"/>
+  </SqlMethod>
+  <SqlMethod name="insertMissingTreeNodes" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+    INSERT
+    INTO AD_TreeNode
+      (
+        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
+        Created, CreatedBy, Updated,
+        UpdatedBy, AD_Tree_ID, Node_ID,
+        Parent_ID, SeqNo
+      )
+      SELECT get_uuid(), a.ad_client_id, a.ad_org_id, a.isactive,
+	now(), '0', now(), 
+	'0', (SELECT ad_tree_id from ad_tree where treetype = ? AND ad_tree.ad_client_id = a.ad_client_id) AS treeID, a.M_PRODUCT_CATEGORY_id,
+	'0', 999
+      FROM M_PRODUCT_CATEGORY a
+      WHERE NOT EXISTS (SELECT 1 
+                        FROM AD_TREENODE tn INNER JOIN AD_TREE t ON (t.ad_tree_id=tn.ad_tree_id)
+                        WHERE t.treetype = ?
+		        AND 1=1 AND a.M_PRODUCT_CATEGORY_id = tn.node_id)
+      ]]>
+    </Sql>
+    <Parameter name="treetype"/>
+    <Parameter name="tablename" optional="false" type="replace" after="AS treeID, a." text="M_PRODUCT_CATEGORY"/>
+    <Parameter name="tablename" optional="false" type="replace" after="FROM " text="M_PRODUCT_CATEGORY"/>
+    <Parameter name="treetype"/>
+    <Parameter name="tablename" optional="false" type="replace" after="AND 1=1 AND a." text="M_PRODUCT_CATEGORY"/>
+  </SqlMethod>
 </SqlClass>

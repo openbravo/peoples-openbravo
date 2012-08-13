@@ -29,12 +29,19 @@ public class UpdateADClientInfo extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
       UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsID(cp);
-      // MC tree
       for (UpdateADClientInfoData clientID : clientsID) {
+	// MC tree
         UpdateADClientInfoData.update(cp,clientID.adClientId);
       }
       // Asset tree
       createTreeAndUpdateClientInfo(cp, "Asset", "AS", "AD_TREE_ASSET_ID");
+      // Product Category tree
+      updateClientInfo(cp, "AD_TREE_PRODUCT_CATEGORY_ID", "PC");
+
+      // Insert Missing Treenodes for Assets
+      UpdateADClientInfoData.insertMissingTreeNodes(cp, "AS", "A_ASSET");
+      // Insert Missing Treenodes for Product Categories
+      UpdateADClientInfoData.insertMissingTreeNodes(cp, "PC", "M_PRODUCT_CATEGORY");
     } catch (Exception e) {
       handleError(e);
     }
@@ -42,12 +49,20 @@ public class UpdateADClientInfo extends ModuleScript {
 
     private void createTreeAndUpdateClientInfo(final ConnectionProvider cp, final String treeTypeName, final String treeTypeValue, final String columnName)
 	throws ServletException {
-       UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingTree(cp, columnName);
+      UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsMissingTree(cp, columnName);
       for (UpdateADClientInfoData clientID: clientsID) {
 	final String treeId = UpdateADClientInfoData.getUUID(cp);
 	final String nameAndDesc = clientID.clientname + " " + treeTypeName;
         UpdateADClientInfoData.createTree(cp, treeId, clientID.adClientId, nameAndDesc, treeTypeValue);	
 	UpdateADClientInfoData.updateClientTree(cp, columnName, treeId, clientID.adClientId);
+      }
+    }
+
+    private void updateClientInfo(final ConnectionProvider cp, final String columnName, final String treeTypeValue)
+	throws ServletException {
+      UpdateADClientInfoData[] clientsID = UpdateADClientInfoData.selectClientsWithoutTree(cp, columnName);
+      for (UpdateADClientInfoData clientID : clientsID) {
+        UpdateADClientInfoData.updateClientTreeAuto(cp, columnName, treeTypeValue, clientID.adClientId);
       }
     }
 }

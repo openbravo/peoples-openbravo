@@ -145,6 +145,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_TREE_PRODUCT_CATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -165,6 +169,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_ORG">
         <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_PROD_CAT">
+        <reference local="AD_TREE_PRODUCT_CATEGORY_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_PRODUCT">
         <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
