@@ -71,7 +71,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "builder",
         "datasource",
         "data/dal",
         "utilities",

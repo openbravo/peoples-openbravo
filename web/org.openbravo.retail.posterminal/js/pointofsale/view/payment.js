@@ -101,6 +101,7 @@ enyo.kind({
 
 
   updatePending: function() {
+	  console.log('updatePending');
     var paymentstatus = this.receipt.getPaymentStatus();
     if (paymentstatus.change) {
       this.$.change.setContent(paymentstatus.change);

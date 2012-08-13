@@ -9,41 +9,14 @@
 
 /*global B, $, Backbone */
 
-(function() {
-
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
-
-  // Order list
-  enyo.kind({
-    name: 'OB.UI.Total',
-    tag: 'span',
-    attributes: {
-      style: 'font-weight:bold;'
-    },
-    renderTotal: function(total){
-      this.setContent(OB.I18N.formatCurrency(total));
-    },
-    initComponents: function() {
-      //FIXME
-    }
-  });
-
-  OB.COMP.Total = Backbone.View.extend({
-    tagName: 'span',
-    attributes: {
-      'style': 'font-weight:bold;'
-    },
-    initialize: function() {
-      this.receipt = this.options.root.modelorder;
-
-      this.receipt.on('change:gross', function() {
-        this.render();
-      }, this);
-    },
-    render: function() {
-      this.$el.text(this.receipt.printTotal());
-      return this;
-    }
-  });
-}());
+// Order list
+enyo.kind({
+  name: 'OB.UI.Total',
+  tag: 'span',
+  attributes: {
+    style: 'font-weight:bold;'
+  },
+  renderTotal: function(total) {
+    this.setContent(OB.I18N.formatCurrency(total));
+  }
+});

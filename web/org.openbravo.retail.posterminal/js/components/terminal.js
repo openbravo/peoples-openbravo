@@ -12,6 +12,7 @@
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
+
   classes: 'container',
   components: [{
     classes: 'section',
@@ -120,6 +121,10 @@ enyo.kind({
         name: 'containerWindow'
       }]
     }]
+  }, {
+    makeId: function() {
+      return 'alertContainer';
+    }
   }],
 
   initComponents: function() {
@@ -183,7 +188,6 @@ enyo.kind({
   makeId: function() {
     return 'container';
   }
-
 });
 
 

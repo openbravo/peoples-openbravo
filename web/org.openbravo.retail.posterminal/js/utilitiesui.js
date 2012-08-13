@@ -43,28 +43,28 @@
   };
 
   enyo.kind({
-	  name: 'OB.UI.Thumbnail',
-	  tag: 'div',
-	  classes: 'image-wrap',
-	  img: null,
-	  contentType: 'img/png',
-	  width: '49px',
-	  height: '49px',
-	  'default': 'img/box.png',
-	  components: [{
-	    tag: 'div',
-	    name: 'image',
-	    style: 'margin: auto; height: 100%; width: 100%; background-size: contain;'
-	  }],
-	  initComponents: function() {
-	    this.inherited(arguments);
+    name: 'OB.UI.Thumbnail',
+    tag: 'div',
+    classes: 'image-wrap',
+    img: null,
+    contentType: 'img/png',
+    width: '49px',
+    height: '49px',
+    'default': 'img/box.png',
+    components: [{
+      tag: 'div',
+      name: 'image',
+      style: 'margin: auto; height: 100%; width: 100%; background-size: contain;'
+    }],
+    initComponents: function() {
+      this.inherited(arguments);
 
-	    var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
-	    this.applyStyle('height', this.height);
-	    this.applyStyle('width', this.width);
-	    this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
-	  }
-	});
+      var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
+      this.applyStyle('height', this.height);
+      this.applyStyle('width', this.width);
+      this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
+    }
+  });
 
   // public
   // reimplemneted with enyo: OB.UI.Thumbnail
@@ -96,39 +96,80 @@
     }
   });
 
-  OB.UTIL.showAlert = function(s, title, type) {
-    var c = B({
-      kind: B.KindJQuery('div'),
-      attr: {
-        'class': 'alert fade in ' + type,
-        style: 'position:absolute; right:35px; top: 5px'
+  enyo.kind({
+    name: 'OB.UTIL.showAlert',
+    style: 'position:absolute; right:35px; top: 5px',
+    components: [{
+      tag: 'button',
+      classes: 'close',
+      attributes: {
+        'data-dismiss': 'alert'
       },
-      content: [{
-        kind: B.KindJQuery('button'),
-        attr: {
-          'class': 'close',
-          'data-dismiss': 'alert'
-        },
-        content: [{
-          kind: B.KindHTML('<span>&times;</span>')
-        }]
-      }, {
-        kind: B.KindJQuery('strong'),
-        content: [title]
-      }, ' ',
-      {
-        kind: B.KindJQuery('span'),
-        content: [s]
-      }]
-    });
+      content: 'x'
+    }, {
+      name: 'title'
+    }, {
+      name: 'txt'
+    }],
+    statics: {
+      display: function(txt, title, type) {
+    	  console.log('display');
+        var alert = new (enyo.kind({
+          kind: 'OB.UTIL.showAlert',
+          title: title,
+          txt: txt,
+          type: type
+        }))();
+        alert.renderInto(enyo.dom.byId('alertContainer'));
+      }
+    },
 
-    $("#container").append(c.$el);
-    setTimeout(function() {
-      $('.alert').alert('close');
-    }, 5000);
-  };
+    initComponents: function() {
+      this.inherited(arguments);
+      this.$.title.setContent(this.title);
+      this.$.txt.setContent(this.txt);
+      this.addClass('alert fade in ' + this.type);
+    //  this.doShowAlert();
+      
+      setTimeout(function() {
+          $('.alert').alert('close');
+        }, 5000);
+    }
+  });
 
-  OB.UTIL.isSupportedBrowser = function () {
+//  OB.UTIL.showAlert = function(s, title, type) {
+//    var c = B({
+//      kind: B.KindJQuery('div'),
+//      attr: {
+//        'class': 'alert fade in ' + type,
+//        style: 'position:absolute; right:35px; top: 5px'
+//      },
+//      content: [{
+//        kind: B.KindJQuery('button'),
+//        attr: {
+//          'class': 'close',
+//          'data-dismiss': 'alert'
+//        },
+//        content: [{
+//          kind: B.KindHTML('<span>&times;</span>')
+//        }]
+//      }, {
+//        kind: B.KindJQuery('strong'),
+//        content: [title]
+//      }, ' ',
+//      {
+//        kind: B.KindJQuery('span'),
+//        content: [s]
+//      }]
+//    });
+//
+//    $("#container").append(c.$el);
+//    setTimeout(function() {
+//      $('.alert').alert('close');
+//    }, 5000);
+//  };
+
+  OB.UTIL.isSupportedBrowser = function() {
     if ($.browser.webkit && window.openDatabase) { //If the browser is not supported, show message and finish.
       return true;
     } else {
@@ -147,16 +188,19 @@
   };
 
   OB.UTIL.showSuccess = function(s) {
-    OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
+    new enyo.kind({
+      kind: OB.UTIL.showAlert
+    });
+    OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblSuccess'), 'alert-success');
   };
 
   OB.UTIL.showWarning = function(s) {
-    OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
+    OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblWarning'), '');
   };
 
   OB.UTIL.showError = function(s) {
     OB.UTIL.showLoading(false);
-    OB.UTIL.showAlert(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
+    OB.UTIL.showAlert.display(s, OB.I18N.getLabel('OBPOS_LblError'), 'alert-error');
   };
 
   /* This will automatically set the focus in the first focusable item in the modal popup */
