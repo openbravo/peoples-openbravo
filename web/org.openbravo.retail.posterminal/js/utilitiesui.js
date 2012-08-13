@@ -9,7 +9,6 @@
 
 /*global B, Backbone $ */
 
-(function() {
 
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
@@ -63,36 +62,6 @@
       this.applyStyle('height', this.height);
       this.applyStyle('width', this.width);
       this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
-    }
-  });
-
-  // public
-  // reimplemneted with enyo: OB.UI.Thumbnail
-  OB.UTIL.Thumbnail = Backbone.View.extend({
-    tagName: 'div',
-    className: 'image-wrap',
-    img: null,
-    contentType: 'img/png',
-    width: 49,
-    height: 49,
-    'default': 'img/box.png',
-    initialize: function() {
-      this.$image = $('<div/>').css('margin', 'auto').css('height', '100%').css('width', '100%').css('background-size', 'contain');
-      this.$el.append(this.$image);
-    },
-    attr: function(attr) {
-      this.img = attr.img || this.img;
-      this.contentType = attr.contentType || this.contentType;
-      this.width = attr.width || this.width;
-      this.height = attr.height || this.height;
-      this['default'] = attr['default'] || this['default'];
-    },
-    render: function() {
-      var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
-      this.$el.css('height', this.height);
-      this.$el.css('width', this.width);
-      this.$image.css('background', '#ffffff url(' + url + ') center center no-repeat');
-      return this;
     }
   });
 
@@ -206,4 +175,3 @@
       return true;
     });
   };
-}());
