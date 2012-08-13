@@ -9,101 +9,55 @@
 
 /*global B, $ */
 
-(function() {
 
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
-  enyo.kind({
-    kind: 'OB.UI.SelectButton',
-    name: 'OB.UI.RenderOrderLine',
-    classes: 'btnselect-orderline',
-    handlers: {
-      onChangeEditMode: 'changeEditMode'
+enyo.kind({
+  kind: 'OB.UI.SelectButton',
+  name: 'OB.UI.RenderOrderLine',
+  classes: 'btnselect-orderline',
+  handlers: {
+    onChangeEditMode: 'changeEditMode'
+  },
+  components: [{
+    name: 'product',
+    attributes: {
+      style: 'float: left; width: 40%;'
     },
-    components: [{
-      name: 'product',
-      attributes: {
-        style: 'float: left; width: 40%;'
-      },
-    }, {
-      name: 'quantity',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right;'
-      }
-    }, {
-      name: 'price',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right;'
-      }
-    }, {
-      name: 'gross',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right;'
-      }
-    }, {
-      style: 'clear: both;'
-    }],
-    initComponents: function() {
-      this.inherited(arguments);
-      this.$.product.setContent(this.model.get('product').get('_identifier'));
-      this.$.quantity.setContent(this.model.printQty());
-      this.$.price.setContent(this.model.printPrice());
-      this.$.gross.setContent(this.model.printGross());
-    },
-    changeEditMode: function(sender, event) {
-      this.addRemoveClass('btnselect-orderline-edit', event.edit);
+  }, {
+    name: 'quantity',
+    attributes: {
+      style: 'float: left; width: 20%; text-align: right;'
     }
-
-  });
-
-  enyo.kind({
-    name: 'OB.UI.RenderOrderLineEmpty',
-    style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-    initComponents: function() {
-      this.inherited(arguments);
-      this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+  }, {
+    name: 'price',
+    attributes: {
+      style: 'float: left; width: 20%; text-align: right;'
     }
-  });
-
-  //refactored as enyo view -> OB.UI.OrderLine 
-  OB.COMP.RenderOrderLine = OB.COMP.SelectButton.extend({
-    contentView: [{
-      id: 'divproduct',
-      tag: 'div',
-      attributes: {
-        style: 'float: left; width: 40%'
-      }
-    }, {
-      id: 'divquantity',
-      tag: 'div',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right'
-      }
-    }, {
-      id: 'divprice',
-      tag: 'div',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right'
-      }
-    }, {
-      id: 'divgross',
-      tag: 'div',
-      attributes: {
-        style: 'float: left; width: 20%; text-align: right'
-      }
-    }, {
-      tag: 'div',
-      attributes: {
-        style: 'clear: both;'
-      }
-    }],
-    render: function() {
-      this.$el.addClass('btnselect-orderline');
-      this.divproduct.text(this.model.get('product').get('_identifier'));
-      this.divquantity.text(this.model.printQty());
-      this.divprice.text(this.model.printPrice());
-      this.divgross.text(this.model.printGross());
-      return this;
+  }, {
+    name: 'gross',
+    attributes: {
+      style: 'float: left; width: 20%; text-align: right;'
     }
-  });
-}());
+  }, {
+    style: 'clear: both;'
+  }],
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.product.setContent(this.model.get('product').get('_identifier'));
+    this.$.quantity.setContent(this.model.printQty());
+    this.$.price.setContent(this.model.printPrice());
+    this.$.gross.setContent(this.model.printGross());
+  },
+  changeEditMode: function(sender, event) {
+    this.addRemoveClass('btnselect-orderline-edit', event.edit);
+  }
+
+});
+
+enyo.kind({
+  name: 'OB.UI.RenderOrderLineEmpty',
+  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function() {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+  }
+});

@@ -9,107 +9,63 @@
 
 /*global window, B, $, Backbone */
 
-(function() {
 
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
 
-  enyo.kind({
-    name: 'OB.UI.ButtonNew',
-    kind: 'OB.UI.ToolbarButton',
-    icon: 'btn-icon btn-icon-new',
-    events: {
-      onAddNewOrder: ''
-    },
-    tap: function() {
-      this.doAddNewOrder();
-    }
-  });
+enyo.kind({
+  name: 'OB.UI.ButtonNew',
+  kind: 'OB.UI.ToolbarButton',
+  icon: 'btn-icon btn-icon-new',
+  events: {
+    onAddNewOrder: ''
+  },
+  tap: function() {
+    this.doAddNewOrder();
+  }
+});
 
-  //  OB.COMP.ButtonNew = OB.COMP.ToolbarButton.extend({
-  //    icon: 'btn-icon btn-icon-new',
-  //    //label: OB.I18N.getLabel('OBPOS_LblNew'),
-  //    clickEvent: function(e) {
-  //      this.options.modelorderlist.addNewOrder();
-  //    }
-  //  });
-  enyo.kind({
-    name: 'OB.UI.ButtonDelete',
-    kind: 'OB.UI.ToolbarButton',
-    icon: 'btn-icon btn-icon-delete',
-    attributes: {
-      href: '#modalConfirmReceiptDelete',
-      'data-toggle': 'modal'
-    }
-  });
 
-  //  OB.COMP.ButtonDelete = OB.COMP.ToolbarButton.extend({
-  //    icon: 'btn-icon btn-icon-delete',
-  //    //label: OB.I18N.getLabel('OBPOS_LblDelete'),
-  //    clickEvent: function (e) {
-  //      $('#modalDeleteReceipt').modal('show');
-  //    }
-  //  });
-  enyo.kind({
-    name: 'OB.UI.ButtonPrint',
-    kind: 'OB.UI.ToolbarButton',
-    icon: 'btn-icon btn-icon-print',
-    tap: function() {
-      var receipt = this.options.modelorder;
-      receipt.calculateTaxes(function() {
-        receipt.trigger('print');
-      });
-    }
-  });
+enyo.kind({
+  name: 'OB.UI.ButtonDelete',
+  kind: 'OB.UI.ToolbarButton',
+  icon: 'btn-icon btn-icon-delete',
+  attributes: {
+    href: '#modalConfirmReceiptDelete',
+    'data-toggle': 'modal'
+  }
+});
 
-  //  OB.COMP.ButtonPrint = OB.COMP.ToolbarButton.extend({
-  //    icon: 'btn-icon btn-icon-print',
-  //    //label: OB.I18N.getLabel('OBPOS_LblPrint'),
-  //    clickEvent: function(e) {
-  //      var receipt = this.options.modelorder;
-  //      receipt.calculateTaxes(function() {
-  //        receipt.trigger('print');
-  //      });
-  //    }
-  //  });
-  enyo.kind({
-    name: 'OB.UI.MenuReturn',
-    kind: 'OB.UI.MenuAction',
-    events: {
-      onShowReturnText:''
-    },
-    label: OB.I18N.getLabel('OBPOS_LblReturn'),
-    tap: function () {
-      this.doShowReturnText();
-    	//TODO: do this...
-    }
-  });
+enyo.kind({
+  name: 'OB.UI.ButtonPrint',
+  kind: 'OB.UI.ToolbarButton',
+  icon: 'btn-icon btn-icon-print',
+  tap: function() {
+    var receipt = this.options.modelorder;
+    receipt.calculateTaxes(function() {
+      receipt.trigger('print');
+    });
+  }
+});
 
-  OB.COMP.MenuReturn = OB.COMP.MenuAction.extend({
-    label: OB.I18N.getLabel('OBPOS_LblReturn'),
-    clickEvent: function(e) {
-      this.options.modelorder.setOrderTypeReturn();
-    }
-  });
+enyo.kind({
+  name: 'OB.UI.MenuReturn',
+  kind: 'OB.UI.MenuAction',
+  events: {
+    onShowReturnText: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblReturn'),
+  tap: function() {
+    this.doShowReturnText();
+  }
+});
 
-  
-  enyo.kind({
-	    name: 'OB.UI.MenuInvoice',
-	    kind: 'OB.UI.MenuAction',
-	    events: {
-	      onShowInvoiceButton:''
-	    },
-	    label: OB.I18N.getLabel('OBPOS_LblInvoice'),
-	    tap: function () {
-	    	this.doShowInvoiceButton();
-	      //TODO: do this...
-	    }
-	  });
-  
-  OB.COMP.MenuInvoice = OB.COMP.MenuAction.extend({
-    label: OB.I18N.getLabel('OBPOS_LblInvoice'),
-    clickEvent: function(e) {
-      this.options.modelorder.setOrderInvoice();
-    }
-  });
-}());
+enyo.kind({
+  name: 'OB.UI.MenuInvoice',
+  kind: 'OB.UI.MenuAction',
+  events: {
+    onShowInvoiceButton: ''
+  },
+  label: OB.I18N.getLabel('OBPOS_LblInvoice'),
+  tap: function() {
+    this.doShowInvoiceButton();
+  }
+});

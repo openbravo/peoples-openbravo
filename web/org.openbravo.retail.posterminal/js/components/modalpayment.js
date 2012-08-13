@@ -16,6 +16,7 @@ enyo.kind({
   header: OB.I18N.getLabel('OBPOS_LblModalPayment'),
   maxheight: '600px',
   show: function(receipt, key, name, paymentMethod, amount) {
+	  this.$.body.destroyComponents();
     this.$.body.createComponent({
       kind: paymentMethod.view,
       paymentType: name,

@@ -9,54 +9,35 @@
 
 /*global Backbone */
 
-(function () {
 
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OB.UI.BusinessPartner',
+  classes: 'btnlink btnlink-small btnlink-gray',
+  published: {
+    order: null
+  },
+  attributes: {
+    'data-toggle': 'modal',
+    'href': '#modalcustomer'
+  },
+  initComponents: function() {},
+  renderCustomer: function(newCustomer) {
+    this.setContent(newCustomer);
+  },
+  orderChanged: function(oldValue) {
+    if (this.order.get('bp')) {
+      this.renderCustomer(this.order.get('bp').get('_identifier'));
+    } else {
+      this.renderCustomer('');
+    }
 
-  enyo.kind({
-    kind: 'OB.UI.SmallButton',
-    name: 'OB.UI.BusinessPartner',
-    classes: 'btnlink btnlink-small btnlink-gray',
-    published: {
-      order: null
-    },
-    attributes: {
-      'data-toggle': 'modal',
-      'href': '#modalcustomer'
-    },
-    initComponents: function() {
-    },
-    renderCustomer: function(newCustomer){
-      this.setContent(newCustomer);
-    },
-    orderChanged: function (oldValue){
-      if(this.order.get('bp')){
-        this.renderCustomer(this.order.get('bp').get('_identifier'));  
+    this.order.on('change:bp', function(model) {
+      if (model.get('bp')) {
+        this.renderCustomer(model.get('bp').get('_identifier'));
       } else {
         this.renderCustomer('');
       }
-      
-      this.order.on('change:bp', function (model) {
-        if(model.get('bp')){
-          this.renderCustomer(model.get('bp').get('_identifier'));
-        } else {
-          this.renderCustomer('');
-        }
-      }, this);
-    }
-  });
-  
-  //  Refactored as enyo view -> OB.UI.BusinessPartner
-  OB.COMP.BusinessPartner = OB.COMP.SmallButton.extend({
-      className: 'btnlink btnlink-small btnlink-gray',
-      attributes: {'href': '#modalcustomer', 'data-toggle': 'modal'},
-      initialize: function () {
-        OB.COMP.SmallButton.prototype.initialize.call(this); // super.initialize();
-        this.receipt = this.options.root.modelorder;
-        this.receipt.on('clear change:bp change:bploc', function () {
-          this.$el.text(this.receipt.get('bp') ? this.receipt.get('bp').get('_identifier') : '');
-        }, this);
-      }
-  });
-}());
+    }, this);
+  }
+});
