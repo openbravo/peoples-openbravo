@@ -13,34 +13,6 @@
   OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
 
-  function isScrolledIntoView(container, elem) {
-
-    var docViewTop = container.scrollTop();
-    var docViewBottom = docViewTop + container.height();
-
-    var elemTop = elem.offset().top;
-    var elemBottom = elemTop + elem.height();
-
-    return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) && (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-  }
-
-  OB.UTIL.makeElemVisible = function(container, elem) {
-
-    var docViewTop = container.offset().top;
-    var docViewBottom = docViewTop + container.height();
-
-    var elemTop = elem.offset().top;
-    var elemBottom = elemTop + elem.height();
-
-    var currentScroll = container.scrollTop();
-
-    if (elemTop < docViewTop) {
-      container.scrollTop(currentScroll - docViewTop + elemTop);
-    } else if (elemBottom > docViewBottom) {
-      container.scrollTop(currentScroll + elemBottom - docViewBottom);
-    }
-  };
-
   enyo.kind({
     name: 'OB.UI.Thumbnail',
     tag: 'div',
