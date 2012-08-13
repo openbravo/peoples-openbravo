@@ -170,81 +170,9 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    // explicitly set the total
     this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
-    //    this.$.paymentsList.setCollection(this.owner.model && this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
-  //  init: function () {
-  //    // this.owner is the window (OB.UI.WindowView)
-  //    // this.parent is the DOM object on top of the list (usually a DIV)
-  //    this.$.paymentsList.setCollection(this.owner.model.getData('DataCloseCashPaymentMethod'));
-  //  },
   setCollection: function (col) {
     this.$.paymentsList.setCollection(col);
   }
 });
-
-//(function () {
-//
-//  OB = window.OB || {};
-//  OB.COMP = window.OB.COMP || {};
-//
-//  //  var sdf = new SimpleDateFormat("HH:mm:ss");
-//  //  document.write(sdf.format(new Date()));
-//  OB.COMP.CountCash = OB.COMP.CustomView.extend({
-//    _id: 'countcash',
-//    createView: function () {
-//      return ({
-//        kind: B.KindJQuery('div'),
-//        attr: {
-//          'id': 'countcash',
-//          'class': 'tab-pane'
-//        },
-//        content: [{
-//          kind: B.KindJQuery('div'),
-//          attr: {
-//            'style': 'overflow:auto; height: 500px; margin: 5px'
-//          },
-//          content: [{
-//            kind: B.KindJQuery('div'),
-//            attr: {
-//              'style': 'background-color: #ffffff; color: black; padding: 5px;'
-//            },
-//            content: [{
-//              kind: B.KindJQuery('div'),
-//              attr: {
-//                'class': 'row-fluid'
-//              },
-//              content: [{
-//                kind: B.KindJQuery('div'),
-//                attr: {
-//                  'class': 'span12'
-//                },
-//                content: [{
-//                  kind: B.KindJQuery('div'),
-//                  attr: {
-//                    'style': 'padding: 10px; border-bottom: 1px solid #cccccc;text-align:center;'
-//                  },
-//                  content: [
-//
-//                  OB.I18N.getLabel('OBPOS_LblStep2of4')
-//
-//                  ]
-//                }]
-//              }]
-//            }, {
-//              kind: B.KindJQuery('div'),
-//              attr: {
-//                'style': 'background-color: #ffffff; color: black;'
-//              },
-//              content: [{
-//                kind: OB.COMP.ListPaymentMethods
-//              }]
-//            }]
-//          }]
-//        }]
-//      });
-//    }
-//  });
-//
-//}());

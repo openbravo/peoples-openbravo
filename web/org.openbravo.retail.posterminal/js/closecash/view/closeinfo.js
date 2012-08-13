@@ -19,12 +19,15 @@ enyo.kind({
     onChangeStep: ''
   },
   tap: function () {
-   this.doChangeStep();
-  }  
+    this.doChangeStep();
+  }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpInfo',
+  published: {
+    model: null
+  },
   components: [{
     style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{ //clock here
@@ -44,10 +47,12 @@ enyo.kind({
       style: 'padding: 5px;',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.Button',
+        name: 'btnPrevious',
         content: OB.I18N.getLabel('OBPOS_LblPrevStep'),
         stepCount: -1
       }, {
         kind: 'OB.OBPOSCashUp.UI.Button',
+        name: 'btnNext',
         content: OB.I18N.getLabel('OBPOS_LblNextStep'),
         stepCount: 1
       }]
@@ -64,42 +69,9 @@ enyo.kind({
       style: 'padding: 3px',
       content: OB.I18N.getLabel('OBPOS_LblStep4')
     }]
-  }]
+  }],
+  refresh: function () {
+    this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
+    this.$.btnNext.setDisabled(!this.model.allowNext());
+  }
 });
-
-//(function () {
-//
-//  OB = window.OB || {};
-//  OB.COMP = window.OB.COMP || {};
-//
-//  OB.COMP.CloseInfo = function (context) {
-//    var me = this;
-//
-//    this.component = B(
-//      {kind: B.KindJQuery('div'), content: [
-//        {kind: B.KindJQuery('div'), attr: {'style': 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px'}, content: [
-//          {kind: OB.COMP.Clock, attr: {'className': 'pos-clock'}},
-//          {kind: B.KindJQuery('div'), content: [
-//            {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'padding: 5px 10px 10px 10px; line-height: 23px;'}, content: [
-//              {kind: B.KindJQuery('div'), id: 'msgaction', attr: {'style': 'float: right; padding: 0px;'}, content: [
-//                {kind: OB.COMP.SmallButton.extend({attributes: {'href': '#modalCancel', 'data-toggle': 'modal'}, className: 'btnlink-white btnlink-fontgrey'}), attr: {'label': OB.I18N.getLabel('OBPOS_LblCancel')}}
-//              ]},
-//              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblCashUpProcess')]} ,
-//              {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px;'}, content: [{kind: OB.COMP.ButtonPrev},{kind: OB.COMP.ButtonNext}]} ,
-//              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep1')]} ,
-//              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep2')]} ,
-//              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep3')]} ,
-//              {kind: B.KindJQuery('div'), content: [OB.I18N.getLabel('OBPOS_LblStep4')]}
-//            ]}
-//          ]}
-//        ]}
-//      ]}
-//    , context);
-//    this.$el = this.component.$el;
-//    context.closeprevbutton.$el.attr('disabled','disabled');
-//    context.countcash.$el.hide();
-//    context.cashtokeep.$el.hide();
-//    context.postprintclose.$el.hide();
-//  };
-//
-//}());

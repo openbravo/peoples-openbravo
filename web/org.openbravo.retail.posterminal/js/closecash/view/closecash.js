@@ -14,20 +14,15 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
   handlers: {
-    //onNext: 'nextStep',
-    //onPrev: 'prevStep',
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
     onChangeStep: 'changeStep'
   },
-  changeStep: function (inSender, inEvent) {
-    this.log(inEvent.originator.name);
-  },
   tapRadio: function (inSender, inEvent) {
-//    if (inEvent.originator.name === 'allowvariableamount') {
-//      //      FIXME: Put focus on the input
-//      //      this.$.cashToKeep.$.variableamount.focus();
-//    }
+    //    if (inEvent.originator.name === 'allowvariableamount') {
+    //      //      FIXME: Put focus on the input
+    //      //      this.$.cashToKeep.$.variableamount.focus();
+    //    }
     this.$.cashUpInfo.$.buttonNext.setDisabled(false);
   },
   buttonOk: function (inSender, inEvent) {
@@ -292,13 +287,32 @@ enyo.kind({
   }],
   init: function () {
     this.inherited(arguments);
-    
+
+    this.$.cashUpInfo.setModel(this.model);
+
+    // Pending Orders
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
-    
+
     this.$.listPaymentMethods.setCollection(this.model.getData('DataCloseCashPaymentMethod'));
     this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
-    //Cash Up Report
+
+    // Cash Up Report
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
+
+    this.model.on('change:step', function (model) {
+      this.refresh();
+    }, this);
+
+    this.refresh();
+  },
+  refresh: function () {
+    this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
+    this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
+    this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
+    this.$.cashUpInfo.refresh();
+  },
+  changeStep: function (inSender, inEvent) {
+    this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
   }
 });
 
@@ -308,66 +322,3 @@ OB.POS.registerWindow({
   menuPosition: 20,
   menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash')
 });
-
-//  return (
-//      {kind: B.KindJQuery('section'), content: [
-//
-//        {kind: OB.MODEL.DayCash},
-//        {kind: OB.Model.Order},
-//        {kind: OB.Collection.OrderList},
-//        {kind: OB.DATA.CloseCashPaymentMethod},
-//        {kind: OB.DATA.PaymentCloseCash},
-//        {kind: OB.COMP.ModalCancel},
-//        {kind: OB.COMP.ModalFinishClose},
-//        {kind: OB.COMP.ModalProcessReceipts},
-//        {kind: OB.DATA.Container, content: [
-//             {kind: OB.DATA.CloseCashPaymentMethod},
-//             {kind: OB.DATA.CashCloseReport},
-//             {kind: OB.COMP.HWManager, attr: {'templatecashup': 'res/printcashup.xml'}}
-//        ]},
-//        {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-//             {kind: OB.COMP.PendingReceipts},
-//             {kind: OB.COMP.CountCash},
-//             {kind: OB.COMP.CashToKeep},
-//             {kind: OB.COMP.PostPrintClose}
-//           ]},
-//
-//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-//            {kind: B.KindJQuery('div'), content: [
-//              {kind: OB.COMP.CloseInfo }
-//            ]},
-//            {kind: OB.COMP.CloseKeyboard }
-//          ]}
-//        ]}
-//
-//      ], init: function () {
-//        var ctx = this.context;
-//        OB.UTIL.showLoading(true);
-//        ctx.on('domready', function () {
-//          var orderlist = this.context.modelorderlist;
-//          OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
-//            var currentOrder = {};
-//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
-//              ctx.orderlisttoprocess = fetchedOrderList;
-//              OB.UTIL.showLoading(false);
-//              $('#modalprocessreceipts').modal('show');
-//            }else{
-//              OB.UTIL.showLoading(false);
-//            }
-//          }, function () { //OB.Dal.find error
-//          });
-//
-//          OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
-//            var currentOrder = {};
-//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
-//              ctx.closenextbutton.$el.attr('disabled','disabled');
-//              orderlist.reset(fetchedOrderList.models);
-//            }
-//          }, function () { //OB.Dal.find error
-//          });
-//        }, this);
-//      }}
-//    );
-//  }
-//});

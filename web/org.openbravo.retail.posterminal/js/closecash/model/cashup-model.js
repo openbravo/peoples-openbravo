@@ -39,6 +39,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   init: function () {
     var me = this;
 
+    this.set('step', 1);
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('payList', this.getData('DataCloseCashPaymentMethod'));
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
@@ -52,5 +53,31 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }, function (pendingOrderList) {
       me.get('orderlist').reset(pendingOrderList.models);
     }, OB.UTIL.showError);
+  },
+  allowNext: function () {
+    var step = this.get('step');
+
+    if (step === 1 && this.get('orderlist').length === 0) {
+      return true;
+    }
+
+    return false;
+  },
+  allowPrevious: function () {
+    var step = this.get('step');
+
+    if (step === 1) {
+      return false;
+    }
+    return true;
+  },
+  showPendingOrdersList: function () {
+    return this.get('step') === 1;
+  },
+  showPaymentMethodList: function () {
+    return this.get('step') === 2;
+  },
+  showPostPrintClose: function () {
+    return false;
   }
 });
