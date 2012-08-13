@@ -95,11 +95,10 @@ enyo.kind({
   }],
   create: function() {
     this.inherited(arguments);
-    debugger;
     this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
-    this.$.total.setContent(OB.I18N.formatCurrency(this.model.getTotal()));
+    this.$.total.setContent(this.model.printTotal());
   }
 });
 
