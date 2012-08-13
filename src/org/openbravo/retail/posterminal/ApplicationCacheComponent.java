@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -107,7 +108,7 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
 
   @Override
   public String getETag() {
-    return getVersion();
+    return UUID.randomUUID().toString();
   }
 
   @Override
@@ -136,4 +137,14 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
     }
     return fileList;
   }
+
+  public String getFileName() {
+    return "";
+  }
+
+  @Override
+  public boolean bypassAuthentication() {
+    return true;
+  }
+
 }
