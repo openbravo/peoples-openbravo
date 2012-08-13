@@ -91,6 +91,12 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
   }
 
   public List<String> getAvailableWidgetClasses(String roleId) throws Exception {
+    boolean isAdminMode = false;
+    return getAvailableWidgetClasses(roleId, isAdminMode);
+  }
+
+  public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode)
+      throws Exception {
     OBContext.setAdminMode();
     try {
       if (widgetClassDefinitions != null) {
@@ -109,16 +115,22 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
           if (!widgetProvider.validate()) {
             continue;
           }
-          for (Parameter p : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
-            if (p.isMandatory() && p.getDefaultValue() == null) {
-              hasNullMandatory = true;
-              break;
-            }
-          }
-          if (!hasNullMandatory) {
+          // If fetching the widgets of the own workspace, there is no need
+          // to filter out the widgets with null mandatory parameters
+          if (!isAdminMode) {
             definitions.add(widgetProvider.getWidgetClassDefinition());
           } else {
-            hasNullMandatory = false;
+            for (Parameter p : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+              if (p.isMandatory() && p.getDefaultValue() == null) {
+                hasNullMandatory = true;
+                break;
+              }
+            }
+            if (!hasNullMandatory) {
+              definitions.add(widgetProvider.getWidgetClassDefinition());
+            } else {
+              hasNullMandatory = false;
+            }
           }
 
           try {
