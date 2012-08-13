@@ -76,11 +76,14 @@ enyo.kind({
     onDeleteLine: 'deleteLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
-    onChangeCurrentOrder: 'changeCurrentOrder'
+    onChangeCurrentOrder: 'changeCurrentOrder',
+    onChangeBusinessPartner: 'changeBusinessPartner'
   },
   components: [{
     kind: 'OB.UI.ModalDeleteReceipt'
-  }, {
+  },{
+    kind: 'OB.UI.ModalBusinessPartners'
+  },{
     classes: 'row',
     style: 'margin-bottom: 5px;',
     components: [{
@@ -124,9 +127,9 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true; // not continue
   },
-  changeBusinessPartner: function(){
-    
-    return true; // not continue
+  changeBusinessPartner: function(inSender, inEvent){
+    this.model.get('order').setBPandBPLoc(inEvent.originator.clickedBp, false, true);
+    return true;
   },
   showInvoiceButton: function() {
     this.$.receiptview.$.orderview.$.btninvoice.show();

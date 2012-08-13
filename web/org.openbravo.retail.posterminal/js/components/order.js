@@ -9,7 +9,7 @@
 
 /*global Backbone */
 
-(function () {
+//(function () {
 
 //  OB = window.OB || {};
 //  OB.COMP = window.OB.COMP || {};
@@ -236,4 +236,4 @@
 //      this.totalgross.text(this.receipt.printTotal());
 //    }
 //  });
-}());
+//}());
