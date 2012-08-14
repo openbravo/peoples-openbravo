@@ -175,26 +175,22 @@
 
     renderGenericWindow: function(windowName) {
       OB.UTIL.showLoading(true);
-      var webwindow, w, c = _.extend({}, Backbone.Events),
-          terminal = OB.POS.modelterminal.get('terminal'),
-          queue = {},
-          emptyQueue = false,
+      var terminal = OB.POS.modelterminal.get('terminal'),
           windowClass;
 
-      c.root = c; // For new Backbone Views using OB.UTIL.initContentView(this);
       this.on('window:ready', function(w) {
-        this.off('window:ready');
-        $("#containerWindow").empty();
+        OB.POS.terminal.$.containerWindow.render();
         OB.UTIL.showLoading(false);
-        w.renderInto(document.getElementById('containerWindow'));
-        c.trigger('domready');
       }, this);
 
       windowClass = OB.POS.windows.where({
         route: windowName
       })[0].get('windowClass');
+
       OB.POS.terminal.$.containerWindow.destroyComponents();
-      w = new windowClass(c);
+      OB.POS.terminal.$.containerWindow.createComponent({
+        kind: windowClass
+      });
     },
 
     login: function(user, password, mode) {
