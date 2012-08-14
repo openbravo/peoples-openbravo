@@ -148,7 +148,6 @@ enyo.kind({
     this.$.btn.setContent(lbl);
   },
   tap: function() {
-    console.log('tap');
     var newKeypad = this.keyboard.state.get('keypadName') === 'coins' ? 'basic' : 'coins';
     this.keyboard.showKeypad(newKeypad);
   },

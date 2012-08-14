@@ -61,7 +61,6 @@ enyo.kind({
   }],
   statics: {
     display: function(txt, title, type) {
-      console.log('display');
       var alert = new(enyo.kind({
         kind: 'OB.UTIL.showAlert',
         title: title,

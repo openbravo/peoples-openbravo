@@ -154,7 +154,6 @@ enyo.kind({
     } else {
       this.$.keyboard.hide();
     }
-    console.log('tab change', arguments);
   },
   deleteLine: function(sender, event) {
     var line = event.line,

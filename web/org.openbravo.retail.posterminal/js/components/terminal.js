@@ -233,7 +233,6 @@ enyo.kind({
       label: 'Profile',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
-        console.log('tap');
         $('#profileDialog').modal('show');
       }
     }, {
@@ -243,7 +242,6 @@ enyo.kind({
       label: 'Log Out',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
-        console.log('tap');
         $('#logoutDialog').modal('show');
       }
     }, {

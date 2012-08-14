@@ -35,7 +35,6 @@ OB.Model.WindowModel = Backbone.Model.extend({
   setAllOff: function(model) {
     var p;
     if (model.off) {
-      console.log('off', model.cid, model);
       model.off();
     }
     if (model.attributes) {

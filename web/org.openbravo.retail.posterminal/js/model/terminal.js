@@ -159,10 +159,7 @@
       }
 
       _.extend(datasources, Backbone.Events);
-      datasources.on('ready', function() {
-        console.log('ready datasoureces', windowName)
-      });
-      //window.
+
       OB.Model.Util.loadModels(false, datasources);
 
 

@@ -199,7 +199,6 @@ enyo.kind({
         value: me.$.productname.getValue()
       };
     }
-    console.log('search', me.$.productname.getValue(), me.$.productcategory.getValue());
     if (me.$.productcategory.getValue() && me.$.productcategory.getValue() !== '__all__') {
       criteria.productCategory = me.$.productcategory.getValue();
     }

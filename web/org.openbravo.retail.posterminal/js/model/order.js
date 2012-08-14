@@ -228,7 +228,6 @@
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
-      console.log('triggered clear');
     },
 
     clearOrderAttributes: function() {

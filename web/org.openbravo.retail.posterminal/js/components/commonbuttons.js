@@ -412,7 +412,6 @@ enyo.kind({
   }],
 
   initComponents: function() {
-    console.log('initComponents modalAction')
     this.inherited(arguments);
     this.$.header.setContent(this.header);
 

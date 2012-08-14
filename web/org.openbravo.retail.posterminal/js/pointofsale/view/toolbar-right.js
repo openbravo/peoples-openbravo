@@ -223,7 +223,6 @@ enyo.kind({
     onTabChange: ''
   },
   tap: function() {
-    console.log('tap')
     this.doTabChange({
       keyboard: 'toolbarscan',
       edit: true

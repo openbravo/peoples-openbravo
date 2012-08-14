@@ -15,7 +15,6 @@ enyo.kind({
     this.inherited(arguments);
     this.model = new this.windowmodel();
     this.model.on('ready', function() {
-      console.trace();
       if (this.init) {
         this.init();
       }
