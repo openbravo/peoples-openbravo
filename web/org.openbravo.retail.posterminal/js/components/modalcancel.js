@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, B, Backbone */
+/*global enyo, $ */
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -44,6 +44,6 @@ enyo.kind({
 
   makeId: function() {
     // ensure id is fixed
-    return 'modalCancel'
+    return 'modalCancel';
   }
 });

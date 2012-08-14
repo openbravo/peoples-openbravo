@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, B, $, Backbone, _, MBP */
+/*global enyo, $ */
 enyo.kind({
   name: 'OB.UI.Button',
   kind: 'enyo.Button',
@@ -66,7 +66,7 @@ enyo.kind({
     }, {
       tag: 'h3',
       name: 'divheader'
-    }],
+    }]
   }, {
     tag: 'div',
     name: 'body',
@@ -116,7 +116,7 @@ enyo.kind({
   tap: function() {
     this.model.trigger('selected', this.model);
     this.model.trigger('click', this.model);
-    $('#' + this.id).parents('.modal').filter(':first').modal('hide')
+    $('#' + this.id).parents('.modal').filter(':first').modal('hide');
   }
 });
 
@@ -191,7 +191,7 @@ enyo.kind({
         name: 'lbl',
         tag: 'span',
         content: this.label
-      })
+      });
     }
     //TODO
     //this.receipt.on('change:gross', function() {
@@ -215,11 +215,8 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.addClass('btnlink-toolbar');
-  },
+  }
 });
-
-
-
 
 // Menu Button
 // Toolbar Button
@@ -230,7 +227,6 @@ enyo.kind({
     'data-toggle': 'dropdown'
   }
 });
-
 
 enyo.kind({
   name: 'OB.UI.ToolbarMenu',
@@ -244,7 +240,7 @@ enyo.kind({
       tag: 'span'
     }, {
       name: 'rightIcon'
-    }],
+    }]
   }, {
     tag: 'ul',
     classes: 'dropdown-menu',
@@ -261,7 +257,7 @@ enyo.kind({
 
     enyo.forEach(this.menuEntries, function(entry) {
       this.$.menu.createComponent(entry);
-    }, this)
+    }, this);
   }
 });
 
@@ -359,7 +355,7 @@ enyo.kind({
     style: 'padding: 12px 15px 12px 15px;',
     attributes: {
       href: '#'
-    },
+    }
   }],
   initComponents: function() {
     this.inherited(arguments);
@@ -397,7 +393,7 @@ enyo.kind({
     }, {
       name: 'header',
       tag: 'h3',
-      classes: 'modal-dialog-header-text',
+      classes: 'modal-dialog-header-text'
     }, {
       tag: 'div',
       classes: 'modal-body modal-dialog-body',
@@ -435,5 +431,5 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.SearchInput',
-  kind: 'enyo.Input',
+  kind: 'enyo.Input'
 });

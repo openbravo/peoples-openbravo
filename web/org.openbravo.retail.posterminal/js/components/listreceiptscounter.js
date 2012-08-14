@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global enyo */
 
 enyo.kind({
   name: 'OB.UI.ReceiptsCounter',

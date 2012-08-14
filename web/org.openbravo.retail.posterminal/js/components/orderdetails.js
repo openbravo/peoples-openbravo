@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, Backbone */
-
+/*global enyo */
 
 enyo.kind({
   name: 'OB.UI.OrderDetails',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, B, Backbone, $ */
+/*global enyo, Backbone, $ */
 
 enyo.kind({
   name: 'OB.UI.ModalProfile',

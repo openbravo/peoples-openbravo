@@ -30,7 +30,7 @@ enyo.kind({
       throw enyo.format('Your list %s needs to define a renderEmpty kind', listName);
     }
 
-    this.header = this.renderHeader ? 1 : 0
+    this.header = this.renderHeader ? 1 : 0;
 
     if (this.collection) {
       this.collectionChanged(null);

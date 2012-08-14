@@ -78,7 +78,6 @@ enyo.kind({
     this.log('lineEdit');
   },
   lineOK: function(inSender, inEvent) {
-    debugger;
     this.model.set('counted', this.model.get('expected'), {
       silent: true
     });

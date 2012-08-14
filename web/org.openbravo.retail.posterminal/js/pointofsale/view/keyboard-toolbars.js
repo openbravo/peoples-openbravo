@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo, _ */
+
 OB.OBPOSPointOfSale.UI.ToolbarScan = {
   name: 'toolbarscan',
   buttons: [{
@@ -16,7 +18,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
   }],
   shown: function() {
     var keyboard = this.owner.owner;
-    keyboard.showKeypad('basic')
+    keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
     keyboard.defaultcommand = 'code';
   }
@@ -87,7 +89,7 @@ enyo.kind({
           command: payment.payment.searchKey,
           label: payment.payment._identifier,
           permission: payment.payment.searchKey,
-          definition: this.getPayment(payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod),
+          definition: this.getPayment(payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod)
         }
       });
     }, this);
@@ -96,7 +98,7 @@ enyo.kind({
       this.createComponent({
         kind: 'OB.UI.BtnSide',
         btn: {}
-      })
+      });
     }
 
     this.createComponent({
@@ -117,7 +119,7 @@ enyo.kind({
   },
   shown: function() {
     var keyboard = this.owner.owner;
-    keyboard.showKeypad('coins')
+    keyboard.showKeypad('coins');
     keyboard.showSidepad('sidedisabled');
 
     //TODO: defaulting to cash using its hardcoded value, should be configurable

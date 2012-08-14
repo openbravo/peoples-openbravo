@@ -18,7 +18,7 @@
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function(online, models, data) {
-      var queue = {}, somethigToLoad = false;;
+      var queue = {}, somethigToLoad = false;
       if (models.length === 0) {
         models.trigger('ready');
         return;

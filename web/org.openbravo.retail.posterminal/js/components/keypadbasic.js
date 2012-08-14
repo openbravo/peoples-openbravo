@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.UI.KeypadBasic',
   label: OB.I18N.getLabel('OBPOS_KeypadBasic'),
@@ -148,7 +150,7 @@ enyo.kind({
     onAddButton: '',
     onKeyCommandPressed: '',
     onRegisterButton: ''
-    	
+
   },
   tag: 'div',
   style: 'margin: 5px;',
@@ -157,7 +159,6 @@ enyo.kind({
   command: false,
   permission: null,
   label: null,
-  classButtonActive: 'btnactive',
   components: [{
     kind: 'OB.UI.Button',
     name: 'button',

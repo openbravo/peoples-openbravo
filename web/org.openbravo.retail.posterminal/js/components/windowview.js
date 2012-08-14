@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.UI.WindowView',
   windowmodel: null,

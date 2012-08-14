@@ -103,12 +103,6 @@
     OB.UTIL.checkConnectivityStatus(); //Initial check;
     setInterval(OB.UTIL.checkConnectivityStatus, 5000);
 
-    beforeUnloadCallback = function() {
-      if (!OB.POS.modelterminal.get('connectedToERP')) {
-        return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');
-      }
-    };
-
     $(window).on('beforeunload', function() {
       if (!OB.POS.modelterminal.get('connectedToERP')) {
         return OB.I18N.getLabel('OBPOS_ShouldNotCloseWindow');

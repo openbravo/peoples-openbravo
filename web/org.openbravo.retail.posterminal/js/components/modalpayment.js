@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, B, Backbone */
+/*global enyo, $ */
 
 enyo.kind({
   name: 'OB.UI.ModalPayment',

@@ -1,3 +1,14 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+/*global $ */
+
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
 OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
@@ -8,10 +19,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   loadUnpaidOrders: function() {
     // Shows a modal window with the orders pending to be paid
-    var orderlist = this.get('orderList');
-    criteria = {
-      'hasbeenpaid': 'N'
-    };
+    var orderlist = this.get('orderList'),
+        criteria = {
+        'hasbeenpaid': 'N'
+        };
     OB.Dal.find(OB.Model.Order, criteria, function(ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
@@ -37,10 +48,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   processPaidOrders: function() {
     // Processes the paid, unprocessed orders
-    var orderlist = this.get('orderList'), me = this;
-    criteria = {
-      hasbeenpaid: 'Y'
-    };
+    var orderlist = this.get('orderList'),
+        me = this,
+        criteria = {
+        hasbeenpaid: 'Y'
+        };
     if (OB.POS.modelterminal.get('connectedToERP')) {
       OB.Dal.find(OB.Model.Order, criteria, function(ordersPaidNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;

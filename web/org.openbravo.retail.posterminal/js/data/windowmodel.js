@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global Backbone, _ */
+
 OB.Model.WindowModel = Backbone.Model.extend({
   data: {},
 
@@ -40,7 +42,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     if (model.attributes) {
       for (p in model.attributes) {
         if (model.attributes.hasOwnProperty(p) && model.attributes[p]) {
-          setAllOff(model);
+          this.setAllOff(model);
         }
       }
     }
@@ -63,8 +65,8 @@ OB.Model.WindowModel = Backbone.Model.extend({
           model.off();
         }
       }, this);
-      if (this.models.off){
-    	  this.models.off();
+      if (this.models.off) {
+        this.models.off();
       }
     }
     this.models = null;

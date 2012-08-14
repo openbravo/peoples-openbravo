@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global enyo */
 
 enyo.kind({
   kind: 'OB.UI.SmallButton',
@@ -42,7 +42,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderView',
   published: {
-    order: null,
+    order: null
   },
   components: [{
     kind: 'OB.UI.Table',
@@ -63,7 +63,7 @@ enyo.kind({
           content: OB.I18N.getLabel('OBPOS_LblTotal')
         }, {
           name: 'totalgross',
-          style: 'float: left; width: 20%; text-align:right; font-weight:bold;',
+          style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
         }, {
           style: 'clear: both;'
         }]

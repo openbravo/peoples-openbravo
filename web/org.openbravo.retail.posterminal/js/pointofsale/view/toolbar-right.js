@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global enyo, $ */
 
 // Toolbar container
 // ----------------------------------------------------------------------------
@@ -85,7 +86,7 @@ enyo.kind({
     var me = this;
 
     function getButtonInPos(pos) {
-      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0]
+      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0];
     }
 
     this.inherited(arguments);
@@ -190,7 +191,7 @@ enyo.kind({
     });
   },
   attributes: {
-    style: 'text-align: center; font-size: 30px;',
+    style: 'text-align: center; font-size: 30px;'
   },
   components: [{
     tag: 'span',
@@ -331,7 +332,7 @@ enyo.kind({
     name: 'edit'
   }],
   makeId: function() {
-    return 'edition'
+    return 'edition';
   },
   receiptChanged: function() {
     this.$.edit.setReceipt(this.receipt);

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global window, $, B, Backbone */
+/*global enyo, $ */
 
 enyo.kind({
   name: 'OB.UI.ModalReceipts',
@@ -26,8 +26,7 @@ enyo.kind({
   },
   receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
-  },
-  init: function() {}
+  }
 });
 
 enyo.kind({
@@ -58,7 +57,7 @@ enyo.kind({
       this.doChangeCurrentOrder({
         newCurrentOrder: model
       });
-    }, this)
+    }, this);
   }
 });
 
@@ -83,9 +82,9 @@ enyo.kind({
       }]
     }, {
       components: [{
-        style: 'float: left; width: 15%; font-weight: bold;',
+        style: 'float: left; width: 15%; font-weight: bold;'
       }, {
-        style: 'float: left; width: 25%; font-weight: bold;',
+        style: 'float: left; width: 25%; font-weight: bold;'
       }, {
         style: 'float: right; text-align: right; width: 25%; font-weight: bold;',
         name: 'total'
@@ -111,11 +110,11 @@ enyo.kind({
   myId: 'modalConfirmReceiptDelete',
   header: OB.I18N.getLabel('OBPOS_ConfirmDeletion'),
   bodyContent: {
-    content: OB.I18N.getLabel('OBPOS_MsgConfirmDelete') + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone'),
+    content: OB.I18N.getLabel('OBPOS_MsgConfirmDelete') + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
   bodyButtons: {
     components: [{
-      kind: 'OB.UI.btnModalApplyDelete',
+      kind: 'OB.UI.btnModalApplyDelete'
     }, {
       kind: 'OB.UI.btnModalCancelDelete'
     }]

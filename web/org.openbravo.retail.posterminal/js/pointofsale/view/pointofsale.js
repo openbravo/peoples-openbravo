@@ -1,4 +1,4 @@
-/*global OB, enyo */
+/*global OB, enyo, confirm */
 
 /*
  ************************************************************************************
@@ -159,7 +159,7 @@ enyo.kind({
     var line = event.line,
         receipt = this.model.get('order');
     if (line && receipt) {
-      receipt.deleteLine(line)
+      receipt.deleteLine(line);
       receipt.trigger('scan');
     }
   },

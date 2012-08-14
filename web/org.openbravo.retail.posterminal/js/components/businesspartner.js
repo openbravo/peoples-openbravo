@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global enyo, Backbone */
 
 
 enyo.kind({
@@ -151,7 +151,7 @@ enyo.kind({
       this.doChangeBusinessPartner({
         businessPartner: model
       });
-    }, this)
+    }, this);
   }
 });
 

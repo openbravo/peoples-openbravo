@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $ */
+/*global enyo, $ */
 
 // Container for the whole POS application
 enyo.kind({
@@ -31,7 +31,7 @@ enyo.kind({
             components: [{
               tag: 'span',
               style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
-              content: '.',
+              content: '.'
             }, {
               tag: 'span',
               content: 'Online' //TODO: trl

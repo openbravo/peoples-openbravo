@@ -7,6 +7,9 @@
  ************************************************************************************
  */
 
+
+/*global enyo, _ */
+
 enyo.kind({
   name: 'OB.UI.ProductBrowser',
   classes: 'row-fluid',

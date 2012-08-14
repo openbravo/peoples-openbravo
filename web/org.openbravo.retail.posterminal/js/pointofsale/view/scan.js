@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Scan',
   published: {

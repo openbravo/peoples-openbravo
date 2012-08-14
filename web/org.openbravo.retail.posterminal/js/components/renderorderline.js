@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $ */
+/*global enyo */
 
 
 enyo.kind({
@@ -21,7 +21,7 @@ enyo.kind({
     name: 'product',
     attributes: {
       style: 'float: left; width: 40%;'
-    },
+    }
   }, {
     name: 'quantity',
     attributes: {

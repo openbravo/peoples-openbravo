@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo, $, Backbone */
+
 enyo.kind({
   name: 'OB.UI.Keyboard',
 
@@ -207,7 +209,7 @@ enyo.kind({
 
   events: {
     onCommandFired: '',
-    onStatusChanged: '',
+    onStatusChanged: ''
   },
 
   handlers: {
@@ -219,7 +221,7 @@ enyo.kind({
     var btn = this.buttons[this.status];
 
     if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
-      btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive)
+      btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
     this.status = newstatus;
 
@@ -328,7 +330,8 @@ enyo.kind({
     if (button.command) {
       button.$.button.tap = function() {
         me.keyPressed(button.command);
-      }
+      };
+      
       this.addButton(button.command, button.$.button);
     } else {
       button.$.button.addClass('btnkeyboard-inactive');
