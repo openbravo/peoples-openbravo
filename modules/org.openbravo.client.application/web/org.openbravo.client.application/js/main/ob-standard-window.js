@@ -174,7 +174,7 @@ isc.OBStandardWindow.addProperties({
       //        contextView.setHalfSplit();
       //      }
       // Refresh in order to show possible new records
-      currentView.refresh(null, false, true);
+      currentView.refresh(null, false);
     };
 
     if (!currentView) {
