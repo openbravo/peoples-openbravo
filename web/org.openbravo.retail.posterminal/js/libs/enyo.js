@@ -1460,7 +1460,7 @@ insertNodeInParent: function(a, b) {
 a.insertBefore(this.node, b || a.firstChild);
 },
 removeNodeFromDom: function() {
-this.hasNode() && this.node.parentNode && this.node.parentNode.removeChild(this.node);
+enyo.Control.unregisterDomEvents(this.id), this.hasNode() && this.node.parentNode && this.node.parentNode.removeChild(this.node);
 },
 teardownRender: function() {
 this.generated && this.teardownChildren(), this.node = null, this.generated = !1;
