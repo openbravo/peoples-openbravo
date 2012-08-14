@@ -110,7 +110,6 @@ enyo.kind({
     this.inherited(arguments);
     if (this.button.containerCssClass) {
       this.setClassAttribute(this.button.containerCssClass);
-      delete this.button.containerCssClass;
     }
     this.$.theButton.createComponent(this.button);
   }
