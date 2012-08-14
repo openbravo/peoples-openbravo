@@ -144,8 +144,7 @@ enyo.kind({
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function(model) {
-      this.clickedBp = model;
-      this.doChangeBusinessPartner();
+      this.doChangeBusinessPartner({businessPartner: model});
     }, this)
   }
 });

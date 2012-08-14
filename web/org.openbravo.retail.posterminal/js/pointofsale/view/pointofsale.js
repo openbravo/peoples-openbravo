@@ -126,7 +126,7 @@ enyo.kind({
     return true; // not continue
   },
   changeBusinessPartner: function(inSender, inEvent){
-    this.model.get('order').setBPandBPLoc(inEvent.originator.clickedBp, false, true);
+    this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
     return true;
   },
