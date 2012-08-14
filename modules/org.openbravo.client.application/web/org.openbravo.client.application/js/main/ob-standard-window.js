@@ -151,9 +151,12 @@ isc.OBStandardWindow.addProperties({
           this.view.hide();
           this.processLayout.show();
         } else {
-          if (window.console) {
-            window.console.error('Cannot find class for process in window ' + params.windowId);
-          }
+          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.windowId]), function () {
+            return true;
+          }, {
+            icon: '[SKINIMG]Dialog/error.png',
+            title: OB.I18N.getLabel('OBUIAPP_Error')
+          });
         }
       }
     }
