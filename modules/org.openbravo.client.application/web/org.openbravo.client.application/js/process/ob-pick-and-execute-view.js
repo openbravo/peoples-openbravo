@@ -54,8 +54,15 @@ isc.OBPickAndExecuteView.addProperties({
     function actionClick() {
       if (view.validate()) {
         view.doProcess(this._buttonValue);
+      } else {
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
       }
     }
+
+    this.messageBar = isc.OBMessageBar.create({
+      visibility: 'hidden',
+      view: this
+    });
 
     okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Done'),
@@ -152,7 +159,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.items = [this.viewGrid, isc.HLayout.create({
+    this.items = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
