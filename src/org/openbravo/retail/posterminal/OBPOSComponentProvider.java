@@ -71,8 +71,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "datasource",
-        "data/dal",
+        "datasource", "data/dal",
         "utilities",
         "utilitiesui",
         "arithmetic",
@@ -92,15 +91,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/keypadcoins",
-        "windows/posbuttons", "data/datamaster",
-        "data/dataordersave",
-        "data/dataordertaxes",
-        "data/dataorderdiscount",
-        "components/modalreceipts",
+        "windows/posbuttons", "data/datamaster", "data/dataordersave", "data/dataordertaxes",
+        "data/dataorderdiscount", "components/modalreceipts",
         "components/rendercategory",
         "components/renderproduct",
         "components/searchproducts",
-        "components/tabsearch",
         "components/total",
         "components/modalpayment",
         "components/renderorderline",
@@ -111,8 +106,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/product-browser",
 
         // Point of sale
-        "pointofsale/model/pointofsale-model",
-        "pointofsale/view/pointofsale",
+        "pointofsale/model/pointofsale-model", "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
         "pointofsale/view/toolbar-right",
         "pointofsale/view/scan",
@@ -137,8 +131,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabpostprintclose",
 
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
-        "closecash/windows/tabcountcash", "closecash/windows/tabcashtokeep",
-        "closecash/windows/tabpostprintclose",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
