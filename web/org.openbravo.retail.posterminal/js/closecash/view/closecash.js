@@ -297,13 +297,17 @@ enyo.kind({
 
     this.$.cashUpInfo.setModel(this.model);
 
-    // Pending Orders
+    // Pending Orders - Step 1
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
+    this.model.get('orderlist').on('all', function () {
+      this.$.cashUpInfo.refresh();
+    }, this);
 
+    // Cash count - Step 2
     this.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
     this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
 
-    // Cash Up Report
+    // Cash Up Report - Step 3
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
     this.model.on('change:step change:totalCounted', function (model) {
@@ -320,6 +324,10 @@ enyo.kind({
   },
   changeStep: function (inSender, inEvent) {
     this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+  },
+  countAllOK: function (inSender, inEvent) {
+    this.model.countAll();
+    this.$.cashUpInto.refresh();
   }
 });
 

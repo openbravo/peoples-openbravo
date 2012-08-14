@@ -76,6 +76,7 @@ enyo.kind({
     this.model.set('counted', this.model.get('expected'));
     this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('counted'))));
     this.$.counted.setShowing(true);
+    this.doLineOK({model: this.model}); // add this counted to window model totalCounted
   }
 });
 
