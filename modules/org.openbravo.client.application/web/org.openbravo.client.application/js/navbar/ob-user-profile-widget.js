@@ -285,7 +285,7 @@ isc.OBUserProfile.addProperties({
           }
         }
         this.setWarehouseValueMap();
-        if (item.name !== 'warehouse') {
+        if (item.name !== 'warehouse' && item.name !== 'default') {
           if (this.getItem('warehouse').getClientPickListData().length > 0) {
             this.getItem('warehouse').moveToFirstValue();
           }
