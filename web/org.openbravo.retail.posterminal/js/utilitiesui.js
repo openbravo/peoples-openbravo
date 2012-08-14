@@ -33,9 +33,7 @@ enyo.kind({
     this.inherited(arguments);
     this.applyStyle('height', this.height);
     this.applyStyle('width', this.width);
-    if (!this.img) {
-      this.setImg(this['default']);
-    }
+    this.imgChanged();
   },
 
   imgChanged: function() {
