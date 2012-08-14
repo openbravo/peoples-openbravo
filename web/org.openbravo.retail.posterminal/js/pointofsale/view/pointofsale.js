@@ -140,7 +140,6 @@ enyo.kind({
     return true;
   },
   receiptToInvoice: function(inSender, inEvent) {
-    console.log('Invoice receipt handler');
     this.model.get('order').setOrderInvoice();
     this.model.get('orderList').saveCurrent();
     this.$.receiptview.$.orderview.$.btninvoice.hide();
@@ -168,9 +167,9 @@ enyo.kind({
   exactPayment: function(sender, event) {
     this.$.keyboard.execStatelessCommand('cashexact');
   },
-  changeCurrentOrder: function(sender, event) {
-    this.model.get('orderList').load(event.originator.clickedOrder);
-    return true; // not continue
+  changeCurrentOrder: function(inSender, inEvent) {
+    this.model.get('orderList').load(inEvent.newCurrentOrder);
+    return true;
   },
   removePayment: function(sender, event) {
     if (this.model.get('paymentData') && !confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {

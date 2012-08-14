@@ -55,8 +55,7 @@ enyo.kind({
   receiptsListChanged: function(oldValue) {
     this.$.receiptslistitemprinter.setCollection(this.receiptsList);
     this.receiptsList.on('click', function(model) {
-      this.clickedOrder = model;
-      this.doChangeCurrentOrder();
+      this.doChangeCurrentOrder({newCurrentOrder: model});
     }, this)
   }
 });
