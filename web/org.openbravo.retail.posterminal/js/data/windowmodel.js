@@ -23,12 +23,52 @@ OB.Model.WindowModel = Backbone.Model.extend({
       if (this.init) {
         this.init();
       }
+
       this.trigger('ready');
     }, this);
 
     OB.Model.Util.loadModels(true, this.models, this.data);
 
     //TODO: load offline models when regesitering window
+  },
+
+  setAllOff: function(model) {
+    var p;
+    if (model.off) {
+      console.log('off', model.cid, model);
+      model.off();
+    }
+    if (model.attributes) {
+      for (p in model.attributes) {
+        if (model.attributes.hasOwnProperty(p) && model.attributes[p]) {
+          setAllOff(model);
+        }
+      }
+    }
+  },
+
+  setOff: function() {
+    if (!this.data) {
+      return;
+    }
+    if (this.data) {
+      _.forEach(this.data, function(model) {
+        this.setAllOff(model);
+      }, this);
+    }
+    this.data = null;
+
+    if (this.models) {
+      _.forEach(this.models, function(model) {
+        if (model.off) {
+          model.off();
+        }
+      }, this);
+      if (this.models.off){
+    	  this.models.off();
+      }
+    }
+    this.models = null;
   },
 
   getData: function(dsName) {

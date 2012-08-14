@@ -13,9 +13,12 @@ enyo.kind({
   commands: {},
   buttons: {},
   status: '',
-  state: new Backbone.Model(),
   sideBarEnabled: false,
-
+  destroy: function() {
+    this.buttons = null;
+    this.commands = null;
+    this.inherited(arguments);
+  },
   tag: 'div',
   classes: 'row-fluid',
   components: [{
@@ -214,7 +217,7 @@ enyo.kind({
   setStatus: function(newstatus) {
     var btn = this.buttons[this.status];
 
-    if (btn) {
+    if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
       btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive)
     }
     this.status = newstatus;
@@ -226,7 +229,7 @@ enyo.kind({
 
 
     btn = this.buttons[this.status];
-    if (btn) {
+    if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
       btn.addClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
   },
@@ -335,6 +338,12 @@ enyo.kind({
     var me = this;
 
     this.inherited(arguments);
+    this.state = new Backbone.Model();
+    this.buttons = {};
+
+    this.$.toolbarcontainer.destroyComponents();
+    this.$.keypadcontainer.destroyComponents();
+
     this.showSidepad('sidedisabled');
 
     if (this.sideBarEnabled) {
@@ -432,6 +441,7 @@ enyo.kind({
   },
 
   showToolbar: function(toolbarName) {
+    this.show();
     enyo.forEach(this.$.toolbarcontainer.getComponents(), function(toolbar) {
       if (toolbar.toolbarName === toolbarName) {
         toolbar.show();
@@ -442,7 +452,6 @@ enyo.kind({
         toolbar.hide();
       }
     }, this);
-    this.show();
   },
 
   addCommand: function(cmd, definition) {
