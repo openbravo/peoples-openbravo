@@ -899,7 +899,7 @@ isc.OBViewGrid.addProperties({
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
 
