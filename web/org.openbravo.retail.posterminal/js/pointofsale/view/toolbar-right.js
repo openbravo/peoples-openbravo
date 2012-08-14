@@ -37,7 +37,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    containerCssClass: 'span3',
+    containerCssClass: 'span3'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     containerCssClass: 'span3'
@@ -71,14 +71,14 @@ enyo.kind({
       this.manualTap(this.edit);
     }, this);
 
-    //TODO
-    //Mechanism to search which button are able to print total
-    var totalPrinterComponent;
-    //hardcoded
-    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
-    totalPrinterComponent.renderTotal(this.receipt.getTotal());
+    //some button will draw the total
+    this.waterfall('onChangeTotal', {
+      newTotal: this.receipt.getTotal()
+    });
     this.receipt.on('change:gross', function(model) {
-      totalPrinterComponent.renderTotal(model.getTotal());
+      this.waterfall('onChangeTotal', {
+        newTotal: this.receipt.getTotal()
+      });
     }, this);
   },
   initComponents: function() {
@@ -175,6 +175,9 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: '#payment',
+  handlers: {
+    onChangeTotal: 'renderTotal'
+  },
   events: {
     onTabChange: ''
   },
@@ -201,8 +204,8 @@ enyo.kind({
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  renderTotal: function(total) {
-    this.$.totalPrinter.renderTotal(total);
+  renderTotal: function(sender, event) {
+    this.$.totalPrinter.renderTotal(event.newTotal);
   }
 });
 

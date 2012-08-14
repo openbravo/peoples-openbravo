@@ -60,7 +60,7 @@ enyo.kind({
         style: 'position: relative; padding: 10px;',
         components: [{
           style: 'float: left; width: 80%;',
-          content: 'TOTAL'
+          content: OB.I18N.getLabel('OBPOS_LblTotal')
         }, {
           name: 'totalgross',
           style: 'float: left; width: 20%; text-align:right; font-weight:bold;',
