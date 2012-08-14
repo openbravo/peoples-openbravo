@@ -17,6 +17,7 @@ enyo.kind({
   destroy: function() {
     this.buttons = null;
     this.commands = null;
+    $(window).unbind('keypress');
     this.inherited(arguments);
   },
   tag: 'div',
