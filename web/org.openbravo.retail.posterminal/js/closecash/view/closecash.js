@@ -241,7 +241,8 @@ enyo.kind({
     {
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts'
+        kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
+        name: 'listPendingReceipts'
       }]
     },
     // 1st column: list of count cash per payment method
@@ -249,6 +250,7 @@ enyo.kind({
       classes: 'span6',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
+        name: 'listPaymentMethods',
         showing: false
       }]
     },
@@ -257,6 +259,7 @@ enyo.kind({
       classes: 'span6',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.CashToKeep',
+        name: 'cashToKeep',
         showing: false
       }]
     },
@@ -265,6 +268,7 @@ enyo.kind({
       classes: 'span6',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
+        name: 'postPrintClose',
         showing: false
       }]
     },
@@ -274,13 +278,16 @@ enyo.kind({
       components: [{
         classes: 'span6',
         components: [{
-          kind: 'OB.OBPOSCashUp.UI.CashUpInfo'
+          kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
+          name: 'cashUpInfo'
         }, {
-          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard'
+          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+          name: 'cashUpKeyboard'
         }]
       }]
     }, {
-      kind: 'OB.UI.ModalCancel'
+      kind: 'OB.UI.ModalCancel',
+      name: 'modalCancel'
     }, {
       //  kind: OB.UI.ModalFinishClose
     }]
@@ -293,13 +300,13 @@ enyo.kind({
     // Pending Orders
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
 
-    this.$.listPaymentMethods.setCollection(this.model.getData('DataCloseCashPaymentMethod'));
+    this.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
     this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
 
     // Cash Up Report
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
-    this.model.on('change:step', function (model) {
+    this.model.on('change:step change:totalCounted', function (model) {
       this.refresh();
     }, this);
 

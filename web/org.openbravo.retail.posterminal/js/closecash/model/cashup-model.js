@@ -40,13 +40,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var me = this;
 
     this.set('step', 1);
+
     this.set('orderlist', new OB.Collection.OrderList());
-    this.set('payList', this.getData('DataCloseCashPaymentMethod'));
+    this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
-    this.set('totalExpected', _.reduce(this.get('payList').models, function (total, model) {
+    this.set('totalExpected', _.reduce(this.get('paymentList').models, function (total, model) {
       return OB.DEC.add(total, model.get('expected'));
     }, 0));
+    this.set('totalCounted', 0);
 
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
@@ -58,6 +60,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var step = this.get('step');
 
     if (step === 1 && this.get('orderlist').length === 0) {
+      return true;
+    }
+
+    if (step === 2 && this.get('totalExpected') === this.get('totalCounted')) {
       return true;
     }
 
@@ -78,6 +84,18 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     return this.get('step') === 2;
   },
   showPostPrintClose: function () {
-    return false;
+    return this.get('step') === 3;
+  },
+
+  // Step 2: logic, expected vs counted 
+  countAll: function () {
+    var totalCounted = 0;
+
+    this.get('paymentList').each(function (model) {
+      totalCounted = OB.DEC.add(totalCounted, model.get('expected'));
+      model.set('counted', OB.DEC.add(0, model.get('expected')));
+    });
+
+    this.set('totalCounted', totalCounted);
   }
 });

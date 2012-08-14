@@ -9,30 +9,28 @@
  ************************************************************************************
  */
 
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.ButtonOk',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-  events: {
-    onButtonOk: ''
-  },
-  tap: function () {
-    this.doButtonOk();
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.ButtonEdit',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-orange btnlink-cashup-ok btn-icon-small btn-icon-edit',
-  tap: function () {
-    //FIXME: Use events and handlers
-    this.owner.owner.owner.owner.owner.owner.$.cashUpKeyboard.doCommandFired({
-      key: this.type
-    });
-  }
-});
-
+//enyo.kind({
+//  name: 'OB.OBPOSCashUp.UI.ButtonOk',
+//  kind: 'OB.UI.SmallButton',
+//  classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+//  events: {
+//    onButtonOk: ''
+//  },
+//  tap: function () {
+//    this.doButtonOk();
+//  }
+//});
+//enyo.kind({
+//  name: 'OB.OBPOSCashUp.UI.ButtonEdit',
+//  kind: 'OB.UI.SmallButton',
+//  classes: 'btnlink-orange btnlink-cashup-ok btn-icon-small btn-icon-edit',
+//  tap: function () {
+//    //FIXME: Use events and handlers
+//    this.owner.owner.owner.owner.owner.owner.$.cashUpKeyboard.doCommandFired({
+//      key: this.type
+//    });
+//  }
+//});
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
   components: [{
@@ -47,36 +45,37 @@ enyo.kind({
       style: 'float: left;',
       components: [{
         name: 'buttonEdit',
-        kind: 'OB.OBPOSCashUp.UI.ButtonEdit',
-        type: '',
-        attributes: {
-          'button': 'editbutton'
-        }
+        kind: 'OB.UI.SmallButton',
+        classes: 'btnlink-orange btnlink-cashup-ok btn-icon-small btn-icon-edit',
+        ontap: 'lineEdit'
       }]
     }, {
       style: 'float: left;',
       components: [{
         name: 'buttonOk',
-        kind: 'OB.OBPOSCashUp.UI.ButtonOk',
-        type: '',
-        attributes: {
-          'button': 'okbutton'
-        }
+        kind: 'OB.UI.SmallButton',
+        classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+        ontap: 'lineOK'
       }]
     }, {
       name: 'counted',
-      style: 'display: none;float: left; padding: 10px 0px 10px 10px;'
+      style: 'float: left; padding: 10px 0px 10px 10px;',
+      showing: false
     }]
   }],
   create: function () {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
-    this.$.buttonEdit.type = this.model.get('id');
-    this.$.buttonOk.type = this.model.get('id');
-    //    this.$.counted.setContent(0);
-    //FIXME: Use events and handlers
-    //    this.owner.owner.owner.owner.owner.model.set('totalExpected',OB.DEC.add(this.owner.owner.owner.owner.owner.model.get('totalExpected'),this.model.get('expected')));
+  },
+  lineEdit: function (inSender, inEvent) {
+    this.log('lineEdit');
+  },
+  lineOK: function (inSender, inEvent) {
+    debugger;
+    this.model.set('counted', this.model.get('expected'));
+    this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('counted'))));
+    this.$.counted.setShowing(true);
   }
 });
 
@@ -154,7 +153,8 @@ enyo.kind({
             style: 'padding: 10px 5px 10px 0px; float: left; ',
             components: [{
               name: 'totalLbl',
-              style: 'padding: 10px 20px 10px 10px; float: left; width: 70%; font-weight:bold;'
+              style: 'padding: 10px 20px 10px 10px; float: left; width: 70%; font-weight:bold;',
+              content: OB.I18N.getLabel('OBPOS_ReceiptTotal')
             }, {
               style: 'padding: 10px 20px 10px 0px;  float: right;',
               components: [{
@@ -168,10 +168,6 @@ enyo.kind({
       }]
     }]
   }],
-  create: function () {
-    this.inherited(arguments);
-    this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
-  },
   setCollection: function (col) {
     this.$.paymentsList.setCollection(col);
   }
