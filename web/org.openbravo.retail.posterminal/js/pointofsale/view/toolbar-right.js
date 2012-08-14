@@ -142,6 +142,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.ToolbarButtonTab',
+  events: {
+    onTabChange: ''
+  },
   tabPanel: '#catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function() {
