@@ -62,7 +62,7 @@ enyo.kind({
 
   receiptChanged: function() {
     var totalPrinterComponent;
-    
+
     this.receipt.on('clear scan', function() {
       this.manualTap(this.scan);
     }, this);
@@ -70,14 +70,14 @@ enyo.kind({
     this.receipt.get('lines').on('click', function() {
       this.manualTap(this.edit);
     }, this);
-    
+
     //TODO
     //Mechanism to search which button are able to print total
     var totalPrinterComponent;
     //hardcoded
     totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
     totalPrinterComponent.renderTotal(this.receipt.getTotal());
-    this.receipt.on('change:gross', function (model) {
+    this.receipt.on('change:gross', function(model) {
       totalPrinterComponent.renderTotal(model.getTotal());
     }, this);
   },
@@ -201,7 +201,7 @@ enyo.kind({
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  renderTotal: function(total){
+  renderTotal: function(total) {
     this.$.totalPrinter.renderTotal(total);
   }
 });

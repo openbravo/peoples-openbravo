@@ -88,12 +88,15 @@ enyo.kind({
               }]
             }, {
               style: 'display: table-cell;',
-              components: [{kind: 'OB.UI.buttonFilterBps',
-                ontap: 'searchUsingBpsFilter'}]
+              components: [{
+                kind: 'OB.UI.buttonFilterBps',
+                ontap: 'searchUsingBpsFilter'
+              }]
             }, {
               style: 'display: table-cell;',
-              components: [{kind: 'OB.UI.buttonClearFilterBps',
-              ontap: 'clearBpsFilter'  
+              components: [{
+                kind: 'OB.UI.buttonClearFilterBps',
+                ontap: 'clearBpsFilter'
               }]
             }]
           }]
@@ -114,7 +117,8 @@ enyo.kind({
     return true;
   },
   searchUsingBpsFilter: function(inSender, inEvent) {
-    var me = this, filter = this.$.filterText.getValue();
+    var me = this,
+        filter = this.$.filterText.getValue();
 
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -135,7 +139,7 @@ enyo.kind({
         value: filter
       };
     }
-    
+
     OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;
   },
@@ -144,7 +148,9 @@ enyo.kind({
     this.bpsList = new Backbone.Collection();
     this.$.bpslistitemprinter.setCollection(this.bpsList);
     this.bpsList.on('click', function(model) {
-      this.doChangeBusinessPartner({businessPartner: model});
+      this.doChangeBusinessPartner({
+        businessPartner: model
+      });
     }, this)
   }
 });

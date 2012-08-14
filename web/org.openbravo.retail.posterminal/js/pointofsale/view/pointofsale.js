@@ -81,9 +81,9 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.ModalDeleteReceipt'
-  },{
+  }, {
     kind: 'OB.UI.ModalBusinessPartners'
-  },{
+  }, {
     classes: 'row',
     style: 'margin-bottom: 5px;',
     components: [{
@@ -110,7 +110,7 @@ enyo.kind({
   }],
   addNewOrder: function(inSender, inEvent) {
     this.model.get('orderList').addNewOrder();
-    return true; // not continue
+    return true;
   },
   deleteCurrentOrder: function() {
     if (this.model.get('order').get('id')) {
@@ -118,14 +118,14 @@ enyo.kind({
       OB.Dal.remove(this.model.get('orderList').current, null, null);
     }
     this.model.get('orderList').deleteCurrent();
-    return true; // not continue
+    return true;
   },
   addProductToOrder: function(inSender, inEvent) {
     this.model.get('order').addProduct(inEvent.product);
     this.model.get('orderList').saveCurrent();
-    return true; // not continue
+    return true;
   },
-  changeBusinessPartner: function(inSender, inEvent){
+  changeBusinessPartner: function(inSender, inEvent) {
     this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
     this.model.get('orderList').saveCurrent();
     return true;
