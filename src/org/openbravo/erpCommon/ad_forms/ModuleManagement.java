@@ -2636,6 +2636,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!sources.exists()) {
       throw new OBException(Utility.messageBD(this, "WrongPathError", vars.getLanguage()));
     }
+    //Added to check write access
+    if(!sources.canWrite()) {
+       throw new OBException(Utility.messageBD(this, "NoApplicableModules", vars.getLanguage()));
+    }
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
       modelFiles.add(model);
