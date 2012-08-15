@@ -11,6 +11,9 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
+  events: {
+	onLineEditCount:''  
+  },
   components: [{
     components: [{
       classes: 'row-fluid',
@@ -62,8 +65,8 @@ enyo.kind({
       this.$.buttonOk.hide();
     }
   },
-  lineEdit: function(inSender, inEvent) {
-    this.log('lineEdit');
+  lineEdit: function() {
+    this.doLineEditCount();
   },
   lineOK: function(inSender, inEvent) {
     this.model.set('counted', this.model.get('expected'));

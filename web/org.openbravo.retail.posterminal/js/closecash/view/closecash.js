@@ -17,7 +17,8 @@ enyo.kind({
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
     onChangeStep: 'changeStep',
-    onCountAllOK: 'countAllOK'
+    onCountAllOK: 'countAllOK',
+    onLineEditCount: 'lineEditCount'
   },
   tapRadio: function(inSender, inEvent) {
     //    if (inEvent.originator.name === 'allowvariableamount') {
@@ -338,6 +339,9 @@ enyo.kind({
   countAllOK: function(inSender, inEvent) {
     this.model.countAll();
     this.$.cashUpInfo.refresh();
+  },
+  lineEditCount: function(sender, event) {
+    this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
   }
 });
 
