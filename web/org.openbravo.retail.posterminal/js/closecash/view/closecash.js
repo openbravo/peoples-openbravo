@@ -16,16 +16,17 @@ enyo.kind({
   handlers: {
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
-    onChangeStep: 'changeStep'
+    onChangeStep: 'changeStep',
+    onCountAllOK: 'countAllOK'
   },
-  tapRadio: function (inSender, inEvent) {
+  tapRadio: function(inSender, inEvent) {
     //    if (inEvent.originator.name === 'allowvariableamount') {
     //      //      FIXME: Put focus on the input
     //      //      this.$.cashToKeep.$.variableamount.focus();
     //    }
     this.$.cashUpInfo.$.buttonNext.setDisabled(false);
   },
-  buttonOk: function (inSender, inEvent) {
+  buttonOk: function(inSender, inEvent) {
     //    $('button[button*="allokbutton"]').css('visibility','hidden');
     //    var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
     //    this.options['counted_'+this.options[this._id].rowid].$el.text(OB.I18N.formatCurrency(elem.get('expected')));
@@ -36,7 +37,7 @@ enyo.kind({
     //      this.me.options.closenextbutton.$el.removeAttr('disabled');
     //    }
   },
-  prevStep: function (inSender, inEvent) {
+  prevStep: function(inSender, inEvent) {
     var found = false;
     if (this.model.get('step') === 3 || this.model.get('step') === 2) {
       //Count Cash back from Post, print & Close.
@@ -126,7 +127,7 @@ enyo.kind({
       //    }
     }
   },
-  nextStep: function (inSender, inEvent) {
+  nextStep: function(inSender, inEvent) {
     var found = false;
     if (this.model.get('step') === 0) {
       this.$.listPendingReceipts.hide();
@@ -292,42 +293,48 @@ enyo.kind({
       //  kind: OB.UI.ModalFinishClose
     }]
   }],
-  init: function () {
+  init: function() {
     this.inherited(arguments);
 
     this.$.cashUpInfo.setModel(this.model);
 
     // Pending Orders - Step 1
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
-    this.model.get('orderlist').on('all', function () {
+    this.model.get('orderlist').on('all', function() {
       this.$.cashUpInfo.refresh();
     }, this);
 
     // Cash count - Step 2
     this.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
-    this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
+    this.$.listPaymentMethods.$.total.setTotal(this.model.get('totalExpected'));
+    this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
+
+    this.model.on('change:totalCounted', function() {
+      this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+        this.waterfall('onAnyCounted');
+    }, this);
 
     // Cash Up Report - Step 3
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
-    this.model.on('change:step change:totalCounted', function (model) {
+    this.model.on('change:step change:totalCounted', function(model) {
       this.refresh();
     }, this);
 
     this.refresh();
   },
-  refresh: function () {
+  refresh: function() {
     this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
     this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
     this.$.cashUpInfo.refresh();
   },
-  changeStep: function (inSender, inEvent) {
+  changeStep: function(inSender, inEvent) {
     this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
   },
-  countAllOK: function (inSender, inEvent) {
+  countAllOK: function(inSender, inEvent) {
     this.model.countAll();
-    this.$.cashUpInto.refresh();
+    this.$.cashUpInfo.refresh();
   }
 });
 

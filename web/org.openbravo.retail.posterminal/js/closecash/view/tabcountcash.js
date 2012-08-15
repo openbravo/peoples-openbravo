@@ -9,28 +9,6 @@
  ************************************************************************************
  */
 
-//enyo.kind({
-//  name: 'OB.OBPOSCashUp.UI.ButtonOk',
-//  kind: 'OB.UI.SmallButton',
-//  classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-//  events: {
-//    onButtonOk: ''
-//  },
-//  tap: function () {
-//    this.doButtonOk();
-//  }
-//});
-//enyo.kind({
-//  name: 'OB.OBPOSCashUp.UI.ButtonEdit',
-//  kind: 'OB.UI.SmallButton',
-//  classes: 'btnlink-orange btnlink-cashup-ok btn-icon-small btn-icon-edit',
-//  tap: function () {
-//    //FIXME: Use events and handlers
-//    this.owner.owner.owner.owner.owner.owner.$.cashUpKeyboard.doCommandFired({
-//      key: this.type
-//    });
-//  }
-//});
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
   components: [{
@@ -73,19 +51,22 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
+    //this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('counted'))));
+  },
+  render: function() {
+    this.inherited(arguments);
+    counted = this.model.get('counted');
+    if (counted) {
+      this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
+      this.$.counted.show();
+      this.$.buttonOk.hide();
+    }
   },
   lineEdit: function(inSender, inEvent) {
     this.log('lineEdit');
   },
   lineOK: function(inSender, inEvent) {
-    this.model.set('counted', this.model.get('expected'), {
-      silent: true
-    });
-    this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('counted'))));
-    this.$.counted.setShowing(true);
-    this.doLineOK({
-      model: this.model
-    }); // add this counted to window model totalCounted
+    this.model.set('counted', this.model.get('expected'));
   }
 });
 
@@ -99,6 +80,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   totalChanged: function(oldValue) {
+    console.log('totalC');
     this.setContent(this.total);
     if (OB.DEC.compare(this.total) < 0) {
       this.applyStyle('color', 'red');
@@ -110,6 +92,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
+  handlers: {
+    onAnyCounted: 'anyCounted'
+  },
+  events: {
+    onCountAllOK: ''
+  },
   components: [{
     classes: 'tab-pane',
     components: [{
@@ -168,7 +156,7 @@ enyo.kind({
                       name: 'buttonAllOk',
                       kind: 'OB.UI.SmallButton',
                       classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-                      ontap: 'lineOK'
+                      ontap: 'doCountAllOK'
                     }]
                   }]
                 }]
@@ -189,9 +177,9 @@ enyo.kind({
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal',
                     style: 'font-weight: bold;'
                   }]
-                },{
+                }, {
                   style: 'padding: 17px 10px 17px 10px; float: left; width: 44px'
-                },{
+                }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
                     name: 'diference',
@@ -208,5 +196,9 @@ enyo.kind({
   }],
   setCollection: function(col) {
     this.$.paymentsList.setCollection(col);
+  },
+  anyCounted: function() {
+    this.$.buttonAllOk.applyStyle('visibility','hidden'); //hiding in this way to keep the space
   }
+
 });

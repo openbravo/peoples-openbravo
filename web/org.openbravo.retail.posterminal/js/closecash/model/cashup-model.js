@@ -36,7 +36,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     totalCounted: OB.DEC.Zero,
     totalDifference: OB.DEC.Zero
   },
-  init: function () {
+  init: function() {
     var me = this;
 
     this.set('step', 1);
@@ -45,18 +45,24 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
-    this.set('totalExpected', _.reduce(this.get('paymentList').models, function (total, model) {
+    this.set('totalExpected', _.reduce(this.get('paymentList').models, function(total, model) {
       return OB.DEC.add(total, model.get('expected'));
     }, 0));
     this.set('totalCounted', 0);
 
+    this.get('paymentList').on('change:counted', function() {
+      this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
+        return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
+      }, 0));
+    }, this);
+
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
-    }, function (pendingOrderList) {
+    }, function(pendingOrderList) {
       me.get('orderlist').reset(pendingOrderList.models);
     }, OB.UTIL.showError);
   },
-  allowNext: function () {
+  allowNext: function() {
     var step = this.get('step');
 
     if (step === 1 && this.get('orderlist').length === 0) {
@@ -70,7 +76,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     return false;
   },
-  allowPrevious: function () {
+  allowPrevious: function() {
     var step = this.get('step');
 
     if (step === 1) {
@@ -78,21 +84,20 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }
     return true;
   },
-  showPendingOrdersList: function () {
+  showPendingOrdersList: function() {
     return this.get('step') === 1;
   },
-  showPaymentMethodList: function () {
+  showPaymentMethodList: function() {
     return this.get('step') === 2;
   },
-  showPostPrintClose: function () {
+  showPostPrintClose: function() {
     return this.get('step') === 3;
   },
 
   // Step 2: logic, expected vs counted 
-  countAll: function () {
-    this.get('paymentList').each(function (model) {
+  countAll: function() {
+    this.get('paymentList').each(function(model) {
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
-    this.set('totalCounted', this.get('totalExpected'));
   }
 });
