@@ -11,11 +11,14 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+  published: {
+    payments: null
+  },
   kind: 'OB.UI.Keyboard',
-  getPayment: function (modalpayment, receipt, key, name, provider) {
+  getPayment: function(modalpayment, receipt, key, name, provider) {
     return {
       permission: key,
-      action: function (key) {
+      action: function(key) {
         //        var providerview = OB.POS.paymentProviders[provider];
         //        if (providerview) {
         //          modalpayment.show(receipt, key, name, providerview, OB.DEC.number(OB.I18N.parseNumber(txt)));
@@ -43,8 +46,7 @@ enyo.kind({
     };
   },
 
-  init: function () {
-    var buttons = [];
+  init: function() {
     this.inherited(arguments);
     _.bind(this.getPayment, this);
 
@@ -55,27 +57,6 @@ enyo.kind({
     //    $('body').append(this.modalpayment.$el);
     //    payments = OB.POS.modelterminal.get('payments');
     //
-    this.owner.model.getData('DataCloseCashPaymentMethod').each(function (payment) {
-      buttons.push({
-        command: payment.id,
-        definition: this.getPayment(this.modalpayment, this.receipt, payment.searchKey, payment._identifier, payment.provider),
-        label: payment.get('name')
-      });
-    }, this);
-    this.addToolbar({
-      name: 'toolbarcountcash',
-      buttons: buttons
-    });
-    //    this.addToolbar('toolbarempty', {
-    //    toolbarempty: [
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}},
-    //                   {command:'---', label: {kind: B.KindHTML('<span>&nbsp;</span>')}}
-    //                 ]
-    //     });
     this.addToolbar({
       name: 'toolbarempty',
       buttons: []
@@ -92,5 +73,20 @@ enyo.kind({
     //    this.addToolbar('toolbarcountcash', this.toolbar);
     //    this.addToolbar([]);
     //    this.show('toolbarempty');
+  },
+  paymentsChanged: function() {
+    var buttons = [];
+    this.payments.each(function(payment) {
+      buttons.push({
+        command: payment.id,
+        definition: this.getPayment(this.modalpayment, this.receipt, payment.searchKey, payment._identifier, payment.provider),
+        label: payment.get('name')
+      });
+    }, this);
+    this.addToolbar({
+      name: 'toolbarcountcash',
+      buttons: buttons
+    });
   }
+
 });

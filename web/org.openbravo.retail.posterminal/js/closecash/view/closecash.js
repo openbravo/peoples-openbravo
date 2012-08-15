@@ -308,10 +308,11 @@ enyo.kind({
     this.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
     this.$.listPaymentMethods.$.total.setTotal(this.model.get('totalExpected'));
     this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
+    this.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
 
     this.model.on('change:totalCounted', function() {
       this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
-        this.waterfall('onAnyCounted');
+      this.waterfall('onAnyCounted');
     }, this);
 
     // Cash Up Report - Step 3
@@ -327,6 +328,8 @@ enyo.kind({
     this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
     this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
+    this.$.cashUpKeyboard.showToolbar(this.model.showPaymentMethodList() ? 'toolbarcountcash' : 'toolbarempty');
+
     this.$.cashUpInfo.refresh();
   },
   changeStep: function(inSender, inEvent) {
