@@ -54,7 +54,6 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
-    //this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('counted'))));
   },
   render: function() {
     this.inherited(arguments);

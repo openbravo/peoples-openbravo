@@ -69,7 +69,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       return true;
     }
 
-    if (step === 2 && this.get('totalExpected') === this.get('totalCounted')) {
+    if (step === 2 && this.isAllCounted()) {
       //TODO: review logic
       return true;
     }
@@ -99,5 +99,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     this.get('paymentList').each(function(model) {
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
+  },
+
+  isAllCounted: function() {
+    return _.reduce(this.get('paymentList').models, function(allCounted, model) {
+      return allCounted && model.get('counted');
+    }, true);
   }
 });
