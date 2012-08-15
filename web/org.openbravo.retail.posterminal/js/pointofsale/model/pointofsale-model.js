@@ -75,7 +75,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   init: function() {
     var receipt = new OB.Model.Order(),
-        discounts, ordersave, taxes, orderList;
+        discounts, ordersave, taxes, orderList, hwManager;
     this.set('order', receipt);
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
@@ -94,6 +94,29 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         orderList.deleteCurrent();
       });
     }, this);
+
+    // Printing: TODO: refactor this when HW Manager is changed
+    hwManager = new OB.COMP.HWManager({});
+    hwManager.templateline = new OB.COMP.HWResource('res/printline.xml');
+    hwManager.templatereceipt = new OB.COMP.HWResource('res/printreceipt.xml');
+    hwManager.templateinvoice = new OB.COMP.HWResource('res/printinvoice.xml');
+    hwManager.templatereturn = new OB.COMP.HWResource('res/printreturn.xml');
+    hwManager.templatereturninvoice = new OB.COMP.HWResource('res/printreturninvoice.xml');
+    hwManager.receipt = receipt;
+
+    hwManager.line = null;
+    receipt.get('lines').on('selected', function(line) {
+      if (hwManager.line) {
+        hwManager.line.off('change', hwManager.printLine);
+      }
+      hwManager.line = line;
+      if (hwManager.line) {
+        hwManager.line.on('change', hwManager.printLine);
+      }
+      hwManager.printLine();
+    }, this);
+
+    receipt.on('closed print', hwManager.printOrder, hwManager);
 
   }
 });
