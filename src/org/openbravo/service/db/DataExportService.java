@@ -38,6 +38,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.DataSet;
@@ -188,7 +189,9 @@ public class DataExportService implements OBSingleton {
     final StringWriter out = new StringWriter();
     exc.setOutput(out);
 
-    final List<DataSetTable> dts = dataSet.getDataSetTableList();
+    // used to filter out the inactive rows
+    final OBQuery<DataSetTable> datasetTable = OBDal.getInstance().createQuery(DataSetTable.class, "dataset='"+dataSet.getId()+"'");
+    final List<DataSetTable> dts = datasetTable.list();
     Collections.sort(dts, new DatasetTableComparator());
 
     // set the Client ID if not set
