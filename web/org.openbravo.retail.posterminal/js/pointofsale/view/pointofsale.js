@@ -17,8 +17,8 @@ enyo.kind({
   tag: 'section',
   handlers: {
     onAddProduct: 'addProductToOrder',
-    onInvoiceReceipt: 'receiptToInvoice',
-    onShowInvoiceButton: 'showInvoiceButton',
+    onCancelReceiptToInvoice: 'cancelReceiptToInvoice',
+    onReceiptToInvoice: 'receiptToInvoice',
     onShowReturnText: 'showReturnText',
     onAddNewOrder: 'addNewOrder',
     onDeleteOrder: 'deleteCurrentOrder',
@@ -80,8 +80,9 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  showInvoiceButton: function() {
-    this.$.receiptview.$.orderview.$.btninvoice.show();
+  receiptToInvoice: function() {
+    this.model.get('order').setOrderInvoice();
+    this.model.get('orderList').saveCurrent();
     return true;
   },
   showReturnText: function(inSender, inEvent) {
@@ -89,10 +90,9 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
-  receiptToInvoice: function(inSender, inEvent) {
-    this.model.get('order').setOrderInvoice();
+  cancelReceiptToInvoice: function(inSender, inEvent) {
+    this.model.get('order').resetOrderInvoice();
     this.model.get('orderList').saveCurrent();
-    this.$.receiptview.$.orderview.$.btninvoice.hide();
     return true;
   },
   tabChange: function(sender, event) {

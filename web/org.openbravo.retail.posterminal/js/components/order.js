@@ -13,13 +13,13 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BtnReceiptToInvoice',
   events: {
-    onInvoiceReceipt: ''
+    onCancelReceiptToInvoice: ''
   },
   tag: 'button',
   style: 'width: 50px;',
   classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
   tap: function() {
-    this.doInvoiceReceipt();
+    this.doCancelReceiptToInvoice();
   }
 });
 
@@ -73,12 +73,14 @@ enyo.kind({
       components: [{
         style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
         components: [{
-          kind: 'btninvoice'
+          kind: 'btninvoice',
+          name: 'divbtninvoice',
+          showing: false
         }, {
           name: 'divreturn',
           showing: false,
           style: 'float: right; width: 50%; text-align: right; font-weight:bold; font-size: 30px; color: #f8941d;',
-          content: 'To be returned'
+          content: OB.I18N.getLabel('OBPOS_ToBeReturned')
         }, {
           style: 'clear: both;'
         }]
@@ -102,6 +104,13 @@ enyo.kind({
         this.$.divreturn.show();
       } else {
         this.$.divreturn.hide();
+      }
+    }, this);
+    this.order.on('change:generateInvoice', function(model) {
+      if (model.get('generateInvoice')) {
+        this.$.divbtninvoice.show();
+      } else {
+        this.$.divbtninvoice.hide();
       }
     }, this);
   }

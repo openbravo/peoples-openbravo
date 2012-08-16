@@ -66,11 +66,11 @@ enyo.kind({
   name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.MenuAction',
   events: {
-    onShowInvoiceButton: ''
+    onReceiptToInvoice: ''
   },
   label: OB.I18N.getLabel('OBPOS_LblInvoice'),
   tap: function() {
-    this.doShowInvoiceButton();
+    this.doReceiptToInvoice();
   }
 });
 
