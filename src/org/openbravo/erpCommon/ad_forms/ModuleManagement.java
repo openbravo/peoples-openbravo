@@ -49,6 +49,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -82,7 +83,6 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -2606,7 +2606,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Checks if there are local changes in the application
    */
-  private boolean verifyLocalChanges(VariablesSecureApp vars){
+  private boolean verifyLocalChanges(VariablesSecureApp vars) {
     long t1 = System.currentTimeMillis();
     Connection connection = OBDal.getInstance().getConnection();
     PreparedStatement ps = null;
@@ -2632,10 +2632,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     File sources = new File(sourcePath);
-    //Added file exists condition to check invalid source path
-    if(!sources.exists()
-    {
-      throw new OBException(Utility.messageBD(this,"WrongPathError",vars.getLanguage()));
+    // Added file exists condition to check invalid source path
+    if (!sources.exists()) {
+      throw new OBException(Utility.messageBD(this, "WrongPathError", vars.getLanguage()));
     }
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
