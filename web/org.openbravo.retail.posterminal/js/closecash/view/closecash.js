@@ -316,25 +316,60 @@ enyo.kind({
       this.waterfall('onAnyCounted');
     }, this);
 
-    // Cash Up Report - Step 3
+    // Cash to keep - Step 3.
+    debugger;
+    this.$.cashToKeep.setPaymentMethods(this.model.get('paymentList'));
+    this.model.on('change:stepOfStep3', function(model) {
+      debugger;
+      this.waterfall('onStepOfStep3Changed', 
+          {currentStepOfStep3: this.model.get('stepOfStep3')});
+      this.refresh();
+    }, this);
+    
+    
+    // Cash Up Report - Step 4
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
     this.model.on('change:step change:totalCounted', function(model) {
       this.refresh();
     }, this);
+    
+    
 
     this.refresh();
   },
   refresh: function() {
     this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
     this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
+    this.$.cashToKeep.setShowing(this.model.showCashToKeep());
     this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
     this.$.cashUpKeyboard.showToolbar(this.model.showPaymentMethodList() ? 'toolbarcountcash' : 'toolbarempty');
 
     this.$.cashUpInfo.refresh();
   },
   changeStep: function(inSender, inEvent) {
-    this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+    var nextStep;
+    if(this.model.get('step') !== 3){
+      this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+      //if the new step is 3 we should set the substep number
+      if (this.model.get('step') === 3){
+        if(inEvent.originator.stepCount > 0){
+          //we come from step 2
+          this.model.set('stepOfStep3', 0);
+        } else {
+          //we come from step 4
+          this.model.set('stepOfStep3', this.model.get('paymentList').length - 1);
+        }
+      }
+    } else {
+      nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
+      //if the new step is 3 we should set the substep number
+      if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1){
+        this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+      } else {
+        this.model.set('stepOfStep3', nextStep);  
+      }
+    }
   },
   countAllOK: function(inSender, inEvent) {
     this.model.countAll();

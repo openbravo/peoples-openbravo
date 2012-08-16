@@ -22,6 +22,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeep',
+  handlers: {
+    onStepOfStep3Changed: 'changeCurrentKeep'
+  },
+  published: {
+    paymentMethods: null
+  },
   components: [{
     classes: 'tab-pane',
     components: [{
@@ -33,9 +39,11 @@ enyo.kind({
           components: [{
             classes: 'span12',
             components: [{
-              //FIXME: Remove
-              id: 'cashtokeepheader',
-              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'
+              name: 'cashtokeepheader',
+              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+              renderHeader: function(value){
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]));
+              }
             }]
           }]
         }, {
@@ -74,5 +82,13 @@ enyo.kind({
         }]
       }]
     }]
-  }]
+  }],
+  currentKeep: 0,
+  paymentMethodsChanged: function(oldValue){
+    this.$.cashtokeepheader.renderHeader(this.paymentMethods.at(this.currentKeep).get('name'));
+  },
+  changeCurrentKeep: function(inSender, inEvent){
+    this.currentKeep = inEvent.currentStepOfStep3;
+    this.$.cashtokeepheader.renderHeader(this.paymentMethods.at(this.currentKeep).get('name'));
+  }
 });

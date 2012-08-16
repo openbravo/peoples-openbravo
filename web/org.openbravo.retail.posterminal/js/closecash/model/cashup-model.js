@@ -40,6 +40,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var me = this;
 
     this.set('step', 1);
+    this.set('stepOfStep3', 0);
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
@@ -73,6 +74,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       //TODO: review logic
       return true;
     }
+    
+    //if (step === 3 && this.get('paymentList').at(this.get('stepOfStep3')).get('kept')) {
+    if (step===3){
+    //TODO: review logic
+      return true;
+    }
 
     return false;
   },
@@ -90,8 +97,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   showPaymentMethodList: function() {
     return this.get('step') === 2;
   },
-  showPostPrintClose: function() {
+  showCashToKeep: function() {
     return this.get('step') === 3;
+  },
+  showPostPrintClose: function() {
+    return this.get('step') === 4;
   },
 
   // Step 2: logic, expected vs counted 
