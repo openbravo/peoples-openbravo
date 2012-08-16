@@ -2240,6 +2240,7 @@ isc.OBViewGrid.addProperties({
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
+    var previousExplicitOffline;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -2274,7 +2275,10 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    previousExplicitOffline = isc.Offline.explicitOffline;
+    isc.Offline.explicitOffline = false;
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
+    isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
   },

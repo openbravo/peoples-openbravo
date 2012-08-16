@@ -1396,6 +1396,11 @@ OB.ViewFormProperties = {
           localRecord, status = resp.status,
           sessionProperties;
 
+      if (this.hasOwnProperty('previousExplicitOffline')) {
+        isc.Offline.explicitOffline = this.previousExplicitOffline;
+        delete this.previousExplicitOffline;
+      }
+
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
         var id = form.getValue('id');
@@ -1530,6 +1535,8 @@ OB.ViewFormProperties = {
       if (!form.validateForm()) {
         return;
       }
+      this.previousExplicitOffline = isc.Offline.explicitOffline;
+      isc.Offline.explicitOffline = false;
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,
