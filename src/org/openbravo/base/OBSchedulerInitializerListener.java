@@ -10,11 +10,16 @@ import static org.openbravo.base.ConfigParameters.CONFIG_ATTRIBUTE;
 import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUTE;
 import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -109,10 +114,34 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       log.info("Storing ConfigParameters and ConnectionProvider in " + "Scheduler Context.");
       scheduler.getContext().put(POOL_ATTRIBUTE, servletContext.getAttribute(POOL_ATTRIBUTE));
       scheduler.getContext().put(CONFIG_ATTRIBUTE, servletContext.getAttribute(CONFIG_ATTRIBUTE));
-
       log.info("Initalizing singleton instance of " + OBScheduler.class.getName());
       OBScheduler.getInstance().initialize(scheduler);
 
+      // Update Interrupted Process Instance's End time with current time.
+      try {
+        String dburl = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("bbdd.url");
+        String database = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("bbdd.sid");
+        String systemUser = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("bbdd.systemUser");
+        String systemPassword = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("bbdd.systemPassword");
+        Class.forName("org.postgresql.Driver");
+        Connection connection = DriverManager.getConnection(dburl + "/" + database, systemUser,
+            systemPassword);
+        if (connection != null) {
+          Statement s = connection.createStatement();
+          String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
+          int executeUpdate = s.executeUpdate(query);
+          log.info("Number of rows updated" + executeUpdate);
+        } else {
+          System.out.println("Connection Failed!");
+        }
+
+      } catch (Exception e) {
+        log.error("Error updating Process Instance " + e.toString(), e);
+      }
     } catch (final Exception e) {
       log.error("Quartz Scheduler failed to initialize: " + e.toString(), e);
     }
