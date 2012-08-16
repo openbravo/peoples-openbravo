@@ -73,5 +73,12 @@ enyo.kind({
   refresh: function () {
     this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
     this.$.btnNext.setDisabled(!this.model.allowNext());
+    //Sometimes the button is shown with over css class.
+    if(this.$.btnNext.hasClass('btn-over')){
+      this.$.btnNext.removeClass('btn-over');
+    }
+    if(this.$.btnPrevious.hasClass('btn-over')){
+      this.$.btnPrevious.removeClass('btn-over');
+    }
   }
 });
