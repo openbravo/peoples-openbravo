@@ -2643,6 +2643,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
       modelFiles.add(model);
+    } else {
+      throw new OBException(Utility.messageBD(this,"WrongPathError",vars.getLanguage()));
     }
     for (File moduleFile : (new File(sources, "modules").listFiles())) {
       File mmodel = new File(moduleFile, "src-db/database/model/tables");
