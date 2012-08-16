@@ -198,11 +198,13 @@ public class DataExportService implements OBSingleton {
 
     final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
     for (final DataSetTable dt : dts) {
-      final Boolean isbo = dt.isBusinessObject();
-      exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
-      final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
-          moduleId, parameters);
-      toExport.addAll(list);
+      if(dt.isActive()) {
+        final Boolean isbo = dt.isBusinessObject();
+        exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
+        final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
+            moduleId, parameters);
+        toExport.addAll(list);
+      }
     }
 
     if (toExport.size() > 0) {
