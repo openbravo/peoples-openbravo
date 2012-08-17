@@ -11,7 +11,6 @@ import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUT
 import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 
 import javax.servlet.ServletContext;
@@ -19,7 +18,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -119,22 +118,13 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
       // Update Interrupted Process Instance's End time with current time.
       try {
-        String dburl = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("bbdd.url");
-        String database = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("bbdd.sid");
-        String systemUser = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("bbdd.systemUser");
-        String systemPassword = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("bbdd.systemPassword");
-        Class.forName("org.postgresql.Driver");
-        Connection connection = DriverManager.getConnection(dburl + "/" + database, systemUser,
-            systemPassword);
+        Connection connection = OBDal.getInstance().getConnection();
         if (connection != null) {
           Statement s = connection.createStatement();
           String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE END_TIME IS NULL";
-          int executeUpdate = s.executeUpdate(query);
-          log.info("Number of rows updated" + executeUpdate);
+          s.executeUpdate(query);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getConnection().commit();
         } else {
           System.out.println("Connection Failed!");
         }
