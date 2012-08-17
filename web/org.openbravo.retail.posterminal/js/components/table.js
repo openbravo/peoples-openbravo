@@ -36,20 +36,22 @@ enyo.kind({
 
   collectionChanged: function(oldCollection) {
     var int = 0;
+    this.destroyComponents();
     if (!this.collection) { // set to null ?
       return;
     }
-    
+
     for ( int ; int < this.collection.length; int++) {
       this._addModelToCollection(this.collection[int]);
     }
+    this.render();
   },
   _addModelToCollection: function(model, index) {
     var tr = this.createComponent({
       kind: this.renderLine,
       model: model,
       lblProperty: this.lblProperty,
-      qtyProperty: this.qtyProperty,
+      qtyProperty: this.qtyProperty
     });
     tr.render();
 

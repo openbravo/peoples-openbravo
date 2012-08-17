@@ -65,7 +65,7 @@ enyo.kind({
     this.value = value;
     this.render();
   },
-  render: function(){
+  render: function() {
     this.$.totalLbl.setContent(this.label);
     this.$.totalQty.setContent(this.value);
   },
@@ -113,15 +113,15 @@ enyo.kind({
     this.value = value;
     this.render();
   },
-  render: function(){
+  render: function() {
     this.$.itemLbl.setContent(this.label);
     this.$.itemQty.setContent(this.value);
   },
   create: function() {
     this.inherited(arguments);
-    if (this.model){
+    if (this.model) {
       this.label = this.model[this.lblProperty];
-      this.value = this.model[this.qtyProperty];  
+      this.value = this.model[this.qtyProperty];
     }
   }
 });
@@ -206,7 +206,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
-  components:[{
+  components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'drops',
     lblProperty: 'description',
@@ -227,7 +227,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
-  components:[{
+  components: [{
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'deposits',
     lblProperty: 'description',
@@ -245,12 +245,78 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'expectedPerPayment',
+    lblProperty: 'name',
+    qtyProperty: 'value'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalexpected',
+    label: OB.I18N.getLabel('OBPOS_LblTotalExpected')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.expectedPerPayment.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'differencePerPayment',
+    lblProperty: 'name',
+    qtyProperty: 'value'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totaldifference',
+    label: OB.I18N.getLabel('OBPOS_LblTotalDifference')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.differencePerPayment.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'countedPerPayment',
+    lblProperty: 'name',
+    qtyProperty: 'value'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalcounted',
+    label: OB.I18N.getLabel('OBPOS_LblTotalCounted')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.countedPerPayment.setCollection(col);
+  }
+});
+
+
+
 
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.PostPrintClose',
   published: {
-    model: null
+    model: null,
+    summary: null
   },
   classes: 'tab-pane',
   components: [{
@@ -302,12 +368,11 @@ enyo.kind({
                 components: [{
                   kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
                   name: 'sales'
-                },
-                {
-                    kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
-                    name: 'returns'
                 }, {
-                  kind:'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+                  kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+                  name: 'returns'
+                }, {
+                  kind: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
                   name: 'totaltransactions'
                 }]
               }]
@@ -322,9 +387,18 @@ enyo.kind({
         components: [{
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
           name: 'dropsTable'
-        },{
+        }, {
           kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
           name: 'depositsTable'
+        },{
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
+          name: 'expectedTable'
+        },{
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
+          name: 'countedTable'
+        },{
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
+          name: 'differenceTable'
         }]
       }, {
         classes: 'row-fluid',
@@ -363,8 +437,18 @@ enyo.kind({
     // this.parent is the DOM object on top of the list (usually a DIV)
     //    this.$.paymentsList.setCollection( this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
-  modelChanged: function() {
+  summaryChanged: function(){
     debugger;
+    this.$.expectedTable.setCollection(this.summary.expectedSummary);
+    this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
+    
+    this.$.countedTable.setCollection(this.summary.countedSummary);
+    this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
+    
+    this.$.differenceTable.setCollection(this.summary.differenceSummary);
+    this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
+  },
+  modelChanged: function() {  
     this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('netsales', this.model.get('netSales'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
@@ -372,20 +456,13 @@ enyo.kind({
     this.$.returns.setCollection(this.model.get('returnsTaxes'));
     this.$.returns.setValue('netreturns', this.model.get('netReturns'));
     this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
-    
-    this.$.totaltransactions.setValue('totaltransactionsline',this.model.get('totalRetailTransactions'));
-    
+
+    this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
+
     this.$.dropsTable.setCollection(this.model.get('drops'));
     this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
-    
+
     this.$.depositsTable.setCollection(this.model.get('deposits'));
     this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
-    //this.$.netSalesAmount.setContent(OB.I18N.formatCurrency(this.model.get('netSales')));
-    //FIXME: Include taxes
-    //this.$.grossSales.setContent(OB.I18N.formatCurrency(this.model.get('grossSales')));
-    //this.$.netReturns.setContent(OB.I18N.formatCurrency(this.model.get('netReturns')));
-    //FIXME: Include taxes
-    //this.$.grossReturns.setContent(OB.I18N.formatCurrency(this.model.get('grossReturns')));
-    //this.$.totalRetailTransacntions.setContent(OB.I18N.formatCurrency(this.model.get('totalRetailTransactions')));
   }
 });

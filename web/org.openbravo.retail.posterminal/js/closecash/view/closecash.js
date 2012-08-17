@@ -294,25 +294,33 @@ enyo.kind({
 
     this.model.on('change:totalCounted', function() {
       this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.waterfall('onAnyCounted');
     }, this);
-
-    // Cash to keep - Step 3.
-    this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-    this.model.on('change:stepOfStep3', function(model) {
-      this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-      this.refresh();
-    }, this);
-
-
-    // Cash Up Report - Step 4
-    this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
     this.model.on('change:step change:totalCounted', function(model) {
       this.refresh();
     }, this);
 
+    // Cash to keep - Step 3.
+    this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+    
+    this.model.on('change:stepOfStep3', function(model) {
+      this.$.cashToKeep.disableSelection();
+      this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+      this.refresh();
+    }, this);
 
+    // Cash Up Report - Step 4
+    //this data doesn't changes
+    this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
+
+    //This data changed when money is counted
+    //difference is calculated after counted
+    this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
+    this.model.on('change:totalDifference', function(model) {
+      this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
+    }, this);
 
     this.refresh();
   },
@@ -336,7 +344,10 @@ enyo.kind({
           this.model.set('stepOfStep3', 0);
         } else {
           //we come from step 4
+          //because the last stepOfStep3 was the same that im setting the event is not raised
           this.model.set('stepOfStep3', this.model.get('paymentList').length - 1);
+          //raise the event
+          this.model.trigger("change:stepOfStep3");
         }
       }
     } else {

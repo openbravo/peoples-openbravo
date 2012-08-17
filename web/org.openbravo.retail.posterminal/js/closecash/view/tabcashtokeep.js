@@ -106,9 +106,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeep',
-  handlers: {
-    onStepOfStep3Changed: 'changeCurrentKeep'
-  },
   published: {
     paymentToKeep: null
   },
@@ -133,14 +130,16 @@ enyo.kind({
         }, {
           kind: 'OB.OBPOSCashUp.UI.KeepDetails',
           name: 'formkeep',
-          renderBody: function(modelToDraw){
-            var paymentMethod = modelToDraw.get('paymentMethod');
+          disableControls: function(){
             //remove selected RButtons
             //reset UI and model.
             $('#' + this.getId()).find('button').removeClass('active');
             this.$.variableInput.setValue('');
             this.doResetQtyToKeep({qtyToKeep: null});
-            
+          },
+          renderBody: function(modelToDraw){
+            var paymentMethod = modelToDraw.get('paymentMethod');
+            this.disableControls();
             //draw
             this.$.keepfixedamount.setShowing(paymentMethod.keepfixedamount);
             if(paymentMethod.keepfixedamount){
@@ -166,8 +165,11 @@ enyo.kind({
       }]
     }]
   }],
-  paymentToKeepChanged: function(oldValue){
+  paymentToKeepChanged: function(model){
     this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
     this.$.formkeep.renderBody(this.paymentToKeep);
+  },
+  disableSelection: function(){
+    this.$.formkeep.disableControls();
   }
 });

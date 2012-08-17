@@ -45,14 +45,18 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
+    //add counted and difference
+    this.initPaymentList();
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
     this.set('totalExpected', _.reduce(this.get('paymentList').models, function(total, model) {
       return OB.DEC.add(total, model.get('expected'));
     }, 0));
+    this.set('totalDifference', OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected')));
     this.set('totalCounted', 0);
 
-    this.get('paymentList').on('change:counted', function() {
+    this.get('paymentList').on('change:counted', function(mod) {
+      mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
       }, 0));
@@ -92,35 +96,35 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }
     return true;
   },
-  isValidCashKeep: function(){
+  isValidCashKeep: function() {
     var unfd;
-    if(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && 
-        this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null){
-      if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))){
-        if(this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')){
+    if (this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null) {
+      if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))) {
+        if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
           return true;
         }
       }
     }
     return false;
   },
-  validateCashKeep: function(qty){
-    var unfd, result = {result:false, message:''};
-    if (qty !== unfd && 
-        qty !== null && 
-        $.isNumeric(qty)){
-      if(this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= qty){
-        result.result=true;
+  validateCashKeep: function(qty) {
+    var unfd, result = {
+      result: false,
+      message: ''
+    };
+    if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
+      if (this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= qty) {
+        result.result = true;
         result.message = '';
-      }else{
-        result.result=false;
-        result.message = OB.I18N.getLabel('OBPOS_MsgMoreThanCounted');        
+      } else {
+        result.result = false;
+        result.message = OB.I18N.getLabel('OBPOS_MsgMoreThanCounted');
       }
-    }else{
-      result.result=false;
+    } else {
+      result.result = false;
       result.message = 'Not valid number to keep';
     }
-    if(!result.result){
+    if (!result.result) {
       this.get('paymentList').at(this.get('stepOfStep3')).set('qtyToKeep', null);
     }
     return result;
@@ -144,10 +148,44 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
   },
-
   isAllCounted: function() {
     return _.reduce(this.get('paymentList').models, function(allCounted, model) {
       return allCounted && model.get('counted');
     }, true);
+  },
+  initPaymentList: function() {
+    var undf;
+    _.each(this.get('paymentList').models, function(curModel) {
+      if (curModel.get('counted') === undf && curModel.get('difference') === undf) {
+        curModel.set('counted', 0, {
+          silent: true
+        });
+        curModel.set('difference', OB.DEC.sub(0, curModel.get('expected')), {
+          silent: true
+        });
+      }
+    }, this);
+  },
+  getCountCashSummary: function() {
+    var countCashSummary, counter, enumConcepts, enumSummarys;
+    countCashSummary = {
+      expectedSummary: [],
+      countedSummary: [],
+      differenceSummary: [],
+      totalCounted: this.get('totalCounted') ,
+      totalExpected: this.get('totalExpected'),
+      totalDifference: this.get('totalDifference')
+    };
+    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary'];
+    enumConcepts = ['expected', 'counted', 'difference'];
+    for (counter = 0; counter < 3; counter++) {
+      _.each(this.get('paymentList').models, function(curModel) {
+        countCashSummary[enumSummarys[counter]].push({
+          name: curModel.get('name'),
+          value: curModel.get(enumConcepts[counter])
+        });
+      }, this);
+    }
+    return countCashSummary;
   }
 });
