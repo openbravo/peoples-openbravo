@@ -69,6 +69,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISCOSTCALCULATED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_COMMISSIONDETAIL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -88,5 +92,6 @@
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <check name="C_COMMISSIONDET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_COMMISSIONDET_ISCOSTCALC"><![CDATA[ISCOSTCALCULATED IN ('Y', 'N')]]></check>
     </table>
   </database>
