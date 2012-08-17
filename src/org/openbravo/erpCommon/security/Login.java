@@ -266,11 +266,17 @@ public class Login extends HttpBaseServlet {
       showForgeLogo = !ActivationKey.getInstance().isActive()
           || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
-      if (!itLink.isEmpty() && !StringUtils.startsWithIgnoreCase(itLink, "http")) {
+      if (!itLink.isEmpty()
+          && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
+              || StringUtils.startsWithIgnoreCase(itLink, "https://") || StringUtils
+                .startsWithIgnoreCase(itLink, "ftp://"))) {
         itLink = "http://" + itLink;
       }
       companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
-      if (!companyLink.isEmpty() && !StringUtils.startsWithIgnoreCase(companyLink, "http")) {
+      if (!companyLink.isEmpty()
+          && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
+              || StringUtils.startsWithIgnoreCase(companyLink, "https://") || StringUtils
+                .startsWithIgnoreCase(companyLink, "ftp://"))) {
         companyLink = "http://" + companyLink;
       }
     }
