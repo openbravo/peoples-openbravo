@@ -40,6 +40,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     var me = this;
 
     this.set('step', 1);
+    //Because step 3 is divided in several steps.
     this.set('stepOfStep3', 0);
 
     this.set('orderlist', new OB.Collection.OrderList());
@@ -64,7 +65,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }, OB.UTIL.showError);
   },
   allowNext: function() {
-    var step = this.get('step');
+    var step = this.get('step'),
+        unfd;
 
     if (step === 1 && this.get('orderlist').length === 0) {
       return true;
@@ -74,10 +76,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       //TODO: review logic
       return true;
     }
-    
-    //if (step === 3 && this.get('paymentList').at(this.get('stepOfStep3')).get('kept')) {
-    if (step===3){
-    //TODO: review logic
+
+    if (step === 3 && this.isValidCashKeep()) {
+      //TODO: review logic
       return true;
     }
 
@@ -90,6 +91,39 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       return false;
     }
     return true;
+  },
+  isValidCashKeep: function(){
+    var unfd;
+    if(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && 
+        this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null){
+      if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))){
+        if(this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')){
+          return true;
+        }
+      }
+    }
+    return false;
+  },
+  validateCashKeep: function(qty){
+    var unfd, result = {result:false, message:''};
+    if (qty !== unfd && 
+        qty !== null && 
+        $.isNumeric(qty)){
+      if(this.get('paymentList').at(this.get('stepOfStep3')).get('counted') >= qty){
+        result.result=true;
+        result.message = '';
+      }else{
+        result.result=false;
+        result.message = OB.I18N.getLabel('OBPOS_MsgMoreThanCounted');        
+      }
+    }else{
+      result.result=false;
+      result.message = 'Not valid number to keep';
+    }
+    if(!result.result){
+      this.get('paymentList').at(this.get('stepOfStep3')).set('qtyToKeep', null);
+    }
+    return result;
   },
   showPendingOrdersList: function() {
     return this.get('step') === 1;

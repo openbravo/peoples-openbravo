@@ -12,11 +12,95 @@
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
   kind: 'OB.UI.RadioButton',
+  style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
+  components: [{
+    name: 'lbl'
+  }],
   events: {
-    onTapRadio: ''
+    onPaymentMethodKept: ''
   },
   tap: function () {
-    this.doTapRadio();
+    this.doPaymentMethodKept({qtyToKeep: this.qtyToKeep});
+  },
+  render: function(content){
+    this.$.lbl.setContent(content);
+  },
+  setQtyToKeep: function(qty){
+    this.qtyToKeep = qty;
+  },
+  initComponents: function(){
+    this.inherited(arguments);
+    if(this.label){
+      this.$.lbl.setContent(this.label);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.KeepDetails',
+  style: 'background-color: #ffffff; color: black;',
+  events: {
+    onResetQtyToKeep: ''
+  },
+  components: [{
+    name: 'RadioGroup',
+    classes: 'btn-group',
+    attributes: {
+      'data-toggle': 'buttons-radio'
+    },
+    components: [{
+      name: 'keepfixedamount',
+      showing: false,
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowmoveeverything',
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      qtyToKeep: 0,
+      label: OB.I18N.getLabel('OBPOS_LblNothing'),
+      showing: false
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowdontmove',
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      showing: false
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowvariableamount',
+      binded: false,
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      showing: false,
+      qtyToKeep: 0,
+      style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; display: block;',
+      components: [{
+        style: 'display: table-row;',
+        components:[{
+          style: 'vertical-align: middle; display: table-cell; ',
+          content: OB.I18N.getLabel('OBPOS_LblOther')
+        },{
+          kind: 'OB.UI.SearchInput',
+          name: 'variableInput',
+          tap: function(){
+            return true;
+          },
+          onkeyup: 'tri',
+          classes: 'span1',
+          type: 'text',
+          style: 'vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 10px; display: inline-block; '
+        }]
+      }]
+    }]
+  }],
+  tri: function(){
+    value = this.$.variableInput.getValue();
+    if(value===''){
+      value = 0;
+    }
+    this.$.allowvariableamount.setQtyToKeep(value);
+    this.$.allowvariableamount.tap();
   }
 });
 
@@ -26,7 +110,7 @@ enyo.kind({
     onStepOfStep3Changed: 'changeCurrentKeep'
   },
   published: {
-    paymentMethods: null
+    paymentToKeep: null
   },
   components: [{
     classes: 'tab-pane',
@@ -47,48 +131,43 @@ enyo.kind({
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black;',
-          components: [{
-            name: 'RadioGroup',
-            classes: 'btn-group',
-            attributes: {
-              'data-toggle': 'buttons-radio'
-            },
-            components: [{
-              name: 'keepfixedamount',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
-            }, {
-              style: 'clear: both;'
-            }, {
-              name: 'allowmoveeverything',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
-            }, {
-              style: 'clear: both;'
-            }, {
-              name: 'allowdontmove',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
-            }, {
-              style: 'clear: both;'
-            }, {
-              name: 'allowvariableamount'
-            }, {
-              name: 'variableamount',
-              kind: 'enyo.Input',
-              type: 'text',
-              classes: 'span1',
-              style: 'display: table-cell; vertical-align: middle; margin: 0px 0px 0px 10px;'
-            }]
-          }]
+          kind: 'OB.OBPOSCashUp.UI.KeepDetails',
+          name: 'formkeep',
+          renderBody: function(modelToDraw){
+            var paymentMethod = modelToDraw.get('paymentMethod');
+            //remove selected RButtons
+            //reset UI and model.
+            $('#' + this.getId()).find('button').removeClass('active');
+            this.$.variableInput.setValue('');
+            this.doResetQtyToKeep({qtyToKeep: null});
+            
+            //draw
+            this.$.keepfixedamount.setShowing(paymentMethod.keepfixedamount);
+            if(paymentMethod.keepfixedamount){
+              this.$.keepfixedamount.render(OB.I18N.formatCurrency(paymentMethod.amount));
+              this.$.keepfixedamount.setQtyToKeep(paymentMethod.amount);
+            }else{
+              this.$.keepfixedamount.render('');
+            }
+            
+            this.$.allowmoveeverything.setShowing(paymentMethod.allowmoveeverything);
+            
+            this.$.allowdontmove.setShowing(paymentMethod.allowdontmove);
+            if(paymentMethod.allowdontmove){
+              this.$.allowdontmove.setQtyToKeep(modelToDraw.get('expected'));
+              this.$.allowdontmove.render(OB.I18N.getLabel('OBPOS_LblTotalAmount') + ' ' + OB.I18N.formatCurrency(modelToDraw.get('expected')));
+            }else{
+              this.$.allowdontmove.render('');
+            }
+            
+            this.$.allowvariableamount.setShowing(paymentMethod.allowvariableamount);
+          }
         }]
       }]
     }]
   }],
-  currentKeep: 0,
-  paymentMethodsChanged: function(oldValue){
-    this.$.cashtokeepheader.renderHeader(this.paymentMethods.at(this.currentKeep).get('name'));
-  },
-  changeCurrentKeep: function(inSender, inEvent){
-    this.currentKeep = inEvent.currentStepOfStep3;
-    this.$.cashtokeepheader.renderHeader(this.paymentMethods.at(this.currentKeep).get('name'));
+  paymentToKeepChanged: function(oldValue){
+    this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
+    this.$.formkeep.renderBody(this.paymentToKeep);
   }
 });

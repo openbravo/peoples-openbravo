@@ -18,7 +18,9 @@ enyo.kind({
     onTapRadio: 'tapRadio',
     onChangeStep: 'changeStep',
     onCountAllOK: 'countAllOK',
-    onLineEditCount: 'lineEditCount'
+    onLineEditCount: 'lineEditCount',
+    onPaymentMethodKept: 'paymentMethodKept',
+    onResetQtyToKeep: 'resetQtyToKeep'
   },
   tapRadio: function(inSender, inEvent) {
     //    if (inEvent.originator.name === 'allowvariableamount') {
@@ -238,44 +240,25 @@ enyo.kind({
   },
   components: [{
     classes: 'row',
-    components: [
-    // 1st column: list of pending receipts
-    {
+    components: [{
       classes: 'span6',
       components: [{
         kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
         name: 'listPendingReceipts'
-      }]
-    },
-    // 1st column: list of count cash per payment method
-    {
-      classes: 'span6',
-      components: [{
+      }, {
         kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
         name: 'listPaymentMethods',
         showing: false
-      }]
-    },
-    // 1st column: Radio buttons to choose how much to keep in cash
-    {
-      classes: 'span6',
-      components: [{
+      }, {
         kind: 'OB.OBPOSCashUp.UI.CashToKeep',
         name: 'cashToKeep',
         showing: false
-      }]
-    },
-    // 1st column: Cash up Report previous to finish the proccess
-    {
-      classes: 'span6',
-      components: [{
+      }, {
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
         name: 'postPrintClose',
         showing: false
       }]
-    },
-    //2nd column
-    {
+    }, {
       classes: 'span6',
       components: [{
         classes: 'span6',
@@ -290,8 +273,6 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalCancel',
       name: 'modalCancel'
-    }, {
-      //  kind: OB.UI.ModalFinishClose
     }]
   }],
   init: function() {
@@ -317,24 +298,21 @@ enyo.kind({
     }, this);
 
     // Cash to keep - Step 3.
-    debugger;
-    this.$.cashToKeep.setPaymentMethods(this.model.get('paymentList'));
+    this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
     this.model.on('change:stepOfStep3', function(model) {
-      debugger;
-      this.waterfall('onStepOfStep3Changed', 
-          {currentStepOfStep3: this.model.get('stepOfStep3')});
+      this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
       this.refresh();
     }, this);
-    
-    
+
+
     // Cash Up Report - Step 4
     this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
 
     this.model.on('change:step change:totalCounted', function(model) {
       this.refresh();
     }, this);
-    
-    
+
+
 
     this.refresh();
   },
@@ -349,11 +327,11 @@ enyo.kind({
   },
   changeStep: function(inSender, inEvent) {
     var nextStep;
-    if(this.model.get('step') !== 3){
+    if (this.model.get('step') !== 3) {
       this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
       //if the new step is 3 we should set the substep number
-      if (this.model.get('step') === 3){
-        if(inEvent.originator.stepCount > 0){
+      if (this.model.get('step') === 3) {
+        if (inEvent.originator.stepCount > 0) {
           //we come from step 2
           this.model.set('stepOfStep3', 0);
         } else {
@@ -363,11 +341,13 @@ enyo.kind({
       }
     } else {
       nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
-      //if the new step is 3 we should set the substep number
-      if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1){
+      //if the new step is 2 or 4 we should set the step number
+      if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
+        //change the step and not change the substep
         this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
       } else {
-        this.model.set('stepOfStep3', nextStep);  
+        //change the substep, not the step
+        this.model.set('stepOfStep3', nextStep);
       }
     }
   },
@@ -377,6 +357,19 @@ enyo.kind({
   },
   lineEditCount: function(sender, event) {
     this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
+  },
+  paymentMethodKept: function(inSender, event) {
+    var validationResult = this.model.validateCashKeep(event.qtyToKeep)
+    if (validationResult.result) {
+      this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', event.qtyToKeep);
+    } else {
+      OB.UTIL.showWarning(validationResult.message);
+    }
+    this.$.cashUpInfo.refresh();
+  },
+  resetQtyToKeep: function(inSender, event) {
+    this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
+    this.$.cashUpInfo.refresh();
   }
 });
 

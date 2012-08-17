@@ -9,6 +9,58 @@
  ************************************************************************************
  */
 
+enyo.kind({
+  name: 'OB.UI.iterateArray',
+  published: {
+    collection: null
+  },
+  create: function() {
+    var listName = this.name || '';
+
+    this.inherited(arguments);
+
+    // helping developers
+    if (!this.renderLine) {
+      throw enyo.format('Your list %s needs to define a renderLine kind', listName);
+    }
+
+    if (!this.renderEmpty) {
+      throw enyo.format('Your list %s needs to define a renderEmpty kind', listName);
+    }
+
+
+    if (this.collection) {
+      this.collectionChanged(null);
+    }
+  },
+
+  collectionChanged: function(oldCollection) {
+    var int = 0;
+    if (!this.collection) { // set to null ?
+      return;
+    }
+    
+    for ( int ; int < this.collection.length; int++) {
+      this._addModelToCollection(this.collection[int]);
+    }
+  },
+  _addModelToCollection: function(model, index) {
+    var tr = this.createComponent({
+      kind: this.renderLine,
+      model: model,
+      lblProperty: this.lblProperty,
+      qtyProperty: this.qtyProperty,
+    });
+    tr.render();
+
+    //FIXME: can we add a model in the middle of a collection?
+    //      if (_.isNumber(index) && index < this.collection.length - 1) {
+    //        this.$el.children().eq(index + this.header).before(tr);
+    //      } else {
+    //        this.$el.append(tr);
+    //      }
+  }
+});
 
 enyo.kind({
   name: 'OB.UI.List',

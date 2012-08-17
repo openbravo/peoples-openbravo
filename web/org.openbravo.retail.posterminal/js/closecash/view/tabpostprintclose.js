@@ -10,205 +10,344 @@
  */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
-//with detailed information for each payment type
+//with detailed information for each payment typ
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+  classes: 'row-fluid',
+  components: [{
+    classes: 'span12',
+    components: [{
+      style: 'width: 10%; float: left;',
+      components: [{
+        allowHtml: true,
+        tag: 'span',
+        content: '&nbsp;'
+      }]
+    }, {
+      style: 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;',
+      components: [{
+        style: 'clear:both;'
+      }]
+    }]
+  }, {}]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+  classes: 'row-fluid',
+  label: '',
+  value: '',
+  components: [{
+    classes: 'span12',
+    components: [{
+      style: 'width: 10%; float: left;',
+      components: [{
+        allowHtml: true,
+        tag: 'span',
+        content: '&nbsp;'
+      }]
+    }, {
+      name: 'totalLbl',
+      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'
+    }, {
+      name: 'totalQty',
+      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;',
+    }, {
+      style: 'width: 10%; float: left;',
+      components: [{
+        allowHtml: true,
+        tag: 'span',
+        content: '&nbsp;'
+      }]
+    }]
+  }, {}],
+  setValue: function(value) {
+    this.value = value;
+    this.render();
+  },
+  render: function(){
+    this.$.totalLbl.setContent(this.label);
+    this.$.totalQty.setContent(this.value);
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    if (this.label && this.value) {
+      this.$.totalLbl.setContent(this.label);
+      this.$.totalQty.setContent(this.value);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ppc_itemLine',
+  label: '',
+  value: '',
+  classes: 'row-fluid',
+  components: [{
+    classes: 'span12',
+    components: [{
+      style: 'width: 10%; float: left;',
+      components: [{
+        allowHtml: true,
+        tag: 'span',
+        content: '&nbsp;'
+      }]
+    }, {
+      name: 'itemLbl',
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
+      content: 'Item Label'
+    }, {
+      name: 'itemQty',
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
+      content: 'item Qty'
+    }, {
+      style: 'width: 10%; float: left;',
+      components: [{
+        allowHtml: true,
+        tag: 'span',
+        content: '&nbsp;'
+      }]
+    }]
+  }, {}],
+  setValue: function(value) {
+    this.value = value;
+    this.render();
+  },
+  render: function(){
+    this.$.itemLbl.setContent(this.label);
+    this.$.itemQty.setContent(this.value);
+  },
+  create: function() {
+    this.inherited(arguments);
+    if (this.model){
+      this.label = this.model[this.lblProperty];
+      this.value = this.model[this.qtyProperty];  
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+  kind: 'OB.UI.iterateArray',
+  renderLine: 'OB.OBPOSCashUp.UI.ppc_itemLine',
+  renderEmpty: 'OB.UI.RenderEmpty'
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ppc_table',
+  setValue: function(name, value) {
+    this.$[name].setValue(value);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
+    name: 'netsales',
+    label: OB.I18N.getLabel('OBPOS_LblNetSales')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'salestaxes',
+    lblProperty: 'taxName',
+    qtyProperty: 'taxAmount'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalsales',
+    label: OB.I18N.getLabel('OBPOS_LblGrossSales')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.salestaxes.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
+    name: 'netreturns',
+    label: OB.I18N.getLabel('OBPOS_LblNetReturns')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'retunrnstaxes',
+    lblProperty: 'taxName',
+    qtyProperty: 'taxAmount'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totalreturns',
+    label: OB.I18N.getLabel('OBPOS_LblGrossReturns')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.retunrnstaxes.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+  components: [{
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totaltransactionsline',
+    label: OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }]
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
+  components:[{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'drops',
+    lblProperty: 'description',
+    qtyProperty: 'amount'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totaldrops',
+    label: OB.I18N.getLabel('OBPOS_LblTotalWithdrawals')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.drops.setCollection(col);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  name: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
+  components:[{
+    kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
+    name: 'deposits',
+    lblProperty: 'description',
+    qtyProperty: 'amount'
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
+    name: 'totaldeposits',
+    label: OB.I18N.getLabel('OBPOS_LblTotalDeposits')
+  }, {
+    kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
+    name: 'separator'
+  }],
+  setCollection: function(col) {
+    this.$.deposits.setCollection(col);
+  }
+});
+
+
+
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.PostPrintClose',
   published: {
     model: null
   },
+  classes: 'tab-pane',
   components: [{
-    classes: 'tab-pane',
+    style: 'overflow:auto; height: 500px; margin: 5px',
     components: [{
-      style: 'overflow:auto; height: 500px; margin: 5px',
+      style: 'background-color: #ffffff; color: black; padding: 5px;',
       components: [{
-        style: 'background-color: #ffffff; color: black; padding: 5px;',
+        classes: 'row-fluid',
         components: [{
-          classes: 'row-fluid',
+          classes: 'span12',
           components: [{
-            classes: 'span12',
+            style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+            content: OB.I18N.getLabel('OBPOS_LblStep4of4')
+          }]
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span12',
+          components: [{
+            style: 'padding: 10px; text-align:center;',
             components: [{
-              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              content: OB.I18N.getLabel('OBPOS_LblStep4of4')
+              tag: 'img',
+              style: 'padding: 20px 20px 20px 10px;',
+              attributes: {
+                src: '../../utility/ShowImageLogo?logo=yourcompanymenu'
+              }
+            }, {
+              style: 'padding: 5px; text-align:center;',
+              name: 'user'
+            }, {
+              name: 'time',
+              style: 'padding: 5px 5px 15px 5px; text-align:center;'
             }]
           }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
+        }]
+      },
+      //FIXME: Iterate taxes
+      {
+        components: [{
+          components: [{}, {
+            tag: 'ul',
+            classes: 'unstyled',
+            style: 'display:block',
             components: [{
-              style: 'padding: 10px; text-align:center;',
+              tag: 'li',
+              classes: 'selected',
               components: [{
-                tag: 'img',
-                style: 'padding: 20px 20px 20px 10px;',
-                attributes: {
-                  src: '../../utility/ShowImageLogo?logo=yourcompanymenu'
-                }
-              }, {
-                style: 'padding: 5px; text-align:center;',
-                name: 'user'
-              }, {
-                name: 'time',
-                style: 'padding: 5px 5px 15px 5px; text-align:center;'
+                components: [{
+                  kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+                  name: 'sales'
+                },
+                {
+                    kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+                    name: 'returns'
+                }, {
+                  kind:'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+                  name: 'totaltransactions'
+                }]
               }]
             }]
+          }, {
+            style: 'border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(204, 204, 204); padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; font-weight: bold; color: rgb(204, 204, 204); display: none;'
+          }, {
+            style: 'display:none;'
           }]
-        }, {
-          classes: 'row-fluid',
+        }]
+      }, {
+        components: [{
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
+          name: 'dropsTable'
+        },{
+          kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
+          name: 'depositsTable'
+        }]
+      }, {
+        classes: 'row-fluid',
+        components: [{
+          classes: 'span12',
           components: [{
-            classes: 'span12',
+            style: 'width: 10%; float: left',
             components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
-              content: OB.I18N.getLabel('OBPOS_LblNetSales')
-            }, {
-              name: 'netSales',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
+              tag: 'span',
+              allowHtml: true,
+              content: '&nbsp;'
             }]
-          }]
-        },
-        //FIXME: Iterate taxes
-        {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              name: 'taxSalesName',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
-              content: 'Entregas IVA 18% * 125.00'
-            }, {
-              name: 'taxSalesAmount',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
-              content: '125.00'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;',
-              content: OB.I18N.getLabel('OBPOS_LblGrossSales')
-            }, {
-              name: 'grossSales',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc;  float: left; width: 60%',
-              content: ''
-            }, {
-              style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
-              content: ''
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
-              content: OB.I18N.getLabel('OBPOS_LblNetReturns')
-            }, {
-              name: 'netReturns',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        },
-        //FIXME: Iterate taxes
-        {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              name: 'taxReturnsName',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%',
-              content: 'Entregas IVA 18% * 125.00'
-            }, {
-              name: 'taxReturnsAmount',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
-              content: '125.00'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold; ',
-              content: OB.I18N.getLabel('OBPOS_LblGrossReturns')
-            }, {
-              name: 'grossReturns',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;  font-weight:bold;'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc;  float: left; width: 60%',
-              content: ''
-            }, {
-              style: 'padding: 10px 0px 10px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right;',
-              content: ''
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'width: 10%; float: left; clear: both;'
-            }, {
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;',
-              content: OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')
-            }, {
-              name: 'totalRetailTransacntions',
-              style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'
-            }, {
-              style: 'width: 10%; float: left;  clear: both;'
-            }]
+          }, {
+            style: 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;',
+            components: [{}]
+          }, {
+            style: 'clear:both;'
           }]
         }]
       }]
     }]
   }],
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     // explicitly set the total
     //    this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
@@ -219,70 +358,34 @@ enyo.kind({
     //
     //    this.$.paymentsList.setCollection(this.owner.model && this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
-  init: function () {
+  init: function() {
     // this.owner is the window (OB.UI.WindowView)
     // this.parent is the DOM object on top of the list (usually a DIV)
     //    this.$.paymentsList.setCollection( this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
-  modelChanged: function () {
-    this.$.netSales.setContent(OB.I18N.formatCurrency(this.model.get('netSales')));
-    
-    //FIXME: Include taxes
-    this.$.grossSales.setContent(OB.I18N.formatCurrency(this.model.get('grossSales')));
+  modelChanged: function() {
+    debugger;
+    this.$.sales.setCollection(this.model.get('salesTaxes'));
+    this.$.sales.setValue('netsales', this.model.get('netSales'));
+    this.$.sales.setValue('totalsales', this.model.get('grossSales'));
 
-    this.$.netReturns.setContent(OB.I18N.formatCurrency(this.model.get('netReturns')));
+    this.$.returns.setCollection(this.model.get('returnsTaxes'));
+    this.$.returns.setValue('netreturns', this.model.get('netReturns'));
+    this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
+    
+    this.$.totaltransactions.setValue('totaltransactionsline',this.model.get('totalRetailTransactions'));
+    
+    this.$.dropsTable.setCollection(this.model.get('drops'));
+    this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
+    
+    this.$.depositsTable.setCollection(this.model.get('deposits'));
+    this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
+    //this.$.netSalesAmount.setContent(OB.I18N.formatCurrency(this.model.get('netSales')));
     //FIXME: Include taxes
-    this.$.grossReturns.setContent(OB.I18N.formatCurrency(this.model.get('grossReturns')));
-    this.$.totalRetailTransacntions.setContent(OB.I18N.formatCurrency(this.model.get('totalRetailTransactions')));
+    //this.$.grossSales.setContent(OB.I18N.formatCurrency(this.model.get('grossSales')));
+    //this.$.netReturns.setContent(OB.I18N.formatCurrency(this.model.get('netReturns')));
+    //FIXME: Include taxes
+    //this.$.grossReturns.setContent(OB.I18N.formatCurrency(this.model.get('grossReturns')));
+    //this.$.totalRetailTransacntions.setContent(OB.I18N.formatCurrency(this.model.get('totalRetailTransactions')));
   }
 });
-
-//(function () {
-//
-//  OB = window.OB || {};
-//  OB.COMP = window.OB.COMP || {};
-//
-//  OB.COMP.PostPrintClose = OB.COMP.CustomView.extend({
-//  _id: 'postprintclose',
-//    createView: function () {
-//      return (
-//        {kind: B.KindJQuery('div'), attr: {'id': 'postprintclose', 'class': 'tab-pane'}, content: [
-//          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
-//            {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
-//              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;'}, content: [
-//                      OB.I18N.getLabel('OBPOS_LblStep4of4')
-//                  ]}
-//                ]}
-//              ]},
-//              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//                    {kind: B.KindJQuery('div'), attr: {'style': 'padding: 10px; text-align:center;'}, content: [
-//                       {kind: B.KindJQuery('img'), attr: {'style': 'padding: 20px 20px 20px 10px;', 'src':'../../utility/ShowImageLogo?logo=yourcompanymenu'}, content:[]},
-//                       {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px; text-align:center;'}, content:[
-//                             OB.I18N.getLabel('OBPOS_LblUser')+': '+OB.POS.modelterminal.get('context').user._identifier
-//                         ]},
-//                         {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 5px 15px 5px; text-align:center;', 'id':'reportTime'}, content:[
-//                            OB.I18N.getLabel('OBPOS_LblTime')+': '+ new Date().toString().substring(3,24)
-//                        ]}
-//                     ]}
-//                  ]}
-//                ]},
-//               {kind: OB.COMP.SearchRetailTransactions},
-//               {kind: OB.COMP.RenderPaymentLines},
-//               {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                 {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//                   {kind: B.KindJQuery('div'), attr: {'style': 'width: 10%; float: left'}, content: [{kind: B.KindHTML('<span>&nbsp;</span>')}]},
-//                   {kind: B.KindJQuery('div'), attr: {'style': 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;'}, content: [
-//                {kind: B.KindJQuery('div')}
-//                ]},    {kind: B.KindJQuery('div'), attr: {style: 'clear: both'}}
-//                   ]}
-//               ]}
-//          ]}
-//        ]}
-//       ]}
-//      );
-//    }
-//  });
-//}());
