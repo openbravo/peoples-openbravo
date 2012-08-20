@@ -10,7 +10,7 @@ WHEN ppd.fin_payment_scheduledetail_id IS NULL THEN 'N'
 ELSE 'Y'
 END AS ob_selected, COALESCE(psi.fin_payment_priority_id, pso.fin_payment_priority_id) AS fin_payment_priority_id, COALESCE(i.c_currency_id, o.c_currency_id) AS c_currency_id, COALESCE(i.issotrx, o.issotrx) AS issotrx
 FROM fin_payment_scheduledetail psd
-LEFT JOIN fin_payment_prop_detail ppd ON (psd.fin_payment_scheduledetail_id=ppd.fin_payment_scheduledetail_id)
+LEFT JOIN fin_payment_prop_detail ppd ON psd.fin_payment_scheduledetail_id = ppd.fin_payment_scheduledetail_id
 LEFT JOIN fin_payment_schedule psi ON psd.fin_payment_schedule_invoice = psi.fin_payment_schedule_id
 LEFT JOIN fin_payment_schedule pso ON psd.fin_payment_schedule_order = pso.fin_payment_schedule_id
 LEFT JOIN c_invoice i ON psi.c_invoice_id = i.c_invoice_id
