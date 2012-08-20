@@ -50,7 +50,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       return OB.DEC.add(total, model.get('expected'));
     }, 0));
     this.set('totalDifference', OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected')));
-    //this.set('totalCounted', 0);
+    this.set('totalCounted', 0);
 
     this.get('paymentList').on('change:counted', function(mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
@@ -58,6 +58,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
       }, 0),
       0);
+      //TODO
+      if (mod.get('counted') === OB.DEC.Zero){
+        this.trigger('change:totalCounted');
+      }
     }, this);
 
     OB.Dal.find(OB.Model.Order, {
