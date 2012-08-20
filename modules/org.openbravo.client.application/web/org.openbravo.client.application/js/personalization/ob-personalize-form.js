@@ -1026,7 +1026,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       }
       window = this.form.view.standardWindow;
     }
-    window.destroyAndRemoveMembers(this);
+    window.windowLayout.destroyAndRemoveMembers(this);
 
     // restores the tabtitle
     window.view.updateTabTitle();
@@ -1088,7 +1088,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     // hide the part from which we were opened 
     window.toolBarLayout.hide();
     window.view.hide();
-    window.addMember(this);
+    window.windowLayout.addMember(this);
 
     // change the tabtitle
     tabSet = OB.MainView.TabSet;
