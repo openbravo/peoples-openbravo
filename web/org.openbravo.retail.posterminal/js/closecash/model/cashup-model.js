@@ -168,8 +168,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     });
   },
   isAllCounted: function() {
+    var udfn;
     return _.reduce(this.get('paymentList').models, function(allCounted, model) {
-      return allCounted && model.get('counted');
+      return allCounted && model.get('counted') !== null && model.get('counted') !== udfn ;
     }, true);
   },
   getCountCashSummary: function() {

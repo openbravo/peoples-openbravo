@@ -361,9 +361,10 @@ enyo.kind({
       this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.waterfall('onAnyCounted');
+      this.refresh();
     }, this);
 
-    this.model.on('change:step change:totalCounted', function(model) {
+    this.model.on('change:step', function(model) {
       this.refresh();
     }, this);
 
