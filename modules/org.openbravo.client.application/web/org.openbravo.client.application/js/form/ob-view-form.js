@@ -1116,12 +1116,28 @@ OB.ViewFormProperties = {
 
   // calls setValue and the onchange handling
   setItemValue: function (item, value) {
-    var currentValue, view;
+    var currentValue, view, isGridItem, completeFieldsLength, i;
 
     if (isc.isA.String(item)) {
 
       // not an item, set and bail
       if (!this.getField(item)) {
+        // It might be a column that is not being displayed in the grid
+        if (!this.view.isShowingForm && this.grid) {
+          // check if the item is included in the complete fields of the grid
+          // see issue https://issues.openbravo.com/view.php?id=21375
+          isGridItem = false;
+          completeFieldsLength = this.grid.completeFields;
+          for (i = 0; i < completeFieldsLength; i++) {
+            if (item === this.grid.completeFields[i].name) {
+              isGridItem = true;
+              break;
+            }
+          }
+          if (isGridItem) {
+            this.grid.setEditValue(this.grid.getEditRow(), item, value);
+          }
+        }
         this.setValue(item, value);
         return;
       }
