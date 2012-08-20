@@ -557,7 +557,7 @@ isc.OBAttachmentsSubmitPopup.addProperties({
 isc.OBImageSelector.addProperties({
   hlayoutTopMargin: 10,
   hlayoutBottomMargin: 10,
-  height: 30,
+  height: 50,
   width: 450,
   align: 'center'
 });
