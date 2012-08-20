@@ -20,7 +20,7 @@ enyo.kind({
   },
   tag: 'div',
   classes: 'image-wrap',
-  contentType: 'img/png',
+  contentType: 'image/png',
   width: '49px',
   height: '49px',
   'default': 'img/box.png',
