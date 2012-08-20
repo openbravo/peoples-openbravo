@@ -73,6 +73,12 @@ enyo.kind({
   refresh: function () {
     this.$.btnPrevious.setDisabled(!this.model.allowPrevious());
     this.$.btnNext.setDisabled(!this.model.allowNext());
+    //Normaly the button shows Next
+    this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
+    if (this.model.get('step') === 4){
+      //in the last step the button shows another label
+      this.$.btnNext.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
+    }
     //Sometimes the button is shown with over css class.
     if(this.$.btnNext.hasClass('btn-over')){
       this.$.btnNext.removeClass('btn-over');

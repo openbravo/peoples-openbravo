@@ -85,6 +85,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       //TODO: review logic
       return true;
     }
+    
+    if (step === 4){
+      return true;
+    }
 
     return false;
   },
