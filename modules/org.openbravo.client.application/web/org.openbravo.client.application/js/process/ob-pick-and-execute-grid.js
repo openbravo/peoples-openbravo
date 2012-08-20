@@ -444,7 +444,11 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+    // retrieve the initial values only if a new row has been selected
+    // see issue https://issues.openbravo.com/view.php?id=20653
+    if (newRow) {
+      this.retrieveInitialValues(rowNum, colNum, newCell, newRow, suppressFocus);
+    }
     this.Super('showInlineEditor', arguments);
   },
 
