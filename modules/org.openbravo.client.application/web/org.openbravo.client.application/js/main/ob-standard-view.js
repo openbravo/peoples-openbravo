@@ -1191,6 +1191,9 @@ isc.OBStandardView.addProperties({
         if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
           tabViewPane.doRefreshContents(true);
         }
+        if (this.isOpenDirectModeParent) {
+          tabViewPane.toolBar.updateButtonState(true);
+        }
       }
     }
     delete this.isOpenDirectModeParent;
