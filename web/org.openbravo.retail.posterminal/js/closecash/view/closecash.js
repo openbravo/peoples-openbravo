@@ -304,7 +304,7 @@ enyo.kind({
 
     // Cash to keep - Step 3.
     this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-    
+
     this.model.on('change:stepOfStep3', function(model) {
       this.$.cashToKeep.disableSelection();
       this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
@@ -321,6 +321,11 @@ enyo.kind({
     this.model.on('change:totalDifference', function(model) {
       this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
     }, this);
+    
+    //finished
+    this.model.on('change:finished', function() {
+      alert('finished -> exit');
+    },this);
 
     this.refresh();
   },
@@ -335,30 +340,35 @@ enyo.kind({
   },
   changeStep: function(inSender, inEvent) {
     var nextStep;
-    if (this.model.get('step') !== 3) {
-      this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
-      //if the new step is 3 we should set the substep number
-      if (this.model.get('step') === 3) {
-        if (inEvent.originator.stepCount > 0) {
-          //we come from step 2
-          this.model.set('stepOfStep3', 0);
-        } else {
-          //we come from step 4
-          //because the last stepOfStep3 was the same that im setting the event is not raised
-          this.model.set('stepOfStep3', this.model.get('paymentList').length - 1);
-          //raise the event
-          this.model.trigger("change:stepOfStep3");
-        }
-      }
+    if (this.model.get('step') === 4 && inEvent.originator.stepCount > 0) {
+      //send cash up to the server
+      this.model.processAndFinishCashUp();
     } else {
-      nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
-      //if the new step is 2 or 4 we should set the step number
-      if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
-        //change the step and not change the substep
+      if (this.model.get('step') !== 3) {
         this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+        //if the new step is 3 we should set the substep number
+        if (this.model.get('step') === 3) {
+          if (inEvent.originator.stepCount > 0) {
+            //we come from step 2
+            this.model.set('stepOfStep3', 0);
+          } else {
+            //we come from step 4
+            //because the last stepOfStep3 was the same that im setting the event is not raised
+            this.model.set('stepOfStep3', this.model.get('paymentList').length - 1);
+            //raise the event
+            this.model.trigger("change:stepOfStep3");
+          }
+        }
       } else {
-        //change the substep, not the step
-        this.model.set('stepOfStep3', nextStep);
+        nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
+        //if the new step is 2 or 4 we should set the step number
+        if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
+          //change the step and not change the substep
+          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+        } else {
+          //change the substep, not the step
+          this.model.set('stepOfStep3', nextStep);
+        }
       }
     }
   },

@@ -37,8 +37,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     totalDifference: OB.DEC.Zero
   },
   init: function() {
-    var me = this;
-
     this.set('step', 1);
     //Because step 3 is divided in several steps.
     this.set('stepOfStep3', 0);
@@ -53,20 +51,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       return OB.DEC.add(total, model.get('expected'));
     }, 0));
     this.set('totalDifference', OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected')));
-    this.set('totalCounted', 0);
+    //this.set('totalCounted', 0);
 
     this.get('paymentList').on('change:counted', function(mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
-      }, 0));
+      }, 0),
+      0);
     }, this);
 
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
-    }, function(pendingOrderList) {
+    }, function(pendingOrderList, me) {
       me.get('orderlist').reset(pendingOrderList.models);
-    }, OB.UTIL.showError);
+    }, OB.UTIL.showError, this);
   },
   allowNext: function() {
     var step = this.get('step'),
@@ -87,6 +86,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }
     
     if (step === 4){
+      this.get('cashUpReport').at(0).set('time',new Date());
       return true;
     }
 
@@ -158,17 +158,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }, true);
   },
   initPaymentList: function() {
-    var undf;
-    _.each(this.get('paymentList').models, function(curModel) {
-      if (curModel.get('counted') === undf && curModel.get('difference') === undf) {
-        curModel.set('counted', 0, {
-          silent: true
-        });
-        curModel.set('difference', OB.DEC.sub(0, curModel.get('expected')), {
-          silent: true
-        });
-      }
-    }, this);
+//    var undf;
+//    _.each(this.get('paymentList').models, function(curModel) {
+//      if (curModel.get('counted') === undf && curModel.get('difference') === undf) {
+//        curModel.set('counted', 0, {
+//          silent: true
+//        });
+//        curModel.set('difference', OB.DEC.sub(0, curModel.get('expected')), {
+//          silent: true
+//        });
+//      }
+//    }, this);
   },
   getCountCashSummary: function() {
     var countCashSummary, counter, enumConcepts, enumSummarys;
@@ -184,12 +184,64 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     enumConcepts = ['expected', 'counted', 'difference'];
     for (counter = 0; counter < 3; counter++) {
       _.each(this.get('paymentList').models, function(curModel) {
+        if(!curModel.get(enumConcepts[counter])){
+          countCashSummary[enumSummarys[counter]].push({
+            name: curModel.get('name'),
+            value: 0
+          });
+        }else{
         countCashSummary[enumSummarys[counter]].push({
           name: curModel.get('name'),
           value: curModel.get(enumConcepts[counter])
         });
+        }
       }, this);
     }
     return countCashSummary;
-  }
+  },
+  printCashUp: function(){
+    // Printing: TODO: refactor this when HW Manager is changed
+    hwManager = new OB.COMP.HWManager({});
+    hwManager.templatecashup = new OB.COMP.HWResource('res/printcashup.xml');
+    hwManager.modeldaycash = {report: this.get('cashUpReport').at(0),
+        summary: this.getCountCashSummary()};
+    hwManager.printCashUp();
+  },
+processAndFinishCashUp: function(){
+  //this._id = 'paymentCloseCash';
+  var objToSend = {
+      terminalId : OB.POS.modelterminal.get('terminal').id,
+      cashCloseInfo : []
+  },
+  server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
+  me = this;
+  
+  //Create the data that server expects
+  _.each(this.get('paymentList').models, function(curModel) {
+    var cashCloseInfo = {
+        expected: 0,
+        difference: 0,
+        paymentTypeId: 0,
+        paymentMethod: {}
+      };
+    cashCloseInfo.paymentTypeId = curModel.get('id');
+    cashCloseInfo.difference = curModel.get('difference');
+    cashCloseInfo.expected = curModel.get('expected');
+    curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
+    cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
+    objToSend.cashCloseInfo.push(cashCloseInfo);
+  },this);
+  this.printCashUp();
+  console.log('Object to send to the server: ');
+  console.log(objToSend);
+  //ready to send to the server
+  server.exec(objToSend, function(data, message){
+    if (data && data.exception) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
+    } else {
+      console.log("cash up processed correctly. -> show modal");
+      me.set("finished", true);//$('#modalFinishClose').modal('show');
+    }
+  });
+}
 });

@@ -423,19 +423,10 @@ enyo.kind({
   }],
   create: function() {
     this.inherited(arguments);
-    // explicitly set the total
-    //    this.$.totalLbl.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
-    //    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
-    //    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
-    //
-    //    this.$.paymentsList.setCollection(this.owner.model && this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
   init: function() {
-    // this.owner is the window (OB.UI.WindowView)
-    // this.parent is the DOM object on top of the list (usually a DIV)
-    //    this.$.paymentsList.setCollection( this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
   summaryChanged: function(){
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
@@ -448,6 +439,7 @@ enyo.kind({
     this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
   },
   modelChanged: function() {  
+    
     this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('netsales', this.model.get('netSales'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
@@ -463,5 +455,9 @@ enyo.kind({
 
     this.$.depositsTable.setCollection(this.model.get('deposits'));
     this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
+    
+    this.model.on('change:time', function(){
+      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
+    }, this)
   }
 });
