@@ -254,6 +254,7 @@ public class AttributeSetInstanceValue {
       } catch (Exception ignored) {
       }
       log4j.error("Rollback in transaction: ", e);
+      return OBMessageUtils.translateError(e.getMessage());
     }
 
     return myMessage;
