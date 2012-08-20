@@ -236,8 +236,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       objToSend.cashCloseInfo.push(cashCloseInfo);
     }, this);
     this.printCashUp();
-    console.log('Object to send to the server: ');
-    console.log(objToSend);
     //ready to send to the server
     server.exec(objToSend, function(data, message) {
       if (data && data.exception) {
