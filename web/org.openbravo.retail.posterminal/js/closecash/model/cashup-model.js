@@ -34,9 +34,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     allowedStep: OB.DEC.Zero,
     totalExpected: OB.DEC.Zero,
     totalCounted: OB.DEC.Zero,
-    totalDifference: OB.DEC.Zero
+    totalDifference: OB.DEC.Zero,
+    pendingOrdersToProcess: false
   },
   init: function() {
+    this.arePendingOrdersToBeProcess();
     this.set('step', 1);
     //Because step 3 is divided in several steps.
     this.set('stepOfStep3', 0);
@@ -70,11 +72,20 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       me.get('orderlist').reset(pendingOrderList.models);
     }, OB.UTIL.showError, this);
   },
+  arePendingOrdersToBeProcess: function(){
+    OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList, me) { //OB.Dal.find success
+      var currentOrder = {};
+      if (fetchedOrderList && fetchedOrderList.length !== 0) {
+        me.set('pendingOrdersToProcess', true);
+      }
+    }, function () { //OB.Dal.find error
+    }, this)
+  },
   allowNext: function() {
     var step = this.get('step'),
         unfd;
 
-    if (step === 1 && this.get('orderlist').length === 0) {
+    if (step === 1 && this.get('orderlist').length === 0  && !this.get('pendingOrdersToProcess')) {
       return true;
     }
 

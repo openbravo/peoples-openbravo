@@ -32,6 +32,35 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalAction',
+  name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
+  header: OB.I18N.getLabel('OBPOS_LblReceiptsToProcess'),
+  bodyContent: {
+    content: OB.I18N.getLabel('OBPOS_MsgReceiptsProcess')
+  },
+  bodyButtons: {
+    tag: 'div',
+    components: [{
+      kind: 'OB.UI.Button',
+      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      content: OB.I18N.getLabel('OBPOS_LblOk'),
+      tap: function() {
+        //continue with orders which have been paid.
+        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
+      }
+    },{
+      kind: 'OB.UI.Button',
+      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      content: OB.I18N.getLabel('OBPOS_LblCancel'),
+      tap: function() {
+        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
+        OB.POS.navigate('retail.pointofsale');
+      }
+    }]
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
@@ -299,13 +328,23 @@ enyo.kind({
       kind:'OB.OBPOSCashUp.UI.modalFinished',
       name: 'modalFinished',
       myId: 'modalFinished'
+    }, {
+      kind:'OB.OBPOSCashUp.UI.modalPendingToProcess',
+      name: 'modalPendingToProcess',
+      myId: 'modalPendingToProcess'
     }]
   }],
   init: function() {
     this.inherited(arguments);
 
     this.$.cashUpInfo.setModel(this.model);
-
+    
+    //step 0
+    this.model.on('change:pendingOrdersToProcess', function(model) {
+      $('#modalprocessreceipts').modal('show');
+    }, this);
+    
+    
     // Pending Orders - Step 1
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
     this.model.get('orderlist').on('all', function() {
