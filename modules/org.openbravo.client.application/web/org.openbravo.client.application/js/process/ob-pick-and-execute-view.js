@@ -26,7 +26,8 @@ isc.OBPickAndExecuteView.addProperties({
   showMaximizeButton: true,
   popupWidth: '90%',
   popupHeight: '90%',
-  firstFocusedItem: null, // Set later
+  // Set later inside initWidget
+  firstFocusedItem: null,
 
   // Set now pure P&E layout properties
   width: '100%',
