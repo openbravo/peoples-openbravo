@@ -97,11 +97,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     // Printing: TODO: refactor this when HW Manager is changed
     hwManager = new OB.COMP.HWManager({});
-    hwManager.templateline = new OB.COMP.HWResource('res/printline.xml');
-    hwManager.templatereceipt = new OB.COMP.HWResource('res/printreceipt.xml');
-    hwManager.templateinvoice = new OB.COMP.HWResource('res/printinvoice.xml');
-    hwManager.templatereturn = new OB.COMP.HWResource('res/printreturn.xml');
-    hwManager.templatereturninvoice = new OB.COMP.HWResource('res/printreturninvoice.xml');
+    hwManager.templateline = new OB.DS.HWResource('res/printline.xml');
+    hwManager.templatereceipt = new OB.DS.HWResource('res/printreceipt.xml');
+    hwManager.templateinvoice = new OB.DS.HWResource('res/printinvoice.xml');
+    hwManager.templatereturn = new OB.DS.HWResource('res/printreturn.xml');
+    hwManager.templatereturninvoice = new OB.DS.HWResource('res/printreturninvoice.xml');
     hwManager.receipt = receipt;
 
     hwManager.line = null;
@@ -111,7 +111,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       }
       hwManager.line = line;
       if (hwManager.line) {
-        hwManager.line.on('change', hwManager.printLine);
+        hwManager.line.on('change', hwManager.printLine, hwManager);
       }
       hwManager.printLine();
     }, this);

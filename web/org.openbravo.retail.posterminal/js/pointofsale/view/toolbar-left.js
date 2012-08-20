@@ -61,11 +61,11 @@ enyo.kind({
   name: 'OB.UI.ButtonPrint',
   kind: 'OB.UI.ToolbarButton',
   icon: 'btn-icon btn-icon-print',
+  events: {
+    onPrintReceipt: ''
+  },  
   tap: function() {
-    var receipt = this.options.modelorder;
-    receipt.calculateTaxes(function() {
-      receipt.trigger('print');
-    });
+    this.doPrintReceipt();
   }
 });
 
