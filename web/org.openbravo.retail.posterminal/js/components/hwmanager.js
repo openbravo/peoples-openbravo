@@ -113,7 +113,6 @@ OB.COMP.HWManager.prototype.printOrder = function() {
 
 OB.COMP.HWManager.prototype.printCashUp = function() {
   var modeldaycash = this.modeldaycash;
-  debugger;
   this.templatecashup.getData(function(data) {
     OB.POS.hwserver.print(data, {
       cashup: modeldaycash
