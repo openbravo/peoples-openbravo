@@ -17,22 +17,18 @@
  ************************************************************************
  */
 
-isc.defineClass('OBPickAndExecuteView', isc.OBPopup);
+isc.defineClass('OBPickAndExecuteView', isc.VLayout);
 
 
 isc.OBPickAndExecuteView.addProperties({
+  // Set default properties for the OBPopup container
+  showMinimizeButton: true,
+  showMaximizeButton: true,
+  popupWidth: '90%',
+  popupHeight: '90%',
+  firstFocusedItem: null, // Set later
 
-  // Override default properties of OBPopup
-  canDragReposition: false,
-  canDragResize: false,
-  isModal: false,
-  showModalMask: false,
-  dismissOnEscape: false,
-  showMinimizeButton: false,
-  showMaximizeButton: false,
-  showFooter: false,
-  showTitle: true,
-
+  // Set now pure P&E layout properties
   width: '100%',
   height: '100%',
   overflow: 'auto',
@@ -69,6 +65,7 @@ isc.OBPickAndExecuteView.addProperties({
       _buttonValue: 'DONE',
       click: actionClick
     });
+    this.firstFocusedItem = okButton;
 
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
@@ -159,7 +156,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.items = [this.messageBar, this.viewGrid, isc.HLayout.create({
+    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
@@ -195,10 +192,6 @@ isc.OBPickAndExecuteView.addProperties({
   closeClick: function (refresh, message) {
     var window = this.parentWindow;
 
-    window.processLayout.hide();
-    window.toolBarLayout.show();
-    window.view.show();
-
     if (message) {
       window.view.messageBar.setMessage(message.severity, message.text);
     }
@@ -207,7 +200,10 @@ isc.OBPickAndExecuteView.addProperties({
       window.refresh();
     }
 
-    this.Super('closeClick', arguments);
+    this.closeClick = function () {
+      return true;
+    }; // To avoid loop when "Super call"
+    this.parentElement.parentElement.closeClick(); // Super call
   },
 
   prepareGridFields: function (fields) {

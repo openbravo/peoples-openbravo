@@ -64,14 +64,6 @@ isc.OBStandardWindow.addProperties({
       height: '100%',
       overflow: 'visible'
     });
-    this.processLayout = isc.VStack.create({
-      height: '100%',
-      width: '100%',
-      overflow: 'auto',
-      visibility: 'hidden'
-    });
-
-    this.windowLayout.addMember(this.processLayout);
 
     this.toolBarLayout = isc.HLayout.create({
       mouseDownCancelParentPropagation: true,
@@ -273,10 +265,8 @@ isc.OBStandardWindow.addProperties({
             parentWindow: this
           }));
 
-          this.processLayout.addMember(this.runningProcess);
-          this.toolBarLayout.hide();
-          this.view.hide();
-          this.processLayout.show();
+          this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
+
         } else {
           isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.windowId]), function () {
             return true;
