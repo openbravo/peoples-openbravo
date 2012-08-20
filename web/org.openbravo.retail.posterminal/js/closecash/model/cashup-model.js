@@ -43,8 +43,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
-    //add counted and difference
-    this.initPaymentList();
+
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
     this.set('totalExpected', _.reduce(this.get('paymentList').models, function(total, model) {
@@ -156,19 +155,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     return _.reduce(this.get('paymentList').models, function(allCounted, model) {
       return allCounted && model.get('counted');
     }, true);
-  },
-  initPaymentList: function() {
-//    var undf;
-//    _.each(this.get('paymentList').models, function(curModel) {
-//      if (curModel.get('counted') === undf && curModel.get('difference') === undf) {
-//        curModel.set('counted', 0, {
-//          silent: true
-//        });
-//        curModel.set('difference', OB.DEC.sub(0, curModel.get('expected')), {
-//          silent: true
-//        });
-//      }
-//    }, this);
   },
   getCountCashSummary: function() {
     var countCashSummary, counter, enumConcepts, enumSummarys;
