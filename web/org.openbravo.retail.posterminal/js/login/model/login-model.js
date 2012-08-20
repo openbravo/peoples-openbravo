@@ -32,7 +32,7 @@
         if (load) {
           if (item.prototype.local) {
             OB.Dal.initCache(item, [], function() {
-              window.console.log('init success: ' + item.prototype.modelName);
+              // window.console.log('init success: ' + item.prototype.modelName);
             }, function() {
               window.console.error('init error', arguments);
             });

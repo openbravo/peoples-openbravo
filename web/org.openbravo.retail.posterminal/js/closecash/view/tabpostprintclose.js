@@ -438,7 +438,6 @@ enyo.kind({
     //    this.$.paymentsList.setCollection( this.owner.model.getData('DataCloseCashPaymentMethod'));
   },
   summaryChanged: function(){
-    debugger;
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
     

@@ -82,7 +82,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   totalChanged: function(oldValue) {
-    console.log('totalC');
+    // console.log('totalC');
     this.setContent(this.total);
     if (OB.DEC.compare(this.total) < 0) {
       this.applyStyle('color', 'red');
