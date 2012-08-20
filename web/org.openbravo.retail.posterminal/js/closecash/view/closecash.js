@@ -48,7 +48,7 @@ enyo.kind({
         //continue with orders which have been paid.
         $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
       }
-    },{
+    }, {
       kind: 'OB.UI.Button',
       classes: 'btnlink btnlink-gray modal-dialog-content-button',
       content: OB.I18N.getLabel('OBPOS_LblCancel'),
@@ -325,11 +325,11 @@ enyo.kind({
       kind: 'OB.UI.ModalCancel',
       name: 'modalCancel'
     }, {
-      kind:'OB.OBPOSCashUp.UI.modalFinished',
+      kind: 'OB.OBPOSCashUp.UI.modalFinished',
       name: 'modalFinished',
       myId: 'modalFinished'
     }, {
-      kind:'OB.OBPOSCashUp.UI.modalPendingToProcess',
+      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
       name: 'modalPendingToProcess',
       myId: 'modalPendingToProcess'
     }]
@@ -338,13 +338,13 @@ enyo.kind({
     this.inherited(arguments);
 
     this.$.cashUpInfo.setModel(this.model);
-    
+
     //step 0
     this.model.on('change:pendingOrdersToProcess', function(model) {
       $('#modalprocessreceipts').modal('show');
     }, this);
-    
-    
+
+
     // Pending Orders - Step 1
     this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
     this.model.get('orderlist').on('all', function() {
@@ -386,11 +386,11 @@ enyo.kind({
     this.model.on('change:totalDifference', function(model) {
       this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
     }, this);
-    
+
     //finished
     this.model.on('change:finished', function() {
       $('#modalFinished').modal('show');
-    },this);
+    }, this);
 
     this.refresh();
   },

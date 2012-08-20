@@ -58,10 +58,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function(total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
-      }, 0),
-      0);
+      }, 0), 0);
       //TODO
-      if (mod.get('counted') === OB.DEC.Zero){
+      if (mod.get('counted') === OB.DEC.Zero) {
         this.trigger('change:totalCounted');
       }
     }, this);
@@ -72,20 +71,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       me.get('orderlist').reset(pendingOrderList.models);
     }, OB.UTIL.showError, this);
   },
-  arePendingOrdersToBeProcess: function(){
-    OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList, me) { //OB.Dal.find success
+  arePendingOrdersToBeProcess: function() {
+    OB.Dal.find(OB.Model.Order, {
+      hasbeenpaid: 'Y'
+    }, function(fetchedOrderList, me) { //OB.Dal.find success
       var currentOrder = {};
       if (fetchedOrderList && fetchedOrderList.length !== 0) {
         me.set('pendingOrdersToProcess', true);
       }
-    }, function () { //OB.Dal.find error
+    }, function() { //OB.Dal.find error
     }, this)
   },
   allowNext: function() {
     var step = this.get('step'),
         unfd;
 
-    if (step === 1 && this.get('orderlist').length === 0  && !this.get('pendingOrdersToProcess')) {
+    if (step === 1 && this.get('orderlist').length === 0 && !this.get('pendingOrdersToProcess')) {
       return true;
     }
 
@@ -98,9 +99,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       //TODO: review logic
       return true;
     }
-    
-    if (step === 4){
-      this.get('cashUpReport').at(0).set('time',new Date());
+
+    if (step === 4) {
+      this.get('cashUpReport').at(0).set('time', new Date());
       return true;
     }
 
@@ -177,7 +178,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       expectedSummary: [],
       countedSummary: [],
       differenceSummary: [],
-      totalCounted: this.get('totalCounted') ,
+      totalCounted: this.get('totalCounted'),
       totalExpected: this.get('totalExpected'),
       totalDifference: this.get('totalDifference')
     };
@@ -185,64 +186,66 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     enumConcepts = ['expected', 'counted', 'difference'];
     for (counter = 0; counter < 3; counter++) {
       _.each(this.get('paymentList').models, function(curModel) {
-        if(!curModel.get(enumConcepts[counter])){
+        if (!curModel.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push({
             name: curModel.get('name'),
             value: 0
           });
-        }else{
-        countCashSummary[enumSummarys[counter]].push({
-          name: curModel.get('name'),
-          value: curModel.get(enumConcepts[counter])
-        });
+        } else {
+          countCashSummary[enumSummarys[counter]].push({
+            name: curModel.get('name'),
+            value: curModel.get(enumConcepts[counter])
+          });
         }
       }, this);
     }
     return countCashSummary;
   },
-  printCashUp: function(){
+  printCashUp: function() {
     // Printing: TODO: refactor this when HW Manager is changed
     hwManager = new OB.COMP.HWManager({});
     hwManager.templatecashup = new OB.COMP.HWResource('res/printcashup.xml');
-    hwManager.modeldaycash = {report: this.get('cashUpReport').at(0),
-        summary: this.getCountCashSummary()};
+    hwManager.modeldaycash = {
+      report: this.get('cashUpReport').at(0),
+      summary: this.getCountCashSummary()
+    };
     hwManager.printCashUp();
   },
-processAndFinishCashUp: function(){
-  //this._id = 'paymentCloseCash';
-  var objToSend = {
-      terminalId : OB.POS.modelterminal.get('terminal').id,
-      cashCloseInfo : []
-  },
-  server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
-  me = this;
-  
-  //Create the data that server expects
-  _.each(this.get('paymentList').models, function(curModel) {
-    var cashCloseInfo = {
+  processAndFinishCashUp: function() {
+    //this._id = 'paymentCloseCash';
+    var objToSend = {
+      terminalId: OB.POS.modelterminal.get('terminal').id,
+      cashCloseInfo: []
+    },
+        server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
+        me = this;
+
+    //Create the data that server expects
+    _.each(this.get('paymentList').models, function(curModel) {
+      var cashCloseInfo = {
         expected: 0,
         difference: 0,
         paymentTypeId: 0,
         paymentMethod: {}
       };
-    cashCloseInfo.paymentTypeId = curModel.get('id');
-    cashCloseInfo.difference = curModel.get('difference');
-    cashCloseInfo.expected = curModel.get('expected');
-    curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
-    cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
-    objToSend.cashCloseInfo.push(cashCloseInfo);
-  },this);
-  this.printCashUp();
-  console.log('Object to send to the server: ');
-  console.log(objToSend);
-  //ready to send to the server
-  server.exec(objToSend, function(data, message){
-    if (data && data.exception) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
-    } else {
-      console.log("cash up processed correctly. -> show modal");
-      me.set("finished", true);//$('#modalFinishClose').modal('show');
-    }
-  });
-}
+      cashCloseInfo.paymentTypeId = curModel.get('id');
+      cashCloseInfo.difference = curModel.get('difference');
+      cashCloseInfo.expected = curModel.get('expected');
+      curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
+      cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
+      objToSend.cashCloseInfo.push(cashCloseInfo);
+    }, this);
+    this.printCashUp();
+    console.log('Object to send to the server: ');
+    console.log(objToSend);
+    //ready to send to the server
+    server.exec(objToSend, function(data, message) {
+      if (data && data.exception) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
+      } else {
+        console.log("cash up processed correctly. -> show modal");
+        me.set("finished", true); //$('#modalFinishClose').modal('show');
+      }
+    });
+  }
 });
