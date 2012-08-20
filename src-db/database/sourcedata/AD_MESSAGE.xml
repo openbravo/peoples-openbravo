@@ -20913,7 +20913,7 @@ In the last 30 days this instance has exceeded the limit of web service calls al
 <!--F4D0363B82154DD899F6B8481C072FB6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F4D0363B82154DD899F6B8481C072FB6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F4D0363B82154DD899F6B8481C072FB6-->  <VALUE><![CDATA[Commission_NoCostCalculated]]></VALUE>
-<!--F4D0363B82154DD899F6B8481C072FB6-->  <MSGTEXT><![CDATA[Cannot create the invoice because there are some details with 'is cost calculated' = No.]]></MSGTEXT>
+<!--F4D0363B82154DD899F6B8481C072FB6-->  <MSGTEXT><![CDATA[Cannot create the invoice because there are some details with 'is cost calculated' = No. That's means that the product has not calculated its cost and it is not possible to calculate the margin.]]></MSGTEXT>
 <!--F4D0363B82154DD899F6B8481C072FB6-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--F4D0363B82154DD899F6B8481C072FB6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F4D0363B82154DD899F6B8481C072FB6--></AD_MESSAGE>

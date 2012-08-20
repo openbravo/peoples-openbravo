@@ -136,7 +136,6 @@
     END IF;
     -- Name 01-Jan-2000 - 31-Jan-2001 - USD
     v_Name:=v_Name || ' ' || TO_CHAR(v_StartDate) || ' - ' || TO_CHAR(v_EndDate) || ' - ' || v_Currency;
-    AD_Sequence_Next('C_CommissionRun', v_AD_Client_ID, v_C_CommissionRun_ID) ;
     AD_Sequence_Doc('DocumentNo_C_CommissionRun', v_AD_Client_ID, 'Y', v_DocumentNo) ;
     DBMS_OUTPUT.PUT_LINE('Create: ' || v_DocumentNo || ' - ' || v_Name) ;
     v_ResultStr:='InsertingHeader';
@@ -150,12 +149,13 @@
       )
       VALUES
       (
-        v_C_CommissionRun_ID, v_Record_ID, v_AD_Client_ID, v_AD_Org_ID,
+        get_uuid(), v_Record_ID, v_AD_Client_ID, v_AD_Org_ID,
          'Y', now(), '0', now(),
         '0', v_DocumentNo, v_Name, v_StartDate,
         0, 'N', 'N'
       )
       ;
+    select C_CommissionRun_ID INTO  v_C_CommissionRun_ID from C_CommissionRun where created = (select max(created) from C_CommissionRun);
     --
     v_ResultStr:='Update Record';
     UPDATE C_Commission
@@ -264,26 +264,12 @@
               || '              GROUP BY m_transaction_id, c_currency_id) COST on m_transaction.m_transaction_id = COST.m_transaction_id ';
             END IF;
           ELSE
-            IF(v_BasisAmt='N') THEN
-              v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
-              || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
-              || 'NULL, NULL, NULL, NULL, ''Y'' '
-              || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
-              || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id ';
-   /*         ELSE
-              v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * CASE WHEN (prd.ISSTOCKED=''Y'' AND prd.PRODUCTTYPE=''I'') THEN l.linenetamt - (qtyinvoiced*(COST.cost/(-1*m_transaction.movementqty))) ELSE l.linenetamt - (M_GET_NO_TRX_PRODUCT_COST(prd.M_PRODUCT_ID, h.DATEINVOICED, ''STA'', h.ad_org_id, null, h.C_CURRENCY_ID)*l.QTYINVOICED) END) AS Amt,'
-              || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
-              || 'NULL, NULL, NULL, NULL '
-              || 'FROM m_transaction inner join m_inoutline on m_transaction.m_inoutline_id = m_inoutline.m_inoutline_id '
-              || 'inner join m_inout on m_inoutline.m_inout_id = m_inout.m_inout_id '
-              || 'inner join c_invoiceline l on m_inoutline.m_inoutline_id = l.m_inoutline_id '
-              || 'inner join C_Invoice h on l.C_Invoice_ID = h.C_Invoice_ID '
-              || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id '
-              || '    LEFT JOIN M_Product prd ON l.M_Product_ID = prd.M_Product_ID '
-              || '    inner join(select SUM(m_transaction_cost.cost) as cost,m_transaction_id '
-              || '              FROM m_transaction_cost '
-              || '              GROUP BY m_transaction_id) as COST on m_transaction.m_transaction_id = COST.m_transaction_id ';*/
-            END IF;
+            --v_BasisAmt = 'N'
+            v_Cmd:='SELECT h.C_Currency_ID, SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.LineNetAmt) AS Amt,'
+            || ' SUM(CASE WHEN dt.docbasetype IN (''ARC'',''APC'') THEN -1 ELSE 1 END * l.QtyInvoiced) AS Qty, '
+            || 'NULL, NULL, NULL, NULL, ''Y'' '
+            || 'FROM C_Invoice h JOIN C_InvoiceLine l ON h.C_Invoice_ID = l.C_Invoice_ID'
+            || '    JOIN c_doctype dt ON h.c_doctype_id = dt.c_doctype_id ';
           END IF;
           v_Cmd := v_Cmd || ' WHERE h.DocStatus IN (''CL'',''CO'')'
           || ' AND h.ISSOTRX = ''Y'''
@@ -363,24 +349,20 @@
           v_Info,
           v_iscostCalculated;
           EXIT WHEN v_rc%NOTFOUND;
-          --
+          -- 
           IF (v_isCascade = 'Y') THEN  --DELETE DETAILS
             v_ResultStr:='DeletingDetail';
             IF (v_DocBasisType='I') THEN  --invoice
               DELETE FROM C_CommissionDetail 
               WHERE c_commissionamt_id IN (select c_commissionamt_id
-                                         from c_commissionamt inner join c_commissionrun on c_commissionamt.c_commissionrun_id = c_commissionrun.c_commissionrun_id
-                                              inner join c_commission on c_commissionrun.c_commission_id = c_commission.c_commission_id
-                                         where c_commission.c_commission_id = v_Record_ID
-                                               AND c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID)  
+                                         from c_commissionamt 
+                                         where c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID)  
                     AND c_invoiceline_id = v_C_InvoiceLine_ID;
             ELSE --orders
               DELETE FROM C_CommissionDetail 
               WHERE c_commissionamt_id IN (select c_commissionamt_id 
-                                         from c_commissionamt inner join c_commissionrun on c_commissionamt.c_commissionrun_id = c_commissionrun.c_commissionrun_id
-                                              inner join c_commission on c_commissionrun.c_commission_id = c_commission.c_commission_id
-                                         where c_commission.c_commission_id = v_Record_ID
-                                               AND c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID)
+                                         from c_commissionamt 
+                                         where c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID)
                     AND c_orderline_id = v_C_OrderLine_ID;
             END IF;
           END IF;
