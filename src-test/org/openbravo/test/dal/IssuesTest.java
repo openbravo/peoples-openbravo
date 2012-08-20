@@ -79,6 +79,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.test.base.BaseTest;
@@ -144,6 +145,9 @@ import org.openbravo.test.base.BaseTest;
  * 
  * https://issues.openbravo.com/view.php?id=20733: Json serialization: always the identifier
  * properties of associated entities are serialized also, resulting in extra queries
+ * 
+ * https://issues.openbravo.com/view.php?id=21360 DalConnectionProvider: getTransactionConnection()
+ * should be equal than ConnectionProviderImpl getTransactionConnection()
  * 
  * @author mtaal
  * @author iperdomo
@@ -763,6 +767,17 @@ public class IssuesTest extends BaseTest {
       final Order order = (Order) bob;
       converter.toJsonObjects(Collections.singletonList((BaseOBObject) order));
     }
+  }
+
+  public void test21360() throws Exception {
+    final DalConnectionProvider connectionProvider = new DalConnectionProvider();
+    // test that a new connection is returned
+    final Connection connection = connectionProvider.getConnection();
+    final Connection otherConnection = connectionProvider.getTransactionConnection();
+    final Connection yetAnotherConnection = connectionProvider.getTransactionConnection();
+    Assert.assertNotSame(connection, yetAnotherConnection);
+    Assert.assertNotSame(connection, otherConnection);
+    Assert.assertNotSame(otherConnection, yetAnotherConnection);
   }
 
 }
