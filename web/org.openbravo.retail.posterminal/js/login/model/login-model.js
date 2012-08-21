@@ -114,7 +114,8 @@
   });
 
   OB.Constants = {
-    FIELDSEPARATOR: '$'
+    FIELDSEPARATOR: '$',
+    IDENTIFIER: '_identifier'
   };
 
   OB.Format = window.OB.Format || {};
