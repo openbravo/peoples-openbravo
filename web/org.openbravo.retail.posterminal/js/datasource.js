@@ -378,6 +378,8 @@
                 message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
               }
             });
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
           }
         }
       });

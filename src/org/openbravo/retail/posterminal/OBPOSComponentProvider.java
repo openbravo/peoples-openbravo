@@ -108,7 +108,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
 
         // Point of sale
-        "pointofsale/model/pointofsale-model", "pointofsale/view/pointofsale",
+        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
+        "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
         "pointofsale/view/toolbar-left",
         "pointofsale/view/toolbar-right",
