@@ -115,7 +115,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   setIgnoreStep3: function() {
     var result = null;
     _.each(this.get('paymentList').models, function(model) {
-      debugger;
       if (model.get('paymentMethod').automatemovementtoother === false) {
           model.set('qtyToKeep', 0);
           if (result !== false) {
