@@ -82,7 +82,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/order",
         "model/terminal",
         "components/commonbuttons",
-        "components/hwmanager",
         "components/table",
         "components/terminal",
         "components/modalprofile",
@@ -120,7 +119,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/keyboardorder",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -129,7 +128,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/view/cashmgmt",
 
         // Cash Up window
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
+        "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
+        "closecash/view/closekeyboard",
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
         "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",

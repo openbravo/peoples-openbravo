@@ -117,15 +117,19 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           OB.UTIL.showLoading(false);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
         } else {
-          // XXX: is this the way to print?: HWManager needs to be refactored
-          var hw = new OB.COMP.HWManager(me);
-          hw.depsdropstosend = me.depsdropstosend.toJSON();
-          hw.attr({
-            templatecashmgmt: 'res/printcashmgmt.xml'
+          me.printCashMgmt.print(me.depsdropstosend.toJSON(), function (e) {
+            if (e.result === 'OK') {
+              OB.POS.navigate('retail.pointofsale');
+            } else if (e.exception) {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMgmtDonePrintNot'));
+              OB.UTIL.showLoading(true);
+              OB.POS.navigate('retail.pointofsale');          
+            }            
           });
-          me.trigger('print');
         }
       });
     }, this);
+    
+    this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
   }
 });

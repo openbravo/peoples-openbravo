@@ -1,5 +1,3 @@
-/*global OB, Backbone, _ */
-
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -8,6 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/*global OB, Backbone, _, $ */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -74,6 +74,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }, function(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
+    
+    this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
   },
   //Previous next
   allowNext: function() {
@@ -132,7 +134,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       }
     }, function(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
-    }, this)
+    }, this);
   },
   // Step 2: logic, expected vs counted 
   countAll: function() {
@@ -210,16 +212,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }
     return countCashSummary;
   },
-  printCashUp: function() {
-    // Printing: TODO: refactor this when HW Manager is changed
-    hwManager = new OB.COMP.HWManager({});
-    hwManager.templatecashup = new OB.COMP.HWResource('res/printcashup.xml');
-    hwManager.modeldaycash = {
-      report: this.get('cashUpReport').at(0),
-      summary: this.getCountCashSummary()
-    };
-    hwManager.printCashUp();
-  },
   processAndFinishCashUp: function() {
     var objToSend = {
       terminalId: OB.POS.modelterminal.get('terminal').id,
@@ -243,13 +235,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
       objToSend.cashCloseInfo.push(cashCloseInfo);
     }, this);
-    this.printCashUp();
+    
+    this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary());
+    
     //ready to send to the server
     server.exec(objToSend, function(data, message) {
       if (data && data.exception) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
       } else {
-        console.log("cash up processed correctly. -> show modal");
+        // console.log("cash up processed correctly. -> show modal");
         me.set("finished", true); //$('#modalFinishClose').modal('show');
       }
     });
