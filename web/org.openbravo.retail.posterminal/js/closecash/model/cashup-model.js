@@ -50,6 +50,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
+    this.setIgnoreStep3();
     this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
     this.set('totalExpected', _.reduce(this.get('paymentList').models, function(total, model) {
@@ -110,6 +111,26 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       return false;
     }
     return true;
+  },
+  setIgnoreStep3: function() {
+    var result = null;
+    _.each(this.get('paymentList').models, function(model) {
+      debugger;
+      if (model.get('paymentMethod').automatemovementtoother === false) {
+          model.set('qtyToKeep', 0);
+          if (result !== false) {
+          result = true;
+        }
+      } else {
+        //fix -> break
+        result = false;
+        return false;
+      }
+    }, this);
+    this.set('ignoreStep3', result);
+  },
+  isStep3Needed: function(stepOfStep3){
+    return (this.get('paymentList').at(stepOfStep3).get('paymentMethod').automatemovementtoother === false) ? false: true;
   },
   showPendingOrdersList: function() {
     return this.get('step') === 1;

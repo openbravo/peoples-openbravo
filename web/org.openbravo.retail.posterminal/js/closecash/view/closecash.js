@@ -138,35 +138,78 @@ enyo.kind({
     this.$.cashUpInfo.refresh();
   },
   changeStep: function(inSender, inEvent) {
-    var nextStep;
+    var nextStep, nextStepOfStep3;
     if (this.model.get('step') === 4 && inEvent.originator.stepCount > 0) {
       //send cash up to the server
       this.model.processAndFinishCashUp();
     } else {
       if (this.model.get('step') !== 3) {
-        this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
-        //if the new step is 3 we should set the substep number
-        if (this.model.get('step') === 3) {
-          if (inEvent.originator.stepCount > 0) {
-            //we come from step 2
-            this.model.set('stepOfStep3', 0);
+        nextStep = this.model.get('step') + inEvent.originator.stepCount;
+        if (nextStep === 3 && this.model.get('ignoreStep3')) {
+          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount + inEvent.originator.stepCount);
+          //To step 4 or to step 2
+        } else {
+          //if the new step is 3 we should set the substep number
+          if (nextStep === 3) {
+            if (inEvent.originator.stepCount > 0) {
+              //we come from step 2
+              nextStepOfStep3 = 0;
+              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
+                this.model.set('step', nextStep, {
+                  silent: true
+                });
+                this.model.set('stepOfStep3', nextStepOfStep3, {
+                  silent: true
+                });
+                this.changeStep(this, inEvent);
+              } else {
+                //change the substep, not the step
+                this.model.set('step', nextStep);
+                this.model.set('stepOfStep3', nextStepOfStep3);
+                //because the last stepOfStep3 was the same that im setting the event is not raised
+                this.model.trigger("change:stepOfStep3");
+              }
+            } else {
+              //we come from step 4
+              nextStepOfStep3 = this.model.get('paymentList').length - 1;
+              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
+                this.model.set('step', nextStep, {
+                  silent: true
+                });
+                this.model.set('stepOfStep3', nextStepOfStep3, {
+                  silent: true
+                });
+                this.changeStep(this, inEvent);
+              } else {
+                //change the substep, not the step
+                this.model.set('step', nextStep);
+                this.model.set('stepOfStep3', nextStepOfStep3);
+                //because the last stepOfStep3 was the same that im setting the event is not raised
+                this.model.trigger("change:stepOfStep3");
+              }
+            }
           } else {
-            //we come from step 4
-            //because the last stepOfStep3 was the same that im setting the event is not raised
-            this.model.set('stepOfStep3', this.model.get('paymentList').length - 1);
-            //raise the event
-            this.model.trigger("change:stepOfStep3");
+            this.model.set('step', nextStep);
           }
         }
       } else {
+        debugger;
         nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
         //if the new step is 2 or 4 we should set the step number
         if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
           //change the step and not change the substep
           this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
         } else {
-          //change the substep, not the step
-          this.model.set('stepOfStep3', nextStep);
+          debugger;
+          if (this.model.isStep3Needed(nextStep) === false) {
+            this.model.set('stepOfStep3', nextStep, {
+              silent: true
+            });
+            this.changeStep(this, inEvent);
+          } else {
+            //change the substep, not the step
+            this.model.set('stepOfStep3', nextStep);
+          }
         }
       }
     }

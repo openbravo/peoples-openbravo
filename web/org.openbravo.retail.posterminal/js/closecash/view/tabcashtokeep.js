@@ -74,7 +74,7 @@ enyo.kind({
       kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
       showing: false,
       qtyToKeep: 0,
-      style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; display: block;',
+      style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
       components: [{
         style: 'display: table-row;',
         components:[{
