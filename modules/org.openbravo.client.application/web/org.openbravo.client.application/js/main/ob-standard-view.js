@@ -831,7 +831,9 @@ isc.OBStandardView.addProperties({
     this.viewGrid.deselectAllRecords(false, true);
 
     if (this.viewGrid.filterEditor) {
-      this.viewGrid.clearFilter(false, true);
+      // do not clear the implicit filter
+      // see issue https://issues.openbravo.com/view.php?id=19943
+      this.viewGrid.clearFilter(true, true);
     }
     if (this.viewGrid.data && this.viewGrid.data.setCriteria) {
       this.viewGrid.data.setCriteria(null);
