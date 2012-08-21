@@ -12,22 +12,6 @@
 OB = window.OB || {};
 OB.COMP = window.OB.COMP || {};
 
-OB.COMP.HWResource = function(res) {
-  this.resource = res;
-  this.resourcedata = null;
-};
-
-OB.COMP.HWResource.prototype.getData = function(callback) {
-  if (this.resourcedata) {
-    callback(this.resourcedata);
-  } else {
-    OB.UTIL.loadResource(this.resource, function(data) {
-      this.resourcedata = data;
-      callback(this.resourcedata);
-    }, this);
-  }
-};
-
 OB.COMP.HWManager = function(context) {
   if (context.modelorder) {
     this.receipt = context.modelorder;
@@ -75,11 +59,9 @@ function cashMgmthwcallback(e) {
 OB.COMP.HWManager.prototype.printLine = function() {
   var line = this.line;
   if (line) {
-    this.templateline.getData(function(data) {
-      OB.POS.hwserver.print(data, {
-        line: line
-      }, hwcallback);
-    });
+    OB.POS.hwserver.print(this.templateline, {
+      line: line
+    }, hwcallback);
   }
 };
 
@@ -104,39 +86,31 @@ OB.COMP.HWManager.prototype.printOrder = function() {
     }
   }
 
-  template.getData(function(data) {
-    OB.POS.hwserver.print(data, {
-      order: receipt
-    }, hwcallback);
-  });
+  OB.POS.hwserver.print(template, {
+    order: receipt
+  }, hwcallback);
 };
 
 OB.COMP.HWManager.prototype.printCashUp = function() {
-  var modeldaycash = this.modeldaycash;
-  this.templatecashup.getData(function(data) {
-    OB.POS.hwserver.print(data, {
-      cashup: modeldaycash
-    }, hwcallback);
-  });
+  OB.POS.hwserver.print(this.templatecashup, {
+    cashup: this.modeldaycash
+  }, hwcallback);
 };
 
 OB.COMP.HWManager.prototype.printCashMgmt = function() {
-  var depsdropstosend = this.depsdropstosend;
-  this.templatecashmgmt.getData(function(data) {
-    OB.POS.hwserver.print(data, {
-      cashmgmt: depsdropstosend
-    }, cashMgmthwcallback);
-  });
+  OB.POS.hwserver.print(this.templatecashmgmt, {
+    cashmgmt: this.depsdropstosend
+  }, cashMgmthwcallback);
 };
 
 OB.COMP.HWManager.prototype.attr = function(attrs) {
-  this.templateline = new OB.COMP.HWResource(attrs.templateline);
-  this.templatereceipt = new OB.COMP.HWResource(attrs.templatereceipt);
-  this.templateinvoice = new OB.COMP.HWResource(attrs.templateinvoice || attrs.templatereceipt);
-  this.templatereturn = new OB.COMP.HWResource(attrs.templatereturn || attrs.templatereceipt);
-  this.templatereturninvoice = new OB.COMP.HWResource(attrs.templatereturninvoice || attrs.templatereturn || attrs.templatereceipt);
-  this.templatecashup = new OB.COMP.HWResource(attrs.templatecashup);
-  this.templatecashmgmt = new OB.COMP.HWResource(attrs.templatecashmgmt);
+  this.templateline = new OB.DS.HWResource(attrs.templateline);
+  this.templatereceipt = new OB.DS.HWResource(attrs.templatereceipt);
+  this.templateinvoice = new OB.DS.HWResource(attrs.templateinvoice || attrs.templatereceipt);
+  this.templatereturn = new OB.DS.HWResource(attrs.templatereturn || attrs.templatereceipt);
+  this.templatereturninvoice = new OB.DS.HWResource(attrs.templatereturninvoice || attrs.templatereturn || attrs.templatereceipt);
+  this.templatecashup = new OB.DS.HWResource(attrs.templatecashup);
+  this.templatecashmgmt = new OB.DS.HWResource(attrs.templatecashmgmt);
 };
 
 OB.COMP.HWManager.prototype.load = function() {
