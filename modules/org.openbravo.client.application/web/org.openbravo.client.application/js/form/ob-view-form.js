@@ -1473,9 +1473,7 @@ OB.ViewFormProperties = {
 
         view.viewGrid.markForRedraw();
 
-        if (form.isNew) {
-          view.refreshChildViews();
-        }
+        view.refreshChildViews();
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
