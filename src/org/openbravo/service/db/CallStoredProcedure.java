@@ -64,11 +64,24 @@ public class CallStoredProcedure {
    *          if the null value is something else than a String (which is handled as a default type)
    * @param doFlush
    *          do flush before calling stored procedure
+   * @param returnResults
+   *          whether a fetch for results should be done after the call to the stored procedure
+   *          (essentially describes whether the PL object is a procedure or function)
+   * 
    * @return the stored procedure result.
    */
   public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush) {
+    return call(name, parameters, types, doFlush, true);
+  }
+
+  public Object call(String name, List<Object> parameters, List<Class<?>> types, boolean doFlush,
+      boolean returnResults) {
     final StringBuilder sb = new StringBuilder();
-    sb.append("SELECT " + name);
+    if (new DalConnectionProvider(false).getRDBMS().equalsIgnoreCase("ORACLE") && !returnResults) {
+      sb.append("CALL " + name);
+    } else {
+      sb.append("SELECT " + name);
+    }
     for (int i = 0; i < parameters.size(); i++) {
       if (i == 0) {
         sb.append("(");
@@ -80,7 +93,9 @@ public class CallStoredProcedure {
     if (parameters.size() > 0) {
       sb.append(")");
     }
-    sb.append(" AS RESULT FROM DUAL");
+    if (returnResults || !new DalConnectionProvider(false).getRDBMS().equalsIgnoreCase("ORACLE")) {
+      sb.append(" AS RESULT FROM DUAL");
+    }
     final Connection conn = OBDal.getInstance().getConnection(doFlush);
     try {
       final PreparedStatement ps = conn.prepareStatement(sb.toString(),
@@ -112,7 +127,7 @@ public class CallStoredProcedure {
       }
       final ResultSet resultSet = ps.executeQuery();
       Object resultValue = null;
-      if (resultSet.next()) {
+      if (returnResults && resultSet.next()) {
         resultValue = resultSet.getObject("RESULT");
         if (resultSet.wasNull()) {
           resultValue = null;

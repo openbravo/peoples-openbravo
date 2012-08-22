@@ -18,22 +18,14 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -43,6 +35,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.mrp.ProductionRun;
 import org.openbravo.model.mrp.ProductionRunLine;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class MRPManufacturingPlanProcess extends DalBaseProcess {
@@ -112,7 +105,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       parameters.add(timeHorizon);
       parameters.add(docDate);
       parameters.add("Y");
-      call("MRP_RUN_INITIALIZE", parameters, null);
+      CallStoredProcedure.getInstance().call("MRP_RUN_INITIALIZE", parameters, null, true, false);
 
       OBDal.getInstance().commitAndClose();
       OBDal.getInstance().getSession().clear();
@@ -130,7 +123,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       parameters.add(timeHorizon);
       parameters.add(docDate);
       parameters.add(safetyLeadTime);
-      call("MRP_RUN_EXPLODE", parameters, null);
+      CallStoredProcedure.getInstance().call("MRP_RUN_EXPLODE", parameters, null, true, false);
       OBDal.getInstance().commitAndClose();
       OBDal.getInstance().getSession().clear();
 
@@ -147,7 +140,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       parameters.add(timeHorizon);
       parameters.add(docDate);
       parameters.add(safetyLeadTime);
-      call("MRP_PROCESSPLAN", parameters, null);
+      CallStoredProcedure.getInstance().call("MRP_PROCESSPLAN", parameters, null, true, false);
 
       OBDal.getInstance().commitAndClose();
       OBDal.getInstance().getSession().clear();
@@ -188,86 +181,4 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     return prlQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private void call(String name, List<Object> parameters, List<Class<?>> types) {
-    final StringBuilder sb = new StringBuilder();
-
-    final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    if (obProps.getProperty("bbdd.rdbms") != null
-        && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-      sb.append("SELECT * FROM ");
-    } else {
-      sb.append(" CALL ");
-    }
-
-    sb.append(name);
-    for (int i = 0; i < parameters.size(); i++) {
-      if (i == 0) {
-        sb.append("(");
-      } else {
-        sb.append(",");
-      }
-      sb.append("?");
-    }
-    if (parameters.size() > 0) {
-      sb.append(")");
-    }
-    final Connection conn = OBDal.getInstance().getConnection(true);
-    try {
-      final PreparedStatement ps = conn.prepareStatement(sb.toString(),
-          ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-      int index = 0;
-
-      for (Object parameter : parameters) {
-        final int sqlIndex = index + 1;
-        if (parameter == null) {
-          if (types == null || types.size() < index) {
-            ps.setNull(sqlIndex, Types.NULL);
-          } else {
-            ps.setNull(sqlIndex, getSqlType(types.get(index)));
-          }
-        } else if (parameter instanceof String && parameter.toString().equals("")) {
-          ps.setNull(sqlIndex, Types.VARCHAR);
-        } else if (parameter instanceof Boolean) {
-          ps.setObject(sqlIndex, ((Boolean) parameter) ? "Y" : "N");
-        } else if (parameter instanceof BaseOBObject) {
-          ps.setObject(sqlIndex, ((BaseOBObject) parameter).getId());
-        } else if (parameter instanceof Timestamp) {
-          ps.setTimestamp(sqlIndex, (Timestamp) parameter);
-        } else if (parameter instanceof Date) {
-          ps.setDate(sqlIndex, new java.sql.Date(((Date) parameter).getTime()));
-        } else {
-          ps.setObject(sqlIndex, parameter);
-        }
-        index++;
-      }
-      final ResultSet resultSet = ps.executeQuery();
-      resultSet.close();
-      ps.close();
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  private int getSqlType(Class<?> clz) {
-    if (clz == null) {
-      return Types.VARCHAR;
-    }
-    if (clz == Boolean.class) {
-      return Types.VARCHAR;
-    } else if (clz == String.class) {
-      return Types.VARCHAR;
-    } else if (clz == BaseOBObject.class) {
-      return Types.VARCHAR;
-    } else if (Number.class.isAssignableFrom(clz)) {
-      return Types.NUMERIC;
-    } else if (clz == Timestamp.class) {
-      return Types.TIMESTAMP;
-    } else if (Date.class.isAssignableFrom(clz)) {
-      return Types.DATE;
-    } else if (BaseOBObject.class.isAssignableFrom(clz)) {
-      return Types.VARCHAR;
-    } else {
-      throw new IllegalStateException("Type not supported, please add it here " + clz.getName());
-    }
-  }
 }
