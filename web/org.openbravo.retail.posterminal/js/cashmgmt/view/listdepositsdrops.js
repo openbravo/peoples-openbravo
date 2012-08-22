@@ -161,10 +161,9 @@ enyo.kind({
         total;
 
     this.inherited(arguments);
-
-    total = _.reduce(transactionsArray, function (accum, trx) {
+    total = OB.DEC.add(OB.DEC.add(this.model.get('startingCash'),this.model.get('totalTendered')), _.reduce(transactionsArray, function (accum, trx) {
       return accum + trx.deposit - trx.drop;
-    }, 0);
+    }, 0));
 
     this.model.set('total', total, {
       silent: true // prevents triggering change event
