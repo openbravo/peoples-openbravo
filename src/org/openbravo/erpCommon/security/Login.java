@@ -281,6 +281,9 @@ public class Login extends HttpBaseServlet {
       }
     }
 
+    Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    xmlEngine.sessionLanguage = systemClient.getLanguage().getLanguage();
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();
 
