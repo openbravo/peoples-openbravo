@@ -366,7 +366,62 @@ function validate(action) {
   }
   return true;
 }
-function updateData(key, mark, drivenByGrid) {
+
+function updateAll(drivenByGrid) {
+  var frm = document.frmMain;
+  var chk = frm.inpScheduledPaymentDetailId;
+  var recordAmount, i;
+
+  frm.inpExpectedPayment.value = applyFormat('0');
+  if (isGLItemEnabled) {
+    frm.inpExpectedPayment.value = frm.inpGLSumAmount.value || applyFormat('0');
+  }
+  if (!chk) {
+    return;
+  } else if (!chk.length) {
+    if (!chk.checked) {
+      recordAmount = frm.elements["inpRecordAmt" + chk.value].value;
+      frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+    }
+    updateData(chk.value, chk.checked, drivenByGrid);
+  } else {
+    var total = chk.length;
+    if (drivenByGrid){
+      if(!document.getElementById('inpTotal') || document.getElementById('inpTotal').value !== applyFormat('0')){
+        document.getElementById('inpTotal').value = applyFormat('0');
+        for (i = 0; i < total; i++) {
+          if(applyFormat(document.frmMain.elements['inpPaymentAmount'+chk[i].value].value) !== "" && chk[i].checked){
+            document.getElementById('inpTotal').value = add(applyFormat(document.getElementById('inpTotal').value), applyFormat(document.frmMain.elements['inpPaymentAmount'+chk[i].value].value));
+          }
+        }
+      }
+    }
+    for (i = 0; i < total; i++) {
+      if (!chk[i].checked) {
+        recordAmount = frm.elements["inpRecordAmt" + chk[i].value].value;
+        frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+      }
+      if (drivenByGrid){
+        if (applyFormat(document.frmMain.elements['inpPaymentAmount'+chk[i].value].value) === "" || !chk[i].checked)
+        {
+          updateData(chk[i].value, chk[i].checked, drivenByGrid, true);
+          if (chk[i].checked){
+            document.getElementById('inpTotal').value = add(applyFormat(document.getElementById('inpTotal').value), applyFormat(document.frmMain.elements['inpPaymentAmount'+chk[i].value].value));
+          }
+        }
+      }
+      else{
+          updateData(chk[i].value, chk[i].checked, drivenByGrid,false);
+      }
+    }
+  }
+  if (drivenByGrid){
+    updateTotal();
+  }
+  return true;
+}
+
+function updateData(key, mark, drivenByGrid, all) {
   if (mark === null) { mark=false; }
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
@@ -405,9 +460,10 @@ function updateData(key, mark, drivenByGrid) {
       }
     }
   }
-
-  updateTotal();
-
+  if (!all){
+    updateTotal();
+  }
+      
   return true;
 }
 function validateDate(element){
