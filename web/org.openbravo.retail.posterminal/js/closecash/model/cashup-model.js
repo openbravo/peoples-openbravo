@@ -204,7 +204,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   },
   //Step 4
   getCountCashSummary: function() {
-    var countCashSummary, counter, enumConcepts, enumSummarys;
+    var countCashSummary, counter, enumConcepts, enumSummarys, i;
     countCashSummary = {
       expectedSummary: [],
       countedSummary: [],
@@ -216,19 +216,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary'];
     enumConcepts = ['expected', 'counted', 'difference'];
     for (counter = 0; counter < 3; counter++) {
-      _.each(this.get('paymentList').models, function(curModel) {
-        if (!curModel.get(enumConcepts[counter])) {
+      for (i = 0; i < this.get('paymentList').models.length; i++) {
+        if (!this.get('paymentList').models[i].get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push({
-            name: curModel.get('name'),
+            name: this.get('paymentList').models[i].get('name'),
             value: 0
           });
         } else {
           countCashSummary[enumSummarys[counter]].push({
-            name: curModel.get('name'),
-            value: curModel.get(enumConcepts[counter])
+            name: this.get('paymentList').models[i].get('name'),
+            value: this.get('paymentList').models[i].get(enumConcepts[counter])
           });
         }
-      }, this);
+      }
     }
     return countCashSummary;
   },
