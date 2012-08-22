@@ -220,7 +220,7 @@ enyo.kind({
     this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
   },
   paymentMethodKept: function(inSender, event) {
-    var validationResult = this.model.validateCashKeep(event.qtyToKeep)
+    var validationResult = this.model.validateCashKeep(event.qtyToKeep);
     if (validationResult.result) {
       this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', event.qtyToKeep);
     } else {

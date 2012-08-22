@@ -1,4 +1,4 @@
-/*global enyo */
+/*global enyo, $ */
 
 /*
  ************************************************************************************
@@ -95,7 +95,7 @@ enyo.kind({
     }]
   }],
   tri: function(){
-    value = this.$.variableInput.getValue();
+    var value = this.$.variableInput.getValue();
     if(value===''){
       value = 0;
     }

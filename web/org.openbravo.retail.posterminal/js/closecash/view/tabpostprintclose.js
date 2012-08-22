@@ -51,7 +51,7 @@ enyo.kind({
       style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 60%; font-weight:bold;'
     }, {
       name: 'totalQty',
-      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;',
+      style: 'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 15%; text-align:right; font-weight:bold;'
     }, {
       style: 'width: 10%; float: left;',
       components: [{
@@ -458,6 +458,6 @@ enyo.kind({
     
     this.model.on('change:time', function(){
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
-    }, this)
+    }, this);
   }
 });

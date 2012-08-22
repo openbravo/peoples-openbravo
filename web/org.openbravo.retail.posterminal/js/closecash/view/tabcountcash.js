@@ -56,7 +56,7 @@ enyo.kind({
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
   render: function() {
-    var udfn;
+    var udfn, counted;
     this.inherited(arguments);
     counted = this.model.get('counted');
     if (counted !== null && counted !== udfn) {
