@@ -121,16 +121,16 @@ enyo.kind({
         me.categories.reset();
       }
     }
-
-    OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
-  },
-  receiptChanged: function() {
+    
     this.products.on('click', function(model) {
       this.doAddProduct({
         product: model
       });
     }, this);
 
+    OB.Dal.find(OB.Model.ProductCategory, null, successCallbackCategories, errorCallback, this);
+  },
+  receiptChanged: function() {
     this.receipt.on('clear', function() {
       this.$.productname.setContent('');
       this.$.productcategory.setContent('');
