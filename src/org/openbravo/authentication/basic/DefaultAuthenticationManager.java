@@ -82,22 +82,16 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       if (LoginUtils.checkUserPassword(conn, strUser, strPass) == null) {
         log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
-        errorMsg.setTitle(Utility.messageBD(this.conn, "IDENTIFICATION_FAILURE_TITLE",
-            variables.getLanguage()));
-        errorMsg.setMessage(Utility.messageBD(this.conn, "IDENTIFICATION_FAILURE_MSG",
-            variables.getLanguage()));
+        errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
+        errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
       } else {
         log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
-        errorMsg
-            .setTitle(Utility.messageBD(this.conn, "LOCKED_USER_TITLE", variables.getLanguage()));
-        errorMsg
-            .setMessage(Utility.messageBD(this.conn, "LOCKED_USER_MSG", variables.getLanguage()));
-        updateDBSession(sessionId, false, "LU");
+        errorMsg.setTitle("LOCKED_USER_TITLE");
+        errorMsg.setMessage("LOCKED_USER_MSG");
       }
 
       // throw error message will be caught by LoginHandler
-      throw new AuthenticationException(Utility.messageBD(this.conn,
-          "IDENTIFICATION_FAILURE_TITLE", variables.getLanguage()), errorMsg);
+      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
