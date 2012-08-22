@@ -1376,10 +1376,15 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // selectors
                       Object el = element.get(1, null);
                       if (el != null) {
-                        hiddenInputs.put(name, el);
-                        // We set the hidden fields in the request, so that subsequent callouts can
-                        // use them
-                        rq.setRequestParameter(name, el.toString());
+                        if (el instanceof NativeArray) {
+                          // In this case, we ignore the value, as a hidden input cannot be an array
+                          // of elements
+                        } else {
+                          hiddenInputs.put(name, el);
+                          // We set the hidden fields in the request, so that subsequent callouts
+                          // can use them
+                          rq.setRequestParameter(name, el.toString());
+                        }
                       }
                     }
                   }
