@@ -96,7 +96,6 @@ enyo.kind({
     this.$.payments.setCollection(this.receipt.get('payments'));
 
     this.receipt.on('change:payment change:change change:gross', function() {
-      debugger;
       this.updatePending();
     }, this);
     this.updatePending();
