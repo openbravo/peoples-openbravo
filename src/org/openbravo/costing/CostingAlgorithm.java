@@ -30,6 +30,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
@@ -517,6 +518,8 @@ public abstract class CostingAlgorithm {
 
     try {
       List<Object> params = new ArrayList<Object>();
+      params.add(production.getId());
+      params.add((String) DalUtil.getId(OBContext.getOBContext().getUser()));
       CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {
