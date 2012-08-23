@@ -82,17 +82,15 @@ public class CallStoredProcedure {
     } else {
       sb.append("SELECT " + name);
     }
+    sb.append("(");
     for (int i = 0; i < parameters.size(); i++) {
-      if (i == 0) {
-        sb.append("(");
-      } else {
+      if (i != 0) {
         sb.append(",");
       }
       sb.append("?");
     }
-    if (parameters.size() > 0) {
-      sb.append(")");
-    }
+    sb.append(")");
+
     if (returnResults || !new DalConnectionProvider(false).getRDBMS().equalsIgnoreCase("ORACLE")) {
       sb.append(" AS RESULT FROM DUAL");
     }
