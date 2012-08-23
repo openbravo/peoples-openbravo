@@ -90,14 +90,7 @@
       this.modelterminal.lock();
     },
     paymentProviders: [],
-    windows: new(Backbone.Collection.extend({
-      comparator: function(window) {
-        // sorts by menu position, 0 if not defined
-        var position = window.get('menuPosition');
-        return position ? position : 0;
-      }
-    }))(),
-    //  windows: new Backbone.Collection(),
+    windows: null,
     navigate: function(route) {
       this.modelterminal.router.navigate(route, {
         trigger: true
@@ -106,6 +99,15 @@
     registerWindow: function(windowName, window) {
       this.modelterminal.registerWindow(windowName, window);
 
+    },
+    cleanWindows: function() {
+      this.windows = new(Backbone.Collection.extend({
+        comparator: function(window) {
+          // sorts by menu position, 0 if not defined
+          var position = window.get('menuPosition');
+          return position ? position : 0;
+        }
+      }))();
     }
   };
 

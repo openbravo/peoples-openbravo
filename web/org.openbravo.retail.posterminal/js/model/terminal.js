@@ -123,6 +123,8 @@ OB.Model.Terminal = Backbone.Model.extend({
       }
     });
 
+    OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
+
     OB.POS.modelterminal.on('terminal.loaded', function() {
       var oldOB = OB;
 
@@ -133,6 +135,8 @@ OB.Model.Terminal = Backbone.Model.extend({
         var newFormat = OB.Format;
         _.extend(OB, oldOB);
         OB.Format = newFormat;
+        OB.POS.cleanWindows();
+
         $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Labels').wait(function() {
           $LAB.script('js/i18n.js').wait(function() {
             $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
