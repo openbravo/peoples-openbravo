@@ -47,11 +47,12 @@ public class LabelsComponent extends BaseTemplateComponent {
         final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
         labels.put(qryLabelObjectItem[0].toString(), qryLabelObjectItem[1].toString());
       }
-      // sb.append(labels.toString());
+      sb.append(labels.toString());
     } catch (Exception e) {
       log.error("There was an exception while generating the Web POS labels", e);
     }
     return sb.toString();
 
   }
+
 }

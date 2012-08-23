@@ -1,2 +1,3 @@
-# Labels for the Web POS
+(function () {
 OB.I18N.labels = ${data.labelsObj}
+}());
