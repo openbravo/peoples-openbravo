@@ -7,84 +7,140 @@
  ************************************************************************************
  */
 
-/*global window, $, B, Backbone */
+/*global enyo, $ */
 
-(function() {
+enyo.kind({
+  name: 'OB.UI.ModalReceipts',
+  myId: 'modalreceipts',
+  published: {
+    receiptsList: null
+  },
+  kind: 'OB.UI.Modal',
+  modalClass: 'modal',
+  headerClass: 'modal-header',
+  bodyClass: 'modal-header',
+  header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
+  body: {
+    kind: 'OB.UI.ListReceipts',
+    name: 'listreceipts'
+  },
+  receiptsListChanged: function(oldValue) {
+    this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
+  }
+});
 
-  OB = window.OB || {};
-  OB.UI = window.OB.UI || {};
-
-  OB.UI.ModalReceipts = OB.COMP.Modal.extend({
-
-    id: 'modalreceipts',
-    header: OB.I18N.getLabel('OBPOS_LblAssignReceipt'),
-    getContentView: function() {
-      return OB.COMP.ListReceipts;
-    },
-    showEvent: function(e) {
-      // custom bootstrap event, no need to prevent default
-      this.options.modelorderlist.saveCurrent();
-    }
-  });
-
-  OB.COMP.ModalDeleteReceipt = OB.COMP.ModalAction.extend({
-    id: 'modalDeleteReceipt',
-    header: OB.I18N.getLabel('OBPOS_ConfirmDeletion'),
-
-    setBodyContent: function() {
-      return ({
-        kind: B.KindJQuery('div'),
-        content: [
-          OB.I18N.getLabel('OBPOS_MsgConfirmDelete'),{kind: B.KindJQuery('br')},OB.I18N.getLabel('OBPOS_cannotBeUndone')]
+enyo.kind({
+  name: 'OB.UI.ListReceipts',
+  classes: 'row-fluid',
+  published: {
+    receiptsList: null
+  },
+  events: {
+    onChangeCurrentOrder: ''
+  },
+  components: [{
+    classes: 'span12',
+    components: [{
+      style: 'border-bottom: 1px solid #cccccc;'
+    }, {
+      components: [{
+        name: 'receiptslistitemprinter',
+        kind: 'OB.UI.Table',
+        renderLine: 'OB.UI.ListReceiptLine',
+        renderEmpty: 'OB.UI.RenderEmpty'
+      }]
+    }]
+  }],
+  receiptsListChanged: function(oldValue) {
+    this.$.receiptslistitemprinter.setCollection(this.receiptsList);
+    this.receiptsList.on('click', function(model) {
+      this.doChangeCurrentOrder({
+        newCurrentOrder: model
       });
-    },
+    }, this);
+  }
+});
 
-    setBodyButtons: function() {
-      return ({
-        kind: B.KindJQuery('div'),
-        content: [{
-          kind: OB.COMP.DeleteReceiptDialogApply
-        }, {
-          kind: OB.COMP.DeleteReceiptDialogCancel
-        }]
-      });
-    }
-  });
+enyo.kind({
+  name: 'OB.UI.ListReceiptLine',
+  kind: 'OB.UI.SelectButton',
+  components: [{
+    name: 'line',
+    style: 'line-height: 23px;',
+    components: [{
+      components: [{
+        style: 'float: left; width: 15%',
+        name: 'time'
+      }, {
+        style: 'float: left; width: 25%',
+        name: 'orderNo'
+      }, {
+        style: 'float: left; width: 60%',
+        name: 'bp'
+      }, {
+        style: 'clear: both;'
+      }]
+    }, {
+      components: [{
+        style: 'float: left; width: 15%; font-weight: bold;'
+      }, {
+        style: 'float: left; width: 25%; font-weight: bold;'
+      }, {
+        style: 'float: right; text-align: right; width: 25%; font-weight: bold;',
+        name: 'total'
+      }, {
+        style: 'clear: both;'
+      }]
+    }]
+  }],
+  create: function() {
+    this.inherited(arguments);
+    this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
+    this.$.orderNo.setContent(this.model.get('documentNo'));
+    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    this.$.total.setContent(this.model.printTotal());
+  }
+});
 
-  // Apply the changes
-  OB.COMP.DeleteReceiptDialogApply = OB.COMP.Button.extend({
-    isActive: true,
-    className: 'btnlink btnlink-gray modal-dialog-content-button',
-    render: function() {
-      this.$el.html(OB.I18N.getLabel('OBPOS_LblYesDelete'));
-      return this;
-    },
-    clickEvent: function(e) {
-      // If the model order does not have an id, it has not been
-      // saved in the database yet, so there is no need to remove it
-      if (this.options.modelorder.get('id')) {
-        // makes sure that the current order has the id
-        this.options.modelorderlist.saveCurrent();
-        // removes the current order from the database
-        OB.Dal.remove(this.options.modelorderlist.current, null, null);
-      }
-      this.options.modelorderlist.deleteCurrent();
-      $('#modalDeleteReceipt').modal('hide');
-    }
-  });
+/*delete confirmation modal*/
 
-  // Cancel
-  OB.COMP.DeleteReceiptDialogCancel = OB.COMP.Button.extend({
-    attributes: {
-      'data-dismiss': 'modal'
-    },
-    className: 'btnlink btnlink-gray modal-dialog-content-button',
-    render: function() {
-      this.$el.html(OB.I18N.getLabel('OBPOS_LblCancel'));
-      return this;
-    },
-    clickEvent: function(e) {
-    }
-  });
+enyo.kind({
+  kind: 'OB.UI.ModalAction',
+  name: 'OB.UI.ModalDeleteReceipt',
+  myId: 'modalConfirmReceiptDelete',
+  header: OB.I18N.getLabel('OBPOS_ConfirmDeletion'),
+  bodyContent: {
+    content: OB.I18N.getLabel('OBPOS_MsgConfirmDelete') + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
+  },
+  bodyButtons: {
+    components: [{
+      kind: 'OB.UI.btnModalApplyDelete'
+    }, {
+      kind: 'OB.UI.btnModalCancelDelete'
+    }]
+  }
+});
 
-}());
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.btnModalApplyDelete',
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  content: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+  events: {
+    onDeleteOrder: ''
+  },
+  tap: function() {
+    $('#modalConfirmReceiptDelete').modal('hide');
+    this.doDeleteOrder();
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.UI.btnModalCancelDelete',
+  attributes: {
+    'data-dismiss': 'modal'
+  },
+  classes: 'btnlink btnlink-gray modal-dialog-content-button',
+  content: OB.I18N.getLabel('OBPOS_LblCancel')
+});

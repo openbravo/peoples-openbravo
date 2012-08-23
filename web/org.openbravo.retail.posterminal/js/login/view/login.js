@@ -193,6 +193,8 @@
       this.$.LoginBrowserNotSupported_P1_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P1'));
       this.$.LoginBrowserNotSupported_P2_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P2', ['Chrome, Safari, Safari (iOS)', 'Android']));
       this.$.LoginBrowserNotSupported_P3_Lbl.setContent(OB.I18N.getLabel('OBPOS_LoginBrowserNotSupported_P3'));
+      
+      this.postRenderActions();
     },
 
     handlers: {

@@ -7,33 +7,24 @@
  ************************************************************************************
  */
 
-/*global window, B, Backbone */
+/*global enyo, $ */
 
-(function() {
+enyo.kind({
+  name: 'OB.UI.ModalPayment',
+  kind: 'OB.UI.Modal',
+  myId: 'modalp',
+  header: OB.I18N.getLabel('OBPOS_LblModalPayment'),
+  maxheight: '600px',
+  show: function(receipt, key, name, paymentMethod, amount) {
+	  this.$.body.destroyComponents();
+    this.$.body.createComponent({
+      kind: paymentMethod.view,
+      paymentType: name,
+      paymentAmount: amount,
+      key: key,
+      receipt: receipt
+    }).render();
 
-  OB = window.OB || {};
-  OB.UI = window.OB.UI || {};
-
-  OB.UI.ModalPayment = OB.COMP.Modal.extend({
-
-    header: OB.I18N.getLabel('OBPOS_LblModalPayment'),
-    maxheight: '600px',
-    getContentView: function() {
-      return Backbone.View.extend({
-        tagName: 'div'
-      });
-    },
-    show: function(receipt, key, name, paymentMethod, amount) {
-
-      this.paymentcomponent = new paymentMethod.view({paymentMethod: paymentMethod}).render();
-      this.contentview.$el.empty().append(this.paymentcomponent.$el);
-      this.paymentcomponent.show(receipt, key, name, amount);
-      this.$el.modal();
-    },
-    hideEvent: function(e) {
-      this.paymentcomponent.close();
-      this.paymentcomponent = null;
-    }
-  });
-
-}());
+    $('#modalp').modal('show');
+  }
+});

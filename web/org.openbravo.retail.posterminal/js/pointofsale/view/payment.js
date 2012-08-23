@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Payment',
   published: {
@@ -167,23 +169,26 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine',
-  style: 'color:white;',
+  classes: 'btnselect',
   components: [{
-    name: 'name',
-    style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
-  }, {
-    name: 'info',
-    style: 'float: left; width: 50%; padding: 5px 0px 0px 0px;'
-  }, {
-    name: 'amount',
-    style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-  }, {
-    style: 'float: left; width: 15%; text-align: right;',
+    style: 'color:white;',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
+      name: 'name',
+      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
+    }, {
+      name: 'info',
+      style: 'float: left; width: 50%; padding: 5px 0px 0px 0px;'
+    }, {
+      name: 'amount',
+      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+    }, {
+      style: 'float: left; width: 15%; text-align: right;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
+      }]
+    }, {
+      style: 'clear: both;'
     }]
-  }, {
-    style: 'clear: both;'
   }],
   initComponents: function() {
     this.inherited(arguments);

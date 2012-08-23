@@ -7,11 +7,12 @@
  ************************************************************************************
  */
 
-/*global B, $ */
+/*global enyo, $ */
 
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
+
   classes: 'container',
   components: [{
     classes: 'section',
@@ -30,7 +31,7 @@ enyo.kind({
             components: [{
               tag: 'span',
               style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
-              content: '.',
+              content: '.'
             }, {
               tag: 'span',
               content: 'Online' //TODO: trl
@@ -120,6 +121,10 @@ enyo.kind({
         name: 'containerWindow'
       }]
     }]
+  }, {
+    makeId: function() {
+      return 'alertContainer';
+    }
   }],
 
   initComponents: function() {
@@ -183,7 +188,6 @@ enyo.kind({
   makeId: function() {
     return 'container';
   }
-
 });
 
 
@@ -229,7 +233,6 @@ enyo.kind({
       label: 'Profile',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
-        console.log('tap');
         $('#profileDialog').modal('show');
       }
     }, {
@@ -239,7 +242,6 @@ enyo.kind({
       label: 'Log Out',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
-        console.log('tap');
         $('#logoutDialog').modal('show');
       }
     }, {

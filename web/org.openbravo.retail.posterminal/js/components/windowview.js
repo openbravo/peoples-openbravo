@@ -7,28 +7,15 @@
  ************************************************************************************
  */
 
-//OB.UI.WindowView = Backbone.View.extend({
-//  windowmodel: null,
-//
-//  initialize: function() {
-//    var me = this;
-//    this.model = new this.windowmodel();
-//    this.model.on('ready', function() {
-//      OB.UTIL.initContentView(me);
-//      if (me.init) {
-//        me.init();
-//      }
-//      OB.POS.modelterminal.trigger('window:ready', me);
-//    });
-//  }
-//});
+/*global enyo */
+
 enyo.kind({
   name: 'OB.UI.WindowView',
   windowmodel: null,
   create: function() {
+
     this.inherited(arguments);
     this.model = new this.windowmodel();
-    console.log('model in window created');
     this.model.on('ready', function() {
       if (this.init) {
         this.init();
@@ -48,6 +35,25 @@ enyo.kind({
           child.init();
         }
       });
+    },
+    destroyModels: function(view) {
+      var p;
+      if (!view) {
+        return;
+      }
+      for (p in view) {
+        if (view.hasOwnProperty(p) && view[p] && view[p].off) {
+          view[p].off();
+          delete view[p];
+        }
+      }
+      if (!view.getComponents) {
+        return;
+      }
+
+      enyo.forEach(view.getComponents(), function(child) {
+        OB.UI.WindowView.destroyModels(child);
+      });
     }
   },
   init: function() {
@@ -58,6 +64,13 @@ enyo.kind({
     //        component.init();
     //      }
     //    });
-  }
+  },
 
+  destroy: function() {
+    this.model.setOff();
+    this.model = null;
+    OB.UI.WindowView.destroyModels(this);
+
+    this.inherited(arguments);
+  }
 });

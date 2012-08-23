@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $ */
+/*global enyo */
 
 enyo.kind({
   name: 'OB.UI.RenderCategory',
@@ -15,7 +15,8 @@ enyo.kind({
   components: [{
     style: 'float: left; width: 25%',
     components: [{
-      kind: 'OB.UI.Thumbnail'
+      kind: 'OB.UI.Thumbnail',
+      name: 'thumbnail'
     }]
   }, {
     style: 'float: left; width: 75%;',
@@ -30,5 +31,6 @@ enyo.kind({
     this.inherited(arguments);
     this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));
+    this.$.thumbnail.setImg(this.model.get('img'));
   }
 });

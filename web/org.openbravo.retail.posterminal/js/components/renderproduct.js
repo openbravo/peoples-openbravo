@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.UI.RenderProduct',
 
@@ -14,7 +16,8 @@ enyo.kind({
   components: [{
     style: 'float: left; width: 25%',
     components: [{
-      kind: 'OB.UI.Thumbnail'
+      kind: 'OB.UI.Thumbnail',
+      name: 'thumbnail'
     }]
   }, {
     style: 'float: left; width: 55%;',
@@ -32,5 +35,6 @@ enyo.kind({
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price').get('listPrice')));
+    this.$.thumbnail.setImg(this.model.get('img'));
   }
 });

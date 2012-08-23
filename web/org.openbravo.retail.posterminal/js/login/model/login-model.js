@@ -18,9 +18,10 @@
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function(online, models, data) {
-      var queue = {};
+      var queue = {}, somethigToLoad = false;
       if (models.length === 0) {
         models.trigger('ready');
+        return;
       }
 
       _.each(models, function(item) {
@@ -31,13 +32,13 @@
         if (load) {
           if (item.prototype.local) {
             OB.Dal.initCache(item, [], function() {
-              window.console.log('init success: ' + item.prototype.modelName);
+              // window.console.log('init success: ' + item.prototype.modelName);
             }, function() {
               window.console.error('init error', arguments);
             });
           } else {
             ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
-
+            somethigToLoad = true;
             queue[item.prototype.modelName] = false;
             ds.on('ready', function() {
               if (data) {
@@ -52,7 +53,7 @@
           }
         }
       });
-      if (OB.UTIL.queueStatus(queue)) {
+      if (!somethigToLoad) {
         models.trigger('ready');
       }
     }
@@ -89,14 +90,7 @@
       this.modelterminal.lock();
     },
     paymentProviders: [],
-    windows: new(Backbone.Collection.extend({
-      comparator: function(window) {
-        // sorts by menu position, 0 if not defined
-        var position = window.get('menuPosition');
-        return position ? position : 0;
-      }
-    }))(),
-    //  windows: new Backbone.Collection(),
+    windows: null,
     navigate: function(route) {
       this.modelterminal.router.navigate(route, {
         trigger: true
@@ -105,6 +99,15 @@
     registerWindow: function(windowName, window) {
       this.modelterminal.registerWindow(windowName, window);
 
+    },
+    cleanWindows: function() {
+      this.windows = new(Backbone.Collection.extend({
+        comparator: function(window) {
+          // sorts by menu position, 0 if not defined
+          var position = window.get('menuPosition');
+          return position ? position : 0;
+        }
+      }))();
     }
   };
 
@@ -113,7 +116,8 @@
   });
 
   OB.Constants = {
-    FIELDSEPARATOR: '$'
+    FIELDSEPARATOR: '$',
+    IDENTIFIER: '_identifier'
   };
 
   OB.Format = window.OB.Format || {};

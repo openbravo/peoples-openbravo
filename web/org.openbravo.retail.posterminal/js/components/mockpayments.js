@@ -7,96 +7,56 @@
  ************************************************************************************
  */
 
-/*global window, Backbone */
+/*global enyo, $ */
 
-(function () {
-
-  OB = window.OB || {};
-  OB.COMP = window.OB.COMP || {};
-
-  var OKButton = OB.COMP.Button.extend({
-    render: function () {
-      this.$el.addClass('btnlink');
-      this.$el.css('float', 'right');
-      this.$el.text('OK');
-      return this;
-    },
-    clickEvent: function (e) {
-      var parent = this.options.parent;
-      parent.receipt.addPayment(new OB.Model.PaymentLine({
-        'kind': parent.key,
-        'name': parent.name,
-        'amount': parent.amount
-      }));
-      parent.$el.parents('.modal').filter(':first').modal('hide'); // If in a modal dialog, close it
-    }
-  });
-
-  OB.COMP.MockPayment = Backbone.View.extend({
-    tagName: 'div',
-    contentView: [{
-      tag: 'div',
-      content: [{
-        tag: 'div',
-        attributes: {
-          'class': 'row-fluid'
-        },
-        content: [{
-          tag: 'div',
-          attributes: {
-            'class': 'span6'
-          },
-          content: [OB.I18N.getLabel('OBPOS_LblModalType')]
-        }, {
-          tag: 'div',
-          id: 'paymenttype',
-          attributes: {
-            'class': 'span6',
-            style: 'font-weight: bold;'
-          }
-        }]
+enyo.kind({
+  name: 'OB.UI.MockPayment',
+  components: [{
+    components: [{
+      classes: 'row-fluid',
+      components: [{
+        classes: 'span6',
+        content: OB.I18N.getLabel('OBPOS_LblModalType')
       }, {
-        tag: 'div',
-        attributes: {
-          'class': 'row-fluid'
-        },
-        content: [{
-          tag: 'div',
-          attributes: {
-            'class': 'span6'
-          },
-          content: [OB.I18N.getLabel('OBPOS_LblModalAmount')]
-        }, {
-          tag: 'div',
-          id: 'paymentamount',
-          attributes: {
-            'class': 'span6',
-            style: 'font-weight: bold;'
-          }
-        }]
+        name: 'paymenttype',
+        classes: 'span6',
+        style: 'font-weight: bold;'
       }]
     }, {
-      view: OKButton
-    }],
+      classes: 'row-fluid',
+      components: [{
+        classes: 'span6',
+        content: OB.I18N.getLabel('OBPOS_LblModalAmount')
+      }, {
+        name: 'paymentamount',
+        classes: 'span6',
+        style: 'font-weight: bold;'
+      }]
+    }]
+  }, {
+    kind: 'OB.UI.Button',
+    classes: 'btnlink',
+    style: 'float: right;',
+    content: 'OK',
+    tap: function() {
+      this.owner.receipt.addPayment(new OB.Model.PaymentLine({
+        'kind': this.owner.key,
+        'name': this.owner.paymentType,
+        'amount': this.owner.paymentAmount
+      }));
 
-    initialize: function () {
-      OB.UTIL.initContentView(this);
-    },
-
-    show: function (receipt, key, name, amount) {
-
-      this.paymenttype.text(name);
-      this.paymentamount.text(OB.I18N.formatCurrency(amount));
-
-      this.receipt = receipt;
-      this.key = key;
-      this.name = name;
-      this.amount = amount;
-    },
-    close: function() {
+      $('#modalp').modal('hide');
     }
-  });
+  }],
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.paymenttype.setContent(this.paymentType);
+    this.$.paymentamount.setContent(this.paymentAmount);
+  }
+});
 
-  // register
-  OB.POS.paymentProviders.push({ property: "testPayments", view: OB.COMP.MockPayment});
-}());
+// register
+OB.POS.paymentProviders.push({
+  property: 'testPayments',
+  view: OB.UI.MockPayment
+});

@@ -1,3 +1,5 @@
+/*global enyo, $ */
+
 /*
  ************************************************************************************
  * Copyright (C) 2012 Openbravo S.L.U.
@@ -7,132 +9,167 @@
  ************************************************************************************
  */
 
-/*global window, B, Backbone */
-
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
   kind: 'OB.UI.RadioButton',
+  style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
+  components: [{
+    name: 'lbl'
+  }],
   events: {
-    onTapRadio: ''
+    onPaymentMethodKept: ''
   },
-  tap: function() {
-    this.doTapRadio();
+  tap: function () {
+    this.doPaymentMethodKept({qtyToKeep: this.qtyToKeep});
+  },
+  render: function(content){
+    this.$.lbl.setContent(content);
+  },
+  setQtyToKeep: function(qty){
+    this.qtyToKeep = qty;
+  },
+  initComponents: function(){
+    this.inherited(arguments);
+    if(this.label){
+      this.$.lbl.setContent(this.label);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.KeepDetails',
+  style: 'background-color: #ffffff; color: black;',
+  events: {
+    onResetQtyToKeep: ''
+  },
+  components: [{
+    name: 'RadioGroup',
+    classes: 'btn-group',
+    attributes: {
+      'data-toggle': 'buttons-radio'
+    },
+    components: [{
+      name: 'keepfixedamount',
+      showing: false,
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowmoveeverything',
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      qtyToKeep: 0,
+      label: OB.I18N.getLabel('OBPOS_LblNothing'),
+      showing: false
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowdontmove',
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      showing: false
+    }, {
+      style: 'clear: both;'
+    }, {
+      name: 'allowvariableamount',
+      binded: false,
+      kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+      showing: false,
+      qtyToKeep: 0,
+      style: 'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
+      components: [{
+        style: 'display: table-row;',
+        components:[{
+          style: 'vertical-align: middle; display: table-cell; ',
+          content: OB.I18N.getLabel('OBPOS_LblOther')
+        },{
+          kind: 'OB.UI.SearchInput',
+          name: 'variableInput',
+          tap: function(){
+            return true;
+          },
+          onkeyup: 'tri',
+          classes: 'span1',
+          type: 'text',
+          style: 'vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 10px; display: inline-block; '
+        }]
+      }]
+    }]
+  }],
+  tri: function(){
+    var value = this.$.variableInput.getValue();
+    if(value===''){
+      value = 0;
+    }
+    this.$.allowvariableamount.setQtyToKeep(value);
+    this.$.allowvariableamount.tap();
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeep',
+  published: {
+    paymentToKeep: null
+  },
   components: [{
     classes: 'tab-pane',
-    components: [ {
+    components: [{
       style: 'overflow:auto; height: 500px; margin: 5px',
-      components: [ {
+      components: [{
         style: 'background-color: #ffffff; color: black; padding: 5px;',
-        components: [ {
+        components: [{
           classes: 'row-fluid',
-          components: [ {
-            classes: 'span12',
-            components: [ {
-              id: 'cashtokeepheader',
-              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-            }]
-          }]
-        },
-        {
-          style: 'background-color: #ffffff; color: black;',
           components: [{
-            name: 'RadioGroup',
-            attributes: {classes: 'btn-group','data-toggle':'buttons-radio'},
+            classes: 'span12',
             components: [{
-              name: 'keepfixedamount',
-              value: '',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-            },
-            {style: 'clear: both;'},
-            {
-              name: 'allowmoveeverything',
-              value: '',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-            },
-            {style: 'clear: both;'},
-            {
-              name: 'allowdontmove',
-              value: '',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-            },
-            {style: 'clear: both;'},
-            {
-              name: 'allowvariableamount',
-              value: '',
-              kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
-              components: [{
-                style: 'display: table-cell; vertical-align: middle;'
-              },{
-                name: 'variableamount',
-                tag: 'input',
-                type:'text',
-                classes: 'span1',
-                style: 'display: table-cell; vertical-align: middle; margin: 0px 0px 0px 10px;'
-              }]
+              name: 'cashtokeepheader',
+              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+              renderHeader: function(value){
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]));
+              }
             }]
           }]
+        }, {
+          kind: 'OB.OBPOSCashUp.UI.KeepDetails',
+          name: 'formkeep',
+          disableControls: function(){
+            //remove selected RButtons
+            //reset UI and model.
+            $('#' + this.getId()).find('button').removeClass('active');
+            this.$.variableInput.setValue('');
+            this.doResetQtyToKeep({qtyToKeep: null});
+          },
+          renderBody: function(modelToDraw){
+            var paymentMethod = modelToDraw.get('paymentMethod');
+            this.disableControls();
+            //draw
+            this.$.keepfixedamount.setShowing(paymentMethod.keepfixedamount);
+            if(paymentMethod.keepfixedamount){
+              this.$.keepfixedamount.render(OB.I18N.formatCurrency(paymentMethod.amount));
+              this.$.keepfixedamount.setQtyToKeep(paymentMethod.amount);
+            }else{
+              this.$.keepfixedamount.render('');
+            }
+            
+            this.$.allowmoveeverything.setShowing(paymentMethod.allowmoveeverything);
+            
+            this.$.allowdontmove.setShowing(paymentMethod.allowdontmove);
+            if(paymentMethod.allowdontmove){
+              this.$.allowdontmove.setQtyToKeep(modelToDraw.get('expected'));
+              this.$.allowdontmove.render(OB.I18N.getLabel('OBPOS_LblTotalAmount') + ' ' + OB.I18N.formatCurrency(modelToDraw.get('expected')));
+            }else{
+              this.$.allowdontmove.render('');
+            }
+            
+            this.$.allowvariableamount.setShowing(paymentMethod.allowvariableamount);
+          }
         }]
       }]
     }]
-  }]
+  }],
+  paymentToKeepChanged: function(model){
+    this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
+    this.$.formkeep.renderBody(this.paymentToKeep);
+  },
+  disableSelection: function(){
+    this.$.formkeep.disableControls();
+  }
 });
-
-//(function () {
-//
-//  OB = window.OB || {};
-//  OB.COMP = window.OB.COMP || {};
-//
-////  var sdf = new SimpleDateFormat("HH:mm:ss");
-////  document.write(sdf.format(new Date()));
-//
-//  OB.COMP.CashToKeep = OB.COMP.CustomView.extend({
-//  _id: 'cashtokeep',
-//    createView: function () {
-//      return (
-//        {kind: B.KindJQuery('div'), attr: {'id': 'countcash', 'class': 'tab-pane'}, content: [
-//          {kind: B.KindJQuery('div'), attr: {'style': 'overflow:auto; height: 500px; margin: 5px'}, content: [
-//            {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black; padding: 5px;'}, content: [
-//              {kind: B.KindJQuery('div'), attr: {'class': 'row-fluid'}, content: [
-//                {kind: B.KindJQuery('div'), attr: {'class': 'span12'}, content: [
-//                  {kind: B.KindJQuery('div'), attr: {'id': 'cashtokeepheader', 'style': 'padding: 10px; border-bottom: 1px solid #cccccc;text-align:center;'}, content: [
-//                  ]}
-//                ]}
-//              ]},
-//                 {kind: B.KindJQuery('div'), attr: {'style': 'background-color: #ffffff; color: black;'}, content: [
-//                     {kind: B.KindJQuery('div'), attr: {'class': 'btn-group','data-toggle':'buttons-radio'}, content: [
-//                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'keepfixedamount'}, content: [
-//                          {kind: B.KindJQuery('div'), attr: {'id': 'keepfixedamountlbl' }, content: []}
-//                        ]},
-//                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
-//
-//                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowmoveeverything'}, content: [
-//                          {kind: B.KindJQuery('div'), attr: {'id': 'allowmoveeverythinglbl' }, content: []}
-//                        ]},
-//                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
-//
-//                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowdontmove'}, content: [
-//                          {kind: B.KindJQuery('div'), attr: {'id': 'allowdontmovelbl' }, content: []}
-//                        ]},
-//                        {kind: B.KindJQuery('div'), attr: {style: 'clear: both;'}},
-//
-//                        {kind: OB.COMP.CashToKeepRadioButton, attr: {'id': 'allowvariableamount'}, content: [
-//                          {kind: B.KindJQuery('div'), attr: {'style': 'display: table-row;'}, content: [
-//                            {kind: B.KindJQuery('div'), attr: {'id': 'allowvariableamountlbl', 'style': 'display: table-cell; vertical-align: middle;'}, content: []},
-//                            {kind: B.KindJQuery('input'), attr: {'type':'text', 'class': 'span1', 'id': 'variableamount', 'style': 'display: table-cell; vertical-align: middle; margin: 0px 0px 0px 10px;'}, content: []}
-//                          ]}
-//                        ]}
-//                     ]}
-//                  ]}
-//            ]}
-//          ]}
-//        ]}
-//      );
-//    }
-//  });
-//
-//}());

@@ -46,7 +46,6 @@
 
 <!-- Login application -->
 <script src="../org.openbravo.client.application/js/utilities/ob-utilities-date.js"></script>
-<script src="js/builder.js"></script>
 <script src="js/datasource.js"></script>
 <script src="js/utilities.js"></script>
 <script src="js/utilitiesui.js"></script>
@@ -65,7 +64,7 @@
    <script>
     (function () {
       function resizeWindow() {
-          console.log('resize');
+        // console.log('resize');
         var winHeight = window.innerHeight,
             percentage;
         if (winHeight < 740) {
@@ -86,8 +85,7 @@
   
     // Hack focus captured by location bar in android browser.
     (function () {
-        debugger;
-           
+          
             OB.POS.terminal.renderInto(document.body);
         
       var locationwarning = true;
@@ -129,7 +127,7 @@
             //  $(document).ready(function () {
                       //TODO: check here if already logged in
                       if (true) {
-                          console.log('navigate to login');
+                          // console.log('navigate to login');
                           OB.POS.navigate('login');
                       } else {
                           OB.POS.navigate('main');

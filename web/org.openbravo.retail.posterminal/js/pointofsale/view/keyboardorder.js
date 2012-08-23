@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $, _, Backbone */
+/*global enyo, _, Backbone */
 
 
 enyo.kind({
@@ -41,7 +41,6 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function(txt) {
-        console.log('price', txt);
         if (this.line) {
           this.receipt.setPrice(this.line, OB.I18N.parseNumber(txt));
           this.receipt.trigger('scan');
@@ -51,7 +50,6 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function(txt) {
-        console.log('dto', txt);
         if (this.line) {
           this.receipt.trigger('discount', this.line, OB.I18N.parseNumber(txt));
         }
@@ -59,7 +57,6 @@ enyo.kind({
     });
     this.addCommand('code', {
       action: function(txt) {
-        console.log('code', txt);
         var criteria, me = this;
 
         function successCallbackPrices(dataPrices, dataProducts) {
@@ -116,7 +113,6 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function(txt) {
-        console.log('+', txt);
         if (this.line) {
           this.receipt.addUnit(this.line, OB.I18N.parseNumber(txt));
           this.receipt.trigger('scan');
@@ -126,7 +122,6 @@ enyo.kind({
     this.addCommand('-', {
       stateless: true,
       action: function(txt) {
-        console.log('-', txt);
         if (this.line) {
           this.receipt.removeUnit(this.line, OB.I18N.parseNumber(txt));
           this.receipt.trigger('scan');

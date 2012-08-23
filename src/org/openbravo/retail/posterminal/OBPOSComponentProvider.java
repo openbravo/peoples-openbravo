@@ -77,7 +77,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         // Common components
-        "builder",
         "datasource",
         "data/dal",
         "utilities",
@@ -89,7 +88,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/order",
         "model/terminal",
         "components/commonbuttons",
-        "components/hwmanager",
         "components/table",
         "components/terminal",
         "components/modalprofile",
@@ -98,24 +96,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/windowview",
         "main",
         // Web POS window
-        "components/keypadbasic",
-        "components/keyboard",
-        "components/keypadcoins",
-        "windows/posbuttons",
-        "data/datamaster",
-        "data/dataordersave",
-        "data/dataordertaxes",
-        "data/dataorderdiscount",
-        "components/renderorder",
-        "components/listreceipts",
+        "components/keypadbasic", "components/keyboard", "components/keypadcoins",
+        "data/datamaster", "data/dataordersave", "data/dataordertaxes", "data/dataorderdiscount",
         "components/modalreceipts",
-        "components/renderbusinesspartner",
-        "components/searchbps",
-        "components/modalbps",
         "components/rendercategory",
         "components/renderproduct",
         "components/searchproducts",
-        "components/tabsearch",
         "components/total",
         "components/modalpayment",
         "components/renderorderline",
@@ -124,11 +110,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/businesspartner",
         "components/listreceiptscounter",
         "components/product-browser",
+        "components/menu",
 
         // Point of sale
-        "pointofsale/model/pointofsale-model",
+        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
         "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview",
+        "pointofsale/view/toolbar-left",
         "pointofsale/view/toolbar-right",
         "pointofsale/view/scan",
         "pointofsale/view/editline",
@@ -137,7 +125,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/keyboardorder",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -146,20 +134,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/view/cashmgmt",
 
         // Cash Up window
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
+        "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
+        "closecash/view/closekeyboard",
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose",
+        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
 
-        "closecash/components/closebuttons", "closecash/components/listpaymentmethod",
-        "closecash/components/renderpayments", "closecash/components/renderpaymentlines",
-        "closecash/components/renderretailtransactions",
-        "closecash/components/renderpendingreceipt", "closecash/components/listpendingreceipts",
-        "closecash/components/searchretailtransactions", "closecash/components/toolbarcountcash",
-        "closecash/components/modalfinishclose", "closecash/components/modalprocessreceipts",
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
-        "closecash/windows/tabcountcash", "closecash/windows/tabcashtokeep",
-        "closecash/windows/tabpostprintclose",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",

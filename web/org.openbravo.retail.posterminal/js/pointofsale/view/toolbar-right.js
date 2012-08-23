@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global enyo, $ */
 
 // Toolbar container
 // ----------------------------------------------------------------------------
@@ -37,7 +38,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.RightToolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    containerCssClass: 'span3',
+    containerCssClass: 'span3'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     containerCssClass: 'span3'
@@ -62,7 +63,7 @@ enyo.kind({
 
   receiptChanged: function() {
     var totalPrinterComponent;
-    
+
     this.receipt.on('clear scan', function() {
       this.manualTap(this.scan);
     }, this);
@@ -70,23 +71,22 @@ enyo.kind({
     this.receipt.get('lines').on('click', function() {
       this.manualTap(this.edit);
     }, this);
-    
-    //TODO
-    //Mechanism to search which button are able to print total
-    var totalPrinterComponent;
-    //hardcoded
-    debugger;
-    totalPrinterComponent = this.$.toolbar.$.rightToolbarButton.$.theButton.$.buttonTabPayment;
-    totalPrinterComponent.renderTotal(this.receipt.getTotal());
-    this.receipt.on('change:gross', function (model) {
-      totalPrinterComponent.renderTotal(model.getTotal());
+
+    //some button will draw the total
+    this.waterfall('onChangeTotal', {
+      newTotal: this.receipt.getTotal()
+    });
+    this.receipt.on('change:gross', function(model) {
+      this.waterfall('onChangeTotal', {
+        newTotal: this.receipt.getTotal()
+      });
     }, this);
   },
   initComponents: function() {
     var me = this;
 
     function getButtonInPos(pos) {
-      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0]
+      return me.$.toolbar.getComponents()[pos].$.theButton.getComponents()[0];
     }
 
     this.inherited(arguments);
@@ -111,7 +111,6 @@ enyo.kind({
     this.inherited(arguments);
     if (this.button.containerCssClass) {
       this.setClassAttribute(this.button.containerCssClass);
-      delete this.button.containerCssClass;
     }
     this.$.theButton.createComponent(this.button);
   }
@@ -143,6 +142,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.ToolbarButtonTab',
+  events: {
+    onTabChange: ''
+  },
   tabPanel: '#catalog',
   label: OB.I18N.getLabel('OBPOS_LblBrowse'),
   tap: function() {
@@ -176,6 +178,9 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: '#payment',
+  handlers: {
+    onChangeTotal: 'renderTotal'
+  },
   events: {
     onTabChange: ''
   },
@@ -186,7 +191,7 @@ enyo.kind({
     });
   },
   attributes: {
-    style: 'text-align: center; font-size: 30px;',
+    style: 'text-align: center; font-size: 30px;'
   },
   components: [{
     tag: 'span',
@@ -202,8 +207,8 @@ enyo.kind({
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
   },
-  renderTotal: function(total){
-    this.$.totalPrinter.renderTotal(total);
+  renderTotal: function(sender, event) {
+    this.$.totalPrinter.renderTotal(event.newTotal);
   }
 });
 
@@ -219,7 +224,6 @@ enyo.kind({
     onTabChange: ''
   },
   tap: function() {
-    console.log('tap')
     this.doTabChange({
       keyboard: 'toolbarscan',
       edit: true
@@ -328,7 +332,7 @@ enyo.kind({
     name: 'edit'
   }],
   makeId: function() {
-    return 'edition'
+    return 'edition';
   },
   receiptChanged: function() {
     this.$.edit.setReceipt(this.receipt);

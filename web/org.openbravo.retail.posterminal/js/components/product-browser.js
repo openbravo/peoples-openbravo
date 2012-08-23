@@ -7,6 +7,9 @@
  ************************************************************************************
  */
 
+
+/*global enyo, _ */
+
 enyo.kind({
   name: 'OB.UI.ProductBrowser',
   classes: 'row-fluid',
@@ -24,9 +27,7 @@ enyo.kind({
     }]
   }],
   init: function() {
-    console.log('init tab ')
     this.$.browseCategories.$.listCategories.categories.on('selected', function(category) {
-      console.log('selected')
       this.$.browseProducts.$.listProducts.loadCategory(category);
     }, this);
   }

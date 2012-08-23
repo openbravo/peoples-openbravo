@@ -7,15 +7,21 @@
  ************************************************************************************
  */
 
+/*global enyo, $, Backbone */
+
 enyo.kind({
   name: 'OB.UI.Keyboard',
 
   commands: {},
   buttons: {},
   status: '',
-  state: new Backbone.Model(),
   sideBarEnabled: false,
-
+  destroy: function() {
+    this.buttons = null;
+    this.commands = null;
+    $(window).unbind('keypress');
+    this.inherited(arguments);
+  },
   tag: 'div',
   classes: 'row-fluid',
   components: [{
@@ -203,7 +209,7 @@ enyo.kind({
 
   events: {
     onCommandFired: '',
-    onStatusChanged: '',
+    onStatusChanged: ''
   },
 
   handlers: {
@@ -214,8 +220,8 @@ enyo.kind({
   setStatus: function(newstatus) {
     var btn = this.buttons[this.status];
 
-    if (btn) {
-      btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive)
+    if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
+      btn.removeClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
     this.status = newstatus;
 
@@ -226,7 +232,7 @@ enyo.kind({
 
 
     btn = this.buttons[this.status];
-    if (btn) {
+    if (btn && (btn.classButtonActive || (btn.owner && btn.owner.classButtonActive))) {
       btn.addClass(btn.classButtonActive || btn.owner.classButtonActive);
     }
   },
@@ -324,7 +330,8 @@ enyo.kind({
     if (button.command) {
       button.$.button.tap = function() {
         me.keyPressed(button.command);
-      }
+      };
+      
       this.addButton(button.command, button.$.button);
     } else {
       button.$.button.addClass('btnkeyboard-inactive');
@@ -335,6 +342,12 @@ enyo.kind({
     var me = this;
 
     this.inherited(arguments);
+    this.state = new Backbone.Model();
+    this.buttons = {};
+
+    this.$.toolbarcontainer.destroyComponents();
+    this.$.keypadcontainer.destroyComponents();
+
     this.showSidepad('sidedisabled');
 
     if (this.sideBarEnabled) {
@@ -393,7 +406,6 @@ enyo.kind({
   },
 
   addToolbar: function(newToolbar) {
-    console.log('addToolbar', newToolbar);
     var toolbar = this.$.toolbarcontainer.createComponent({
       toolbarName: newToolbar.name,
       shown: newToolbar.shown,
@@ -433,9 +445,8 @@ enyo.kind({
   },
 
   showToolbar: function(toolbarName) {
-    console.log('showToolbar', toolbarName);
+    this.show();
     enyo.forEach(this.$.toolbarcontainer.getComponents(), function(toolbar) {
-      console.log(toolbar);
       if (toolbar.toolbarName === toolbarName) {
         toolbar.show();
         if (toolbar.shown) {
@@ -445,7 +456,6 @@ enyo.kind({
         toolbar.hide();
       }
     }, this);
-    this.show();
   },
 
   addCommand: function(cmd, definition) {
@@ -463,7 +473,6 @@ enyo.kind({
   },
 
   addKeypad: function(keypad) {
-    console.log(keypad);
     this.$.keypadcontainer.createComponent({
       kind: keypad,
       keyboard: this
@@ -473,7 +482,6 @@ enyo.kind({
   showKeypad: function(keypadName) {
     this.state.set('keypadName', keypadName);
     enyo.forEach(this.$.keypadcontainer.getComponents(), function(pad) {
-      console.log(pad, keypadName);
       if (pad.padName === keypadName) {
         this.state.set('keypadLabel', pad.label);
         pad.show();

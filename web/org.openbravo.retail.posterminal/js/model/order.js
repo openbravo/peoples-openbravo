@@ -163,7 +163,8 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, null, function() {
+      OB.Dal.save(this, function(){
+      }, function() {
         window.console.error(arguments);
       });
       this.set('undo', undoCopy);
@@ -227,7 +228,6 @@
       this.clearOrderAttributes();
       this.trigger('change');
       this.trigger('clear');
-      console.log('triggered clear');
     },
 
     clearOrderAttributes: function() {
@@ -650,6 +650,14 @@
     },
 
     deleteCurrent: function() {
+      function deleteCurrentFromDatabase (orderToDelete){
+        OB.Dal.remove(orderToDelete, function(){
+          return true;
+        }, function(){
+          OB.UTIL.showError('Error removing');
+        });
+      }
+      
       if (this.current) {
         this.remove(this.current);
         if (this.length > 0) {

@@ -7,315 +7,230 @@
  ************************************************************************************
  */
 
-/*global OB, enyo*/
+/*global OB, enyo, $*/
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
   handlers: {
-    onNext: 'nextStep',
-    onPrev: 'prevStep',
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
-  },
-  tapRadio: function(inSender, inEvent) {
-    if(inEvent.originator.name==='allowvariableamount'){
-//      FIXME: Put focus on the input
-      //      this.$.cashToKeep.$.variableamount.focus();
-    }
-    this.$.cashUpInfo.$.buttonNext.setDisabled(false);
-  },
-  buttonOk: function(inSender, inEvent) {
-    debugger;
-//    $('button[button*="allokbutton"]').css('visibility','hidden');
-//    var elem = this.me.options.modeldaycash.paymentmethods.get(this.options[this._id].rowid);
-//    this.options['counted_'+this.options[this._id].rowid].$el.text(OB.I18N.formatCurrency(elem.get('expected')));
-//    elem.set('counted',OB.DEC.add(0,elem.get('expected')));
-//    this.me.options.modeldaycash.set('totalCounted',OB.DEC.add(this.me.options.modeldaycash.get('totalCounted'),elem.get('counted')));
-//    this.options['counted_'+this.rowid].$el.show();
-//    if($('button[button="okbutton"][style!="display: none; "]').length===0){
-//      this.me.options.closenextbutton.$el.removeAttr('disabled');
-//    }
-  },
-  prevStep: function(inSender, inEvent) {
-    var found = false;
-    if (this.model.get('step') === 3 || this.model.get('step') === 2) {
-      //Count Cash back from Post, print & Close.
-      if(this.model.get('step') === 2){
-        this.model.set('allowedStep', this.model.get('allowedStep')-1);
-      }else{
-        this.model.set('step',2);
-      }
-      found = false;
-      this.$.cashUpInfo.$.buttonNext.setDisabled(true);
-      $(".active").removeClass("active");
-      //Count Cash to Cash to keep or Cash to keep to Cash to keep
-      if( $(".active").length===0){
-        this.$.cashToKeep.show();
-        this.$.postPrintClose.hide();
-        this.$.cashUpInfo.$.buttonNext.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
-      }
-       while(this.model.get('allowedStep') >= 0 ){
-
-         //FIXME:Delete this line when Step 2 works well
-         this.model.payList.at(this.model.get('allowedStep')).set('counted',0);
-         
-         
-         if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').automatemovementtoother){
-          found = true;
-          $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4', [this.model.payList.at(this.model.get('allowedStep')).get('name')]));
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').keepfixedamount){
-            if(!this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount){
-              this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount=0;
-            }
-            if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount > this.model.payList.at(this.model.get('allowedStep')).get('counted')){
-              this.$.cashToKeep.$.keepfixedamount.setContent(OB.I18N.formatCurrency(this.model.payList.at(this.model.get('allowedStep')).get('counted')));
-              this.$.cashToKeep.$.keepfixedamount.value=this.model.payList.at(this.model.get('allowedStep')).get('counted');
-            }else{
-              this.$.cashToKeep.$.keepfixedamount.setContent(OB.I18N.formatCurrency(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount));
-              this.$.cashToKeep.$.keepfixedamount.value=this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount;
-            }
-            this.$.cashToKeep.$.keepfixedamount.show();
-          }else{
-            this.$.cashToKeep.$.keepfixedamount.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowmoveeverything){
-            this.$.cashToKeep.$.allowmoveeverything.value=0;
-            this.$.cashToKeep.$.allowmoveeverything.setContent(OB.I18N.getLabel('OBPOS_LblNothing'));
-            this.$.cashToKeep.$.allowmoveeverything.show();
-          }else{
-            this.$.cashToKeep.$.allowmoveeverything.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowdontmove){
-            this.$.cashToKeep.$.allowdontmove.value=this.model.payList.at(this.model.get('allowedStep')).get('counted');
-            this.$.cashToKeep.$.allowdontmove.setContent(OB.I18N.getLabel('OBPOS_LblTotalAmount')+' '+OB.I18N.formatCurrency(OB.DEC.add(0,this.model.payList.at(this.model.get('allowedStep')).get('counted'))));
-            this.$.cashToKeep.$.allowdontmove.show();
-          }else{
-            this.$.cashToKeep.$.allowdontmove.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowvariableamount){
-            this.$.cashToKeep.$.allowvariableamount.setContent(OB.I18N.getLabel('OBPOS_LblOther'));
-            this.$.cashToKeep.$.allowvariableamount.show();
-            this.$.cashToKeep.$.variableamount.show();
-            this.$.cashToKeep.$.variableamount.value='';
-          }else {
-            this.$.cashToKeep.$.allowvariableamount.hide();
-            this.$.cashToKeep.$.variableamount.hide();
-          }
-          break;
-        }
-         this.model.set('allowedStep', this.model.get('allowedStep')-1);
-      }
-      if(found===false){
-        this.$.listPaymentMethods.show();
-        this.$.cashToKeep.hide();
-        this.$.cashUpKeyboard.showToolbar('toolbarcountcash');
-        this.model.set('step', 1);
-        this.model.set('allowedStep', 0);
-        this.$.cashUpInfo.$.buttonNext.setDisabled(false);
-      }
-    } else if (this.model.get('step') === 1) {
-      //Pending receipts back from Count Cash.
-      this.$.listPendingReceipts.show();
-      this.$.listPaymentMethods.hide();
-      this.$.cashUpInfo.$.buttonPrev.setDisabled(true);
-      this.$.cashUpInfo.$.buttonNext.setDisabled(false);
-      this.$.cashUpKeyboard.showToolbar('toolbarempty');
-      this.model.set('step', 0);
-      //    if($('button[button="okbutton"][style!="display: none; "]').length!==0){
-      //      this.$el.attr('disabled','disabled');
-      //    }
-  }
-  },
-  nextStep: function(inSender, inEvent) {
-    var found = false;
-    debugger;
-    if(this.model.get('step')===0) {
-      this.$.listPendingReceipts.hide();
-      this.$.listPaymentMethods.show();
-      this.$.cashUpInfo.$.buttonPrev.setDisabled(false);
-      this.$.cashUpKeyboard.showToolbar('toolbarcountcash');
-      this.model.set('step', this.model.get('step') + 1);
-      //show toolbarcountcash
-      //      if($('button[button="okbutton"][style!="display: none; "]').length!==0){
-      //        this.$el.attr('disabled','disabled');
-      //      }
-    } else if(this.model.get('step')===1 || this.model.get('step')===2){
-      found = false;
-      if(this.model.get('step') === 2){
-        this.model.set('allowedStep', this.model.get('allowedStep')+1);
-      }
-      this.$.cashUpInfo.$.buttonNext.setDisabled(true);
-      this.model.set('step', 2);
-    //Count Cash to Cash to keep or Cash to keep to Cash to keep
-      if( $(".active").length>0 && this.model.get('allowedStep')!==0){
-        if($('.active').text()===""){//Variable Amount
-          if(this.$.cashToKeep.$.variableamount.value===''){
-            this.model.payList.at(this.model.get('allowedStep')-1).get('paymentMethod').amountToKeep=0;
-          }else{
-            if(OB.I18N.parseNumber(this.$.cashToKeep.$.variableamount.value) <= this.model.payList.at(this.model.get('allowedStep')-1).get('counted')){
-              this.model.payList.at(this.model.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber(this.$.cashToKeep.$.variableamount.value);
-            }else{
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanCounted'));
-              this.model.set('allowedStep', this.model.get('allowedStep')-1);
-              this.$.cashUpInfo.$.buttonNext.setDisabled(false);
-              return true;
-            }
-          }
-        }else{
-          this.model.payList.at(this.model.get('allowedStep')-1).get('paymentMethod').amountToKeep=OB.I18N.parseNumber($('.active').text());
-        }
-        $(".active").removeClass("active");
-      }
-       while(this.model.get('allowedStep') < this.model.payList.length){
-         //FIXME:Delete this line when Step 2 works well
-         this.model.payList.at(this.model.get('allowedStep')).set('counted',0);
-         
-         
-         if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').automatemovementtoother){
-          found = true;
-          $('#cashtokeepheader').text(OB.I18N.getLabel('OBPOS_LblStep3of4', [this.model.payList.at(this.model.get('allowedStep')).get('name')]));
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').keepfixedamount){
-            if(!this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount){
-              this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount=0;
-            }
-            if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount > this.model.payList.at(this.model.get('allowedStep')).get('counted')){
-              this.$.cashToKeep.$.keepfixedamount.setContent(OB.I18N.formatCurrency(this.model.payList.at(this.model.get('allowedStep')).get('counted')));
-              this.$.cashToKeep.$.keepfixedamount.value=this.model.payList.at(this.model.get('allowedStep')).get('counted');
-            }else{
-              this.$.cashToKeep.$.keepfixedamount.setContent(OB.I18N.formatCurrency(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount));
-              this.$.cashToKeep.$.keepfixedamount.value=this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').amount;
-            }
-            this.$.cashToKeep.$.keepfixedamount.show();
-          }else{
-            this.$.cashToKeep.$.keepfixedamount.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowmoveeverything){
-            this.$.cashToKeep.$.allowmoveeverything.value=0;
-            this.$.cashToKeep.$.allowmoveeverything.setContent(OB.I18N.getLabel('OBPOS_LblNothing'));
-            this.$.cashToKeep.$.allowmoveeverything.show();
-          }else{
-            this.$.cashToKeep.$.allowmoveeverything.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowdontmove){
-            this.$.cashToKeep.$.allowdontmove.value=this.model.payList.at(this.model.get('allowedStep')).get('counted');
-            this.$.cashToKeep.$.allowdontmove.setContent(OB.I18N.getLabel('OBPOS_LblTotalAmount')+' '+OB.I18N.formatCurrency(OB.DEC.add(0,this.model.payList.at(this.model.get('allowedStep')).get('counted'))));
-            this.$.cashToKeep.$.allowdontmove.show();
-          }else{
-            this.$.cashToKeep.$.allowdontmove.hide();
-          }
-          if(this.model.payList.at(this.model.get('allowedStep')).get('paymentMethod').allowvariableamount){
-            this.$.cashToKeep.$.allowvariableamount.setContent(OB.I18N.getLabel('OBPOS_LblOther'));
-            this.$.cashToKeep.$.allowvariableamount.show();
-            this.$.cashToKeep.$.variableamount.show();
-            this.$.cashToKeep.$.variableamount.value='';
-          }else {
-            this.$.cashToKeep.$.allowvariableamount.hide();
-            this.$.cashToKeep.$.variableamount.hide();
-          }
-          break;
-        }
-         this.model.set('allowedStep', this.model.get('allowedStep')+1);
-      }
-      if(found===false){
-        this.$.postPrintClose.show();
-        this.$.cashToKeep.hide();
-        this.$.listPaymentMethods.hide();
-//        this.options.renderpaymentlines.$el.empty();
-//        this.options.renderpaymentlines.render();
-        this.$.cashUpInfo.$.buttonNext.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
-        this.$.cashUpInfo.$.buttonNext.setDisabled(false);
-        this.model.set('allowedStep', this.model.get('allowedStep')-1);
-        this.model.set('step', 3);
-        this.model.time=new Date().toString().substring(3,24);
-        $('#reportTime').text(OB.I18N.getLabel('OBPOS_LblTime')+': '+new Date().toString().substring(3,24));
-      }else{
-        this.$.listPaymentMethods.hide();
-        this.$.cashToKeep.show();
-        this.$.cashUpKeyboard.showToolbar('toolbarempty');
-      }
-    }
+    onChangeStep: 'changeStep',
+    onCountAllOK: 'countAllOK',
+    onLineEditCount: 'lineEditCount',
+    onPaymentMethodKept: 'paymentMethodKept',
+    onResetQtyToKeep: 'resetQtyToKeep'
   },
   components: [{
     classes: 'row',
-    components: [
-    // 1st column: list of pending receipts
-    {
+    components: [{
       classes: 'span6',
       components: [{
-        kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts'
-      }]
-    },
-    // 1st column: list of count cash per payment method
-    {
-      classes: 'span6',
-      components: [{
+        kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
+        name: 'listPendingReceipts'
+      }, {
         kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
+        name: 'listPaymentMethods',
         showing: false
-      }]
-    },
-    // 1st column: Radio buttons to choose how much to keep in cash
-    {
-      classes: 'span6',
-      components: [{
+      }, {
         kind: 'OB.OBPOSCashUp.UI.CashToKeep',
+        name: 'cashToKeep',
         showing: false
-      }]
-    },
-    // 1st column: Cash up Report previous to finish the proccess
-    {
-      classes: 'span6',
-      components: [{
+      }, {
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
+        name: 'postPrintClose',
         showing: false
       }]
-    },
-    //2nd column
-    {
+    }, {
       classes: 'span6',
       components: [{
         classes: 'span6',
         components: [{
-          kind: 'OB.OBPOSCashUp.UI.CashUpInfo'
+          kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
+          name: 'cashUpInfo'
         }, {
-          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard'
+          kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+          name: 'cashUpKeyboard'
         }]
       }]
     }, {
-      kind: 'OB.UI.ModalCancel'
+      kind: 'OB.UI.ModalCancel',
+      name: 'modalCancel'
     }, {
-      //  kind: OB.UI.ModalFinishClose
+      kind: 'OB.OBPOSCashUp.UI.modalFinished',
+      name: 'modalFinished',
+      myId: 'modalFinished'
+    }, {
+      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
+      name: 'modalPendingToProcess',
+      myId: 'modalPendingToProcess'
     }]
   }],
   init: function() {
     this.inherited(arguments);
-    var me = this;
-    OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
-      if (fetchedOrderList && fetchedOrderList.length !== 0) {
-        me.model.orderlist.reset(fetchedOrderList.models);
-        me.$.listPendingReceipts.$.pendingReceiptList.setCollection(fetchedOrderList);
-//        ctx.closenextbutton.$el.attr('disabled','disabled');
-//        orderlist.reset(fetchedOrderList.models);
-      }
-    }, function () { }); //OB.Dal.find error
-    
-    this.model.payList.each(function(payList) {
-      this.model.set('totalExpected', OB.DEC.add(this.model.get('totalExpected'),payList.get('expected')));
+
+    this.$.cashUpInfo.setModel(this.model);
+
+    //step 0
+    this.model.on('change:pendingOrdersToProcess', function(model) {
+      $('#modalprocessreceipts').modal('show');
     }, this);
-    this.$.listPaymentMethods.$.total.setContent(this.model.get('totalExpected'));
-    
-    //Cash Up Report
-    this.$.postPrintClose.$.netSales.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('netSales')));
-    //FIXME: Include taxes
-    this.$.postPrintClose.$.grossSales.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('grossSales')));
-    
-    this.$.postPrintClose.$.netReturns.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('netReturns')));
-    //FIXME: Include taxes
-    this.$.postPrintClose.$.grossReturns.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('grossReturns')));
-    debugger;
-    this.$.postPrintClose.$.totalRetailTransacntions.setContent( OB.I18N.formatCurrency(this.model.cashUpReport.models[0].get('totalRetailTransactions')));
-    
+
+
+    // Pending Orders - Step 1
+    this.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
+    this.model.get('orderlist').on('all', function() {
+      this.$.cashUpInfo.refresh();
+    }, this);
+
+    // Cash count - Step 2
+    this.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
+    this.$.listPaymentMethods.$.total.setTotal(this.model.get('totalExpected'));
+    this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
+    this.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
+
+    this.model.on('change:totalCounted', function() {
+      this.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.waterfall('onAnyCounted');
+      this.refresh();
+    }, this);
+
+    this.model.on('change:step', function(model) {
+      this.refresh();
+    }, this);
+
+    // Cash to keep - Step 3.
+    this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+
+    this.model.on('change:stepOfStep3', function(model) {
+      this.$.cashToKeep.disableSelection();
+      this.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+      this.refresh();
+    }, this);
+
+    // Cash Up Report - Step 4
+    //this data doesn't changes
+    this.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
+
+    //This data changed when money is counted
+    //difference is calculated after counted
+    this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
+    this.model.on('change:totalDifference', function(model) {
+      this.$.postPrintClose.setSummary(this.model.getCountCashSummary());
+    }, this);
+
+    //finished
+    this.model.on('change:finished', function() {
+      $('#modalFinished').modal('show');
+    }, this);
+
+    this.refresh();
+  },
+  refresh: function() {
+    this.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
+    this.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
+    this.$.cashToKeep.setShowing(this.model.showCashToKeep());
+    this.$.postPrintClose.setShowing(this.model.showPostPrintClose());
+    this.$.cashUpKeyboard.showToolbar(this.model.showPaymentMethodList() ? 'toolbarcountcash' : 'toolbarempty');
+
+    this.$.cashUpInfo.refresh();
+  },
+  changeStep: function(inSender, inEvent) {
+    var nextStep, nextStepOfStep3;
+    if (this.model.get('step') === 4 && inEvent.originator.stepCount > 0) {
+      //send cash up to the server
+      this.model.processAndFinishCashUp();
+    } else {
+      if (this.model.get('step') !== 3) {
+        nextStep = this.model.get('step') + inEvent.originator.stepCount;
+        if (nextStep === 3 && this.model.get('ignoreStep3')) {
+          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount + inEvent.originator.stepCount);
+          //To step 4 or to step 2
+        } else {
+          //if the new step is 3 we should set the substep number
+          if (nextStep === 3) {
+            if (inEvent.originator.stepCount > 0) {
+              //we come from step 2
+              nextStepOfStep3 = 0;
+              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
+                this.model.set('step', nextStep, {
+                  silent: true
+                });
+                this.model.set('stepOfStep3', nextStepOfStep3, {
+                  silent: true
+                });
+                this.changeStep(this, inEvent);
+              } else {
+                //change the substep, not the step
+                this.model.set('step', nextStep);
+                this.model.set('stepOfStep3', nextStepOfStep3);
+                //because the last stepOfStep3 was the same that im setting the event is not raised
+                this.model.trigger("change:stepOfStep3");
+              }
+            } else {
+              //we come from step 4
+              nextStepOfStep3 = this.model.get('paymentList').length - 1;
+              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
+                this.model.set('step', nextStep, {
+                  silent: true
+                });
+                this.model.set('stepOfStep3', nextStepOfStep3, {
+                  silent: true
+                });
+                this.changeStep(this, inEvent);
+              } else {
+                //change the substep, not the step
+                this.model.set('step', nextStep);
+                this.model.set('stepOfStep3', nextStepOfStep3);
+                //because the last stepOfStep3 was the same that im setting the event is not raised
+                this.model.trigger("change:stepOfStep3");
+              }
+            }
+          } else {
+            this.model.set('step', nextStep);
+          }
+        }
+      } else {
+        nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
+        //if the new step is 2 or 4 we should set the step number
+        if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
+          //change the step and not change the substep
+          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+        } else {
+          if (this.model.isStep3Needed(nextStep) === false) {
+            this.model.set('stepOfStep3', nextStep, {
+              silent: true
+            });
+            this.changeStep(this, inEvent);
+          } else {
+            //change the substep, not the step
+            this.model.set('stepOfStep3', nextStep);
+          }
+        }
+      }
+    }
+  },
+  countAllOK: function(inSender, inEvent) {
+    this.model.countAll();
+    this.$.cashUpInfo.refresh();
+  },
+  lineEditCount: function(sender, event) {
+    this.$.cashUpKeyboard.setStatus(event.originator.model.get('_id'));
+  },
+  paymentMethodKept: function(inSender, event) {
+    var validationResult = this.model.validateCashKeep(event.qtyToKeep);
+    if (validationResult.result) {
+      this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', event.qtyToKeep);
+    } else {
+      OB.UTIL.showWarning(validationResult.message);
+    }
+    this.$.cashUpInfo.refresh();
+  },
+  resetQtyToKeep: function(inSender, event) {
+    this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
+    this.$.cashUpInfo.refresh();
   }
 });
 
@@ -325,66 +240,3 @@ OB.POS.registerWindow({
   menuPosition: 20,
   menuLabel: OB.I18N.getLabel('OBPOS_LblCloseCash')
 });
-
-//  return (
-//      {kind: B.KindJQuery('section'), content: [
-//
-//        {kind: OB.MODEL.DayCash},
-//        {kind: OB.Model.Order},
-//        {kind: OB.Collection.OrderList},
-//        {kind: OB.DATA.CloseCashPaymentMethod},
-//        {kind: OB.DATA.PaymentCloseCash},
-//        {kind: OB.COMP.ModalCancel},
-//        {kind: OB.COMP.ModalFinishClose},
-//        {kind: OB.COMP.ModalProcessReceipts},
-//        {kind: OB.DATA.Container, content: [
-//             {kind: OB.DATA.CloseCashPaymentMethod},
-//             {kind: OB.DATA.CashCloseReport},
-//             {kind: OB.COMP.HWManager, attr: {'templatecashup': 'res/printcashup.xml'}}
-//        ]},
-//        {kind: B.KindJQuery('div'), attr: {'class': 'row'}, content: [
-//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-//             {kind: OB.COMP.PendingReceipts},
-//             {kind: OB.COMP.CountCash},
-//             {kind: OB.COMP.CashToKeep},
-//             {kind: OB.COMP.PostPrintClose}
-//           ]},
-//
-//          {kind: B.KindJQuery('div'), attr: {'class': 'span6'}, content: [
-//            {kind: B.KindJQuery('div'), content: [
-//              {kind: OB.COMP.CloseInfo }
-//            ]},
-//            {kind: OB.COMP.CloseKeyboard }
-//          ]}
-//        ]}
-//
-//      ], init: function () {
-//        var ctx = this.context;
-//        OB.UTIL.showLoading(true);
-//        ctx.on('domready', function () {
-//          var orderlist = this.context.modelorderlist;
-//          OB.Dal.find(OB.Model.Order, {hasbeenpaid:'Y'}, function (fetchedOrderList) { //OB.Dal.find success
-//            var currentOrder = {};
-//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
-//              ctx.orderlisttoprocess = fetchedOrderList;
-//              OB.UTIL.showLoading(false);
-//              $('#modalprocessreceipts').modal('show');
-//            }else{
-//              OB.UTIL.showLoading(false);
-//            }
-//          }, function () { //OB.Dal.find error
-//          });
-//
-//          OB.Dal.find(OB.Model.Order,{hasbeenpaid:'N'}, function (fetchedOrderList) { //OB.Dal.find success
-//            var currentOrder = {};
-//            if (fetchedOrderList && fetchedOrderList.length !== 0) {
-//              ctx.closenextbutton.$el.attr('disabled','disabled');
-//              orderlist.reset(fetchedOrderList.models);
-//            }
-//          }, function () { //OB.Dal.find error
-//          });
-//        }, this);
-//      }}
-//    );
-//  }
-//});

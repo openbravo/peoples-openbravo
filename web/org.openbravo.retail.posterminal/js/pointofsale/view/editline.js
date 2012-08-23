@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo */
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine',
   published: {
@@ -152,8 +154,7 @@ enyo.kind({
     if (this.line) {
       this.$.msgaction.hide();
       this.$.msgedit.show();
-      this.$.editlineimage.img = this.line.get('product').get('img');
-      this.$.editlineimage.render();
+      this.$.editlineimage.setImg(this.line.get('product').get('img'));
       this.$.editlinename.setContent(this.line.get('product').get('_identifier'));
       this.$.editlineqty.setContent(this.line.printQty());
       this.$.editlinediscount.setContent(this.line.printDiscount());
@@ -163,8 +164,7 @@ enyo.kind({
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
       this.$.msgaction.show();
-      this.$.editlineimage.img = null;
-      this.$.editlineimage.render();
+      this.$.editlineimage.setImg(null);
       this.$.editlinename.setContent('');
       this.$.editlineqty.setContent('');
       this.$.editlinediscount.setContent('');
