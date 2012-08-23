@@ -482,14 +482,24 @@ isc.OBViewGrid.addProperties({
   },
 
   hideField: function (field, suppressRelayout) {
-    var res = this.Super('hideField', arguments);
+    var res;
+    this._hidingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('hideField', arguments);
+    delete this._savedEditValues;
+    delete this._hidingField;
     this.view.standardWindow.storeViewState();
     this.refreshContents();
     return res;
   },
 
   showField: function (field, suppressRelayout) {
-    var res = this.Super('showField', arguments);
+    var res;
+    this._showingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('showField', arguments);
+    delete this._savedEditValues;
+    delete this._showingField;
     this.view.standardWindow.storeViewState();
     this.refreshContents();
     return res;
@@ -2297,6 +2307,13 @@ isc.OBViewGrid.addProperties({
     var rowNum = this.getEditRow(),
         record = this.getRecord(rowNum),
         editForm = this.getEditForm();
+
+    // Do not hide the inline editor if the action has been caused
+    // by hiding or showing a field
+    // See issue https://issues.openbravo.com/view.php?id=21352
+    if (this._hidingField || this._showingField) {
+      return;
+    }
     this._hidingInlineEditor = true;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {

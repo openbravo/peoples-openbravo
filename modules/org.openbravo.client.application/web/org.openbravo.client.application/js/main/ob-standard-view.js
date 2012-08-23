@@ -1813,7 +1813,14 @@ isc.OBStandardView.addProperties({
     if (this.isEditingGrid && this.viewGrid.getEditForm()) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        if (this.viewGrid._hidingField || this.viewGrid._showingField) {
+          // If this has been caused by hiding or showing a field while the grid was being edited,
+          // add the properties of the saved edit values
+          // See issue https://issues.openbravo.com/view.php?id=21352
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum), this.viewGrid._savedEditValues);
+        } else {
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        }
       } else {
         record = isc.addProperties({}, this.viewGrid.getSelectedRecord());
       }
