@@ -41,6 +41,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   public static final String QUALIFIER = "OBPOS_Main";
   public static final String APP_CACHE_COMPONENT = "AppCacheManifest";
   public static final String CLIENT_MODEL_COMPONENT = "ClientModel";
+  public static final String LABELS_COMPONENT = "Labels";
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
@@ -52,6 +53,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     } else if (componentId.equals(CLIENT_MODEL_COMPONENT)) {
       final ClientModelComponent component = getComponent(ClientModelComponent.class);
       component.setId(CLIENT_MODEL_COMPONENT);
+      component.setParameters(parameters);
+      return component;
+    } else if (componentId.equals(LABELS_COMPONENT)) {
+      final LabelsComponent component = getComponent(LabelsComponent.class);
+      component.setId(LABELS_COMPONENT);
       component.setParameters(parameters);
       return component;
     } else if (componentId.equals(KernelConstants.RESOURCE_COMPONENT_ID)) {

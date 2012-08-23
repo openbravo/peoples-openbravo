@@ -19,7 +19,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +30,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 
 /**
  * 
@@ -61,27 +62,12 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
       return version;
     }
 
-    final StringBuffer sb = new StringBuffer();
-
-    for (final String file : getFileList()) {
-      final String ext = file.substring(file.length() - 3);
-      if (ext.contains("png")) {
-        continue; // skip images
-      }
-
-      try {
-        final String content = FileUtils.readFileToString(new File(file), "UTF-8");
-        sb.append(content);
-      } catch (IOException e) {
-        log.error("Error reading file: " + e.getMessage(), e);
-      }
+    StringBuffer versionString = new StringBuffer();
+    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
+    for (Module module : modules) {
+      versionString.append(module.getVersion());
     }
-
-    if (sb.toString().equals("")) {
-      sb.append(System.currentTimeMillis()); // fall-back version
-    }
-
-    version = DigestUtils.md5Hex(sb.toString());
+    version = DigestUtils.md5Hex(versionString.toString());
 
     return version;
   }
@@ -90,11 +76,11 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
     return "*";
   }
 
-  public List<String> getCache() {
+  private List<String> transformPath(List<String> stringFileList) {
     final List<String> resources = new ArrayList<String>();
     final String relativePath = PATH_PREFIX + getModulePackageName();
 
-    for (final String f : getFileList()) {
+    for (final String f : stringFileList) {
       final int pos = f.indexOf(relativePath);
       resources.add("../../" + f.substring(pos));
     }
@@ -116,13 +102,22 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
     return false;
   }
 
-  private List<String> getFileList() {
+  public List<String> getImageFileList() {
+    final String[] extensions = { "png" };
+    return transformPath(getFileList(extensions));
+  }
+
+  public List<String> getCSSFileList() {
+    final String[] extensions = { "css", "less" };
+    return transformPath(getFileList(extensions));
+  }
+
+  private List<String> getFileList(String[] extensions) {
 
     if (fileList != null) {
       return fileList;
     }
 
-    final String[] extensions = { "js", "css", "less", "png" };
     final String relativePath = PATH_PREFIX + getModulePackageName();
 
     fileList = new ArrayList<String>();
@@ -139,7 +134,7 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
   }
 
   public String getFileName() {
-    return "";
+    return OBPOSStaticResorcesComponent.getStaticResourceFileName();
   }
 
   @Override

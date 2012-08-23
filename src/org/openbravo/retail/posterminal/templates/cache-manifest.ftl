@@ -19,11 +19,30 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/libs/mbp-helper.js
 ../../web/org.openbravo.retail.posterminal/js/libs/enyo.js
 
-# Boot code
+# Boot code 
+../../web/org.openbravo.client.application/js/utilities/ob-utilities-date.js
+../../web/org.openbravo.retail.posterminal/js/builder.js
+../../web/org.openbravo.retail.posterminal/js/datasource.js
+../../web/org.openbravo.retail.posterminal/js/utilities.js
+../../web/org.openbravo.retail.posterminal/js/utilitiesui.js
+../../web/org.openbravo.retail.posterminal/js/i18n.js
+../../web/org.openbravo.retail.posterminal/js/components/clock.js
+../../web/org.openbravo.retail.posterminal/js/components/commonbuttons.js
+../../web/org.openbravo.retail.posterminal/js/model/terminal.js
+../../web/org.openbravo.retail.posterminal/js/components/terminal.js
+../../web/org.openbravo.retail.posterminal/js/login/model/login-model.js
+../../web/org.openbravo.retail.posterminal/js/login/view/login.js
+
 
 # Images
+<#list data.imageFileList as imageFile>
+${imageFile}
+</#list>
 
 # CSS
 
+# Labels
+../../org.openbravo.client.kernel/OBPOS_Main/Labels
+
 # Generated file
-#../../web/js/gen/${data.fileName}.js
+../../web/js/gen/${data.fileName}.js
