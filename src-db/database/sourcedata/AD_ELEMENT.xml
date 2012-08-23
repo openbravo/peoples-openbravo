@@ -9071,8 +9071,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1573-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1573-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1573-->  <COLUMNNAME><![CDATA[CommissionOrders]]></COLUMNNAME>
-<!--1573-->  <NAME><![CDATA[Commission only specified Orders]]></NAME>
-<!--1573-->  <PRINTNAME><![CDATA[Commission Orders]]></PRINTNAME>
+<!--1573-->  <NAME><![CDATA[Based on Sales Rep.]]></NAME>
+<!--1573-->  <PRINTNAME><![CDATA[Based on Sales Rep.]]></PRINTNAME>
 <!--1573-->  <DESCRIPTION><![CDATA[Commission only Orders or Invoices, where this Sales Rep is entered]]></DESCRIPTION>
 <!--1573-->  <HELP><![CDATA[Sales Reps are entered in Orders and Invoices. If selected, only Orders and Invoices for this Sales Reps are included in the calculation of the commission.]]></HELP>
 <!--1573-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
