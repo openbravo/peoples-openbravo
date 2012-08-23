@@ -153,7 +153,7 @@ BEGIN
 		  AND gl_category.ad_client_id = v_client_id
 		  order by isdefault desc) tmp;
       else
-          RAISE_APPLICATION_ERROR(-20000, '@OrgForStandardGLCategory@');
+          RAISE_APPLICATION_ERROR(-20000, '@OrgForManualGLCategory@');
       end if;
    
 
