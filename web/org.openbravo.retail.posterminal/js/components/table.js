@@ -244,7 +244,7 @@ enyo.kind({
     }, this);
 
     this.collection.on('reset', function(a, b, c) {
-      var lastmodel;
+      var modelsel;
 
       this.$.tbody.hide();
       this.$.tempty.show();
@@ -262,9 +262,12 @@ enyo.kind({
           this._addModelToCollection(model);
         }, this);
 
-        if (this.listStyle === 'list' || this.listStyle === 'edit') {
-          lastmodel = this.collection.at(this.collection.size() - 1);
-          lastmodel.trigger('selected', lastmodel);
+        if (this.listStyle === 'list') {
+          modelsel = this.collection.at(0);
+          modelsel.trigger('selected', modelsel);
+        } else  if (this.listStyle === 'edit') {
+          modelsel = this.collection.at(this.collection.size() - 1);
+          modelsel.trigger('selected', modelsel);
         }
       }
     }, this);
