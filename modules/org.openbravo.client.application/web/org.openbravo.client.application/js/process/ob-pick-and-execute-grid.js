@@ -51,6 +51,10 @@ isc.OBPickAndExecuteGrid.addProperties({
   // default selection
   selectionProperty: 'obSelected',
 
+  shouldFixRowHeight: function () {
+    return true;
+  },
+
   initWidget: function () {
     var i, len = this.fields.length;
 
@@ -99,6 +103,10 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
       canFilter: true,
+      frozen: true,
+      canFreeze: true,
+      showHover: true,
+      prompt: OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt'),
       filterEditorType: 'StaticTextItem'
     });
 

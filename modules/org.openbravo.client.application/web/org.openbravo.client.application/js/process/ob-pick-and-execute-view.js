@@ -250,6 +250,7 @@ isc.OBPickAndExecuteView.addProperties({
       canSort: false,
       canReorder: false,
       canHide: false,
+      frozen: true,
       canFreeze: false,
       canDragResize: false,
       canGroupBy: false,
