@@ -1410,7 +1410,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties;
+          sessionProperties, keepSelection;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1473,7 +1473,8 @@ OB.ViewFormProperties = {
 
         view.viewGrid.markForRedraw();
 
-        view.refreshChildViews();
+        keepSelection = true;
+        view.refreshChildViews(keepSelection);
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);

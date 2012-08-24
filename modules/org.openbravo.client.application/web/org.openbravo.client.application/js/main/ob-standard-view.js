@@ -799,8 +799,8 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  doRefreshContents: function (doRefreshWhenVisible, forceRefresh) {
-
+  doRefreshContents: function (doRefreshWhenVisible, forceRefresh, keepSelection) {
+    var callback, me = this;
     // if not visible anymore, reset the view back
     if (!this.isViewVisible()) {
       if (this.isShowingForm) {
@@ -824,6 +824,11 @@ isc.OBStandardView.addProperties({
 
     // can be used by others to see that we are refreshing content
     this.refreshContents = true;
+
+    if (keepSelection) {
+      this.viewGrid.recordsSelectedBeforeRefresh = this.viewGrid.getSelectedRecords();
+      this.formVisibleBeforeRefresh = this.isShowingForm;
+    }
 
     // clear all our selections..
     // note the true parameter prevents autosave actions from happening
@@ -855,7 +860,25 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
 
-    this.viewGrid.refreshContents();
+    if (keepSelection) {
+      callback = function () {
+        var length, i, recordIndex;
+        length = me.viewGrid.recordsSelectedBeforeRefresh.length;
+        for (i = 0; i < length; i++) {
+          recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.recordsSelectedBeforeRefresh[i]);
+          me.viewGrid.selectRecord(recordIndex);
+        }
+        if (me.formVisibleBeforeRefresh) {
+          me.switchFormGridVisibility();
+        }
+        delete me.formVisibleBeforeRefresh;
+        delete me.viewGrid.recordsSelectedBeforeRefresh;
+      };
+    } else {
+      callback = null;
+    }
+
+    this.viewGrid.refreshContents(callback);
 
     this.toolBar.updateButtonState(true);
 
@@ -868,7 +891,7 @@ isc.OBStandardView.addProperties({
     this.refreshContents = false;
   },
 
-  refreshChildViews: function () {
+  refreshChildViews: function (keepSelection) {
     var i, length, tabViewPane;
 
     if (this.childTabSet) {
@@ -877,7 +900,7 @@ isc.OBStandardView.addProperties({
         tabViewPane = this.childTabSet.tabs[i].pane;
         // force a refresh, only the visible ones will really 
         // be refreshed
-        tabViewPane.doRefreshContents(true);
+        tabViewPane.doRefreshContents(true, null, keepSelection);
       }
     }
   },

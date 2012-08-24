@@ -1963,7 +1963,7 @@ isc.OBViewGrid.addProperties({
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
 
     var record = this.getRecord(rowNum),
-        editRow, editSession, autoSaveAction;
+        editRow, editSession, autoSaveAction, keepSelection;
 
     // a new id has been computed use that now    
     if (record && record._newId) {
@@ -1992,7 +1992,8 @@ isc.OBViewGrid.addProperties({
     // if nothing else got selected, select ourselves then
     if (!this.getSelectedRecord()) {
       this.selectRecord(record);
-      this.view.refreshChildViews();
+      keepSelection = true;
+      this.view.refreshChildViews(keepSelection);
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
