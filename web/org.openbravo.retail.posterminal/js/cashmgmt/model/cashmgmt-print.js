@@ -15,11 +15,11 @@
     this.templatecashmgmt = new OB.DS.HWResource('res/printcashmgmt.xml');
   };
 
-  PrintCashMgmt.prototype.print = function (depsdropstosend, callback) {
+  PrintCashMgmt.prototype.print = function (depsdropstosend) {
     
     OB.POS.hwserver.print(this.templatecashmgmt, {
       cashmgmt: depsdropstosend
-    }, callback);
+    });
   };
 
   // Public object definition
