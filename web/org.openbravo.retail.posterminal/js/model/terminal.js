@@ -212,6 +212,8 @@ OB.Model.Terminal = Backbone.Model.extend({
       }, null, null);
     }
 
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+
     $.ajax({
       url: '../../org.openbravo.retail.posterminal/POSLoginHandler',
       data: {
@@ -239,6 +241,12 @@ OB.Model.Terminal = Backbone.Model.extend({
         me.triggerLoginFail(jqXHR.status, mode);
       }
     });
+    }else{
+alert('offline!!!');
+        OB.POS.navigate('main', {
+          trigger: true
+        });
+    }
   },
 
   logout: function() {

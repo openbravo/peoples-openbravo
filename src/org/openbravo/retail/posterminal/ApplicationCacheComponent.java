@@ -49,7 +49,6 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
   private static final Logger log = Logger.getLogger(ApplicationCacheComponent.class);
 
   private String version = null;
-  private List<String> fileList = null;
 
   @Override
   protected Template getComponentTemplate() {
@@ -107,20 +106,17 @@ public class ApplicationCacheComponent extends BaseTemplateComponent {
     return transformPath(getFileList(extensions));
   }
 
-  public List<String> getCSSFileList() {
+  public List<String> getcssFileList() {
     final String[] extensions = { "css", "less" };
     return transformPath(getFileList(extensions));
   }
 
   private List<String> getFileList(String[] extensions) {
 
-    if (fileList != null) {
-      return fileList;
-    }
 
     final String relativePath = PATH_PREFIX + getModulePackageName();
 
-    fileList = new ArrayList<String>();
+    List<String> fileList = new ArrayList<String>();
 
     final File directory = new File(RequestContext.getServletContext().getRealPath(relativePath));
 

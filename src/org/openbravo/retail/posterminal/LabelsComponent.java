@@ -18,10 +18,14 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 
@@ -53,6 +57,21 @@ public class LabelsComponent extends BaseTemplateComponent {
     }
     return sb.toString();
 
+  }
+
+  public String getFormat() {
+
+    try {
+      JSONObject item = new JSONObject();
+      final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+      item.put("date", props.getProperty(KernelConstants.DATE_FORMAT_PROPERTY, "dd-MM-yyyy"));
+      item.put("dateTime",
+          props.getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss"));
+      return item.toString();
+    } catch (Exception e) {
+      log.error("There was an exception while generating the format", e);
+    }
+    return null;
   }
 
 }

@@ -109,7 +109,7 @@
       }
       
 
-
+      if (OB.POS.modelterminal.get('connectedToERP')) {
       $.ajax({
           url: '../../org.openbravo.retail.posterminal.service.loginutils',
           contentType: 'application/json;charset=utf-8',
@@ -139,7 +139,9 @@
             }
           }
         });
-      
+      }else{
+    	  OB.POS.navigate('login');
+      }
       
       
     }());
