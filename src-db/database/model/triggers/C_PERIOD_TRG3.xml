@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_PERIOD_TRG3">
+    <trigger name="C_PERIOD_TRG3" table="C_PERIOD" fires="after" insert="true" update="true" delete="false" foreach="statement">
+      <body><![CDATA[
+    V_COUNT NUMBER:= 0;
+Begin
+    For Cur_Period In
+      (Select * 
+      From C_Period
+      Where C_Period_Id In (Select Distinct(Cp.C_Period_Id)
+      From C_Period Cp 
+            Join C_Periodcontrol Cpc On Cpc.C_Period_Id= Cp.C_Period_Id 
+      Where Periodstatus = 'O'))
+    Loop
+       Select Count(*) 
+       Into V_COUNT
+       From C_Period 
+       Where C_Period_Id <> Cur_Period.C_Period_Id
+       And Ad_Org_Id=Cur_Period.Ad_Org_Id
+       And Cur_Period.startdate <= Enddate
+			 And Cur_Period.Enddate >= Startdate;
+       If (V_COUNT > 0) Then
+         RAISE_APPLICATION_ERROR(-20000, '@DatesOverlapped@');
+       End if;
+    End Loop;
+END]]></body>
+    </trigger>
+  </database>
