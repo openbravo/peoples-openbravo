@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
@@ -664,6 +665,9 @@ public class InitialClientSetup {
         ImportResult iResult;
         try {
           iResult = InitialSetupUtility.insertReferenceData(dataSet, client, null);
+        } catch (OBException e) {
+          return logErrorAndRollback(e.getMessage(),
+              "Exception ocurred while getting source.path from Openbravo.properties", e);
         } catch (Exception e) {
           return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "
