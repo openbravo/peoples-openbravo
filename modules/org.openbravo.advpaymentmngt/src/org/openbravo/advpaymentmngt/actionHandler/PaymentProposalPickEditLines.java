@@ -14,11 +14,10 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
   private static Logger log = Logger.getLogger(PaymentProposalPickEditLines.class);
@@ -27,6 +26,7 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
     OBContext.setAdminMode();
+    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
@@ -40,12 +40,17 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
           strPaymentProposalId);
 
       if (cleanPaymentProposalDetails(paymentProposal)) {
-        createPaymentProposalDetails(jsonRequest);
+        int cont = createPaymentProposalDetails(jsonRequest);
+        jsonRequest = new JSONObject();
+
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", "success");
+        errorMessage.put("text", OBMessageUtils.messageBD("Success"));
+        jsonRequest.put("message", errorMessage);
       }
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       log.error(e.getMessage(), e);
 
       try {
@@ -53,8 +58,7 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
 
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
-        errorMessage.put("text",
-            Utility.messageBD(new DalConnectionProvider(), e.getMessage(), vars.getLanguage()));
+        errorMessage.put("text", OBMessageUtils.messageBD(e.getMessage()));
 
         jsonRequest.put("message", errorMessage);
       } catch (Exception e2) {
@@ -87,18 +91,19 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     return true;
   }
 
-  private void createPaymentProposalDetails(JSONObject jsonRequest) throws JSONException,
+  private int createPaymentProposalDetails(JSONObject jsonRequest) throws JSONException,
       OBException {
 
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
-      return;
+      return 0;
     }
     final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
     FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
         strPaymentProposalId);
     BigDecimal totalAmount = BigDecimal.ZERO, totalWriteOff = BigDecimal.ZERO;
+    int cont = 0;
     for (int i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -125,11 +130,13 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
         OBDal.getInstance().save(newPPD);
         OBDal.getInstance().save(paymentProposal);
         OBDal.getInstance().flush();
+        cont++;
       }
     }
 
     paymentProposal.setAmount(totalAmount);
     paymentProposal.setWriteoffAmount(totalWriteOff);
     OBDal.getInstance().save(paymentProposal);
+    return cont;
   }
 }
