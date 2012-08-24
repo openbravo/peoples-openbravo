@@ -49,10 +49,15 @@ isc.OBPickAndExecuteView.addProperties({
         okButton, newButton, cancelButton, i, buttonLayout = [];
 
     function actionClick() {
+      view.messageBar.hide();
       if (view.validate()) {
         view.doProcess(this._buttonValue);
       } else {
-        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+        if (!view.messageBar.isVisible()) {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+        }
       }
     }
 
