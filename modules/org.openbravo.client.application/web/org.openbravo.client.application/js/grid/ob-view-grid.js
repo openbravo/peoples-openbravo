@@ -2719,6 +2719,20 @@ isc.OBViewGrid.addProperties({
       this.getEditForm().doChangeFICCall(null, true);
     }
     this.Super('fieldStateChanged', arguments);
+  },
+
+  getFieldFromColumnName: function (columnName) {
+    var i, field, length, fields = this.completeFields;
+
+    length = fields.length;
+
+    for (i = 0; i < fields.length; i++) {
+      if (fields[i].columnName === columnName) {
+        field = fields[i];
+        break;
+      }
+    }
+    return field;
   }
 
 });

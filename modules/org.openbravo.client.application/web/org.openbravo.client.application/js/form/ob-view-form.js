@@ -1085,6 +1085,11 @@ OB.ViewFormProperties = {
       gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, null, true, true);
     }
 
+    if (!field) {
+      // Look in the complete fields, the column might be hidden
+      field = this.grid.getFieldFromColumnName(columnName);
+    }
+
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
       // Adjust to formatting if exists value and classicValue.
