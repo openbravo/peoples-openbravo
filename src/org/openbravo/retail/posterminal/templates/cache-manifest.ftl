@@ -33,10 +33,12 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/components/terminal.js
 ../../web/org.openbravo.retail.posterminal/js/login/model/login-model.js
 ../../web/org.openbravo.retail.posterminal/js/login/view/login.js
+../../web/org.openbravo.retail.posterminal/js/data/dal.js
 ../../web/org.openbravo.retail.posterminal/js/model/product-category.js  
 ../../web/org.openbravo.retail.posterminal/js/model/product.js  
 ../../web/org.openbravo.retail.posterminal/js/model/businesspartner.js  
 ../../web/org.openbravo.retail.posterminal/js/model/document-sequence.js  
+../../web/org.openbravo.retail.posterminal/js/model/user.js  
 
 
 # Images

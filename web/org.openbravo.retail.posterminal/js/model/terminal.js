@@ -194,6 +194,8 @@ OB.Model.Terminal = Backbone.Model.extend({
   login: function(user, password, mode) {
     OB.UTIL.showLoading(true);
     var me = this;
+	me.user = user;
+	me.password = password;
     this.set('terminal', null);
     this.set('payments', null);
     this.set('context', null);
@@ -206,11 +208,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('currencyPrecision', null);
 
     // Remove the pending orders that have not been paid
-    if (OB.Dal) { //TODO: check this...
-      OB.Dal.removeAll(OB.Model.Order, {
-        'hasbeenpaid': 'N'
-      }, null, null);
-    }
+    //if (OB.Dal) { //TODO: check this...
+    //  OB.Dal.removeAll(OB.Model.Order, {
+    //    'hasbeenpaid': 'N'
+    //  }, null, null);
+    //}
 
     if (OB.POS.modelterminal.get('connectedToERP')) {
 
@@ -233,6 +235,32 @@ OB.Model.Terminal = Backbone.Model.extend({
         //          pos = location.pathname.indexOf('login.jsp');
         //          baseUrl = window.location.pathname.substring(0, pos);
         //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
+
+        OB.Dal.initCache(OB.Model.User, [], null, null);
+        OB.Dal.find(OB.Model.User, {'name': me.user},
+          function(users) {
+            var user;
+        	if(users.models.length == 0 ) {
+              user = new OB.Model.User();
+              user.set('name', me.user);
+              user.set('password', me.password);
+              OB.Dal.save(user, function(){
+              }, function() {
+                window.console.error(arguments);
+              });
+        	}else{
+              user = users.models[0];
+              user.set('password', me.password);
+              OB.Dal.save(user, function(){
+              }, function() {
+                window.console.error(arguments);
+              });
+            }
+          }, 
+          function() {
+          }
+        );
+        
         OB.POS.navigate('main', {
           trigger: true
         });
@@ -242,12 +270,28 @@ OB.Model.Terminal = Backbone.Model.extend({
       }
     });
     }else{
-alert('offline!!!');
-        OB.POS.navigate('main', {
-          trigger: true
-        });
-    }
-  },
+    	alert('offline!!!');
+        OB.Dal.find(OB.Model.User, {'name': me.user},
+          function(users) {
+            var user;
+        	if(users.models.length == 0 ) {
+              alert('pos is offline, and this user never logged in the pos');
+        	}else{
+              if(users.models[0].get('password') === me.password){
+                OB.POS.navigate('main', {
+                  trigger: true
+                });
+              } else{
+                  alert('the user/password is not correct');
+            	  OB.POS.navigate('login');
+              }
+            }
+          }, 
+          function() {
+          }
+        );
+    }   
+  }, 
 
   logout: function() {
     var me = this;

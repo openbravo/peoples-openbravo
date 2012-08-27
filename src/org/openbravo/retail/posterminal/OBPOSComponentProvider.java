@@ -87,6 +87,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/clock",
         "model/order",
         "model/terminal",
+        "model/user",
         "components/commonbuttons",
         "components/table",
         "components/terminal",
@@ -97,7 +98,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "main",
         // Web POS window
         "components/keypadbasic", "components/keyboard", "components/keypadcoins",
-        "data/datamaster", "data/dataordersave", "data/dataordertaxes", "data/dataorderdiscount",
+        "data/datamaster", "data/dataordersave", "data/dataordertaxes",
+        "data/dataorderdiscount",
         "components/modalreceipts",
         "components/rendercategory",
         "components/renderproduct",
@@ -135,10 +137,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Cash Up window
         "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
-        "closecash/view/closekeyboard",
-        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/view/closekeyboard", "closecash/view/closeinfo",
+        "closecash/view/tabpendingreceipts", "closecash/view/tabcountcash",
+        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
+        "closecash/components/cashup-modals",
 
         "closecash/data/datamaster", "closecash/model/daycash", "closecash/data/dataclosecash",
         // Core resources

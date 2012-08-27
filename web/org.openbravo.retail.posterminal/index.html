@@ -56,11 +56,13 @@
 <script src="js/components/terminal.js"></script>
 <script src="js/login/model/login-model.js"></script>
 <script src="js/login/view/login.js"></script>
+  <script src="js/data/dal.js"></script>
 
   <script src="js/model/product-category.js"></script>
   <script src="js/model/product.js"></script>
   <script src="js/model/businesspartner.js"></script>
   <script src="js/model/document-sequence.js"></script>
+  <script src="js/model/user.js"></script>
   <script src="../../org.openbravo.client.kernel/OBPOS_Main/Labels"></script>
    <script>
     (function () {
@@ -137,9 +139,11 @@
             } else {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
             }
+            OB.UTIL.showLoading(false);
           }
         });
       }else{
+    	  OB.UTIL.showLoading(false);
     	  OB.POS.navigate('login');
       }
       
