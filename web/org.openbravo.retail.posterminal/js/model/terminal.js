@@ -112,16 +112,28 @@ OB.Model.Terminal = Backbone.Model.extend({
         };
 
 
-    new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
-      if (data.exception) {
-        me.logout();
-      } else if (data[0]) {
-        me.set('terminal', data[0]);
-        me.trigger('terminal.loaded');
-      } else {
-        OB.UTIL.showError("Terminal does not exists: " + params.terminal);
-      }
-    });
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+        new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
+          if (data.exception) {
+            me.logout();
+          } else if (data[0]) {
+            me.set('terminal', data[0]);
+            //In online mode, we save the terminal information in the local db
+            me.usermodel.set('terminalinfo', data[0]);
+            OB.Dal.save(me.usermodel, function(){
+            }, function() {
+              window.console.error(arguments);
+            });
+            me.trigger('terminal.loaded');
+          } else {
+            OB.UTIL.showError("Terminal does not exists: " + params.terminal);
+          }
+        });
+        }else{
+        	//Offline mode, we get the terminal information from the local db
+            me.set('terminal', me.usermodel.get('terminalinfo'));
+            me.trigger('terminal.loaded');
+        }
 
     OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
 
@@ -131,6 +143,13 @@ OB.Model.Terminal = Backbone.Model.extend({
       $LAB.setGlobalDefaults({
         AppendTo: 'body'
       });
+      if(!OB.POS.modelterminal.get('connectedToERP')){
+          OB.POS.cleanWindows();
+    	  $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          return;
+      }
       $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
         var newFormat = OB.Format;
         _.extend(OB, oldOB);
@@ -248,8 +267,10 @@ OB.Model.Terminal = Backbone.Model.extend({
               }, function() {
                 window.console.error(arguments);
               });
+              me.usermodel = user;
         	}else{
               user = users.models[0];
+              me.usermodel = user;
               user.set('password', me.password);
               OB.Dal.save(user, function(){
               }, function() {
@@ -278,6 +299,7 @@ OB.Model.Terminal = Backbone.Model.extend({
               alert('pos is offline, and this user never logged in the pos');
         	}else{
               if(users.models[0].get('password') === me.password){
+                me.usermodel = users.models[0];
                 OB.POS.navigate('main', {
                   trigger: true
                 });
