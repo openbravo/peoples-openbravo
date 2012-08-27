@@ -39,6 +39,7 @@ Begin
        From C_Period 
        Where C_Period_Id <> Cur_Period.C_Period_Id
        And Ad_Org_Id=Cur_Period.Ad_Org_Id
+       And Ad_Client_Id=Cur_Period.Ad_Client_Id
        And Cur_Period.startdate <= Enddate
        And Cur_Period.Enddate >= Startdate;
        If (V_COUNT > 0) Then
