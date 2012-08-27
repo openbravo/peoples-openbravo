@@ -11,16 +11,23 @@
 
 (function() {
 
-
+  function triggerReady(models) {
+    if (models._LoadOnline && OB.UTIL.queueStatus(models._LoadQueue || {})) {
+      models.trigger('ready');
+    }
+  }
 
   // global components.
   OB = window.OB || {};
   OB.Model = OB.Model || {};
   OB.Model.Util = {
     loadModels: function(online, models, data) {
-      var queue = {}, somethigToLoad = false;
+      var somethigToLoad = false;
+
+      models._LoadOnline = online;
+
       if (models.length === 0) {
-        models.trigger('ready');
+        triggerReady(models)
         return;
       }
 
@@ -39,22 +46,21 @@
           } else {
             ds = new OB.DS.DataSource(new OB.DS.Request(item, OB.POS.modelterminal.get('terminal').client, OB.POS.modelterminal.get('terminal').organization, OB.POS.modelterminal.get('terminal').id));
             somethigToLoad = true;
-            queue[item.prototype.modelName] = false;
+            models._LoadQueue = models._LoadQueue || {};
+            models._LoadQueue[item.prototype.modelName] = false;
             ds.on('ready', function() {
               if (data) {
                 data[item.prototype.modelName] = new Backbone.Collection(ds.cache);
               }
-              queue[item.prototype.modelName] = true;
-              if (OB.UTIL.queueStatus(queue)) {
-                models.trigger('ready');
-              }
+              models._LoadQueue[item.prototype.modelName] = true;
+              triggerReady(models);
             });
             ds.load(item.params);
           }
         }
       });
       if (!somethigToLoad) {
-        models.trigger('ready');
+        triggerReady(models);
       }
     }
   };
@@ -92,6 +98,13 @@
     paymentProviders: [],
     windows: null,
     navigate: function(route) {
+      //HACK -> when f5 in login page
+      //the route to navigate is the same that we are.
+      //Backbone doesn't navigates
+      //With this hack allways navigate.
+      if (route === Backbone.history.fragment) {
+        Backbone.history.fragment = '';
+      }
       this.modelterminal.router.navigate(route, {
         trigger: true
       });

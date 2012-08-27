@@ -137,17 +137,33 @@ enyo.kind({
             this.$.variableInput.setValue('');
             this.doResetQtyToKeep({qtyToKeep: null});
           },
-          renderBody: function(modelToDraw){
-            var paymentMethod = modelToDraw.get('paymentMethod');
-            this.disableControls();
-            //draw
-            this.$.keepfixedamount.setShowing(paymentMethod.keepfixedamount);
-            if(paymentMethod.keepfixedamount){
-              this.$.keepfixedamount.render(OB.I18N.formatCurrency(paymentMethod.amount));
-              this.$.keepfixedamount.setQtyToKeep(paymentMethod.amount);
+          renderFixedAmount: function(modelToDraw){
+            var udfn;
+            this.$.keepfixedamount.setShowing(modelToDraw.get('paymentMethod').keepfixedamount);
+            if(modelToDraw.get('paymentMethod').keepfixedamount){
+              if (modelToDraw.get('counted') !== null && modelToDraw.get('counted') !== udfn){
+                if (modelToDraw.get('counted') < modelToDraw.get('paymentMethod').amount){
+                  this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('counted')));
+                  this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('counted'));
+                }else{
+                  this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('paymentMethod').amount));
+                  this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('paymentMethod').amount);
+                }
+              }else{
+                this.$.keepfixedamount.render(OB.I18N.formatCurrency(modelToDraw.get('paymentMethod').amount));
+                this.$.keepfixedamount.setQtyToKeep(modelToDraw.get('paymentMethod').amount);
+              }
             }else{
               this.$.keepfixedamount.render('');
             }
+          },
+          renderBody: function(modelToDraw){
+            
+            var paymentMethod = modelToDraw.get('paymentMethod');
+            this.disableControls();
+            //draw
+            debugger;
+            this.renderFixedAmount(modelToDraw);
             
             this.$.allowmoveeverything.setShowing(paymentMethod.allowmoveeverything);
             
@@ -168,6 +184,14 @@ enyo.kind({
   paymentToKeepChanged: function(model){
     this.$.cashtokeepheader.renderHeader(this.paymentToKeep.get('name'));
     this.$.formkeep.renderBody(this.paymentToKeep);
+    
+    //If fixed quantity to keep is more than counted quantity,
+    //counted quantity should be propossed to keep.
+    if(this.paymentToKeep.get('paymentMethod').keepfixedamount){
+      this.paymentToKeep.on('change:counted', function(mod){
+        this.$.formkeep.renderFixedAmount(this.paymentToKeep);
+      },this);     
+    }
   },
   disableSelection: function(){
     this.$.formkeep.disableControls();
