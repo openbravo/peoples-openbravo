@@ -1807,6 +1807,10 @@ OB.ViewFormProperties = {
   },
 
   keyDown: function () {
+    if (this.grid && this.grid.editFormKeyDown) {
+      // To fix issue https://issues.openbravo.com/view.php?id=21382
+      this.grid.editFormKeyDown(arguments);
+    }
     var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
     if (response !== false) {
       response = this.Super('keyDown', arguments);

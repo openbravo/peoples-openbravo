@@ -68,7 +68,7 @@ isc.OBGrid.addProperties({
       me.focusInFirstFilterEditor();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', 'OBGrid.body', ksAction_FocusFilter);
+    OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', ['OBGrid.body', 'OBGrid.editForm'], ksAction_FocusFilter);
 
     ksAction_FocusGrid = function () {
       me.focus();
@@ -80,7 +80,7 @@ isc.OBGrid.addProperties({
       me.clearFilter(true);
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Grid_ClearFilter', ['OBGrid.body', 'OBGrid.filter'], ksAction_ClearFilter);
+    OB.KeyboardManager.Shortcuts.set('Grid_ClearFilter', ['OBGrid.body', 'OBGrid.filter', 'OBGrid.editForm'], ksAction_ClearFilter);
 
     ksAction_SelectAll = function () {
       me.selectAllRecords();
@@ -103,12 +103,21 @@ isc.OBGrid.addProperties({
   },
 
   bodyKeyPress: function (event, eventInfo) {
-    if ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1] && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id)) {
+    if (eventInfo && this.lastSelectedRecord && ((eventInfo.keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME && this.data.localData[0].id === this.lastSelectedRecord.id) || (eventInfo.keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME && this.data.localData[this.data.localData.length - 1] && this.data.localData[this.data.localData.length - 1].id === this.lastSelectedRecord.id))) {
       return true;
     }
     var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body');
     if (response !== false) {
       response = this.Super('bodyKeyPress', arguments);
+    }
+    return response;
+  },
+
+  editFormKeyDown: function () {
+    // Custom method. Only works if the form is an OBViewForm
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.editForm');
+    if (response !== false) {
+      response = this.Super('editFormKeyDown', arguments);
     }
     return response;
   },
