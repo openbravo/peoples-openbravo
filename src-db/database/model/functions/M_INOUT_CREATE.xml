@@ -85,27 +85,19 @@
     ORDER BY l.line, l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
       l.m_product_uom_id, qtyordered-qtydelivered;
     ol Cur_OrderLine%ROWTYPE;
-    CURSOR Cur_Storage (p_Product varchar, p_Warehouse varchar, p_UOM varchar, p_Product_UOM varchar, p_Attribute varchar) IS
-    SELECT T.C_UOM_ID,
-      T.M_LOCATOR_ID,
-      T.M_ATTRIBUTESETINSTANCE_ID,
-      T.M_PRODUCT_UOM_ID,
-      COALESCE(T.QtyOnHand, 0) AS QtyOnHand,
-      T.QtyOrderOnHand AS QtyOrder
-    FROM M_STORAGE_DETAIL T LEFT OUTER JOIN
-      M_ATTRIBUTESETINSTANCE A
-      ON T.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID,
-      M_LOCATOR L
-    WHERE T.M_PRODUCT_ID=p_Product AND
-      T.M_LOCATOR_ID=L.M_LOCATOR_ID AND
-      L.M_WAREHOUSE_ID=p_Warehouse AND
-      T.C_UOM_ID=p_UOM AND
-      COALESCE(T.M_PRODUCT_UOM_ID, '0')=COALESCE(p_Product_UOM, '0') AND
-      COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')) AND
-      COALESCE(T.QtyOnHand, 0)>0
-      AND L.ISACTIVE='Y'
-    ORDER BY L.PRIORITYNO,
-      A.CREATED, T.CREATED;
+    CURSOR Cur_Storage (v_ad_pinstance_id varchar) IS
+      SELECT sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id,
+          sd.c_uom_id, sd.m_product_uom_id, u.stdprecision,
+          ms.quantity AS qtyonhand, ms.qtyorder AS qtyorder,
+          ms.priority
+      FROM m_stock_proposed ms 
+            LEFT JOIN m_storage_detail sd ON ms.m_storage_detail_id = sd.m_storage_detail_id
+            LEFT JOIN m_product_uom pu ON sd.m_product_uom_id = pu.m_product_uom_id
+            LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
+            LEFT JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
+      WHERE ms.ad_pinstance_id = v_ad_pinstance_id
+      ORDER BY ms.priority;
+
     v_storage Cur_Storage%ROWTYPE;
 
   -- Record Info
@@ -353,6 +345,7 @@ BEGIN --BODY
           v_LocatorQty NUMBER;
           v_Locator_ID VARCHAR2(32) ;
           v_IsStocked NUMBER:=0;
+          v_pinstance_ID VARCHAR2(32);
         BEGIN
           LOOP
             -- Check Availability
@@ -408,7 +401,46 @@ BEGIN --BODY
                     CLOSE Cur_Storage;
                     Cur_Storage_ISOPEN:=false;
                   END IF;
-                  OPEN Cur_Storage(v_Product_old, v_Warehouse_old, v_UOM_old, v_Product_UOM_old, v_Attribute_old) ;
+                  
+                  -- Call M_GET_STOCK
+                  DECLARE
+                    v_pinstance_result AD_PInstance.result%TYPE;
+                    v_pinstance_msg AD_PInstance.errormsg%TYPE;
+                  BEGIN
+                    v_pinstance_id := get_uuid();
+                    INSERT INTO ad_pinstance (
+                        ad_pinstance_id, ad_process_id, record_id, isactive, 
+                        ad_user_id, ad_client_id, ad_org_id, created, createdby,
+                        updated, updatedby
+                    ) VALUES (
+                        v_pinstance_id, 'FF80818132C964E30132C9747257002E', v_record_id, 'Y',
+                        v_User_ID, v_ad_client_id, ol.AD_Org_ID, now(), v_User_ID,
+                        now(), v_User_ID
+                    );
+      
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', v_ad_client_id, null, null, null, null, null);
+                    --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', cur_bom.org_id, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', v_Product_old, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', v_UOM_old, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'M_Warehouse_ID', v_Warehouse_old, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_AttributesetInstance_ID', v_Attribute_old, null, null, null, null, null);
+                    AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'ProcessID', '137', null, null, null, null, null);
+      
+                    M_GET_STOCK(v_pinstance_ID, 'N');
+                    -- Check result
+                    SELECT result, errormsg
+                      INTO v_pinstance_result, v_pinstance_msg
+                    FROM ad_pinstance
+                    WHERE ad_pinstance_id = v_pinstance_id;
+                    IF (v_pinstance_result = 0) THEN
+                      -- Error on m_get_stock
+                      RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
+                    END IF;
+                  END; -- End Call M_GET_STOCK
+                  
+                  
+                  OPEN Cur_Storage(v_pinstance_id) ;
                   Cur_Storage_ISOPEN:=true;
                   FETCH Cur_Storage INTO v_storage;
                   IF (Cur_Storage%NOTFOUND) THEN
@@ -432,7 +464,7 @@ BEGIN --BODY
                     END IF;
                     v_ActualQty:=NULL;
                     IF (v_storage.M_Product_UOM_ID IS NOT NULL) THEN
-                      v_ActualQty:=v_storage.QtyOrder*(v_LocatorQty/v_storage.QtyOnHand) ;
+                      v_ActualQty:=ROUND(v_storage.QtyOrder*(v_LocatorQty/v_storage.QtyOnHand), v_storage.stdprecision) ;
                     END IF;
                     IF (v_LocatorQty <> 0) THEN
                       -- Create InOut Line
