@@ -145,8 +145,8 @@ OB.Model.Terminal = Backbone.Model.extend({
       });
       if(!OB.POS.modelterminal.get('connectedToERP')){
           OB.POS.cleanWindows();
-    	  $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+    	  //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+          //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
           $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
           return;
       }
@@ -171,17 +171,18 @@ OB.Model.Terminal = Backbone.Model.extend({
     OB.POS.windows.add(window);
 
     windowClass = window.windowClass;
-    if (OB.DATA[windowName]) {
-      // old way of defining datasources...
-      datasources = OB.DATA[windowName];
-    } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
-      datasources = windowClass.prototype.windowmodel.prototype.models;
+    if(OB.POS.modelterminal.get('connectedToERP')){
+      if (OB.DATA[windowName]) {
+        // old way of defining datasources...
+        datasources = OB.DATA[windowName];
+      } else if (windowClass.prototype && windowClass.prototype.windowmodel && windowClass.prototype.windowmodel.prototype && windowClass.prototype.windowmodel.prototype.models) {
+        datasources = windowClass.prototype.windowmodel.prototype.models;
+      }
+
+      _.extend(datasources, Backbone.Events);
+
     }
-
-    _.extend(datasources, Backbone.Events);
-
     OB.Model.Util.loadModels(false, datasources);
-
 
     this.router.route(windowName, windowName, function() {
       this.renderGenericWindow(windowName);
@@ -347,7 +348,10 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   load: function() {
-
+    if(!OB.POS.modelterminal.get('connectedToERP')){
+      return;
+    }
+	  
     // reset all application state.
     $(window).off('keypress');
     //  this.set('terminal', null);

@@ -228,6 +228,9 @@
 
     setCompanyLogo: function (inSender, jsonCompanyLogo) {
       var logoUrl = [];
+      if(!jsonCompanyLogo.response){
+        return;
+      }
       jsonCompanyLogo = jsonCompanyLogo.response[0].data;
       enyo.forEach(jsonCompanyLogo, function (v) {
         logoUrl.push(v.logoUrl);
@@ -243,6 +246,9 @@
           connected = [],
           target = this.$.loginUserContainer,
           i;
+      if(!jsonImgData.response){
+          return;
+        }
       jsonImgData = jsonImgData.response[0].data;
       enyo.forEach(jsonImgData, function (v) {
         name.push(v.name);
