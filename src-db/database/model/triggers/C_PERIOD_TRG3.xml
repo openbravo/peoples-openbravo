@@ -33,7 +33,7 @@ Begin
       Where C_Period_Id In (Select Distinct(Cp.C_Period_Id)
       From C_Period Cp 
             Join C_Periodcontrol Cpc On Cpc.C_Period_Id= Cp.C_Period_Id 
-      Where Periodstatus = 'O'))
+      Where Periodstatus <> 'P'))
     Loop
        Select Count(*) 
        Into V_COUNT
