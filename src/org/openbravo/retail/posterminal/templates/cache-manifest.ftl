@@ -56,4 +56,4 @@ ${cssFile}
 
 # Generated file
 ../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS
-#../../web/js/gen/${data.fileName}.js
+../../web/js/gen/${data.fileName}.js

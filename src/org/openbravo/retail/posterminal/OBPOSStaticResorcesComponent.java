@@ -46,7 +46,7 @@ public class OBPOSStaticResorcesComponent extends BaseComponent {
     final ServletContext context = (ServletContext) getParameters().get(
         KernelConstants.SERVLET_CONTEXT);
     File finalFile = new File(context.getRealPath(filePath));
-    if (finalFile.exists()) {
+    if (finalFile.exists() && !isDevelopment()) {
       return "$LAB.script('" + getContextUrl() + filePath + "');";
     }
     StaticResourceComponent sr = rc.get();
@@ -77,5 +77,15 @@ public class OBPOSStaticResorcesComponent extends BaseComponent {
       versionString.append(module.getVersion());
     }
     return DigestUtils.md5Hex(versionString.toString());
+  }
+
+  private boolean isDevelopment() {
+    for (Module module : KernelUtils.getInstance().getModulesOrderedByDependency()) {
+      if (module.isInDevelopment()) {
+        return true;
+      }
+    }
+    return false;
+
   }
 }

@@ -119,7 +119,7 @@ OB.Model.Terminal = Backbone.Model.extend({
           } else if (data[0]) {
             me.set('terminal', data[0]);
             //In online mode, we save the terminal information in the local db
-            me.usermodel.set('terminalinfo', data[0]);
+            me.usermodel.set('terminalinfo', JSON.stringify(data[0]));
             OB.Dal.save(me.usermodel, function(){
             }, function() {
               window.console.error(arguments);
@@ -131,7 +131,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         });
         }else{
         	//Offline mode, we get the terminal information from the local db
-            me.set('terminal', me.usermodel.get('terminalinfo'));
+            me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')));
             me.trigger('terminal.loaded');
         }
 
