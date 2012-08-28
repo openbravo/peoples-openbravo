@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PERIOD_TRG3">
     <trigger name="C_PERIOD_TRG3" table="C_PERIOD" fires="after" insert="true" update="true" delete="false" foreach="statement">
-      <body><![CDATA[    /*************************************************************************
+      <body><![CDATA[
+    /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
     * Version 1.1  with a permitted attribution clause; you may not  use this
