@@ -491,8 +491,9 @@ public abstract class CostingAlgorithm {
       calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
     }
     OBDal.getInstance().refresh(transaction.getProductionLine());
-    return transaction.getProductionLine().getEstimatedCost()
-        .multiply(transaction.getMovementQuantity().abs());
+    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
+        .getProductionLine().getEstimatedCost().multiply(transaction.getMovementQuantity().abs())
+        : BigDecimal.ZERO;
   }
 
   /**
