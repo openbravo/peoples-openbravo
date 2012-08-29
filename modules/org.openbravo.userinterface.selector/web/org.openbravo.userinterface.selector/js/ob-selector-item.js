@@ -48,8 +48,7 @@ isc.OBSelectorPopupWindow.addProperties({
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
       click: function () {
-        selectorWindow.hide();
-        selectorWindow.selector.focusInItem();
+        selectorWindow.closeClick();
       }
     });
 
@@ -209,6 +208,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   closeClick: function () {
     this.hide(arguments);
+    this.selector.focusInItem();
   },
 
   hide: function () {
