@@ -37,7 +37,7 @@ enyo.kind({
   toolbarName: 'toolbarpayment',
   pay: function(amount, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
-      if (paymentMethod.view) {
+      if (paymentMethod.paymentProvider) {
         this.$.modalpayment.show(this.receipt, key, name, paymentMethod, amount);
       } else {
         this.receipt.addPayment(new OB.Model.PaymentLine({
