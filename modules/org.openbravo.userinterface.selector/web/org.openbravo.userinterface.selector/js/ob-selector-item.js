@@ -416,11 +416,10 @@ isc.OBSelectorItem.addProperties({
   },
 
   enableShortcuts: function () {
-    var me = this,
-        ksAction_ShowPopup;
+    var ksAction_ShowPopup;
 
-    ksAction_ShowPopup = function () {
-      me.openSelectorWindow();
+    ksAction_ShowPopup = function (caller) {
+      caller.openSelectorWindow();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon'], ksAction_ShowPopup);
@@ -429,12 +428,13 @@ isc.OBSelectorItem.addProperties({
   init: function () {
     this.enableShortcuts();
     this.icons = [{
+      selector: this,
       src: this.popupIconSrc,
       width: this.popupIconWidth,
       height: this.popupIconHeight,
       hspace: this.popupIconHspace,
       keyPress: function (keyName, character, form, item, icon) {
-        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.icon');
+        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.icon', this.selector);
         if (response !== false) {
           response = this.Super('keyPress', arguments);
         }
@@ -574,7 +574,7 @@ isc.OBSelectorItem.addProperties({
   },
 
   keyPress: function (item, form, keyName, characterValue) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem', this);
     if (response !== false) {
       response = this.Super('keyPress', arguments);
     }
@@ -756,7 +756,7 @@ isc.OBSelectorLinkItem.addProperties({
   },
 
   keyPress: function (item, form, keyName, characterValue) {
-    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorLinkItem');
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorLinkItem', this);
     if (response !== false) {
       response = this.Super('keyPress', arguments);
     }
@@ -822,10 +822,10 @@ isc.OBSelectorLinkItem.addProperties({
   },
 
   enableShortcuts: function () {
-    var me = this,
-        ksAction_ShowPopup;
-    ksAction_ShowPopup = function () {
-      me.showPicker();
+    var ksAction_ShowPopup;
+
+    ksAction_ShowPopup = function (caller) {
+      caller.showPicker();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('SelectorLink_ShowPopup', 'OBSelectorLinkItem', ksAction_ShowPopup);
