@@ -110,7 +110,7 @@
               GROUP BY pl.M_Product_ID, pl.M_ProductionPlan_ID
               HAVING SUM(pl.MovementQty) <> 0) rpn 
            ON (rpp.M_ProductionPlan_ID = rpn.M_ProductionPlan_ID) 
-           GROUP BY rpn.M_Product_ID, rpp.ComponentCost, rpp.MA_Sequence_ID) auxSeq
+           GROUP BY rpn.M_Product_ID, rpp.ComponentCost, rpp.MA_Sequence_ID, rpp.ProducedStdQuantity) auxSeq
         LEFT OUTER JOIN MA_SequenceProduct sp 
         ON (auxSeq.M_Product_ID = sp.M_Product_ID AND auxSeq.MA_Sequence_ID = sp.MA_Sequence_ID), M_Product
         WHERE auxSeq.M_Product_ID = M_Product.M_Product_ID
