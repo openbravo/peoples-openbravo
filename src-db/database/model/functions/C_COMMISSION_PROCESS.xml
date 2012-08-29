@@ -139,6 +139,7 @@
     AD_Sequence_Doc('DocumentNo_C_CommissionRun', v_AD_Client_ID, 'Y', v_DocumentNo) ;
     DBMS_OUTPUT.PUT_LINE('Create: ' || v_DocumentNo || ' - ' || v_Name) ;
     v_ResultStr:='InsertingHeader';
+    v_C_CommissionRun_ID:= get_uuid();
     INSERT
     INTO C_CommissionRun
       (
@@ -149,13 +150,12 @@
       )
       VALUES
       (
-        get_uuid(), v_Record_ID, v_AD_Client_ID, v_AD_Org_ID,
+        v_C_CommissionRun_ID, v_Record_ID, v_AD_Client_ID, v_AD_Org_ID,
          'Y', now(), '0', now(),
         '0', v_DocumentNo, v_Name, v_StartDate,
         0, 'N', 'N'
-      )
+      )  
       ;
-    select C_CommissionRun_ID INTO  v_C_CommissionRun_ID from C_CommissionRun where created = (select max(created) from C_CommissionRun);
     --
     v_ResultStr:='Update Record';
     UPDATE C_Commission
