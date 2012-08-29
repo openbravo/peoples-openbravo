@@ -118,12 +118,6 @@ OB.Model.Terminal = Backbone.Model.extend({
             me.logout();
           } else if (data[0]) {
             me.set('terminal', data[0]);
-            //In online mode, we save the terminal information in the local db
-            me.usermodel.set('terminalinfo', JSON.stringify(data[0]));
-            OB.Dal.save(me.usermodel, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
             me.trigger('terminal.loaded');
           } else {
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
@@ -131,7 +125,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         });
         }else{
         	//Offline mode, we get the terminal information from the local db
-            me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')));
+            me.set('terminal', JSON.parse(me.usermodel.get('terminalinfo')).terminal);
             me.trigger('terminal.loaded');
         }
 
@@ -348,7 +342,19 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   load: function() {
-    if(!OB.POS.modelterminal.get('connectedToERP')){
+    var termInfo;
+	if(!OB.POS.modelterminal.get('connectedToERP')){
+      termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
+      this.set('payments', termInfo.payments);
+      this.set('context', termInfo.context);
+      this.set('permissions', termInfo.permissions);
+      this.set('businesspartner', termInfo.businesspartner);
+      this.set('location', termInfo.location);
+      this.set('pricelist', termInfo.pricelist);
+      this.set('pricelistversion', termInfo.pricelistversion);
+      this.set('currency', termInfo.currency);
+      this.set('currencyPrecision', termInfo.currencyPrecision);
+      this.triggerReady();
       return;
     }
 	  
@@ -591,6 +597,14 @@ OB.Model.Terminal = Backbone.Model.extend({
   triggerReady: function() {
     var undef;
     if (this.get('payments') && this.get('pricelistversion') && this.get('currency') && this.get('context') && this.get('permissions') && this.get('documentsequence') !== undef) {
+      if (OB.POS.modelterminal.get('connectedToERP')) {
+        //In online mode, we save the terminal information in the local db
+        this.usermodel.set('terminalinfo', JSON.stringify(this));
+        OB.Dal.save(this.usermodel, function(){
+        }, function() {
+          window.console.error(arguments);
+        });
+      }
       this.trigger('ready');
     }
   },
