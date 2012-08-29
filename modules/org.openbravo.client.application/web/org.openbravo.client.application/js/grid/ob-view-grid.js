@@ -125,7 +125,9 @@ isc.OBViewGrid.addProperties({
   // it is better to allow fast grid interaction and if an error occurs
   // dismiss any new records being edited and go back to the edit row
   // which causes the error
-  waitForSave: false,
+  // set to true to solve this issue:
+  // https://issues.openbravo.com/view.php?id=21352
+  waitForSave: true,
   stopOnErrors: false,
   confirmDiscardEdits: false,
   canMultiSort: false,
@@ -2166,6 +2168,15 @@ isc.OBViewGrid.addProperties({
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
+
+    // no newValue, compute it, this because in the super method there is a check
+    // how many arguments are passed on, sometimes the newValue is not passed in
+    // and then it must be recomputed, so if we then use the undefined newValue
+    // in the actionObject below things will go wrong
+    if (arguments.length < 2) {
+      newValue = this.getEditValue(rowNum, colNum);
+    }
+
     if (!this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,
