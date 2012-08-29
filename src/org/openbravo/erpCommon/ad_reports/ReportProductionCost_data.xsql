@@ -84,7 +84,7 @@
            FROM
               (SELECT SUM(pl.MovementQty) AS ProducedQty, 
               MAX(C_CURRENCY_CONVERT(pl.ComponentCost, ?, ?, TO_DATE(p.movementdate), null, pl.ad_client_id, pl.ad_org_id)) AS ComponentCost, 
-              pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID,sp.sum(sp.quantity) as ProducedStdQuantity
+              pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID,sum(sp.quantity) as ProducedStdQuantity
               FROM M_Production p
                 INNER JOIN M_ProductionPlan pp ON (p.M_Production_ID = pp.M_Production_ID)
                 INNER JOIN M_ProductionLine pl ON (pp.M_ProductionPlan_ID = pl.M_ProductionPlan_ID)
