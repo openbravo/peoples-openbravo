@@ -163,6 +163,9 @@ function submitThisPage(strCommand) {
 }
 function openAddTransaction(bankStatementLineId){
   document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+  if ( document.getElementById('inpCheckBox_' + bankStatementLineId) && document.getElementById('inpCheckBox_' + bankStatementLineId).checked){
+    unMatchLine(bankStatementLineId, true);
+  }
   openServletNewWindow('DEFAULT', false, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', 'ADDTRANSACTION', '2EED9BC16DB34D2B80BA40A21564BECF', false,600, 900, null, null, false, true, true);
   return true;
 }
