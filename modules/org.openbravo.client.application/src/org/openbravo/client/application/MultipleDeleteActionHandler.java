@@ -51,6 +51,9 @@ public class MultipleDeleteActionHandler extends BaseActionHandler {
         final BaseOBObject object = OBDal.getInstance().get(entityName, (String) ids.get(i));
         if (object != null) {
           OBDal.getInstance().remove(object);
+          // https://issues.openbravo.com/view.php?id=21229#c51631
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
         }
       }
       OBDal.getInstance().commitAndClose();
