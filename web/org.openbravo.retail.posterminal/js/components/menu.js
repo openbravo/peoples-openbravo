@@ -133,13 +133,13 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.item.setContent(this.label);
-    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (!OB.POS.modelterminal.hasPermission(this.route)) {
       this.$.item.setStyle('color: #cccccc; padding-bottom: 10px;padding-left: 15px; padding-right: 15px;padding-top: 10px;');
     }
   },
   tap: function() {
     // TODO: check online for required windows
-    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (!OB.POS.modelterminal.hasPermission(this.route)) {
       return;
     }
     if (this.route) {
