@@ -340,10 +340,11 @@ enyo.kind({
 
   initComponents: function() {
     var me = this;
+    this.buttons = {}; // must be intialized before calling super, not after.
 
     this.inherited(arguments);
     this.state = new Backbone.Model();
-    this.buttons = {};
+
 
     this.$.toolbarcontainer.destroyComponents();
     this.$.keypadcontainer.destroyComponents();
