@@ -239,12 +239,12 @@ enyo.kind({
 
   execCommand: function(cmddefinition, txt) {
     if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
-      cmddefinition.action.call(this, txt);
+      cmddefinition.action(this, txt);
     }
   },
 
   execStatelessCommand: function(cmd, txt) {
-    this.commands[cmd].action.call(this, txt);
+    this.commands[cmd].action(this, txt);
   },
 
   getNumber: function() {

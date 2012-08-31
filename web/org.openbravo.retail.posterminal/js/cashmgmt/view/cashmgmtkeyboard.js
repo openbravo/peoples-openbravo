@@ -17,8 +17,8 @@ enyo.kind({
   getPayment: function(id, key, name, identifier, type) {
     return {
       permission: key,
-      action: function(txt) {
-        this.owner.currentPayment = {
+      action: function(keyboard, txt) {
+        keyboard.owner.currentPayment = {
           id: id,
           amount: txt,
           identifier: identifier,
