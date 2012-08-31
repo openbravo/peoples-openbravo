@@ -350,7 +350,7 @@ public class CostingMigrationProcess implements Process {
         (String) DalUtil.getId(rule.getClient()));
     final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
     CostingRuleProcess crp = new CostingRuleProcess();
-    crp.createCostingRuleInits(rule, childOrgs);
+    crp.createCostingRuleInits(rule.getId(), childOrgs, null);
 
     // Set valid from date
     Date startingDate = new Date();
