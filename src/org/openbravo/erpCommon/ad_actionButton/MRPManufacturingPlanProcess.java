@@ -178,6 +178,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
         where.toString());
     prlQry.setNamedParameter("prodRun", productionRunId);
 
+    prlQry.setFetchSize(1000);
     return prlQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
