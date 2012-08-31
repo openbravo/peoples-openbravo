@@ -55,9 +55,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strInvPrice = vars.getNumericParameter("inpinvoiceprice");
       String strWindowId = vars.getStringParameter("inpwindowId");
-      String strlastNetUnitPrice = vars.getSessionValue(strWindowId + "|lastNetUnitPrice");
+      String strlastNetUnitPrice = vars.getNumericGlobalVariable("inplastNetUnitPrice", strWindowId
+          + "|lastNetUnitPrice", "0");
 
-      if (strlastNetUnitPrice.equals("N")) {
+      if (strlastNetUnitPrice.equals("0")) {
         strlastNetUnitPrice = strInvPrice;
       }
       try {
