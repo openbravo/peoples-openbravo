@@ -1387,6 +1387,7 @@ OB.ViewFormProperties = {
   // function
   saveRow: function () {
     var savingNewRecord = this.isNew,
+        storedFocusItem = this.getFocusItem(),
         i, length, flds, form = this,
         ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
 
@@ -1542,6 +1543,8 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
+      this.setFocusItem(storedFocusItem);
+      this.setFocusInForm();
 
       return false;
     };
