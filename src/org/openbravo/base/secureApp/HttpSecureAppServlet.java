@@ -207,6 +207,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       OBContext.setAdminMode();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
+      if (strUserAuth == null && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
+        strUserAuth = "0";
+        variables.loggingIn = "Y";
+      }
 
       if (strUserAuth == null) {
         // auth-manager return null after redirecting to the login page -> stop request-processing
@@ -217,6 +221,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
+      if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+        variables.loggingIn = "Y";
+      }
       // NOTE !isLoggingIn assumes that the value of LoggingIn is N, this
       // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {

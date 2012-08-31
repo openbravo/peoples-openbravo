@@ -620,10 +620,10 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function (noSetSession, changeEvent) {
+  updateButtonState: function (noSetSession, changeEvent, forceUpdate) {
     var me = this,
         isActiveTab = false;
-    if (this.view && this.view.isActiveView && this.view.isActiveView()) {
+    if (forceUpdate || (this.view && this.view.isActiveView && this.view.isActiveView())) {
       this.fireOnPause('updateButtonState', function () {
         me.pausedUpdateButtonState(noSetSession, changeEvent);
       });

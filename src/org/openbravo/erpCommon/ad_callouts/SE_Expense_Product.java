@@ -54,10 +54,16 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strTabId = vars.getStringParameter("inpTabId");
       String strInvPrice = vars.getNumericParameter("inpinvoiceprice");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strlastNetUnitPrice = vars.getNumericGlobalVariable("inplastNetUnitPrice", strWindowId
+          + "|lastNetUnitPrice", "0");
 
+      if (strlastNetUnitPrice.equals("0")) {
+        strlastNetUnitPrice = strInvPrice;
+      }
       try {
         printPage(response, vars, strDateexpense, strmProductId, strsTimeexpenseId, strqty,
-            strcCurrencyId, strInvPrice, strChanged, strTabId);
+            strcCurrencyId, strInvPrice, strChanged, strTabId, strWindowId, strlastNetUnitPrice);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -67,8 +73,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strDateexpense, String strmProductId, String strsTimeexpenseId, String strqty,
-      String strcCurrencyId, String strInvPrice, String strChanged, String strTabId)
-      throws IOException, ServletException {
+      String strcCurrencyId, String strInvPrice, String strChanged, String strTabId,
+      String strWindowId, String strlastNetUnitPrice) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -88,7 +94,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
           .today(this) : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
     }
 
-    if (strInvPrice.equals("")) {
+    if (strInvPrice.equals("")
+        || (strChanged.equals("inpmProductId") && strInvPrice.equals(strlastNetUnitPrice))) {
       for (int i = 0; data != null && i < data.length && noPrice; i++) {
         if (data[i].validfrom == null || data[i].validfrom.equals("")
             || !DateTimeData.compare(this, strDateexpense, data[i].validfrom).equals("-1")) {
@@ -120,6 +127,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
           }
         }
       }
+      vars.setSessionValue(strWindowId + "|lastNetUnitPrice", priceActual);
     } else {
       priceActual = strInvPrice;
     }

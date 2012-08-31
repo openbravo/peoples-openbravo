@@ -263,9 +263,9 @@
         }
       },
 
-      execute: function (position) {
+      execute: function (position, caller) {
         if (this.list[position].action !== null && typeof this.list[position].action === 'function') {
-          return this.list[position].action(this.list[position].funcParam);
+          return this.list[position].action(caller, this.list[position].funcParam);
         } else {
           return true;
         }
@@ -275,7 +275,7 @@
         return this.list;
       },
 
-      monitor: function (execLevel) {
+      monitor: function (execLevel, caller) {
         var i, j, length = this.list.length,
             position = null,
             pushedKS = {};
@@ -313,7 +313,7 @@
         }
 
         if (position !== null) {
-          return this.execute(position);
+          return this.execute(position, caller);
         } else {
           return true;
         }

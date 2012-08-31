@@ -211,8 +211,12 @@ isc.OBApplicationMenuButton.addProperties({
     ksAction = function () {
       if (!me.menu.showing) {
         isc.EH.clickMaskClick();
+        setTimeout(function () {
+          me.showMenu();
+        }, 10); //setTimeout to avoid delayCall function that manages the focus
+      } else {
+        me.menu.hide();
       }
-      me.click();
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);

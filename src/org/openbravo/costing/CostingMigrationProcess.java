@@ -284,10 +284,11 @@ public class CostingMigrationProcess implements Process {
           updateTrxLegacyCosts(cost, stdPrecission, naturalTree);
 
           if ((i % 100) == 0) {
-            SessionHandler.getInstance().commitAndStart();
+            OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
           }
         }
+        SessionHandler.getInstance().commitAndStart();
       }
     }
 
@@ -350,7 +351,7 @@ public class CostingMigrationProcess implements Process {
         (String) DalUtil.getId(rule.getClient()));
     final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
     CostingRuleProcess crp = new CostingRuleProcess();
-    crp.createCostingRuleInits(rule, childOrgs);
+    crp.createCostingRuleInits(rule.getId(), childOrgs, null);
 
     // Set valid from date
     Date startingDate = new Date();
@@ -585,9 +586,9 @@ public class CostingMigrationProcess implements Process {
         // Shipments with accounting date different than the movement date gets the cost valid on
         // the accounting date.
         BigDecimal unitCost = new BigDecimal(new ProductInfo(cost.getProduct().getId(),
-            new DalConnectionProvider()).getProductItemCost(OBDateUtils.formatDate(trx
+            new DalConnectionProvider(false)).getProductItemCost(OBDateUtils.formatDate(trx
             .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()), null, "AV",
-            new DalConnectionProvider(), OBDal.getInstance().getConnection()));
+            new DalConnectionProvider(false), OBDal.getInstance().getConnection()));
         BigDecimal trxCost = unitCost.multiply(trx.getMovementQuantity().abs()).setScale(
             standardPrecision, BigDecimal.ROUND_HALF_UP);
 

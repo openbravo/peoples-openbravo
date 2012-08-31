@@ -125,7 +125,9 @@ isc.OBViewGrid.addProperties({
   // it is better to allow fast grid interaction and if an error occurs
   // dismiss any new records being edited and go back to the edit row
   // which causes the error
-  waitForSave: false,
+  // set to true to solve this issue:
+  // https://issues.openbravo.com/view.php?id=21352
+  waitForSave: true,
   stopOnErrors: false,
   confirmDiscardEdits: false,
   canMultiSort: false,
@@ -693,10 +695,19 @@ isc.OBViewGrid.addProperties({
   bodyKeyPress: function (event, eventInfo) {
     var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid.body');
     if (response !== false) {
-      if (event.keyName === 'Space' && (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
+      if (event && event.keyName === 'Space' && (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
         return true;
       }
       response = this.Super('bodyKeyPress', arguments);
+    }
+    return response;
+  },
+
+  editFormKeyDown: function () {
+    // Custom method. Only works if the form is an OBViewForm
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid.editForm');
+    if (response !== false) {
+      response = this.Super('editFormKeyDown', arguments);
     }
     return response;
   },
@@ -723,16 +734,7 @@ isc.OBViewGrid.addProperties({
     var me = this,
         ksAction_CancelEditing, ksAction_MoveUpWhileEditing, ksAction_MoveDownWhileEditing, ksAction_DeleteSelectedRecords, ksAction_EditInGrid, ksAction_EditInForm, ksAction_CancelChanges;
 
-    ksAction_CancelEditing = function () {
-      if (me.getEditForm()) {
-        me.cancelEditing();
-        return false; //To avoid keyboard shortcut propagation
-      } else {
-        return true;
-      }
-    };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_CancelEditing);
-
+    // This is JUST for the case of an editing row with the whole row in "read only mode"
     ksAction_MoveUpWhileEditing = function () {
       if (me.getEditForm()) {
         var editRow = me.getEditRow();
@@ -745,10 +747,11 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveUpWhileEditing, null, {
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', 'OBViewGrid.body', ksAction_MoveUpWhileEditing, null, {
       "key": "Arrow_Up"
     });
 
+    // This is JUST for the case of an editing row with the whole row in "read only mode"
     ksAction_MoveDownWhileEditing = function () {
       if (me.getEditForm()) {
         var editRow = me.getEditRow();
@@ -761,9 +764,19 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveDownWhileEditing, null, {
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', 'OBViewGrid.body', ksAction_MoveDownWhileEditing, null, {
       "key": "Arrow_Down"
     });
+
+    ksAction_CancelEditing = function () {
+      if (me.getEditForm()) {
+        me.cancelEditing();
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_CancelEditing);
 
     ksAction_DeleteSelectedRecords = function () {
       var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
@@ -796,13 +809,7 @@ isc.OBViewGrid.addProperties({
         return true;
       }
     };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', 'OBViewGrid.body', ksAction_EditInForm);
-
-    ksAction_CancelChanges = function () {
-      me.view.undo();
-      return false;
-    };
-    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelChanges', 'OBViewGrid.body', ksAction_CancelChanges);
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', ['OBViewGrid.body', 'OBViewGrid.editForm'], ksAction_EditInForm);
 
     this.Super('enableShortcuts', arguments);
   },
@@ -2161,6 +2168,15 @@ isc.OBViewGrid.addProperties({
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
+
+    // no newValue, compute it, this because in the super method there is a check
+    // how many arguments are passed on, sometimes the newValue is not passed in
+    // and then it must be recomputed, so if we then use the undefined newValue
+    // in the actionObject below things will go wrong
+    if (arguments.length < 2) {
+      newValue = this.getEditValue(rowNum, colNum);
+    }
+
     if (!this.view.standardWindow.isAutoSaveEnabled() && !enterKey && !autoSaveDone && newRow && (editForm.hasChanged || editForm.isNew)) {
       var actionObject = {
         target: this,

@@ -236,7 +236,7 @@ isc.OBStandardView.addProperties({
 
     this.Super('initWidget', arguments);
 
-    this.toolBar.updateButtonState(true);
+    this.toolBar.updateButtonState(true, false, true);
   },
 
   show: function () {
@@ -770,6 +770,7 @@ isc.OBStandardView.addProperties({
       if (this.isShowingForm && !this.viewForm.isNew) {
         this.setTargetRecordInWindow(this.viewGrid.getSelectedRecord().id);
       }
+      this.toolBar.updateButtonState(true, false, true);
     } else {
 
       // close any editors we may have
