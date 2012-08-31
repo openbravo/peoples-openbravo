@@ -48,6 +48,7 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
 </script>
@@ -339,6 +340,14 @@ function displayMulticurrencyControls() {
   var display = ( invCurrency && accountCurrency && invCurrency != accountCurrency );
 
   displayLogicElement('multiCurrencyRow', display );
+  if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
+      readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramActualConverted', true);
+   }
+  else {
+      readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramActualConverted', false);
+  }
 }
 </script>
 <script language="JavaScript" type="text/javascript">
@@ -697,6 +706,7 @@ function closeProcessPayment() {
   <input type="hidden" name="strElement_AY" id="paramStrElement_AY" value=""/>
   <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
   <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>

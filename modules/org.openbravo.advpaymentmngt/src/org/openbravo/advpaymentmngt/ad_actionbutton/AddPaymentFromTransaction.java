@@ -529,6 +529,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("strElement_SR", strElement_SR);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
 
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

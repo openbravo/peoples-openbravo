@@ -47,6 +47,7 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
 </script>
@@ -259,6 +260,16 @@ function displayMulticurrencyControls() {
   displayLogicElement('lblExpectedConverted', display );
   displayLogicElement('paramActualConvertedCell', display );
   displayLogicElement('lblActualConverted', display );
+  if (document.frmMain.strNotAllowExchange.value === 'Y' && display) {  
+      readOnlyLogicElement('paramExchangeRate', true);
+      readOnlyLogicElement('paramActualConverted', true);
+      displayLogicElement('actualConvertedCal', false );
+   }
+  else {
+      readOnlyLogicElement('paramExchangeRate', false);
+      readOnlyLogicElement('paramActualConverted', false);
+      displayLogicElement('actualConvertedCal', true );
+  }
 }
 
 
@@ -447,6 +458,7 @@ var strText = "";
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
   <input type="hidden" name="isFirstLoad" value="true"/>
+  <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -863,7 +875,7 @@ var strText = "";
                       </span>
                       </td>
                       <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
+                      <a id="actualConvertedCal" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                           <tr>
                             <td class="FieldButton_bg">

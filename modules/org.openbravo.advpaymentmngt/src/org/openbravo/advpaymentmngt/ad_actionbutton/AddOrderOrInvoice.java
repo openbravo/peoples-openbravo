@@ -517,6 +517,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     // If UsedCredit is not equal zero, check Use available credit
     xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
 
+    // Not allow to change exchange rate and amount
+    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+        strWindowId);
+    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
