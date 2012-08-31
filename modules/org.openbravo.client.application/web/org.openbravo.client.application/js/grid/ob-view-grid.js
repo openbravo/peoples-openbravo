@@ -482,14 +482,26 @@ isc.OBViewGrid.addProperties({
   },
 
   hideField: function (field, suppressRelayout) {
-    var res = this.Super('hideField', arguments);
+    var res;
+    this._hidingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('hideField', arguments);
+    delete this._savedEditValues;
+    delete this._hidingField;
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
   showField: function (field, suppressRelayout) {
-    var res = this.Super('showField', arguments);
+    var res;
+    this._showingField = true;
+    this._savedEditValues = this.getEditValues(this.getEditRow());
+    res = this.Super('showField', arguments);
+    delete this._savedEditValues;
+    delete this._showingField;
     this.view.standardWindow.storeViewState();
+    this.refreshContents();
     return res;
   },
 
@@ -754,7 +766,8 @@ isc.OBViewGrid.addProperties({
     });
 
     ksAction_DeleteSelectedRecords = function () {
-      if (me.getSelectedRecords().length > 0) {
+      var isDeletingEnabled = !me.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_DELETE).disabled;
+      if (me.getSelectedRecords().length > 0 && isDeletingEnabled) {
         me.view.deleteSelectedRows();
         return false; //To avoid keyboard shortcut propagation
       } else {
@@ -896,7 +909,7 @@ isc.OBViewGrid.addProperties({
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].view.newRow();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
 
@@ -979,7 +992,14 @@ isc.OBViewGrid.addProperties({
     }, this.Super('getFilterEditorProperties', arguments));
   },
 
-  refreshGrid: function (callback) {
+  removeOrClause: function (criteria) {
+    // The original criteria is stored in the position #1
+    // The criteria to select the selected record is stored in position #0
+    return criteria.criteria.get(1);
+  },
+
+  refreshGrid: function (callback, forceCurrentRecordID) {
+    var originalCriteria, criteria = {};
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
@@ -991,7 +1011,39 @@ isc.OBViewGrid.addProperties({
     var context = {
       showPrompt: false
     };
-    this.filterData(this.getCriteria(), null, context);
+
+    // Removes the 'or' clause, if there is one
+    // See note at the function foot
+    originalCriteria = this.getCriteria();
+    if (this._criteriaWithOrClause) {
+      originalCriteria = this.removeOrClause(originalCriteria);
+      this._criteriaWithOrClause = false;
+    }
+
+    // If a record has to be included in the refresh, it must be included
+    // in the filter with an 'or' operator, along with the original filter,
+    // but only if there is an original filter
+    if (forceCurrentRecordID && originalCriteria.criteria.length > 0) {
+      // Adds the current record to the criteria
+      this._criteriaWithOrClause = true;
+      criteria._constructor = 'AdvancedCriteria';
+      criteria._OrExpression = true; // trick to get a really _or_ in the backend
+      criteria.operator = 'or';
+      criteria.criteria = [{
+        fieldName: 'id',
+        operator: 'equals',
+        value: forceCurrentRecordID
+      }];
+      criteria.criteria.push(originalCriteria); // original filter
+    } else {
+      criteria = originalCriteria;
+    }
+    this.filterData(criteria, null, context);
+    // At this point the original criteria should be restored, to prevent
+    // the 'or' clause that was just added to be used in subsequent refreshes.
+    // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
+    // would trigger an automatic refresh that would leave without effect that last filterData
+    // The additional criteria will be removed in the next call to refreshGrid
   },
 
   // with a delay to handle the target record when the body has been drawn
@@ -1221,6 +1273,16 @@ isc.OBViewGrid.addProperties({
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
         }
+        // if the field referenced by the criterion has a criteriaField, remove the redundant criterion that references its displayField
+        if (!shouldRemove && this.fields) {
+          for (j = 0; j < this.fields.length; j++) {
+            if (criterion.operator === 'iContains' && this.fields[j].criteriaField && this.fields[j].displayField === criterion.fieldName && criterion.fieldName !== this.fields[j].criteriaField) {
+              shouldRemove = true;
+              break;
+            }
+          }
+        }
+
         if (shouldRemove) {
           internalCriteria.removeAt(i);
         } else {
@@ -1901,7 +1963,7 @@ isc.OBViewGrid.addProperties({
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
 
     var record = this.getRecord(rowNum),
-        editRow, editSession, autoSaveAction;
+        editRow, editSession, autoSaveAction, keepSelection;
 
     // a new id has been computed use that now    
     if (record && record._newId) {
@@ -1930,7 +1992,8 @@ isc.OBViewGrid.addProperties({
     // if nothing else got selected, select ourselves then
     if (!this.getSelectedRecord()) {
       this.selectRecord(record);
-      this.view.refreshChildViews();
+      keepSelection = true;
+      this.view.refreshChildViews(keepSelection);
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
@@ -2188,6 +2251,7 @@ isc.OBViewGrid.addProperties({
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
+    var previousExplicitOffline;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -2222,7 +2286,10 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    previousExplicitOffline = isc.Offline.explicitOffline;
+    isc.Offline.explicitOffline = false;
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
+    isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
   },
@@ -2241,6 +2308,13 @@ isc.OBViewGrid.addProperties({
     var rowNum = this.getEditRow(),
         record = this.getRecord(rowNum),
         editForm = this.getEditForm();
+
+    // Do not hide the inline editor if the action has been caused
+    // by hiding or showing a field
+    // See issue https://issues.openbravo.com/view.php?id=21352
+    if (this._hidingField || this._showingField) {
+      return;
+    }
     this._hidingInlineEditor = true;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
@@ -2645,6 +2719,20 @@ isc.OBViewGrid.addProperties({
       this.getEditForm().doChangeFICCall(null, true);
     }
     this.Super('fieldStateChanged', arguments);
+  },
+
+  getFieldFromColumnName: function (columnName) {
+    var i, field, length, fields = this.completeFields;
+
+    length = fields.length;
+
+    for (i = 0; i < fields.length; i++) {
+      if (fields[i].columnName === columnName) {
+        field = fields[i];
+        break;
+      }
+    }
+    return field;
   }
 
 });

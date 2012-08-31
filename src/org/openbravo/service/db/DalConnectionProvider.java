@@ -27,7 +27,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.hibernate.StatelessSession;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -94,7 +96,10 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = getConnection();
+    final StatelessSession session = SessionFactoryController.getInstance().getSessionFactory()
+        .openStatelessSession();
+    Connection conn = session.connection();
+
     if (conn == null) {
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     }

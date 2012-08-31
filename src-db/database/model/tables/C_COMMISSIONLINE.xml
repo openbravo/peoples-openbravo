@@ -93,6 +93,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EXCLUDE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_COMMISSIONLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -125,6 +129,7 @@
       </index>
       <check name="C_COMMISSIONLIN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_COMMISSIONLINE_COMMISSIO_CHK"><![CDATA[COMMISSIONORDERS IN ('Y', 'N')]]></check>
+      <check name="C_COMMISSIONLINE_EXCLUDE_CHK"><![CDATA[EXCLUDE IN ('Y', 'N')]]></check>
       <check name="C_COMMISSIONLINE_ISPOSITIV_CHK"><![CDATA[ISPOSITIVEONLY IN ('Y', 'N')]]></check>
     </table>
   </database>

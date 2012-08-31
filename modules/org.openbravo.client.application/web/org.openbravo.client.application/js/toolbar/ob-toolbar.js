@@ -230,7 +230,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0);
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.id) === 'N');
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -623,18 +623,11 @@ isc.OBToolbar.addProperties({
   updateButtonState: function (noSetSession, changeEvent) {
     var me = this,
         isActiveTab = false;
-    if (this.view && this.view.activeBar && this.view.activeBar.styleName === 'OBViewActive') {
-      isActiveTab = true;
+    if (this.view && this.view.isActiveView && this.view.isActiveView()) {
+      this.fireOnPause('updateButtonState', function () {
+        me.pausedUpdateButtonState(noSetSession, changeEvent);
+      });
     }
-    this.fireOnPause('updateButtonState', function () {
-      //Temporary hack to fix issue https://issues.openbravo.com/view.php?id=20825
-      if ((me.view.tabId === '160' || me.view.tabId === 'FF8080812F213146012F2135BC25000E') && isActiveTab) { //corner case: 160 --> G/L Journal and  FF8080812F213146012F2135BC25000E --> Transaction  (Financial Account child)
-        setTimeout(function () {
-          me.pausedUpdateButtonState(noSetSession, changeEvent);
-        }, 1000);
-      }
-      me.pausedUpdateButtonState(noSetSession, changeEvent);
-    });
   },
 
   pausedUpdateButtonState: function (noSetSession, changeEvent) {

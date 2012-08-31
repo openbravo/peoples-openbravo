@@ -147,6 +147,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     if (amount.scale() > stdPrecision)
       amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
     resultado.append(", new Array(\"inpexpenseamt\", " + amount.toPlainString() + ")");
+    resultado.append(", new Array(\"inpinvoiceprice\", "
+        + (priceActual.equals("") ? "\"\"" : priceActual) + ")");
     String c_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
     // Checks if there is a conversion rate for each of the transactions of
     // the report

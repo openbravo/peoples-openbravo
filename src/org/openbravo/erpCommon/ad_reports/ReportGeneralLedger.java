@@ -211,15 +211,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String rowNum = "0";
     String oraLimit1 = null;
     String oraLimit2 = null;
+    String oraSubtotalLimit = null;
     String pgLimit = null;
+    String pgSubtotalLimit = null;
     if (intRecordRange != 0) {
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         rowNum = "ROWNUM";
         oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
         oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
+        oraSubtotalLimit = String.valueOf(initRecordNumber);
       } else {
         rowNum = "0";
         pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
+        pgSubtotalLimit = String.valueOf(initRecordNumber);
       }
     }
     log4j.debug("offset= " + initRecordNumber + " pageSize= " + intRecordRange);
@@ -262,6 +266,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         discard[0] = "sectionAmount";
       BigDecimal previousDebit = BigDecimal.ZERO;
       BigDecimal previousCredit = BigDecimal.ZERO;
+      BigDecimal previousTotalDr = BigDecimal.ZERO;
+      BigDecimal previousTotalCr = BigDecimal.ZERO;
       String strAllaccounts = "Y";
       if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
         if (strcelementvalueto.equals("")) {
@@ -293,12 +299,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         log4j.debug("RecordNo: " + initRecordNumber);
 
       ReportGeneralLedgerData[] dataTotal = null;
+      ReportGeneralLedgerData[] dataSubtotal = null;
       String strOld = "";
+      // boolean firstPagBlock = false;
       ReportGeneralLedgerData[] subreportElement = new ReportGeneralLedgerData[1];
       for (int i = 0; data != null && i < data.length; i++) {
         if (!strOld.equals(data[i].groupbyid + data[i].id)) {
           subreportElement = new ReportGeneralLedgerData[1];
+          // firstPagBlock = false;
           if (i == 0 && initRecordNumber > 0) {
+            // firstPagBlock = true;
             Long init = System.currentTimeMillis();
             dataTotal = ReportGeneralLedgerData.select2Total(this, rowNum, strGroupByText,
                 strGroupBy, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
@@ -308,6 +318,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo,
                 data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
+
+            dataSubtotal = ReportGeneralLedgerData.select2sum(this, rowNum, strGroupByText,
+                strGroupBy, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
+                strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, pgSubtotalLimit,
+                oraSubtotalLimit, null, null, data[0].id);
+
             log4j.debug("Select2Total. Time in mils: " + (System.currentTimeMillis() - init));
             // Now dataTotal is covered adding debit and credit amounts
             for (int j = 0; dataTotal != null && j < dataTotal.length; j++) {
@@ -318,6 +337,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             subreportElement[0] = new ReportGeneralLedgerData();
             subreportElement[0].totalacctdr = previousDebit.toPlainString();
             subreportElement[0].totalacctcr = previousCredit.toPlainString();
+            data[0].amtacctdrprevsum = (dataSubtotal != null) ? dataSubtotal[0].amtacctdr
+                : data[0].amtacctdrprevsum;
+            data[0].amtacctcrprevsum = (dataSubtotal != null) ? dataSubtotal[0].amtacctcr
+                : data[0].amtacctcrprevsum;
             subreportElement[0].total = previousDebit.subtract(previousCredit).toPlainString();
           } else {
             if ("".equals(data[i].groupbyid)) {
@@ -344,6 +367,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           data[i].totalacctdr = subreportElement[0].totalacctdr;
           data[i].totalacctcr = subreportElement[0].totalacctcr;
         }
+
         data[i].totalacctsub = subreportElement[0].total;
 
         data[i].previousdebit = subreportElement[0].totalacctdr;
@@ -378,6 +402,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
           }
         }
+
         data[i].finaldebit = subreportElement[0].totalacctdr;
         data[i].finalcredit = subreportElement[0].totalacctcr;
         data[i].finaltotal = subreportElement[0].total;

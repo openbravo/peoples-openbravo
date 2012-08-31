@@ -49,6 +49,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1097,7 +1098,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    boolean localChanges = verifyLocalChanges();
+    boolean localChanges = verifyLocalChanges(vars);
     if (localChanges) {
       final PrintWriter out = response.getWriter();
       final String discardlc[] = {};
@@ -2605,7 +2606,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Checks if there are local changes in the application
    */
-  private boolean verifyLocalChanges() {
+  private boolean verifyLocalChanges(VariablesSecureApp vars) {
     long t1 = System.currentTimeMillis();
     Connection connection = OBDal.getInstance().getConnection();
     PreparedStatement ps = null;
@@ -2631,9 +2632,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     File sources = new File(sourcePath);
+    // Added file exists condition to check invalid source path
+    if (!sources.exists()) {
+      throw new OBException(Utility.messageBD(this, "WrongPathError", vars.getLanguage()));
+    }
+    //Added to check write access
+    if(!sources.canWrite()) {
+       throw new OBException(Utility.messageBD(this, "NoApplicableModules", vars.getLanguage()));
+    }
     File model = new File(sources, "src-db/database/model/tables");
     if (model.exists()) {
       modelFiles.add(model);
+    } else {
+      throw new OBException(Utility.messageBD(this,"WrongPathError",vars.getLanguage()));
     }
     for (File moduleFile : (new File(sources, "modules").listFiles())) {
       File mmodel = new File(moduleFile, "src-db/database/model/tables");

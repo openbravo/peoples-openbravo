@@ -250,7 +250,7 @@ public class OBViewTab extends BaseTemplateComponent {
     if (parentProperty != null) {
       return parentProperty;
     }
-    if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId())) {
+    if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId()) && ("RO".equals(tab.getUIPattern()) || "SR".equals(tab.getUIPattern()))) {
       parentProperty = getEntity().getIdProperties().get(0).getName();
     } else {
       parentProperty = ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());

@@ -437,7 +437,7 @@
 <!--132-->  <DESCRIPTION><![CDATA[Create and edit manual G/L journal entries.]]></DESCRIPTION>
 <!--132-->  <HELP><![CDATA[General Ledger journals allow to manually enter and post ledger entries including "opening" balance accounts ones.]]></HELP>
 <!--132-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--132-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--132-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--132-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--132-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

@@ -193,9 +193,6 @@ public class DalMappingGenerator implements OBSingleton {
 
     if (p.getSqlLogic() != null) {
       sb.append(" formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
-      if (!p.isInactive()) {
-        sb.append(" update=\"false\" insert=\"false\" ");
-      }
     } else {
       sb.append(" column=\"" + p.getColumnName() + "\"");
     }
@@ -208,10 +205,8 @@ public class DalMappingGenerator implements OBSingleton {
     // for ui and not for background processes
     // if (!p.isUpdatable() || p.isInactive()) {
 
-    if (p.isInactive() || p.getEntity().isView()) {
+    if (p.isInactive() || p.getEntity().isView() || p.getSqlLogic() != null) {
       sb.append(" update=\"false\"");
-    }
-    if (p.isInactive() || p.getEntity().isView()) {
       sb.append(" insert=\"false\"");
     }
 

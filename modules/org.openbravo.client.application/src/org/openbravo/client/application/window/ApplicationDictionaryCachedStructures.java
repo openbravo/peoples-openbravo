@@ -75,11 +75,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return tabMap.get(tabId);
     }
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    Hibernate.initialize(tab);
-    Hibernate.initialize(tab.getADAuxiliaryInputList());
-    Hibernate.initialize(tab.getADFieldList());
-    Hibernate.initialize(tab.getTable());
-    Hibernate.initialize(tab.getTable().getADColumnList());
+    initializeDALObject(tab);
+    initializeDALObject(tab.getADAuxiliaryInputList());
+    initializeDALObject(tab.getADFieldList());
+    initializeDALObject(tab.getTable());
+    initializeDALObject(tab.getTable().getADColumnList());
     tabMap.put(tabId, tab);
     return tab;
   }
@@ -89,8 +89,8 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return tableMap.get(tableId);
     }
     Table table = OBDal.getInstance().get(Table.class, tableId);
-    Hibernate.initialize(table);
-    Hibernate.initialize(table.getADColumnList());
+    initializeDALObject(table);
+    initializeDALObject(table.getADColumnList());
     tableMap.put(tableId, table);
     return table;
   }
@@ -105,7 +105,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       if (f.getColumn() == null) {
         continue;
       }
-      Hibernate.initialize(f.getColumn());
+      initializeDALObject(f.getColumn());
       initializeColumn(f.getColumn());
     }
     fieldMap.put(tabId, fields);
@@ -127,20 +127,20 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   private void initializeColumn(Column c) {
 
-    Hibernate.initialize(c.getValidation());
+    initializeDALObject(c.getValidation());
     if (c.getValidation() != null) {
-      Hibernate.initialize(c.getValidation().getValidationCode());
+      initializeDALObject(c.getValidation().getValidationCode());
     }
     if (c.getCallout() != null) {
-      Hibernate.initialize(c.getCallout());
-      Hibernate.initialize(c.getCallout().getADModelImplementationList());
+      initializeDALObject(c.getCallout());
+      initializeDALObject(c.getCallout().getADModelImplementationList());
       for (ModelImplementation imp : c.getCallout().getADModelImplementationList()) {
-        Hibernate.initialize(imp);
+        initializeDALObject(imp);
       }
     }
 
     if (c.getReference() != null) {
-      Hibernate.initialize(c.getReference());
+      initializeDALObject(c.getReference());
       initializeReference(c.getReference());
     }
     if (c.getReferenceSearchKey() != null) {
@@ -149,15 +149,15 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   }
 
   private void initializeReference(Reference reference) {
-    Hibernate.initialize(reference.getADReferencedTableList());
+    initializeDALObject(reference.getADReferencedTableList());
     for (ReferencedTable t : reference.getADReferencedTableList()) {
-      Hibernate.initialize(t);
+      initializeDALObject(t);
     }
-    Hibernate.initialize(reference.getOBUISELSelectorList());
+    initializeDALObject(reference.getOBUISELSelectorList());
     for (Selector s : reference.getOBUISELSelectorList()) {
-      Hibernate.initialize(s);
+      initializeDALObject(s);
       SelectorField displayField = s.getDisplayfield();
-      Hibernate.initialize(displayField);
+      initializeDALObject(displayField);
     }
 
   }
@@ -167,13 +167,17 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return auxInputMap.get(tabId);
     }
     Tab tab = getTab(tabId);
-    Hibernate.initialize(tab.getADAuxiliaryInputList());
+    initializeDALObject(tab.getADAuxiliaryInputList());
     List<AuxiliaryInput> auxInputs = new ArrayList<AuxiliaryInput>(tab.getADAuxiliaryInputList());
     for (AuxiliaryInput auxIn : auxInputs) {
-      Hibernate.initialize(auxIn);
+      initializeDALObject(auxIn);
     }
     auxInputMap.put(tabId, auxInputs);
     return auxInputs;
+  }
+
+  private synchronized void initializeDALObject(Object obj) {
+    Hibernate.initialize(obj);
   }
 
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,

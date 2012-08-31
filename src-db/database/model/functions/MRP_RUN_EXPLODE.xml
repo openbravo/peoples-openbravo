@@ -37,7 +37,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2012 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -68,6 +68,15 @@ BEGIN
     WHERE MRP_RUN_PRODUCTION_ID = p_Run_ID
       AND isexploded = 'N';
 
+    --initialize ma_processplan_totalized_aux table
+    INSERT INTO ma_processplan_tot_aux (
+      ma_processplan_tot_aux_id, ma_processplan_id, ma_processplan_version_id,
+      dependantproduct, depqty, produced, proqty
+    )
+    SELECT get_uuid(), ma_processplan_id, ma_processplan_version_id,
+      dependantproduct, depqty, produced, proqty
+    FROM ma_processplan_totalized;
+
     WHILE (v_Count <> 0) LOOP
       v_New := 'N';
       v_lastProductID := '-1'; -- non-existant value
@@ -91,11 +100,11 @@ BEGIN
           Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, Cur_Run_Lines.planneddate - p_SecurityMargin, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin) ELSE Cur_Run_Lines.planneddate - p_SecurityMargin - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
         ELSE
           v_ResultStr := 'Explode dependant products';
-          FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOTALIZED.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
+          FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
                                         M_PRODUCT.ISPURCHASED
-                                 FROM MA_PROCESSPLAN_TOTALIZED, M_PRODUCT
+                                 FROM MA_PROCESSPLAN_TOT_AUX, M_PRODUCT
                                  WHERE PRODUCED = Cur_Run_Lines.M_Product_ID
-                                   AND MA_PROCESSPLAN_TOTALIZED.DEPENDANTPRODUCT = M_PRODUCT.M_PRODUCT_ID) LOOP
+                                   AND MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT = M_PRODUCT.M_PRODUCT_ID) LOOP
             MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run_ID, p_Planner_ID, Cur_Dependants.DependantProduct,
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
                        p_PlanningDate, 'Y');
@@ -110,7 +119,7 @@ BEGIN
 
           v_ResultStr := 'Other dependant products';
           FOR Cur_Parents IN (SELECT pt.PRODUCED
-                              FROM MA_PROCESSPLAN_TOTALIZED pt
+                              FROM MA_PROCESSPLAN_TOT_AUX pt
                               WHERE pt.DEPENDANTPRODUCT = Cur_Run_Lines.M_Product_ID) LOOP
             MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run_ID, p_Planner_ID, Cur_Parents.Produced,
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
@@ -140,6 +149,9 @@ BEGIN
       END IF;
       v_Count := v_NewCount;
     END LOOP;
+
+  --Delete ma_processplan_totalized_aux table.
+  DELETE FROM ma_processplan_tot_aux;
 
   END; --BODY
 EXCEPTION

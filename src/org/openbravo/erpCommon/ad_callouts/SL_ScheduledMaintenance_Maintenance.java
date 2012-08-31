@@ -73,6 +73,11 @@ public class SL_ScheduledMaintenance_Maintenance extends HttpSecureAppServlet {
     if (strMaintenance != null && !strMaintenance.equals("")) {
       SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData.select(
           this, strMaintenance);
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      if (data[0].maMachineId.equals(""))
+        vars.setSessionValue(strWindowId + "|IsSOTrx", "N");
+      else
+        vars.setSessionValue(strWindowId + "|IsSOTrx", "Y");
       resultado.append("new Array(\"inpmaMaintOperationId\", \"" + data[0].maMaintOperationId
           + "\"),\n");
       resultado.append("new Array(\"inpMaintenanceType\", \""

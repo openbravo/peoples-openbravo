@@ -20,7 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
-import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.CallStoredProcedure;
 
 public abstract class CostingAlgorithm {
   protected MaterialTransaction transaction;
@@ -492,8 +491,9 @@ public abstract class CostingAlgorithm {
       calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
     }
     OBDal.getInstance().refresh(transaction.getProductionLine());
-    return transaction.getProductionLine().getEstimatedCost()
-        .multiply(transaction.getMovementQuantity().abs());
+    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
+        .getProductionLine().getEstimatedCost().multiply(transaction.getMovementQuantity().abs())
+        : BigDecimal.ZERO;
   }
 
   /**
@@ -518,11 +518,10 @@ public abstract class CostingAlgorithm {
   private void calculateWorkEffortCost(ProductionTransaction production) {
 
     try {
-      // first get a connection
-      final Connection connection = OBDal.getInstance().getConnection();
-
-      CostingData.calculateWorkEffortCost(connection, new DalConnectionProvider(),
-          production.getId(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      List<Object> params = new ArrayList<Object>();
+      params.add(production.getId());
+      params.add((String) DalUtil.getId(OBContext.getOBContext().getUser()));
+      CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();

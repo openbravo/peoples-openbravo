@@ -1085,6 +1085,11 @@ OB.ViewFormProperties = {
       gridEditInformation.grid.setEditValue(gridEditInformation.editRow, prop, null, true, true);
     }
 
+    if (!field) {
+      // Look in the complete fields, the column might be hidden
+      field = this.grid.getFieldFromColumnName(columnName);
+    }
+
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
       // Adjust to formatting if exists value and classicValue.
@@ -1116,12 +1121,28 @@ OB.ViewFormProperties = {
 
   // calls setValue and the onchange handling
   setItemValue: function (item, value) {
-    var currentValue, view;
+    var currentValue, view, isGridItem, completeFieldsLength, i;
 
     if (isc.isA.String(item)) {
 
       // not an item, set and bail
       if (!this.getField(item)) {
+        // It might be a column that is not being displayed in the grid
+        if (!this.view.isShowingForm && this.grid) {
+          // check if the item is included in the complete fields of the grid
+          // see issue https://issues.openbravo.com/view.php?id=21375
+          isGridItem = false;
+          completeFieldsLength = this.grid.completeFields;
+          for (i = 0; i < completeFieldsLength; i++) {
+            if (item === this.grid.completeFields[i].name) {
+              isGridItem = true;
+              break;
+            }
+          }
+          if (isGridItem) {
+            this.grid.setEditValue(this.grid.getEditRow(), item, value);
+          }
+        }
         this.setValue(item, value);
         return;
       }
@@ -1394,7 +1415,12 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties;
+          sessionProperties, keepSelection;
+
+      if (this.hasOwnProperty('previousExplicitOffline')) {
+        isc.Offline.explicitOffline = this.previousExplicitOffline;
+        delete this.previousExplicitOffline;
+      }
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
@@ -1452,9 +1478,8 @@ OB.ViewFormProperties = {
 
         view.viewGrid.markForRedraw();
 
-        if (form.isNew) {
-          view.refreshChildViews();
-        }
+        keepSelection = true;
+        view.refreshChildViews(keepSelection);
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
@@ -1530,6 +1555,8 @@ OB.ViewFormProperties = {
       if (!form.validateForm()) {
         return;
       }
+      this.previousExplicitOffline = isc.Offline.explicitOffline;
+      isc.Offline.explicitOffline = false;
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,

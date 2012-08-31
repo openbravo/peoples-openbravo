@@ -71,6 +71,8 @@ class WindowTreeUtility {
       TreeType = "AR";
     else if (keyColumnName.equals("C_Tax_Report_ID"))
       TreeType = "TR";
+    else if (keyColumnName.equals("A_Asset_ID"))
+      TreeType = "AS";
     else
       TreeType = "";
     if (TreeType.equals(""))
@@ -135,6 +137,8 @@ class WindowTreeUtility {
           TreeID);
     else if (TreeType.equals("TR"))
       data = WindowTreeData.selectTaxReport(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("AS"))
+      data = WindowTreeData.selectAsset(conn, strEditable, strParentID, strNodeId, TreeID);
 
     return data;
   }

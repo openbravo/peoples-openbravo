@@ -267,6 +267,25 @@ isc.OBGrid.addProperties({
       this.fireOnPause("performFilter", {}, this.fetchDelay);
     },
 
+    // If the criteria contains an 'or' operator due to the changes made for solving
+    // issue 20722 (https://issues.openbravo.com/view.php?id=20722), remove the criteria
+    // that makes reference to a specific id and return the original one
+    removeSpecificIdFilter: function (criteria) {
+      if (!criteria) {
+        return criteria;
+      }
+      if (criteria.operator !== 'or') {
+        return criteria;
+      }
+      if (criteria.criteria && criteria.criteria.length !== 2) {
+        return criteria;
+      }
+      if (criteria.criteria.get(0).fieldName !== 'id') {
+        return criteria;
+      }
+      return criteria.criteria.get(1);
+    },
+
     // repair that filter criteria on fk fields can be 
     // on the identifier instead of the field itself.
     // after applying the filter the grid will set the criteria
@@ -281,6 +300,9 @@ isc.OBGrid.addProperties({
       // make a copy so that we don't change the object
       // which is maybe used somewhere else
       criteria = isc.clone(criteria);
+      // If a criterion has been added to include the selected record, remove it
+      // See issue https://issues.openbravo.com/view.php?id=20722
+      criteria = this.removeSpecificIdFilter(criteria);
       var internCriteria = criteria.criteria;
       if (internCriteria && this.getEditForm()) {
         // now remove anything which is not a field
@@ -302,7 +324,7 @@ isc.OBGrid.addProperties({
           var fnd = false,
               j;
           for (j = 0; j < length; j++) {
-            if (fields[j].displayField === fullPropName) {
+            if (fields[j].displayField === fullPropName || fields[j].criteriaField === fullPropName) {
               fnd = true;
               break;
             }
@@ -321,7 +343,6 @@ isc.OBGrid.addProperties({
           }
         }
       }
-
       return this.Super('setValuesAsCriteria', [criteria, refresh]);
     },
 
@@ -377,6 +398,10 @@ isc.OBGrid.addProperties({
         }
 
         field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
+
+        if (field.criteriaField) {
+          field.filterEditorProperties.criteriaField = field.criteriaField;
+        }
 
         if (field.isLink) {
           // store the originalFormatCellValue if not already set
@@ -538,11 +563,10 @@ isc.OBGrid.addProperties({
       }
       var value = criterion.value;
       // see the description in setValuesAsCriteria above
-      if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
-        var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
-        prop = prop.substring(0, index);
+      var separatorIndex = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
+      if (separatorIndex !== -1) {
+        prop = prop.substring(0, separatorIndex);
       }
-
       var field = this.filterEditor.getField(prop);
       // criterion.operator is set in case of an and/or expression
       if (this.isValidFilterField(field) && (criterion.operator || value === false || value || value === 0)) {

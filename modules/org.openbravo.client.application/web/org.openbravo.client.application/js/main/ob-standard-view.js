@@ -799,8 +799,8 @@ isc.OBStandardView.addProperties({
     }
   },
 
-  doRefreshContents: function (doRefreshWhenVisible, forceRefresh) {
-
+  doRefreshContents: function (doRefreshWhenVisible, forceRefresh, keepSelection) {
+    var callback, me = this;
     // if not visible anymore, reset the view back
     if (!this.isViewVisible()) {
       if (this.isShowingForm) {
@@ -825,13 +825,20 @@ isc.OBStandardView.addProperties({
     // can be used by others to see that we are refreshing content
     this.refreshContents = true;
 
+    if (keepSelection) {
+      this.viewGrid.recordsSelectedBeforeRefresh = this.viewGrid.getSelectedRecords();
+      this.formVisibleBeforeRefresh = this.isShowingForm;
+    }
+
     // clear all our selections..
     // note the true parameter prevents autosave actions from happening
     // this should have been done before anyway
     this.viewGrid.deselectAllRecords(false, true);
 
     if (this.viewGrid.filterEditor) {
-      this.viewGrid.clearFilter(false, true);
+      // do not clear the implicit filter
+      // see issue https://issues.openbravo.com/view.php?id=19943
+      this.viewGrid.clearFilter(true, true);
     }
     if (this.viewGrid.data && this.viewGrid.data.setCriteria) {
       this.viewGrid.data.setCriteria(null);
@@ -853,7 +860,25 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
 
-    this.viewGrid.refreshContents();
+    if (keepSelection) {
+      callback = function () {
+        var length, i, recordIndex;
+        length = me.viewGrid.recordsSelectedBeforeRefresh.length;
+        for (i = 0; i < length; i++) {
+          recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.recordsSelectedBeforeRefresh[i]);
+          me.viewGrid.selectRecord(recordIndex);
+        }
+        if (me.formVisibleBeforeRefresh) {
+          me.switchFormGridVisibility();
+        }
+        delete me.formVisibleBeforeRefresh;
+        delete me.viewGrid.recordsSelectedBeforeRefresh;
+      };
+    } else {
+      callback = null;
+    }
+
+    this.viewGrid.refreshContents(callback);
 
     this.toolBar.updateButtonState(true);
 
@@ -866,7 +891,7 @@ isc.OBStandardView.addProperties({
     this.refreshContents = false;
   },
 
-  refreshChildViews: function () {
+  refreshChildViews: function (keepSelection) {
     var i, length, tabViewPane;
 
     if (this.childTabSet) {
@@ -875,7 +900,7 @@ isc.OBStandardView.addProperties({
         tabViewPane = this.childTabSet.tabs[i].pane;
         // force a refresh, only the visible ones will really 
         // be refreshed
-        tabViewPane.doRefreshContents(true);
+        tabViewPane.doRefreshContents(true, null, keepSelection);
       }
     }
   },
@@ -1146,6 +1171,14 @@ isc.OBStandardView.addProperties({
     if (!this.hasSelectionStateChanged()) {
       return;
     }
+
+    // If the record has been automatically selected because was the only record in the header tab,
+    // only select the record if the window has not been opened by clicking on the recent views icon to
+    // create a new record
+    // see issue https://issues.openbravo.com/view.php?id=20564
+    if (this.isShowingForm && this.viewForm.isNew) {
+      return;
+    }
     var me = this,
         callback = function () {
         me.delayedRecordSelected();
@@ -1182,6 +1215,9 @@ isc.OBStandardView.addProperties({
 
         if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
           tabViewPane.doRefreshContents(true);
+        }
+        if (this.isOpenDirectModeParent) {
+          tabViewPane.toolBar.updateButtonState(true);
         }
       }
     }
@@ -1347,7 +1383,10 @@ isc.OBStandardView.addProperties({
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
-  refresh: function (refreshCallback, autoSaveDone) {
+  refresh: function (refreshCallback, autoSaveDone, forceCurrentRecordId) {
+    // If a record should be visible after the refresh, even if it does not comply with the
+    // current filter, its ID should be entered in the forceCurrentRecordId parameter
+    // See issue https://issues.openbravo.com/view.php?id=20722
     var me = this,
         view = this,
         actionObject, formRefresh, callback;
@@ -1357,7 +1396,7 @@ isc.OBStandardView.addProperties({
       actionObject = {
         target: this,
         method: this.refresh,
-        parameters: [refreshCallback, true]
+        parameters: [refreshCallback, true, forceCurrentRecordId]
       };
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
@@ -1375,17 +1414,17 @@ isc.OBStandardView.addProperties({
     };
 
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback);
+      this.viewGrid.refreshGrid(refreshCallback, forceCurrentRecordId);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
           if (ok) {
-            view.viewGrid.refreshGrid(formRefresh);
+            view.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid(formRefresh);
+        this.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
       }
     }
   },
@@ -1797,7 +1836,14 @@ isc.OBStandardView.addProperties({
     if (this.isEditingGrid && this.viewGrid.getEditForm()) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        if (this.viewGrid._hidingField || this.viewGrid._showingField) {
+          // If this has been caused by hiding or showing a field while the grid was being edited,
+          // add the properties of the saved edit values
+          // See issue https://issues.openbravo.com/view.php?id=21352
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum), this.viewGrid._savedEditValues);
+        } else {
+          record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
+        }
       } else {
         record = isc.addProperties({}, this.viewGrid.getSelectedRecord());
       }
