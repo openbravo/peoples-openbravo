@@ -257,7 +257,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	if(users.models.length == 0 ) {
               user = new OB.Model.User();
               user.set('name', me.user);
-              user.set('password', me.password);
+              user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
               OB.Dal.save(user, function(){
               }, function() {
                 window.console.error(arguments);
@@ -266,7 +266,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	}else{
               user = users.models[0];
               me.usermodel = user;
-              user.set('password', me.password);
+              user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
               OB.Dal.save(user, function(){
               }, function() {
                 window.console.error(arguments);
@@ -294,7 +294,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	if(users.models.length == 0 ) {
               alert('pos is offline, and this user never logged in the pos');
         	}else{
-              if(users.models[0].get('password') === me.password){
+              if(users.models[0].get('password') === hex_md5(me.password+OB.POS.paramTerminal)){
                 me.usermodel = users.models[0];
                 OB.POS.navigate('main', {
                   trigger: true
