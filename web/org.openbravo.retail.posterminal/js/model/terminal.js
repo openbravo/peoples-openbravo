@@ -251,9 +251,10 @@ OB.Model.Terminal = Backbone.Model.extend({
         //          window.location = baseUrl + OB.POS.hrefWindow(OB.POS.paramWindow);
 
         OB.Dal.initCache(OB.Model.User, [], null, null);
+        OB.Dal.initCache(OB.Model.Session, [], null, null);
         OB.Dal.find(OB.Model.User, {'name': me.user},
           function(users) {
-            var user;
+            var user, session;
         	if(users.models.length == 0 ) {
               user = new OB.Model.User();
               user.set('name', me.user);
@@ -272,6 +273,12 @@ OB.Model.Terminal = Backbone.Model.extend({
                 window.console.error(arguments);
               });
             }
+        	session=new OB.Model.Session();
+        	session.set('ad_user_id', user.get('id'));
+            OB.Dal.save(session, function(){
+            }, function() {
+              window.console.error(arguments);
+            });
           }, 
           function() {
           }
@@ -296,6 +303,12 @@ OB.Model.Terminal = Backbone.Model.extend({
         	}else{
               if(users.models[0].get('password') === hex_md5(me.password+OB.POS.paramTerminal)){
                 me.usermodel = users.models[0];
+            	session=new OB.Model.Session();
+            	session.set('ad_user_id', users.models[0].get('id'));
+                OB.Dal.save(session, function(){
+                }, function() {
+                  window.console.error(arguments);
+                });
                 OB.POS.navigate('main', {
                   trigger: true
                 });
