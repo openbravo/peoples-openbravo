@@ -20,6 +20,7 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -34,6 +35,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -57,14 +59,22 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
       final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
       FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
           strPaymentProposalId);
+      final String strPaymentMethodId = jsonRequest.getString("inpfinPaymentmethodId");
+      FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+          strPaymentMethodId);
 
       if (cleanPaymentProposalDetails(paymentProposal)) {
-        int cont = createPaymentProposalDetails(jsonRequest);
+        HashMap<String, String> map = createPaymentProposalDetails(jsonRequest, paymentMethod);
         jsonRequest = new JSONObject();
 
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "success");
         errorMessage.put("text", OBMessageUtils.messageBD("Success"));
+        if (map.get("DifferentPaymentMethod").equals("true")) {
+          errorMessage.put("severity", "warning");
+          errorMessage.put("text",
+              OBMessageUtils.messageBD("APRM_Different_PaymentMethod_Selected"));
+        }
         jsonRequest.put("message", errorMessage);
       }
 
@@ -110,25 +120,34 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     return true;
   }
 
-  private int createPaymentProposalDetails(JSONObject jsonRequest) throws JSONException,
-      OBException {
+  private HashMap<String, String> createPaymentProposalDetails(JSONObject jsonRequest,
+      FIN_PaymentMethod paymentMethod) throws JSONException, OBException {
 
+    HashMap<String, String> map = new HashMap<String, String>();
+    map.put("DifferentPaymentMethod", "false");
+    map.put("Count", "0");
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
-      return 0;
+      return map;
     }
     final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
     FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
         strPaymentProposalId);
     BigDecimal totalAmount = BigDecimal.ZERO, totalWriteOff = BigDecimal.ZERO;
     int cont = 0;
+    String differentPaymentMethod = "false";
     for (int i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
       BigDecimal paidAmount = new BigDecimal(selectedLine.getString("payment"));
 
       if (paidAmount.compareTo(BigDecimal.ZERO) != 0) {
+        FIN_PaymentMethod linePaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+            selectedLine.getString("paymentMethod"));
+        if (!paymentMethod.equals(linePaymentMethod)) {
+          differentPaymentMethod = "true";
+        }
         FIN_PaymentPropDetail newPPD = OBProvider.getInstance().get(FIN_PaymentPropDetail.class);
         newPPD.setOrganization(paymentProposal.getOrganization());
         newPPD.setClient(paymentProposal.getClient());
@@ -156,6 +175,8 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     paymentProposal.setAmount(totalAmount);
     paymentProposal.setWriteoffAmount(totalWriteOff);
     OBDal.getInstance().save(paymentProposal);
-    return cont;
+    map.put("DifferentPaymentMethod", differentPaymentMethod);
+    map.put("Count", Integer.toString(cont));
+    return map;
   }
 }
