@@ -60,7 +60,8 @@ BEGIN
           CreatedBy, Updated, UpdatedBy,
           P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
           P_COGS_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
-          P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct
+          P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct,
+          P_COGS_Return_Acct, P_Revenue_Return_Acct
         )
         VALUES
         (
@@ -69,7 +70,8 @@ BEGIN
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,
           Cur_Defaults.P_COGS_Acct, Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
-          Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct
+          Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct,
+          Cur_Defaults.P_COGS_Return_Acct, Cur_Defaults.P_Revenue_Return_Acct
         )
         ;
     END LOOP;
