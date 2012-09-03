@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-  <database name="MODIFIED TABLE M_PRODUCT_CATEGORY">
-    <table name="M_PRODUCT_CATEGORY" primaryKey="M_PRODUCT_CATEGORY_KEY">
-      <column name="EM_OBPOS_LINE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-    </table>
-  </database>
