@@ -40,7 +40,11 @@ CACHE:
 ../../web/org.openbravo.retail.posterminal/js/model/businesspartner.js  
 ../../web/org.openbravo.retail.posterminal/js/model/document-sequence.js  
 ../../web/org.openbravo.retail.posterminal/js/model/user.js  
-
+../../web/org.openbravo.retail.posterminal/js/model/session.js  
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate
+../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice
+../../web/org.openbravo.retail.posterminal/res/printline.xml
+../../web/org.openbravo.retail.posterminal/res/printreceipt.xml
 
 # Images
 <#list data.imageFileList as imageFile>

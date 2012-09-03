@@ -28,9 +28,14 @@ OB.Model.WindowModel = Backbone.Model.extend({
 
       this.trigger('ready');
     }, this);
-
-    OB.Model.Util.loadModels(true, this.models, this.data);
-
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Model.Util.loadModels(true, this.models, this.data);
+    }else{
+      if (this.init) {
+        this.init();
+      }
+      this.trigger('ready');
+    }
     //TODO: load offline models when regesitering window
   },
 

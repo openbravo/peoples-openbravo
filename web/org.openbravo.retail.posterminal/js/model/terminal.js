@@ -99,7 +99,41 @@ OB.Model.Terminal = Backbone.Model.extend({
         terminal: OB.POS.paramTerminal
         };
 
+    OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
 
+    OB.POS.modelterminal.on('terminal.loaded', function() {
+      var oldOB = OB;
+
+      $LAB.setGlobalDefaults({
+        AppendTo: 'body'
+      });
+      if(!OB.POS.modelterminal.get('connectedToERP')){
+          OB.Format = JSON.parse(me.usermodel.get('formatInfo'));
+          OB.POS.cleanWindows();
+    	  $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+          return;
+      }
+      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
+        var newFormat = OB.Format;
+        _.extend(OB, oldOB);
+        OB.Format = newFormat;
+        OB.POS.cleanWindows();
+
+        me.usermodel.set('formatInfo', JSON.stringify(OB.Format));
+        OB.Dal.save(me.usermodel, function(){
+        }, function() {
+          window.console.error(arguments);
+        });
+        
+        $LAB.script('js/i18n.js').wait(function() {
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
+          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
+        });
+      });
+    });
     if (OB.POS.modelterminal.get('connectedToERP')) {
         new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function(data) {
           if (data.exception) {
@@ -117,34 +151,7 @@ OB.Model.Terminal = Backbone.Model.extend({
             me.trigger('terminal.loaded');
         }
 
-    OB.POS.modelterminal.off('terminal.loaded'); // Unregister previous events.
 
-    OB.POS.modelterminal.on('terminal.loaded', function() {
-      var oldOB = OB;
-
-      $LAB.setGlobalDefaults({
-        AppendTo: 'body'
-      });
-      if(!OB.POS.modelterminal.get('connectedToERP')){
-          OB.POS.cleanWindows();
-    	  //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-          //$LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-          return;
-      }
-      $LAB.script('../../org.openbravo.client.kernel/OBCLKER_Kernel/Application').wait(function() {
-        var newFormat = OB.Format;
-        _.extend(OB, oldOB);
-        OB.Format = newFormat;
-        OB.POS.cleanWindows();
-
-        $LAB.script('js/i18n.js').wait(function() {
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice');
-          $LAB.script('../../org.openbravo.client.kernel/OBPOS_Main/StaticResources?_appName=WebPOS');
-        });
-      });
-    });
   },
 
   registerWindow: function(window) {
@@ -344,10 +351,14 @@ OB.Model.Terminal = Backbone.Model.extend({
   },
 
   load: function() {
-    var termInfo;
+    var termInfo, i;
 	if(!OB.POS.modelterminal.get('connectedToERP')){
       termInfo = JSON.parse(this.usermodel.get('terminalinfo'));
       this.set('payments', termInfo.payments);
+      this.paymentnames = {};
+      for (i = 0, max = termInfo.payments.length; i < max; i++) {
+        this.paymentnames[termInfo.payments[i].payment.searchKey] = termInfo.payments[i].payment._identifier;
+      }
       this.set('context', termInfo.context);
       this.set('permissions', termInfo.permissions);
       this.set('businesspartner', termInfo.businesspartner);
@@ -356,6 +367,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('pricelistversion', termInfo.pricelistversion);
       this.set('currency', termInfo.currency);
       this.set('currencyPrecision', termInfo.currencyPrecision);
+      this.setDocumentSequence();
       this.triggerReady();
       return;
     }
