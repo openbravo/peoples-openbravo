@@ -15,7 +15,6 @@ enyo.kind({
     onlineState: null
   },
   onlineStateChanged: function(){
-    debugger;
     if (this.onlineState){
       this.$.onlineLabel.setContent('Online');
       this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
@@ -168,7 +167,6 @@ enyo.kind({
     }, this);
 
     this.terminal.on('change:connectedToERP', function(model){
-      debugger;
       this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));    
     }, this);
     

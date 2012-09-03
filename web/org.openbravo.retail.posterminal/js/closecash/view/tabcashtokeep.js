@@ -162,7 +162,6 @@ enyo.kind({
             var paymentMethod = modelToDraw.get('paymentMethod');
             this.disableControls();
             //draw
-            debugger;
             this.renderFixedAmount(modelToDraw);
             
             this.$.allowmoveeverything.setShowing(paymentMethod.allowmoveeverything);
