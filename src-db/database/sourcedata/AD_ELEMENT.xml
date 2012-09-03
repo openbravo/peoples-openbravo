@@ -2063,10 +2063,10 @@ You find the current status in the Document Status field. The options are listed
 <!--307-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--307-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--307-->  <COLUMNNAME><![CDATA[GAAP]]></COLUMNNAME>
-<!--307-->  <NAME><![CDATA[GAAP]]></NAME>
-<!--307-->  <PRINTNAME><![CDATA[GAAP]]></PRINTNAME>
-<!--307-->  <DESCRIPTION><![CDATA[Generally Accepted Accounting Principles]]></DESCRIPTION>
-<!--307-->  <HELP><![CDATA[The GAAP identifies the account principles that this accounting schema will adhere to.]]></HELP>
+<!--307-->  <NAME><![CDATA[Accounting Standard]]></NAME>
+<!--307-->  <PRINTNAME><![CDATA[Accounting Standard]]></PRINTNAME>
+<!--307-->  <DESCRIPTION><![CDATA[Accounting Standard]]></DESCRIPTION>
+<!--307-->  <HELP><![CDATA[The Accounting Standard identifies the account principles that this accounting schema will adhere to.]]></HELP>
 <!--307-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--307-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--307--></AD_ELEMENT>
