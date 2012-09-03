@@ -434,7 +434,7 @@
               QuantityOrder= CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN QuantityOrder
                              ELSE (c_uom_convert((CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
 				(CASE WHEN (QtyDelivered = 0) THEN qtyinvoiced ELSE 
-					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END), C_UOM_ID, (SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=M_PRODUCT_UOM_ID),'Y')) END,
+					(CASE WHEN (QtyDelivered < 0 AND qtyinvoiced < 0) THEN LEAST(QtyDelivered, qtyinvoiced) ELSE GREATEST(QtyDelivered, qtyinvoiced) END) END) END), C_UOM_ID, (SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y')) END,
               Updated=now()
           WHERE C_Order_ID=v_Record_ID
             AND QtyOrdered <> (SELECT (CASE WHEN (qtyinvoiced = 0) THEN QtyDelivered ELSE 
@@ -471,7 +471,7 @@
 				END)
                   FROM M_MATCHPO
                   WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
-                  ), 0),C_UOM_ID,(SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=M_PRODUCT_UOM_ID),'Y') END,
+                  ), 0),C_UOM_ID,(SELECT UOM.C_UOM_ID FROM M_PRODUCT_UOM UOM WHERE UOM.M_PRODUCT_UOM_ID=C_ORDERLINE.M_PRODUCT_UOM_ID),'Y') END,
               Updated=now(),
               linenetamt=COALESCE((
                   SELECT (CASE WHEN (SUM(CASE WHEN M_MATCHPO.M_INOUTLINE_ID IS NULL THEN M_MATCHPO.QTY ELSE 0 END) = 0) 
