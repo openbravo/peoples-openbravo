@@ -59,7 +59,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append(" as o");
     where.append(" where exists (");
     where.append("    select 1 from " + CostingRule.ENTITY_NAME + " as cr");
-    where.append("    where ad_is_orgincluded(o.id, cr." + CostingRule.PROPERTY_ORGANIZATION
+    where.append("    where ad_isorgincluded(o.id, cr." + CostingRule.PROPERTY_ORGANIZATION
         + ".id, " + CostingRule.PROPERTY_CLIENT + ".id) <> -1 ");
     where.append("      and cr." + CostingRule.PROPERTY_VALIDATED + " is true");
     where.append(" )");
@@ -128,7 +128,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + " in (:orgs)");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
@@ -153,7 +153,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + " in (:orgs)");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
