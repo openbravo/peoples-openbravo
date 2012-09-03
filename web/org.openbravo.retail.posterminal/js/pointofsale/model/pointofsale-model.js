@@ -37,7 +37,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         currentOrder = ordersNotPaid.models[0];
         orderlist.load(currentOrder);
         loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-        OB.UTIL.showAlert(loadOrderStr, OB.I18N.getLabel('OBUIAPP_Info'));
+        OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBUIAPP_Info'));
       }
     }, function() { //OB.Dal.find error
       // If there is an error fetching the pending orders,
@@ -67,7 +67,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           $('.alert:contains("' + OB.I18N.getLabel('OBPOS_ProcessPendingOrders') + '")').alert('close');
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorProcessOrder'));
         };
-        OB.UTIL.showAlert(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
+        OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBUIAPP_Info'));
         OB.UTIL.processOrders(me, ordersPaidNotProcessed, successCallback, errorCallback);
       });
     }
