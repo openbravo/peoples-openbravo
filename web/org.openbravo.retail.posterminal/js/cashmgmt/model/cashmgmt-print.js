@@ -12,7 +12,7 @@
 (function () {
 
   var PrintCashMgmt = function () {
-    this.templatecashmgmt = new OB.DS.HWResource('res/printcashmgmt.xml');
+    this.templatecashmgmt = new OB.DS.HWResource(OB.OBPOSCashMgmt.Print.CashMgmtTemplate);
   };
 
   PrintCashMgmt.prototype.print = function (depsdropstosend) {
@@ -27,5 +27,6 @@
   OB.OBPOSCashMgmt.Print = OB.OBPOSCashMgmt.Print || {};
 
   OB.OBPOSCashMgmt.Print.CashMgmt = PrintCashMgmt;
+  OB.OBPOSCashMgmt.Print.CashMgmtTemplate = 'res/printcashmgmt.xml';
 
 }());
