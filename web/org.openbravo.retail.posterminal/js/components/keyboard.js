@@ -239,12 +239,12 @@ enyo.kind({
 
   execCommand: function(cmddefinition, txt) {
     if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
-      cmddefinition.action.call(this, txt);
+      cmddefinition.action(this, txt);
     }
   },
 
   execStatelessCommand: function(cmd, txt) {
-    this.commands[cmd].action.call(this, txt);
+    this.commands[cmd].action(this, txt);
   },
 
   getNumber: function() {
@@ -340,10 +340,11 @@ enyo.kind({
 
   initComponents: function() {
     var me = this;
+    this.buttons = {}; // must be intialized before calling super, not after.
 
     this.inherited(arguments);
     this.state = new Backbone.Model();
-    this.buttons = {};
+
 
     this.$.toolbarcontainer.destroyComponents();
     this.$.keypadcontainer.destroyComponents();

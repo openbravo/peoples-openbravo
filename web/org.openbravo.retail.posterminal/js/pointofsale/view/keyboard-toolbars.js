@@ -37,7 +37,7 @@ enyo.kind({
   toolbarName: 'toolbarpayment',
   pay: function(amount, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
-      if (paymentMethod.view) {
+      if (paymentMethod.paymentProvider) {
         this.$.modalpayment.show(this.receipt, key, name, paymentMethod, amount);
       } else {
         this.receipt.addPayment(new OB.Model.PaymentLine({
@@ -53,7 +53,7 @@ enyo.kind({
     return ({
       'permission': key,
       'stateless': false,
-      'action': function(txt) {
+      'action': function(keyboard, txt) {
         var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
         amount = _.isNaN(amount) ? me.receipt.getPending() : amount;
         me.pay(amount, key, name, paymentMethod);
@@ -76,13 +76,6 @@ enyo.kind({
       }
       allpayments[payment.payment.searchKey] = payment;
 
-      //        Btn = OB.COMP.ButtonKey.extend({
-      //          command: payments[i].payment.searchKey,
-      //          definition: getPayment(modalpayment, receipt, payments[i].payment.searchKey, payments[i].payment._identifier, payments[i].paymentMethod),
-      //          classButtonActive: 'btnactive-green',
-      //          permission: payments[i].payment.searchKey,
-      //          contentViewButton: [payments[i].payment._identifier]
-      //        });
       this.createComponent({
         kind: 'OB.UI.BtnSide',
         btn: {
@@ -107,8 +100,8 @@ enyo.kind({
     });
 
     this.owner.owner.addCommand('cashexact', {
-      action: function(txt) {
-        var exactpayment = allpayments[this.status] || defaultpayment,
+      action: function(keyboard, txt) {
+        var exactpayment = allpayments[keyboard.status] || defaultpayment,
             amount = me.receipt.getPending();
 
         if (amount > 0 && exactpayment) {

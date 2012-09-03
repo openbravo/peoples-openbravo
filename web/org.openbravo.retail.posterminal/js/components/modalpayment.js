@@ -18,7 +18,8 @@ enyo.kind({
   show: function(receipt, key, name, paymentMethod, amount) {
 	  this.$.body.destroyComponents();
     this.$.body.createComponent({
-      kind: paymentMethod.view,
+      kind: paymentMethod.paymentProvider,
+      paymentMethod: paymentMethod,
       paymentType: name,
       paymentAmount: amount,
       key: key,

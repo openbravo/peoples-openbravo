@@ -27,7 +27,7 @@
       models._LoadOnline = online;
 
       if (models.length === 0) {
-        triggerReady(models)
+        triggerReady(models);
         return;
       }
 
@@ -95,7 +95,6 @@
     lock: function(callback) {
       this.modelterminal.lock();
     },
-    paymentProviders: [],
     windows: null,
     navigate: function(route) {
       //HACK -> when f5 in login page

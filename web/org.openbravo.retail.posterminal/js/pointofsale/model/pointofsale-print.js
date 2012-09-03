@@ -13,7 +13,7 @@
 
   var PrintReceipt = function(receipt) {
     this.receipt = receipt;
-    this.receipt.on('closed print', this.print, this);
+    this.receipt.on('print', this.print, this);
 
     this.templatereceipt = new OB.DS.HWResource('res/printreceipt.xml');
     this.templateinvoice = new OB.DS.HWResource('res/printinvoice.xml');

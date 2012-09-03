@@ -39,6 +39,7 @@ enyo.kind({
   imgChanged: function() {
     var url = (this.img) ? 'data:' + this.contentType + ';base64,' + this.img : this['default'];
     this.$.image.applyStyle('background', '#ffffff url(' + url + ') center center no-repeat');
+    this.$.image.applyStyle('background-size', 'contain');
   }
 });
 

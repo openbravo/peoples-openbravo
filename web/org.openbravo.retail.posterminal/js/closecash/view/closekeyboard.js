@@ -33,7 +33,7 @@ enyo.kind({
       buttons.push({
         command: payment.get('_id'),
         definition: {
-          action: function(amt) {
+          action: function(keyboard, amt) {
             payment.set('counted', amt);
           }
         },

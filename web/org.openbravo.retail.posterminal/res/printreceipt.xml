@@ -114,8 +114,12 @@
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>
     </line>
     <line></line>
-    <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1'))%></text>
+    <line size="1">
+      <% if (order.get('hasbeenpaid') === 'Y') { %>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
+      <% } else { %>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft'))  %></text>
+      <% } %>
     </line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>

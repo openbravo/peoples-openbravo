@@ -54,9 +54,3 @@ enyo.kind({
     this.$.paymentamount.setContent(this.paymentAmount);
   }
 });
-
-// register
-OB.POS.paymentProviders.push({
-  property: 'testPayments',
-  view: OB.UI.MockPayment
-});

@@ -91,6 +91,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     receipt.on('paymentDone', function() {
       receipt.calculateTaxes(function() {
         receipt.trigger('closed');
+        receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
     }, this);
