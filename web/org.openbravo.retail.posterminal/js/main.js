@@ -73,8 +73,7 @@
 
     // Redirect to login window
     localStorage.setItem('target-window', window.location.href);
-    OB.POS.navigate('login');
-    //window.location = window.location.pathname + 'login.jsp' + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
+    window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
   $(document).ready(function() {
