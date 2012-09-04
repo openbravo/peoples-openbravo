@@ -218,7 +218,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
           payment.setWriteoffAmount(paymentWriteOfAmount);
           payment.setProcessed(true);
-          payment.setAPRMProcessPayment("R");
+          payment.setAPRMProcessPayment("RE");
           if (payment.getGeneratedCredit() == null) {
             payment.setGeneratedCredit(BigDecimal.ZERO);
           }
