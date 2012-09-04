@@ -15,10 +15,10 @@ enyo.kind({
   myId: 'modalp',
   header: OB.I18N.getLabel('OBPOS_LblModalPayment'),
   maxheight: '600px',
-  show: function(receipt, key, name, paymentMethod, amount) {
+  show: function(receipt, provider, key, name, paymentMethod, amount) {
 	  this.$.body.destroyComponents();
     this.$.body.createComponent({
-      kind: paymentMethod.paymentProvider,
+      kind: provider,
       paymentMethod: paymentMethod,
       paymentType: name,
       paymentAmount: amount,
