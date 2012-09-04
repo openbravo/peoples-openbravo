@@ -1547,8 +1547,12 @@ OB.ViewFormProperties = {
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
       if (form.isVisible() && storedFocusItem && storedFocusItem.isFocusable(true)) {
-        form.setFocusItem(storedFocusItem);
-        form.setFocusInForm();
+        // The setTimeout fixes issue https://issues.openbravo.com/view.php?id=21546
+        // that is only reproducible in certain versions of Chrome
+        setTimeout(function () {
+          form.setFocusItem(storedFocusItem);
+          form.setFocusInForm();
+        }, 10);
       }
 
       return false;
