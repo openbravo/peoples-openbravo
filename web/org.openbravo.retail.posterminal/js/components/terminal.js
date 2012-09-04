@@ -32,7 +32,7 @@ enyo.kind({
   }, {
     name: 'onlineLabel',
     tag: 'span',
-    content: OB.I18N.getLabel('OBPOS_Online')
+    content: 'online'
   }]
 });
 
