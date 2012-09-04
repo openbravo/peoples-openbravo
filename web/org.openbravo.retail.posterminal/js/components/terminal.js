@@ -16,10 +16,10 @@ enyo.kind({
   },
   onlineStateChanged: function(){
     if (this.onlineState){
-      this.$.onlineLabel.setContent('Online');
+      this.$.onlineLabel.setContent(OB.I18N.getLabel('OBPOS_Online'));
       this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
     }else{
-      this.$.onlineLabel.setContent('Offline');
+      this.$.onlineLabel.setContent(OB.I18N.getLabel('OBPOS_Offline'));
       this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOffline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
     }
   },
@@ -32,7 +32,7 @@ enyo.kind({
   }, {
     name: 'onlineLabel',
     tag: 'span',
-    content: 'Online' //TODO: trl
+    content: OB.I18N.getLabel('OBPOS_Online')
   }]
 });
 
@@ -167,7 +167,7 @@ enyo.kind({
     }, this);
 
     this.terminal.on('change:connectedToERP', function(model){
-      this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));    
+      this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));
     }, this);
     
     this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function() {
