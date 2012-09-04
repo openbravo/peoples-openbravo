@@ -1387,9 +1387,12 @@ OB.ViewFormProperties = {
   // function
   saveRow: function () {
     var savingNewRecord = this.isNew,
-        storedFocusItem = this.getFocusItem(),
-        i, length, flds, form = this,
+        storedFocusItem, i, length, flds, form = this,
         ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
+
+    if (this.getFocusItem()) {
+      storedFocusItem = this.getFocusItem();
+    }
 
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
@@ -1543,8 +1546,10 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
-      this.setFocusItem(storedFocusItem);
-      this.setFocusInForm();
+      if (form.isVisible() && storedFocusItem && storedFocusItem.isFocusable(true)) {
+        form.setFocusItem(storedFocusItem);
+        form.setFocusInForm();
+      }
 
       return false;
     };
