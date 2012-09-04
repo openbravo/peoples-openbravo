@@ -103,13 +103,6 @@
         </line>      
         <line>
           <text align="left" length="2"></text>
-          <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentExp') %></text>
-          <text align="left" length="2"><%= pinfo.ExpirationMonth %></text>
-          <text align="left" length="1">/</text>
-          <text align="left" length="2"><%= pinfo.ExpirationYear %></text>
-        </line>      
-        <line>
-          <text align="left" length="2"></text>
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentLogo') %></text>
           <text align="left" length="20"><%= pinfo.CardLogo %></text>
         </line>      

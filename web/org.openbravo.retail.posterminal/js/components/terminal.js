@@ -9,10 +9,36 @@
 
 /*global enyo, $ */
 
+enyo.kind({
+  name: 'OB.UI.onlineviewer',
+  published: {
+    onlineState: null
+  },
+  onlineStateChanged: function(){
+    if (this.onlineState){
+      this.$.onlineLabel.setContent('Online');
+      this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
+    }else{
+      this.$.onlineLabel.setContent('Offline');
+      this.$.onlineImg.setAttribute('style', 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOffline.png\'); background-repeat: no-repeat; background-position: 2px 3px;');
+    }
+  },
+  style: 'display: inline-block; margin-left: 15px;',
+  components: [{
+    name: 'onlineImg',
+    tag: 'span',
+    style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
+    content: '.'
+  }, {
+    name: 'onlineLabel',
+    tag: 'span',
+    content: 'Online' //TODO: trl
+  }]
+});
+
 // Container for the whole POS application
 enyo.kind({
   name: 'OB.UI.Terminal',
-
   classes: 'container',
   components: [{
     classes: 'section',
@@ -24,18 +50,11 @@ enyo.kind({
         classes: 'span12',
         style: 'color: white; font-size: 16px;',
         components: [{
+          name: 'onlineContainer',
           style: 'display: inline-block; vertical-align: middle; margin: 3px 0px 0px 0px;',
           components: [{
-            name: 'online',
-            style: 'display: inline-block; margin-left: 15px;',
-            components: [{
-              tag: 'span',
-              style: 'display: inline-block; width: 20px; color: transparent; background-image: url(\'./img/iconOnline.png\'); background-repeat: no-repeat; background-position: 2px 3px;',
-              content: '.'
-            }, {
-              tag: 'span',
-              content: 'Online' //TODO: trl
-            }]
+            kind: 'OB.UI.onlineviewer',
+            name: 'onlineviewer'
           }, {
             name: 'terminal',
             style: 'display: inline-block; margin-left: 50px;'
@@ -126,7 +145,6 @@ enyo.kind({
       return 'alertContainer';
     }
   }],
-
   initComponents: function() {
     //this.terminal = terminal;
     this.inherited(arguments);
@@ -148,7 +166,10 @@ enyo.kind({
       }
     }, this);
 
-
+    this.terminal.on('change:connectedToERP', function(model){
+      this.$.onlineviewer.setOnlineState(model.get('connectedToERP'));    
+    }, this);
+    
     this.terminal.on('change:terminal change:bplocation change:location change:pricelist change:pricelistversion', function() {
       var name = '';
       var clientname = '';
@@ -189,8 +210,6 @@ enyo.kind({
     return 'container';
   }
 });
-
-
 
 enyo.kind({
   name: 'OB.UI.Terminal.UserWidget',

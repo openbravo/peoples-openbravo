@@ -121,6 +121,7 @@ enyo.kind({
                 components: [{
                   kind: 'OB.UI.ButtonKey',
                   label: OB.I18N.getLabel('OBPOS_KbPrice'),
+                  permission: 'OBPOS_order.changePrice',
                   command: 'line:price'
                 }]
               }]
@@ -133,6 +134,7 @@ enyo.kind({
                 components: [{
                   kind: 'OB.UI.ButtonKey',
                   label: OB.I18N.getLabel('OBPOS_KbDiscount'),
+                  permission: 'OBPOS_order.discount',
                   command: 'line:dto'
                 }]
               }]
@@ -238,7 +240,7 @@ enyo.kind({
   },
 
   execCommand: function(cmddefinition, txt) {
-    if (!cmddefinition.permissions || OB.POS.modelterminal.hasPermission(cmddefinition.permissions)) {
+    if (!cmddefinition.permission || OB.POS.modelterminal.hasPermission(cmddefinition.permission)) {
       cmddefinition.action(this, txt);
     }
   },

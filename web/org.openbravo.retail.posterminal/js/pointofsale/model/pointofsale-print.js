@@ -15,10 +15,10 @@
     this.receipt = receipt;
     this.receipt.on('print', this.print, this);
 
-    this.templatereceipt = new OB.DS.HWResource('res/printreceipt.xml');
-    this.templateinvoice = new OB.DS.HWResource('res/printinvoice.xml');
-    this.templatereturn = new OB.DS.HWResource('res/printreturn.xml');
-    this.templatereturninvoice = new OB.DS.HWResource('res/printreturninvoice.xml');    
+    this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
+    this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
+    this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
+    this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);    
   };
   
   PrintReceipt.prototype.print = function () {
@@ -60,7 +60,7 @@
       this.print();
     }, this);
     
-    this.templateline = new OB.DS.HWResource('res/printline.xml');    
+    this.templateline = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);    
   };
   
   PrintReceiptLine.prototype.print = function () {
@@ -74,6 +74,11 @@
   OB.OBPOSPointOfSale.Print = OB.OBPOSPointOfSale.Print || {}; 
   
   OB.OBPOSPointOfSale.Print.Receipt = PrintReceipt; 
+  OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printreceipt.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice = 'res/printinvoice.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = 'res/printreturn.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine; 
+  OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml'; 
 
 }());
