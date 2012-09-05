@@ -61,13 +61,15 @@
       return memo && val;
     }, true);
   };
+  
+  OB.UTIL.processOrderClass = 'org.openbravo.retail.posterminal.ProcessOrder';
 
   OB.UTIL.processOrders = function(model, orders, successCallback, errorCallback) {
     var ordersToJson = [];
     orders.each(function(order) {
       ordersToJson.push(order.serializeToJSON());
     });
-    this.proc = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessOrder');
+    this.proc = new OB.DS.Process(OB.UTIL.processOrderClass);
     if (OB.POS.modelterminal.get('connectedToERP')) {
       this.proc.exec({
         order: ordersToJson
