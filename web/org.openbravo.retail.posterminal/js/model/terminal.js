@@ -179,6 +179,17 @@ OB.Model.Terminal = Backbone.Model.extend({
 
     //TODO: load OB.DATA??? It should be done only if needed...
   },
+  
+  isWindowOnline: function(route) {
+    var i, windows;
+    windows = OB.POS.windows.toArray();
+    for(i=0;i<windows.length;i++){
+      if(windows[i].get('route') === route) {
+        return windows[i].get('online');  
+      }
+    }
+    return false;
+  },
 
   renderGenericWindow: function(windowName) {
     OB.UTIL.showLoading(true);
@@ -289,12 +300,11 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
     }else{
     	OB.POS.modelterminal.set('windowRegistered', undefined);
-    	alert('offline!!!');
         OB.Dal.find(OB.Model.User, {'name': me.user},
           function(users) {
             var user;
         	if(users.models.length == 0 ) {
-              alert('pos is offline, and this user never logged in the pos');
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
         	}else{
               if(users.models[0].get('password') === hex_md5(me.password+OB.POS.paramTerminal)){
                 me.usermodel = users.models[0];
@@ -308,7 +318,7 @@ OB.Model.Terminal = Backbone.Model.extend({
                   trigger: true
                 });
               } else{
-                  alert('the user/password is not correct');
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflinePasswordNotCorrect'));
             	  OB.POS.navigate('login');
               }
             }
@@ -367,6 +377,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('pricelistversion', termInfo.pricelistversion);
       this.set('currency', termInfo.currency);
       this.set('currencyPrecision', termInfo.currencyPrecision);
+      this.set('loggedOffline', true);
       this.setDocumentSequence();
       this.triggerReady();
       return;
@@ -384,6 +395,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('pricelistversion', null);
     this.set('currency', null);
     this.set('currencyPrecision', null);
+    this.set('loggedOffline', false);
 
     // Starting app
     var me = this;

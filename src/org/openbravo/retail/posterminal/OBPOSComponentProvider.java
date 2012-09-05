@@ -93,6 +93,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/terminal",
         "components/modalprofile",
         "components/modallogout",
+        "components/modalonline",
         "components/modalcancel",
         "components/windowview",
         "main",

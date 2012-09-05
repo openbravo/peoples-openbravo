@@ -82,5 +82,6 @@ OB.POS.registerWindow({
 	  windowClass: OB.OBPOSCashMgmt.UI.CashManagement,
 	  route: 'retail.cashmanagement',
 	  menuPosition: 10,
+	  online: true,
 	  menuLabel: OB.I18N.getLabel('OBPOS_LblCashManagement')
 	});

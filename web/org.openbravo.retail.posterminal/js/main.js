@@ -58,6 +58,9 @@
       OB.UTIL.showLoading(false);
       alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     }
+    if(OB.POS.modelterminal.get('loggedOffline')===true) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
+    }
   });
 
   modelterminal.on('loginsuccess', function() {

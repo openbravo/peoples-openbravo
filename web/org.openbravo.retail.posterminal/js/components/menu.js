@@ -138,7 +138,16 @@ enyo.kind({
     }
   },
   tap: function() {
-    // TODO: check online for required windows
+    if(OB.POS.modelterminal.isWindowOnline(this.route) === true){
+      if(!OB.POS.modelterminal.get('connectedToERP')){
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+      }
+      if(OB.POS.modelterminal.get('loggedOffline')===true){
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowOfflineLogin'));
+        return;
+      }
+    }
     if (!OB.POS.modelterminal.hasPermission(this.route)) {
       return;
     }
