@@ -36,8 +36,7 @@
     },
     createStatement: '${data.createStatement?js_string}',
     dropStatement: '${data.dropStatement?js_string}',
-    insertStatement: '${data.insertStatement?js_string}',
-    updateStatement: '${data.updateStatement?js_string}'
+    insertStatement: '${data.insertStatement?js_string}'
   });
 
   var ${data.modelName}List = Backbone.Collection.extend({
