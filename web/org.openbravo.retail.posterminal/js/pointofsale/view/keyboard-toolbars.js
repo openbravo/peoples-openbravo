@@ -37,8 +37,18 @@ enyo.kind({
   toolbarName: 'toolbarpayment',
   pay: function(amount, key, name, paymentMethod) {
     if (OB.DEC.compare(amount) > 0) {
-      if (paymentMethod.paymentProvider) {
-        this.$.modalpayment.show(this.receipt, key, name, paymentMethod, amount);
+      
+      var provider;
+      if (this.receipt.get('orderType') === 0) {
+        provider = paymentMethod.paymentProvider;
+      } else if  (this.receipt.get('orderType') === 1) {
+        provider = paymentMethod.refundProvider;
+      } else {
+        provider = null;
+      }
+      
+      if (provider) {
+        this.$.modalpayment.show(this.receipt, provider, key, name, paymentMethod, amount);
       } else {
         this.receipt.addPayment(new OB.Model.PaymentLine({
           'kind': key,
