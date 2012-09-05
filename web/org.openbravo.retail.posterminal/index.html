@@ -65,6 +65,23 @@
   <script src="js/model/user.js"></script>
   <script src="js/model/session.js"></script>
   <script src="../../org.openbravo.client.kernel/OBPOS_Main/Labels"></script>
+  <script>
+    (function () {
+  window.addEventListener('load', function(e) {
+
+  window.applicationCache.addEventListener('updateready', function(e) {
+    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+      window.applicationCache.swapCache();
+        window.location.reload();
+      }
+    } else {
+      // Manifest didn't change
+    }
+  }, false);
+
+}, false);
+}());
+  </script>
    <script>
     (function () {
       function resizeWindow() {
