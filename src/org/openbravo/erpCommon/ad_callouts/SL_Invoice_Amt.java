@@ -184,7 +184,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppriceactual\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelist\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
-      resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "\"),");
+      resultado.append("new Array(\"inppricestd\", " + netUnitPrice.toString() + "),");
     }
     // if taxinclusive field is changed then modify net unit price and gross price
     if (strChanged.equals("inpgrossUnitPrice")) {
