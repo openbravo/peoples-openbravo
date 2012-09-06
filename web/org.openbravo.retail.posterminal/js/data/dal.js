@@ -8,11 +8,11 @@
  */
 
 /*global define,_,console,Backbone */
-(function (d) {
+(function () {
 
   var dbSize = 50 * 1024 * 1024,
       undef, wsql = window.openDatabase !== undef,
-      db = d || (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize)),
+      db = (wsql && window.openDatabase('WEBPOS', '0.1', 'Openbravo Web POS', dbSize)),
       OP;
 
   OP = {
@@ -362,4 +362,4 @@
     removeAll: removeAll,
     initCache: initCache
   };
-}(OB && OB.DATA && OB.DATA.OfflineDB));
+}());
