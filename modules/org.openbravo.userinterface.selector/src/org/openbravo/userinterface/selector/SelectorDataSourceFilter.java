@@ -171,11 +171,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
               }
             } else {
               for (int i = 0; i < fieldNameSplit.length; i++) {
-                if (cEntity.hasProperty(fieldName)) {
-                  fProp = cEntity.getProperty(fieldNameSplit[i]);
-                } else {
-                  continue;
-                }
+                fProp = cEntity.getProperty(fieldNameSplit[i]);
                 if (i != fieldNameSplit.length - 1) {
                   cEntity = fProp.getReferencedProperty().getEntity();
                 }
