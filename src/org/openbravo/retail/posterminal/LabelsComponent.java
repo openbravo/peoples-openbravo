@@ -18,6 +18,8 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -27,7 +29,10 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.module.ModuleDependency;
 
 public class LabelsComponent extends BaseTemplateComponent {
   private static final String TEMPLATE_ID = "A92865DA3F58419B9906A0307F41D705";
@@ -39,13 +44,13 @@ public class LabelsComponent extends BaseTemplateComponent {
   }
 
   public String getLabelsObj() {
+    String moduleIds = getDependantModuleIds();
     StringBuffer sb = new StringBuffer();
 
     try {
       JSONObject labels = new JSONObject();
-      // TODO: Don't retrieve only OBPOS messages but also messages in modules depending on it
       String hqlLabel = "select message.searchKey, message.messageText "
-          + "from ADMessage message " + "where message.searchKey like 'OBPOS_%'";
+          + "from ADMessage message " + "where module.id in " + moduleIds;
       Query qryLabel = OBDal.getInstance().getSession().createQuery(hqlLabel);
       for (Object qryLabelObject : qryLabel.list()) {
         final Object[] qryLabelObjectItem = (Object[]) qryLabelObject;
@@ -57,6 +62,39 @@ public class LabelsComponent extends BaseTemplateComponent {
     }
     return sb.toString();
 
+  }
+
+  private String getDependantModuleIds() {
+    StringBuffer ids = new StringBuffer();
+
+    List<Module> dependantModules = new ArrayList<Module>();
+    Module retailModule = OBDal.getInstance().get(Module.class, "FF808181326CC34901326D53DBCF0018");
+    OBCriteria<ModuleDependency> totalDeps = OBDal.getInstance().createCriteria(
+        ModuleDependency.class);
+    dependantModules.add(retailModule);
+    getDependantModules(retailModule, dependantModules, totalDeps.list());
+    int n = 0;
+    ids.append("(");
+    for (Module mod : dependantModules) {
+      if (n > 0) {
+        ids.append(",");
+      }
+      ids.append("'" + mod.getId() + "'");
+      n++;
+    }
+    ids.append(")");
+    return ids.toString();
+  }
+
+  private void getDependantModules(Module module, List<Module> moduleList,
+      List<ModuleDependency> list) {
+    for (ModuleDependency depModule : list) {
+      if (depModule.getDependentModule().equals(module)
+          && !moduleList.contains(depModule.getDependentModule())) {
+        moduleList.add(depModule.getModule());
+        getDependantModules(depModule.getModule(), moduleList, list);
+      }
+    }
   }
 
   public String getFormat() {
