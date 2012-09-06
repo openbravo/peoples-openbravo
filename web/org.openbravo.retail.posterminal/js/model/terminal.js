@@ -211,6 +211,32 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
 
+  updateSession: function(user) {
+  	OB.Dal.find(OB.Model.Session, {'user': user.get('id')},
+        function(sessions) {
+  		  var session;
+          if(sessions.models.length == 0){
+        	  session=new OB.Model.Session();
+        	  session.set('ad_user_id', user.get('id'));
+        	  session.set('terminal', OB.POS.paramTerminal);
+      	    session.set('active', 'Y');
+            OB.Dal.save(session, function(){
+            }, function() {
+              window.console.error(arguments);
+            });
+  		  }else{
+    		  session=sessions.models[0];
+        	  session.set('active', 'Y');
+            OB.Dal.save(session, function(){
+            }, function() {
+              window.console.error(arguments);
+            });
+  		  }
+          OB.POS.modelterminal.set('session', session.get('id'));
+  	  },
+  	function(){window.console.error(arguments);});
+  },
+  
   login: function(user, password, mode) {
     OB.UTIL.showLoading(true);
     var me = this;
@@ -279,12 +305,7 @@ OB.Model.Terminal = Backbone.Model.extend({
                 window.console.error(arguments);
               });
             }
-        	session=new OB.Model.Session();
-        	session.set('ad_user_id', user.get('id'));
-            OB.Dal.save(session, function(){
-            }, function() {
-              window.console.error(arguments);
-            });
+        	me.updateSession(user);
           }, 
           function() {
           }
@@ -308,12 +329,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	}else{
               if(users.models[0].get('password') === hex_md5(me.password+OB.POS.paramTerminal)){
                 me.usermodel = users.models[0];
-            	session=new OB.Model.Session();
-            	session.set('ad_user_id', users.models[0].get('id'));
-                OB.Dal.save(session, function(){
-                }, function() {
-                  window.console.error(arguments);
-                });
+                me.updateSession(me.usermodel);
                 OB.POS.navigate('main', {
                   trigger: true
                 });

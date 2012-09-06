@@ -94,10 +94,11 @@
     tableName: 'c_order',
     entityName: 'Order',
     source: '',
-    properties: ['id', 'json', 'hasbeenpaid', 'isbeingprocessed'],
+    properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
       'json': 'json',
+      'session': 'ad_session_id',
       'hasbeenpaid': 'hasbeenpaid',
       'isbeingprocessed': 'isbeingprocessed'
     },
@@ -107,9 +108,9 @@
       isbeingprocessed: 'N'
     },
 
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_order (c_order_id TEXT PRIMARY KEY, json CLOB, hasbeenpaid TEXT, isbeingprocessed TEXT)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS c_order (c_order_id TEXT PRIMARY KEY, json CLOB, ad_session_id TEXT, hasbeenpaid TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS c_order',
-    insertStatement: 'INSERT INTO c_order(c_order_id, json, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?)',
+    insertStatement: 'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
     _id: 'modelorder',
     initialize: function(attributes) {
@@ -623,6 +624,7 @@
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
+      order.set('session', OB.POS.modelterminal.get('session'));
       order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
       order.set('currency', OB.POS.modelterminal.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);

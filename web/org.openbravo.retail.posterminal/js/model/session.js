@@ -16,16 +16,18 @@
     tableName: 'ad_session',
     entityName: 'Session',
     source: 'org.openbravo.retail.posterminal.Session',
-    properties: ['id','ad_user_id', '_identifier', '_idx'],
+    properties: ['id','user', 'terminal', 'active', '_identifier', '_idx'],
     propertyMap: {
       'id': 'ad_session_id',
-      'ad_user_id': 'user',
+      'user': 'ad_user_id',
+      'terminal': 'terminal',
+      'active': 'active',
       '_identifier': '_identifier',
       '_idx': '_idx'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS ad_session (ad_session_id TEXT PRIMARY KEY , ad_user_id TEXT, _identifier TEXT , _idx NUMERIC)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS ad_session (ad_session_id TEXT PRIMARY KEY , ad_user_id TEXT, terminal TEXT, active TEXT, _identifier TEXT , _idx NUMERIC)',
     dropStatement: 'DROP TABLE IF EXISTS ad_session',
-    insertStatement: 'INSERT INTO ad_session(ad_session_id, ad_user_id, _identifier, _idx)  VALUES (?, ?, ?, ?)',
+    insertStatement: 'INSERT INTO ad_session(ad_session_id, ad_user_id, terminal, active, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)',
     updateStatement: '',
     local: true
   });
