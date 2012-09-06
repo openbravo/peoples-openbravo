@@ -103,38 +103,12 @@ public class SE_Order_BPartner extends SimpleCallout {
     // BPartner Location
 
     FieldProvider[] tdv = null;
-    int nLocations = 0;
-    try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
-      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
-      tdv = comboTableData.select(false);
-      nLocations = tdv.length;
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
 
     String strLocation = info.vars.getStringParameter("inpcBpartnerId_LOC");
-    if (tdv != null && tdv.length > 0) {
-      info.addSelect("inpcBpartnerLocationId");
-      if (strLocation.isEmpty()) {
-        // If no location is provided, the first one is selected
-        info.addSelectResult(tdv[0].getField("id"), tdv[0].getField("name"), true);
-        for (int i = 1; i < tdv.length; i++) {
-          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), false);
-        }
-      } else {
-        // If a location is provided, it is selected
-        for (int i = 0; i < tdv.length; i++) {
-          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
-              .getField("id").equalsIgnoreCase(strLocation));
-        }
-      }
-      info.endSelect();
+    if (strLocation != null) {
+      info.addResult("inpcBpartnerLocationId", strLocation);
     }
+
     // Warehouses
 
     FieldProvider[] td = null;
@@ -243,38 +217,11 @@ public class SE_Order_BPartner extends SimpleCallout {
     }
 
     // Bill to
-    FieldProvider[] tlv = null;
-    try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
-      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
-      tlv = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+
+    if (strLocation != null) {
+      info.addResult("inpbilltoId", strLocation);
     }
 
-    if (tlv != null && tlv.length > 0) {
-      info.addSelect("inpbilltoId");
-      if (strLocation.isEmpty()) {
-        // If no location is provided, the first one is selected
-        info.addSelectResult(tlv[0].getField("id"), tlv[0].getField("name"), true);
-        for (int i = 0; i < tlv.length; i++) {
-          info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), false);
-        }
-      } else {
-        // If a location is provided, it is selected
-        for (int i = 0; i < tlv.length; i++) {
-          info.addSelectResult(tlv[i].getField("id"), tlv[i].getField("name"), tlv[i]
-              .getField("id").equalsIgnoreCase(strLocation));
-        }
-      }
-      info.endSelect();
-    } else {
-      info.addResult("inpbilltoId", null);
-    }
     // Payment rule
 
     info.addResult("inppaymentrule", strPaymentrule);
@@ -365,10 +312,6 @@ public class SE_Order_BPartner extends SimpleCallout {
     // Message
 
     StringBuilder message = new StringBuilder();
-
-    if (nLocations == 0) {
-      message.append(Utility.messageBD(this, "NoBPLocation", info.vars.getLanguage()));
-    }
 
     if (data != null && data.length > 0
         && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
