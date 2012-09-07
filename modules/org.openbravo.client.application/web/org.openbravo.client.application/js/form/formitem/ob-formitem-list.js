@@ -142,6 +142,7 @@ isc.OBListItem.addProperties({
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (this.valueMap && this.valueMap[value]) {
+      this.lastSelectedValue = value;
       return this.valueMap[value];
     }
 
@@ -162,11 +163,18 @@ isc.OBListItem.addProperties({
     return ret;
   },
 
-  mapDisplayToValue: function (value) {
-    if (value === '') {
+  mapDisplayToValue: function (display) {
+    if (display === '') {
       return null;
     }
-    return this.Super('mapDisplayToValue', arguments);
+    if (this.lastSelectedValue && display === this.mapValueToDisplay(this.lastSelectedValue)) {
+      // Prevents mapDisplayToValue from failing when there are several
+      // entries in the valuemap with the same value
+      // See issue https://issues.openbravo.com/view.php?id=21553
+      return this.lastSelectedValue;
+    } else {
+      return this.Super('mapDisplayToValue', arguments);
+    }
   }
 
 });
