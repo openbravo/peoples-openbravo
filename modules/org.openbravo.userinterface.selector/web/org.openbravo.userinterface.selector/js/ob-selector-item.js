@@ -644,7 +644,8 @@ isc.OBSelectorItem.addProperties({
   },
 
   getPickListFilterCriteria: function () {
-    var crit = this.Super('getPickListFilterCriteria', arguments);
+    var crit = this.Super('getPickListFilterCriteria', arguments),
+        operator;
     this.pickList.data.useClientFiltering = false;
     var criteria = {
       operator: 'or',
@@ -670,16 +671,21 @@ isc.OBSelectorItem.addProperties({
       displayFieldValue = crit[this.displayField];
     }
     if (displayFieldValue !== null) {
+      if (this.textMatchStyle === 'substring') {
+        operator = 'iContains';
+      } else {
+        operator = 'iStartsWith';
+      }
       for (i = 0; i < this.extraSearchFields.length; i++) {
         criteria.criteria.push({
           fieldName: this.extraSearchFields[i],
-          operator: 'iContains',
+          operator: operator,
           value: displayFieldValue
         });
       }
       criteria.criteria.push({
         fieldName: this.displayField,
-        operator: 'iContains',
+        operator: operator,
         value: displayFieldValue
       });
     }
