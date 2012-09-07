@@ -207,7 +207,9 @@ isc.OBToolbar.addClassProperties({
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
-        this.setDisabled(!this.view.isEditingGrid);
+        // Only enabled when the grid is being edited or when
+        // the selected records have errors
+        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged());
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
