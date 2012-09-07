@@ -305,6 +305,19 @@ isc.OBViewGrid.addProperties({
       this.contextMenu = this.getMenuConstructor().create({
         items: menuItems
       });
+      this.contextMenu.show = function () {
+        var me = this;
+        if (!grid.view.isActiveView()) {
+          // The view where the context menu is being opened must be active
+          // See issue https://issues.openbravo.com/view.php?id=20872
+          grid.view.setAsActiveView(true);
+          setTimeout(function () {
+            me.Super('show', arguments);
+          }, 10);
+        } else {
+          me.Super('show', arguments);
+        }
+      };
     }
 
     var ret = this.Super('initWidget', arguments);
