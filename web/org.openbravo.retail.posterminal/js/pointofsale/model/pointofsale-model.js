@@ -21,7 +21,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
         criteria = {
-        'hasbeenpaid': 'N'
+        'hasbeenpaid': 'N',
+        'session': OB.POS.modelterminal.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function(ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},

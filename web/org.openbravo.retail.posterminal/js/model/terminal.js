@@ -217,7 +217,7 @@ OB.Model.Terminal = Backbone.Model.extend({
   		  var session;
           if(sessions.models.length == 0){
         	  session=new OB.Model.Session();
-        	  session.set('ad_user_id', user.get('id'));
+        	  session.set('user', user.get('id'));
         	  session.set('terminal', OB.POS.paramTerminal);
       	    session.set('active', 'Y');
             OB.Dal.save(session, function(){
@@ -284,6 +284,7 @@ OB.Model.Terminal = Backbone.Model.extend({
 
         OB.Dal.initCache(OB.Model.User, [], null, null);
         OB.Dal.initCache(OB.Model.Session, [], null, null);
+        OB.POS.modelterminal.set('orgUserId', data.userId);
         OB.Dal.find(OB.Model.User, {'name': me.user},
           function(users) {
             var user, session;
@@ -393,6 +394,7 @@ OB.Model.Terminal = Backbone.Model.extend({
       this.set('pricelistversion', termInfo.pricelistversion);
       this.set('currency', termInfo.currency);
       this.set('currencyPrecision', termInfo.currencyPrecision);
+      this.set('orgUserId', termInfo.orgUserId);
       this.set('loggedOffline', true);
       this.setDocumentSequence();
       this.triggerReady();

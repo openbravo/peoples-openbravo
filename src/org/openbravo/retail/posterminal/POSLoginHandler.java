@@ -127,6 +127,7 @@ public class POSLoginHandler extends LoginHandler {
         session.setSessionActive(true);
 
         jsonMsg.put("showMessage", false);
+        jsonMsg.put("userId", userId);
       } else {
         errorLogin(res, vars, session, "OBPOS_NO_POS_ROLE_TITLE", "OBPOS_NO_POS_ROLE_MSG",
             new ArrayList<String>());

@@ -128,11 +128,14 @@
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
         this.set('documentType', attributes.documentType);
+        this.set('createdBy', attributes.createdBy);
+        this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('priceList', attributes.priceList);
         this.set('currency', attributes.currency);
         this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+        this.set('session', attributes.session);
         this.set('warehouse', attributes.warehouse);
         this.set('salesRepresentative', attributes.salesRepresentative);
         this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
@@ -235,12 +238,15 @@
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
+      this.set('createdBy', null);
+      this.set('updatedBy', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
       this.set('priceList', null);
       this.set('currency', null);
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
+      this.set('session', null);
       this.set('warehouse', null);
       this.set('salesRepresentative', null);
       this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
@@ -263,12 +269,15 @@
       this.set('id', _order.get('id'));
       this.set('client', _order.get('client'));
       this.set('organization', _order.get('organization'));
+      this.set('createdBy', _order.get('createdBy'));
+      this.set('updatedBy', _order.get('updatedBy'));
       this.set('documentType', _order.get('documentType'));
       this.set('orderType', _order.get('orderType'));
       this.set('generateInvoice', _order.get('generateInvoice'));
       this.set('priceList', _order.get('priceList'));
       this.set('currency', _order.get('currency'));
       this.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
+      this.set('session', _order.get('session'));
       this.set('warehouse', _order.get('warehouse'));
       this.set('salesRepresentative', _order.get('salesRepresentative'));
       this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, _order.get('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER));
@@ -621,6 +630,8 @@
 
       order.set('client', OB.POS.modelterminal.get('terminal').client);
       order.set('organization', OB.POS.modelterminal.get('terminal').organization);
+      order.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      order.set('updatedBy', OB.POS.modelterminal.get('orgUserId'));
       order.set('documentType', OB.POS.modelterminal.get('terminal').documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order
       order.set('generateInvoice', false);
