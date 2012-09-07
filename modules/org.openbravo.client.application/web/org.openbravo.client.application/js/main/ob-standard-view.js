@@ -2069,12 +2069,10 @@ isc.OBStandardView.addProperties({
         OB.Utilities.fixNull250(currentValues);
 
         try {
-          if (this.originalShowIf === 'true') {
-            originalShowIfValue = true;
-          } else if (this.originalShowIf === 'false') {
-            originalShowIfValue = false;
-          } else {
+          if (isc.isA.Function(this.originalShowIf)) {
             originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          } else {
+            originalShowIfValue = isc.JSON.decode(this.originalShowIf);
           }
         } catch (_exception) {
           isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
