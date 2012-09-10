@@ -136,6 +136,11 @@ public class OpenIDManager implements OBSingleton {
   public User getUser(Identifier oid) throws OBException {
     User u = null;
 
+    if (oid == null) {
+      log.error("No user has been associated with the Google account");
+      return null;
+    }
+
     OBCriteria<OBSOIDUserIdentifier> userCriteria = OBDal.getInstance().createCriteria(
         OBSOIDUserIdentifier.class);
     userCriteria
