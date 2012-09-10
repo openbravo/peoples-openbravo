@@ -32,7 +32,7 @@ enyo.kind({
   }, {
     name: 'onlineLabel',
     tag: 'span',
-    content: 'online'
+    content: ''//is set later, in onlineStateChanged function.
   }]
 });
 
