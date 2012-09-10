@@ -40,6 +40,7 @@
       this.doUserImgClick();
     },
     create: function () {
+      var me = this;
       this.inherited(arguments);
 
       if (this.userImage && this.userImage !== 'none') {
@@ -48,6 +49,28 @@
       if (this.userConnected === 'true') {
         this.$.bottomIcon.applyStyle('background-image', 'url(img/iconOnlineUser.png)');
       }
+      
+      OB.Dal.find(OB.Model.User, {'name': this.user},
+        function(users) {
+    	  var user;
+          if(users.models.length != 0 ) {
+            user = users.models[0];
+            OB.Dal.find(OB.Model.Session, {'user': user.get('id')},
+                    function(sessions) {
+            	      var session;
+                      if(sessions.models.length != 0 ) {
+                        var session=sessions.models[0];
+                        if(session.get('active')==='Y'){
+                          me.$.bottomIcon.applyStyle('background-image', 'url(img/iconAwayUser.png)');
+                        }else{
+                          me.$.bottomIcon.applyStyle('background-image', 'url(img/iconOfflineUser.png)');
+                        }
+                      }
+            },function() {window.console.error(arguments);});
+          }
+      },function() {window.console.error(arguments);});
+      
+      
       if (this.user) {
         this.$.bottomText.setContent(this.user);
       }

@@ -237,6 +237,21 @@ OB.Model.Terminal = Backbone.Model.extend({
   	function(){window.console.error(arguments);});
   },
   
+  closeSession: function() {
+    var sessionId = OB.POS.modelterminal.get('session');
+    OB.Dal.get(OB.Model.Session, sessionId, 
+      function(session){
+    	session.set('active','N');
+        OB.Dal.save(session, function(){
+          OB.POS.modelterminal.triggerLogout();
+        }, function() {
+          window.console.error(arguments);
+        });
+      },function(){
+      window.console.error(arguments);
+    });
+  },
+  
   login: function(user, password, mode) {
     OB.UTIL.showLoading(true);
     var me = this;
@@ -365,16 +380,39 @@ OB.Model.Terminal = Backbone.Model.extend({
       dataType: 'json',
       type: 'GET',
       success: function(data, textStatus, jqXHR) {
+        me.closeSession();
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        me.closeSession();
+      }
+    });
+  },
+
+  lock: function() {
+    var me = this;
+    this.set('terminal', null);
+    this.set('payments', null);
+    this.set('context', null);
+    this.set('permissions', null);
+    this.set('bplocation', null);
+    this.set('location', null);
+    this.set('pricelist', null);
+    this.set('pricelistversion', null);
+    this.set('currency', null);
+    this.set('currencyPrecision', null);
+
+    $.ajax({
+      url: '../../org.openbravo.retail.posterminal.service.logout',
+      contentType: 'application/json;charset=utf-8',
+      dataType: 'json',
+      type: 'GET',
+      success: function(data, textStatus, jqXHR) {
         me.triggerLogout();
       },
       error: function(jqXHR, textStatus, errorThrown) {
         me.triggerLogout();
       }
     });
-  },
-
-  lock: function() {
-    alert('Feature not yet implemented');
   },
 
   load: function() {

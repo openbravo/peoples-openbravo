@@ -268,6 +268,12 @@ enyo.kind({
       style: 'height: 5px;'
     }, {
       kind: 'OB.UI.MenuAction',
+      label: 'Lock screen',
+      tap: function() {
+       OB.POS.lock();
+      }
+    }, {
+      kind: 'OB.UI.MenuAction',
       label: 'Log Out',
       //TODO: OB.I18N.getLabel('OBPOS_LblProfile'),
       tap: function() {
