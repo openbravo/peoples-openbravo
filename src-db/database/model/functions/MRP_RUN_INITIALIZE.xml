@@ -214,8 +214,13 @@ BEGIN --BODY
     END; -- End Call M_GET_STOCK
 
     SELECT COALESCE(SUM(quantity),0) INTO v_QtyOnHand
-    FROM m_stock_proposed
-    WHERE ad_pinstance_id = v_ad_pinstance_id;
+    FROM m_stock_proposed sp
+        JOIN m_storage_detail sd ON sp.m_storage_detail_id = sd.m_storage_detail_id
+        JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
+        JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
+    WHERE ad_pinstance_id = v_ad_pinstance_id
+      -- Only stock of warehouses in p_org_id and its childs.
+      AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, w.ad_client_id) <> -1;
 
     v_ResultStr := 'Inserting stock lines product: ' || Cur_Product.M_Product_ID;
     MRP_RUN_INSERTLINES(p_client_id, p_org_id, p_user_id, p_run, cur_product.m_product_id, (-1 * cur_product.stockmin), 0, NULL, 'MS', 'Y', NULL, NULL, NULL, NULL, NULL, p_planningdate, NULL, p_production, (CASE WHEN cur_product.stockmin > 0 THEN 'N' ELSE 'Y' END), NULL, v_aux_id);
@@ -230,16 +235,22 @@ BEGIN --BODY
               ol.c_orderline_id, GREATEST(COALESCE(ol.datepromised, ol.dateordered, o.dateordered), p_planningdate) AS planningdate,
               COALESCE(ol.dateordered, o.dateordered) AS dateordered,
               o.issotrx
-         FROM c_order o, c_orderline ol LEFT JOIN (SELECT c_orderline_id, sum(qty) AS qty FROM m_matchpo WHERE m_inoutline_id IS NOT NULL GROUP BY c_orderline_id) matchpo ON ol.c_orderline_id = matchpo.c_orderline_id
-         WHERE o.c_order_id = ol.c_order_id
-           --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
-           AND o.processed = 'Y'
+         FROM c_orderline ol
+              JOIN c_order o ON o.c_order_id = ol.c_order_id
+              LEFT JOIN (SELECT c_orderline_id, sum(qty) AS qty 
+                        FROM m_matchpo
+                        WHERE m_inoutline_id IS NOT NULL
+                        GROUP BY c_orderline_id) matchpo ON ol.c_orderline_id = matchpo.c_orderline_id
+              JOIN m_warehouse w ON ol.m_warehouse_id = w.m_warehouse_id
+         WHERE o.processed = 'Y'
            AND ol.qtyordered <> (COALESCE(ol.qtydelivered,0) + COALESCE(matchpo.qty,0))
            AND ol.m_product_id = cur_product.m_product_id
-           AND mrp_check_planningmethod(cur_product.mrp_planningmethod_id,
+           AND MRP_CHECK_PLANNINGMETHOD(cur_product.mrp_planningmethod_id,
                                        (CASE o.issotrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
                                        to_number(COALESCE(ol.datepromised, ol.dateordered, o.dateordered) - p_planningdate), p_timehorizon) <> -1
-           AND ad_isorgincluded(o.ad_org_id, p_org_id, p_client_id) > -1
+           AND AD_ISORGINCLUDED(o.ad_org_id, p_org_id, p_client_id) > -1
+           -- Only orders of warehouses in p_org_id and its childs
+           AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, p_client_id) > -1
     ) LOOP
       MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), NULL, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END), 'Y', Cur_OrderLine.C_OrderLine_ID, NULL, NULL, NULL, NULL, Cur_OrderLine.planningDate, Cur_OrderLine.dateordered, p_Production, (CASE WHEN (Cur_OrderLine.IsSOTrx = 'Y' AND p_Production = 'Y') OR (p_Production = 'N' AND Cur_OrderLine.Qty < 0 ) THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
     END LOOP;
