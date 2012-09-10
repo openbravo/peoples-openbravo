@@ -91,7 +91,7 @@
     Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
-    v_ProductName VARCHAR2(40);
+    v_ProductName M_Product.name%TYPE;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
