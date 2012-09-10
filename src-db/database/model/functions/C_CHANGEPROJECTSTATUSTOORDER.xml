@@ -120,7 +120,7 @@
             RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@');
           END IF;
           /*Added in order to work with Multiphase Project*/
-          IF Cur_SO.PROJECTCATEGORY<>'S' THEN
+          IF (Cur_SO.PROJECTCATEGORY is null OR Cur_SO.PROJECTCATEGORY<>'S') THEN
             SELECT COUNT(*)
             INTO v_TotalLines
             FROM C_PROJECTLINE
