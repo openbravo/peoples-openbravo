@@ -369,6 +369,17 @@ function removeGLItem(key, removedAmount) {
 function validate(action) {
   var frm = document.frmMain;
   if (action === 'openprocess') {
+	if (isMulticurrencyTxn()) {
+	  if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+	    setWindowElementFocus(frm.inpActualConverted);
+	    showJSMessage(7);
+	    return false;
+	  } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+	    setWindowElementFocus(frm.inpExchangeRate);
+	    showJSMessage(7);
+	     return false;
+	  }
+	}
     if (frm.inpActualPayment.value === null || frm.inpActualPayment.value === '') {
       setWindowElementFocus(frm.inpActualPayment);
       showJSMessage(7);
@@ -389,17 +400,7 @@ function validate(action) {
       setWindowElementFocus(frm.inpPaymentDate);
       showJSMessage(7);
       return false;
-    } else if (isMulticurrencyTxn()) {
-      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
-        setWindowElementFocus(frm.inpActualConverted);
-        showJSMessage(7);
-        return false;
-      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
-        setWindowElementFocus(frm.inpExchangeRate);
-        showJSMessage(7);
-        return false;
-      }
-    } else {
+    }  else {
       var diffAction = frm.inpDifferenceAction,
           selectedAction = null, i, actionSelected = false;
       for (i = 0; i < diffAction.length; i++) {
