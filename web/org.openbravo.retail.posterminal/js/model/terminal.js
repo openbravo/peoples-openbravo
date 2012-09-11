@@ -243,7 +243,19 @@ OB.Model.Terminal = Backbone.Model.extend({
       function(session){
     	session.set('active','N');
         OB.Dal.save(session, function(){
-          OB.POS.modelterminal.triggerLogout();
+        	//All pending to be paid orders will be removed on logout
+            OB.Dal.find(OB.Model.Order, {'session': session.get('id'), 'hasbeenpaid':'N'},
+              function(orders) {
+          	    var i,j, order, orderlines, orderline;
+          	    var triggerLogoutFunc = function(){OB.POS.modelterminal.triggerLogout();};
+                for(i=0;i<orders.models.length;i++) {
+                  order = orders.models[i];
+                  OB.Dal.removeAll(OB.Model.Order, {'order':order.get('id')}, null,function(){ window.console.error(arguments);});
+                  //Logout will only be triggered after last order
+                  OB.Dal.remove(order, i<orders.models.length-1?null:triggerLogoutFunc,
+                    function(){ window.console.error(arguments);});
+                }
+              },function() {window.console.error(arguments);});
         }, function() {
           window.console.error(arguments);
         });
@@ -374,6 +386,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     this.set('currency', null);
     this.set('currencyPrecision', null);
 
+    
     $.ajax({
       url: '../../org.openbravo.retail.posterminal.service.logout',
       contentType: 'application/json;charset=utf-8',
