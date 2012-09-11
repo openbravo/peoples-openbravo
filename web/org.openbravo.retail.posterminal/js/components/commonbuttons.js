@@ -288,6 +288,7 @@ enyo.kind({
   components: [{
     name: 'lbl',
     tag: 'a',
+    allowHtml: true,
     style: 'padding: 12px 15px 12px 15px;',
     attributes: {
       href: '#'

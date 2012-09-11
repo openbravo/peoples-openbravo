@@ -279,6 +279,10 @@ enyo.kind({
       }
     } else if (cmd === 'OK') {
       txt = this.getString();
+      
+      if(txt==='0' && this.status===''){
+        OB.POS.lock();
+      }
 
       if (txt && this.status === '') {
         if (this.defaultcommand) {
