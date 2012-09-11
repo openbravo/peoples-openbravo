@@ -1384,9 +1384,9 @@ isc.OBStandardView.addProperties({
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
-  refresh: function (refreshCallback, autoSaveDone, forceCurrentRecordId) {
+  refresh: function (refreshCallback, autoSaveDone, newRecordsToBeIncluded) {
     // If a record should be visible after the refresh, even if it does not comply with the
-    // current filter, its ID should be entered in the forceCurrentRecordId parameter
+    // current filter, its ID should be entered in the newRecordsToBeIncluded parameter
     // See issue https://issues.openbravo.com/view.php?id=20722
     var me = this,
         view = this,
@@ -1397,7 +1397,7 @@ isc.OBStandardView.addProperties({
       actionObject = {
         target: this,
         method: this.refresh,
-        parameters: [refreshCallback, true, forceCurrentRecordId]
+        parameters: [refreshCallback, true, newRecordsToBeIncluded]
       };
       this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
@@ -1414,18 +1414,21 @@ isc.OBStandardView.addProperties({
       me.viewForm.refresh();
     };
 
+    if (!newRecordsToBeIncluded) {
+      this.newRecordsAfterRefresh = [];
+    }
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback, forceCurrentRecordId);
+      this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
           if (ok) {
-            view.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
+            view.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid(formRefresh, forceCurrentRecordId);
+        this.viewGrid.refreshGrid(formRefresh, newRecordsToBeIncluded);
       }
     }
   },

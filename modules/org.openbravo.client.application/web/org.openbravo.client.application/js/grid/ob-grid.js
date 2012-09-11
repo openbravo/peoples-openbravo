@@ -279,19 +279,24 @@ isc.OBGrid.addProperties({
     // issue 20722 (https://issues.openbravo.com/view.php?id=20722), remove the criteria
     // that makes reference to a specific id and return the original one
     removeSpecificIdFilter: function (criteria) {
+      var i, length;
       if (!criteria) {
         return criteria;
       }
       if (criteria.operator !== 'or') {
         return criteria;
       }
-      if (criteria.criteria && criteria.criteria.length !== 2) {
+      if (criteria.criteria && criteria.criteria.length < 2) {
         return criteria;
       }
-      if (criteria.criteria.get(0).fieldName !== 'id') {
-        return criteria;
+      // The original criteria is in the position 0, the rest are specific ids
+      length = criteria.criteria.length;
+      for (i = 1; i < length; i++) {
+        if (criteria.criteria.get(i).fieldName !== 'id') {
+          return criteria;
+        }
       }
-      return criteria.criteria.get(1);
+      return criteria.criteria.get(0);
     },
 
     // repair that filter criteria on fk fields can be 

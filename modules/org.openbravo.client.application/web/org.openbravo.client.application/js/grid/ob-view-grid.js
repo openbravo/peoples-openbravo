@@ -1013,13 +1013,14 @@ isc.OBViewGrid.addProperties({
   },
 
   removeOrClause: function (criteria) {
-    // The original criteria is stored in the position #1
-    // The criteria to select the selected record is stored in position #0
-    return criteria.criteria.get(1);
+    // The original criteria is stored in the position #0
+    // The criteria to select the recently created records is stored in position #1..length-1
+    return criteria.criteria.get(0);
   },
 
-  refreshGrid: function (callback, forceCurrentRecordID) {
-    var originalCriteria, criteria = {};
+  refreshGrid: function (callback, newRecordsToBeIncluded) {
+    var originalCriteria, criteria = {},
+        newRecordsCriteria, newRecordsLength, i;
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
       // as the record is already selected it is already in the filter
@@ -1043,18 +1044,24 @@ isc.OBViewGrid.addProperties({
     // If a record has to be included in the refresh, it must be included
     // in the filter with an 'or' operator, along with the original filter,
     // but only if there is an original filter
-    if (forceCurrentRecordID && originalCriteria.criteria.length > 0) {
+    if (newRecordsToBeIncluded && originalCriteria.criteria.length > 0) {
       // Adds the current record to the criteria
+      newRecordsCriteria = [];
+      newRecordsLength = newRecordsToBeIncluded.length;
+      for (i = 0; i < newRecordsLength; i++) {
+        newRecordsCriteria.push({
+          fieldName: 'id',
+          operator: 'equals',
+          value: newRecordsToBeIncluded[i]
+        });
+      }
+
+
       this._criteriaWithOrClause = true;
       criteria._constructor = 'AdvancedCriteria';
       criteria._OrExpression = true; // trick to get a really _or_ in the backend
       criteria.operator = 'or';
-      criteria.criteria = [{
-        fieldName: 'id',
-        operator: 'equals',
-        value: forceCurrentRecordID
-      }];
-      criteria.criteria.push(originalCriteria); // original filter
+      criteria.criteria = [originalCriteria].concat(newRecordsCriteria);
     } else {
       criteria = originalCriteria;
     }
