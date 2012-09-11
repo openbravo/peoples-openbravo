@@ -268,10 +268,21 @@
           image = [],
           connected = [],
           target = this.$.loginUserContainer,
-          i;
+          i, me = this;
       if(!jsonImgData.response){
-          return;
-        }
+          OB.Dal.find(OB.Model.User, {},
+            function(users) {
+            var i, user, session;
+            for(i=0;i<users.models.length;i++ ) {
+              user = users.models[i];
+              name.push(user.get('name'));
+              userName.push(user.get('name'));
+              connected.push(false);
+          	}
+            me.renderUserButtons(name, userName, image, connected, target);
+          },function() {window.console.error(arguments);});
+        return true;
+      }
       jsonImgData = jsonImgData.response[0].data;
       enyo.forEach(jsonImgData, function (v) {
         name.push(v.name);
@@ -279,6 +290,11 @@
         image.push(v.image);
         connected.push(v.connected);
       });
+      this.renderUserButtons(name, userName, image, connected, target);
+    },
+    
+    renderUserButtons: function(name, userName, image, connected, target){
+      var i;
       for (i = 0; i < name.length; i++) {
         target.createComponent({
           kind: 'OB.OBPOSLogin.UI.UserButton',
