@@ -4136,7 +4136,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--565-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--565-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--565-->  <COLUMNNAME><![CDATA[Separator]]></COLUMNNAME>
-<!--565-->  <NAME><![CDATA[Storage Bin Separator]]></NAME>
+<!--565-->  <NAME><![CDATA[Element separator]]></NAME>
 <!--565-->  <PRINTNAME><![CDATA[Element Separator]]></PRINTNAME>
 <!--565-->  <DESCRIPTION><![CDATA[Element Separator]]></DESCRIPTION>
 <!--565-->  <HELP><![CDATA[The Element Separator defines the delimiter printed between elements of the structure]]></HELP>
