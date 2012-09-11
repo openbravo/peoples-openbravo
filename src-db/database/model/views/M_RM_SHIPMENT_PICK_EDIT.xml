@@ -7,7 +7,7 @@ WHERE iol3.c_orderline_id = ol.c_orderline_id), 0)) AS pendingqty, iol.m_inout_i
 CASE
 WHEN iol.m_inout_id IS NOT NULL THEN 'Y'
 ELSE 'N'
-END AS ob_selected, ol.c_orderline_id, ol.line
+END AS ob_selected, ol.c_orderline_id, ol.line, iol.m_inoutline_id
 FROM c_orderline ol
 JOIN c_order o ON o.c_order_id = ol.c_order_id AND o.processed = 'Y' AND o.issotrx = 'N'
 LEFT JOIN m_storage_detail sd ON sd.m_product_id = ol.m_product_id AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(ol.m_attributesetinstance_id, '0') AND sd.qtyonhand > 0
@@ -15,5 +15,6 @@ LEFT JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
 JOIN c_doctype dt ON o.c_doctypetarget_id = dt.c_doctype_id AND dt.isreturn = 'Y'
 LEFT JOIN (SELECT iol2.m_inoutline_id, iol2.m_inout_id, iol2.movementqty, iol2.c_orderline_id, iol2.ad_org_id, iol2.m_locator_id
 FROM m_inoutline iol2
-JOIN m_inout io2 ON iol2.m_inout_id = io2.m_inout_id AND io2.processed = 'N') iol ON iol.c_orderline_id = ol.c_orderline_id AND iol.m_locator_id = sd.m_locator_id]]></view>
+JOIN m_inout io2 ON iol2.m_inout_id = io2.m_inout_id AND io2.processed = 'N') iol ON iol.c_orderline_id = ol.c_orderline_id AND iol.m_locator_id = sd.m_locator_id
+WHERE o.docstatus = 'CO']]></view>
   </database>

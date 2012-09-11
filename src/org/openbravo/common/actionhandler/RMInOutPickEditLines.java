@@ -30,6 +30,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -57,8 +58,10 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       // Issue 20585: https://issues.openbravo.com/view.php?id=20585
       final String strInOutId = jsonRequest.getString("M_InOut_ID");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
-      if (cleanInOutLines(inOut)) {
-        createInOutLines(jsonRequest);
+      if (inOut != null) {
+        List<String> idList = OBDao.getIDListFromOBObject(inOut
+            .getMaterialMgmtShipmentInOutLineList());
+        createInOutLines(jsonRequest, idList);
       }
 
     } catch (Exception e) {
@@ -69,36 +72,27 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private boolean cleanInOutLines(ShipmentInOut inOut) {
-    if (inOut == null) {
-      return false;
-    } else if (inOut.getMaterialMgmtShipmentInOutLineList().isEmpty()) {
-      // nothing to delete.
-      return true;
-    }
-    try {
-      inOut.getMaterialMgmtShipmentInOutLineList().clear();
-      OBDal.getInstance().save(inOut);
-      OBDal.getInstance().flush();
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      return false;
-    }
-    return true;
-  }
-
-  private void createInOutLines(JSONObject jsonRequest) throws JSONException {
+  private void createInOutLines(JSONObject jsonRequest, List<String> idList) throws JSONException {
     JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
-    // if no lines selected don't do anything.
-    if (selectedLines.length() == 0) {
-      return;
-    }
     final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
+    // if no lines selected don't do anything.
+    if (selectedLines.length() == 0) {
+      removeNonSelectedLines(idList, inOut);
+      return;
+    }
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
-      ShipmentInOutLine newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+      ShipmentInOutLine newInOutLine = null;
+      boolean notExistsShipmentLine = selectedLine.get("goodsShipmentLine").equals(null);
+      if (notExistsShipmentLine) {
+        newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+      } else {
+        newInOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            selectedLine.get("goodsShipmentLine"));
+        idList.remove(selectedLine.get("goodsShipmentLine"));
+      }
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());
       newInOutLine.setLineNo((i + 1L) * 10L);
@@ -122,11 +116,27 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
         newInOutLine.setConditionGoods(inOut.getConditionGoods());
       }
 
-      List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
-      inOutLines.add(newInOutLine);
-      inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
+      if (notExistsShipmentLine) {
+        List<ShipmentInOutLine> inOutLines = inOut.getMaterialMgmtShipmentInOutLineList();
+        inOutLines.add(newInOutLine);
+        inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
+      }
 
       OBDal.getInstance().save(newInOutLine);
+      OBDal.getInstance().save(inOut);
+      OBDal.getInstance().flush();
+    }
+
+    removeNonSelectedLines(idList, inOut);
+  }
+
+  private void removeNonSelectedLines(List<String> idList, ShipmentInOut inOut) {
+    if (idList.size() > 0) {
+      for (String id : idList) {
+        ShipmentInOutLine iol = OBDal.getInstance().get(ShipmentInOutLine.class, id);
+        inOut.getMaterialMgmtShipmentInOutLineList().remove(iol);
+        OBDal.getInstance().remove(iol);
+      }
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
     }
