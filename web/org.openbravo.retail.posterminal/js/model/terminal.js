@@ -248,6 +248,10 @@ OB.Model.Terminal = Backbone.Model.extend({
               function(orders) {
           	    var i,j, order, orderlines, orderline;
           	    var triggerLogoutFunc = function(){OB.POS.modelterminal.triggerLogout();};
+          	    if(orders.models.length===0){
+          	      //If there are no orders to remove, a logout is triggered
+          	      OB.POS.modelterminal.triggerLogout();
+          	    }
                 for(i=0;i<orders.models.length;i++) {
                   order = orders.models[i];
                   OB.Dal.removeAll(OB.Model.Order, {'order':order.get('id')}, null,function(){ window.console.error(arguments);});
