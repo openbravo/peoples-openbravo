@@ -14245,7 +14245,7 @@ AND e.pending <> 0]]></HQLWHERECLAUSE>
 AND CASE WHEN e.salesTransaction = true THEN 'true' ELSE 'false' END = @Order.salesTransaction@
 AND e.businessPartner.id = @Order.businessPartner@
 AND (e.orderNo IS NULL OR e.priceIncludesTax = (SELECT priceIncludesTax FROM PricingPriceList WHERE id = @Order.priceList@))]]></HQLWHERECLAUSE>
-<!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, movementDate desc, orderNo, product.name]]></HQLORDERBYCLAUSE>
+<!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLORDERBYCLAUSE><![CDATA[obSelected desc, salesOrderLine.lineNo, movementDate desc, orderNo, product.name]]></HQLORDERBYCLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <HQLFILTERCLAUSE><![CDATA[e.movementDate >= (now() - 90) OR e.obSelected=true]]></HQLFILTERCLAUSE>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--CC35784EF36B4732B40167CD5D2449F0-->  <EM_OBUIAPP_SELECTION><![CDATA[OB.RM.RMOrderSelectionChange]]></EM_OBUIAPP_SELECTION>
