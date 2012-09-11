@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2012 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -258,8 +258,14 @@
             
                 <tr>
                     <td class="TitleCell"><span class="LabelText">What is the main purpose of the instance?</span></td>
-                    <td class="Combo_ContentCell" colspan="3">
-                        <select name="purpose" id="purpose" class="ComboKey Combo_TwoCells_width" required="true" >
+                    <td class="Combo_ContentCell" colspan="3" id="editable">
+                        <select name="purpose" id="purpose" class="ComboKey Combo_TwoCells_width" required="true">
+                          <div id="reportPurpose"></div>
+                        </select>
+                    </td>
+                    
+                    <td class="Combo_ContentCell" colspan="3" id="readonly">
+                        <select name="purpose" id="purpose" class="ComboKeyReadOnly Combo_TwoCells_width" disabled>
                           <div id="reportPurpose"></div>
                         </select>
                     </td>
@@ -275,8 +281,12 @@
                           <td>
                             <table style="border:0px;border-collapse:collapse;">
                               <tr>
-                                <td style="padding-top: 0px;">
+                                <td style="padding-top: 0px;" id="editable">
                                   <textarea id="publicKey" class="dojoValidateValid required TextArea_ThreeCells_width TextArea_Large_height"  onchange="validateTextArea(this.id);return true;" required="true" maxlength="2000" name="publicKey" ></textarea>
+                                </td>
+                                
+                                <td style="padding-top: 0px;" id="readonly">
+                                  <textarea id="publicKey" class="dojoValidateValid TextArea_ThreeCells_width TextArea_Large_height" readonly maxlength="2000" name="publicKey" ></textarea>
                                 </td>
                               </tr>
                             </table>
