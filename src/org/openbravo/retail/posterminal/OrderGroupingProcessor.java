@@ -158,7 +158,8 @@ public class OrderGroupingProcessor {
         }
       }
       finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
-      OBDal.getInstance().getConnection().commit();
+      // The commit will be done in ProcessCashClose.java (flush), Transactional process.
+      // OBDal.getInstance().getConnection().commit();
     } finally {
       OBContext.restorePreviousMode();
       OBDal.getInstance().rollbackAndClose();

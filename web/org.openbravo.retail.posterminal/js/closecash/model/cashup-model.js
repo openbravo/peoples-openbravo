@@ -259,9 +259,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary());
     
     //ready to send to the server
-    server.exec(objToSend, function(data, message) {
-      if (data && data.exception) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgFinishCloseError'));
+    server.exec(objToSend, function(data) {
+      if (data.error) {
+        me.set("finishedWrongly", true);
       } else {
         // console.log("cash up processed correctly. -> show modal");
         me.set("finished", true); //$('#modalFinishClose').modal('show');

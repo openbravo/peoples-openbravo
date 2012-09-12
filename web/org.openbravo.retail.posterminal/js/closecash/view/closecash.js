@@ -62,6 +62,10 @@ enyo.kind({
       name: 'modalFinished',
       myId: 'modalFinished'
     }, {
+      kind: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
+      name: 'modalFinishedWrongly',
+      myId: 'modalFinishedWrongly'
+    }, {
       kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
       name: 'modalPendingToProcess',
       myId: 'modalPendingToProcess'
@@ -124,6 +128,10 @@ enyo.kind({
     //finished
     this.model.on('change:finished', function() {
       $('#modalFinished').modal('show');
+    }, this);
+    //finishedWrongly
+    this.model.on('change:finishedWrongly', function() {
+      $('#modalFinishedWrongly').modal('show');
     }, this);
 
     this.refresh();

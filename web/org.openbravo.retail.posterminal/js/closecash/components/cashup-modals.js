@@ -33,6 +33,27 @@ enyo.kind({
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
+  name: 'OB.OBPOSCashUp.UI.modalFinishedWrongly',
+  header: OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
+  bodyContent: {
+    content:  OB.I18N.getLabel('OBPOS_CashUpWrongly')
+  },
+  bodyButtons: {
+    tag: 'div',
+    components: [{
+      //OK button
+      kind: 'OB.UI.Button',
+      classes: 'btnlink btnlink-gray modal-dialog-content-button',
+      content: OB.I18N.getLabel('OBPOS_LblOk'),
+      tap: function() {
+        $('#' + this.parent.parent.parent.parent.parent.getId()).modal('hide');
+      }
+    }]
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
   header: OB.I18N.getLabel('OBPOS_LblReceiptsToProcess'),
   bodyContent: {
