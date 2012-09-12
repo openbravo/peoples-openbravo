@@ -27,7 +27,8 @@
       <![CDATA[
       SELECT AD_MODEL_OBJECT_ID as ID, (COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME, 
       LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml, 
-	  '' as ad_tab_id, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule
+	  '' as tabId, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule,
+	  '' as key, '' as tablevel
       FROM AD_MODEL_OBJECT o
       WHERE ISACTIVE = 'Y'
       AND OBJECT_TYPE = 'S'
@@ -40,10 +41,11 @@
   <SqlMethod name="selectAllTabs" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select t.ad_tab_id, AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
+        select t.ad_tab_id as tabId, AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
                AD_MAPPING_FORMAT(to_char(t.name)) as tabName, 
                m2.javapackage as windowPackage, m2.ad_module_id as windowmodule,
-               m.javapackage as tabPackage, m.ad_module_id as tabmodule
+               m.javapackage as tabPackage, m.ad_module_id as tabmodule,
+               t.ad_window_id as key, t.tablevel
           from ad_tab t, ad_window w, ad_module m, ad_module m2
          where t.ad_module_id = m.ad_module_id
            and w.ad_module_id = m2.ad_module_id

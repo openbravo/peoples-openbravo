@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -36,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADButton;
 import org.openbravo.wad.controls.WADControl;
@@ -68,6 +70,7 @@ public class Wad extends DefaultHandler {
   private String strSystemSeparator;
   private static String jsDateFormat;
   private static String sqlDateFormat;
+  private static boolean generateAllClassic250Windows;
 
   private static final Logger log4j = Logger.getLogger(Wad.class);
 
@@ -323,12 +326,33 @@ public class Wad extends DefaultHandler {
 
       }
 
+      Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
+      Map<String, Boolean> generateTabMap = new HashMap<String, Boolean>();
+
+      if (!generateAllClassic250Windows) {
+        // calculate which windows/tabs are needed/requested
+        generateWindowMap = calculateWindowsToGenerate(wad.pool, tabsData,
+            new HashMap<String, Boolean>());
+        generateTabMap = calculateTabsToGenerate(wad.pool, tabsData, generateWindowMap,
+            new HashMap<String, Boolean>());
+        int skip = 0;
+        int generate = 0;
+        for (Boolean b : generateTabMap.values()) {
+          if (b) {
+            generate++;
+          } else {
+            skip++;
+          }
+        }
+        log4j.info("After filtering generating " + generate + " tabs and skipping " + skip);
+      }
+
       // If generateWebXml parameter is true, the web.xml file should be
       // generated
       if (generateWebXml) {
 
         if (!quick || WadData.genereteWebXml(wad.pool))
-          wad.processWebXml(fileWebXml, attachPath, webPath);
+          wad.processWebXml(fileWebXml, attachPath, webPath, generateWindowMap, generateTabMap);
         else
           log4j.info("No changes in web.xml");
       }
@@ -340,10 +364,25 @@ public class Wad extends DefaultHandler {
         for (int i = 0; i < tabsData.length; i++) {
           // don't compile if it is in an unactive branch
           if (wad.allTabParentsActive(tabsData[i].tabid)) {
-            log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
-                + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
-            log4j.debug("Processing: " + tabsData[i].tabid);
-            wad.processTab(fileFin, fileFinReloads, tabsData[i]);
+
+            // TODO: check if smartbuild does detect change in that property, as now it needs to
+            // trigger a recompile in that case, same for check of the windowsInClassicModeInput
+            boolean windowInClassicMode = generateAllClassic250Windows
+                || windowInClassicMode(generateWindowMap, tabsData[i].key);
+            boolean tabJavaNeeded = generateAllClassic250Windows
+                || generateTabMap.get(tabsData[i].tabid);
+
+            boolean generateTab = windowInClassicMode || tabJavaNeeded;
+            boolean onlyJavaNeeded = !windowInClassicMode && tabJavaNeeded;
+
+            if (generateTab) {
+              log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
+                  + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+              wad.processTab(fileFin, fileFinReloads, tabsData[i], onlyJavaNeeded);
+            } else {
+              log4j.debug("Skipped Window: " + tabsData[i].windowname + " - Tab: "
+                  + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+            }
           }
         }
       }
@@ -354,6 +393,110 @@ public class Wad extends DefaultHandler {
     } finally {
       wad.pool.destroy();
     }
+  }
+
+  private static boolean windowInClassicMode(Map<String, Boolean> generateWindowMap, String windowId) {
+    Boolean res = generateWindowMap.get(windowId);
+    return (res != null && res);
+  }
+
+  private static Map<String, Boolean> calculateWindowsToGenerate(ConnectionProvider conn,
+      FieldProvider[] tabsData, Map<String, Boolean> calculatedWindowMap) throws ServletException {
+
+    // check if some tabs/windows need to be shown in classic mode
+    log4j.info("calculatedWindowMap " + calculatedWindowMap.size());
+    Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
+    String oldWindowId = null;
+    for (FieldProvider tab : tabsData) {
+      if (calculatedWindowMap.get(tab.getField("key")) != null) {
+        // if already calculated before set if
+        generateWindowMap.put(tab.getField("key"), calculatedWindowMap.get(tab.getField("key")));
+        continue;
+      }
+      if (oldWindowId == null || !tab.getField("key").equals(oldWindowId)) {
+        // new window -> check all tabs in that window
+        boolean res = TabsData.selectShowWindowIn250ClassicMode(conn, tab.getField("key"));
+        if (res) {
+          log4j.info("Window: " + tab.getField("windowname") + " is needed in classic 2.50 mode.");
+          generateWindowMap.put(tab.getField("key"), Boolean.TRUE);
+        } else {
+          res = TabsData.selectShowWindowIn250ClassicModePreference(conn, tab.getField("key"));
+          if (res) {
+            log4j.info("Window: " + tab.getField("windowname")
+                + " is configured for classic 2.50 mode via preferences");
+            generateWindowMap.put(tab.getField("key"), Boolean.TRUE);
+          }
+        }
+        oldWindowId = tab.getField("key");
+      }
+    }
+    return generateWindowMap;
+  }
+
+  private static Map<String, Boolean> calculateTabsToGenerate(ConnectionProvider conn,
+      FieldProvider[] tabsData, Map<String, Boolean> generateWindowMap,
+      Map<String, Boolean> calculatedTabs) throws ServletException {
+    Map<String, Boolean> res = new HashMap<String, Boolean>();
+
+    for (FieldProvider tab : tabsData) {
+      // if already calculated before skip
+      if (res.get(tab.getField("tabid")) != null) {
+        continue;
+      }
+
+      // if complete window needed -> mark and skip
+      Boolean entry = generateWindowMap.get(tab.getField("key"));
+      if (entry != null && entry) {
+        res.put(tab.getField("tabid"), Boolean.TRUE);
+        continue;
+      }
+
+      if (calculatedTabs.get(tab.getField("tabid")) != null) {
+        res.put(tab.getField("tabid"), calculatedTabs.get(tab.getField("tabid")));
+        continue;
+      }
+
+      boolean needToCompile = tabJavaNeededforActionButtons(conn, tab.getField("tabid"));
+
+      if (needToCompile) {
+        log4j.debug("Need to generate tab: " + tab.getField("tabname") + ",id: "
+            + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
+        res.put(tab.getField("tabid"), Boolean.TRUE);
+
+        // TODO: looks like only parent-xsql's are needed? not really the whole servlet?
+        // but note that only 11 parent tabs in sum so perhaps not worth to optimize
+        if (!tab.getField("tablevel").equals("0")) {
+          // check path along parentTabs up to root and generate all those also
+          String parentTab = TabsData.selectParentTab(conn, tab.getField("tabid"));
+          while (parentTab != null && !parentTab.equals("")) {
+            TabsData theTab = TabsData.selectTabDebugData(conn, parentTab);
+            log4j.debug("Also generating parentTab: " + theTab.tabname + ", id: " + parentTab + " "
+                + theTab.tabname + ", level: " + theTab.tablevel);
+            res.put(parentTab, Boolean.TRUE);
+            parentTab = TabsData.selectParentTab(conn, parentTab);
+          }
+        }
+      } else {
+        // mark as not needed to compile
+        res.put(tab.getField("tabid"), Boolean.FALSE);
+      }
+    }
+
+    return res;
+  }
+
+  private static boolean tabJavaNeededforActionButtons(ConnectionProvider conn, String tabId)
+      throws ServletException {
+    ActionButtonRelationData[] actBtns = ActionButtonRelationData.select(conn, tabId);
+    ActionButtonRelationData[] actBtnsJava = ActionButtonRelationData.selectJava(conn, tabId);
+
+    if ((actBtns == null || actBtns.length == 0)
+        && (actBtnsJava == null || actBtnsJava.length == 0)) {
+      // No action buttons
+      return false;
+    }
+
+    return true;
   }
 
   private boolean allTabParentsActive(String tabId) {
@@ -627,10 +770,12 @@ public class Wad extends DefaultHandler {
    *          The path where are the attached files.
    * @param webPath
    *          The url where are the static web content.
+   * @param calculatedTabMap
    * @throws ServletException
    * @throws IOException
    */
-  private void processWebXml(File fileWebXml, String attachPath, String webPath)
+  private void processWebXml(File fileWebXml, String attachPath, String webPath,
+      Map<String, Boolean> calculatedWindowMap, Map<String, Boolean> calculatedTabMap)
       throws ServletException, IOException {
     try {
       log4j.info("Processing web.xml");
@@ -657,8 +802,19 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structureContextParams", contextParams);
 
       WadData[] allTabs = WadData.selectAllTabs(pool);
-      xmlDocument.setData("structureServletTab", getTabServlets(allTabs));
-      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs));
+      Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
+      Map<String, Boolean> generateTabMap = new HashMap<String, Boolean>();
+
+      if (!generateAllClassic250Windows) {
+        // calculate which windows/tabs are needed/requested
+        generateWindowMap = calculateWindowsToGenerate(pool, allTabs, calculatedWindowMap);
+        generateTabMap = calculateTabsToGenerate(pool, allTabs, generateWindowMap, calculatedTabMap);
+      }
+
+      xmlDocument.setData("structureServletTab",
+          getTabServlets(allTabs, generateWindowMap, generateTabMap));
+      xmlDocument.setData("structureMappingTab",
+          getTabMappings(allTabs, generateWindowMap, generateTabMap));
 
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
@@ -699,55 +855,88 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  private WadData[] getTabServlets(WadData[] allTabs) {
+  private WadData[] getTabServlets(WadData[] allTabs, Map<String, Boolean> generateWindowMap,
+      Map<String, Boolean> generateTabMap) {
     ArrayList<WadData> servlets = new ArrayList<WadData>();
     for (WadData tab : allTabs) {
+      boolean windowInClassicMode = generateAllClassic250Windows
+          || windowInClassicMode(generateWindowMap, tab.key);
+      boolean tabJavaNeeded = generateAllClassic250Windows
+          || (generateTabMap.get(tab.tabid) == null) || generateTabMap.get(tab.tabid);
+
+      boolean generateTab = windowInClassicMode || tabJavaNeeded;
+      boolean onlyJavaNeeded = !windowInClassicMode && tabJavaNeeded;
+
+      if (!generateTab) {
+        continue;
+      }
+
       String tabClassName = "org.openbravo.erpWindows."
           + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage + ".") + tab.windowname + "."
-          + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
+          + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
       WadData servlet = new WadData();
       servlet.displayname = tabClassName;
-      servlet.name = "W" + tab.adTabId;
+      servlet.name = "W" + tab.tabid;
       servlet.classname = tabClassName;
       servlets.add(servlet);
 
-      String comboReloadClassName = "org.openbravo.erpCommon.ad_callouts.ComboReloads"
-          + tab.adTabId;
+      if (onlyJavaNeeded) {
+        continue;
+      }
+
+      String comboReloadClassName = "org.openbravo.erpCommon.ad_callouts.ComboReloads" + tab.tabid;
       WadData servletCombo = new WadData();
       servletCombo.displayname = comboReloadClassName;
-      servletCombo.name = "WR" + tab.adTabId;
+      servletCombo.name = "WR" + tab.tabid;
       servletCombo.classname = comboReloadClassName;
       servlets.add(servletCombo);
     }
     return servlets.toArray(new WadData[servlets.size()]);
   }
 
-  private FieldProvider[] getTabMappings(WadData[] allTabs) {
+  private FieldProvider[] getTabMappings(WadData[] allTabs, Map<String, Boolean> generateWindowMap,
+      Map<String, Boolean> generateTabMap) {
     ArrayList<WadData> mappings = new ArrayList<WadData>();
     for (WadData tab : allTabs) {
+      boolean windowInClassicMode = generateAllClassic250Windows
+          || windowInClassicMode(generateWindowMap, tab.key);
+      boolean tabJavaNeeded = generateAllClassic250Windows
+          || ((generateTabMap.get(tab.tabid) != null) && (generateTabMap.get(tab.tabid)));
+
+      boolean generateTab = windowInClassicMode || tabJavaNeeded;
+      boolean onlyJavaNeeded = !windowInClassicMode && tabJavaNeeded;
+
+      if (!generateTab) {
+        continue;
+      }
+
       String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
-          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
+          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
-      WadData mapping = new WadData();
-      mapping.name = "W" + tab.adTabId;
-      mapping.classname = prefix + "_Relation.html";
-      mappings.add(mapping);
+      if (onlyJavaNeeded) {
+        // Keeping mapping to *_Edition.html because it is the mapping used for processes
+        WadData mapping2 = new WadData();
+        mapping2.name = "W" + tab.tabid;
+        mapping2.classname = prefix + "_Edition.html";
+        mappings.add(mapping2);
+      } else {
+        WadData mapping = new WadData();
+        mapping.name = "W" + tab.tabid;
+        mapping.classname = prefix + "_Relation.html";
+        mappings.add(mapping);
 
-      WadData mapping2 = new WadData();
-      mapping2.name = "W" + tab.adTabId;
-      mapping2.classname = prefix + "_Edition.html";
-      mappings.add(mapping2);
+        WadData mapping3 = new WadData();
+        mapping3.name = "W" + tab.tabid;
+        mapping3.classname = prefix + "_Excel.xls";
+        mappings.add(mapping3);
 
-      WadData mapping3 = new WadData();
-      mapping3.name = "W" + tab.adTabId;
-      mapping3.classname = prefix + "_Excel.xls";
-      mappings.add(mapping3);
-
-      WadData mapping4 = new WadData();
-      mapping4.name = "WR" + tab.adTabId;
-      mapping4.classname = "/ad_callouts/ComboReloads" + tab.adTabId + ".html";
-      mappings.add(mapping4);
+        // TODO: check if needed for processes...
+        WadData mapping4 = new WadData();
+        mapping4.name = "WR" + tab.tabid;
+        mapping4.classname = "/ad_callouts/ComboReloads" + tab.tabid + ".html";
+        mappings.add(mapping4);
+      }
     }
     return mappings.toArray(new WadData[mappings.size()]);
   }
@@ -764,7 +953,8 @@ public class Wad extends DefaultHandler {
    *          An object containing the tabs info.
    * @throws Exception
    */
-  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData) throws Exception {
+  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData, boolean onlyJava)
+      throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
       // tabName contains tab's UUID for non core tabs
@@ -1022,42 +1212,44 @@ public class Wad extends DefaultHandler {
             tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
             tabsData.javapackage, vecFieldParameters);
 
-        /************************************************
-         * JAVA of the combo reloads
-         *************************************************/
-        processTabComboReloads(fileFinReloads, tabsData.tabid, parentsFieldsData, vecFields,
-            isSOTrx, tabsData.accesslevel);
+        if (!onlyJava) {
+          /************************************************
+           * JAVA of the combo reloads
+           *************************************************/
+          processTabComboReloads(fileFinReloads, tabsData.tabid, parentsFieldsData, vecFields,
+              isSOTrx, tabsData.accesslevel);
 
-        /************************************************
-         * XML in Relation view
-         *************************************************/
-        processTabXmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName,
-            gridControl);
+          /************************************************
+           * XML in Relation view
+           *************************************************/
+          processTabXmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName,
+              gridControl);
 
-        /************************************************
-         * HTML in Relation view
-         *************************************************/
-        processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabsData.uipattern.equals("RO"), gridControl, false, "", tabNamePresentation,
-            tabsData.tableId, tabsData.accesslevel);
+          /************************************************
+           * HTML in Relation view
+           *************************************************/
+          processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName,
+              keyColumnName, tabsData.uipattern.equals("RO"), gridControl, false, "",
+              tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
 
-        /************************************************
-         * XML in Edition view
-         *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key,
-            tabsData.uipattern.equals("RO"), efd, efdauxiliar, isSecondaryKey);
+          /************************************************
+           * XML in Edition view
+           *************************************************/
+          processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key,
+              tabsData.uipattern.equals("RO"), efd, efdauxiliar, isSecondaryKey);
 
-        /************************************************
-         * HTML in Edition view
-         *************************************************/
-        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
-            tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", true,
-            isSecondaryKey);
-        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
-            tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", false,
-            isSecondaryKey);
+          /************************************************
+           * HTML in Edition view
+           *************************************************/
+          processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
+              tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
+              tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",
+              true, isSecondaryKey);
+          processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
+              tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
+              tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",
+              false, isSecondaryKey);
+        }
       }
 
     } catch (final ServletException e) {
@@ -4365,10 +4557,16 @@ public class Wad extends DefaultHandler {
       sqlDateFormat = properties.getProperty("dateFormat.sql");
       WADControl.setDateFormat(sqlDateFormat);
       log4j.info("sqlDateFormat: " + sqlDateFormat);
+
+      generateAllClassic250Windows = false;
+      String compileAll250 = properties.getProperty("wad.generateAllClassic250Windows");
+      if (compileAll250 != null && compileAll250.equalsIgnoreCase("true")) {
+        generateAllClassic250Windows = true;
+      }
+      log4j.info("generateAllClassic250Windows: " + generateAllClassic250Windows);
     } catch (final IOException e) {
       // catch possible io errors from readLine()
       e.printStackTrace();
     }
   }
-
 }
