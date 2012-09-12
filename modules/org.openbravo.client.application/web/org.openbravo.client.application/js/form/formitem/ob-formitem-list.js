@@ -73,7 +73,12 @@ isc.OBListItem.addProperties({
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
       // update the display before moving the focus
       this.updateValueMap(true);
-      this.form.focusInNextItem(this.name);
+      // Only focus in the next item if the key that triggered the event is
+      // not the tab key, so the focus is not moved twice
+      // See issue https://issues.openbravo.com/view.php?id=21419
+      if (isc.EH.getKeyName() !== 'Tab') {
+        this.form.focusInNextItem(this.name);
+      }
     }
   },
 
