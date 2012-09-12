@@ -1855,7 +1855,7 @@ Are you sure you want to log out?]]></MSGTEXT>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <VALUE><![CDATA[OBPOS_OnlineConnectionHasReturned]]></VALUE>
-<!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <MSGTEXT><![CDATA[The connection has come back. However, to be fully online again, you need to reenter your credentials. This is highly advisable, as will allow you to be able to use the online-only features again. Do you want to proceed?]]></MSGTEXT>
+<!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <MSGTEXT><![CDATA[The connection has come back. However, to be fully online again, you need to reenter your credentials. This is highly advisable, as will allow you to use the online-only features again. Do you want to proceed?]]></MSGTEXT>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--CC9FB6E6597A466E8B11684FF30C3EA3--></AD_MESSAGE>
