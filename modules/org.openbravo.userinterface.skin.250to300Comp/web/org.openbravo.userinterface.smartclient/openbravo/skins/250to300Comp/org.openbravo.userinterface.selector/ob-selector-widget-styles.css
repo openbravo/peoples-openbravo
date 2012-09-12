@@ -69,17 +69,17 @@
   border-bottom: 1px solid #E1E1E1;
 }
 .ob_cell {
-  background: #E1E1E1 url(./images/selector-widget/listgrid/rowEven.png) repeat-x top left scroll;
+  background: #E1E1E1 url(./listgrid/rowEven.png) repeat-x top left scroll;
 }
 .ob_cellDark {
-  background: #C0CFDC url(./images/selector-widget/listgrid/rowOdd.png) repeat-x top left scroll;
+  background: #C0CFDC url(./listgrid/rowOdd.png) repeat-x top left scroll;
 }
 .ob_tallCellDark {
   background-color: #F6F7F9;
 }
 .ob_cellOver,
 .ob_cellOverDark {
-  background: #A3D77F url(./images/selector-widget/listgrid/row_Over.png) repeat-x top left scroll;
+  background: #A3D77F url(./listgrid/row_Over.png) repeat-x top left scroll;
 }
 .ob_tallCellOver,
 .ob_tallCellOverDark {
@@ -87,7 +87,7 @@
 }
 .ob_cellSelected,
 .ob_cellSelectedDark {
-  background: #569633 url(./images/selector-widget/listgrid/row_Selected.png) repeat-x top left scroll;
+  background: #569633 url(./listgrid/row_Selected.png) repeat-x top left scroll;
   color: #FFFFFF;
 }
 .ob_tallCellSelected,
@@ -96,7 +96,7 @@
 }
 .ob_cellSelectedOver,
 .ob_cellSelectedOverDark {
-  background: #569633 url(./images/selector-widget/listgrid/row_Selected_Over.png) repeat-x top left scroll;
+  background: #569633 url(./listgrid/row_Selected_Over.png) repeat-x top left scroll;
   color: #FFFFFF;
 }
 .ob_tallCellSelectedOver,
@@ -146,7 +146,7 @@
   border-right: 1px solid #000000;
   border-top: 1px solid #000000;
 
-  background: url(./images/selector-widget/listgrid/header.png) repeat-x bottom left; 
+  background: url(./listgrid/header.png) repeat-x bottom left; 
 }
 
 .ob_sorterbutton,
@@ -157,15 +157,15 @@
 .ob_sorterbuttondown,
 .ob_sorterbuttonselectedover,
 .ob_sorterbuttonselecteddown {
-  background: url(./images/selector-widget/listgrid/header.png) repeat-x bottom left; 
+  background: url(./listgrid/header.png) repeat-x bottom left; 
 }
 
 .ob_headerButtonOver {
-  background: url(./images/selector-widget/listgrid/header_Over.png) repeat-x bottom left; 
+  background: url(./listgrid/header_Over.png) repeat-x bottom left; 
 }
 
 .ob_headerButtonSelected {
-  background: url(./images/selector-widget/listgrid/header_Selected.png) repeat-x bottom left; 
+  background: url(./listgrid/header_Selected.png) repeat-x bottom left; 
 }
 
 .ob_recordEditorCell {
@@ -211,7 +211,7 @@
 }
 
 .headerBar {
-  background: #FFFFFF url(./images/selector-widget/listgrid/header.png) repeat-x bottom left scroll;
+  background: #FFFFFF url(./listgrid/header.png) repeat-x bottom left scroll;
 }
 
 
@@ -243,7 +243,7 @@
   padding: 1px;
   padding-left: 4px;
   border: 1px solid #888888; 
-  background: #FFFFFF url(./images/selector-widget/controls/text_input.png) repeat-x scroll;
+  background: #FFFFFF url(./control/text_input.png) repeat-x scroll;
   color: #333333;
 }
 
@@ -255,7 +255,7 @@
   padding: 1px;
   padding-left: 4px;
   border: 1px solid #888888;
-  background: #FFFADE url(./images/selector-widget/controls/text_input_Required.png) repeat-x scroll;
+  background: #FFFADE url(./control/text_input_Required.png) repeat-x scroll;
   color: #333333;
 }
 
@@ -284,7 +284,7 @@
 .selectItemTextFocused {
   background-repeat: repeat-x ;
   background-position: top left;
-  background-image: url(./images/selector-widget/controls/text_input_Focused.png);
+  background-image: url(./control/text_input_Focused.png);
   background-color: #D9F0FB;
   padding: 0px;
   padding-left: 3px;
@@ -295,7 +295,7 @@
 .selectItemTextRequiredFocused {
   background-repeat: repeat-x ;
   background-position: top left;
-  background-image: url(./images/selector-widget/controls/text_input_Required_Focused.png);
+  background-image: url(./control/text_input_Required_Focused.png);
   background-color: #EAEED0;
   padding: 0px;
   padding-left: 3px;
@@ -326,7 +326,7 @@
   background-color: white;
   background-repeat: repeat-x ;
   background-position: bottom left;
-  background-image: url(./images/selector-widget/pickers/border.png);
+  background-image: url(./pickers/border.png);
   border-width: 0px 1px 0px 1px;
   border-style: solid;
   border-color: #8fa7c7;
