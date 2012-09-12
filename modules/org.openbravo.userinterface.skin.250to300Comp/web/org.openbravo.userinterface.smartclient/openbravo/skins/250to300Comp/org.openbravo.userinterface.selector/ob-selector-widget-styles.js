@@ -25,7 +25,7 @@ if (!isc.OBClassicWindow) {
 isc.OBClassicWindow.addProperties({
   // rounded frame edges
   showEdges: true,
-  edgeImage: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/window/window.png',
+  edgeImage: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/window/window.png',
   customEdges: null,
   edgeSize: 6,
   edgeTop: 23,
@@ -69,27 +69,27 @@ isc.OBClassicWindow.changeDefaults('headerIconDefaults', {
   src: '[SKIN]/Window/headerIcon.png'
 });
 isc.OBClassicWindow.changeDefaults('restoreButtonDefaults', {
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/window/restore.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/window/restore.png',
   showRollOver: true,
   showDown: false,
   width: 15,
   height: 15
 });
 isc.OBClassicWindow.changeDefaults('closeButtonDefaults', {
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/window/close.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/window/close.png',
   showRollOver: true,
   showDown: false,
   width: 15,
   height: 15
 });
 isc.OBClassicWindow.changeDefaults('maximizeButtonDefaults', {
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/window/maximize.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/window/maximize.png',
   showRollOver: true,
   width: 15,
   height: 15
 });
 isc.OBClassicWindow.changeDefaults('minimizeButtonDefaults', {
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/window/minimize.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/window/minimize.png',
   showRollOver: true,
   showDown: false,
   width: 15,
@@ -106,7 +106,7 @@ if (!isc.OBClassicIButton) {
 }
 
 isc.OBClassicIButton.addProperties({
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/button/button.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/btn.png',
   height: 22,
   width: 100,
   capSize: 4,
@@ -161,7 +161,7 @@ isc.OBClassicGrid.addProperties({
   showHeaderMenuButton: true,
   headerMenuButtonConstructor: 'HeaderImgButton',
   headerMenuButtonWidth: 17,
-  headerMenuButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/listgrid/header_menu.png',
+  headerMenuButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/listgrid/header_menu.png',
   headerMenuButtonIcon: '[SKINIMG]/ListGrid/sort_descending.png',
   headerMenuButtonIconWidth: 9,
   headerMenuButtonIconHeight: 6,
@@ -180,7 +180,7 @@ isc.OBClassicGrid.addProperties({
 isc.OBClassicGrid.changeDefaults('sorterDefaults', {
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle
   showFocused: false,
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/listgrid/header.png',
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/listgrid/header.png',
   baseStyle: 'ob_sorterButton'
 });
 isc.OBClassicGrid.changeDefaults('headerButtonDefaults', {
@@ -192,7 +192,7 @@ isc.OBClassicGrid.changeDefaults('headerButtonDefaults', {
 isc.OBClassicGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true,
-  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/listgrid/header.png'
+  src: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/listgrid/header.png'
 });
 isc.OBClassicGrid.changeDefaults('summaryRowDefaults', {
   bodyBackgroundColor: null,
@@ -205,7 +205,7 @@ isc.OBClassicGrid.changeDefaults('filterEditorDefaults', {
 
 isc.ComboBoxItem.addProperties({
   showFocusedPickerIcon: true,
-  pickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/images/selector-widget/controls/comboBoxPicker.png',
+  pickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/control/cBoxPicker.png',
   height: 17,
   pickerIconWidth: 18
 });
