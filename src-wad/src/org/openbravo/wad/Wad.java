@@ -227,6 +227,12 @@ public class Wad extends DefaultHandler {
         strWindowName = "xx";
       }
 
+      if (argv.length <= 17) {
+        generateAllClassic250Windows = false;
+      } else {
+        generateAllClassic250Windows = argv[17].equals("true");
+      }
+
       log4j.info("File connection: " + strFileConnection);
       log4j.info("window: " + strWindowName);
       log4j.info("module: " + module);
@@ -240,6 +246,7 @@ public class Wad extends DefaultHandler {
       log4j.info("Attach path: " + attachPath);
       log4j.info("Web path: " + webPath);
       log4j.info("Quick mode: " + quick);
+      log4j.info("Generate all 2.50 windows: " + generateAllClassic250Windows);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
