@@ -569,7 +569,7 @@ public class DataImportService implements OBSingleton {
           rdl.setSpecific((String) ins.getId());
           rdl.setTable(OBDal.getInstance().get(Table.class, ins.getEntity().getTableId()));
           if (module != null) {
-            rdl.setModule(module);
+            rdl.setModule(module.getId());
           }
           OBDal.getInstance().save(rdl);
         }
