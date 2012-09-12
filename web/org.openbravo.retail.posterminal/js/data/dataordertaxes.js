@@ -37,62 +37,65 @@
         OB.Dal.find(OB.Model.TaxRate, {
           taxCategory: product.get('taxCategory'),
           businessPartnerTaxCategory: bpTaxCategory
-        }, function (coll) { // success
+        }, function (coll, args) { // success
           var taxRate, rate, taxAmt, net, pricenet, amount, taxId;
+          if (coll){
+            if (coll.length > 0) {
+              taxRate = coll.at(0);
+              taxId = taxRate.get('id');
 
-          if (coll.length === 0) {
-            throw 'No tax rate found';
-          }
+              rate = new BigDecimal(String(taxRate.get('rate')));
+              rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
 
-          taxRate = coll.at(0);
-          taxId = taxRate.get('id');
+              pricenet = OB.DEC.div(element.get('price'), rate.add(new BigDecimal('1')));
 
-          rate = new BigDecimal(String(taxRate.get('rate')));
-          rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
+              net =  OB.DEC.mul(pricenet, element.get('qty'));
+              amount = OB.DEC.sub(element.get('gross'), net);
+              gross = element.get('gross');
 
-          pricenet = OB.DEC.div(element.get('price'), rate.add(new BigDecimal('1')));
+              element.set('tax', taxId);
+              element.set('taxAmount', amount);
+              element.set('net', net);
+              element.set('pricenet', pricenet);
 
-          net =  OB.DEC.mul(pricenet, element.get('qty'));
-          amount = OB.DEC.sub(element.get('gross'), net);
-          gross = element.get('gross');
+              totalnet = OB.DEC.add(totalnet, net);
 
-          element.set('tax', taxId);
-          element.set('taxAmount', amount);
-          element.set('net', net);
-          element.set('pricenet', pricenet);
+              if (taxes[taxId]) {
+                taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
+                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
+                taxes[taxId].gross = OB.DEC.add(taxes[taxId].gross, gross);
+              } else {
+                taxes[taxId] = {};
+                taxes[taxId].name = taxRate.get('name');
+                taxes[taxId].rate = taxRate.get('rate');
+                taxes[taxId].net = net;
+                taxes[taxId].amount = amount;
+                taxes[taxId].gross = gross;
+              }
 
-          totalnet = OB.DEC.add(totalnet, net);
+              // processed = yes
+              queue[element.cid] = true;
 
-          if (taxes[taxId]) {
-            taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
-            taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
-            taxes[taxId].gross = OB.DEC.add(taxes[taxId].gross, gross);
-          } else {
-            taxes[taxId] = {};
-            taxes[taxId].name = taxRate.get('name');
-            taxes[taxId].rate = taxRate.get('rate');
-            taxes[taxId].net = net;
-            taxes[taxId].amount = amount;
-            taxes[taxId].gross = gross;
-          }
+              // checking queue status
+              triggerNext = OB.UTIL.queueStatus(queue);
 
-          // processed = yes
-          queue[element.cid] = true;
-
-          // checking queue status
-          triggerNext = OB.UTIL.queueStatus(queue);
-
-          // triggering next steps
-          if (triggerNext) {
-            me.set('taxes', taxes);
-            me.set('net', totalnet);
-            if (callback) {
-              callback();
+              // triggering next steps
+              if (triggerNext) {
+                me.set('taxes', taxes);
+                me.set('net', totalnet);
+                if (callback) {
+                  callback();
+                }
+              }
+            }else{
+              OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
             }
+          }else{
+            OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
           }
-        }, function () { // error
-          window.console.error(arguments);
-        });
+        }, function (tx, error) { // error
+          OB.UTIL.showError("OBDAL error: " + error);
+        }, product);
 
         // add line to queue of pending to be processed
         queue[element.cid] = false;
