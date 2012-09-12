@@ -112,4 +112,8 @@ public class LabelsComponent extends BaseTemplateComponent {
     return null;
   }
 
+  @Override
+  public boolean bypassAuthentication() {
+    return true;
+  }
 }

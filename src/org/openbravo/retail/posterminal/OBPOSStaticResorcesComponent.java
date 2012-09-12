@@ -88,4 +88,9 @@ public class OBPOSStaticResorcesComponent extends BaseComponent {
     return false;
 
   }
+
+  @Override
+  public boolean bypassAuthentication() {
+    return true;
+  }
 }

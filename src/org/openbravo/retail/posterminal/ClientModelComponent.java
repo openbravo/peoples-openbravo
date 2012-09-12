@@ -201,4 +201,9 @@ public class ClientModelComponent extends BaseTemplateComponent {
     }
     return source;
   }
+
+  @Override
+  public boolean bypassAuthentication() {
+    return true;
+  }
 }
