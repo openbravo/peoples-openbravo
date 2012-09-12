@@ -404,7 +404,6 @@ public class Wad extends DefaultHandler {
       FieldProvider[] tabsData, Map<String, Boolean> calculatedWindowMap) throws ServletException {
 
     // check if some tabs/windows need to be shown in classic mode
-    log4j.info("calculatedWindowMap " + calculatedWindowMap.size());
     Map<String, Boolean> generateWindowMap = new HashMap<String, Boolean>();
     String oldWindowId = null;
     for (FieldProvider tab : tabsData) {
@@ -463,8 +462,6 @@ public class Wad extends DefaultHandler {
             + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
         res.put(tab.getField("tabid"), Boolean.TRUE);
 
-        // TODO: looks like only parent-xsql's are needed? not really the whole servlet?
-        // but note that only 11 parent tabs in sum so perhaps not worth to optimize
         if (!tab.getField("tablevel").equals("0")) {
           // check path along parentTabs up to root and generate all those also
           String parentTab = TabsData.selectParentTab(conn, tab.getField("tabid"));
@@ -915,7 +912,8 @@ public class Wad extends DefaultHandler {
           + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
       if (onlyJavaNeeded) {
-        // Keeping mapping to *_Edition.html because it is the mapping used for processes
+        // Keeping mapping to *_Edition.html because it is the mapping used for processes but
+        // skipping the rest
         WadData mapping2 = new WadData();
         mapping2.name = "W" + tab.tabid;
         mapping2.classname = prefix + "_Edition.html";
@@ -931,7 +929,6 @@ public class Wad extends DefaultHandler {
         mapping3.classname = prefix + "_Excel.xls";
         mappings.add(mapping3);
 
-        // TODO: check if needed for processes...
         WadData mapping4 = new WadData();
         mapping4.name = "WR" + tab.tabid;
         mapping4.classname = "/ad_callouts/ComboReloads" + tab.tabid + ".html";

@@ -249,6 +249,13 @@
                        WHERE AD_WINDOW.AD_WINDOW_ID = TB.AD_WINDOW_ID
                          AND A.AD_TAB_ID = TB.AD_TAB_ID
                          AND A.UPDATED > SI.LAST_BUILD
+                     UNION
+                       SELECT 1
+                         FROM AD_PREFERENCE P
+                         WHERE P.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
+                         AND ISACTIVE='Y'
+                         AND PROPERTY = 'OBUIAPP_UseClassicMode'
+                         AND P.UPDATED > SI.LAST_BUILD
                        )
         ORDER BY AD_WINDOW.name, AD_TAB.tablevel, AD_TAB.seqno
           ]]>

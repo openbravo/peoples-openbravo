@@ -210,6 +210,11 @@
                                       union
                                      select max(updated)
                                        from ad_model_object_para) upd) 
+           or exists (select 1 
+                        from ad_preference
+                       where isactive = 'Y'
+                         and property = 'OBUIAPP_UseClassicMode'
+                         and updated > last_build)
                                       
       ]]>
     </Sql>
