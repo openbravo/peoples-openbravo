@@ -43,11 +43,33 @@ public class TaxRate extends ProcessHQLQuery {
     final Region toRegion = posDetail.getOrganization().getObretcoCBpLocation()
         .getLocationAddress().getRegion();
 
-    return "from FinancialMgmtTaxRate where active = true "
-        + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') and (country.id = '"
-        + fromCountry.getId() + "' or country is null) and (region.id = '" + fromRegion.getId()
-        + "' or region is null) and (destinationCountry.id = '" + toCountry.getId()
-        + "' or destinationCountry is null) and (destinationRegion.id = '" + toRegion.getId()
-        + "' or destinationRegion is null) and $readableCriteria order by validFromDate desc ";
+    String hql = "from FinancialMgmtTaxRate where active = true "
+        + "and parentTaxRate is null and salesPurchaseType in ('S', 'B') ";
+
+    if (fromCountry != null) {
+      hql = hql + "and (country.id = '" + fromCountry.getId() + "' or country is null) ";
+    } else {
+      hql = hql + "and country is null ";
+    }
+    if (fromRegion != null) {
+      hql = hql + "and (region.id = '" + fromRegion.getId() + "' or region is null) ";
+    } else {
+      hql = hql + "and region is null ";
+    }
+    if (toCountry != null) {
+      hql = hql + "and (destinationCountry.id = '" + toCountry.getId()
+          + "' or destinationCountry is null) ";
+    } else {
+      hql = hql + "and destinationCountry is null ";
+    }
+    if (toRegion != null) {
+      hql = hql + "and (destinationRegion.id = '" + toRegion.getId()
+          + "' or destinationRegion is null) ";
+    } else {
+      hql = hql + "and destinationRegion is null ";
+    }
+    hql = hql + "and $readableCriteria order by validFromDate desc ";
+
+    return hql;
   }
 }
