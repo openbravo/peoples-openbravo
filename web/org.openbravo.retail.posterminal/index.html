@@ -128,7 +128,7 @@
       }
       
 
-      if (OB.POS.modelterminal.get('connectedToERP')) {
+      //if (OB.POS.modelterminal.get('connectedToERP')) {
       $.ajax({
           url: '../../org.openbravo.retail.posterminal.service.loginutils',
           contentType: 'application/json;charset=utf-8',
@@ -138,31 +138,34 @@
             terminalName: OB.POS.paramTerminal
           },
           error: function (jqXHR, textStatus, errorThrown) {
-            OB.UTIL.showError(errorThrown + ": " + this.url);
+          // we are likely offline. Attempt to navigate to the login page
+            OB.UTIL.showLoading(false);
+            OB.POS.navigate('login');
           },
           success: function (data, textStatus, jqXHR) {
             //OB.I18N.labels = data.response[0].data[1];
             OB.Format = data.response[0].data[2];
             if ((data.response[0].data[0].strClient) !== 'none') {
-            //  $(document).ready(function () {
-                      //TODO: check here if already logged in
-                      if (true) {
-                          // console.log('navigate to login');
-                          OB.POS.navigate('login');
-                      } else {
-                          OB.POS.navigate('main');
-                      }
-                   //   });
+            	 new OB.DS.Request('org.openbravo.retail.posterminal.term.Context').exec({}, function(data) {
+            	      if (data && !data.exception) {
+                        OB.POS.modelterminal.user = data[0].user.username;
+            	        OB.POS.navigate('main');
+            	      }else{
+                        OB.POS.navigate('login'); 
+            	      }
+            	    }, function(){
+            	      OB.POS.navigate('login');
+            	    });
             } else {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NO_POS_TERMINAL_TITLE',[OB.POS.paramTerminal]));
             }
             OB.UTIL.showLoading(false);
           }
         });
-      }else{
-    	  OB.UTIL.showLoading(false);
-    	  OB.POS.navigate('login');
-      }
+      //}else{
+   // 	  OB.UTIL.showLoading(false);
+    //	  OB.POS.navigate('login');
+      //}
       
       
     }());

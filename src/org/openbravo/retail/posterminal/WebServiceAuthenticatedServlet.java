@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.spi.NOPLoggerRepository;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -75,7 +76,16 @@ public abstract class WebServiceAuthenticatedServlet extends BaseKernelServlet {
       String strLanguage) throws IOException {
     final String message = Utility.messageBD(this, strCode, strLanguage);
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    writeResult(response, silentExceptionToJson(new OBSecurityException(message)));
+    writeResult(response, silentExceptionToJson(new OBSecurityException(message) {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      protected Logger getLogger() {
+        // The logger is overridden so no unnecessary exception trace is shown in the log in this
+        // case
+        return new org.apache.log4j.spi.NOPLogger(new NOPLoggerRepository(), "NOP");
+      }
+    }));
   }
 
   protected void writeResult(HttpServletResponse response, String result) throws IOException {

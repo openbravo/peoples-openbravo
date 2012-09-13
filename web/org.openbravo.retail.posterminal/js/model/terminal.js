@@ -140,6 +140,9 @@ OB.Model.Terminal = Backbone.Model.extend({
             me.logout();
           } else if (data[0]) {
             me.set('terminal', data[0]);
+            if(!me.usermodel){
+              OB.POS.modelterminal.setUserModelOnline();
+            }
             me.trigger('terminal.loaded');
           } else {
             OB.UTIL.showError("Terminal does not exists: " + params.terminal);
@@ -316,32 +319,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         OB.Dal.initCache(OB.Model.User, [], null, null);
         OB.Dal.initCache(OB.Model.Session, [], null, null);
         OB.POS.modelterminal.set('orgUserId', data.userId);
-        OB.Dal.find(OB.Model.User, {'name': me.user},
-          function(users) {
-            var user, session;
-        	if(users.models.length == 0 ) {
-              user = new OB.Model.User();
-              user.set('name', me.user);
-              user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
-              OB.Dal.save(user, function(){
-              }, function() {
-                window.console.error(arguments);
-              });
-              me.usermodel = user;
-        	}else{
-              user = users.models[0];
-              me.usermodel = user;
-              user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
-              OB.Dal.save(user, function(){
-              }, function() {
-                window.console.error(arguments);
-              });
-            }
-        	me.updateSession(user);
-          }, 
-          function() {
-          }
-        );
+        me.setUserModelOnline();
         
         OB.POS.navigate('main', {
           trigger: true
@@ -376,6 +354,36 @@ OB.Model.Terminal = Backbone.Model.extend({
         );
     }   
   }, 
+  
+  setUserModelOnline: function() {
+	  var me = this;
+	  OB.Dal.find(OB.Model.User, {'name': me.user},
+      function(users) {
+        var user, session;
+    	if(users.models.length == 0 ) {
+          user = new OB.Model.User();
+          user.set('name', me.user);
+          user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
+          OB.Dal.save(user, function(){
+          }, function() {
+            window.console.error(arguments);
+          });
+          me.usermodel = user;
+    	}else{
+          user = users.models[0];
+          me.usermodel = user;
+          user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
+          OB.Dal.save(user, function(){
+          }, function() {
+            window.console.error(arguments);
+          });
+        }
+    	me.updateSession(user);
+      }, 
+      function() {
+      }
+    );
+  },
 
   logout: function() {
     var me = this;
