@@ -151,18 +151,9 @@ public class CostingRuleProcess implements Process {
   }
 
   private void migrationCheck() {
-    if (isCostingMigrationNeeded() && !CostingStatus.getInstance().isMigrated()) {
+    if (!CostingStatus.getInstance().isMigrated()) {
       throw new OBException("@CostMigrationNotDone@");
     }
-  }
-
-  private boolean isCostingMigrationNeeded() {
-    OBQuery<org.openbravo.model.materialmgmt.cost.Costing> costingQry = OBDal.getInstance()
-        .createQuery(org.openbravo.model.materialmgmt.cost.Costing.class, "");
-    costingQry.setFilterOnReadableClients(false);
-    costingQry.setFilterOnReadableOrganization(false);
-
-    return costingQry.count() > 0;
   }
 
   private boolean existsPreviousRule(CostingRule rule) {
