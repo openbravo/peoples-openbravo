@@ -1044,7 +1044,7 @@ isc.OBViewGrid.addProperties({
     // If a record has to be included in the refresh, it must be included
     // in the filter with an 'or' operator, along with the original filter,
     // but only if there is an original filter
-    if (newRecordsToBeIncluded && originalCriteria.criteria.length > 0) {
+    if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && originalCriteria.criteria.length > 0) {
       // Adds the current record to the criteria
       newRecordsCriteria = [];
       newRecordsLength = newRecordsToBeIncluded.length;
@@ -2286,8 +2286,8 @@ isc.OBViewGrid.addProperties({
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
-  saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
-    var previousExplicitOffline;
+  saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, originalCallback, ficCallDone) {
+    var previousExplicitOffline, saveCallback;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -2297,11 +2297,23 @@ isc.OBViewGrid.addProperties({
 
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
-      if (saveCallback) {
-        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+      if (originalCallback) {
+        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
+
+    saveCallback = function () {
+      if (originalCallback) {
+        if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
+          if (!this.view.newRecordsAfterRefresh) {
+            this.view.newRecordsAfterRefresh = [];
+          }
+          this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
+        }
+        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+      }
+    };
 
     if (ficCallDone) {
       // reset the new values as this can have changed because of a fic call
