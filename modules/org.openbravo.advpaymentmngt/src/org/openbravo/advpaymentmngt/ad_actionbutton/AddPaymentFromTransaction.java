@@ -389,7 +389,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
               .get(0).getPaymentMethod().getId() : "";
         }
       } else {
-        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getId());
+        xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getIdentifier());
       }
     }
     // Take payment date from the add transaction popup
