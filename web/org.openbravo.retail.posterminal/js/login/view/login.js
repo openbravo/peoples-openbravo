@@ -49,7 +49,8 @@
       if (this.userConnected === 'true') {
         this.$.bottomIcon.applyStyle('background-image', 'url(img/iconOnlineUser.png)');
       }
-      
+
+      OB.Dal.initCache(OB.Model.User, [], null, null);
       OB.Dal.find(OB.Model.User, {'name': this.user},
         function(users) {
     	  var user;
