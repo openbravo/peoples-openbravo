@@ -2207,6 +2207,11 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
+    if (enterKey) {
+      // See issue https://issues.openbravo.com/view.php?id=19830
+      this.view.standardWindow.getDirtyEditForm().validateForm();
+    }
+
     this._leavingCell = true;
 
     if (newValue) {
