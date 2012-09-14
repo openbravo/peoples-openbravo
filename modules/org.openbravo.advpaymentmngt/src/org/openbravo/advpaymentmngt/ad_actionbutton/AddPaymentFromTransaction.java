@@ -384,7 +384,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             BusinessPartner.class);
         obcBP.add(Restrictions.eq(BusinessPartner.PROPERTY_NAME, bsline.getBpartnername()));
         if (obcBP.list() != null && obcBP.list().size() > 0) {
-          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getId());
+          xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getIdentifier());
           defaultPaymentMethod = (obcBP.list().get(0).getPaymentMethod() != null) ? obcBP.list()
               .get(0).getPaymentMethod().getId() : "";
         }
