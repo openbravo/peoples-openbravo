@@ -358,6 +358,9 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(false);
       }
       this.resetBaseStyle();
+      if (this.view.viewForm.readOnly && !this.view.attachmentExists) {
+        this.setDisabled(true);
+      }
     },
     keyboardShortcutId: 'ToolBar_Attachments'
   },
