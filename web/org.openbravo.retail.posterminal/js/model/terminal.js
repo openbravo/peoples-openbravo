@@ -271,6 +271,10 @@ OB.Model.Terminal = Backbone.Model.extend({
     });
   },
   
+  generate_sha1: function (theString) {
+    return CryptoJS.enc.Hex.stringify(CryptoJS.SHA1(theString));
+  },
+  
   login: function(user, password, mode) {
     OB.UTIL.showLoading(true);
     var me = this;
@@ -337,7 +341,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	if(users.models.length == 0 ) {
                 OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
         	}else{
-              if(users.models[0].get('password') === hex_md5(me.password+OB.POS.paramTerminal)){
+              if(users.models[0].get('password') === me.generate_sha1(me.password+OB.POS.paramTerminal)){
                 me.usermodel = users.models[0];
                 me.updateSession(me.usermodel);
                 OB.POS.navigate('main', {
@@ -363,7 +367,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     	if(users.models.length == 0 ) {
           user = new OB.Model.User();
           user.set('name', me.user);
-          user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
+          user.set('password', me.generate_sha1(me.password+OB.POS.paramTerminal));
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
@@ -372,7 +376,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     	}else{
           user = users.models[0];
           me.usermodel = user;
-          user.set('password', hex_md5(me.password+OB.POS.paramTerminal));
+          user.set('password', me.generate_sha1(me.password+OB.POS.paramTerminal));
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
