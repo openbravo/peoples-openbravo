@@ -15,6 +15,11 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class Location extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected String getQuery(JSONObject jsonsent) throws JSONException {
     return "from Location where id = (select min(locationAddress) from OrganizationInformation where organization.id = :org and $readableCriteria)";
   }
