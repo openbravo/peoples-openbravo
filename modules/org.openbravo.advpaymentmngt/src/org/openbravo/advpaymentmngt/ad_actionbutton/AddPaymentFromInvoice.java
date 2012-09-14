@@ -505,10 +505,13 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     JSONObject msg = new JSONObject();
     try {
       msg.put("combo", finAccountComboHtml);
-      msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
+      if (financialAccountCurrency != null) {
+        msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
+        msg.put("financialAccountCurrencyPrecision",
+            financialAccountCurrency.getStandardPrecision());
+      }
       msg.put("exchangeRate", exchangeRate == null ? "" : exchangeRate);
       msg.put("formatOutput", formatOutput);
-      msg.put("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision());
     } catch (JSONException e) {
       log4j.error("JSON object error" + msg.toString());
     }
