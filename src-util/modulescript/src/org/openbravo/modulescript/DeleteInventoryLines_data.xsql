@@ -30,15 +30,41 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       DELETE FROM m_storage_detail
-        WHERE m_product_id IN (SELECT p.m_product_id
-                      FROM m_product p JOIN m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id
-                      WHERE coalesce(p.attrsetvaluetype, '-') <> 'F'
-                      AND aset.isoneattrsetvalrequired = 'Y')
-        AND COALESCE(m_attributesetinstance_id, '0') = '0'
-        AND QTYONHAND = 0 
-        AND PREQTYONHAND = 0 
-        AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
-        AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL)
+        WHERE m_storage_detail_id IN
+        	(SELECT m_storage_detail_id
+        	FROM M_STORAGE_DETAIL MS
+	        WHERE m_product_id IN (SELECT p.m_product_id
+	                      FROM m_product p JOIN m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id
+	                      WHERE coalesce(p.attrsetvaluetype, '-') <> 'F'
+	                      AND aset.isoneattrsetvalrequired = 'Y')
+	        AND COALESCE(m_attributesetinstance_id, '0') = '0'
+	        AND QTYONHAND = 0 
+	        AND PREQTYONHAND = 0 
+	        AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
+	        AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL)
+	        AND NOT EXISTS (SELECT 1 FROM m_stock_aux SA WHERE SA.M_STORAGE_DETAIL_ID = MS.M_STORAGE_DETAIL_ID)
+	        AND NOT EXISTS (SELECT 1 FROM m_stock_proposed SA WHERE SA.M_STORAGE_DETAIL_ID = MS.M_STORAGE_DETAIL_ID))
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="deleteStockAuxLines" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      DELETE FROM m_stock_aux
+        WHERE m_storage_detail_id IN
+        	(SELECT m_storage_detail_id
+        	FROM M_STORAGE_DETAIL MS
+	        WHERE m_product_id IN (SELECT p.m_product_id
+	                      FROM m_product p JOIN m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id
+	                      WHERE coalesce(p.attrsetvaluetype, '-') <> 'F'
+	                      AND aset.isoneattrsetvalrequired = 'Y')
+	        AND COALESCE(m_attributesetinstance_id, '0') = '0'
+	        AND QTYONHAND = 0 
+	        AND PREQTYONHAND = 0 
+	        AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
+	        AND (PREQTYORDERONHAND=0 OR PREQTYORDERONHAND IS NULL))
+	        AND COALESCE(quantity, 0) = 0
+			AND COALESCE(qtyorder, 0) = 0
       ]]>
     </Sql>
   </SqlMethod>

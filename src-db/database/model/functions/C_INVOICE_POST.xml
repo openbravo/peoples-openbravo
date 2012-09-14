@@ -1329,7 +1329,9 @@ BEGIN --BODY
           GrandTotal=v_GrandTotal,
           withholdingamount = withholdamount
       WHERE C_Invoice_ID=v_Record_ID;
-      C_INVOICETAX_ROUNDING(v_Record_ID, v_GrandTotal, v_TotalLines);
+      IF (v_istaxincluded = 'Y') THEN
+        C_INVOICETAX_ROUNDING(v_Record_ID, v_GrandTotal - v_taxnorecalculable, v_TotalLines);
+      END IF;
       DBMS_OUTPUT.PUT_LINE('withholdingamount=' || withholdamount);
       DBMS_OUTPUT.PUT_LINE('GrandTotal=' || v_GrandTotal) ;
     END; -- Calculate Tax and Totals

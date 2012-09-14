@@ -825,7 +825,7 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setAdminMode: function (level, levelValue) {
-    var leftColumn = this.leftColumnLayout;
+    var leftColumn = this.leftColumnLayout, levelLabel, levelValueLabel;
 
     this.adminMode = true;
     this.portalLayout.sendEvents = false;
@@ -835,14 +835,17 @@ isc.OBMyOpenbravo.addProperties({
     leftColumn.recentViewsLayout.hide();
     leftColumn.refreshLayout.hide();
     leftColumn.recentDocumentsLayout.hide();
+    //set this values before destroy because after that there will be undefined
+    levelLabel = level.getDisplayValue();
+    levelValueLabel = levelValue.getDisplayValue ? levelValue.getDisplayValue() : '';
     leftColumn.adminOtherMyOBLayout.getMembers()[1].destroy(); // remove DynamicForm
     leftColumn.adminOtherMyOBLayout.hide();
     if (!leftColumn.addWidgetLayout.getMember(0).isOpened()) {
       leftColumn.addWidgetLayout.getMember(0).doOpen();
     }
     leftColumn.addMember(isc.OBMyOBPublishChangesDialog.create({
-      levelLabel: level.getDisplayValue(),
-      levelValueLabel: levelValue.getDisplayValue ? levelValue.getDisplayValue() : ''
+      levelLabel: levelLabel,
+      levelValueLabel: levelValueLabel
     }));
     this.reloadWidgets();
   },
