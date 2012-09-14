@@ -379,6 +379,15 @@ function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
         } else {
           document.getElementById('paramExchangeRate').value = '';
         }
+        if (resp.twriteoff) {
+            document.getElementById('paramStrtypewriteoff').value = applyFormatJSToOBMasked(resp.twriteoff, resp.formatOutput);
+            document.getElementById('paramStrAmountwriteoff').value = applyFormatJSToOBMasked(resp.awriteoff, resp.formatOutput);
+        }
+        else{
+        	document.getElementById('paramStrtypewriteoff').value = '';
+            document.getElementById('paramStrAmountwriteoff').value = '';
+        }
+        updateDifference();
       }
       displayMulticurrencyControls();
       updateConvertedAmounts();
@@ -433,6 +442,7 @@ var strText = "";
     displayLogicElement('paramUseCreditContainer', hasCredit );
     displayLogicElement('rowCredit', hasCredit );
     displayMulticurrencyControls();
+    
     if (isTrue('isReceipt')) {
         setWindowElementFocus(frm.inpActualPayment);
     } else {
@@ -460,6 +470,9 @@ var strText = "";
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
   <input type="hidden" name="isFirstLoad" value="true"/>
   <input type="hidden" name="strNotAllowExchange" id="paramStrNotAllowExchange" value=""/>
+  <input type="hidden" name="strWriteOffLimit" id="paramStrWriteOffLimit" value=""/>
+  <input type="hidden" name="strtypewriteoff" id="paramStrtypewriteoff" value=""/>
+  <input type="hidden" name="strAmountwriteoff" id="paramStrAmountwriteoff" value=""/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -1107,6 +1120,12 @@ var strText = "";
                               <input type="radio" name="inpDifferenceAction" value="writeoff"/>
                             </td>
                             <td><span class="LabelText">Write off the difference</span></td>
+                          </tr>
+                          <tr id="writeofflimit">
+                            <td class="Radio_Check_ContentCell" >
+                              <input type="radio" name="inpDifferenceAction" value="writeofflimit" id="radiolimit" DISABLED/>
+                            </td>
+                            <td><span class="LabelText">Write off the difference (Above limit)</span></td>
                           </tr>
                         </table>
                       </td>

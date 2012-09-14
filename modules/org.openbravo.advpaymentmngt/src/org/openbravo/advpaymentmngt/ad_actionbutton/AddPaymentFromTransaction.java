@@ -534,6 +534,20 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         strWindowId);
     xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
 
+    if (financialAccount.getWriteofflimit() != null) {
+      final String strtypewriteoff;
+      final String strAmountwriteoff;
+
+      strtypewriteoff = financialAccount.getTypewriteoff();
+      strAmountwriteoff = financialAccount.getWriteofflimit().toString();
+      xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+      xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+
+      final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+          strWindowId);
+      xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

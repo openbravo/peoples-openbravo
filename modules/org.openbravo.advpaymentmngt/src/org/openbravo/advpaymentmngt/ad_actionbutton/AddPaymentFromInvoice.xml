@@ -66,6 +66,11 @@
     <!-- Not allow to change exchange rate and amount -->
     <PARAMETER id="paramStrNotAllowExchange" name="strNotAllowExchange" attribute="value"/>
     
+     <!-- Not allow to change Write Off-->
+    <PARAMETER id="paramStrWriteOffLimit" name="strWriteOffLimit" attribute="value"/>
+    <PARAMETER id="paramStrtypewriteoff" name="strtypewriteoff" attribute="value"/>
+    <PARAMETER id="paramStrAmountwriteoff" name="strAmountwriteoff" attribute="value"/>
+    
     <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
     </SUBREPORT>

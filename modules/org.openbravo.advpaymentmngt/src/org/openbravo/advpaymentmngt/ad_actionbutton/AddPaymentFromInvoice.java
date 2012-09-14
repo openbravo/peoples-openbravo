@@ -357,11 +357,35 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
+    final String strtypewriteoff;
+    final String strAmountwriteoff;
     if (account != null) {
       if (!financialAccounts.contains(account)) {
         strFinancialAccountId = financialAccounts.get(0).getId();
+        if (financialAccounts.get(0).getWriteofflimit() != null) {
+          strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
+          strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
+          xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+          xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+        }
+
+      } else {
+        if (account.getWriteofflimit() != null) {
+          strtypewriteoff = account.getTypewriteoff();
+          strAmountwriteoff = account.getWriteofflimit().toString();
+          xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+          xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+        }
+      }
+    } else {
+      if (financialAccounts.get(0).getWriteofflimit() != null) {
+        strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
+        strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
+        xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+        xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
       }
     }
+
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
@@ -418,6 +442,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
         strWindowId);
     xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+    // Not allow to write off
+    final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+        strWindowId);
+    xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -477,8 +506,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(paymentMethodComboHtml.replaceAll("\"", "\\'"));
-    out.close();
 
+    out.close();
   }
 
   private void refreshFinancialAccountCombo(HttpServletResponse response, VariablesSecureApp vars,
@@ -502,8 +531,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         FIN_Utility.getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
         conversionRatePrecision);
 
+    FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+
     JSONObject msg = new JSONObject();
     try {
+      if (financialAccount.getWriteofflimit() != null) {
+        msg.put("twriteoff", financialAccount.getTypewriteoff());
+        msg.put("awriteoff", financialAccount.getWriteofflimit().toString());
+      }
       msg.put("combo", finAccountComboHtml);
       if (financialAccountCurrency != null) {
         msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
