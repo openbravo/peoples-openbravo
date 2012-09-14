@@ -341,7 +341,7 @@ OB.Model.Terminal = Backbone.Model.extend({
         	if(users.models.length == 0 ) {
                 OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineUserNotRegistered'));
         	}else{
-              if(users.models[0].get('password') === me.generate_sha1(me.password+OB.POS.paramTerminal)){
+              if(users.models[0].get('password') === me.generate_sha1(me.password+users.models[0].get('created'))){
                 me.usermodel = users.models[0];
                 me.updateSession(me.usermodel);
                 OB.POS.navigate('main', {
@@ -363,11 +363,13 @@ OB.Model.Terminal = Backbone.Model.extend({
 	  var me = this;
 	  OB.Dal.find(OB.Model.User, {'name': me.user},
       function(users) {
-        var user, session;
+        var user, session, date;
     	if(users.models.length == 0 ) {
+    	  date= new Date().toString();
           user = new OB.Model.User();
           user.set('name', me.user);
-          user.set('password', me.generate_sha1(me.password+OB.POS.paramTerminal));
+          user.set('password', me.generate_sha1(me.password+date));
+          user.set('created', date);
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
@@ -376,7 +378,7 @@ OB.Model.Terminal = Backbone.Model.extend({
     	}else{
           user = users.models[0];
           me.usermodel = user;
-          user.set('password', me.generate_sha1(me.password+OB.POS.paramTerminal));
+          user.set('password', me.generate_sha1(me.password+user.get('created')));
           OB.Dal.save(user, function(){
           }, function() {
             window.console.error(arguments);
