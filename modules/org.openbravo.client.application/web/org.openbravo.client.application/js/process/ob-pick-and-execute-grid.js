@@ -48,6 +48,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     width: 32
   },
 
+  //The Cell should be validated each time the focus is changed.
+  validateByCell: true,
   // default selection
   selectionProperty: 'obSelected',
 
